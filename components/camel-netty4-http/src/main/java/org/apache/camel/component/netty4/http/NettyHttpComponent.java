@@ -208,7 +208,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (answer == null) {
             HttpServerConsumerChannelFactory channelFactory = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
             answer = new HttpServerBootstrapFactory(channelFactory);
-            answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerPipelineFactory(consumer));
+            answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerInitializerFactory(consumer));
             bootstrapFactories.put(key, answer);
         }
         return answer;

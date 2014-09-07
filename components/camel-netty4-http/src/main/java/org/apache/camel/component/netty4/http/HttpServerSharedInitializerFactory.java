@@ -27,7 +27,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.component.netty4.NettyConsumer;
-import org.apache.camel.component.netty4.ServerPipelineFactory;
+import org.apache.camel.component.netty4.ServerInitializerFactory;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
@@ -36,19 +36,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A shared {@link org.apache.camel.component.netty.ServerPipelineFactory} for a shared Netty HTTP server.
+ * A shared {@link HttpServerInitializerFactory} for a shared Netty HTTP server.
  *
  * @see NettySharedHttpServer
  */
-public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
+public class HttpServerSharedInitializerFactory extends HttpServerInitializerFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpServerSharedPipelineFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServerSharedInitializerFactory.class);
     private final NettySharedHttpServerBootstrapConfiguration configuration;
     private final HttpServerConsumerChannelFactory channelFactory;
     private final ClassResolver classResolver;
     private SSLContext sslContext;
 
-    public HttpServerSharedPipelineFactory(NettySharedHttpServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
+    public HttpServerSharedInitializerFactory(NettySharedHttpServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
                                            ClassResolver classResolver) {
         this.configuration = configuration;
         this.channelFactory = channelFactory;
@@ -67,7 +67,7 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
     }
 
     @Override
-    public ServerPipelineFactory createPipelineFactory(NettyConsumer nettyConsumer) {
+    public ServerInitializerFactory createPipelineFactory(NettyConsumer nettyConsumer) {
         throw new UnsupportedOperationException("Should not call this operation");
     }
 

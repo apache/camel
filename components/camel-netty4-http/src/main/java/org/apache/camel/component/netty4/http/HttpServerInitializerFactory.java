@@ -32,27 +32,27 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
-import org.apache.camel.component.netty4.ServerPipelineFactory;
+import org.apache.camel.component.netty4.ServerInitializerFactory;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ServerPipelineFactory} for the Netty HTTP server.
+ * {@link ServerInitializerFactory} for the Netty HTTP server.
  */
-public class HttpServerPipelineFactory extends ServerPipelineFactory {
+public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpServerPipelineFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServerInitializerFactory.class);
     protected NettyHttpConsumer consumer;
     protected SSLContext sslContext;
     protected NettyHttpConfiguration configuration;
 
-    public HttpServerPipelineFactory() {
+    public HttpServerInitializerFactory() {
         // default constructor needed
     }
 
-    public HttpServerPipelineFactory(NettyHttpConsumer nettyConsumer) {
+    public HttpServerInitializerFactory(NettyHttpConsumer nettyConsumer) {
         this.consumer = nettyConsumer;
         this.configuration = nettyConsumer.getConfiguration();
         try {
@@ -67,8 +67,8 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
     }
 
     @Override
-    public ServerPipelineFactory createPipelineFactory(NettyConsumer nettyConsumer) {
-        return new HttpServerPipelineFactory((NettyHttpConsumer) nettyConsumer);
+    public ServerInitializerFactory createPipelineFactory(NettyConsumer nettyConsumer) {
+        return new HttpServerInitializerFactory((NettyHttpConsumer) nettyConsumer);
     }
 
     @Override

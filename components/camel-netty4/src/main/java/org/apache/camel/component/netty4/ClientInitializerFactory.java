@@ -29,14 +29,14 @@ import io.netty.channel.ChannelPipeline;
  *
  * @see ChannelInitializer
  */
-public abstract class ClientPipelineFactory extends ChannelInitializer<Channel> {
+public abstract class ClientInitializerFactory extends ChannelInitializer<Channel> {
 
     /**
-     * Creates a new {@link ClientPipelineFactory} using the given {@link NettyProducer}
+     * Creates a new {@link ClientInitializerFactory} using the given {@link NettyProducer}
      *
      * @param producer the associated producers
-     * @return the {@link ClientPipelineFactory} associated to the given producer.
+     * @return the {@link ClientInitializerFactory} associated to the given producer.
      */
-    public abstract ClientPipelineFactory createPipelineFactory(NettyProducer producer);
+    public abstract ClientInitializerFactory createPipelineFactory(NettyProducer producer);
 
 }

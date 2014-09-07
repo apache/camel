@@ -30,14 +30,14 @@ import io.netty.channel.ChannelPipeline;
  *
  * @see ChannelPipelineFactory
  */
-public abstract class ServerPipelineFactory extends ChannelInitializer<Channel> {
+public abstract class ServerInitializerFactory extends ChannelInitializer<Channel> {
 
     /**
-     * Creates a new {@link ServerPipelineFactory} using the given {@link NettyConsumer}
+     * Creates a new {@link ServerInitializerFactory} using the given {@link NettyConsumer}
      *
      * @param consumer the associated consumer
-     * @return the {@link ServerPipelineFactory} associated to the given consumer.
+     * @return the {@link ServerInitializerFactory} associated to the given consumer.
      */
-    public abstract ServerPipelineFactory createPipelineFactory(NettyConsumer consumer);
+    public abstract ServerInitializerFactory createPipelineFactory(NettyConsumer consumer);
 
 }

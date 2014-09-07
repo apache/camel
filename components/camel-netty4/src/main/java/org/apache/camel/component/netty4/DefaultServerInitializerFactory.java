@@ -34,14 +34,14 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultServerPipelineFactory extends ServerPipelineFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultServerPipelineFactory.class);
+public class DefaultServerInitializerFactory extends ServerInitializerFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultServerInitializerFactory.class);
 
     private NettyConsumer consumer;
     private SSLContext sslContext;
 
     @Deprecated
-    public DefaultServerPipelineFactory(NettyServerBootstrapConfiguration configuration) {
+    public DefaultServerInitializerFactory(NettyServerBootstrapConfiguration configuration) {
         this.consumer = null;
         try {
             this.sslContext = createSSLContext(null, configuration);
@@ -54,7 +54,7 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
         }
     }
 
-    public DefaultServerPipelineFactory(NettyConsumer consumer) {
+    public DefaultServerInitializerFactory(NettyConsumer consumer) {
         this.consumer = consumer;
         try {
             this.sslContext = createSSLContext(consumer.getContext(), consumer.getConfiguration());
@@ -184,8 +184,8 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
     }
 
     @Override
-    public ServerPipelineFactory createPipelineFactory(NettyConsumer consumer) {
-        return new DefaultServerPipelineFactory(consumer);
+    public ServerInitializerFactory createPipelineFactory(NettyConsumer consumer) {
+        return new DefaultServerInitializerFactory(consumer);
     }
 
 }

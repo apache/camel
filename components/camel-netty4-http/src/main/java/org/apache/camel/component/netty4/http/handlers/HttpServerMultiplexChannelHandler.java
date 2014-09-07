@@ -27,9 +27,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -47,7 +45,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * A multiplex {@link org.apache.camel.component.netty4.http.HttpServerPipelineFactory} which keeps a list of handlers, and delegates to the
+ * A multiplex {@link org.apache.camel.component.netty4.http.HttpServerInitializerFactory} which keeps a list of handlers, and delegates to the
  * target handler based on the http context path in the incoming request. This is used to allow to reuse
  * the same Netty consumer, allowing to have multiple routes on the same netty {@link io.netty.bootstrap.ServerBootstrap}
  */

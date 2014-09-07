@@ -104,7 +104,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         channelFactory = new HttpServerMultiplexChannelHandler();
         channelFactory.init(configuration.getPort());
 
-        ChannelInitializer<Channel> pipelineFactory = new HttpServerSharedPipelineFactory(configuration, channelFactory, classResolver);
+        ChannelInitializer<Channel> pipelineFactory = new HttpServerSharedInitializerFactory(configuration, channelFactory, classResolver);
 
         // thread factory and pattern
         String port = Matcher.quoteReplacement("" + configuration.getPort());

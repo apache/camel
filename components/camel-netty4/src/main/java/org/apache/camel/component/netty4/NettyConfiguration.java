@@ -75,7 +75,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam
     private boolean allowDefaultCodec = true;
     @UriParam
-    private ClientPipelineFactory clientPipelineFactory;
+    private ClientInitializerFactory clientPipelineFactory;
     @UriParam
     private int maximumPoolSize = 16;
     @UriParam
@@ -167,8 +167,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         trustStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
         keyStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
         trustStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
-        clientPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
-        serverPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
+        clientPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientInitializerFactory.class, clientPipelineFactory);
+        serverPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerInitializerFactory.class, serverPipelineFactory);
 
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);
@@ -389,11 +389,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.allowDefaultCodec = allowDefaultCodec;
     }
 
-    public void setClientPipelineFactory(ClientPipelineFactory clientPipelineFactory) {
+    public void setClientPipelineFactory(ClientInitializerFactory clientPipelineFactory) {
         this.clientPipelineFactory = clientPipelineFactory;
     }
 
-    public ClientPipelineFactory getClientPipelineFactory() {
+    public ClientInitializerFactory getClientPipelineFactory() {
         return clientPipelineFactory;
     }
 
