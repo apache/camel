@@ -77,7 +77,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 //context.setTracing(true);
-                DataFormat syslogDataFormat = new Rfc3164SyslogDataFormat();
+                DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
                 from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {

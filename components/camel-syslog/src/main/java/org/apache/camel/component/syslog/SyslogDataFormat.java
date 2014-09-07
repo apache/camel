@@ -24,24 +24,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
-public class Rfc3164SyslogDataFormat implements DataFormat {
+public class SyslogDataFormat implements DataFormat {
+    @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         SyslogMessage message = ExchangeHelper.convertToMandatoryType(exchange, SyslogMessage.class, body);
-        stream.write(Rfc3164SyslogConverter.toString(message).getBytes());
+        stream.write(SyslogConverter.toString(message).getBytes());
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
         String body = ExchangeHelper.convertToMandatoryType(exchange, String.class, inputStream);
-        SyslogMessage message = Rfc3164SyslogConverter.parseMessage(body.getBytes());
+        SyslogMessage message = SyslogConverter.parseMessage(body.getBytes());
 
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_FACILITY, message.getFacility());
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_SEVERITY, message.getSeverity());
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_HOSTNAME, message.getHostname());
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_TIMESTAMP, message.getTimestamp());
 
-        //Since we are behind the fact of being in an Endpoint...
-        //We need to pull in the remote/local via either Mina or Netty.
+        // Since we are behind the fact of being in an Endpoint...
+        // We need to pull in the remote/local via either Mina or Netty.
 
         if (exchange.getIn().getHeader("CamelMinaLocalAddress") != null) {
             message.setLocalAddress(exchange.getIn().getHeader("CamelMinaLocalAddress", String.class));
@@ -52,7 +54,7 @@ public class Rfc3164SyslogDataFormat implements DataFormat {
             message.setRemoteAddress(exchange.getIn().getHeader("CamelMinaRemoteAddress", String.class));
             exchange.getOut().setHeader(SyslogConstants.SYSLOG_REMOTE_ADDRESS, message.getRemoteAddress());
         }
-        
+
         if (exchange.getIn().getHeader("CamelNettyLocalAddress") != null) {
             message.setLocalAddress(exchange.getIn().getHeader("CamelNettyLocalAddress", String.class));
             exchange.getOut().setHeader(SyslogConstants.SYSLOG_LOCAL_ADDRESS, message.getLocalAddress());
