@@ -110,7 +110,7 @@
                     <dependency>
                         <groupId>org.jboss.weld.se</groupId>
                         <artifactId>weld-se-core</artifactId>
-                        <version>${weld-version}</version>
+                        <version>${weld2-version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -168,7 +168,7 @@
                 <dependency>
                     <groupId>org.jboss.weld</groupId>
                     <artifactId>weld-core</artifactId>
-                    <version>${weld-version}</version>
+                    <version>${weld2-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
