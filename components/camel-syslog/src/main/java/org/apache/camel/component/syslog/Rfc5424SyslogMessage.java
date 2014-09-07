@@ -1,12 +1,8 @@
 /**
- * 
+ *
  */
 package org.apache.camel.component.syslog;
 
-/**
- * @author svenrienstra
- * 
- */
 public class Rfc5424SyslogMessage extends SyslogMessage {
     private String appName = "-";
     private String procId = "-";
@@ -17,60 +13,56 @@ public class Rfc5424SyslogMessage extends SyslogMessage {
      * @return the appName
      */
     public String getAppName() {
-	return appName;
+        return appName;
     }
 
     /**
-     * @param appName
-     *            the appName to set
+     * @param appName the appName to set
      */
     public void setAppName(String appName) {
-	this.appName = appName;
+        this.appName = appName;
     }
 
     /**
      * @return the procId
      */
     public String getProcId() {
-	return procId;
+        return procId;
     }
 
     /**
-     * @param procId
-     *            the procId to set
+     * @param procId the procId to set
      */
     public void setProcId(String procId) {
-	this.procId = procId;
+        this.procId = procId;
     }
 
     /**
      * @return the msgId
      */
     public String getMsgId() {
-	return msgId;
+        return msgId;
     }
 
     /**
-     * @param msgId
-     *            the msgId to set
+     * @param msgId the msgId to set
      */
     public void setMsgId(String msgId) {
-	this.msgId = msgId;
+        this.msgId = msgId;
     }
 
     /**
      * @return the structuredData
      */
     public String getStructuredData() {
-	return structuredData;
+        return structuredData;
     }
 
     /**
-     * @param structuredData
-     *            the structuredData to set
+     * @param structuredData the structuredData to set
      */
     public void setStructuredData(String structuredData) {
-	this.structuredData = structuredData;
+        this.structuredData = structuredData;
     }
 
 }

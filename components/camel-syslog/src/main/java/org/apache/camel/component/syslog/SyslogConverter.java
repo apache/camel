@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
 import java.net.InetAddress;
@@ -24,7 +23,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.camel.Converter;
@@ -42,6 +40,7 @@ public final class SyslogConverter {
 
     private static Map<String, MONTHS> monthValueMap = new HashMap<String, MONTHS>() {
         private static final long serialVersionUID = 1L;
+
         {
             put("jan", MONTHS.jan);
             put("feb", MONTHS.feb);
@@ -107,7 +106,7 @@ public final class SyslogConverter {
         sbr.append(" ");
 
         if (isRfc5424) {
-            Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage)message;
+            Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage) message;
 
             sbr.append(rfc5424SyslogMessage.getAppName());
             sbr.append(" ");
@@ -137,20 +136,20 @@ public final class SyslogConverter {
         byteBuffer.put(bytes);
         byteBuffer.rewind();
 
-        Character charFound = (char)byteBuffer.get();
+        Character charFound = (char) byteBuffer.get();
 
         SyslogFacility foundFacility = null;
         SyslogSeverity foundSeverity = null;
 
         while (charFound != '<') {
             // Ignore noise in beginning of message.
-            charFound = (char)byteBuffer.get();
+            charFound = (char) byteBuffer.get();
         }
         char priChar = 0;
         if (charFound == '<') {
             int facility = 0;
 
-            while (Character.isDigit(priChar = (char)(byteBuffer.get() & 0xff))) {
+            while (Character.isDigit(priChar = (char) (byteBuffer.get() & 0xff))) {
                 facility *= 10;
                 facility += Character.digit(priChar, 10);
             }
@@ -166,7 +165,7 @@ public final class SyslogConverter {
         SyslogMessage syslogMessage = new SyslogMessage();
         boolean isRfc5424 = false;
         // Read next character
-        charFound = (char)byteBuffer.get();
+        charFound = (char) byteBuffer.get();
         // If next character is a 1, we have probably found an rfc 5424 message
         // message
         if (charFound == '1') {
@@ -185,14 +184,14 @@ public final class SyslogConverter {
             syslogMessage.setTimestamp(parseRfc3164Date(byteBuffer));
         } else {
 
-            charFound = (char)byteBuffer.get();
+            charFound = (char) byteBuffer.get();
             if (charFound != ' ') {
                 LOG.error("Invalid syslog message, missing a mandatory space after version");
             }
 
             // This should be the timestamp
             StringBuilder date = new StringBuilder();
-            while ((charFound = (char)(byteBuffer.get() & 0xff)) != ' ') {
+            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 date.append(charFound);
             }
 
@@ -202,34 +201,34 @@ public final class SyslogConverter {
         // The host is the char sequence until the next ' '
 
         StringBuilder host = new StringBuilder();
-        while ((charFound = (char)(byteBuffer.get() & 0xff)) != ' ') {
+        while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
             host.append(charFound);
         }
 
         syslogMessage.setHostname(host.toString());
 
         if (isRfc5424) {
-            Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage)syslogMessage;
+            Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage) syslogMessage;
             StringBuilder appName = new StringBuilder();
-            while ((charFound = (char)(byteBuffer.get() & 0xff)) != ' ') {
+            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 appName.append(charFound);
             }
             rfc5424SyslogMessage.setAppName(appName.toString());
 
             StringBuilder procId = new StringBuilder();
-            while ((charFound = (char)(byteBuffer.get() & 0xff)) != ' ') {
+            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 procId.append(charFound);
             }
             rfc5424SyslogMessage.setProcId(procId.toString());
 
             StringBuilder msgId = new StringBuilder();
-            while ((charFound = (char)(byteBuffer.get() & 0xff)) != ' ') {
+            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 msgId.append(charFound);
             }
             rfc5424SyslogMessage.setMsgId(msgId.toString());
 
             StringBuilder structuredData = new StringBuilder();
-            while ((charFound = (char)(byteBuffer.get() & 0xff)) != ' ') {
+            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 structuredData.append(charFound);
             }
             rfc5424SyslogMessage.setStructuredData(structuredData.toString());
@@ -237,7 +236,7 @@ public final class SyslogConverter {
 
         StringBuilder msg = new StringBuilder();
         while (byteBuffer.hasRemaining()) {
-            charFound = (char)(byteBuffer.get() & 0xff);
+            charFound = (char) (byteBuffer.get() & 0xff);
             msg.append(charFound);
         }
 
@@ -253,12 +252,12 @@ public final class SyslogConverter {
         Calendar cal = message.getTimestamp();
 
         String firstLetter = MONTHS.values()[cal.get(Calendar.MONTH)].toString().substring(0, 1); // Get
-                                                                                                  // first
-                                                                                                  // letter
+        // first
+        // letter
         String remainder = MONTHS.values()[cal.get(Calendar.MONTH)].toString().substring(1); // Get
-                                                                                             // remainder
-                                                                                             // of
-                                                                                             // word.
+        // remainder
+        // of
+        // word.
         String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
 
         sbr.append(capitalized);
@@ -318,14 +317,14 @@ public final class SyslogConverter {
 
         char[] month = new char[3];
         for (int i = 0; i < 3; i++) {
-            month[i] = (char)(byteBuffer.get() & 0xff);
+            month[i] = (char) (byteBuffer.get() & 0xff);
         }
-        charFound = (char)byteBuffer.get();
+        charFound = (char) byteBuffer.get();
         if (charFound != ' ') {
             // Invalid Message - missing mandatory space.
             LOG.error("Invalid syslog message, missing a mandatory space after month");
         }
-        charFound = (char)(byteBuffer.get() & 0xff);
+        charFound = (char) (byteBuffer.get() & 0xff);
 
         int day = 0;
         if (charFound == ' ') {
@@ -336,25 +335,25 @@ public final class SyslogConverter {
             day += Character.digit(charFound, 10);
         }
 
-        while (Character.isDigit(charFound = (char)(byteBuffer.get() & 0xff))) {
+        while (Character.isDigit(charFound = (char) (byteBuffer.get() & 0xff))) {
             day *= 10;
             day += Character.digit(charFound, 10);
         }
 
         int hour = 0;
-        while (Character.isDigit(charFound = (char)(byteBuffer.get() & 0xff))) {
+        while (Character.isDigit(charFound = (char) (byteBuffer.get() & 0xff))) {
             hour *= 10;
             hour += Character.digit(charFound, 10);
         }
 
         int minute = 0;
-        while (Character.isDigit(charFound = (char)(byteBuffer.get() & 0xff))) {
+        while (Character.isDigit(charFound = (char) (byteBuffer.get() & 0xff))) {
             minute *= 10;
             minute += Character.digit(charFound, 10);
         }
 
         int second = 0;
-        while (Character.isDigit(charFound = (char)(byteBuffer.get() & 0xff))) {
+        while (Character.isDigit(charFound = (char) (byteBuffer.get() & 0xff))) {
             second *= 10;
             second += Character.digit(charFound, 10);
         }

@@ -1,9 +1,7 @@
 /**
- * 
+ *
  */
 package org.apache.camel.component.syslog.netty;
-
-import static org.jboss.netty.buffer.ChannelBuffers.wrappedBuffer;
 
 import java.nio.charset.Charset;
 
@@ -13,9 +11,8 @@ import org.jboss.netty.channel.ChannelHandler.Sharable;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 
-/**
- * @author svenrienstra
- */
+import static org.jboss.netty.buffer.ChannelBuffers.wrappedBuffer;
+
 @Sharable
 public class Rfc5425Encoder extends OneToOneEncoder {
 
@@ -25,7 +22,7 @@ public class Rfc5425Encoder extends OneToOneEncoder {
             return msg;
         }
 
-        ChannelBuffer src = (ChannelBuffer)msg;
+        ChannelBuffer src = (ChannelBuffer) msg;
         int length = src.readableBytes();
 
         String headerString = length + " ";

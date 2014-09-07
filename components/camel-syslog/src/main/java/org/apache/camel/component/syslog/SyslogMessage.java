@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
 import java.util.Calendar;
@@ -89,6 +88,6 @@ public class SyslogMessage {
     @Override
     public String toString() {
         return "SyslogMessage{" + "content='" + logMessage + '\'' + ", facility=" + facility + ", severity=" + severity + ", remoteAddress='" + remoteAddress + '\''
-               + ", localAddress='" + localAddress + '\'' + ", hostname='" + hostname + '\'' + ", messageTime=" + timestamp + '}';
+                + ", localAddress='" + localAddress + '\'' + ", hostname='" + hostname + '\'' + ", messageTime=" + timestamp + '}';
     }
 }

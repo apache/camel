@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.apache.camel.component.syslog.netty;
 
@@ -11,24 +11,15 @@ import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 
-/**
- * @author svenrienstra
- */
 public class Rfc5425FrameDecoder extends FrameDecoder implements ChannelHandlerFactory {
 
     private Integer currentFramelength;
 
-    /**
-     * @see org.jboss.netty.handler.codec.frame.FrameDecoder#decode(org.jboss.netty.channel.ChannelHandlerContext,
-     *      org.jboss.netty.channel.Channel,
-     *      org.jboss.netty.buffer.ChannelBuffer)
-     */
     @Override
     protected Object decode(ChannelHandlerContext ctx, Channel channel, ChannelBuffer buffer) throws Exception {
         if (currentFramelength == null) {
-            // find index of the first space, it should be after the length
-            // field
-            int index = indexOf(buffer, ChannelBuffers.wrappedBuffer(new byte[] {' '}));
+            // find index of the first space, it should be after the length field
+            int index = indexOf(buffer, ChannelBuffers.wrappedBuffer(new byte[]{' '}));
 
             // Read part until the first space, if we have found one
             StringBuffer lengthbuffer = new StringBuffer();
