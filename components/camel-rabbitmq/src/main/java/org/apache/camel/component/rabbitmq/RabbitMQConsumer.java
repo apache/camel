@@ -27,12 +27,11 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.ShutdownSignalException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-
-import com.rabbitmq.client.ShutdownSignalException;
 
 public class RabbitMQConsumer extends DefaultConsumer {
     ExecutorService executor;
@@ -84,7 +83,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     /**
-     * Add a consummer thread for given channel
+     * Add a consumer thread for given channel
      */
     private void startConsumers() throws IOException {
         // First channel used to declare Exchange and Queue
@@ -101,7 +100,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     /**
-     * Add a consummer thread for given channel
+     * Add a consumer thread for given channel
      */
     private void startConsumer(Channel channel) throws IOException {
         RabbitConsumer consumer = new RabbitConsumer(this, channel);
@@ -181,10 +180,10 @@ public class RabbitMQConsumer extends DefaultConsumer {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             mergeAmqpProperties(exchange, properties);
             log.trace("Created exchange [exchange={}]", exchange);
-            long deliveryTag = 0; 
+            long deliveryTag = 0;
             try {
                 deliveryTag = envelope.getDeliveryTag();
-                consumer.getProcessor().process(exchange);                
+                consumer.getProcessor().process(exchange);
                 if (!consumer.endpoint.isAutoAck()) {
                     if (exchange.getException() == null) {
                         log.trace("Acknowledging receipt [delivery_tag={}]",
