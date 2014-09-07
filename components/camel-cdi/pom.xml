@@ -107,6 +107,9 @@
   <profiles>
     <profile>
       <id>owb</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -135,10 +138,7 @@
     </profile>
 
     <profile>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <id>weld</id>
+      <id>weld2</id>
       <dependencies>
         <dependency>
           <groupId>org.apache.deltaspike.cdictrl</groupId>
