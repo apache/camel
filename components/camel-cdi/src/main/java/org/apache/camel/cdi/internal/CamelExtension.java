@@ -96,8 +96,7 @@ public class CamelExtension implements Extension {
      * @param process Annotated type.
      * @throws Exception In case of exceptions.
      */
-    protected void contextAwareness(@Observes ProcessAnnotatedType<? extends CamelContextAware> process)
-            throws Exception {
+    protected void contextAwareness(@Observes ProcessAnnotatedType<? extends CamelContextAware> process) throws Exception {
         AnnotatedType at = process.getAnnotatedType();
 
         Method method = at.getJavaClass().getMethod("setCamelContext", CamelContext.class);
@@ -108,8 +107,7 @@ public class CamelExtension implements Extension {
 
     }
 
-    protected  void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process)
-            throws Exception {
+    protected  void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process) throws Exception {
         AnnotatedType annotatedType = process.getAnnotatedType();
         ContextName annotation = annotatedType.getAnnotation(ContextName.class);
         Class javaClass = annotatedType.getJavaClass();
@@ -222,8 +220,7 @@ public class CamelExtension implements Extension {
     /**
      * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
-    public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager)
-            throws Exception {
+    public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager) throws Exception {
         for (CamelContextBean bean : camelContextBeans) {
             String name = bean.getCamelContextName();
             CamelContext context = getCamelContext(name);
@@ -345,7 +342,7 @@ public class CamelExtension implements Extension {
     }
 
     protected boolean isRoutesBean(Class<?> returnType) {
-        return (RoutesBuilder.class.isAssignableFrom(returnType) || RouteContainer.class.isAssignableFrom(returnType)) &&
-                !Modifier.isAbstract(returnType.getModifiers());
+        return (RoutesBuilder.class.isAssignableFrom(returnType) || RouteContainer.class.isAssignableFrom(returnType))
+            && !Modifier.isAbstract(returnType.getModifiers());
     }
 }
