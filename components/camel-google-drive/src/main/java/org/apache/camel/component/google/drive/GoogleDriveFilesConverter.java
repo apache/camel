@@ -32,6 +32,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Converter
 public final class GoogleDriveFilesConverter {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleDriveFilesConverter.class);
     
