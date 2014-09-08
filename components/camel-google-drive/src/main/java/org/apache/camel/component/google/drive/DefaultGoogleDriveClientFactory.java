@@ -31,21 +31,13 @@ public class DefaultGoogleDriveClientFactory implements GoogleDriveClientFactory
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
     private FileDataStoreFactory dataStoreFactory;
-    // TODO Directory to store user credentials
-    private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"), ".store/drive_sample");
+    private static final java.io.File DATA_STORE_DIR = new java.io.File(".google_drive");
 
     public DefaultGoogleDriveClientFactory() {
         this.transport = new NetHttpTransport();
         this.jsonFactory = new JacksonFactory();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.camel.component.google.drive.GoogleDriveClientFactory#makeClient
-     * (java.lang.String, java.lang.String, java.util.Collection)
-     */
     @Override
     public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName) {
         Credential credential;

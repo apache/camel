@@ -64,7 +64,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         // parameter type is com.google.api.client.http.AbstractInputStreamContent
         headers.put("CamelGoogleDrive.mediaContent", mediaContent);
 
-        File result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
+        File result = requestBodyAndHeaders("google-drive://drive-files/insert", null, headers);
         return result;
     }
     
