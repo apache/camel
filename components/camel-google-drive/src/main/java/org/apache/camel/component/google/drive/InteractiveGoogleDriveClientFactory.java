@@ -27,19 +27,19 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 
-public class DefaultGoogleDriveClientFactory implements GoogleDriveClientFactory {
+public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFactory {
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
     private FileDataStoreFactory dataStoreFactory;
     private static final java.io.File DATA_STORE_DIR = new java.io.File(".google_drive");
 
-    public DefaultGoogleDriveClientFactory() {
+    public InteractiveGoogleDriveClientFactory() {
         this.transport = new NetHttpTransport();
         this.jsonFactory = new JacksonFactory();
     }
 
     @Override
-    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName) {
+    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken) {
         Credential credential;
         try {
             credential = authorize(clientId, clientSecret, scopes);
@@ -51,12 +51,18 @@ public class DefaultGoogleDriveClientFactory implements GoogleDriveClientFactory
         return null;
     }
 
-    // Authorizes the installed application to access user's protected data.
+    /**
+     * This method interactively creates the necessary authorization tokens on first run, 
+     * and stores the tokens in the data store. Subsequent runs will no longer require interactivity
+     * as long as the credentials file is not removed.
+     */
     private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
         dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
         // set up authorization code flow
-        // TODO refresh token support too
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, clientId, clientSecret, scopes).setDataStoreFactory(dataStoreFactory).build();
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, clientId, clientSecret, scopes)
+          .setDataStoreFactory(dataStoreFactory)
+          .setAccessType("offline")
+          .build();
         // authorize
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
