@@ -67,6 +67,15 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         File result = requestBodyAndHeaders("google-drive://drive-files/insert", null, headers);
         return result;
     }
+
+    protected File uploadTestFolder() {
+        File fileMetadata = new File();
+        fileMetadata.setTitle("testfolder");
+        fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+        File result = requestBody("google-drive://drive-files/insert?inBody=content", fileMetadata);
+        return result;
+    }
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
