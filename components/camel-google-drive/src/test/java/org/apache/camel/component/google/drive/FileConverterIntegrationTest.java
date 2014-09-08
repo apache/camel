@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.drive;
 
 
+import java.io.InputStream;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,9 +33,9 @@ import com.google.api.services.drive.model.FileList;
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
-public class FileConverterTest extends AbstractGoogleDriveTestSupport {
+public class FileConverterIntegrationTest extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileConverterTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileConverterIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
     
     @Override
@@ -43,7 +45,7 @@ public class FileConverterTest extends AbstractGoogleDriveTestSupport {
     }
     
     @Test
-    public void testConverter() throws Exception {
+    public void testFileConverter() throws Exception {
         template.sendBodyAndHeader("file://target/convertertest", "Hello!", "CamelFileName", "greeting.txt");
     
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -51,27 +53,19 @@ public class FileConverterTest extends AbstractGoogleDriveTestSupport {
 
         assertMockEndpointsSatisfied();
  
-        FileList fileList = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.FileList.class);
-        assertTrue(fileInList("greeting.txt", fileList));
-    }
+        File file = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.File.class);
+        
+        assertEquals("Hello!", context.getTypeConverter().convertTo(String.class, mock.getReceivedExchanges().get(0), file));
 
-    private boolean fileInList(String fileName, FileList fileList) {
-        for (File f : fileList.getItems()) {
-            if (f.getTitle().equals(fileName)) {
-                return true;
-            }
-        }
-        return false;
     }
-
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("file://target/convertertest?noop=true")
-                  // should convert from GenericFile to Google File here
+                  .convertBodyTo(File.class)
                   .to("google-drive://drive-files/insert?inBody=content")
-                  .to("google-drive://drive-files/list")
                   .to("mock:result");
             }
         };

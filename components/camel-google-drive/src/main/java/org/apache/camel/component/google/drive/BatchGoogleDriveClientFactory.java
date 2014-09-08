@@ -18,6 +18,9 @@ package org.apache.camel.component.google.drive;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -25,6 +28,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 
 public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(BatchGoogleDriveClientFactory.class);
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
 
@@ -40,8 +44,7 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
             credential = authorize(clientId, clientSecret, scopes, refreshToken);
             return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("Could not create Google Drive client.", e);            
         }
         return null;
     }

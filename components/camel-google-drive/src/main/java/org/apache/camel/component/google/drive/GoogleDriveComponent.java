@@ -16,20 +16,31 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiComponent;
-import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 
 /**
  * Represents the component that manages {@link GoogleDriveEndpoint}.
  */
 @UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer")
 public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
-
+    private Drive client;
+    private GoogleDriveClientFactory clientFactory;
+    private List<String> scopes = DEFAULT_SCOPES;
+    
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
+            DriveScopes.DRIVE); 
+    
     public GoogleDriveComponent() {
         super(GoogleDriveEndpoint.class, GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
     }
@@ -43,9 +54,35 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
         return GoogleDriveApiName.fromValue(apiNameStr);
     }
 
+    public Drive getClient() {
+        if (client == null) {
+            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), scopes, configuration.getApplicationName(), configuration.getRefreshToken());
+        }
+        return client;
+    }
+    
+    public GoogleDriveClientFactory getClientFactory() {
+        if (clientFactory == null) {
+            clientFactory = new BatchGoogleDriveClientFactory();
+        }
+        return clientFactory;
+    }
+
+    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
+        this.clientFactory = clientFactory;
+    }
+    
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, GoogleDriveApiName apiName,
                                       GoogleDriveConfiguration endpointConfiguration) {
         return new GoogleDriveEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+    private List<String> getScopes() {
+        return scopes;
+    }
+
+    private void setScopes(List<String> scopes) {
+        this.scopes = scopes;
     }
 }

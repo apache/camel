@@ -24,6 +24,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
@@ -32,6 +34,8 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
  */
 public class GoogleDriveConsumer extends AbstractApiConsumer<GoogleDriveApiName, GoogleDriveConfiguration> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BatchGoogleDriveClientFactory.class);
+    
     public GoogleDriveConsumer(GoogleDriveEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     } 

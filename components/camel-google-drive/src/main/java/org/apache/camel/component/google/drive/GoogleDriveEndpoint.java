@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -33,7 +31,6 @@ import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
 import org.apache.camel.component.google.drive.internal.GoogleDrivePropertiesHelper;
 
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
 
 /**
  * Represents a GoogleDrive endpoint.
@@ -41,12 +38,6 @@ import com.google.api.services.drive.DriveScopes;
 @UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer")
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
-    private Drive client;
-    
-    private GoogleDriveClientFactory clientFactory;
-
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
-            DriveScopes.DRIVE);    
     
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
                          GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
@@ -118,11 +109,8 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
         } 
     }
     
-    private Drive getClient() {
-        if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), DEFAULT_SCOPES, configuration.getApplicationName(), configuration.getRefreshToken());
-        }
-        return client;
+    public Drive getClient() {
+        return ((GoogleDriveComponent)getComponent()).getClient();
     }
 
     @Override
@@ -130,14 +118,5 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
         return apiProxy;
     }
 
-    public GoogleDriveClientFactory getClientFactory() {
-        if (clientFactory == null) {
-            clientFactory = new InteractiveGoogleDriveClientFactory();
-        }
-        return clientFactory;
-    }
 
-    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
-        this.clientFactory = clientFactory;
-    }
 }
