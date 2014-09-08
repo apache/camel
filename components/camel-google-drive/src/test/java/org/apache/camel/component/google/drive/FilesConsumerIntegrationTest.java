@@ -17,16 +17,15 @@
 package org.apache.camel.component.google.drive;
 
 
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
-import org.apache.camel.component.mock.MockEndpoint;
-
-import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.

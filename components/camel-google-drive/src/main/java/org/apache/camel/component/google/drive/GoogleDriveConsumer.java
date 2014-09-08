@@ -19,15 +19,14 @@ package org.apache.camel.component.google.drive;
 import java.io.IOException;
 import java.util.Map;
 
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.apache.camel.util.component.AbstractApiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
 /**
  * The GoogleDrive consumer.

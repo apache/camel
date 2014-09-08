@@ -25,33 +25,35 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.model.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IntrospectionSupport;
 import org.junit.AfterClass;
 
-import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.model.File;
-
 public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
     protected static final String CAMEL_TEST_TAG = "camel_was_here";
     protected static final String CAMEL_TEST_FILE = "CamelTestFile";
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
-    private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
     protected static String testUserId;
-
-    private static String refreshToken;
-    private static String propertyText;
-
     protected static String testFolderId;
     protected static String testFileId;
 
     protected static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
     protected static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
     protected static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
+
+    private static String refreshToken;
+    private static String propertyText;
+
+    
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+    private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
+    
     
     protected File uploadTestFile() {
         File fileMetadata = new File();
@@ -88,7 +90,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         final StringBuilder builder = new StringBuilder();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line;
-        while((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             builder.append(line).append(LINE_SEPARATOR);
         }
         propertyText = builder.toString();

@@ -17,18 +17,14 @@
 package org.apache.camel.component.google.drive;
 
 
-import java.io.InputStream;
-
+import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
-import org.apache.camel.component.mock.MockEndpoint;
-
-import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
@@ -64,9 +60,9 @@ public class FileConverterIntegrationTest extends AbstractGoogleDriveTestSupport
         return new RouteBuilder() {
             public void configure() {
                 from("file://target/convertertest?noop=true")
-                  .convertBodyTo(File.class)
-                  .to("google-drive://drive-files/insert?inBody=content")
-                  .to("mock:result");
+                    .convertBodyTo(File.class)
+                    .to("google-drive://drive-files/insert?inBody=content")
+                    .to("mock:result");
             }
         };
     }

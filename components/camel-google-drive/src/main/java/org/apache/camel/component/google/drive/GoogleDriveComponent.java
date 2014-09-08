@@ -19,27 +19,26 @@ package org.apache.camel.component.google.drive;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.util.component.AbstractApiComponent;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
-
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleDriveEndpoint}.
  */
 @UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer")
 public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
+                                                                     DriveScopes.DRIVE); 
     private Drive client;
     private GoogleDriveClientFactory clientFactory;
     private List<String> scopes = DEFAULT_SCOPES;
-    
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
-            DriveScopes.DRIVE); 
     
     public GoogleDriveComponent() {
         super(GoogleDriveEndpoint.class, GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());

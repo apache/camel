@@ -19,16 +19,16 @@ package org.apache.camel.component.google.drive;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.api.services.drive.model.Comment;
+import com.google.api.services.drive.model.File;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
+import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;
-
-import com.google.api.services.drive.model.Comment;
-import com.google.api.services.drive.model.File;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Replies APIs.
@@ -99,39 +99,39 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
             public void configure() {
                 // test route for delete
                 from("direct://DELETE")
-                  .to("google-drive://" + PATH_PREFIX + "/delete");
+                    .to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
                 from("direct://GET")
-                  .to("google-drive://" + PATH_PREFIX + "/get");
+                    .to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for insert
                 from("direct://INSERT")
-                  .to("google-drive://" + PATH_PREFIX + "/insert");
+                    .to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
                 from("direct://LIST")
-                  .to("google-drive://" + PATH_PREFIX + "/list");
+                    .to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for patch
                 from("direct://PATCH")
-                  .to("google-drive://" + PATH_PREFIX + "/patch");
+                    .to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for update
                 from("direct://UPDATE")
-                  .to("google-drive://" + PATH_PREFIX + "/update");
+                    .to("google-drive://" + PATH_PREFIX + "/update");
                 
                 // just used to upload file for test
                 from("direct://INSERT_1")
-                  .to("google-drive://" + GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName() + "/insert");
+                    .to("google-drive://" + GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName() + "/insert");
                 
                 // test route for insert
                 from("direct://INSERT_COMMENT")
-                  .to("google-drive://drive-comments/insert");
+                    .to("google-drive://drive-comments/insert");
 
                 // test route for list
                 from("direct://LIST_COMMENTS")
-                  .to("google-drive://drive-comments/list?inBody=fileId");
+                    .to("google-drive://drive-comments/list?inBody=fileId");
 
             }
         };

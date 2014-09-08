@@ -19,15 +19,14 @@ package org.apache.camel.component.google.drive;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.api.services.drive.model.File;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.apache.camel.component.google.drive.internal.DriveChildrenApiMethod;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.DriveChildrenApiMethod;
-
-import com.google.api.services.drive.model.File;
 
 /**
  * Test class for {@link com.google.api.services.drive.Drive$Children} APIs.
@@ -64,19 +63,19 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
             public void configure() {
                 // test route for delete
                 from("direct://DELETE")
-                  .to("google-drive://" + PATH_PREFIX + "/delete");
+                    .to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
                 from("direct://GET")
-                  .to("google-drive://" + PATH_PREFIX + "/get");
+                    .to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for insert
                 from("direct://INSERT")
-                  .to("google-drive://" + PATH_PREFIX + "/insert");
+                    .to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
                 from("direct://LIST")
-                  .to("google-drive://" + PATH_PREFIX + "/list?inBody=folderId");
+                    .to("google-drive://" + PATH_PREFIX + "/list?inBody=folderId");
 
             }
         };

@@ -20,18 +20,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.file.GenericFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
+
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.file.GenericFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GoogleDriveFilesConverter {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleDriveFilesConverter.class);

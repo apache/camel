@@ -18,9 +18,6 @@ package org.apache.camel.component.google.drive;
 
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -30,13 +27,16 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InteractiveGoogleDriveClientFactory.class);
+    private static final java.io.File DATA_STORE_DIR = new java.io.File(".google_drive");
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
     private FileDataStoreFactory dataStoreFactory;
-    private static final java.io.File DATA_STORE_DIR = new java.io.File(".google_drive");
-
+    
     public InteractiveGoogleDriveClientFactory() {
         this.transport = new NetHttpTransport();
         this.jsonFactory = new JacksonFactory();
@@ -63,9 +63,9 @@ public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFac
         dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
         // set up authorization code flow
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, clientId, clientSecret, scopes)
-          .setDataStoreFactory(dataStoreFactory)
-          .setAccessType("offline")
-          .build();
+            .setDataStoreFactory(dataStoreFactory)
+            .setAccessType("offline")
+            .build();
         // authorize
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }

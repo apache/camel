@@ -18,14 +18,14 @@ package org.apache.camel.component.google.drive;
 
 import java.util.List;
 
+import com.google.api.services.drive.model.Change;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
-
-import com.google.api.services.drive.model.Change;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
@@ -65,15 +65,15 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                  .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
+                    .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
 
                 // test route for list
                 from("direct://LIST")
-                  .to("google-drive://" + PATH_PREFIX + "/list");
+                    .to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for watch
                 from("direct://WATCH")
-                  .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
+                    .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
 
             }
         };

@@ -17,12 +17,11 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
 
 /**
  * Test class for com.google.api.services.drive.Drive$About APIs.
@@ -46,7 +45,7 @@ public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                  .to("google-drive://" + PATH_PREFIX + "/get");
+                    .to("google-drive://" + PATH_PREFIX + "/get");
 
             }
         };
