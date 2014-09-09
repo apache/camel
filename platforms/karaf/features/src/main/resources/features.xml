@@ -946,8 +946,7 @@
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.olingo/olingo-odata2-api/${olingo2-version}</bundle>
-    <!-- need to use the released bundle-->
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.olingo-odata2-core/2.0.0_1-SNAPSHOT</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.olingo-odata2-core/${olingo-odata2-core-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel.component.olingo2/camel-olingo2-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.component.olingo2/camel-olingo2/${project.version}</bundle>
   </feature>
