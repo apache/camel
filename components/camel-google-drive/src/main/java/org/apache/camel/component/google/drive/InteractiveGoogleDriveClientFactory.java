@@ -43,7 +43,7 @@ public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFac
     }
 
     @Override
-    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken) {
+    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
         Credential credential;
         try {
             credential = authorize(clientId, clientSecret, scopes);

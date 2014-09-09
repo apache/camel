@@ -22,6 +22,6 @@ import com.google.api.services.drive.Drive;
 
 public interface GoogleDriveClientFactory {
 
-    Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken);
+    Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken);
 
 }

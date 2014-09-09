@@ -38,24 +38,31 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
     }
 
     @Override
-    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken) {
+    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
         Credential credential;
         try {
-            credential = authorize(clientId, clientSecret, scopes, refreshToken);
+            credential = authorize(clientId, clientSecret, scopes);
+
+            if (refreshToken != null && !"".equals(refreshToken)) {
+                credential.setRefreshToken(refreshToken);
+            } 
+            if (accessToken != null && !"".equals(accessToken)) {
+                credential.setAccessToken(accessToken);
+            }
             return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             LOG.error("Could not create Google Drive client.", e);            
         }
         return null;
     }
-
+    
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes, String refreshToken) throws Exception {
+    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
         // authorize
         return new GoogleCredential.Builder()
             .setJsonFactory(jsonFactory)
             .setTransport(transport)
             .setClientSecrets(clientId, clientSecret)
-            .build().setRefreshToken(refreshToken);
+            .build();
     }
 }
