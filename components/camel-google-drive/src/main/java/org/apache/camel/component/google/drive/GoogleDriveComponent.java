@@ -55,7 +55,8 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
 
     public Drive getClient() {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), scopes, configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
+            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), scopes, 
+                configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
         }
         return client;
     }
