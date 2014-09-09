@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -34,11 +30,9 @@ import org.apache.camel.util.component.AbstractApiComponent;
  */
 @UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer")
 public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
-                                                                     DriveScopes.DRIVE); 
+
     private Drive client;
     private GoogleDriveClientFactory clientFactory;
-    private List<String> scopes = DEFAULT_SCOPES;
     
     public GoogleDriveComponent() {
         super(GoogleDriveEndpoint.class, GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
@@ -55,7 +49,7 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
 
     public Drive getClient() {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), scopes, 
+            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), 
                 configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
         }
         return client;
@@ -76,13 +70,5 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
     protected Endpoint createEndpoint(String uri, String methodName, GoogleDriveApiName apiName,
                                       GoogleDriveConfiguration endpointConfiguration) {
         return new GoogleDriveEndpoint(uri, this, apiName, methodName, endpointConfiguration);
-    }
-
-    private List<String> getScopes() {
-        return scopes;
-    }
-
-    private void setScopes(List<String> scopes) {
-        this.scopes = scopes;
     }
 }

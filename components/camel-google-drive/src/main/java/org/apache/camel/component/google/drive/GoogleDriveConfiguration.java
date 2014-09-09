@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.api.services.drive.DriveScopes;
+
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -24,7 +29,12 @@ import org.apache.camel.spi.UriParams;
  */
 @UriParams
 public class GoogleDriveConfiguration {
-
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
+            DriveScopes.DRIVE); 
+    
+    @UriParam
+    private List<String> scopes = DEFAULT_SCOPES;
+    
     @UriParam
     private String clientId;
 
@@ -79,5 +89,12 @@ public class GoogleDriveConfiguration {
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
+    
+    public List<String> getScopes() {
+        return scopes;
+    }
 
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
+    }
 }
