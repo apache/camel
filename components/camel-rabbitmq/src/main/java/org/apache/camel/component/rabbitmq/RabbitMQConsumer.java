@@ -32,8 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
-import com.rabbitmq.client.ShutdownSignalException;
-
 public class RabbitMQConsumer extends DefaultConsumer {
     ExecutorService executor;
     Connection conn;
