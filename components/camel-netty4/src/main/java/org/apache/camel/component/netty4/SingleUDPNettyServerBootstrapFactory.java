@@ -28,7 +28,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -186,9 +185,8 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         LOG.info("ConnectionlessBootstrap disconnecting from {}:{}", configuration.getHost(), configuration.getPort());
 
         LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
+        allChannels.close().awaitUninterruptibly();
+        
         // and then shutdown the thread pools
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
