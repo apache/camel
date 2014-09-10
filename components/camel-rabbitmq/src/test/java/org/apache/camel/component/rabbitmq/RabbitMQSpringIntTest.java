@@ -16,30 +16,25 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import java.io.IOException;
-
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-
+import com.rabbitmq.client.*;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 /**
  * Test RabbitMQ component with Spring DSL
  */
-@RunWith(CamelSpringJUnit4ClassRunner.class)
-@ContextConfiguration("RabbitMQSpringIntTest-context.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
 public class RabbitMQSpringIntTest {
     @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate template;
