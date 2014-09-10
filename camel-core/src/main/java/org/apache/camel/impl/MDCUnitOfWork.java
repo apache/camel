@@ -217,13 +217,15 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
                     if (correlationId != null) {
                         MDC.put(MDC_CORRELATION_ID, correlationId);
                     }
-                    if (routeId != null) {
-                        MDC.put(MDC_ROUTE_ID, routeId);
-                    }
                     if (camelContextId != null) {
                         MDC.put(MDC_CAMEL_CONTEXT_ID, camelContextId);
                     }
                 }
+                // need to setup the routeId finally
+                if (routeId != null) {
+                    MDC.put(MDC_ROUTE_ID, routeId);
+                }
+                
             } finally {
                 // muse ensure delegate is invoked
                 delegate.done(doneSync);
