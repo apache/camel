@@ -87,6 +87,9 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (mode != null) {
             setProperty(expression, "mode", mode);
         }
+        if (group != null) {
+            setProperty(expression, "group", group);
+        }
     }
 
     @Override
@@ -98,17 +101,14 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (mode != null) {
             setProperty(predicate, "mode", mode);
         }
+        if (group != null) {
+            setProperty(predicate, "group", group);
+        }
     }
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        Expression answer = super.createExpression(camelContext); 
-        if (group != null) {
-            if (group > 0) {
-                //REVISIT wrap the xml tokens with a group element to turn the result into xml?
-                answer = ExpressionBuilder.groupIteratorExpression(answer, null, group);
-            }
-        }
+        Expression answer = super.createExpression(camelContext);
         return answer;
     }
 }
