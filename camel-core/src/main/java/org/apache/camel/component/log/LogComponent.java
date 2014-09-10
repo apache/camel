@@ -67,19 +67,17 @@ public class LogComponent extends UriEndpointComponent {
         } else {
             endpoint.setProvidedLogger(providedLogger);
         }
-       
-        // first, try to use the user-specified formatter (or the one picked up from the Registry and transferred to
-        // the property by a previous endpoint initialisation); if null, try to pick it up from the Registry now
-        ExchangeFormatter localFormatter = exchangeFormatter;
-        if (localFormatter == null) {
-            localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
-            if (localFormatter != null) {
-                exchangeFormatter = localFormatter;
-                setProperties(exchangeFormatter, parameters);
-            }
-        }
-        // if no formatter is available in the Registry, create a local one of the default type, for a single use
-        if (localFormatter == null) {
+
+        // first, try to pick up the ExchangeFormatter from the registry
+        ExchangeFormatter localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
+        if (localFormatter != null) {
+            setProperties(localFormatter, parameters);
+        } else if (localFormatter == null && exchangeFormatter != null) {
+            // do not set properties, the exchangeFormatter is explicitly set, thefore the 
+            // user would have set its properties explicitly too
+            localFormatter = exchangeFormatter;
+        } else {
+            // if no formatter is available in the Registry, create a local one of the default type, for a single use
             localFormatter = new DefaultExchangeFormatter();
             setProperties(localFormatter, parameters);
         }
