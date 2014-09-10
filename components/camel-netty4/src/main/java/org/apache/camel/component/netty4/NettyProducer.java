@@ -63,7 +63,6 @@ public class NettyProducer extends DefaultAsyncProducer {
     private CamelLogger noReplyLogger;
     private EventLoopGroup workerGroup;
     private ObjectPool<Channel> pool;
-    private Timer timer;
     private Map<Channel, NettyCamelState> nettyCamelStatesMap = new ConcurrentHashMap<Channel, NettyCamelState>();
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
@@ -122,8 +121,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
-        timer = new HashedWheelTimer();
-
         // setup pipeline factory
         ClientInitializerFactory factory = configuration.getClientPipelineFactory();
         if (factory != null) {
@@ -159,11 +156,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             pool.close();
             pool = null;
-        }
-
-        if (timer != null) {
-            timer.stop();
-            timer = null;
         }
 
         super.doStop();
