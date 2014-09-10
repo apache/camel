@@ -193,13 +193,12 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     } else {
                         log.trace("Unacknowledging receipt [delivery_tag={}]",
                                 deliveryTag);
-                        rejectQuicly(String.valueOf(deliveryTag));
+                        rejectQuicly(deliveryTag);
                     }
                 }
-
             } catch (Exception e) {
                 if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
-                    channel.basicReject(deliveryTag, false);
+                    rejectQuicly(deliveryTag);
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
@@ -209,37 +208,16 @@ public class RabbitMQConsumer extends DefaultConsumer {
          * Reject a message without throw exceptions.
          * @param deliveryTagString Message tag to reject.
          */
-        protected void rejectQuicly(String deliveryTagString) {
+        protected void rejectQuicly(Long deliveryTag) {
             try {
-                long deliveryTag = Long.valueOf(deliveryTagString);
                 if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
                     channel.basicReject(deliveryTag, false);
                 }
             } catch (Exception e) {
-                log.error("Fail to reject message [delivery_tag={}]", deliveryTagString);
+                log.error("Fail to reject message [delivery_tag={}]", deliveryTag, e);
             }           
-        }
+        }               
         
-        @Override
-        public void handleCancel(String consumerTag) throws IOException {
-            rejectQuicly(consumerTag);
-        }
-
-        @Override
-        public void handleCancelOk(String consumerTag) {
-            rejectQuicly(consumerTag);
-        }
-
-        @Override
-        public void handleConsumeOk(String consumerTag) {
-            rejectQuicly(consumerTag);
-        }
-
-        @Override
-        public void handleShutdownSignal(String consumerTag,
-                ShutdownSignalException sig) {
-            rejectQuicly(consumerTag);
-        }
         /**
          * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
          */
