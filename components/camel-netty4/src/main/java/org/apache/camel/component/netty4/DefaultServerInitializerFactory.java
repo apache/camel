@@ -100,7 +100,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             addToPipeline("decoder-" + x, channelPipeline, decoder);
         }
 
-        if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
+        if (consumer.getConfiguration().isUsingExecutorService()) {
             // Just use EventExecutorGroup from the Netty Component
             EventExecutorGroup applicationExecutor = consumer.getEndpoint().getComponent().getExecutorService();
             addToPipeline("handler", channelPipeline, applicationExecutor, new ServerChannelHandler(consumer));

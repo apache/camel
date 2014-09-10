@@ -79,8 +79,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam
     private int maximumPoolSize = 16;
     @UriParam
-    // TODO we need to rename this property
-    private boolean orderedThreadPoolExecutor = true;
+    private boolean usingExecutorService = true;
     @UriParam
     private int producerPoolMaxActive = -1;
     @UriParam
@@ -405,12 +404,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public boolean isOrderedThreadPoolExecutor() {
-        return orderedThreadPoolExecutor;
+    public boolean isUsingExecutorService() {
+        return usingExecutorService;
     }
 
-    public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
-        this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
+    public void setUsingExecutorService(boolean usingExecutorService) {
+        this.usingExecutorService = usingExecutorService;
     }
 
     public int getProducerPoolMaxActive() {

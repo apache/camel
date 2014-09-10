@@ -70,7 +70,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
                 jndi.bind("sharedBoss", sharedBoosGroup);
 
                 for (int i = 0; i < 100; i++) {
-                    from("netty4:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&orderedThreadPoolExecutor=false"
+                    from("netty4:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false"
                             + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
                         .validate(body().isInstanceOf(String.class))
                         .to("log:result")

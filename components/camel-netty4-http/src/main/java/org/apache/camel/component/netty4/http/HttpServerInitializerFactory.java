@@ -95,7 +95,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         int port = consumer.getConfiguration().getPort();
         ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port).getChannelHandler();
         
-        if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
+        if (consumer.getConfiguration().isUsingExecutorService()) {
             EventExecutorGroup applicationExecutor = consumer.getEndpoint().getComponent().getExecutorService();
             pipeline.addLast(applicationExecutor, "handler", handler);
         } else {

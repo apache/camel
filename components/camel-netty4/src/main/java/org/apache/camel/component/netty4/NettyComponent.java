@@ -99,6 +99,10 @@ public class NettyComponent extends UriEndpointComponent {
     public static Timer getTimer() {
         return timer;
     }
+    
+    public void setExecutorService(EventExecutorGroup executorServcie) {
+        this.executorService = executorService;
+    }
 
     public synchronized EventExecutorGroup getExecutorService() {
         if (executorService == null) {
@@ -116,7 +120,8 @@ public class NettyComponent extends UriEndpointComponent {
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }
-        if (configuration.isOrderedThreadPoolExecutor()) {
+        
+        if (configuration.isUsingExecutorService() && executorService == null) {
             executorService = createExecutorService();
         }
 
