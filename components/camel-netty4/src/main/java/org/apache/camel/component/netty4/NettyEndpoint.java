@@ -42,9 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 public class NettyEndpoint extends DefaultEndpoint {
     @UriParam
     private NettyConfiguration configuration;
-    // TODO do we really need this time in netty4
-    private Timer timer;
-
+    
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
@@ -89,23 +87,10 @@ public class NettyEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public void setTimer(Timer timer) {
-        this.timer = timer;
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-
     @Override
     protected String createEndpointUri() {
         ObjectHelper.notNull(configuration, "configuration");
         return "netty4:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":" + getConfiguration().getPort();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        ObjectHelper.notNull(timer, "timer");
     }
     
     protected SSLSession getSSLSession(ChannelHandlerContext ctx) {
