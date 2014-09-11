@@ -33,6 +33,7 @@ import junit.framework.TestCase;
  */
 public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
 
+    // the input containing multiple Cs
     private static final byte[] TEST_BODY = (
         "<?xml version='1.0' encoding='UTF-8'?>"
         + "<g:A xmlns:g='urn:g'>"
@@ -50,6 +51,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
         + "</c:B>"
         + "</g:A>").getBytes();
 
+    // one extracted C in its wrapped context per token
     private static final String[] RESULTS_WRAPPED_SIZE1 = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:A xmlns:g='urn:g'>"
@@ -99,7 +101,8 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             + "<c:C attr='8'/>"
             + "</c:B>"
             + "</g:A>"};
-    
+
+    // two extracted Cs in their wrapped context per token
     private static final String[] RESULTS_WRAPPED_SIZE2 = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:A xmlns:g='urn:g'>"
@@ -129,7 +132,8 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             + "<c:C attr='8'/>"
             + "</c:B>"
             + "</g:A>"};
-    
+
+    // at most three extracted Cs in their common wrapped context per token
     private static final String[] RESULTS_WRAPPED_SIZE3L = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:A xmlns:g='urn:g'>"
@@ -160,6 +164,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             + "</c:B>"
             + "</g:A>"};
 
+    // three extracted Cs in their corresponding wrapped contexts per token
     private static final String[] RESULTS_WRAPPED_SIZE3U = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:A xmlns:g='urn:g'>"
@@ -187,6 +192,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             + "</c:B>"
             + "</g:A>"};
 
+    // four extracted Cs in their wrapped context per token
     private static final String[] RESULTS_WRAPPED_SIZE4 = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:A xmlns:g='urn:g'>"
@@ -206,9 +212,11 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             + "<c:C attr='8'/>"
             + "</c:B>"
             + "</g:A>"};
-    
+
+    // at most five extracted Cs in their common wrapped context per token
     private static final String[] RESULTS_WRAPPED_SIZE5L = RESULTS_WRAPPED_SIZE4;
 
+    // five extracted Cs in their corresponding wrapped contexts per token
     private static final String[] RESULTS_WRAPPED_SIZE5U = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:A xmlns:g='urn:g'>"
