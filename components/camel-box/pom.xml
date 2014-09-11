@@ -15,15 +15,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.14.0</version>
   </parent>
 
   <artifactId>camel-box</artifactId>
@@ -217,17 +216,17 @@
                 <api>
                   <apiName>collaborations</apiName>
                   <proxyClass>com.box.boxjavalibv2.resourcemanagers.IBoxCollaborationsManager</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
                 <api>
                   <apiName>comments</apiName>
                   <proxyClass>com.box.boxjavalibv2.resourcemanagers.IBoxCommentsManager</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
                 <api>
                   <apiName>events</apiName>
                   <proxyClass>com.box.boxjavalibv2.resourcemanagers.IBoxEventsManager</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
                 <api>
                   <apiName>files</apiName>
@@ -252,7 +251,7 @@
                       <replacement>fileId</replacement>
                     </substitution>
                   </substitutions>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <aliases>
                     <alias>
                       <methodPattern>[gs]et(.+)</methodPattern>
@@ -287,7 +286,7 @@
                       <replacement>folderId</replacement>
                     </substitution>
                   </substitutions>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
                 <api>
                   <apiName>groups</apiName>
@@ -312,7 +311,7 @@
                       <replacement>groupId</replacement>
                     </substitution>
                   </substitutions>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <aliases>
                     <alias>
                       <methodPattern>[gs]et(.+)</methodPattern>
@@ -329,12 +328,12 @@
                   <proxyClass>org.apache.camel.component.box.internal.LongPollingEventsManager</proxyClass>
                   <fromSignatureFile>${project.basedir}/src/signatures/long-polling-events-manager.txt</fromSignatureFile>
                   <excludeConfigNames>callback</excludeConfigNames>
-                  <nullableOptions/>
+                  <nullableOptions />
                 </api>
                 <api>
                   <apiName>search</apiName>
                   <proxyClass>com.box.boxjavalibv2.resourcemanagers.IBoxSearchManager</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
                 <api>
                   <apiName>shared-comments</apiName>
@@ -361,7 +360,7 @@
                 <api>
                   <apiName>shared-items</apiName>
                   <proxyClass>com.box.boxjavalibv2.resourcemanagers.IBoxSharedItemsManager</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
                 <api>
                   <apiName>users</apiName>
@@ -376,7 +375,7 @@
                       <methodAlias>$1</methodAlias>
                     </alias>
                   </aliases>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                 </api>
               </apis>
               <!-- common substitutions -->
