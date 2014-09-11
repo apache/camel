@@ -69,6 +69,7 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -696,7 +697,25 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // create a dummy entity location by adding a dummy key predicate
-        final EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet(referencedEntity.toString());
+        // look for a Container name if available
+        String referencedEntityName = referencedEntity.toString();
+        final int containerSeparator = referencedEntityName.lastIndexOf('.');
+        final EdmEntityContainer entityContainer;
+        if (containerSeparator != -1) {
+            final String containerName = referencedEntityName.substring(0, containerSeparator);
+            referencedEntityName = referencedEntityName.substring(containerSeparator + 1);
+            entityContainer = edm.getEntityContainer(containerName);
+            if (entityContainer == null) {
+                throw new IllegalArgumentException("EDM does not have entity container " + containerName);
+            }
+        } else {
+            entityContainer = edm.getDefaultEntityContainer();
+            if (entityContainer == null) {
+                throw new IllegalArgumentException("EDM does not have a default entity container"
+                    + ", use a fully qualified entity set name");
+            }
+        }
+        final EdmEntitySet entitySet = entityContainer.getEntitySet(referencedEntityName);
         final List<EdmProperty> keyProperties = entitySet.getEntityType().getKeyProperties();
 
         if (keyProperties.size() == 1) {
@@ -710,7 +729,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             referencedEntity.append(')');
         }
 
-        return pathSeparator == -1 ? referencedEntity.toString()
+        return pathSeparator == -1 ? referencedEntityName
             : referencedEntity.append(entityReference.substring(pathSeparator)).toString();
     }
 

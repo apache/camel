@@ -73,12 +73,13 @@ public class Olingo2AppIntegrationTest {
     private static final long TIMEOUT = 10;
 
     private static final String MANUFACTURERS = "Manufacturers";
+    private static final String FQN_MANUFACTURERS = "DefaultContainer.Manufacturers";
     private static final String ADDRESS = "Address";
     private static final String CARS = "Cars";
 
     private static final String TEST_KEY = "'1'";
     private static final String TEST_CREATE_KEY = "'123'";
-    private static final String TEST_MANUFACTURER = MANUFACTURERS + "(" + TEST_KEY + ")";
+    private static final String TEST_MANUFACTURER = FQN_MANUFACTURERS + "(" + TEST_KEY + ")";
     private static final String TEST_CREATE_MANUFACTURER = MANUFACTURERS + "(" + TEST_CREATE_KEY + ")";
 
     private static final String TEST_RESOURCE_CONTENT_ID = "1";

@@ -61,7 +61,8 @@ public class Olingo2AppIntegrationTest extends AbstractOlingo2TestSupport {
     private static final String TEST_RESOURCE_CONTENT_ID = "1";
     private static final String ADDRESS = "Address";
     private static final String TEST_RESOURCE = "$1";
-    private static final String TEST_CREATE_MANUFACTURER = "Manufacturers('123')";
+    private static final String TEST_RESOURCE_ADDRESS = TEST_RESOURCE + "/Address";
+    private static final String TEST_CREATE_MANUFACTURER = "DefaultContainer.Manufacturers('123')";
 
     @Test
     public void testRead() throws Exception {
@@ -160,26 +161,29 @@ public class Olingo2AppIntegrationTest extends AbstractOlingo2TestSupport {
         batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).
             contentId(TEST_RESOURCE_CONTENT_ID).operation(Operation.CREATE).body(data).build());
 
-        // 6. update
-        final Map<String, Object> updateData = new HashMap<String, Object>(data);
+        // 6. update address in created entry
         @SuppressWarnings("unchecked")
+        final Map<String, Object> updateData = new HashMap<String, Object>(data);
         Map<String, Object> address = (Map<String, Object>) updateData.get(ADDRESS);
-        updateData.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
+        batchParts.add(
+            Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE_ADDRESS).operation(Operation.UPDATE).body(address).build());
 
+        // 7. update
+        updateData.put("Name", "MyCarManufacturer Renamed");
         batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE)
             .body(updateData).build());
 
-        // 7. delete
+        // 8. delete
         batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.DELETE).build());
 
-        // 8. read to verify delete
+        // 9. read to verify delete
         batchParts.add(Olingo2BatchQueryRequest.resourcePath(TEST_CREATE_MANUFACTURER).build());
 
         // execute batch request
         final List<Olingo2BatchResponse> responseParts = requestBody("direct://BATCH", batchParts);
         assertNotNull("Batch response", responseParts);
-        assertEquals("Batch responses expected", 8, responseParts.size());
+        assertEquals("Batch responses expected", 9, responseParts.size());
 
         final Edm edm = (Edm) responseParts.get(0).getBody();
         assertNotNull(edm);
@@ -203,13 +207,18 @@ public class Olingo2AppIntegrationTest extends AbstractOlingo2TestSupport {
 
         int statusCode = responseParts.get(5).getStatusCode();
         assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), statusCode);
+        LOG.info("Update address status: {}", statusCode);
+
         statusCode = responseParts.get(6).getStatusCode();
-        LOG.info("Update status: {}", statusCode);
+        assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), statusCode);
+        LOG.info("Update entry status: {}", statusCode);
+
+        statusCode = responseParts.get(7).getStatusCode();
         assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), statusCode);
         LOG.info("Delete status: {}", statusCode);
 
-        assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
-        final Exception exception = (Exception) responseParts.get(7).getBody();
+        assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), responseParts.get(8).getStatusCode());
+        final Exception exception = (Exception) responseParts.get(8).getBody();
         assertNotNull(exception);
         LOG.info("Read deleted entry exception: {}", exception);
     }
@@ -226,7 +235,7 @@ public class Olingo2AppIntegrationTest extends AbstractOlingo2TestSupport {
                     .to("olingo2://read/Manufacturers?$orderBy=Name%20asc");
 
                 from("direct://READENTRY")
-                    .to("olingo2://read/Manufacturers");
+                    .to("olingo2://read/DefaultContainer.Manufacturers");
 
                 // test route for create
                 from("direct://CREATE")

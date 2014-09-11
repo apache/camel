@@ -88,6 +88,16 @@ public class Olingo2BatchChangeRequest extends Olingo2BatchRequest {
         }
 
         public Olingo2BatchChangeRequest build() {
+            // avoid later NPEs
+            if (request.resourcePath == null) {
+                throw new IllegalArgumentException("Null resourcePath");
+            }
+            if (request.operation == null) {
+                throw new IllegalArgumentException("Null operation");
+            }
+            if (request.operation != Operation.DELETE && request.body == null) {
+                throw new IllegalArgumentException("Null body");
+            }
             return request;
         }
     }
