@@ -144,7 +144,7 @@
             <Export-Package>${componentPackage};version=${project.version}</Export-Package>
             <Import-Package>
               ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=2.14-SNAPSHOT,
+              org.apache.camel.*;version=${project.version},
               *
             </Import-Package>
             <Private-Package>${outPackage}</Private-Package>
