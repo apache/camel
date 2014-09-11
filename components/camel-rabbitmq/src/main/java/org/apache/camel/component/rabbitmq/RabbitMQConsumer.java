@@ -27,7 +27,6 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.ShutdownSignalException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -205,43 +204,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
             }
-        }
-
-        /**
-         * Reject a message without throw exceptions.
-         *
-         * @param deliveryTagString Message tag to reject.
-         */
-        protected void rejectQuietly(String deliveryTagString) {
-            try {
-                long deliveryTag = Long.valueOf(deliveryTagString);
-                if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
-                    channel.basicReject(deliveryTag, false);
-                }
-            } catch (Exception e) {
-                log.error("Fail to reject message [delivery_tag={}]", deliveryTagString);
-            }
-        }
-
-        @Override
-        public void handleCancel(String consumerTag) throws IOException {
-            rejectQuietly(consumerTag);
-        }
-
-        @Override
-        public void handleCancelOk(String consumerTag) {
-            rejectQuietly(consumerTag);
-        }
-
-        @Override
-        public void handleConsumeOk(String consumerTag) {
-            rejectQuietly(consumerTag);
-        }
-
-        @Override
-        public void handleShutdownSignal(String consumerTag,
-                                         ShutdownSignalException sig) {
-            rejectQuietly(consumerTag);
         }
 
         /**
