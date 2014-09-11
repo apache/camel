@@ -130,6 +130,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
 
         apiProxy = new Olingo2AppWrapper(new Olingo2AppImpl(configuration.getServiceUri(), clientBuilder));
         apiProxy.getOlingo2App().setContentType(configuration.getContentType());
+        apiProxy.getOlingo2App().setHttpHeaders(configuration.getHttpHeaders());
 
         return apiProxy;
     }
