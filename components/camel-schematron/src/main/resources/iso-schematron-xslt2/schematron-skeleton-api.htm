@@ -1,0 +1,723 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>The ISO Schematron Skeleton API</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGED" CONTENT="20080808;2200065">
+</HEAD>
+<BODY LANG="en-AU" DIR="LTR">
+<H1>API for ISO Schematron Skeleton</H1>
+<H2><BR><BR>
+</H2>
+<P>Rick Jelliffe, 2010/04/14</P>
+<P>This document provides documentation on the XSLT API available in
+the implementation of Schematron called <TT>iso_schematron_skeleton.xsl</TT>.
+(available in an XSLT1 and XSLT2 version). The API makes available as
+much information from the schema, however there may be some edge
+cases where it is not exhaustive.   
+</P>
+<P>The <I>skeleton</I> is an XSLT script which provides all the basic
+parsing and validating routines for compiling a Schematron schema
+into XSLT. Schematron was designed to allow many different uses, and
+the skeleton gives you a headstart in creating a customized
+implementation. You just need to write XSLT templates to override the
+default ones. (The program you write is sometimes called a
+<I>meta-stylesheet</I>.)   It is the meta-stylesheet that is called
+as the XSLT script, not the skeleton. There are several
+pre-processing stages which the Schematron schema should be processed
+through first, to handle such things as include statements and
+abstract patterns. 
+</P>
+<P>Phases and error reporting for problems in the schema itself are
+handled by the skeleton with no interaction with a &ldquo;meta-stylesheet&rdquo;.
+Note that there is no guarantee that the context node is always the
+element being handled: in most cases the only information available
+is the information in the parameters. 
+</P>
+<P>For an introductory tutorial on using this API, see Bob DuCharme's
+<A HREF="http://www.xml.com/pub/a/2004/10/05/tr.html">Schematron 1.5:
+Looking Under the Hood</A> 
+</P>
+<H1>Superset of API for Schematron 1.5 and 1.6</H1>
+<P>(This is an updated version of the API for the Schematron 1.5
+implementation called <TT>skeleton1-5.xsl</TT>, which in turn comes
+from the <I>new architecture</I> contributed by Oliver Becker for
+Schematron 1.3.)</P>
+<P>The current API contains only additions. Well-written
+meta-stylesheets that use the new API will be be able to run on the
+existing 1.5 and 1.6 skeletons. Similarly, it should be possible to
+upgrade the skeleton from 1.5 or 1.6 to the iso-schematron-skeleton
+only by correcting the import statement at the beginning of the
+meta-stylsheet. Additions or re-groupings from the 1.5 schema are
+shown in red. Deletions have overstrike.</P>
+<P>Mooted addition: a parameter @action  which for specifying
+processing instructions on assertions and reports.</P>
+<HR>
+<H2><TT>process-prolog</TT></H2>
+<P>The <TT>process-prolog</TT> template gets called at the start of
+the validation session. It has no parameters. The default
+implementation is no action.</P>
+<HR>
+<H2><TT>process-root</TT></H2>
+<P>The <TT>process-root</TT> template processes the root element of
+the schema (which is not the same thing as the root of the document /
+and need not be the document element /*) .</P>
+<DL>
+	<DT><TT><I>node-list</I></TT><TT> $contents</TT> 
+	</DT><DT>
+	<TT><I>string</I></TT><TT> $schemaVersion</TT> 
+	</DT><DD>
+	The version of the schema, perhaps a datestamp. 
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;xslt&quot; | &quot;xpath&quot; |
+	&quot;xslt2&quot; | ...</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$queryBinding</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The query language binding. </FONT>
+	</DD><DT>
+	<TT><I>string</I></TT><TT> $title</TT> 
+	</DT><DD>
+	The title of this schema 
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;iso&quot; | &quot;1.5&quot; |
+	&quot;1.6&quot; | ...</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$version</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The version of Schematron being used. </FONT>
+	</DD></DL>
+<P>
+Rich properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML SystemId</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$icon</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The URI of an icon </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML ID</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$id</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The unique identifier with the schema for the
+	</FONT><TT><FONT COLOR="#ff0000">schema</FONT></TT><FONT COLOR="#ff0000">
+	element. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>SGML FPI</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$fpi</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The Formal Public Identifier for this schema. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>IETF language</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$lang</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The human language used in this schema, from
+	xml:lang </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>URL</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$see</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">Link to documentation on WWW or file </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;preserve&quot; | &quot;default&quot;</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$space</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The value for xml:space </FONT>
+	</DD></DL>
+<P>
+To print the documentation paragraphs, use <TT>&lt;xsl:apply-templates
+mode=&quot;do-schema-p&quot; /&gt;</TT></P>
+<P>To output the results, use <TT>&lt;xsl:copy-of select=&quot;$contents&quot;
+/&gt;</TT></P>
+<HR>
+<H2><TT>process-assert</TT></H2>
+<P>The <TT>process-assert</TT> template handles asserts whose test
+has failed. 
+</P>
+<DL>
+	<DT><TT><I>XPath</I></TT><TT> $test</TT> 
+	</DT><DD>
+	The test 
+	</DD><DT>
+	<TT><I>XML IDREFS</I></TT><TT> $diagnostics</TT> 
+	</DT><DD>
+	A list of the idrefs diagnostic elements related to the current
+	assertion 
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML NMTOKEN</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$flag</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The name of a flag that becomes true because
+	this assertion fails. The flag is true for the document if it is
+	flagged true on any assertion. For compatability, this parameter
+	should not be used with Schematron 1.5.</FONT> 
+	</DD></DL>
+<P>
+Rich properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML SystemId</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$icon</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The URI of an icon </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML ID</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$id</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The unique identifier with the schema for the
+	</FONT><TT><FONT COLOR="#ff0000">assert</FONT></TT><FONT COLOR="#ff0000">
+	element. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>SGML FPI</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$fpi</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The Formal Public Identifier for this
+	assertion. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>IETF language</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$lang</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The human language used in this assertion,
+	from xml:lang </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>URL</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$see</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">Link to documentation on WWW or file </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;preserve&quot; | &quot;default&quot;</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$space</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The value for xml:space </FONT>
+	</DD></DL>
+<P>
+Linking properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML NMTOKEN</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$role</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">A name for the generic role of this assertion.
+	The schema creator would have their own vocabulary. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XPath</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$subject</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">A path relative to the current context to some
+	interesting node considered the subject. </FONT>
+	</DD></DL>
+<P>
+To print the text contents, use <TT>&lt;xsl:apply-templates
+mode=&quot;text&quot; /&gt;</TT></P>
+<HR>
+<H2><TT>process-diagnostic</TT></H2>
+<P>The <TT>process-diagnostic</TT> template handles diagnostic
+messages for <TT>assert</TT> statements that have failed and <TT>report</TT>
+statements that have succeeded. The diagnostics are evaluated in the
+context of the rule.</P>
+<P>Rich properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML SystemId</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$icon</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The URI of an icon </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML ID</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$id</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The unique identifier with the schema for the
+	</FONT><TT><FONT COLOR="#ff0000">assert</FONT></TT><FONT COLOR="#ff0000">
+	element. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>SGML FPI</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$fpi</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The Formal Public Identifier for this
+	assertion. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>IETF language</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$lang</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The human language used in this assertion,
+	from xml:lang </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>URL</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$see</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">Link to documentation on WWW or file </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;preserve&quot; | &quot;default&quot;</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$space</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The value for xml:space </FONT>
+	</DD><HR>
+</DL>
+<H2><TT>process-dir</TT></H2>
+<P>The <TT>process-dir</TT> template handles bi-directionality
+markup, which is only needed by certain human scripts such as Arabic.</P>
+<DL>
+	<DT><TT><I>&quot;ltr&quot; or &quot;rtl&quot; or &quot;&quot;</I></TT><TT>
+	$value</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	Left-to-right or right-to-left or unspecified 
+	</DD><HR>
+</DL>
+<H2><TT>process-emph</TT></H2>
+<P>The <TT>process-emph</TT> template handles the markup of
+emphasized text in paragraphs, assertions and diagnostics. It has no
+parameters.</P>
+<HR>
+<H2><TT>process-message</TT></H2>
+<P>The <TT>process-message</TT> handles default outputing of text.</P>
+<DL>
+	<DT><TT><I>string</I></TT><TT> $pattern</TT> 
+	</DT><DD>
+	Some text that may be some kind of pattern 
+	</DD><DT>
+	<TT><I>string</I></TT><TT> $role</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	Some text that may be some kind of role 
+	</DD><HR>
+</DL>
+<H2><TT>process-name</TT></H2>
+<P>The <TT>process-name</TT> templates handle name strings that can
+be used in assertions. <TT>asssert</TT> and <TT>report</TT> only
+provide <TT>name</TT> subelements rather than the more general
+<TT>value-of</TT> elements to encourage plain language and generic
+descriptions rather than specific diagnostics, for which purpose the
+<TT>diagnostics</TT> elements are used.</P>
+<DL>
+	<DT><TT><I>string</I></TT><TT> $name</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	The name of the current element, or of the node specified by a <TT>name</TT>
+	element 
+	</DD><HR>
+</DL>
+<H2><TT>process-ns</TT></H2>
+<P>The <TT>process-ns</TT> template reports on <TT>ns</TT>
+declarations, which are used to transmit on namespace information by
+the skeleton.</P>
+<DL>
+	<DT><TT><I>Namespace NCName</I></TT><TT> $prefix</TT> 
+	</DT><DD>
+	The prefix of a namespace 
+	</DD><DT>
+	<TT><I>XML SystemId</I></TT><TT> $uri</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	The (internationalized) URI Reference of a namespace 
+	</DD><HR>
+</DL>
+<H2><TT>process-p</TT></H2>
+<P>The <TT>process-p</TT> template handles paragraphs.</P>
+<DL>
+	<DT><TT><I>XML NMTOKEN</I></TT><TT> $class</TT> 
+	</DT><DD>
+	An attribute that can be used for stylesheet style 
+	</DD><DT>
+	<TT><I>XML ID</I></TT><TT> $id</TT> 
+	</DT><DD>
+	The unique identifier with the schema for the <TT>p</TT> element. 
+	</DD><DT>
+	<TT><I>XML SystemId</I></TT><TT> $icon</TT> 
+	</DT><DD>
+	The URI of an icon 
+	</DD><DT>
+	<TT><I>IETF Language</I></TT><TT> $lang</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	The human language used in this paragraph 
+	</DD></DL>
+<P>
+To print the text contents, use <TT>&lt;xsl:apply-templates
+mode=&quot;text&quot; /&gt;</TT> 
+</P>
+<HR>
+<H2><TT>process-pattern</TT></H2>
+<P>The <TT>process-pattern</TT> reports on the start of evaluation of
+a <TT>pattern</TT> element.</P>
+<DL>
+	<DT><TT><I>string</I></TT><TT> $name</TT> 
+	</DT><DD>
+	The title of the current pattern 
+	</DD><DT>
+	<TT><I>XML NCNAMES</I></TT><TT> $is-a</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	Empty or not provided if the pattern is not derived from an abstract
+	pattern. Otherwise the name of the abstract pattern. A list may be
+	used if there was a sequence of abstract patterns. 
+	</DD></DL>
+<P>
+Rich properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML SystemId</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$icon</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The URI of an icon </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML ID</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$id</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The unique identifier with the schema for the
+	</FONT><TT><FONT COLOR="#ff0000">pattern</FONT></TT><FONT COLOR="#ff0000">
+	element. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>SGML FPI</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$fpi</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The Formal Public Identifier for this pattern.
+	</FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>IETF language</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$lang</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The human language used in this pattern, from
+	xml:lang </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>URL</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$see</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">A (internationalized) URI reference to some
+	supporting or defining documentation </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;preserve&quot; | &quot;default&quot;</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$space</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The value for xml:space </FONT>
+	</DD></DL>
+<P>
+To print the documentation contents, use <TT>&lt;xsl:apply-templates
+mode=&quot;do-pattern-p&quot;/&gt;</TT></P>
+<HR>
+<H2><TT>process-report</TT></H2>
+<P>The <TT>process-report</TT> template handles <TT>report</TT> whose
+test has succeeded. 
+</P>
+<DL>
+	<DT><TT><I>XPath</I></TT><TT> $test</TT> 
+	</DT><DD>
+	The test 
+	</DD><DT>
+	<TT><I>XML IDREFS</I></TT><TT> $diagnostics</TT> 
+	</DT><DD>
+	A list of the diagnostic elements related to the current assertion 
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML NMTOKEN</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$flag</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The name of a flag that becomes true because
+	this assertion fails. The flag is true for the document if it is
+	flagged true on any assertion. For compatability, this parameter
+	should not be used with Schematron 1.5.</FONT> 
+	</DD></DL>
+<P>
+Rich properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML SystemId</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$icon</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The URI of an icon </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML ID</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$id</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The unique identifier with the schema for the
+	</FONT><TT><FONT COLOR="#ff0000">report</FONT></TT><FONT COLOR="#ff0000">
+	element. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>SGML FPI</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$fpi</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The Formal Public Identifier for this report. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>IETF language</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$lang</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The human language used in this report, from
+	xml:lang </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>URL</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$see</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">Link to documentation on WWW or file </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;preserve&quot; | &quot;default&quot;</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$space</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The value for xml:space </FONT>
+	</DD></DL>
+<P>
+Linking properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML NMTOKEN</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$role</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">A name for the generic role of this assertion.
+	The schema creator would have their own vocabulary. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XPath</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$subject</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">A path relative to the current context to some
+	interesting node considered the subject. </FONT>
+	</DD></DL>
+<P>
+To print the text contents, use <TT>&lt;xsl:apply-templates
+mode=&quot;text&quot; /&gt;</TT></P>
+<HR>
+<H2><TT>process-rule</TT></H2>
+<P>The <TT>process-rule</TT> reports that a <TT>rule</TT> element has
+fired: its <TT>context</TT> attribute matched some nodes. .</P>
+<DL>
+	<DT><TT><I>XSLT expression</I></TT><TT> $context</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	The expression that gives the context of the current 
+	</DD></DL>
+<P>
+Rich properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML SystemId</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$icon</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The URI of an icon </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XML ID</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$id</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The unique identifier with the schema for this
+	</FONT><TT><FONT COLOR="#ff0000">rule</FONT></TT><FONT COLOR="#ff0000">
+	element. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>SGML FPI</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$fpi</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The Formal Public Identifier for this rule. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>IETF language</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$lang</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">The human language used in this rule, from
+	xml:lang </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>URL</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$see</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">Link to documentation on WWW or file </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>&quot;preserve&quot; | &quot;default&quot;</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$space</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">The value for xml:space </FONT>
+	</DD></DL>
+<P>
+Linking properties:</P>
+<DL>
+	<DT><TT><FONT COLOR="#ff0000"><I>XML NMTOKEN</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$role</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD>
+	<FONT COLOR="#ff0000">A name for the generic role of this assertion.
+	The schema creator would have their own vocabulary. </FONT>
+	</DD><DT>
+	<TT><FONT COLOR="#ff0000"><I>XPath</I></FONT></TT><TT><FONT COLOR="#ff0000">
+	$subject</FONT></TT><FONT COLOR="#ff0000"> </FONT>
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	<FONT COLOR="#ff0000">A path relative to the current context to some
+	interesting node considered the subject. </FONT>
+	</DD><HR>
+</DL>
+<H2><TT>process-span</TT></H2>
+<P>The <TT>process-span</TT> handles span elements, which are generic
+elements for styling, like HTML's .</P>
+<DL>
+	<DT><TT><I>XML NMTOKEN</I></TT><TT> $class</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	An attribute that can be used for stylesheet style 
+	</DD><HR>
+</DL>
+<H2><TT>process-title</TT></H2>
+<P>The <TT>process-title</TT> handles title elements, which are
+generic elements for styling, like HTML's .</P>
+<DL>
+	<DT><TT><I>XML NMTOKEN</I></TT><TT> $class</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	An attribute that can be used for stylesheet style 
+	</DD></DL>
+<P>
+By default, titles are handled by invocing <TT>process-p</TT> with
+the parameter class with a value &quot;title&quot;.</P>
+<HR>
+<H2><TT>process-value-of</TT></H2>
+<P>The <TT>process-value-of</TT> template handles <TT>value-of</TT>
+elements, which are used in diagnostic messages to allow very
+specific hinting .</P>
+<DL>
+	<DT><TT><I>XPath</I></TT><TT> $select</TT> 
+	</DT><DD STYLE="margin-bottom: 0.5cm">
+	The path of some node that will be evaluated and printed.</DD><HR>
+</DL>
+<H1>Global Parameters</H1>
+<P>There are several global parameters that may be available for use.
+However, it is not a requirement to follow these, and implementations
+may not supply them with any value. So a test of
+string-length(<I>variable</I><SPAN STYLE="font-style: normal">) &lt;
+0 is appropriate in each case.</SPAN></P>
+<P><BR><BR>
+</P>
+<TABLE WIDTH=557 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=1 CELLSPACING=0>
+	<COL WIDTH=132>
+	<COL WIDTH=77>
+	<COL WIDTH=340>
+	<TR>
+		<TD WIDTH=132>
+			<P ALIGN=CENTER><FONT SIZE=2><B>Parameter</B></FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P ALIGN=CENTER><FONT SIZE=2><B>Value</B></FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P ALIGN=CENTER><FONT SIZE=2><B>Description</B></FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>allow-foreign</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>&quot;true&quot; | &quot;false&quot; (default) </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>Pass non-Schematron elements to the generated
+			stylesheet.  Pass the Schematron elements span, emph and dir: to
+			the output SVRL.  </FONT>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>fileNameParameter</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>string</FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>A parameter passed to the Validator and
+			potentially available as a variable in Schematron schemas as
+			$fileNameParameter</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>fileDirParameter</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>string</FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>A parameter passed to the Validator and
+			potentially available as a variable in Schematron schemas as
+			$fileDirParameter</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>archiveNamePaameter</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>string</FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>A parameter passed to the Validator and
+			potentially available as a variable in Schematron schemas as
+			$archiveNameParameter</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>archiveDirParameter</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>string</FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>A parameter passed to the Validator and
+			potentially available as a variable in Schematron schemas as
+			$archivePathParameter</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>debug </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=77>
+			<P>&ldquo;<FONT SIZE=2>true&rdquo; | &ldquo;false&rdquo; (default)</FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>Verbose error messages (Note this may be
+			superceded by &ldquo;verbose&rdquo; at some stage in the future.)</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>generate-paths</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>true|false </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>generate the SVRL @location attribute with XPaths</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>diagnose</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>yes | no </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>Add the diagnostics to the assertion results</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><A NAME="DDE_LINK"></A><FONT SIZE=2>terminate</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>yes | no | true | false | assert</FONT>
+			</P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>Terminate on the first failed assertion or
+			successful report</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>message-newline </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>&quot;true&quot; (default) | &quot;false&quot;  </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>Generate an extra newline at the end of messages</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=132>
+			<P><FONT SIZE=2>output-encoding</FONT></P>
+		</TD>
+		<TD WIDTH=77>
+			<P><FONT SIZE=2>string</FONT></P>
+		</TD>
+		<TD WIDTH=340>
+			<P><FONT SIZE=2>The encoding used for output, for example if the
+			output is XML</FONT></P>
+		</TD>
+	</TR>
+</TABLE>
+<DL>
+	<DD STYLE="margin-bottom: 0.5cm"> 
+	</DD></DL>
+</BODY>
+</HTML>
