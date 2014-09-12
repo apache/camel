@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import javax.xml.transform.Templates;
+
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.transform.Templates;
-
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * SchematronEngine Unit Test.
@@ -38,8 +38,7 @@ public class SchematronProcessorTest {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
         logger.info("Validating payload: {}", payload);
-        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("report/article-1-report.xml"));
-
+       
         // validate
         String result = getProcessor("sch/schematron-1.sch").validate(payload);
         logger.info("Schematron Report: {}", result);

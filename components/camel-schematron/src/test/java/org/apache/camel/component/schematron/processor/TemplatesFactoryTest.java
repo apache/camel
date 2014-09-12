@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import javax.xml.transform.Templates;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.xml.transform.Templates;
 
 /**
  * TemplateFactory Unit Test.
