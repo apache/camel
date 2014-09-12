@@ -677,6 +677,7 @@
     <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
   </feature>
   <feature name='camel-jibx' version='${project.version}' resolver='(obr)' start-level='50'>
+    <!-- this feature doesn't work under JDK8 -->
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jibx/${project.version}</bundle>
     <bundle dependency='true'>mvn:org.jibx/jibx-run/${jibx-version}</bundle>
