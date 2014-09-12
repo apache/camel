@@ -22,12 +22,7 @@ import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.DifferenceListener;
-import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
 
 /**
  * Schematron Component Test.
@@ -44,7 +39,6 @@ public class SchematronComponentTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
-        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("report/article-1-report.xml"));
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.schematron.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
@@ -23,12 +26,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.XpathEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utility Class.
- * <p/>
  */
 public final class Utils {
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.schematron;
 
+import javax.xml.transform.Templates;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.schematron.constant.Constants;
@@ -24,11 +26,10 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import javax.xml.transform.Templates;
 
 /**
  * Schematron Producer Unit Test.
- * <p/>
+ * 
  */
 public class SchematronProducerTest extends CamelTestSupport {
 
