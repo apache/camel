@@ -212,7 +212,8 @@
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate</arguments>
+            <!-- The profile we want to use when doing the release -->
+            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate,osgi.test,performance.test</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
