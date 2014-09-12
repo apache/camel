@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.schematron.processor;
 
-
-
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Templates;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.schematron.processor;
 
-import org.apache.camel.component.schematron.constant.Constants;
-import org.apache.camel.component.schematron.exception.SchematronConfigException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
+import java.io.File;
+import java.io.InputStream;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -29,8 +26,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.InputStream;
+
+import org.w3c.dom.Node;
+
+import org.apache.camel.component.schematron.constant.Constants;
+import org.apache.camel.component.schematron.exception.SchematronConfigException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Class generating Templates for a given schematron rules
