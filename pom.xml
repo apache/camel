@@ -124,6 +124,7 @@
     <module>tooling</module>
     <module>tests</module>
     <module>examples</module>
+    <module>etc</module>
   </modules>
 
   <scm>
