@@ -33,7 +33,7 @@ public final class HostUtils {
     }
 
     /**
-     * Returns a {@link} of {@link InetAddress} per {@link NetworkInterface} as a {@link Map}.
+     * Returns a {@link Map} of {@link InetAddress} per {@link NetworkInterface}.
      */
     public static Map<String, Set<InetAddress>> getNetworkInterfaceAddresses() {
         //JVM returns interfaces in a non-predictable order, so to make this more predictable

@@ -592,7 +592,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
     
     /**
-     * @deprecated Use {@link #secureXML(String, Map, boolean, String, String, String, String) instead.
+     * @deprecated Use {@link #secureXML(String, Map, boolean, String, String, String, String)} instead.
      * Uses the XML Security data format
      */
     @Deprecated

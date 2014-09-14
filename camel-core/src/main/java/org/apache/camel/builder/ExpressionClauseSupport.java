@@ -612,7 +612,7 @@ public class ExpressionClauseSupport<T> {
      *        wrap the token with its ancestor contet, or to unwrap to its element child
      * @param namespaces the namespace map to the namespace bindings 
      * @param group to group by the given number
-     * @return
+     * @return the builder to continue processing the DSL
      */
     public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
         XMLTokenizerExpression expression = new XMLTokenizerExpression(path);
