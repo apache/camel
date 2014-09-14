@@ -98,7 +98,7 @@ public class LogComponent extends UriEndpointComponent {
      * {@link Logger} in {@link CamelLogger}
      * 
      * @param parameters
-     * @return
+     * @return the Logger object from the parameter
      */
     protected Logger getLogger(Map<String, Object> parameters) {
         return getAndRemoveOrResolveReferenceParameter(parameters, "logger", Logger.class);

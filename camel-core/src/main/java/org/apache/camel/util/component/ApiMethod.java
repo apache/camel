@@ -21,7 +21,6 @@ import java.util.List;
 
 /**
  * Interface for proxy methods.
- * @param <T>
  */
 public interface ApiMethod {
 

@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
- * in a {@link java.util.List<Exchange>} as the message body.
+ * in a {@link List} of {@link Exchange} as the message body.
  *
  * @version 
  */
