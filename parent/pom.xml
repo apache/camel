@@ -114,8 +114,7 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <!-- we use exceptional a SNAPSHOT version because CXF 3.0.1 breaks our feature validation which is really bad -->
-    <cxf-version>3.0.2-SNAPSHOT</cxf-version>
+    <cxf-version>3.0.1</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>3.0.2-SNAPSHOT</cxf-xjc-utils-version>
     <deltaspike-version>1.0.2</deltaspike-version>
