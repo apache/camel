@@ -948,7 +948,8 @@
     <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.olingo/olingo-odata2-api/${olingo2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.olingo-odata2-core/${olingo-odata2-core-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel.component.olingo2/camel-olingo2-api/${project.version}</bundle>
+    <bundle dependency='true'>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel.component.olingo2/camel-olingo2-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.component.olingo2/camel-olingo2/${project.version}</bundle>
   </feature>
   <feature name='camel-openshift' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -1180,12 +1181,14 @@
     <bundle>mvn:org.apache.camel/camel-splunk/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-batch' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>spring-batch doesn't support importing spring 4.x </details>
     <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-core/${spring-batch-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-infrastructure/${spring-batch-version}</bundle>
     <feature version='${project.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-spring-batch/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-integration' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>spring-integartion doesn't support importing spring 4.x </details>
     <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:org.springframework.retry/spring-retry/${spring-retry-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
@@ -1209,6 +1212,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>spring-data-redis doesn't support importing spring version which is above 4.0.5 </details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-tx</feature>
@@ -1218,6 +1222,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-redis/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-security' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>spring-security doesn't support importing spring 4.x </details>
     <feature>http</feature>
     <feature version='${project.version}'>camel-spring</feature>
     <feature version='${spring-version-range}'>spring-web</feature>
@@ -1227,6 +1232,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-security/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-ws' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>spring-ws doesn't support importing spring 4.x </details>
     <feature>http</feature>
     <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
