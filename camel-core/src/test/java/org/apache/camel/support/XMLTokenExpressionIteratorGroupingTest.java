@@ -332,7 +332,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             'w', 2, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE2);
     }
 
-    public void disabledtestExtractWrappedSize3L() throws Exception {
+    public void testExtractWrappedSize3L() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 3, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE3L);
     }
@@ -348,7 +348,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             'w', 4, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE4);
     }
 
-    public void disabledtestExtractWrappedSize5L() throws Exception {
+    public void testExtractWrappedSize5L() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 5, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE5L);
     }
