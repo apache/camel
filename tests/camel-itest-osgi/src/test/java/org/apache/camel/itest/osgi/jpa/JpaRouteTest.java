@@ -103,7 +103,6 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             applicationContext.setBundleContext(bundleContext);
             applicationContext.refresh();
         }
-        cleanupRepository();
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
