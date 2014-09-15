@@ -71,7 +71,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
      * Creates a tokenize expression.
      */
     public Expression createExpression() {
-        ObjectHelper.notNull(path, "token");
+        ObjectHelper.notNull(path, "path");
 
         Expression answer = ExpressionBuilder.tokenizeXMLAwareExpression(path, mode);
         return answer;
