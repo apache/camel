@@ -72,8 +72,8 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                 return new Iterator<Object>() {
                     private NamedQueryParser parser = new NamedQueryParser(query);
                     private Object next;
-                    private boolean done = false;
-                    private boolean preFetched = false;
+                    private boolean done;
+                    private boolean preFetched;
 
                     @Override
                     public boolean hasNext() {
@@ -81,7 +81,7 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                             next();
                             preFetched = true;
                         }
-                        return (!done);
+                        return !done;
                     }
 
                     @Override
