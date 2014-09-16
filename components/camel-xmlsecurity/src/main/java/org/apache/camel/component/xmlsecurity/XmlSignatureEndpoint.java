@@ -101,5 +101,15 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
     public void setSchemaResourceUri(String schemaResourceUri) {
         getConfiguration().setSchemaResourceUri(schemaResourceUri);
+        
     }
+    
+    public String getOutputXmlEncoding() {
+        return getConfiguration().getOutputXmlEncoding();
+    }
+    
+    public void setOutputXmlEncoding(String encoding) {
+        getConfiguration().setOutputXmlEncoding(encoding);
+    }
+    
 }

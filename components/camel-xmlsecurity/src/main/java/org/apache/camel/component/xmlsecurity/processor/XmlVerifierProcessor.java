@@ -204,8 +204,14 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
                 return getConfiguration().getOutputNodeSearchType();
             }
 
+            @Override
             public Boolean getRemoveSignatureElements() {
                 return getConfiguration().getRemoveSignatureElements();
+            }
+            
+            @Override
+            public String getOutputXmlEncoding() {
+                return getConfiguration().getOutputXmlEncoding();
             }
 
         };

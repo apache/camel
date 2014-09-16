@@ -44,6 +44,8 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     private Boolean clearHeaders = Boolean.TRUE;
 
     private String schemaResourceUri;
+    
+    private String outputXmlEncoding;
 
     public XmlSignatureConfiguration() {
     }
@@ -176,6 +178,21 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
      */
     public void setSchemaResourceUri(String schemaResourceUri) {
         this.schemaResourceUri = schemaResourceUri;
+    }
+    
+    public String getOutputXmlEncoding() {
+        return outputXmlEncoding;
+    }
+
+    /**
+     * The character encoding of the resulting signed XML document. If
+     * <code>null</code> then the encoding of the original XML document is used.
+     * 
+     * @param outputXmlEncoding
+     *            character encoding
+     */
+    public void setOutputXmlEncoding(String outputXmlEncoding) {
+        this.outputXmlEncoding = outputXmlEncoding;
     }
 
 }
