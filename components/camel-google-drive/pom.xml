@@ -35,8 +35,11 @@
     <componentName>GoogleDrive</componentName>
     <componentPackage>org.apache.camel.component.google.drive</componentPackage>
     <outPackage>org.apache.camel.component.google.drive.internal</outPackage>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <camel.osgi.private.pkg>org.apache.camel.component.google.drive.internal</camel.osgi.private.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.google.drive</camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=google-drive
+    </camel.osgi.export.service>
   </properties>
 
   <dependencies>
@@ -69,7 +72,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-    <version>2.15-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -110,52 +113,6 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-
-      <!-- to generate the MANIFEST-FILE of the bundle -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.3.7</version>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
-            <Bundle-SymbolicName>org.apache.camel.camel-google-drive</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
-            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
-            <Import-Package>
-              ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=${project.version},
-              *
-            </Import-Package>
-            <Private-Package>${outPackage}</Private-Package>
-            <Implementation-Title>Apache Camel</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
-            <_failok>false</_failok>
-          </instructions>
-        </configuration>
-      </plugin>
 
       <!-- generate Component source and test source -->
       <plugin>
@@ -203,7 +160,7 @@
                   <apiName>drive-files</apiName>
                   <proxyClass>com.google.api.services.drive.Drive$Files</proxyClass>
                   <fromJavadoc />
-                </api>                
+                </api>
                 <api>
                   <apiName>drive-parents</apiName>
                   <proxyClass>com.google.api.services.drive.Drive$Parents</proxyClass>
@@ -242,7 +199,7 @@
                       <argType>com.google.api.services.drive.model.Channel</argType>
                       <replacement>contentChannel</replacement>
                     </substitution>
-                  </substitutions> 
+                  </substitutions>
             </configuration>
           </execution>
         </executions>
@@ -286,7 +243,7 @@
         <plugin>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>2.15-SNAPSHOT</version>
+          <version>${project.version}</version>
           <configuration>
             <scheme>${schemeName}</scheme>
             <componentName>${componentName}</componentName>
@@ -304,7 +261,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>2.15-SNAPSHOT</version>
+        <version>${project.version}</version>
         <configuration>
           <scheme>${schemeName}</scheme>
           <componentName>${componentName}</componentName>
