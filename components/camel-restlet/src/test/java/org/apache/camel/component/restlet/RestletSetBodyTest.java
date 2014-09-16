@@ -21,10 +21,9 @@ import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.Ignore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.InputRepresentation;
@@ -41,24 +40,23 @@ public class RestletSetBodyTest extends RestletTestSupport {
     }
     
     @Test
-    @Ignore
     public void testSetBodyRepresentation() throws Exception {
-        HttpGet get = new HttpGet("http://0.0.0.0:" + portNum + "/images/123");
-        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet get = new HttpGet("http://0.0.0.0:" + "1234" + "/images/123");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
         InputStream is = null;
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("image/png", response.getEntity().getContentType().getValue());
             is = response.getEntity().getContent();
-            assertEquals("Get wrong available size", 10, is.available());
+            assertEquals("Get wrong available size", 10, response.getEntity().getContentLength());
             byte[] buffer = new byte[10];
             is.read(buffer);
             for (int i = 0; i < 10; i++) {
                 assertEquals(i + 1, buffer[i]);
             }
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
             if (is != null) {
                 is.close();
             }
@@ -81,7 +79,7 @@ public class RestletSetBodyTest extends RestletTestSupport {
                 }
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
 
-                from("restlet:http://0.0.0.0:" + portNum + "/images/{symbol}?restletMethods=get")
+                from("restlet:http://0.0.0.0:" + "1234" + "/images/{symbol}?restletMethods=get")
                     .setBody().constant(new InputRepresentation(inputStream, MediaType.IMAGE_PNG, 10));
             }
         };
