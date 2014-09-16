@@ -415,9 +415,14 @@ public final class Olingo2AppImpl implements Olingo2App {
 
                     // if a entity is created (via POST request) the response body contains the new created entity
                     HttpStatusCodes statusCode = HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode());
-                    if (statusCode != HttpStatusCodes.NO_CONTENT) {
 
-                        // TODO do we need to handle response based on other UriTypes???
+                    // look for no content, or no response body!!!
+                    final boolean noEntity = result.getEntity() == null || result.getEntity().getContentLength() == 0;
+                    if (statusCode == HttpStatusCodes.NO_CONTENT || noEntity) {
+                        responseHandler.onResponse(
+                            (T) HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode()));
+                    } else {
+
                         switch (uriInfo.getUriType()) {
                         case URI9:
                             // $batch
@@ -457,18 +462,70 @@ public final class Olingo2AppImpl implements Olingo2App {
                             responseHandler.onResponse((T) responses);
                             break;
 
-                        default:
+                        case URI4:
+                        case URI5:
+                            // simple property
+                            // get the response content as Object for $value or Map<String, Object> otherwise
+                            final List<EdmProperty> simplePropertyPath = uriInfo.getPropertyPath();
+                            final EdmProperty simpleProperty = simplePropertyPath.get(simplePropertyPath.size() - 1);
+                            if (uriInfo.isValue()) {
+                                responseHandler.onResponse(
+                                    (T) EntityProvider.readPropertyValue(simpleProperty,
+                                        result.getEntity().getContent()));
+                            } else {
+                                responseHandler.onResponse(
+                                    (T) EntityProvider.readProperty(getContentType(), simpleProperty,
+                                        result.getEntity().getContent(),
+                                        EntityProviderReadProperties.init().build()));
+                            }
+                            break;
+
+                        case URI3:
+                            // complex property
+                            // get the response content as Map<String, Object>
+                            final List<EdmProperty> complexPropertyPath = uriInfo.getPropertyPath();
+                            final EdmProperty complexProperty = complexPropertyPath.get(complexPropertyPath.size() - 1);
+                            responseHandler.onResponse(
+                                (T) EntityProvider.readProperty(getContentType(), complexProperty,
+                                result.getEntity().getContent(),
+                                EntityProviderReadProperties.init().build()));
+                            break;
+
+                        case URI7A:
+                            // $links with 0..1 cardinality property
+                            // get the response content as String
+                            final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
+                            responseHandler.onResponse(
+                                (T) EntityProvider.readLink(getContentType(), targetLinkEntitySet,
+                                result.getEntity().getContent()));
+                            break;
+
+                        case URI7B:
+                            // $links with * cardinality property
+                            // get the response content as java.util.List<String>
+                            final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
+                            responseHandler.onResponse(
+                                (T) EntityProvider.readLinks(getContentType(), targetLinksEntitySet,
+                                result.getEntity().getContent()));
+                            break;
+
+                        case URI1:
+                        case URI2:
+                        case URI6A:
+                        case URI6B:
+                            // Entity
                             // get the response content as an ODataEntry object
                             responseHandler.onResponse((T) EntityProvider.readEntry(response.getContentHeader(),
                                 uriInfo.getTargetEntitySet(),
                                 result.getEntity().getContent(),
                                 EntityProviderReadProperties.init().build()));
                             break;
+
+                        default:
+                            throw new ODataApplicationException("Unsupported resource type " + uriInfo.getTargetType(),
+                                Locale.ENGLISH);
                         }
 
-                    } else {
-                        responseHandler.onResponse(
-                            (T) HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode()));
                     }
                 }
             });
