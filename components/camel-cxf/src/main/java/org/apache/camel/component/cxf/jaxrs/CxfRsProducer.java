@@ -139,6 +139,7 @@ public class CxfRsProducer extends DefaultProducer {
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
+        Object[] pathValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
 
         if (LOG.isTraceEnabled()) {
@@ -149,7 +150,12 @@ public class CxfRsProducer extends DefaultProducer {
 
         // set the path
         if (path != null) {
-            client.path(path);
+            if(pathValues != null && pathValues.length > 0) {
+                client.path(path, pathValues);
+            }
+            else {
+                client.path(path);
+            }
         }
 
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();

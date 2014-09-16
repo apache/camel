@@ -246,6 +246,34 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer name", response.getName(), "John");
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
+
+    @Test
+    public void testGetCustomerWithVariableReplacementAndCxfRsEndpoint() {
+        Exchange exchange
+                = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message inMessage = exchange.getIn();
+                // set the Http method
+                inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                // set the relative path
+                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/{customerId}");
+                // Set variables for replacement
+                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, new String[] {"123"});
+                // Specify the response class , cxfrs will use InputStream as the response object type
+                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+                // since we use the Get method, so we don't need to set the message body
+                inMessage.setBody(null);
+            }
+        });
+
+        // get the response message
+        Customer response = (Customer) exchange.getOut().getBody();
+        assertNotNull("The response should not be null ", response);
+        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
+        assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+    }
     
     @Test
     public void testAddCustomerUniqueResponseCodeWithHttpClientAPI() {
