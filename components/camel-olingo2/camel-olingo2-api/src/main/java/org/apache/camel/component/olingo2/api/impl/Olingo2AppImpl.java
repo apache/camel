@@ -127,10 +127,7 @@ public final class Olingo2AppImpl implements Olingo2App {
      * @param builder custom HTTP client builder.
      */
     public Olingo2AppImpl(String serviceUri, HttpAsyncClientBuilder builder) {
-        if (serviceUri == null) {
-            throw new IllegalArgumentException("serviceUri");
-        }
-        this.serviceUri = serviceUri;
+        setServiceUri(serviceUri);
 
         if (builder == null) {
             this.client = HttpAsyncClients.createDefault();
@@ -143,7 +140,11 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     @Override
     public void setServiceUri(String serviceUri) {
-        this.serviceUri = serviceUri;
+        if (serviceUri == null || serviceUri.isEmpty()) {
+            throw new IllegalArgumentException("serviceUri");
+        }
+        this.serviceUri = serviceUri.endsWith(SEPARATOR) ? serviceUri.substring(0, serviceUri.length() - 1)
+            : serviceUri;
     }
 
     @Override
@@ -513,9 +514,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         case URI7A:
             // $links with 0..1 cardinality property
             final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
-            final URI rootLinkUri = new URI(targetLinkEntitySet.getName());
             EntityProviderWriteProperties linkProperties =
-                EntityProviderWriteProperties.serviceRoot(rootLinkUri).build();
+                EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
             @SuppressWarnings("unchecked")
             final Map<String, Object> linkMap = (Map<String, Object>) content;
             response = EntityProvider.writeLink(responseContentType, targetLinkEntitySet, linkMap, linkProperties);
@@ -524,12 +524,11 @@ public final class Olingo2AppImpl implements Olingo2App {
         case URI7B:
             // $links with * cardinality property
             final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
-            final URI rootLinksUri = new URI(targetLinksEntitySet.getName());
             EntityProviderWriteProperties linksProperties =
-                EntityProviderWriteProperties.serviceRoot(rootLinksUri).build();
+                EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
             @SuppressWarnings("unchecked")
-            final Map<String, Object> linksMap = (Map<String, Object>) content;
-            response = EntityProvider.writeLink(responseContentType, targetLinksEntitySet, linksMap, linksProperties);
+            final List<Map<String, Object>> linksMap = (List<Map<String, Object>>) content;
+            response = EntityProvider.writeLinks(responseContentType, targetLinksEntitySet, linksMap, linksProperties);
             break;
 
         case URI1:
@@ -538,8 +537,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         case URI6B:
             // Entity
             final EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
-            final URI rootUri = new URI(targetEntitySet.getName());
-            EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).build();
+            EntityProviderWriteProperties properties =
+                EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
             @SuppressWarnings("unchecked")
             final Map<String, Object> objectMap = (Map<String, Object>) content;
             response = EntityProvider.writeEntry(responseContentType, targetEntitySet, objectMap, properties);
