@@ -102,11 +102,6 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>hibernate-entitymanager</artifactId>
-    	<scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -148,7 +143,6 @@
         <configuration>
           <persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/persistence.xml</persistenceXmlFile>
           <includes>org/apache/camel/examples/*.class</includes>
-          <excludes>org/apache/camel/examples/VersionedItem.class</excludes>
           <addDefaultConstructor>true</addDefaultConstructor>
           <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
         </configuration>
