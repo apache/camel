@@ -18,6 +18,8 @@ package org.apache.camel.component.jpa;
 
 import javax.persistence.EntityManager;
 
+import org.apache.camel.Exchange;
+
 /**
  * A strategy for deleting entity beans which have been processed; either by a real delete or by an update of some
  * application specific properties so that the entity bean will not be found in future polling queries.
@@ -32,6 +34,7 @@ public interface DeleteHandler<T> {
      *
      * @param entityManager the entity manager
      * @param entityBean    the entity bean that has been processed and should be deleted
+     * @param exchange      the exchange that could be used to update the entityBean
      */
-    void deleteObject(EntityManager entityManager, Object entityBean);
+    void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange);
 }
