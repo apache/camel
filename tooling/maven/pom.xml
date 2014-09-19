@@ -67,7 +67,7 @@
           <stylesheetfile>${basedir}/../../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>900m</maxmemory>
-          <source>1.6</source>
+          <source>${jdk.version}</source>
         </configuration>
       </plugin>
     </plugins>
