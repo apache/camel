@@ -249,8 +249,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
 
     @Test
     public void testGetCustomerWithVariableReplacementAndCxfRsEndpoint() {
-        Exchange exchange
-                = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();

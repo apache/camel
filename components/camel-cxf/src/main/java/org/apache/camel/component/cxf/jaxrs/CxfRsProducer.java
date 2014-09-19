@@ -38,6 +38,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
@@ -150,10 +151,9 @@ public class CxfRsProducer extends DefaultProducer {
 
         // set the path
         if (path != null) {
-            if(pathValues != null && pathValues.length > 0) {
+            if (ObjectHelper.isNotEmpty(pathValues) && pathValues.length > 0) {
                 client.path(path, pathValues);
-            }
-            else {
+            } else {
                 client.path(path);
             }
         }
