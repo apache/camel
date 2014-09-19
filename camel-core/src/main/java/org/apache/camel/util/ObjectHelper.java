@@ -1134,7 +1134,7 @@ public final class ObjectHelper {
      * @return {@code true} if the given type is a Java primitive array type
      */
     public static boolean isPrimitiveArrayType(Class<?> clazz) {
-        if (clazz.isArray()) {
+        if (clazz != null && clazz.isArray()) {
             return clazz.getComponentType().isPrimitive();
         }
         return false;
