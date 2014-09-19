@@ -67,11 +67,6 @@ public final class ObjectHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
 
-    // must be as-is otherwise class cannot be loaded
-    @SuppressWarnings("unchecked")
-    private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
-            float[].class, double[].class, char[].class, boolean[].class);
-
     /**
      * Utility classes should not have a public constructor.
      */
@@ -1139,7 +1134,10 @@ public final class ObjectHelper {
      * @return {@code true} if the given type is a Java primitive array type
      */
     public static boolean isPrimitiveArrayType(Class<?> clazz) {
-        return PRIMITIVE_ARRAY_TYPES.contains(clazz);
+        if (clazz.isArray()) {
+            return clazz.getComponentType().isPrimitive();
+        }
+        return false;
     }
 
     public static int arrayLength(Object[] pojo) {
