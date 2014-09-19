@@ -296,7 +296,6 @@
           <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>256m</maxmemory>
-          <source>1.6</source>
 
           <groups>
             <group>
@@ -379,8 +378,6 @@
               <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
               <linksource>true</linksource>
               <maxmemory>256m</maxmemory>
-              <source>1.6</source>
-
               <groups>
                 <group>
                   <title>Camel API</title>

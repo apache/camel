@@ -2475,10 +2475,10 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin-version}</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-            <maxmem>256M</maxmem>
-            <fork>${compiler.fork}</fork>
+              <source>${jdk.version}</source>
+              <target>${jdk.version}</target>
+              <maxmem>256M</maxmem>
+              <fork>${compiler.fork}</fork>
           </configuration>
         </plugin>
         <plugin>
@@ -2510,11 +2510,11 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <configuration>
             <attach>true</attach>
-            <source>1.6</source>
+            <source>${jdk.version}</source>
             <quiet>true</quiet>
             <bottom>Apache Camel</bottom>
             <detectOfflineLinks>false</detectOfflineLinks>
-            <javadocVersion>1.6</javadocVersion>
+            <javadocVersion>${jdk.version}</javadocVersion>
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
@@ -2854,7 +2854,7 @@
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>500m</maxmemory>
-          <source>1.6</source>
+          <source>${jdk.version}</source>
         </configuration>
       </plugin>
       <plugin>
