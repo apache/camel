@@ -195,9 +195,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
         String remainder = ifStartsWithReturnRemainder("bodyAs", function);
         if (remainder != null) {
             String type = ObjectHelper.between(remainder, "(", ")");
-            if (type == null) {
+            remainder = ObjectHelper.after(remainder, ")");
+            if (type == null || ObjectHelper.isNotEmpty(remainder)) {
                 throw new SimpleParserException("Valid syntax: ${bodyAs(type)} was: " + function, token.getIndex());
             }
+            
             type = StringHelper.removeQuotes(type);
             return ExpressionBuilder.bodyExpression(type);
         }
@@ -205,7 +207,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("mandatoryBodyAs", function);
         if (remainder != null) {
             String type = ObjectHelper.between(remainder, "(", ")");
-            if (type == null) {
+            remainder = ObjectHelper.after(remainder, ")");
+            if (type == null || ObjectHelper.isNotEmpty(remainder)) {
                 throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
             }
             type = StringHelper.removeQuotes(type);
@@ -235,7 +238,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
             String key = ObjectHelper.before(keyAndType, ",");
             String type = ObjectHelper.after(keyAndType, ",");
-            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
+            remainder = ObjectHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {
                 throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             }
             key = StringHelper.removeQuotes(key);
@@ -268,19 +272,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (remainder.startsWith("[") && remainder.endsWith("]")) {
                 remainder = remainder.substring(1, remainder.length() - 1);
             }
+            // remove quotes from key
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
 
             // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${header.name[key]} was: " + function, token.getIndex());
             }
 
-            if (OgnlHelper.isValidOgnlExpression(remainder)) {
+            if (OgnlHelper.isValidOgnlExpression(key)) {
                 // ognl based header
-                return ExpressionBuilder.headersOgnlExpression(remainder);
+                return ExpressionBuilder.headersOgnlExpression(key);
             } else {
                 // regular header
-                return ExpressionBuilder.headerExpression(remainder);
+                return ExpressionBuilder.headerExpression(key);
             }
         }
 

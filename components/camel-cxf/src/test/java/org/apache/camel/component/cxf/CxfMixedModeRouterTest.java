@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cxf;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.helpers.XMLUtils;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -121,7 +122,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                                 + list.get(0) 
                                 + "</return></ns1:echoResponse>";
                             List<Element> body = new ArrayList<Element>();
-                            body.add(XMLUtils.parse(s).getDocumentElement());
+                            body.add(StaxUtils.read(new StringReader(s)).getDocumentElement());
 
                             message = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(), body);
                         }

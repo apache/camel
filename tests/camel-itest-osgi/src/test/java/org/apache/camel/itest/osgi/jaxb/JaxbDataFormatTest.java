@@ -16,19 +16,20 @@
  */
 package org.apache.camel.itest.osgi.jaxb;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class JaxbDataFormatTest extends OSGiIntegrationTestSupport {
     
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -38,6 +39,13 @@ public class JaxbDataFormatTest extends OSGiIntegrationTestSupport {
                 from("direct:start").unmarshal(person).to("mock:bar");
             }
         };
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setApplicationContextClassLoader(this.getClass().getClassLoader());
+        return context;
     }
 
     @Test
@@ -59,7 +67,7 @@ public class JaxbDataFormatTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            // using the features to install the other camel components             
+            // using the features to install the other camel components
             loadCamelFeatures("camel-jaxb"));
         
         return options;

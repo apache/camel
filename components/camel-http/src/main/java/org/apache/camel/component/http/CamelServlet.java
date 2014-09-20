@@ -17,9 +17,10 @@
 package org.apache.camel.component.http;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,7 +47,8 @@ public class CamelServlet extends HttpServlet {
      */
     private String servletName;
 
-    private ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
+    private ServletResolveConsumerStrategy servletResolveConsumerStrategy = new HttpServletResolveConsumerStrategy();
+    private final ConcurrentMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -72,9 +74,23 @@ public class CamelServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             return;
         }
+
+        // if its an OPTIONS request then return which method is allowed
+        if ("OPTIONS".equals(request.getMethod())) {
+            String s;
+            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
+            } else {
+                // allow them all
+                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            response.addHeader("Allow", s);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         
         if (consumer.getEndpoint().getHttpMethodRestrict() != null 
-            && !consumer.getEndpoint().getHttpMethodRestrict().equals(request.getMethod())) {
+            && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod())) {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return;
         }
@@ -89,6 +105,7 @@ public class CamelServlet extends HttpServlet {
 
         if (consumer.getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
         if (consumer.getEndpoint().isDisableStreamCache()) {
             exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
@@ -152,22 +169,12 @@ public class CamelServlet extends HttpServlet {
         }
     }
 
+    /**
+     * @deprecated use {@link ServletResolveConsumerStrategy#resolve(javax.servlet.http.HttpServletRequest, java.util.Map)}
+     */
+    @Deprecated
     protected HttpConsumer resolve(HttpServletRequest request) {
-        String path = request.getPathInfo();
-        if (path == null) {
-            return null;
-        }
-        HttpConsumer answer = consumers.get(path);
-               
-        if (answer == null) {
-            for (String key : consumers.keySet()) {
-                if (consumers.get(key).getEndpoint().isMatchOnUriPrefix() && path.startsWith(key)) {
-                    answer = consumers.get(key);
-                    break;
-                }
-            }
-        }
-        return answer;
+        return getServletResolveConsumerStrategy().resolve(request, getConsumers());
     }
 
     public void connect(HttpConsumer consumer) {
@@ -187,9 +194,22 @@ public class CamelServlet extends HttpServlet {
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
-    
+
+    public ServletResolveConsumerStrategy getServletResolveConsumerStrategy() {
+        return servletResolveConsumerStrategy;
+    }
+
+    public void setServletResolveConsumerStrategy(ServletResolveConsumerStrategy servletResolveConsumerStrategy) {
+        this.servletResolveConsumerStrategy = servletResolveConsumerStrategy;
+    }
+
+    public Map<String, HttpConsumer> getConsumers() {
+        return Collections.unmodifiableMap(consumers);
+    }
+
     /**
      * Override the Thread Context ClassLoader if need be.
+     *
      * @param exchange
      * @return old classloader if overridden; otherwise returns null
      */

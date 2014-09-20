@@ -31,7 +31,6 @@ import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
@@ -41,8 +40,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
- *
- * @version 
  */
 public abstract class AbstractXStreamWrapper implements DataFormat {
     
@@ -53,6 +50,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     private Map<String, String> aliases;
     private Map<String, String[]> omitFields;
     private Map<String, String[]> implicitCollections;
+    private String mode;
 
     public AbstractXStreamWrapper() {
     }
@@ -60,7 +58,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
     }
-    
+
+    /**
+     * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
+     * be created and cached.
+     *
+     * @param resolver class resolver to be used during a configuration of the XStream instance.
+     * @return XStream instance used by this data format.
+     */
     public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
             xstream = createXStream(resolver);
@@ -131,13 +136,37 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
                     xstream.registerConverter(converter);
                 }
+                
+                if (mode != null) {
+                    xstream.setMode(getModeFromString(mode));
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to build XStream instance", e);
         }
 
         return xstream;
-    }    
+    } 
+    
+    protected int getModeFromString(String modeString) {
+        int result;
+        if ("NO_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.NO_REFERENCES;
+        } else if ("ID_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.ID_REFERENCES;
+        } else if ("XPATH_RELATIVE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.XPATH_RELATIVE_REFERENCES;
+        } else if ("XPATH_ABSOLUTE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.XPATH_ABSOLUTE_REFERENCES;
+        } else if ("SINGLE_NODE_XPATH_RELATIVE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.SINGLE_NODE_XPATH_RELATIVE_REFERENCES;
+        } else if ("SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES;
+        } else {
+            throw new IllegalArgumentException("Unknown mode : " + modeString);
+        }
+        return result;
+    }
 
     public StaxConverter getStaxConverter() {
         if (staxConverter == null) {
@@ -188,6 +217,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     public void setXstreamDriver(HierarchicalStreamDriver xstreamDriver) {
         this.xstreamDriver = xstreamDriver;
+    }
+    
+    public String getMode() {
+        return mode;
+    }
+    
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     public XStream getXstream() {

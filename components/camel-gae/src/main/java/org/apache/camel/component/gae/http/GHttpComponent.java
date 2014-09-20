@@ -43,6 +43,9 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * Engine.
  */
 public class GHttpComponent extends ServletComponent {
+    public GHttpComponent() {
+        super(GHttpEndpoint.class);
+    }
 
     @Override
     @SuppressWarnings("unchecked")

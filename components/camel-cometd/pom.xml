@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.15-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cometd</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Cometd</name>
-    <description>Camel Cometd support</description>
+    <description>Camel Cometd support based on Jetty </description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.cometd.*</camel.osgi.export.pkg>
@@ -60,11 +60,14 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jmx</artifactId>
         </dependency>
         <dependency>
             <groupId>org.cometd.java</groupId>

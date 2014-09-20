@@ -18,18 +18,20 @@ package org.apache.camel.itest.osgi.jetty;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport {
    
     @Test
@@ -66,7 +68,7 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
             // using the features to install the other camel components             
             loadCamelFeatures("camel-jetty"),
             //set up the camel context bundle1          
-            provision(newBundle().add("META-INF/spring/CamelContext1.xml", OSGiMulitJettyCamelContextsTest.class.getResource("CamelContext1.xml"))
+            provision(TinyBundles.bundle().add("META-INF/spring/CamelContext1.xml", OSGiMulitJettyCamelContextsTest.class.getResource("CamelContext1.xml"))
                       .add(JettyProcessor.class)
                       .set(Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextBundle1")
                       .set(Constants.BUNDLE_NAME, "CamelContext1")
@@ -74,7 +76,7 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
                       .build()),
                   
             //set up the camel context bundle1          
-            provision(newBundle().add("META-INF/spring/CamelContext2.xml", OSGiMulitJettyCamelContextsTest.class.getResource("CamelContext2.xml"))
+            provision(TinyBundles.bundle().add("META-INF/spring/CamelContext2.xml", OSGiMulitJettyCamelContextsTest.class.getResource("CamelContext2.xml"))
                       .add(JettyProcessor.class)           
                       .set(Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextBundle2")
                       .set(Constants.DYNAMICIMPORT_PACKAGE, "*")

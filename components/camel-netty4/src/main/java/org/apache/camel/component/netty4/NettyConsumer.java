@@ -50,12 +50,12 @@ public class NettyConsumer extends DefaultConsumer {
 
         if (nettyServerBootstrapFactory == null) {
             // setup pipeline factory
-            ServerPipelineFactory pipelineFactory;
-            ServerPipelineFactory factory = configuration.getServerPipelineFactory();
+            ServerInitializerFactory pipelineFactory;
+            ServerInitializerFactory factory = configuration.getServerPipelineFactory();
             if (factory != null) {
                 pipelineFactory = factory.createPipelineFactory(this);
             } else {
-                pipelineFactory = new DefaultServerPipelineFactory(this);
+                pipelineFactory = new DefaultServerInitializerFactory(this);
             }
 
             if (isTcp()) {
@@ -80,6 +80,16 @@ public class NettyConsumer extends DefaultConsumer {
         LOG.info("Netty consumer unbound from: " + configuration.getAddress());
 
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        ServiceHelper.suspendService(nettyServerBootstrapFactory);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        ServiceHelper.resumeService(nettyServerBootstrapFactory);
     }
 
     public CamelContext getContext() {

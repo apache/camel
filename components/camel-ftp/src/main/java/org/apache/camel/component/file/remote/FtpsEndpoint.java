@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -26,6 +27,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.net.ftp.FTPClient;
@@ -38,6 +40,7 @@ import org.apache.commons.net.ftp.FTPSClient;
  * 
  * @version 
  */
+@UriEndpoint(scheme = "ftps", consumerClass = FtpConsumer.class)
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     
     protected Map<String, Object> ftpClientKeyStoreParameters;
@@ -154,17 +157,18 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         dataTimeout = getConfiguration().getTimeout();
 
         if (ftpClientParameters != null) {
+            Map<String, Object> localParameters = new HashMap<String, Object>(ftpClientParameters);
             // setting soTimeout has to be done later on FTPClient (after it has connected)
-            Object timeout = ftpClientParameters.remove("soTimeout");
+            Object timeout = localParameters.remove("soTimeout");
             if (timeout != null) {
                 soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
             // and we want to keep data timeout so we can log it later
-            timeout = ftpClientParameters.remove("dataTimeout");
+            timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
                 dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
-            setProperties(client, ftpClientParameters);
+            setProperties(client, localParameters);
         }
 
         if (ftpClientConfigParameters != null) {
@@ -172,7 +176,8 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            setProperties(ftpClientConfig, ftpClientConfigParameters);
+            Map<String, Object> localConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
+            setProperties(ftpClientConfig, localConfigParameters);
         }
 
         if (dataTimeout > 0) {

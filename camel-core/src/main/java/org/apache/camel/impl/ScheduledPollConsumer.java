@@ -462,7 +462,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     protected void doStart() throws Exception {
         super.doStart();
 
-        // validate that if backoff multiplier is in use, the threshold values is set correclty
+        // validate that if backoff multiplier is in use, the threshold values is set correctly
         if (backoffMultiplier > 0) {
             if (backoffIdleThreshold <= 0 && backoffErrorThreshold <= 0) {
                 throw new IllegalArgumentException("backoffIdleThreshold and/or backoffErrorThreshold must be configured to a positive value when using backoffMultiplier");

@@ -27,18 +27,24 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed XsltEndpoint")
+@UriEndpoint(scheme = "xslt")
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
 
-    private XsltBuilder xslt;
-    private String resourceUri;
-    private boolean cacheStylesheet;
     private volatile boolean cacheCleared;
+    private XsltBuilder xslt;
+    @UriParam
+    private String resourceUri;
+    @UriParam
+    private boolean cacheStylesheet;
 
     public XsltEndpoint(String endpointUri, Component component, XsltBuilder xslt, String resourceUri,
             boolean cacheStylesheet) throws Exception {
@@ -81,26 +87,16 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        String newResourceUri = exchange.getIn().getHeader(XsltConstants.XSLT_RESOURCE_URI, String.class);
-        if (newResourceUri != null) {
-            exchange.getIn().removeHeader(XsltConstants.XSLT_RESOURCE_URI);
-
-            LOG.trace("{} set to {} creating new endpoint to handle exchange", XsltConstants.XSLT_RESOURCE_URI, newResourceUri);
-            XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
-            newEndpoint.onExchange(exchange);
-        } else {
-            if (!cacheStylesheet || cacheCleared) {
-                loadResource(resourceUri);
-            }
-            super.onExchange(exchange);
+        if (!cacheStylesheet || cacheCleared) {
+            loadResource(resourceUri);
         }
+        super.onExchange(exchange);
     }
 
     /**
      * Loads the resource.
      *
      * @param resourceUri  the resource to load
-     *
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException is thrown if error loading resource
      */
@@ -119,11 +115,18 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         loadResource(resourceUri);
+
+        // and then inject camel context and start service
+        xslt.setCamelContext(getCamelContext());
+        ServiceHelper.startService(xslt);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        ServiceHelper.stopService(xslt);
     }
 }

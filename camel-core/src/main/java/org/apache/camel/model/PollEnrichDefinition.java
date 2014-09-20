@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> {
+public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> implements EndpointRequiredDefinition {
     @XmlAttribute(name = "uri")
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
@@ -52,6 +52,8 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
     private Boolean aggregationStrategyMethodAllowNull;
+    @XmlAttribute
+    private Boolean aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
@@ -84,6 +86,15 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     }
 
     @Override
+    public String getEndpointUri() {
+        if (resourceUri != null) {
+            return resourceUri;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         if (ObjectHelper.isEmpty(resourceUri) && ObjectHelper.isEmpty(resourceRef)) {
             throw new IllegalArgumentException("Either uri or ref must be provided for resource endpoint");
@@ -110,6 +121,9 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
             enricher.setDefaultAggregationStrategy();
         } else {
             enricher.setAggregationStrategy(strategy);
+        }
+        if (getAggregateOnException() != null) {
+            enricher.setAggregateOnException(getAggregateOnException());
         }
 
         return enricher;
@@ -194,5 +208,13 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public Boolean getAggregateOnException() {
+        return aggregateOnException;
+    }
+
+    public void setAggregateOnException(Boolean aggregateOnException) {
+        this.aggregateOnException = aggregateOnException;
     }
 }

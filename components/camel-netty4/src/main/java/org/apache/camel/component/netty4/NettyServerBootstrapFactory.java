@@ -15,40 +15,40 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
-
 import java.util.concurrent.ThreadFactory;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.Service;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelPipelineFactory;
+import org.apache.camel.SuspendableService;
 
 /**
- * Factory for setting up Netty {@link org.jboss.netty.bootstrap.ServerBootstrap} and all
+ * Factory for setting up Netty {@link io.netty.bootstrap.ServerBootstrap} and all
  * the needed logic for doing that.
  * <p/>
- * This factory allows for consumers to reuse existing {@link org.jboss.netty.bootstrap.ServerBootstrap} which
+ * This factory allows for consumers to reuse existing {@link io.netty.bootstrap.ServerBootstrap} which
  * allows to share the same port for multiple consumers.
  */
-public interface NettyServerBootstrapFactory extends Service {
+public interface NettyServerBootstrapFactory extends SuspendableService {
 
     /**
      * Initializes this <b>non-shared</b> {@link NettyServerBootstrapFactory}.
      *
      * @param camelContext     the {@link CamelContext} for non-shared bootstrap factory
      * @param configuration    the bootstrap configuration
-     * @param pipelineFactory  the pipeline factory
+     * @param pipelineFactory  the channel initializer which set up the channel handler pipeline
      */
-    void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
+    void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory);
 
     /**
      * Initializes this <b>shared</b> {@link NettyServerBootstrapFactory}.
      *
      * @param threadFactory    the thread factory to use for shared bootstrap factory
      * @param configuration    the bootstrap configuration
-     * @param pipelineFactory  the pipeline factory
+     * @param pipelineFactory  the channel initializer which set up the channel handler pipeline
      */
-    void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
+    void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory);
 
     /**
      * When a new {@link Channel} is opened.

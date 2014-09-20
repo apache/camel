@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,15 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version 
  */
-public class JpaComponent extends DefaultComponent {
+public class JpaComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+    private boolean joinTransaction = true;
+
+    public JpaComponent() {
+        super(JpaEndpoint.class);
+    }
 
     // Properties
     //-------------------------------------------------------------------------
@@ -61,6 +66,7 @@ public class JpaComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String path, Map<String, Object> options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
+        endpoint.setJoinTransaction(isJoinTransaction());
 
         // lets interpret the next string as a class
         if (ObjectHelper.isNotEmpty(path)) {
@@ -71,7 +77,6 @@ public class JpaComponent extends DefaultComponent {
                 endpoint.setEntityType(type);
             }
         }
-
         return endpoint;
     }
 
@@ -132,5 +137,13 @@ public class JpaComponent extends DefaultComponent {
         if (transactionManager == null) {
             LOG.warn("No TransactionManager has been configured on this JpaComponent. Each JpaEndpoint will auto create their own JpaTransactionManager.");
         }
+    }
+
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
     }
 }

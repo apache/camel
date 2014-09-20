@@ -36,6 +36,8 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default endpoint useful for implementation inheritance.
@@ -52,6 +54,7 @@ import org.apache.camel.util.URISupport;
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
@@ -64,6 +67,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
     private Map<String, Object> consumerProperties;
+    private int pollingConsumerQueueSize = 1000;
+    private boolean pollingConsumerBlockWhenFull = true;
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
@@ -136,7 +141,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public String toString() {
-        return String.format("Endpoint[%s]", URISupport.sanitizeUri(getEndpointUri()));
+        String value = null;
+        try {
+            value = getEndpointUri();
+        } catch (RuntimeException e) {
+            // ignore any exception and use null for building the string value
+        }
+        return String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
     }
 
     /**
@@ -209,8 +220,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
-        // should not configure consumer
-        return new EventDrivenPollingConsumer(this);
+        // should not call configurePollingConsumer when its EventDrivenPollingConsumer
+        LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} and blockWhenFull: {}", getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull());
+        EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
+        consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        return consumer;
     }
 
     public Exchange createExchange(Exchange exchange) {
@@ -259,6 +273,56 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    /**
+     * Gets the {@link org.apache.camel.PollingConsumer} queue size, when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * The default value is <tt>1000</tt>
+     */
+    public int getPollingConsumerQueueSize() {
+        return pollingConsumerQueueSize;
+    }
+
+    /**
+     * Sets the {@link org.apache.camel.PollingConsumer} queue size, when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * The default value is <tt>1000</tt>
+     */
+    public void setPollingConsumerQueueSize(int pollingConsumerQueueSize) {
+        this.pollingConsumerQueueSize = pollingConsumerQueueSize;
+    }
+
+    /**
+     * Whether to block when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
+     * when trying to add to the queue, and its full.
+     * <p/>
+     * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
+     */
+    public boolean isPollingConsumerBlockWhenFull() {
+        return pollingConsumerBlockWhenFull;
+    }
+
+    /**
+     * Set whether to block when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
+     * when trying to add to the queue, and its full.
+     * <p/>
+     * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
+     */
+    public void setPollingConsumerBlockWhenFull(boolean pollingConsumerBlockWhenFull) {
+        this.pollingConsumerBlockWhenFull = pollingConsumerBlockWhenFull;
     }
 
     public void configureProperties(Map<String, Object> options) {

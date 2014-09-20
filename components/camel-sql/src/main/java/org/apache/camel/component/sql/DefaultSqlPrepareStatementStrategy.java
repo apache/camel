@@ -29,9 +29,11 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 
 /**
  * Default {@link SqlPrepareStatementStrategy} that supports named query parameters as well index based.
@@ -53,8 +55,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     public String prepareQuery(String query, boolean allowNamedParameters) throws SQLException {
         String answer;
         if (allowNamedParameters && hasNamedParameters(query)) {
-            // replace all :?word with just ?
-            answer = query.replaceAll("\\:\\?\\w+", "\\?");
+            // replace all :?word and :?${foo} with just ?
+            answer = query.replaceAll("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}", "\\?");
         } else {
             answer = query;
         }
@@ -64,67 +66,11 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     @Override
-    public Iterator<?> createPopulateIterator(final String query, final String preparedQuery, final int expectedParams,
-                                              final Exchange exchange, final Object value) throws SQLException {
+    public Iterator<?> createPopulateIterator(final String query, final String preparedQuery, final int expectedParams, final Exchange exchange,
+                                              final Object value) throws SQLException {
         if (hasNamedParameters(query)) {
             // create an iterator that returns the value in the named order
-            try {
-                // the body may be a map which we look at first
-                final Map<?, ?> bodyMap = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, value);
-                final Map<?, ?> headerMap = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;
-
-                return new Iterator<Object>() {
-                    private NamedQueryParser parser = new NamedQueryParser(query);
-                    private Object nextParam;
-                    private boolean done;
-
-                    @Override
-                    public boolean hasNext() {
-                        if (done) {
-                            return false;
-                        }
-
-                        if (nextParam == null) {
-                            nextParam = parser.next();
-                            if (nextParam == null) {
-                                done = true;
-                            }
-                        }
-                        return nextParam != null;
-                    }
-
-                    @Override
-                    public Object next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException();
-                        }
-
-                        boolean contains = bodyMap != null && bodyMap.containsKey(nextParam);
-                        contains |= headerMap != null && headerMap.containsKey(nextParam);
-                        if (!contains) {
-                            throw new RuntimeExchangeException("Cannot find key [" + nextParam + "] in message body or headers to use when setting named parameter in query [" + query + "]", exchange);
-                        }
-
-                        // get from body before header
-                        Object next = bodyMap != null ? bodyMap.get(nextParam) : null;
-                        if (next == null) {
-                            next = headerMap != null ? headerMap.get(nextParam) : null;
-                        }
-
-                        nextParam = null;
-                        return next;
-                    }
-
-                    @Override
-                    public void remove() {
-                        // noop
-                    }
-                };
-            } catch (Exception e) {
-                throw new SQLException("The message body must be a java.util.Map type when using named parameters in the query: " + query, e);
-            }
-
-
+            return new PopulateIterator(query, exchange, value);
         } else {
             // if only 1 parameter and the body is a String then use body as is
             if (expectedParams == 1 && value instanceof String) {
@@ -133,7 +79,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                 // is the body a String
                 if (value instanceof String) {
                     // if the body is a String then honor quotes etc.
-                    String[] tokens = StringQuoteHelper.splitSafeQuote((String)value, separator, true);
+                    String[] tokens = StringQuoteHelper.splitSafeQuote((String) value, separator, true);
                     List<String> list = Arrays.asList(tokens);
                     return list.iterator();
                 } else {
@@ -146,19 +92,30 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     @Override
     public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
-        int argNumber = 1;
-        if (expectedParams > 0) {
-            while (iterator != null && iterator.hasNext()) {
-                Object value = iterator.next();
-                LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
-                ps.setObject(argNumber, value);
-                argNumber++;
-            }
+        if (expectedParams <= 0) {
+            return;
         }
 
-        if (argNumber - 1 != expectedParams) {
-            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
+        final Object[] args = new Object[expectedParams];
+        int i = 0;
+        int argNumber = 1;
+
+        while (iterator != null && iterator.hasNext()) {
+            Object value = iterator.next();
+            LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
+            if (argNumber <= expectedParams) {
+                args[i] = value;
+            }
+            argNumber++;
+            i++;
         }
+        if (argNumber - 1 != expectedParams) {
+            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was: " + (argNumber - 1));
+        }
+
+        // use argument setter as it deals with various JDBC drivers setObject vs setLong/setInteger/setString etc.
+        ArgumentPreparedStatementSetter setter = new ArgumentPreparedStatementSetter(args);
+        setter.setValues(ps);
     }
 
     protected boolean hasNamedParameters(String query) {
@@ -168,7 +125,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     private static final class NamedQueryParser {
 
-        private static final Pattern PATTERN = Pattern.compile("\\:\\?(\\w+)");
+        private static final Pattern PATTERN = Pattern.compile("\\:\\?(\\w+|\\$\\{[^\\}]+\\})");
         private final Matcher matcher;
 
         private NamedQueryParser(String query) {
@@ -181,6 +138,61 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             }
 
             return matcher.group(1);
+        }
+    }
+
+    private static final class PopulateIterator implements Iterator<Object> {
+        private static final String MISSING_PARAMETER_EXCEPTION =
+                "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
+        private final String query;
+        private final NamedQueryParser parser;
+        private final Exchange exchange;
+        private final Map<?, ?> bodyMap;
+        private final Map<?, ?> headersMap;
+        private String nextParam;
+
+        private PopulateIterator(String query, Exchange exchange, Object body) {
+            this.query = query;
+            this.parser = new NamedQueryParser(query);
+            this.exchange = exchange;
+            this.bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
+            this.headersMap = safeMap(exchange.getIn().getHeaders());
+
+            this.nextParam = parser.next();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return nextParam != null;
+        }
+
+        @Override
+        public Object next() {
+            if (nextParam == null) {
+                throw new NoSuchElementException();
+            }
+
+            try {
+                if (nextParam.startsWith("${") && nextParam.endsWith("}")) {
+                    return SimpleLanguage.expression(nextParam).evaluate(exchange, Object.class);
+                } else if (bodyMap.containsKey(nextParam)) {
+                    return bodyMap.get(nextParam);
+                } else if (headersMap.containsKey(nextParam)) {
+                    return headersMap.get(nextParam);
+                }
+                throw new RuntimeExchangeException(String.format(MISSING_PARAMETER_EXCEPTION, nextParam, query), exchange);
+            } finally {
+                nextParam = parser.next();
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        private static Map<?, ?> safeMap(Map<?, ?> map) {
+            return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
         }
     }
 }

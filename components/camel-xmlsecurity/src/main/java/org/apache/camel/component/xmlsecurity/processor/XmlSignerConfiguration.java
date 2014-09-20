@@ -23,6 +23,7 @@ import java.util.UUID;
 import javax.xml.crypto.AlgorithmMethod;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
@@ -65,12 +66,16 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     private String prefixForXmlSignatureNamespace = "ds";
 
     private String contentObjectId;
-    
+
+    // default value is null so that a unique ID is generated.
+    private String signatureId;
+
     /**
-     * The URI of the content reference. If <code>null</code> then the URI will
-     * be set to "" in the enveloped XML signature case or set to "#[object_id]"
-     * in the enveloping XML signature case. This value can be overwritten by
-     * the header {@link XmlSignatureConstants#HEADER_CONTENT_REFERENCE_URI}.
+     * The URI of the content reference. This value can be overwritten by the
+     * header {@link XmlSignatureConstants#HEADER_CONTENT_REFERENCE_URI}. Can
+     * only be used in connection with the enveloped case when you specify a
+     * schema (see {@link #setSchemaResourceUri(String)}. Will be ignored in the
+     * enveloping and detached case.
      */
     private String contentReferenceUri;
 
@@ -102,6 +107,10 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     private XmlSignatureProperties properties;
 
+    private List<XPathFilterParameterSpec> xpathsToIdAttributes = Collections.emptyList();
+    
+    private XPathFilterParameterSpec parentXpath;
+
     /* references that should be resolved when the context changes */
     private String keyAccessorName;
     private String canonicalizationMethodName;
@@ -109,7 +118,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     private String propertiesName;
 
     public XmlSignerConfiguration() {
-        super();
     }
 
     public XmlSignerConfiguration copy() {
@@ -211,7 +219,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * Signature algorithm. Default value is
      * "http://www.w3.org/2000/09/xmldsig#rsa-sha1".
      * 
-     * @param signatureAlgorithm signature algorithm
+     * @param signatureAlgorithm
+     *            signature algorithm
      */
     public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
@@ -237,7 +246,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * Only relevant when a KeyInfo is returned by {@link KeyAccessor}. and
      * {@link KeyInfo#getId()} is not <code>null</code>.
      * 
-     * @param addKeyInfoReference boolean value
+     * @param addKeyInfoReference
+     *            boolean value
      */
     public void setAddKeyInfoReference(Boolean addKeyInfoReference) {
         this.addKeyInfoReference = addKeyInfoReference;
@@ -258,7 +268,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
      * without-namespaces
      * 
-     * @param prefixForXmlSignatureNamespace prefix
+     * @param prefixForXmlSignatureNamespace
+     *            prefix
      */
     public void setPrefixForXmlSignatureNamespace(String prefixForXmlSignatureNamespace) {
         this.prefixForXmlSignatureNamespace = prefixForXmlSignatureNamespace;
@@ -270,11 +281,22 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     /**
      * Local name of the parent element to which the XML signature element will
-     * be added. Only relevant for enveloped XML signature. Default value is
-     * <code>null</code>. The value must be <code>null</code> for enveloping XML
-     * signature.
+     * be added. Only relevant for enveloped XML signature. Alternatively you can 
+     * also use {@link #setParentXpath(XPathFilterParameterSpec)}.
      * 
-     * @param parentLocalName local name
+     * <p> Default value is
+     * <code>null</code>. The value must be <code>null</code> for enveloping and
+     * detached XML signature.
+     * <p>
+     * This parameter or the parameter {@link #setParentXpath(XPathFilterParameterSpec)}
+     * for enveloped signature and the parameter {@link #setXpathsToIdAttributes(List)} 
+     * for detached signature must not be set in the same configuration.
+     * <p>
+     * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified
+     * in the same configuration then an exception is thrown.
+     * 
+     * @param parentLocalName
+     *            local name
      */
     public void setParentLocalName(String parentLocalName) {
         this.parentLocalName = parentLocalName;
@@ -294,20 +316,54 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     public String getContentObjectId() {
         if (contentObjectId == null) {
+            // content object ID must always be set, because it is only used in enveloping case.
             contentObjectId = "_" + UUID.randomUUID().toString();
         }
         return contentObjectId;
     }
 
+    /**
+     * Sets the content object Id attribute value. By default a UUID is
+     * generated. If you set the <code>null</code> value, then a new UUID will
+     * be generated. Only used in the enveloping case.
+     * 
+     * @param contentObjectId
+     */
     public void setContentObjectId(String contentObjectId) {
         this.contentObjectId = contentObjectId;
+    }
+
+    public String getSignatureId() {
+        return signatureId;
+    }
+
+    /**
+     * Sets the signature Id. If this parameter is not set (null value) then a
+     * unique ID is generated for the signature ID (default). If this parameter
+     * is set to "" (empty string) then no Id attribute is created in the
+     * signature element.
+     * 
+     * @param signatureId
+     */
+    public void setSignatureId(String signatureId) {
+        this.signatureId = signatureId;
     }
 
     public String getContentReferenceUri() {
         return contentReferenceUri;
     }
 
+    /**
+     * Reference URI for the content to be signed. Only used in the enveloped
+     * case. If the reference URI contains an ID attribute value, then the
+     * resource schema URI ( {@link #setSchemaResourceUri(String)}) must also be
+     * set because the schema validator will then find out which attributes are
+     * ID attributes. Will be ignored in the enveloping or detached case.
+     * 
+     * @param referenceUri
+     */
     public void setContentReferenceUri(String referenceUri) {
+
         this.contentReferenceUri = referenceUri;
     }
 
@@ -349,7 +405,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      */
     public void setProperties(String propertiesName) {
         if (getCamelContext() != null && propertiesName != null) {
-            XmlSignatureProperties props = getCamelContext().getRegistry().lookupByNameAndType(propertiesName, XmlSignatureProperties.class);
+            XmlSignatureProperties props = getCamelContext().getRegistry()
+                    .lookupByNameAndType(propertiesName, XmlSignatureProperties.class);
             if (props != null) {
                 setProperties(props);
             }
@@ -390,4 +447,54 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     public void setPropertiesName(String propertiesName) {
         this.propertiesName = propertiesName;
     }
+
+    public List<XPathFilterParameterSpec> getXpathsToIdAttributes() {
+        return xpathsToIdAttributes;
+    }
+
+    /**
+     * Define the elements which are signed in the detached case via XPATH
+     * expressions to ID attributes (attributes of type ID). For each element
+     * found via the XPATH expression a detached signature is created whose
+     * reference URI contains the corresponding attribute value (preceded by
+     * '#'). The signature becomes the last sibling of the signed element.
+     * Elements with deeper hierarchy level are signed first.
+     * <p>
+     * You can also set the XPATH list dynamically via the header
+     * {@link XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES}.
+     * <p>
+     * The parameter {@link #setParentLocalName(String)} or {@link #setParentXpath(XPathFilterParameterSpec)}
+     * for enveloped signature and this parameter for detached signature must not
+     * be set in the same configuration.
+     * 
+     * @param xpathsToIdAttributes
+     */
+    public void setXpathsToIdAttributes(List<XPathFilterParameterSpec> xpathsToIdAttributes) {
+        if (xpathsToIdAttributes == null) {
+            this.xpathsToIdAttributes = Collections.emptyList();
+        } else {
+            this.xpathsToIdAttributes = Collections.unmodifiableList(xpathsToIdAttributes);
+        }
+    }
+
+    public XPathFilterParameterSpec getParentXpath() {
+        return parentXpath;
+    }
+
+    /** Sets the XPath to find the parent node in the enveloped case. 
+     * Either you specify the parent node via this method or the local name and namespace of the parent 
+     * with the methods {@link #setParentLocalName(String)} and {@link #setParentNamespace(String)}. 
+     * <p>
+     * Default value is <code>null</code>. The value must be <code>null</code> for enveloping and
+     * detached XML signature.
+     * <p>
+     * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified
+     * in the same configuration then an exception is thrown.
+     * 
+     * @param parentXpath xpath to the parent node, if the xpath returns several values then the first Element node is used
+     */
+    public void setParentXpath(XPathFilterParameterSpec parentXpath) {
+        this.parentXpath = parentXpath;
+    }
+    
 }

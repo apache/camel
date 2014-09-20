@@ -59,10 +59,11 @@ public class MBeanInfoAssembler implements Service {
     // which could prevent classloader to unload classes if being referenced from this cache
     private final LRUCache<Class<?>, MBeanAttributesAndOperations> cache = new LRUWeakCache<Class<?>, MBeanAttributesAndOperations>(1000);
 
-    private final CamelContext camelContext;
+    public MBeanInfoAssembler() {
+    }
 
+    @Deprecated
     public MBeanInfoAssembler(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     @Override

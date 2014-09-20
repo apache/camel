@@ -17,16 +17,35 @@
 package org.apache.camel.component.cache;
 
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.Configuration;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class CacheManagerFactory extends ServiceSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CacheManagerFactory.class);
     private CacheManager cacheManager;
 
     public synchronized CacheManager getInstance() {
         if (cacheManager == null) {
             cacheManager = createCacheManagerInstance();
+
+            // always turn off ET phone-home
+            LOG.debug("Turning off EHCache update checker ...");
+            Configuration config = cacheManager.getConfiguration();
+            try {
+                // need to set both the system property and bypass the setUpdateCheck method as that can be changed dynamically
+                System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
+                ReflectionHelper.setField(config.getClass().getDeclaredField("updateCheck"), config, false);
+
+                LOG.info("Turned off EHCache update checker. updateCheck={}", config.getUpdateCheck());
+            } catch (Throwable e) {
+                // ignore
+                LOG.warn("Error turning off EHCache update checker. Beware information sent over the internet!", e);
+            }
         }
-        
+
         return cacheManager;
     }
 
@@ -48,6 +67,7 @@ public abstract class CacheManagerFactory extends ServiceSupport {
         // shutdown cache manager when stopping
         if (cacheManager != null) {
             cacheManager.shutdown();
+            cacheManager = null;
         }
     }
 }

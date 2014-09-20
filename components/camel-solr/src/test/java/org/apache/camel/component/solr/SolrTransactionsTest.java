@@ -20,6 +20,10 @@ import org.junit.Test;
 
 public class SolrTransactionsTest extends SolrComponentTestSupport {
 
+    public SolrTransactionsTest(SolrFixtures.TestServerType serverToTest) {
+        super(serverToTest);
+    }
+
     @Test
     public void testCommit() throws Exception {
 

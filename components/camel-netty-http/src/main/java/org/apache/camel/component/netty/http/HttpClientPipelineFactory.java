@@ -16,19 +16,24 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.ClientPipelineFactory;
+import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.component.netty.http.handlers.HttpClientChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.http.HttpClientCodec;
 import org.jboss.netty.handler.ssl.SslHandler;
+import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +81,14 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
         }
 
         pipeline.addLast("http", new HttpClientCodec());
+
+        if (producer.getConfiguration().getRequestTimeout() > 0) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
+            }
+            ChannelHandler timeout = new ReadTimeoutHandler(NettyComponent.getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            pipeline.addLast("timeout", timeout);
+        }
 
         // handler to route Camel messages
         pipeline.addLast("handler", new HttpClientChannelHandler(producer));

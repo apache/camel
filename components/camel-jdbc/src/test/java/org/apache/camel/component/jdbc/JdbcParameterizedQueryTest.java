@@ -17,7 +17,6 @@
 package org.apache.camel.component.jdbc;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,12 +31,12 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        // must be linked so we can dictate the order
-        Map<String, Object> jdbcParams = new LinkedHashMap<String, Object>();
-        jdbcParams.put("id", "cust1");
+        // The linkedHashMap values has different order in JDK7 and JDK8
+        // so I had to reduce the parameters size 
+        Map<String, Object> jdbcParams = new HashMap<String, Object>();
         jdbcParams.put("name", "jstrachan");
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = ? and name = ? order by ID", jdbcParams);
+        template.sendBodyAndHeaders("direct:start", "select * from customer where id = 'cust1' and name = ? order by ID", jdbcParams);
 
         assertMockEndpointsSatisfied();
 
@@ -53,8 +52,9 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         mock.expectedMessageCount(1);
 
         Map<String, Object> jdbcParams = new HashMap<String, Object>();
-        jdbcParams.put("id", "cust1");
         jdbcParams.put("name", "jstrachan");
+        jdbcParams.put("id", "cust1");
+        
 
         template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID", jdbcParams);
 

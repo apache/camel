@@ -24,6 +24,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.impl.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -89,6 +90,16 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
                 LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
             }
         }       
+    }
+    
+    @Override
+    public void onRemove(Route route) {
+        try {
+            // stop and un-schedule jobs
+            doStop();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public void scheduleRoute(Action action, Route route) throws Exception {

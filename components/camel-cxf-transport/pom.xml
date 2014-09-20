@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf-transport</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: CXF :: Transport</name>
   <description>Camel Transport for CXF </description>
-  
+
    <properties>
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
@@ -39,6 +39,7 @@
       javax.ws.rs*;version="[0.0,2)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
+      javax.servlet*;resolution="optional";version="[0,4)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
       org.springframework.beans*;resolution:=optional,
       ${camel.osgi.import.defaults},
@@ -62,18 +63,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
-     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-core</artifactId>
-    </dependency>
-    
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -98,10 +94,9 @@
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint.core</artifactId>
-      <version>${aries-blueprint-core-version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -157,14 +152,14 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- logging -->      
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -176,7 +171,6 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>${cxf-version}</version>
         <executions>
           <execution>
             <id>generate-test-sources</id>
@@ -201,5 +195,4 @@
     </plugins>
   </build>
 
-  
 </project>

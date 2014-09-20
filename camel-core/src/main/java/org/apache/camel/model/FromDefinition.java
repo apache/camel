@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> {
+public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
     @XmlAttribute
     private String uri;
     @XmlAttribute
@@ -73,6 +73,11 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         } else {
             return endpoint;
         }
+    }
+
+    @Override
+    public String getEndpointUri() {
+        return getUri();
     }
 
     // Properties

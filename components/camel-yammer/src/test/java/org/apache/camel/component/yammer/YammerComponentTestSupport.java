@@ -30,7 +30,6 @@ public abstract class YammerComponentTestSupport extends CamelTestSupport {
     private String messages;
     
     public YammerComponentTestSupport() {
-        super();
     }
 
     @Override

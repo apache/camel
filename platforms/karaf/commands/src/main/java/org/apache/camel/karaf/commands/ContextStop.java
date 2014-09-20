@@ -17,26 +17,17 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.CamelContext;
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 /**
  * Command to stop a Camel context.
  */
-@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context.")
-public class ContextStop extends CamelCommandSupport {
+@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context. It becomes unavailable and can not be started again.")
+public class ContextStop extends AbstractContextCommand {
 
-    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
-    String context;
-
-    public Object doExecute() throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(context);
-        if (camelContext == null) {
-            System.err.println("The Camel context " + camelContext + " is not found.");
-            return null;
-        }
+    @Override
+    protected void performContextCommand(CamelContext camelContext) throws Exception {
         camelContext.stop();
-        return null;
     }
 
 }

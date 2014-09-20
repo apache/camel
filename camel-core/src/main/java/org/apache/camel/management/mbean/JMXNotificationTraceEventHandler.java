@@ -45,9 +45,12 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
     }
 
     public void traceExchangeOut(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
+        // We do nothing here
     }
 
     public Object traceExchangeIn(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+        // Just trace the exchange as usual
+        traceExchange(node, target, traceInterceptor, exchange);
         return null;
     }
 

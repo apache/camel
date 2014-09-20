@@ -22,7 +22,9 @@ import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * @version 
+ * {@link org.apache.camel.RouteNode} representing onException.
+ *
+ * @version
  */
 public class OnExceptionRouteNode implements RouteNode {
 

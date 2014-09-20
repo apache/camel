@@ -30,7 +30,10 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-
+import org.apache.camel.model.rest.RestConfigurationDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.RestConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,8 @@ import org.slf4j.LoggerFactory;
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
+    private RestsDefinition restCollection = new RestsDefinition();
+    private RestConfigurationDefinition restConfiguration;
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -67,6 +72,43 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * Configures the REST services
+     *
+     * @return the builder
+     */
+    public RestConfigurationDefinition restConfiguration() {
+        if (restConfiguration == null) {
+            restConfiguration = new RestConfigurationDefinition();
+        }
+        return restConfiguration;
+    }
+
+    /**
+     * Creates a new REST service
+     *
+     * @return the builder
+     */
+    public RestDefinition rest() {
+        getRestCollection().setCamelContext(getContext());
+        RestDefinition answer = getRestCollection().rest();
+        configureRest(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a new REST service
+     *
+     * @param path  the base path
+     * @return the builder
+     */
+    public RestDefinition rest(String path) {
+        getRestCollection().setCamelContext(getContext());
+        RestDefinition answer = getRestCollection().rest(path);
+        configureRest(answer);
+        return answer;
+    }
 
     /**
      * Creates a new route from the given URI input
@@ -259,8 +301,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
+        // must configure routes before rests
         configureRoutes((ModelCamelContext)context);
-        // add routes to Camel by populating them
+        configureRests((ModelCamelContext) context);
+
+        // but populate rests before routes, as we want to turn rests into routes
+        populateRests();
         populateRoutes();
     }
 
@@ -276,6 +322,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         checkInitialized();
         routeCollection.setCamelContext(context);
         return routeCollection;
+    }
+
+    /**
+     * Configures the rests
+     *
+     * @param context the Camel context
+     * @return the rests configured
+     * @throws Exception can be thrown during configuration
+     */
+    public RestsDefinition configureRests(ModelCamelContext context) throws Exception {
+        setContext(context);
+        restCollection.setCamelContext(context);
+        return restCollection;
     }
 
     /**
@@ -337,6 +396,33 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         camelContext.addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
+    protected void populateRests() throws Exception {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        getRestCollection().setCamelContext(camelContext);
+
+        // setup rest configuration before adding the rests
+        if (getRestConfiguration() != null) {
+            RestConfiguration config = getRestConfiguration().asRestConfiguration(getContext());
+            camelContext.setRestConfiguration(config);
+        }
+        camelContext.addRestDefinitions(getRestCollection().getRests());
+    }
+
+    public RestsDefinition getRestCollection() {
+        return restCollection;
+    }
+
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
+    }
+
+    public void setRestCollection(RestsDefinition restCollection) {
+        this.restCollection = restCollection;
+    }
+
     public void setRouteCollection(RoutesDefinition routeCollection) {
         this.routeCollection = routeCollection;
     }
@@ -354,8 +440,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return new DefaultCamelContext();
     }
 
+    protected void configureRest(RestDefinition rest) {
+        // noop
+    }
+
     protected void configureRoute(RouteDefinition route) {
-        route.setGroup(getClass().getName());
+        // noop
     }
 
     /**

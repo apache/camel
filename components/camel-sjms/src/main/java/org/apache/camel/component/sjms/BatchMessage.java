@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * A {@link List} of these objects can be used to batch a collection of bodies and
  * header pairs in one exchange.
- * 
  */
 public class BatchMessage<T> {
     private T payload;
@@ -70,7 +69,7 @@ public class BatchMessage<T> {
         if (!(obj instanceof BatchMessage)) {
             return false;
         }
-        BatchMessage other = (BatchMessage)obj;
+        BatchMessage other = (BatchMessage) obj;
         if (headers == null) {
             if (other.headers != null) {
                 return false;

@@ -64,13 +64,20 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+        boolean renamed = false;
         File file = new File(from);
         File target = new File(to);
         try {
-            return FileUtil.renameFile(file, target, endpoint.isCopyAndDeleteOnRenameFail());
+            if (endpoint.isRenameUsingCopy()) {
+                renamed = FileUtil.renameFileUsingCopy(file, target);
+            } else {
+                renamed = FileUtil.renameFile(file, target, endpoint.isCopyAndDeleteOnRenameFail());
+            }
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Error renaming file from " + from + " to " + to, e);
         }
+        
+        return renamed;
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {

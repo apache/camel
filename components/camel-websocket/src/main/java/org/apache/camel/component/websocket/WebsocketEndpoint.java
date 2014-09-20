@@ -54,6 +54,13 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private String staticResources;
 
     private Integer port;
+    // Here are the configuration on the WebSocketComponentServlet
+    private Integer bufferSize;
+    private Integer maxIdleTime;
+    private Integer maxTextMessageSize;
+    private Integer maxBinaryMessageSize;
+    private Integer minVersion;
+    
 
     public WebsocketEndpoint(WebsocketComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
@@ -162,6 +169,46 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     public boolean isSessionSupport() {
         return sessionSupport;
+    }
+
+    public Integer getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(Integer bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
+    public Integer getMaxIdleTime() {
+        return maxIdleTime;
+    }
+
+    public void setMaxIdleTime(Integer maxIdleTime) {
+        this.maxIdleTime = maxIdleTime;
+    }
+
+    public Integer getMaxTextMessageSize() {
+        return maxTextMessageSize;
+    }
+
+    public void setMaxTextMessageSize(Integer maxTextMessageSize) {
+        this.maxTextMessageSize = maxTextMessageSize;
+    }
+
+    public Integer getMaxBinaryMessageSize() {
+        return maxBinaryMessageSize;
+    }
+
+    public void setMaxBinaryMessageSize(Integer maxBinaryMessageSize) {
+        this.maxBinaryMessageSize = maxBinaryMessageSize;
+    }
+
+    public Integer getMinVersion() {
+        return minVersion;
+    }
+
+    public void setMinVersion(Integer minVersion) {
+        this.minVersion = minVersion;
     }
 
     public List<Handler> getHandlers() {

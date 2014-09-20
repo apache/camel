@@ -72,6 +72,7 @@ public class ContextInfo extends CamelCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
         System.out.println(StringEscapeUtils.unescapeJava("\tShutdown timeout: "
                 + camelContext.getShutdownStrategy().getTimeUnit().toSeconds(camelContext.getShutdownStrategy().getTimeout()) + " sec."));
+        System.out.println(StringEscapeUtils.unescapeJava("\tAllow UseOriginalMessage: " + camelContext.isAllowUseOriginalMessage()));
         System.out.println(StringEscapeUtils.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
         System.out.println(StringEscapeUtils.unescapeJava("\tTracing: " + camelContext.isTracing()));
         System.out.println("");
@@ -98,13 +99,13 @@ public class ContextInfo extends CamelCommandSupport {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + name));
         }
 
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mLanguages\u001B[0m"));
-        for (String language : camelContext.getLanguageNames()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
-        }
-
         if (mode != null && mode.equals("--verbose")) {
+            System.out.println("");
+            System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mLanguages\u001B[0m"));
+            for (String language : camelContext.getLanguageNames()) {
+                System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
+            }
+
             System.out.println("");
             System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mEndpoints\u001B[0m"));
             for (Endpoint endpoint : camelContext.getEndpoints()) {

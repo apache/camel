@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -41,6 +42,6 @@ public class JmsRouteUsingSpringTest extends JmsRouteTest {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        applicationContext.close();
+        IOHelper.close(applicationContext);
     }
 }

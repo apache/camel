@@ -64,6 +64,7 @@ public final class UnitOfWorkProducer implements Producer {
         return producer.createExchange(pattern);
     }
 
+    @Deprecated
     public Exchange createExchange(Exchange exchange) {
         return producer.createExchange(exchange);
     }

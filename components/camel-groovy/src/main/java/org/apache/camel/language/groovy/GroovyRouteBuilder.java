@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 @Deprecated
 public abstract class GroovyRouteBuilder extends RouteBuilder {
     public GroovyRouteBuilder() {
-        super();
     }
 
     public GroovyRouteBuilder(CamelContext context) {

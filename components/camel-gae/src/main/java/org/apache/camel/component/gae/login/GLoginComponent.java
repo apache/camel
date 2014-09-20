@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.auth.GAuthComponent;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * The <a href="http://camel.apache.org/glogin.html">GLogin Component</a>
@@ -36,14 +36,14 @@ import org.apache.camel.impl.DefaultComponent;
  * do a programmatic login to GAE applications. Web applications should use the
  * {@link GAuthComponent} for access authorization to other web applications.
  */
-public class GLoginComponent extends DefaultComponent {
+public class GLoginComponent extends UriEndpointComponent {
 
     public GLoginComponent() {
-        this(null);
+        super(GLoginEndpoint.class);
     }
 
     public GLoginComponent(CamelContext context) {
-        super(context);
+        super(context, GLoginEndpoint.class);
     }
 
     @Override

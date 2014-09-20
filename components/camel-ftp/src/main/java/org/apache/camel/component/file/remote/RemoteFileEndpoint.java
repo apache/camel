@@ -26,6 +26,7 @@ import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -33,10 +34,15 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
+    @UriParam
     private int maximumReconnectAttempts = 3;
+    @UriParam
     private long reconnectDelay = 1000;
+    @UriParam
     private boolean disconnect;
+    @UriParam
     private boolean fastExistsCheck;
+    @UriParam
     private boolean download = true;
 
     public RemoteFileEndpoint() {

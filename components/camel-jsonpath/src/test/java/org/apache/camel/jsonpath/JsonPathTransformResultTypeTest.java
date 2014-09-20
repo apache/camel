@@ -17,7 +17,6 @@
 package org.apache.camel.jsonpath;
 
 import java.io.File;
-import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;

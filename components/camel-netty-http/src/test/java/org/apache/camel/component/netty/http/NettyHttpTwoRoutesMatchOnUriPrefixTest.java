@@ -36,7 +36,16 @@ public class NettyHttpTwoRoutesMatchOnUriPrefixTest extends BaseNettyTest {
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(503, cause.getStatusCode());
+            assertEquals(404, cause.getStatusCode());
+        }
+
+        // .. and likewise baz is not a context-path we have mapped as input
+        try {
+            template.requestBody("netty-http:http://localhost:{{port}}/baz", "Hello World", String.class);
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(404, cause.getStatusCode());
         }
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);

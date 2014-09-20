@@ -61,7 +61,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
-    private boolean loadStatisticsEnabled = true;
+    private boolean loadStatisticsEnabled;
     private CamelContext camelContext;
 
     public DefaultManagementStrategy() {

@@ -16,16 +16,27 @@
  */
 package org.apache.camel.component.xmlsecurity.processor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLCryptoContext;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
+import org.xml.sax.SAXException;
+import org.apache.camel.BytesSource;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.xmlsecurity.SantuarioUtil;
+import org.apache.camel.component.validator.DefaultLSResourceResolver;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
+import org.apache.camel.component.xmlsecurity.api.XmlSignatureException;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +48,12 @@ public abstract class XmlSignatureProcessor implements Processor {
         try {
             SantuarioUtil.initializeSantuario();
             SantuarioUtil.addSantuarioJSR105Provider();
-        } catch (Throwable t) {
+        } catch (Throwable t) { //NOPMD
             // provider not in classpath, ignore and fall back to jre default
             LOG.info("Cannot add the SantuarioJSR105Provider due to {0}, fall back to JRE default.", t);
         }
     }
-    
+
     public abstract XmlSignatureConfiguration getConfiguration();
 
     void setUriDereferencerAndBaseUri(XMLCryptoContext context) {
@@ -84,4 +95,42 @@ public abstract class XmlSignatureProcessor implements Processor {
             }
         }
     }
+
+    protected Schema getSchema(Message message) throws SAXException, XmlSignatureException, IOException {
+
+        String schemaResourceUri = getSchemaResourceUri(message);
+        if (schemaResourceUri == null || schemaResourceUri.isEmpty()) {
+            return null;
+        }
+        InputStream is = ResourceHelper.resolveResourceAsInputStream(getConfiguration().getCamelContext().getClassResolver(),
+                schemaResourceUri);
+        if (is == null) {
+            throw new XmlSignatureException(
+                    "XML Signature component is wrongly configured: No XML schema found for specified schema resource URI "
+                            + schemaResourceUri);
+        }
+        byte[] bytes = null;
+        try {
+            bytes = IOConverter.toBytes(is);
+        } finally {
+            // and make sure to close the input stream after the schema has been loaded
+            IOHelper.close(is);
+        }
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        schemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        schemaFactory.setResourceResolver(new DefaultLSResourceResolver(getConfiguration().getCamelContext(), getConfiguration()
+                .getSchemaResourceUri()));
+        LOG.debug("Instantiating schema for validation");
+        return schemaFactory.newSchema(new BytesSource(bytes));
+    }
+
+    protected String getSchemaResourceUri(Message message) {
+        String schemaResourceUri = message.getHeader(XmlSignatureConstants.HEADER_SCHEMA_RESOURCE_URI, String.class);
+        if (schemaResourceUri == null) {
+            schemaResourceUri = getConfiguration().getSchemaResourceUri();
+        }
+        LOG.debug("schema resource URI: {} ", getConfiguration().getSchemaResourceUri());
+        return schemaResourceUri;
+    }
+
 }

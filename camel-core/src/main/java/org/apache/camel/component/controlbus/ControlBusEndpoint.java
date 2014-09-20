@@ -24,12 +24,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelLogger;
 
 /**
  * The control bus endpoint.
  */
+@UriEndpoint(scheme = "controlbus")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     private Language language;

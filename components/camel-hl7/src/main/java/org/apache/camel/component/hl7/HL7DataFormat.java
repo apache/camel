@@ -21,17 +21,19 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
-
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 
+import static org.apache.camel.component.hl7.HL7Constants.HL7_CONTEXT;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_CONTROL;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_TYPE;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_PROCESSING_ID;
@@ -78,11 +80,13 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  *
  * @see org.apache.camel.component.hl7.HL7MLLPCodec
  */
-public class HL7DataFormat implements DataFormat {
+public class HL7DataFormat extends ServiceSupport implements DataFormat {
 
     private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
 
-    private Parser parser = new GenericParser();
+    private HapiContext hapiContext;
+    private Parser parser;
+    private boolean validate = true;
     
     static {
         HEADER_MAP.put(HL7_SENDING_APPLICATION, "MSH-3");
@@ -114,17 +118,24 @@ public class HL7DataFormat implements DataFormat {
         for (Map.Entry<String, String> entry : HEADER_MAP.entrySet()) {
             exchange.getOut().setHeader(entry.getKey(), terser.get(entry.getValue()));
         }
+        exchange.getOut().setHeader(HL7_CONTEXT, hapiContext);
         return message;
     }
 
     public boolean isValidate() {
-        return !(parser.getValidationContext() instanceof NoValidation);
+        return validate;
     }
 
     public void setValidate(boolean validate) {
-        if (!validate) {
-            parser.setValidationContext(new NoValidation());
-        }
+        this.validate = validate;
+    }
+
+    public HapiContext getHapiContext() {
+        return hapiContext;
+    }
+
+    public void setHapiContext(HapiContext context) {
+        this.hapiContext = context;
     }
 
     public Parser getParser() {
@@ -134,7 +145,24 @@ public class HL7DataFormat implements DataFormat {
     public void setParser(Parser parser) {
         this.parser = parser;
     }
-    
-    
+
+
+    @Override
+    protected void doStart() throws Exception {
+        if (hapiContext == null) {
+            hapiContext = new DefaultHapiContext();
+        }
+        if (parser == null) {
+            parser = hapiContext.getGenericParser();
+        }
+        if (!validate) {
+            parser.setValidationContext(ValidationContextFactory.noValidation());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }
 

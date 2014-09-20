@@ -27,15 +27,12 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
 public class SedaProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SedaProducer.class);
-
+    
     /**
      * @deprecated Better make use of the {@link SedaEndpoint#getQueue()} API which delivers the accurate reference to the queue currently being used.
      */
@@ -210,8 +207,14 @@ public class SedaProducer extends DefaultAsyncProducer {
      * @param exchange the exchange to add to the queue
      */
     protected void addToQueue(Exchange exchange) throws SedaConsumerNotAvailableException {
+        BlockingQueue<Exchange> queue = null;
         QueueReference queueReference = endpoint.getQueueReference();
-        BlockingQueue<Exchange> queue = queueReference.getQueue();
+        if (queueReference != null) {
+            queue = queueReference.getQueue();
+        }
+        if (queue == null) {
+            throw new SedaConsumerNotAvailableException("No queue available on endpoint: " + endpoint, exchange);
+        }
 
         if (endpoint.isFailIfNoConsumers() && !queueReference.hasConsumers()) {
             throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);

@@ -25,22 +25,36 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * @version
  */
+@UriEndpoint(scheme = "jdbc")
 public class JdbcEndpoint extends DefaultEndpoint {
+    @UriParam
     private int readSize;
+    @UriParam
     private boolean transacted;
+    @UriParam
     private boolean resetAutoCommit = true;
+    @UriParam
     private DataSource dataSource;
     private Map<String, Object> parameters;
+    @UriParam
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+    @UriParam
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
+    @UriParam
     private boolean allowNamedParameters = true;
+    @UriParam
     private boolean useHeadersAsParameters;
+    @UriParam
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
+    @UriParam
     private String outputClass;
+    @UriParam
     private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
 
     public JdbcEndpoint() {

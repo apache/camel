@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.mtom;
 
 import java.awt.image.BufferedImage;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +43,9 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.helpers.XPathUtils;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -96,7 +97,7 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<Source>();
-                elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
+                elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
@@ -124,16 +125,17 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         Element ele = (Element)xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
                                            XPathConstants.NODE);
         String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
-
+        
         ele = (Element)xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
                                            XPathConstants.NODE);
         String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-        DataHandler dr = exchange.getOut().getAttachment(photoId);
+        
+        DataHandler dr = exchange.getOut().getAttachment(decodingReference(photoId));
         Assert.assertEquals("application/octet-stream", dr.getContentType());
         MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
    
-        dr = exchange.getOut().getAttachment(imageId);
+        dr = exchange.getOut().getAttachment(decodingReference(imageId));
         Assert.assertEquals("image/jpeg", dr.getContentType());
         
         BufferedImage image = ImageIO.read(dr.getInputStream());
@@ -142,6 +144,11 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         
         // END SNIPPET: producer
 
+    }
+    
+    // CXF encoding the XOP reference since 3.0.1
+    private String decodingReference(String reference) throws UnsupportedEncodingException {
+        return java.net.URLDecoder.decode(reference, "UTF-8");
     }
     
     protected boolean isMtomEnabled() {

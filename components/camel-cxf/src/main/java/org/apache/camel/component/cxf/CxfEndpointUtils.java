@@ -26,16 +26,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.util.WSDLSoapServiceFactoryBean;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -108,42 +103,6 @@ public final class CxfEndpointUtils {
             }
         }
         return hasAnnotation(cls.getSuperclass(), annotation);
-    }
-
-    public static ServerFactoryBean getServerFactoryBean(Class<?> cls) throws CamelException {
-        ServerFactoryBean serverFactory  = null;
-        try {
-            if (cls == null) {
-                serverFactory = new ServerFactoryBean();
-                serverFactory.setServiceFactory(new WSDLSoapServiceFactoryBean());
-
-            } else {
-                boolean isJSR181SEnabled = CxfEndpointUtils.hasWebServiceAnnotation(cls);
-                serverFactory = isJSR181SEnabled ? new JaxWsServerFactoryBean()
-                            : new ServerFactoryBean();
-            }
-            return serverFactory;
-        } catch (Exception e) {
-            throw new CamelException(e);
-        }
-
-    }
-
-    public static ClientProxyFactoryBean getClientFactoryBean(Class<?> cls) throws CamelException {
-        ClientProxyFactoryBean clientFactory = null;
-        try {
-            if (cls == null) {
-                clientFactory = new ClientProxyFactoryBean();
-                clientFactory.setServiceFactory(new WSDLSoapServiceFactoryBean());
-            } else {
-                boolean isJSR181SEnabled = CxfEndpointUtils.hasWebServiceAnnotation(cls);
-                clientFactory = isJSR181SEnabled ? new JaxWsProxyFactoryBean()
-                        : new ClientProxyFactoryBean();
-            }
-            return clientFactory;
-        } catch (Exception e) {
-            throw new CamelException(e);
-        }
     }
     
     // only used by test currently

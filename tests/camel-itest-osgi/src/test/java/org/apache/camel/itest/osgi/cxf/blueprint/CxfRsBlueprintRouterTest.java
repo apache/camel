@@ -23,26 +23,28 @@ import org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
@@ -73,7 +75,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -85,7 +87,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             boolean isMary = "{\"Customer\":{\"id\":123,\"name\":\"Mary\"}}".equals(s);
             assertTrue("Should be John or Mary", isJohn || isMary);
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -94,7 +96,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
     public void testGetCustomerWithQuery() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers?id=123");
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -102,7 +104,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -110,7 +112,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
     public void testGetCustomers() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/");
         get.addHeader("Accept" , "application/xml");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -125,7 +127,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
                 fail("Not expected body returned: " + s);
             }
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -133,7 +135,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
     public void testGetSubResource() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/orders/223/products/323");
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -141,7 +143,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", 
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -151,14 +153,14 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -169,7 +171,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -177,7 +179,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
 
     }
@@ -191,7 +193,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             loadCamelFeatures(
                          "camel-blueprint", "camel-http4", "camel-cxf"),
                                         
-            bundle(newBundle()
+            bundle(TinyBundles.bundle()
                 .add("OSGI-INF/blueprint/test.xml", CxfRsBlueprintRouterTest.class.getResource("CxfRsBlueprintRouter.xml"))
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Customer.class)
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService.class)

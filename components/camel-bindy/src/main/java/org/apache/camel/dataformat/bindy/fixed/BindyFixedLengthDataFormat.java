@@ -94,7 +94,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         
         // add the footer if it is in the exchange header
         Map<String, Object> footerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER);
-        if (headerRow != null) {
+        if (footerRow != null) {
             models.add(models.size(), footerRow);
         }
 

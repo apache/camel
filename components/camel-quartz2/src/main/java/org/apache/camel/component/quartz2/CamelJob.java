@@ -69,7 +69,7 @@ public class CamelJob implements Job {
         }
     }
 
-    private CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
+    protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
         SchedulerContext schedulerContext = getSchedulerContext(context);
         String camelContextName = context.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
         CamelContext result = (CamelContext)schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
@@ -79,7 +79,7 @@ public class CamelJob implements Job {
         return result;
     }
 
-    private SchedulerContext getSchedulerContext(JobExecutionContext context) throws JobExecutionException {
+    protected SchedulerContext getSchedulerContext(JobExecutionContext context) throws JobExecutionException {
         try {
             return context.getScheduler().getContext();
         } catch (SchedulerException e) {
@@ -87,7 +87,7 @@ public class CamelJob implements Job {
         }
     }
 
-    private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
+    protected QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);

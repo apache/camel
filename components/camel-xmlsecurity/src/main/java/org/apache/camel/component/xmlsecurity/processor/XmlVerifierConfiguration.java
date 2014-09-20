@@ -53,7 +53,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {
-        super();
     }
 
     public XmlVerifierConfiguration copy() {

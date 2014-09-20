@@ -17,7 +17,7 @@
 package org.apache.camel
 package scala.dsl
 
-import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
+import org.apache.camel.processor.OnCompletionTest.MyProcessor
 import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
 import processor.OnCompletionOnCompleteOnlyTest
 
@@ -26,7 +26,8 @@ class SOnCompletionOnCompleteOnlyTest extends OnCompletionOnCompleteOnlyTest wit
   override def createRouteBuilder = new RouteBuilder {
 
     "direct:start" ==> {
-      onCompletion(completeOnly) {
+      onCompletion.onCompleteOnly {
+        to("log:sync")
         to("mock:sync")
       }
       process(new MyProcessor())

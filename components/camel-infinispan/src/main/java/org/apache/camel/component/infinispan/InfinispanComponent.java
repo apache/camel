@@ -19,9 +19,13 @@ package org.apache.camel.component.infinispan;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class InfinispanComponent extends DefaultComponent {
+public class InfinispanComponent extends UriEndpointComponent {
+
+    public InfinispanComponent() {
+        super(InfinispanEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

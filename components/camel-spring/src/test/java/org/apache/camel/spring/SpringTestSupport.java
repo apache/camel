@@ -28,6 +28,7 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.util.IOHelper;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -57,9 +58,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
     }
 
     private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {

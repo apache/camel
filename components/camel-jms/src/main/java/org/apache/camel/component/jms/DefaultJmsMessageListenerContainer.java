@@ -35,15 +35,48 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerContainer {
 
     private final JmsEndpoint endpoint;
+    private final boolean allowQuickStop;
 
     public DefaultJmsMessageListenerContainer(JmsEndpoint endpoint) {
+        this(endpoint, true);
+    }
+
+    public DefaultJmsMessageListenerContainer(JmsEndpoint endpoint, boolean allowQuickStop) {
         this.endpoint = endpoint;
+        this.allowQuickStop = allowQuickStop;
+    }
+
+    /**
+     * Whether this {@link DefaultMessageListenerContainer} allows the {@link #runningAllowed()} to quick stop
+     * in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()} is enabled, and {@link org.apache.camel.CamelContext}
+     * is currently being stopped.
+     */
+    protected boolean isAllowQuickStop() {
+        return allowQuickStop;
     }
 
     @Override
     protected boolean runningAllowed() {
-        // do not run if we have been stopped
-        return endpoint.isRunning();
+        // we can stop quickly if CamelContext is being stopped, and we do not accept messages while stopping
+        // this allows a more cleanly shutdown of the message listener
+        boolean quickStop = false;
+        if (isAllowQuickStop() && !endpoint.isAcceptMessagesWhileStopping()) {
+            quickStop = endpoint.getCamelContext().getStatus().isStopping();
+        }
+
+        if (quickStop) {
+            // log at debug level so its quicker to see we are stopping quicker from the logs
+            logger.debug("runningAllowed() -> false due CamelContext is stopping and endpoint configured to not accept messages while stopping");
+            return false;
+        } else {
+            // otherwise we only run if the endpoint is running
+            boolean answer = endpoint.isRunning();
+            // log at trace level as otherwise this can be noisy during normal operation
+            if (logger.isTraceEnabled()) {
+                logger.trace("runningAllowed() -> " + answer);
+            }
+            return answer;
+        }
     }
 
     /**

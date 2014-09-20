@@ -197,7 +197,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
             for (DBObject index : dynamicIndex) {
                 LOG.debug("create BDObject Index {}", index);
-                collection.ensureIndex(index);
+                collection.createIndex(index);
             }
         }
     }
@@ -249,7 +249,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         message.setHeader(MongoDbConstants.DATABASE, database);
         message.setHeader(MongoDbConstants.COLLECTION, collection);
         message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
-
         message.setBody(dbObj);
         exchange.setIn(message);
         return exchange;
@@ -415,25 +414,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /** 
      * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection will be
      * overridden by this setting.
+     * <p/>
+     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed {@code readPreference}
+     * value. Some examples for the possible values are {@code nearest}, {@code primary} or {@code secondary} etc.
      * 
-     * @param readPreference the bean name of the read preference to set
+     * @param readPreference the name of the read preference to set
      */
     public void setReadPreference(String readPreference) {
-        Class<?>[] innerClasses = ReadPreference.class.getDeclaredClasses();
-        for (Class<?> inClass : innerClasses) {
-            if (inClass.getSuperclass() == ReadPreference.class && inClass.getName().equals(readPreference)) {
-                try {
-                    this.readPreference = (ReadPreference) inClass.getConstructor((Class<?>) null).newInstance((Object[]) null);
-                } catch (Exception e) {
-                    continue;
-                }
-                break;
-            }
-        }
-
-        String msg = "Could not resolve specified ReadPreference of type " + readPreference
-                + ". Read preferences are resolved from inner classes of com.mongodb.ReadPreference.";
-        throw new IllegalArgumentException(msg);
+        this.readPreference = ReadPreference.valueOf(readPreference);
     }
 
     public ReadPreference getReadPreference() {

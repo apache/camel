@@ -17,21 +17,31 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.xml.namespace.QName;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for ProcessorDefinition and the other model classes.
  */
 public final class ProcessorDefinitionHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessorDefinitionHelper.class);
 
     private ProcessorDefinitionHelper() {
     }
@@ -198,9 +208,6 @@ public final class ProcessorDefinitionHelper {
         }
 
         for (ProcessorDefinition out : outputs) {
-            if (type.isInstance(out)) {
-                found.add((T)out);
-            }
 
             // send is much common
             if (out instanceof SendDefinition) {
@@ -222,6 +229,9 @@ public final class ProcessorDefinitionHelper {
                     List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
                     doFindType(children, type, found);
                 }
+
+                // do not check children as we already did that
+                continue;
             }
 
             // special for try ... catch ... finally
@@ -241,6 +251,20 @@ public final class ProcessorDefinitionHelper {
 
                 // do not check children as we already did that
                 continue;
+            }
+
+            // special for some types which has special outputs
+            if (out instanceof OutputDefinition) {
+                OutputDefinition outDef = (OutputDefinition) out;
+                List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
+                doFindType(outDefOut, type, found);
+
+                // do not check children as we already did that
+                continue;
+            }
+
+            if (type.isInstance(out)) {
+                found.add((T)out);
             }
 
             // try children as well
@@ -464,6 +488,129 @@ public final class ProcessorDefinitionHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Inspects the given definition and resolves any property placeholders from its properties.
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will be property placeholder resolved.
+     *
+     * @param routeContext the route context
+     * @param definition   the definition
+     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
+     * @see org.apache.camel.component.properties.PropertiesComponent
+     */
+    public static void resolvePropertyPlaceholders(RouteContext routeContext, Object definition) throws Exception {
+        LOG.trace("Resolving property placeholders for: {}", definition);
+
+        // find all getter/setter which we can use for property placeholders
+        Map<String, Object> properties = new HashMap<String, Object>();
+        IntrospectionSupport.getProperties(definition, properties, null);
+
+        ProcessorDefinition<?> processorDefinition = null;
+        if (definition instanceof ProcessorDefinition) {
+            processorDefinition = (ProcessorDefinition<?>) definition;
+        }
+        // include additional properties which have the Camel placeholder QName
+        // and when the definition parameter is this (otherAttributes belong to this)
+        if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
+            for (QName key : processorDefinition.getOtherAttributes().keySet()) {
+                if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
+                    String local = key.getLocalPart();
+                    Object value = processorDefinition.getOtherAttributes().get(key);
+                    if (value != null && value instanceof String) {
+                        // value must be enclosed with placeholder tokens
+                        String s = (String) value;
+                        String prefixToken = routeContext.getCamelContext().getPropertyPrefixToken();
+                        String suffixToken = routeContext.getCamelContext().getPropertySuffixToken();
+                        if (prefixToken == null) {
+                            throw new IllegalArgumentException("Property with name [" + local + "] uses property placeholders; however, no properties component is configured.");
+                        }
+
+                        if (!s.startsWith(prefixToken)) {
+                            s = prefixToken + s;
+                        }
+                        if (!s.endsWith(suffixToken)) {
+                            s = s + suffixToken;
+                        }
+                        value = s;
+                    }
+                    properties.put(local, value);
+                }
+            }
+        }
+
+        if (!properties.isEmpty()) {
+            LOG.trace("There are {} properties on: {}", properties.size(), definition);
+            // lookup and resolve properties for String based properties
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                // the name is always a String
+                String name = entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    // value must be a String, as a String is the key for a property placeholder
+                    String text = (String) value;
+                    text = routeContext.getCamelContext().resolvePropertyPlaceholders(text);
+                    if (text != value) {
+                        // invoke setter as the text has changed
+                        boolean changed = IntrospectionSupport.setProperty(routeContext.getCamelContext().getTypeConverter(), definition, name, text);
+                        if (!changed) {
+                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
+                        }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Inspects the given definition and resolves known fields
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will check if it refers to a known field (such as on Exchange).
+     *
+     * @param definition   the definition
+     */
+    public static void resolveKnownConstantFields(Object definition) throws Exception {
+        LOG.trace("Resolving known fields for: {}", definition);
+
+        // find all String getter/setter
+        Map<String, Object> properties = new HashMap<String, Object>();
+        IntrospectionSupport.getProperties(definition, properties, null);
+
+        if (!properties.isEmpty()) {
+            LOG.trace("There are {} properties on: {}", properties.size(), definition);
+
+            // lookup and resolve known constant fields for String based properties
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                String name = entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    // we can only resolve String typed values
+                    String text = (String) value;
+
+                    // is the value a known field (currently we only support constants from Exchange.class)
+                    if (text.startsWith("Exchange.")) {
+                        String field = ObjectHelper.after(text, "Exchange.");
+                        String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
+                        if (constant != null) {
+                            // invoke setter as the text has changed
+                            IntrospectionSupport.setProperty(definition, name, constant);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

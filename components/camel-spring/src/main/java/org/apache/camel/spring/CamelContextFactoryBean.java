@@ -46,15 +46,19 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
+import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -79,7 +83,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("unused")
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
         implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
@@ -101,9 +104,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String autoStartup;
     @XmlAttribute(required = false)
+    private String shutdownEager;
+    @XmlAttribute(required = false)
     private String useMDCLogging;
     @XmlAttribute(required = false)
     private String useBreadcrumb;
+    @XmlAttribute(required = false)
+    private String allowUseOriginalMessage;
+    @XmlAttribute(required = false)
+    private String runtimeEndpointRegistryEnabled;
     @XmlAttribute(required = false)
     private String managementNamePattern;
     @XmlAttribute(required = false)
@@ -142,6 +151,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef", required = false)
     private List<RouteContextRefDefinition> routeRefs = new ArrayList<RouteContextRefDefinition>();
+    @XmlElement(name = "restContextRef", required = false)
+    private List<RestContextRefDefinition> restRefs = new ArrayList<RestContextRefDefinition>();
     @XmlElement(name = "threadPoolProfile", required = false)
     private List<ThreadPoolProfileDefinition> threadPoolProfiles;
     @XmlElement(name = "threadPool", required = false)
@@ -162,6 +173,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
     @XmlElement(name = "interceptSendToEndpoint", required = false)
     private List<InterceptSendToEndpointDefinition> interceptSendToEndpoints = new ArrayList<InterceptSendToEndpointDefinition>();
+    @XmlElement(name = "restConfiguration", required = false)
+    private RestConfigurationDefinition restConfiguration;
+    @XmlElement(name = "rest", required = false)
+    private List<RestDefinition> rests = new ArrayList<RestDefinition>();
     @XmlElement(name = "route", required = false)
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient
@@ -233,6 +248,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         if (beanPostProcessor != null) {
             // Inject the annotated resource
             beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+
+        Boolean shutdownEager = CamelContextHelper.parseBoolean(getContext(), getShutdownEager());
+        if (shutdownEager != null) {
+            LOG.debug("Using shutdownEager: " + shutdownEager);
+            getContext().setShutdownEager(shutdownEager);
         }
     }
 
@@ -373,6 +399,22 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    public List<RestDefinition> getRests() {
+        return rests;
+    }
+
+    public void setRests(List<RestDefinition> rests) {
+        this.rests = rests;
+    }
+
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
+    }
+
+    public void setRestConfiguration(RestConfigurationDefinition restConfiguration) {
+        this.restConfiguration = restConfiguration;
     }
 
     public List<CamelEndpointFactoryBean> getEndpoints() {
@@ -532,6 +574,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.autoStartup = autoStartup;
     }
 
+    public String getShutdownEager() {
+        return shutdownEager;
+    }
+
+    public void setShutdownEager(String shutdownEager) {
+        this.shutdownEager = shutdownEager;
+    }
+
     public String getUseMDCLogging() {
         return useMDCLogging;
     }
@@ -546,6 +596,22 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public String getAllowUseOriginalMessage() {
+        return allowUseOriginalMessage;
+    }
+
+    public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public String getRuntimeEndpointRegistryEnabled() {
+        return runtimeEndpointRegistryEnabled;
+    }
+
+    public void setRuntimeEndpointRegistryEnabled(String runtimeEndpointRegistryEnabled) {
+        this.runtimeEndpointRegistryEnabled = runtimeEndpointRegistryEnabled;
     }
 
     public String getManagementNamePattern() {
@@ -600,6 +666,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setRouteRefs(List<RouteContextRefDefinition> routeRefs) {
         this.routeRefs = routeRefs;
+    }
+
+    public List<RestContextRefDefinition> getRestRefs() {
+        return restRefs;
+    }
+
+    public void setRestRefs(List<RestContextRefDefinition> restRefs) {
+        this.restRefs = restRefs;
     }
 
     public String getErrorHandlerRef() {

@@ -17,8 +17,8 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Collection;
-
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -29,19 +29,21 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
+
 /**
  * @version 
  */
 public class JpaProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private final Expression expression;
 
     public JpaProducer(JpaEndpoint endpoint, Expression expression) {
         super(endpoint);
         this.expression = expression;
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManagerFactory = endpoint.getEntityManagerFactory();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -51,17 +53,21 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
-
         final Object values = expression.evaluate(exchange, Object.class);
+
         if (values != null) {
+            final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, getEndpoint().isUsePassedInEntityManager());
+
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
-                    entityManager.joinTransaction();
+                    if (getEndpoint().isJoinTransaction()) {
+                        entityManager.joinTransaction();
+                    }
+
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
-                        for (int index = 0; index < array.length; index++) {
-                            save(array[index]);
+                        for (Object element : array) {
+                            save(element);
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;
@@ -76,8 +82,6 @@ public class JpaProducer extends DefaultProducer {
                     }
 
                     if (getEndpoint().isFlushOnSend()) {
-                        // there may be concurrency so need to join tx before flush
-                        entityManager.joinTransaction();
                         entityManager.flush();
                     }
 
@@ -85,12 +89,12 @@ public class JpaProducer extends DefaultProducer {
                 }
 
                 /**
-                 * save the given entity end return the managed entity
+                 * Save the given entity end return the managed entity
+                 *
                  * @return the managed entity
                  */
                 private Object save(final Object entity) {
-                    // there may be concurrency so need to join tx before persist/merge
-                    entityManager.joinTransaction();
+                    LOG.debug("save: {}", entity);
                     if (getEndpoint().isUsePersist()) {
                         entityManager.persist(entity);
                         return entity;
@@ -100,13 +104,6 @@ public class JpaProducer extends DefaultProducer {
                 }
             });
         }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        entityManager.close();
-        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
     }
 
 }

@@ -30,7 +30,6 @@ import javax.servlet.ServletResponse;
  * The camel filter wrapper that processes only initially dispatched requests.
  * Re-dispatched requests are ignored.
  */
-
 public class CamelFilterWrapper implements Filter {
     
     private Filter wrapped;

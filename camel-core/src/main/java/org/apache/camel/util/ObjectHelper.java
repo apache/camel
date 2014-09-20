@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -57,7 +58,6 @@ import org.apache.camel.WrappedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A number of useful helper methods for working with Objects
  *
@@ -66,9 +66,6 @@ import org.slf4j.LoggerFactory;
 public final class ObjectHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
-    @SuppressWarnings("unchecked")
-    private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
-                                                                       float[].class, double[].class, char[].class, boolean[].class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -547,15 +544,18 @@ public final class ObjectHelper {
             if (isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
                 return new Iterator<Object>() {
-                    int idx = -1;
+                    private int idx;
 
                     public boolean hasNext() {
-                        return (idx + 1) < Array.getLength(array);
+                        return idx < Array.getLength(array);
                     }
 
                     public Object next() {
-                        idx++;
-                        return Array.get(array, idx);
+                        if (!hasNext()) {
+                            throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
+                        }
+
+                        return Array.get(array, idx++);
                     }
 
                     public void remove() {
@@ -571,15 +571,18 @@ public final class ObjectHelper {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
             return new Iterator<Object>() {
-                int idx = -1;
+                private int idx;
 
                 public boolean hasNext() {
-                    return (idx + 1) < nodeList.getLength();
+                    return idx < nodeList.getLength();
                 }
 
                 public Object next() {
-                    idx++;
-                    return nodeList.item(idx);
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
+                    }
+
+                    return nodeList.item(idx++);
                 }
 
                 public void remove() {
@@ -614,13 +617,17 @@ public final class ObjectHelper {
             } else {
                 // use a plain iterator that returns the value as is as there are only a single value
                 return new Iterator<Object>() {
-                    int idx = -1;
+                    private int idx;
 
                     public boolean hasNext() {
-                        return idx + 1 == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
+                        return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
                     }
 
                     public Object next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
+                        }
+
                         idx++;
                         return s;
                     }
@@ -1127,7 +1134,10 @@ public final class ObjectHelper {
      * @return {@code true} if the given type is a Java primitive array type
      */
     public static boolean isPrimitiveArrayType(Class<?> clazz) {
-        return PRIMITIVE_ARRAY_TYPES.contains(clazz);
+        if (clazz != null && clazz.isArray()) {
+            return clazz.getComponentType().isPrimitive();
+        }
+        return false;
     }
 
     public static int arrayLength(Object[] pojo) {

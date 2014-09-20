@@ -59,6 +59,14 @@ public class ManagedTracer implements NotificationSenderAware, ManagedTracerMBea
         return tracer;
     }
 
+    public String getCamelId() {
+        return camelContext.getName();
+    }
+
+    public String getCamelManagementName() {
+        return camelContext.getManagementName();
+    }
+
     public boolean getEnabled() {
         return tracer.isEnabled();
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -76,7 +77,8 @@ public class RestletResponseTest extends RestletTestSupport {
     private void getCustomResponse(String address) throws Exception {
         HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + address));
         assertHttpResponse(response, 417, "application/JSON");
-        assertEquals("Get a wrong http header", "Cache-Control: max-age=20", response.getFirstHeader(HeaderConstants.HEADER_CACHE_CONTROL).toString());
+        String s = response.getFirstHeader(HeaderConstants.HEADER_CACHE_CONTROL).toString().toLowerCase(Locale.US);
+        assertEquals("Get a wrong http header", "cache-control: max-age=20", s);
     }
     
     @Test

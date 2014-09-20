@@ -164,6 +164,26 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
     
+    public void testSplitterParallelAggregate() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(5);
+        resultEndpoint.expectedBodiesReceivedInAnyOrder("James", "Guillaume", "Hiram", "Rob", "Roman");
+
+        Exchange result = template.request("direct:parallelAggregate", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob,Roman");
+                in.setHeader("foo", "bar");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        Message out = result.getOut();
+
+        assertMessageHeader(out, "foo", "bar");
+        assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
+    }
+
     public void testSplitterWithStreamingAndFileBody() throws Exception {
         URL url = this.getClass().getResource("/org/apache/camel/processor/simple.txt");
         assertNotNull("We should find this simple file here.", url);
@@ -250,6 +270,7 @@ public class SplitterTest extends ContextTestSupport {
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
                 from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().to("mock:result");
+                from("direct:parallelAggregate").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().parallelAggregate().to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
                 from("direct:exception")

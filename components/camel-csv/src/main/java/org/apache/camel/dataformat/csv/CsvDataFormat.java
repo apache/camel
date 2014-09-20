@@ -20,9 +20,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,11 +32,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVStrategy;
 import org.apache.commons.csv.writer.CSVConfig;
 import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.csv.writer.CSVWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CSV Data format.
@@ -46,14 +50,41 @@ import org.apache.commons.csv.writer.CSVWriter;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  *
- * @version 
+ * @version
  */
 public class CsvDataFormat implements DataFormat {
-    private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvDataFormat.class);
+
+    private CSVStrategy strategy = cloneCSVStrategyIfNecessary(CSVStrategy.DEFAULT_STRATEGY);
     private CSVConfig config = new CSVConfig();
     private boolean autogenColumns = true;
     private String delimiter;
     private boolean skipFirstLine;
+    /**
+     * Lazy row loading with iterator for big files.
+     */
+    private boolean lazyLoad;
+    private boolean useMaps;
+
+    private static CSVStrategy cloneCSVStrategyIfNecessary(CSVStrategy csvStrategy) {
+        for (Field field : CSVStrategy.class.getFields()) {
+            try {
+                if (field.get(null) == csvStrategy) {
+                    // return a safe copy of the declared static constant so that we don't cause any side effect
+                    // by (potentially) other CsvDataFormat objects in use, as we change the properties of the
+                    // strategy itself (e.g. it's set delimiter through the #unmarshal() method below)
+                    LOGGER.debug("Returning a clone of {} as it is the declared constant {} by the CSVStrategy class", csvStrategy, field.getName());
+
+                    return (CSVStrategy) csvStrategy.clone();
+                }
+            } catch (Exception e) {
+                ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        // not a declared static constant of CSVStrategy so return it as is
+        return csvStrategy;
+    }
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         if (delimiter != null) {
@@ -95,33 +126,57 @@ public class CsvDataFormat implements DataFormat {
         }
         strategy.setDelimiter(config.getDelimiter());
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-
+        Reader reader = null;
+        boolean error = false;
         try {
-            CSVParser parser = new CSVParser(in, strategy);
-            List<List<String>> list = new ArrayList<List<String>>();
-            boolean isFirstLine = true;
-            while (true) {
-                String[] strings = parser.getLine();
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    if (skipFirstLine) {
-                        // skip considering the first line if we're asked to do so
-                        continue;
+            reader = IOHelper.buffered(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)));
+            CSVParser parser = new CSVParser(reader, strategy);
+            if (skipFirstLine) {
+                // read one line ahead and skip it
+                parser.getLine();
+            }
+            CsvLineConverter<?> lineConverter;
+            if (useMaps) {
+                final CSVField[] fields = this.config.getFields();
+                final String[] fieldS;
+                if (fields != null && fields.length > 0) {
+                    fieldS = new String[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        fieldS[i] = fields[i].getName();
                     }
+                } else {
+                    fieldS = parser.getLine();
                 }
-                if (strings == null) {
-                    break;
-                }
-                List<String> line = Arrays.asList(strings);
-                list.add(line);
+                lineConverter = CsvLineConverters.getMapLineConverter(fieldS);
+            } else {
+                lineConverter = CsvLineConverters.getListConverter();
+            }
+
+            @SuppressWarnings({"unchecked", "rawtypes"}) CsvIterator<?> csvIterator = new CsvIterator(parser, reader, lineConverter);
+            return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
+        } catch (Exception e) {
+            error = true;
+            throw e;
+        } finally {
+            if (error) {
+                IOHelper.close(reader);
+            }
+        }
+    }
+
+    private <T> List<T> loadAllAsList(CsvIterator<T> iter) {
+        try {
+            List<T> list = new ArrayList<T>();
+            while (iter.hasNext()) {
+                list.add(iter.next());
             }
             return list;
         } finally {
-            IOHelper.close(in);
+            // close the iterator (which would also close the reader) as we've loaded all the data upfront
+            IOHelper.close(iter);
         }
     }
-    
+
     public String getDelimiter() {
         return delimiter;
     }
@@ -132,7 +187,7 @@ public class CsvDataFormat implements DataFormat {
         }
         this.delimiter = delimiter;
     }
-    
+
     public CSVConfig getConfig() {
         return config;
     }
@@ -146,7 +201,7 @@ public class CsvDataFormat implements DataFormat {
     }
 
     public void setStrategy(CSVStrategy strategy) {
-        this.strategy = strategy;
+        this.strategy = cloneCSVStrategyIfNecessary(strategy);
     }
 
     public boolean isAutogenColumns() {
@@ -168,6 +223,28 @@ public class CsvDataFormat implements DataFormat {
 
     public void setSkipFirstLine(boolean skipFirstLine) {
         this.skipFirstLine = skipFirstLine;
+    }
+
+    public boolean isLazyLoad() {
+        return lazyLoad;
+    }
+
+    public void setLazyLoad(boolean lazyLoad) {
+        this.lazyLoad = lazyLoad;
+    }
+
+    public boolean isUseMaps() {
+        return useMaps;
+    }
+
+    /**
+     * Sets whether or not the result of the unmarshalling should be a {@code java.util.Map} instead of a {@code java.util.List}. It uses the first line as a
+     * header line and uses it as keys of the maps.
+     *
+     * @param useMaps {@code true} in order to use {@code java.util.Map} instead of {@code java.util.List}, {@code false} otherwise.
+     */
+    public void setUseMaps(boolean useMaps) {
+        this.useMaps = useMaps;
     }
 
     private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {

@@ -20,6 +20,8 @@ import org.fusesource.mqtt.client.MQTT;
 import org.fusesource.mqtt.client.QoS;
 
 public class MQTTConfiguration extends MQTT {
+    public static final String MQTT_SUBSCRIBE_TOPIC = "CamelMQTTSubscribeTopic";
+    public static final String MQTT_PUBLISH_TOPIC = "CamelMQTTPublishTopic";
 
     /**
      * These a properties that are looked for in an Exchange - to publish to
@@ -70,10 +72,18 @@ public class MQTTConfiguration extends MQTT {
         this.publishTopicName = publishTopicName;
     }
 
+    /**
+     * Please use MQTT_SUBSCRIBE_TOPIC and MQTT_PUBLISH_TOPIC to set or get the topic name
+     */
+    @Deprecated
     public String getMqttTopicPropertyName() {
         return mqttTopicPropertyName;
     }
 
+    /**
+     * Please use MQTT_SUBSCRIBE_TOPIC and MQTT_PUBLISH_TOPIC to set or get the topic name
+     */
+    @Deprecated
     public void setMqttTopicPropertyName(String mqttTopicPropertyName) {
         this.mqttTopicPropertyName = mqttTopicPropertyName;
     }

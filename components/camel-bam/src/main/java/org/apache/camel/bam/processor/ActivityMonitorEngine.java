@@ -21,18 +21,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
 
+import org.apache.camel.bam.EntityManagerCallback;
+import org.apache.camel.bam.EntityManagerTemplate;
 import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -45,15 +45,17 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityMonitorEngine.class);
-    private JpaTemplate template;
+    private EntityManagerFactory entityManagerFactory;
+    private EntityManagerTemplate entityManagerTemplate;
     private TransactionTemplate transactionTemplate;
     private ProcessRules rules;
     private long windowMillis = 1000L;
     private Thread thread;
     private boolean useLocking;
 
-    public ActivityMonitorEngine(JpaTemplate template, TransactionTemplate transactionTemplate, ProcessRules rules) {
-        this.template = template;
+    public ActivityMonitorEngine(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate, ProcessRules rules) {
+        this.entityManagerFactory = entityManagerFactory;
+        this.entityManagerTemplate = new EntityManagerTemplate(entityManagerFactory);
         this.transactionTemplate = transactionTemplate;
         this.rules = rules;
     }
@@ -80,8 +82,10 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
                         Map<String, Object> params = new HashMap<String, Object>(1);
                         params.put("timeNow", timeNow);
 
-                        List<ActivityState> list = CastUtils.cast(template.findByNamedParams("select x from "
-                                + QueryUtils.getTypeName(ActivityState.class) + " x where x.timeOverdue < :timeNow", params));
+                        String activityStateQuery = "select x from "
+                                + QueryUtils.getTypeName(ActivityState.class) + " x where x.timeOverdue < :timeNow";
+                        List<ActivityState> list = entityManagerTemplate.find(ActivityState.class,
+                                activityStateQuery, params);
                         for (ActivityState activityState : list) {
                             fireExpiredEvent(activityState);
                         }
@@ -106,8 +110,8 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     protected void fireExpiredEvent(final ActivityState activityState) {
         LOG.debug("Trying to fire expiration of: {}", activityState);
 
-        template.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+        entityManagerTemplate.execute(new EntityManagerCallback<Object>() {
+            public Object execute(EntityManager entityManager) throws PersistenceException {
                 // let's try locking the object first
                 if (isUseLocking()) {
                     LOG.debug("Attempting to lock: {}", activityState);

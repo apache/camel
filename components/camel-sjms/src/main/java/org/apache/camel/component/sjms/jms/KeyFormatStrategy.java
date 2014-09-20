@@ -19,14 +19,12 @@ package org.apache.camel.component.sjms.jms;
 /**
  * Strategy for applying encoding and decoding of JMS headers so they apply to
  * the JMS spec.
- * 
- * @version
  */
 public interface KeyFormatStrategy {
 
     /**
      * Encodes the key before its sent as a {@link javax.jms.Message} message.
-     * 
+     *
      * @param key the original key
      * @return the encoded key
      */
@@ -35,7 +33,7 @@ public interface KeyFormatStrategy {
     /**
      * Decodes the key after its received from a {@link javax.jms.Message}
      * message.
-     * 
+     *
      * @param key the encoded key
      * @return the decoded key as the original key
      */

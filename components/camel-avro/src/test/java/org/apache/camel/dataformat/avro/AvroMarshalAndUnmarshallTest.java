@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.avro;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

@@ -22,12 +22,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 /**
  * @version 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class SedaTest extends OSGiIntegrationTestSupport {
     
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -46,21 +46,6 @@ public class SedaTest extends OSGiIntegrationTestSupport {
         mock.expectedBodiesReceived("Hello World");
         template.sendBody("seda:foo", "Hello World");
         assertMockEndpointsSatisfied();        
-    }
-    
-    @Test
-    public void testCamelContextName() throws Exception {
-        // should get the context name with osgi bundle id
-        String name1 = context.getName();
-
-        CamelContext context2 = createCamelContext();
-        String name2 = context2.getName();
-
-        assertNotSame(name1, name2);
-
-        String id = "" + bundleContext.getBundle().getBundleId();
-        assertTrue(name1.startsWith(id));
-        assertTrue(name2.startsWith(id));
-    }
+    }   
    
 }

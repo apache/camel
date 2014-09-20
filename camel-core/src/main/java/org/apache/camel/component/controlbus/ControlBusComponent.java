@@ -20,14 +20,18 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * The <a href="http://camel.apache.org/controlbus.html">control bus</a> component.
  */
-public class ControlBusComponent extends DefaultComponent {
+public class ControlBusComponent extends UriEndpointComponent {
 
     private ExecutorService executorService;
+
+    public ControlBusComponent() {
+        super(ControlBusEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

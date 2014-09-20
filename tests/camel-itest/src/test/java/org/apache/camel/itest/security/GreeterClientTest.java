@@ -28,8 +28,6 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.hello_world_soap_http.Greeter;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.message.token.UsernameToken;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,7 +70,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
         props.put("user", username);
         // Set the the password type to be plain text, 
         // so we can keep using the password to authenticate with spring security
-        props.put(UsernameToken.PASSWORD_TYPE, WSConstants.PW_TEXT);       
+        props.put("passwordType", "PasswordText");       
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);
 
         client.getOutInterceptors().add(wss4jOut);

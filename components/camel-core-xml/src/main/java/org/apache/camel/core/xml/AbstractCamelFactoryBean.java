@@ -33,6 +33,8 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     private String camelContextId;
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private Boolean customId;
 
     public abstract T getObject() throws Exception;
 
@@ -80,6 +82,14 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
 
     public void setCamelContextId(String camelContextId) {
         this.camelContextId = camelContextId;
+    }
+
+    public Boolean getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(Boolean customId) {
+        this.customId = customId;
     }
 
     public boolean isSingleton() {

@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import javax.print.DocFlavor;
 import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.Sides;
 
 import org.apache.camel.util.ObjectHelper;
@@ -40,6 +41,8 @@ public class PrinterConfiguration {
     private MediaSizeName mediaSizeName;
     private String sides;
     private Sides internalSides;
+    private String orientation;
+    private OrientationRequested internalOrientation;
     private boolean sendToPrinter = true;
     private String mediaTray;
 
@@ -49,10 +52,10 @@ public class PrinterConfiguration {
     public PrinterConfiguration(URI uri) throws URISyntaxException {
         this.uri = uri;
     }
-    
+
     public void parseURI(URI uri) throws Exception {
         String protocol = uri.getScheme();
-        
+
         if (!protocol.equalsIgnoreCase("lpr")) {
             throw new IllegalArgumentException("Unrecognized Print protocol: " + protocol + " for uri: " + uri);
         }
@@ -66,21 +69,23 @@ public class PrinterConfiguration {
         path = ObjectHelper.removeStartingCharacters(path, '/');
         path = ObjectHelper.removeStartingCharacters(path, '\\');
         setPrintername(path);
-        
+
         Map<String, Object> printSettings = URISupport.parseParameters(uri);
-        setFlavor((String)printSettings.get("flavor"));
-        setMimeType((String)printSettings.get("mimeType"));
+        setFlavor((String) printSettings.get("flavor"));
+        setMimeType((String) printSettings.get("mimeType"));
         setDocFlavor(assignDocFlavor(flavor, mimeType));
-        
-        setPrinterPrefix((String)printSettings.get("printerPrefix"));
-        
+
+        setPrinterPrefix((String) printSettings.get("printerPrefix"));
+
         if (printSettings.containsKey("copies")) {
             setCopies(Integer.valueOf((String) printSettings.get("copies")));
         }
-        setMediaSize((String)printSettings.get("mediaSize"));
-        setSides((String)printSettings.get("sides"));
-        setMediaSizeName(assignMediaSize(mediaSize));       
+        setMediaSize((String) printSettings.get("mediaSize"));
+        setSides((String) printSettings.get("sides"));
+        setOrientation((String) printSettings.get("orientation"));
+        setMediaSizeName(assignMediaSize(mediaSize));
         setInternalSides(assignSides(sides));
+        setInternalOrientation(assignOrientation(orientation));
         if (printSettings.containsKey("sendToPrinter")) {
             if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
@@ -100,7 +105,7 @@ public class PrinterConfiguration {
         if (flavor == null) {
             flavor = "DocFlavor.BYTE_ARRAY";
         }
-        
+
         DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         DocFlavorAssigner docFlavorAssigner = new DocFlavorAssigner();
         if (mimeType.equalsIgnoreCase("AUTOSENSE")) {
@@ -150,10 +155,10 @@ public class PrinterConfiguration {
         } else if (mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
             d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE(flavor);
         }
-        
+
         return d;
     }
-    
+
     private MediaSizeName assignMediaSize(String size) {
         MediaSizeAssigner mediaSizeAssigner = new MediaSizeAssigner();
 
@@ -171,7 +176,7 @@ public class PrinterConfiguration {
         } else {
             answer = mediaSizeAssigner.selectMediaSizeNameOther(size);
         }
-        
+
         return answer;
     }
 
@@ -194,10 +199,31 @@ public class PrinterConfiguration {
         } else {
             answer = Sides.ONE_SIDED;
         }
-        
+
         return answer;
     }
-    
+
+    public OrientationRequested assignOrientation(final String orientation) {
+        OrientationRequested answer;
+
+        if (orientation == null) {
+            // default to portrait
+            answer = OrientationRequested.PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("portrait")) {
+            answer = OrientationRequested.PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("landscape")) {
+            answer = OrientationRequested.LANDSCAPE;
+        } else if (orientation.equalsIgnoreCase("reverse-portrait")) {
+            answer = OrientationRequested.REVERSE_PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("reverse-landscape")) {
+            answer = OrientationRequested.REVERSE_LANDSCAPE;
+        } else {
+            answer = OrientationRequested.PORTRAIT;
+        }
+
+        return answer;
+    }
+
     public URI getUri() {
         return uri;
     }
@@ -284,6 +310,22 @@ public class PrinterConfiguration {
 
     public void setInternalSides(Sides internalSides) {
         this.internalSides = internalSides;
+    }
+
+    public OrientationRequested getInternalOrientation() {
+        return internalOrientation;
+    }
+
+    public void setInternalOrientation(OrientationRequested internalOrientation) {
+        this.internalOrientation = internalOrientation;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
     }
 
     public String getMimeType() {

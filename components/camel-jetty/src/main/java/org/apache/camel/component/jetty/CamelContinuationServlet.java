@@ -57,7 +57,7 @@ public class CamelContinuationServlet extends CamelServlet {
         log.trace("Service: {}", request);
 
         // is there a consumer registered for the request.
-        HttpConsumer consumer = resolve(request);
+        HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -103,6 +103,7 @@ public class CamelContinuationServlet extends CamelServlet {
 
             if (consumer.getEndpoint().isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+                exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
             }
             if (consumer.getEndpoint().isDisableStreamCache()) {
                 exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);

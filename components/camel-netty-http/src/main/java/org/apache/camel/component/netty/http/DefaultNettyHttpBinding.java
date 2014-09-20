@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -55,16 +56,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link NettyHttpBinding}.
  */
-public class DefaultNettyHttpBinding implements NettyHttpBinding {
+public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettyHttpBinding.class);
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
     public DefaultNettyHttpBinding() {
     }
 
     public DefaultNettyHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+    
+    public DefaultNettyHttpBinding copy() {
+        try {
+            return (DefaultNettyHttpBinding)this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override
@@ -119,6 +128,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         // uri is path and query parameters
         headers.put(Exchange.HTTP_URI, uri.getPath());
         headers.put(Exchange.HTTP_QUERY, uri.getQuery());
+        headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getPath();
@@ -132,14 +142,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             LOG.trace("HTTP-Uri {}", request.getUri());
         }
 
-        for (String name : request.getHeaderNames()) {
+        for (String name : request.headers().names()) {
             // mapping the content-type
             if (name.toLowerCase(Locale.US).equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
 
             if (name.toLowerCase(Locale.US).equals("authorization")) {
-                String value = request.getHeader(name);
+                String value = request.headers().get(name);
                 // store a special header that this request was authenticated using HTTP Basic
                 if (value != null && value.trim().startsWith("Basic")) {
                     if (headerFilterStrategy != null
@@ -150,7 +160,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             }
 
             // add the headers one by one, and use the header filter strategy
-            List<String> values = request.getHeaders(name);
+            List<String> values = request.headers().getAll(name);
             Iterator<?> it = ObjectHelper.createIterator(values);
             while (it.hasNext()) {
                 Object extracted = it.next();
@@ -185,8 +195,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         }
 
         // if body is application/x-www-form-urlencoded then extract the body as query string and append as headers
-        if (request.getMethod().getName().equals("POST") && request.getHeader(Exchange.CONTENT_TYPE) != null
-                && request.getHeader(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
+        // if it is a bridgeEndpoint we need to skip this part of work
+        if (request.getMethod().getName().equals("POST") && request.headers().get(Exchange.CONTENT_TYPE) != null
+                && request.headers().get(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                && !configuration.isBridgeEndpoint()) {
 
             String charset = "UTF-8";
 
@@ -254,13 +266,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.getStatus().getCode());
         headers.put(NettyHttpConstants.HTTP_RESPONSE_TEXT, response.getStatus().getReasonPhrase());
 
-        for (String name : response.getHeaderNames()) {
+        for (String name : response.headers().names()) {
             // mapping the content-type
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
             // add the headers one by one, and use the header filter strategy
-            List<String> values = response.getHeaders(name);
+            List<String> values = response.headers().getAll(name);
             Iterator<?> it = ObjectHelper.createIterator(values);
             while (it.hasNext()) {
                 Object extracted = it.next();
@@ -304,7 +316,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
-                    response.addHeader(key, headerValue);
+                    response.headers().add(key, headerValue);
                 }
             }
         }
@@ -375,7 +387,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             // TODO How to enable the chunk transport 
             int len = buffer.readableBytes();
             // set content-length
-            response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
+            response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, len);
             LOG.trace("Content-Length: {}", len);
         }
 
@@ -383,7 +395,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
             // set content-type
-            response.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType);
+            response.headers().set(HttpHeaders.Names.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
 
@@ -398,7 +410,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 connection = HttpHeaders.Values.CLOSE;
             }
         }
-        response.setHeader(HttpHeaders.Names.CONNECTION, connection);
+        response.headers().set(HttpHeaders.Names.CONNECTION, connection);
         LOG.trace("Connection: {}", connection);
 
         return response;
@@ -450,7 +462,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
-                    request.addHeader(key, headerValue);
+                    request.headers().add(key, headerValue);
                 }
             }
         }
@@ -474,7 +486,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 request.setContent(buffer);
                 int len = buffer.readableBytes();
                 // set content-length
-                request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
+                request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, len);
                 LOG.trace("Content-Length: {}", len);
             } else {
                 // we do not support this kind of body
@@ -490,7 +502,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
             // set content-type
-            request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType);
+            request.headers().set(HttpHeaders.Names.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
 
@@ -498,7 +510,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         // use URI as its faster than URL (no DNS lookup)
         URI u = new URI(uri);
         String host = u.getHost();
-        request.setHeader(HttpHeaders.Names.HOST, host);
+        request.headers().set(HttpHeaders.Names.HOST, host);
         LOG.trace("Host: {}", host);
 
         // configure connection to accordingly to keep alive configuration
@@ -512,7 +524,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 connection = HttpHeaders.Values.CLOSE;
             }
         }
-        request.setHeader(HttpHeaders.Names.CONNECTION, connection);
+        request.headers().set(HttpHeaders.Names.CONNECTION, connection);
         LOG.trace("Connection: {}", connection);
 
         return request;

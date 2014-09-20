@@ -61,4 +61,11 @@ public class Customer {
     public void setAddress(Address address) {
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
+        return "Customer[id: " + getId() + ", name: " + getName() + ", address: " + getAddress() + "]";
+    }
+
 }

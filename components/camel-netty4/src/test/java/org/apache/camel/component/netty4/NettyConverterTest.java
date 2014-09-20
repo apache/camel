@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.DynamicChannelBuffer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,12 +33,12 @@ public class NettyConverterTest extends CamelTestSupport {
      */
     private  static final String PAYLOAD = "Test Message";
 
-    private ChannelBuffer buf;
+    private ByteBuf buf;
 
     @Before
     public void startUp() {
         byte[] bytes = PAYLOAD.getBytes();
-        buf = new DynamicChannelBuffer(bytes.length);
+        buf = PooledByteBufAllocator.DEFAULT.buffer(bytes.length);
         buf.writeBytes(bytes);
     }
 

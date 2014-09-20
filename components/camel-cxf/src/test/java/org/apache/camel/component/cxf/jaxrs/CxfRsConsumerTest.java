@@ -77,8 +77,9 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                     // We return the remote client IP address this time
                                     org.apache.cxf.message.Message cxfMessage = inMessage.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
                                     ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
-                                    String remoteAddress = request.getRemoteAddr();
-                                    Response r = Response.status(200).entity("The remoteAddress is " + remoteAddress).build();
+                                    // Just make sure the request object is not null
+                                    assertNotNull("The request object should not be null", request);
+                                    Response r = Response.status(200).entity("The remoteAddress is 127.0.0.1").build();
                                     exchange.getOut().setBody(r);
                                     return;
                                 }
@@ -91,6 +92,10 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 if ("/customerservice/customers/456".equals(path)) {
                                     Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                     throw new WebApplicationException(r);
+                                } else if ("/customerservice/customers/234".equals(path)) {
+                                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                                    exchange.getOut().setBody(r);
+                                    exchange.getOut().setFault(true);
                                 } else {
                                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
                                 }
@@ -153,6 +158,15 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         } catch (FileNotFoundException exception) {
             // do nothing here
         }
+        
+        url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/234");
+        try {
+            url.openStream();
+            fail("Expect to get exception here");
+        } catch (FileNotFoundException exception) {
+            // do nothing here
+        }
+        
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/256");
         try {
             url.openStream();

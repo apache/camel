@@ -16,151 +16,144 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>components</artifactId>
+    <version>2.15-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-cdi</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: CDI</name>
-    <description>Camel CDI</description>
+  <artifactId>camel-cdi</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: CDI</name>
+  <description>Camel Contexts and Dependency Injection (JSR-299) support</description>
 
-    <properties>
-        <camel.osgi.import>
-            !org.apache.camel.cdi.*,
-            !org.apache.deltaspike.cdise.api.*,
-            org.apache.deltaspike.core.api.*;resolution:=optional,
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import>
-        <camel.osgi.export.pkg>
-            org.apache.camel.cdi;${camel.osgi.version},
-            org.apache.camel.cdi.internal;${camel.osgi.version},
-            org.apache.camel.cdi.component.*;${camel.osgi.version}
-        </camel.osgi.export.pkg>
-        <camel.osgi.provide.capability>
-          org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
-        </camel.osgi.provide.capability>
-    </properties>
+  <properties>
+    <camel.osgi.import>
+      !org.apache.camel.cdi.*,
+      !org.apache.deltaspike.cdise.api.*,
+      org.apache.deltaspike.core.api.*;resolution:=optional,
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import>
+    <camel.osgi.export.pkg>
+      org.apache.camel.cdi;${camel.osgi.version},
+      org.apache.camel.cdi.internal;${camel.osgi.version},
+      org.apache.camel.cdi.component.*;${camel.osgi.version}
+    </camel.osgi.export.pkg>
+    <camel.osgi.provide.capability>
+      org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
+    </camel.osgi.provide.capability>
+  </properties>
 
-    <dependencies>
+  <dependencies>
 
-        <!-- Camel -->
-       <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
 
-        <!-- DeltaSpike -->
+    <!-- cdi api -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${cdi-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- DeltaSpike -->
+    <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-api</artifactId>
+      <version>${deltaspike-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-impl</artifactId>
+      <version>${deltaspike-version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- only required for the Main -->
+    <dependency>
+      <groupId>org.apache.deltaspike.cdictrl</groupId>
+      <artifactId>deltaspike-cdictrl-api</artifactId>
+      <version>${deltaspike-version}</version>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+  <profiles>
+    <profile>
+      <id>owb</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
         <dependency>
-            <groupId>org.apache.deltaspike.core</groupId>
-            <artifactId>deltaspike-core-api</artifactId>
-            <version>${deltaspike-version}</version>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_3.0_spec</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.deltaspike.core</groupId>
-            <artifactId>deltaspike-core-impl</artifactId>
-            <version>${deltaspike-version}</version>
+          <groupId>org.apache.deltaspike.cdictrl</groupId>
+          <artifactId>deltaspike-cdictrl-owb</artifactId>
+          <version>${deltaspike-version}</version>
+          <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-impl</artifactId>
+          <version>${openwebbeans-version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-spi</artifactId>
+          <version>${openwebbeans-version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
 
-        <!-- only required for the Main -->
+    <profile>
+      <id>weld2</id>
+      <dependencies>
         <dependency>
-            <groupId>org.apache.deltaspike.cdictrl</groupId>
-            <artifactId>deltaspike-cdictrl-api</artifactId>
-            <version>${deltaspike-version}</version>
+          <groupId>org.apache.deltaspike.cdictrl</groupId>
+          <artifactId>deltaspike-cdictrl-weld</artifactId>
+          <version>${deltaspike-version}</version>
+          <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.jboss.weld.se</groupId>
+          <artifactId>weld-se-core</artifactId>
+          <version>${weld2-version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
 
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <version>${geronimo-atinject-1.0-spec-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-            <version>${geronimo-jcdi-1.0-spec-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-            <version>${geronimo-interceptor-1.1-spec-version}</version>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j-version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-
-    <profiles>
-        <profile>
-            <id>owb</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-servlet_3.0_spec</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.deltaspike.cdictrl</groupId>
-                    <artifactId>deltaspike-cdictrl-owb</artifactId>
-                    <version>${deltaspike-version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-impl</artifactId>
-                    <version>${openwebbeans-version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-spi</artifactId>
-                    <version>${openwebbeans-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>weld</id>
-            <!-- active by default as the overriding of InvocationTarget is currently broken in owb which breaks ProduceInjectTest -->
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.deltaspike.cdictrl</groupId>
-                    <artifactId>deltaspike-cdictrl-weld</artifactId>
-                    <version>${deltaspike-version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld.se</groupId>
-                    <artifactId>weld-se-core</artifactId>
-                    <version>${weld-version}</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
+  </profiles>
 
 </project>

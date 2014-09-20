@@ -21,44 +21,44 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-<bean id="propertyConfigurer"
-	class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-</bean>
+  <bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  </bean>
 
-    <bean id="myMinaFactory" class="org.apache.camel.component.mina.MinaComponent">
-        <!-- we must provide a camel context so we refer to it by its id -->
-        <constructor-arg index="0" ref="myCamel"/>
-    </bean>
+  <bean id="myMinaFactory" class="org.apache.camel.component.mina.MinaComponent">
+    <!-- we must provide a camel context so we refer to it by its id -->
+    <constructor-arg index="0" ref="myCamel"/>
+  </bean>
 
-    <bean id="minaSyslog"
-          factory-bean="myMinaFactory"
-          factory-method="createEndpoint">
-        <!-- and here we can pass it our configuration -->
-        <constructor-arg index="0" ref="minaSyslogConfig"/>
-    </bean>
+  <bean id="minaSyslog"
+        factory-bean="myMinaFactory"
+        factory-method="createEndpoint">
+    <!-- and here we can pass it our configuration -->
+    <constructor-arg index="0" ref="minaSyslogConfig"/>
+  </bean>
 
-    <!-- this is our mina configuration with plain properties -->
-    <bean id="minaSyslogConfig" class="org.apache.camel.component.mina.MinaConfiguration">
-        <property name="protocol" value="udp"/>
-        <property name="host" value="localhost"/>
-        <property name="port" value="${server-port}"/>
-        <property name="sync" value="false"/>
-    </bean>
+  <!-- this is our mina configuration with plain properties -->
+  <bean id="minaSyslogConfig" class="org.apache.camel.component.mina.MinaConfiguration">
+    <property name="protocol" value="udp"/>
+    <property name="host" value="localhost"/>
+    <property name="port" value="${server-port}"/>
+    <property name="sync" value="false"/>
+  </bean>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
-        <dataFormats>
-            <syslog id="mySyslog"/>
-        </dataFormats>
+    <dataFormats>
+      <syslog id="mySyslog"/>
+    </dataFormats>
 
-        <route>
-            <from ref="minaSyslog"/>
-            <unmarshal ref="mySyslog"/>
-            <to uri="mock:stop1"/>
-            <marshal ref="mySyslog"/>
-            <to uri="mock:stop2"/>
-        </route>
+    <route>
+      <from ref="minaSyslog"/>
+      <unmarshal ref="mySyslog"/>
+      <to uri="mock:stop1"/>
+      <marshal ref="mySyslog"/>
+      <to uri="mock:stop2"/>
+    </route>
 
-    </camelContext>
+  </camelContext>
 
 </beans>

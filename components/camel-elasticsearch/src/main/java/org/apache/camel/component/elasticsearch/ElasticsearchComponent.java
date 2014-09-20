@@ -20,18 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link ElasticsearchEndpoint}.
  */
-public class ElasticsearchComponent extends DefaultComponent {
+public class ElasticsearchComponent extends UriEndpointComponent {
 
     public ElasticsearchComponent() {
+        super(ElasticsearchEndpoint.class);
     }
 
     public ElasticsearchComponent(CamelContext context) {
-        super(context);
+        super(context, ElasticsearchEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

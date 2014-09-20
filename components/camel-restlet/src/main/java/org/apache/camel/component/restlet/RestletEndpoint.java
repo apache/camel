@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,6 +40,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
+    private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
     private Method restletMethod = Method.GET;
 
@@ -49,6 +52,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private String protocol = DEFAULT_PROTOCOL;
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
+    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
     private String uriPattern;
 
     // Optional and for consumer only. This allows a single route to service multiple URI patterns.
@@ -59,6 +64,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private HeaderFilterStrategy headerFilterStrategy;
     private RestletBinding restletBinding;
     private boolean throwExceptionOnFailure = true;
+    private boolean disableStreamCache;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -72,6 +78,15 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system.
         return true;
+    }
+
+    @Override
+    public Exchange createExchange() {
+        Exchange exchange = super.createExchange();
+        if (isDisableStreamCache()) {
+            exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
+        }
+        return exchange;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -122,6 +137,22 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+    
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public String getUriPattern() {
@@ -188,7 +219,15 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
-    
+
+    public boolean isDisableStreamCache() {
+        return disableStreamCache;
+    }
+
+    public void setDisableStreamCache(boolean disableStreamCache) {
+        this.disableStreamCache = disableStreamCache;
+    }
+
     // Update the endpointUri with the restlet method information
     protected void updateEndpointUri() {
         String endpointUri = getEndpointUri();

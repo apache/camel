@@ -36,7 +36,7 @@ public class RestletConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(RestletConsumer.class);
     private Restlet restlet;
 
-    public RestletConsumer(Endpoint endpoint, Processor processor) 
+    public RestletConsumer(Endpoint endpoint, Processor processor)
         throws Exception {
         super(endpoint, processor);
         

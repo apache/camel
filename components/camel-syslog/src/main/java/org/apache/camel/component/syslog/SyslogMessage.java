@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class SyslogMessage {
 
@@ -28,7 +27,7 @@ public class SyslogMessage {
     private String hostname;
     private String logMessage;
 
-    private Date timestamp;
+    private Calendar timestamp;
 
     public String getLogMessage() {
         return logMessage;
@@ -54,11 +53,11 @@ public class SyslogMessage {
         this.facility = facility;
     }
 
-    public Date getTimestamp() {
+    public Calendar getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -88,7 +87,7 @@ public class SyslogMessage {
 
     @Override
     public String toString() {
-        return "SyslogMessage{" + "content='" + logMessage + '\'' + ", facility=" + facility + ", severity=" + severity + ", remoteAddress='"
-               + remoteAddress + '\'' + ", localAddress='" + localAddress + '\'' + ", hostname='" + hostname + '\'' + ", messageTime=" + timestamp + '}';
+        return "SyslogMessage{" + "content='" + logMessage + '\'' + ", facility=" + facility + ", severity=" + severity + ", remoteAddress='" + remoteAddress + '\''
+                + ", localAddress='" + localAddress + '\'' + ", hostname='" + hostname + '\'' + ", messageTime=" + timestamp + '}';
     }
 }

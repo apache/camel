@@ -23,38 +23,50 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.Exchange;
 
 /**
- * {@link ErrorHandler} and {@link ErrorListener} which will log warnings,
+ * {@link ErrorHandler} and {@link ErrorListener} which will ignore warnings,
  * and throws error and fatal as exception, which ensures those can be caught by Camel and dealt-with.
+ * <p/>
+ * Also any warning, error or fatal error is stored on the {@link Exchange} as a property with the keys
+ * <tt>CamelXsltWarning</tt>, <tt>CamelXsltError</tt>, and <tt>CamelXsltFatalError</tt> which
+ * allows end users to access those information form the exchange.
  */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultTransformErrorHandler.class);
+
+    private final Exchange exchange;
+
+    public DefaultTransformErrorHandler(Exchange exchange) {
+        this.exchange = exchange;
+    }
 
     public void error(SAXParseException exception) throws SAXException {
+        exchange.setProperty(Exchange.XSLT_ERROR, exception);
         throw exception;
     }
 
     public void fatalError(SAXParseException exception) throws SAXException {
+        exchange.setProperty(Exchange.XSLT_FATAL_ERROR, exception);
         throw exception;
     }
 
     public void warning(SAXParseException exception) throws SAXException {
-        LOG.warn("parser warning", exception);
+        exchange.setProperty(Exchange.XSLT_WARNING, exception);
     }
 
     public void error(TransformerException exception) throws TransformerException {
+        exchange.setProperty(Exchange.XSLT_ERROR, exception);
         throw exception;
     }
 
     public void fatalError(TransformerException exception) throws TransformerException {
+        exchange.setProperty(Exchange.XSLT_FATAL_ERROR, exception);
         throw exception;
     }
 
     public void warning(TransformerException exception) throws TransformerException {
-        LOG.warn("parser warning", exception);
+        exchange.setProperty(Exchange.XSLT_WARNING, exception);
     }
 
 }

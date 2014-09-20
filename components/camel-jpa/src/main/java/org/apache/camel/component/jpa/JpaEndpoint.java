@@ -17,7 +17,6 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -29,6 +28,8 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -39,27 +40,37 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@UriEndpoint(scheme = "jpa", consumerClass = JpaConsumer.class)
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+    @UriParam
     private String persistenceUnit = "camel";
     private Expression producerExpression;
+    @UriParam
     private int maximumResults = -1;
     private Class<?> entityType;
     private Map<String, Object> entityManagerProperties;
+    @UriParam
     private boolean consumeDelete = true;
+    @UriParam
     private boolean consumeLockEntity = true;
+    @UriParam
     private boolean flushOnSend = true;
+    @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
     private boolean usePersist;
+    @UriParam
+    private boolean joinTransaction = true;
+    @UriParam
+    private boolean usePassedInEntityManager;
 
     public JpaEndpoint() {
     }
 
     /**
-     * 
-     * @param endpointUri
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
     @Deprecated
@@ -74,9 +85,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * 
-     * @param endpointUri
-     * @param entityManagerFactory
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
     @Deprecated
@@ -86,10 +94,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * 
-     * @param endpointUri
-     * @param entityManagerFactory
-     * @param transactionManager
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
     @Deprecated
@@ -241,6 +245,22 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.usePersist = usePersist;
     }
 
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
+    }
+
+    public boolean isUsePassedInEntityManager() {
+        return this.usePassedInEntityManager;
+    }
+
+    public void setUsePassedInEntityManager(boolean usePassedIn) {
+        this.usePassedInEntityManager = usePassedIn;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -262,6 +282,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return tm;
     }
 
+    /**
+     * @deprecated use {@link #getEntityManagerFactory()} to get hold of factory and create an entity manager using the factory.
+     */
+    @Deprecated
     protected EntityManager createEntityManager() {
         return getEntityManagerFactory().createEntityManager();
     }

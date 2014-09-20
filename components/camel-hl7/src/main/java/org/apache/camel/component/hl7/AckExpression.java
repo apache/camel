@@ -27,27 +27,43 @@ import org.apache.camel.util.ObjectHelper;
 
 public class AckExpression extends ExpressionAdapter {
 
-    private AckCode acknowledgementCode;
+    private AcknowledgmentCode acknowledgementCode;
     private String errorMessage;
     private ErrorCode errorCode;
 
     public AckExpression() {
-        this(null, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
-    }
-
-    public AckExpression(AckCode acknowledgementCode) {
-        this(acknowledgementCode, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
+        this((AcknowledgmentCode)null, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
     }
 
     /**
-     * @deprecated Use {@link #AckExpression(AckCode, String, ErrorCode)}
+     * @deprecated use {@link #AckExpression(ca.uhn.hl7v2.AcknowledgmentCode)}
+     */
+    @Deprecated
+    public AckExpression(AckCode acknowledgementCode) {
+        this(acknowledgementCode.toAcknowledgmentCode());
+    }
+
+    /**
+     * @deprecated Use {@link #AckExpression(AcknowledgmentCode, String, ErrorCode)}
      */
     @Deprecated
     public AckExpression(AckCode acknowledgementCode, String errorMessage, int errorCode) {
         this(acknowledgementCode, errorMessage, ErrorCode.errorCodeFor(errorCode));
     }
 
+    /**
+     * @deprecated Use {@link #AckExpression(AcknowledgmentCode, String, ErrorCode)}
+     */
+    @Deprecated
     public AckExpression(AckCode acknowledgementCode, String errorMessage, ErrorCode errorCode) {
+        this(acknowledgementCode.toAcknowledgmentCode(), errorMessage, errorCode);
+    }
+
+    public AckExpression(AcknowledgmentCode acknowledgementCode) {
+        this(acknowledgementCode, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
+    }
+
+    public AckExpression(AcknowledgmentCode acknowledgementCode, String errorMessage, ErrorCode errorCode) {
         this.acknowledgementCode = acknowledgementCode;
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
@@ -59,11 +75,11 @@ public class AckExpression extends ExpressionAdapter {
         Message msg = exchange.getIn().getBody(Message.class);
         try {
             HL7Exception hl7e = generateHL7Exception(t);
-            AckCode code = acknowledgementCode;
+            AcknowledgmentCode code = acknowledgementCode;
             if (t != null && code == null) {
-                code = AckCode.AE;
+                code = AcknowledgmentCode.AE;
             }
-            return msg.generateACK(code == null ? AcknowledgmentCode.AA : code.toAcknowledgmentCode(), hl7e);
+            return msg.generateACK(code == null ? AcknowledgmentCode.AA : code, hl7e);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -72,7 +88,7 @@ public class AckExpression extends ExpressionAdapter {
     private HL7Exception generateHL7Exception(Throwable t) {
         HL7Exception hl7Exception = null;
         if (t == null) {
-            if (acknowledgementCode != null && acknowledgementCode.isError()) {
+            if (acknowledgementCode != null && !isSuccess(acknowledgementCode)) {
                 hl7Exception = new HL7Exception(errorMessage, errorCode);
             }
         } else {
@@ -84,6 +100,10 @@ public class AckExpression extends ExpressionAdapter {
             }
         }
         return hl7Exception;
+    }
+
+    private boolean isSuccess(AcknowledgmentCode code) {
+        return code.name().endsWith("A");
     }
 
 }

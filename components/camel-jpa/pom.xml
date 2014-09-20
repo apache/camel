@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-jpa</artifactId>
@@ -105,6 +105,36 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa-maven-plugin</artifactId>
+                    <versionRange>${openjpa-version}</versionRange>
+                    <goals>
+                      <goal>enhance</goal>
+                      <goal>test-enhance</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.openjpa</groupId>

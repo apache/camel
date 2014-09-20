@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.velocity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.velocity.VelocityContext;
 import org.junit.Test;
 
 public class VelocityTest extends CamelTestSupport {
@@ -42,6 +46,29 @@ public class VelocityTest extends CamelTestSupport {
         assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getOut().getBody());
         assertEquals("Christian", exchange.getOut().getHeader("name"));
         assertSame(dataHandler, exchange.getOut().getAttachment("item"));
+    }
+    
+    @Test
+    public void testVelocityContext() throws Exception {
+        Exchange exchange = template.request("direct:a", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("");
+                exchange.getIn().setHeader("name", "Christian");
+                Map<String, Object> variableMap = new HashMap<String, Object>();
+                Map<String, Object> headersMap = new HashMap<String, Object>();
+                headersMap.put("name", "Willem");
+                variableMap.put("headers", headersMap);
+                variableMap.put("body", "Monday");
+                variableMap.put("exchange", exchange);
+                VelocityContext velocityContext = new VelocityContext(variableMap);
+                exchange.getIn().setHeader(VelocityConstants.VELOCITY_CONTEXT, velocityContext);
+                exchange.setProperty("item", "7");
+            }
+        });
+
+        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getOut().getBody());
+        assertEquals("Christian", exchange.getOut().getHeader("name"));
     }
 
     protected RouteBuilder createRouteBuilder() {

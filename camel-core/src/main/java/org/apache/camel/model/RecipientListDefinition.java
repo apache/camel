@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -77,6 +76,10 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private Processor onPrepare;
     @XmlAttribute
     private Boolean shareUnitOfWork;
+    @XmlAttribute
+    private Integer cacheSize;
+    @XmlAttribute
+    private Boolean parallelAggregate;
 
     public RecipientListDefinition() {
     }
@@ -116,8 +119,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         }
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
         answer.setParallelProcessing(isParallelProcessing());
-        answer.setStreaming(isStreaming());   
+        answer.setParallelAggregate(isParallelAggregate());
+        answer.setStreaming(isStreaming());
         answer.setShareUnitOfWork(isShareUnitOfWork());
+        if (getCacheSize() != null) {
+            answer.setCacheSize(getCacheSize());
+        }
         if (onPrepareRef != null) {
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
         }
@@ -280,7 +287,20 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         setParallelProcessing(true);
         return this;
     }
-    
+
+    /**
+     * Doing the aggregate work in parallel
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> parallelAggregate() {
+        setParallelAggregate(true);
+        return this;
+    }
+
     /**
      * Doing the recipient list work in streaming model
      *
@@ -364,6 +384,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public RecipientListDefinition<Type> shareUnitOfWork() {
         setShareUnitOfWork(true);
+        return this;
+    }
+
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this recipient list, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 
@@ -510,4 +542,29 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         return shareUnitOfWork != null && shareUnitOfWork;
     }
 
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    public Boolean getParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    /**
+     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     */
+    public boolean isParallelAggregate() {
+        return parallelAggregate != null && parallelAggregate;
+    }
+
+    public void setParallelAggregate(Boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
+    }
 }

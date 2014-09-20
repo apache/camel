@@ -49,6 +49,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;
+    private boolean aggregateOnException;
 
     /**
      * Creates a new {@link PollEnricher}. The default aggregation strategy is to
@@ -75,6 +76,10 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         this.timeout = timeout;
     }
 
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
     /**
      * Sets the aggregation strategy for this poll enricher.
      *
@@ -84,11 +89,8 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    /**
-     * Sets the default aggregation strategy for this poll enricher.
-     */
-    public void setDefaultAggregationStrategy() {
-        this.aggregationStrategy = defaultAggregationStrategy();
+    public long getTimeout() {
+        return timeout;
     }
 
     /**
@@ -101,6 +103,21 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isAggregateOnException() {
+        return aggregateOnException;
+    }
+
+    public void setAggregateOnException(boolean aggregateOnException) {
+        this.aggregateOnException = aggregateOnException;
+    }
+
+    /**
+     * Sets the default aggregation strategy for this poll enricher.
+     */
+    public void setDefaultAggregationStrategy() {
+        this.aggregationStrategy = defaultAggregationStrategy();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -147,7 +164,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
             LOG.debug("Consumer received: {}", resourceExchange);
         }
 
-        if (resourceExchange != null && resourceExchange.isFailed()) {
+        if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
             // copy resource exchange onto original exchange (preserving pattern)
             copyResultsPreservePattern(exchange, resourceExchange);
         } else {

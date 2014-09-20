@@ -73,21 +73,20 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                     private NamedQueryParser parser = new NamedQueryParser(query);
                     private Object next;
                     private boolean done;
+                    private boolean preFetched;
 
                     @Override
                     public boolean hasNext() {
-                        if (done) {
-                            return false;
+                        if (!done && !preFetched) {
+                            next();
+                            preFetched = true;
                         }
-                        if (next == null) {
-                            next = next();
-                        }
-                        return next != null;
+                        return !done;
                     }
 
                     @Override
                     public Object next() {
-                        if (next == null) {
+                        if (!preFetched) {
                             String key = parser.next();
                             if (key == null) {
                                 done = true;
@@ -100,9 +99,8 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                             }
                             next = headerMap.get(key);
                         }
-                        Object answer = next;
-                        next = null;
-                        return answer;
+                        preFetched = false;
+                        return next;
                     }
 
                     @Override

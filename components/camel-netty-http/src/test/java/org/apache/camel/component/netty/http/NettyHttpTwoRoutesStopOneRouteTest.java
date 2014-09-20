@@ -43,13 +43,13 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Camel");
 
-        // the foo route is stopped so this service is not available
+        // the foo route is stopped so this service is no longer there
         try {
             template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(503, cause.getStatusCode());
+            assertEquals(404, cause.getStatusCode());
         }
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);

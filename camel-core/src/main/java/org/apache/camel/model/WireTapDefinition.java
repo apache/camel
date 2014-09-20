@@ -43,7 +43,8 @@ import org.apache.camel.util.CamelContextHelper;
  */
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<WireTapDefinition<Type>> implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
+public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<WireTapDefinition<Type>>
+        implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>>, EndpointRequiredDefinition {
     @XmlAttribute
     protected String uri;
     @XmlAttribute
@@ -78,6 +79,17 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
 
     public WireTapDefinition(Endpoint endpoint) {
         setEndpoint(endpoint);
+    }
+
+    @Override
+    public String getEndpointUri() {
+        if (uri != null) {
+            return uri;
+        } else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        } else {
+            return null;
+        }
     }
 
     @Override

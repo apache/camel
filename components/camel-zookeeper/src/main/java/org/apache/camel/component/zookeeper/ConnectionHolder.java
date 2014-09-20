@@ -85,7 +85,9 @@ public class ConnectionHolder implements Watcher {
 
     public void closeConnection() {
         try {
-            zookeeper.close();
+            if (zookeeper != null) {
+                zookeeper.close();
+            }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Shutting down connection to Zookeeper cluster {}", configuration.getConnectString());
             }

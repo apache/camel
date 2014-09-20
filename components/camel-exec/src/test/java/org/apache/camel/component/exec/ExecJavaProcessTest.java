@@ -66,10 +66,10 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
 
     @Produce(uri = "direct:input")
-    private ProducerTemplate producerTemplate;
+    ProducerTemplate producerTemplate;
 
     @EndpointInject(uri = "mock:output")
-    private MockEndpoint output;
+    MockEndpoint output;
 
     @Test
     public void testExecJavaProcessExitCode0() throws Exception {
@@ -369,7 +369,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         });
     }
 
-    private List<String> buildArgs(Object commandArgument) {
+    List<String> buildArgs(Object commandArgument) {
         String classpath = System.getProperty("java.class.path");
         List<String> args = new ArrayList<String>();
         args.add("-cp");

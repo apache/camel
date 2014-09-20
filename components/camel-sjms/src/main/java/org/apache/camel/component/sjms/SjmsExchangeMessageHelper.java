@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -76,25 +75,25 @@ public final class SjmsExchangeMessageHelper {
 
                 DefaultMessage bodyMessage = null;
                 if (out) {
-                    bodyMessage = (DefaultMessage)exchange.getOut();
+                    bodyMessage = (DefaultMessage) exchange.getOut();
                 } else {
-                    bodyMessage = (DefaultMessage)exchange.getIn();
+                    bodyMessage = (DefaultMessage) exchange.getIn();
                 }
                 switch (JmsMessageHelper.discoverJmsMessageType(message)) {
                 case Bytes:
-                    BytesMessage bytesMessage = (BytesMessage)message;
+                    BytesMessage bytesMessage = (BytesMessage) message;
                     if (bytesMessage.getBodyLength() > Integer.MAX_VALUE) {
                         LOGGER.warn("Length of BytesMessage is too long: {}", bytesMessage.getBodyLength());
                         return null;
                     }
-                    byte[] result = new byte[(int)bytesMessage.getBodyLength()];
+                    byte[] result = new byte[(int) bytesMessage.getBodyLength()];
                     bytesMessage.readBytes(result);
                     bodyMessage.setHeader(JMS_MESSAGE_TYPE, JmsMessageType.Bytes);
                     bodyMessage.setBody(result);
                     break;
                 case Map:
                     Map<String, Object> body = new HashMap<String, Object>();
-                    MapMessage mapMessage = (MapMessage)message;
+                    MapMessage mapMessage = (MapMessage) message;
                     Enumeration<String> names = mapMessage.getMapNames();
                     while (names.hasMoreElements()) {
                         String key = names.nextElement();
@@ -105,17 +104,17 @@ public final class SjmsExchangeMessageHelper {
                     bodyMessage.setBody(body);
                     break;
                 case Object:
-                    ObjectMessage objMsg = (ObjectMessage)message;
+                    ObjectMessage objMsg = (ObjectMessage) message;
                     bodyMessage.setHeader(JMS_MESSAGE_TYPE, JmsMessageType.Object);
                     bodyMessage.setBody(objMsg.getObject());
                     break;
                 case Text:
-                    TextMessage textMsg = (TextMessage)message;
+                    TextMessage textMsg = (TextMessage) message;
                     bodyMessage.setHeader(JMS_MESSAGE_TYPE, JmsMessageType.Text);
                     bodyMessage.setBody(textMsg.getText());
                     break;
                 case Stream:
-                    StreamMessage streamMessage = (StreamMessage)message;
+                    StreamMessage streamMessage = (StreamMessage) message;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int next = streamMessage.readByte();
                     while (next > -1) {
@@ -141,9 +140,9 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Removes the property from the JMS message.
-     * 
+     *
      * @param jmsMessage the JMS message
-     * @param name name of the property to remove
+     * @param name       name of the property to remove
      * @return the old value of the property or <tt>null</tt> if not exists
      * @throws JMSException can be thrown
      */
@@ -162,7 +161,7 @@ public final class SjmsExchangeMessageHelper {
         Map<String, Object> map = new LinkedHashMap<String, Object>();
         Enumeration<?> en = jmsMessage.getPropertyNames();
         while (en.hasMoreElements()) {
-            String key = (String)en.nextElement();
+            String key = (String) en.nextElement();
             if (name.equals(key)) {
                 answer = key;
             } else {
@@ -181,16 +180,16 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Tests whether a given property with the name exists
-     * 
+     *
      * @param jmsMessage the JMS message
-     * @param name name of the property to test if exists
+     * @param name       name of the property to test if exists
      * @return <tt>true</tt> if the property exists, <tt>false</tt> if not.
      * @throws JMSException can be thrown
      */
     public static boolean hasProperty(Message jmsMessage, String name) throws JMSException {
         Enumeration<?> en = jmsMessage.getPropertyNames();
         while (en.hasMoreElements()) {
-            String key = (String)en.nextElement();
+            String key = (String) en.nextElement();
             if (name.equals(key)) {
                 return true;
             }
@@ -200,10 +199,10 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Sets the property on the given JMS message.
-     * 
+     *
      * @param jmsMessage the JMS message
-     * @param name name of the property to set
-     * @param value the value
+     * @param name       name of the property to set
+     * @param value      the value
      * @throws JMSException can be thrown
      */
     public static void setProperty(Message jmsMessage, String name, Object value) throws JMSException {
@@ -211,21 +210,21 @@ public final class SjmsExchangeMessageHelper {
             return;
         }
         if (value instanceof Byte) {
-            jmsMessage.setByteProperty(name, (Byte)value);
+            jmsMessage.setByteProperty(name, (Byte) value);
         } else if (value instanceof Boolean) {
-            jmsMessage.setBooleanProperty(name, (Boolean)value);
+            jmsMessage.setBooleanProperty(name, (Boolean) value);
         } else if (value instanceof Double) {
-            jmsMessage.setDoubleProperty(name, (Double)value);
+            jmsMessage.setDoubleProperty(name, (Double) value);
         } else if (value instanceof Float) {
-            jmsMessage.setFloatProperty(name, (Float)value);
+            jmsMessage.setFloatProperty(name, (Float) value);
         } else if (value instanceof Integer) {
-            jmsMessage.setIntProperty(name, (Integer)value);
+            jmsMessage.setIntProperty(name, (Integer) value);
         } else if (value instanceof Long) {
-            jmsMessage.setLongProperty(name, (Long)value);
+            jmsMessage.setLongProperty(name, (Long) value);
         } else if (value instanceof Short) {
-            jmsMessage.setShortProperty(name, (Short)value);
+            jmsMessage.setShortProperty(name, (Short) value);
         } else if (value instanceof String) {
-            jmsMessage.setStringProperty(name, (String)value);
+            jmsMessage.setStringProperty(name, (String) value);
         } else {
             // fallback to Object
             jmsMessage.setObjectProperty(name, value);
@@ -236,8 +235,8 @@ public final class SjmsExchangeMessageHelper {
      * Sets the correlation id on the JMS message.
      * <p/>
      * Will ignore exception thrown
-     * 
-     * @param message the JMS message
+     *
+     * @param message       the JMS message
      * @param correlationId the correlation id
      */
     public static void setCorrelationId(Message message, String correlationId) {
@@ -253,7 +252,7 @@ public final class SjmsExchangeMessageHelper {
     /**
      * Normalizes the destination name, by removing any leading queue or topic
      * prefixes.
-     * 
+     *
      * @param destination the destination
      * @return the normalized destination
      */
@@ -272,7 +271,7 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Sets the JMSReplyTo on the message.
-     * 
+     *
      * @param message the message
      * @param replyTo the reply to destination
      */
@@ -286,7 +285,7 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Gets the JMSReplyTo from the message.
-     * 
+     *
      * @param message the message
      * @return the reply to, can be <tt>null</tt>
      */
@@ -302,7 +301,7 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Gets the JMSType from the message.
-     * 
+     *
      * @param message the message
      * @return the type, can be <tt>null</tt>
      */
@@ -318,10 +317,10 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Gets the JMSRedelivered from the message.
-     * 
+     *
      * @param message the message
      * @return <tt>true</tt> if redelivered, <tt>false</tt> if not,
-     *         <tt>null</tt> if not able to determine
+     * <tt>null</tt> if not able to determine
      */
     public static Boolean getJMSRedelivered(Message message) {
         try {
@@ -335,18 +334,18 @@ public final class SjmsExchangeMessageHelper {
 
     /**
      * Sets the JMSDeliveryMode on the message.
-     * 
-     * @param exchange the exchange
-     * @param message the message
+     *
+     * @param exchange     the exchange
+     * @param message      the message
      * @param deliveryMode the delivery mode, either as a String or integer
      * @throws javax.jms.JMSException is thrown if error setting the delivery
-     *             mode
+     *                                mode
      */
     public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {
         Integer mode = null;
 
         if (deliveryMode instanceof String) {
-            String s = (String)deliveryMode;
+            String s = (String) deliveryMode;
             if ("PERSISTENT".equalsIgnoreCase(s)) {
                 mode = DeliveryMode.PERSISTENT;
             } else if ("NON_PERSISTENT".equalsIgnoreCase(s)) {
@@ -408,7 +407,7 @@ public final class SjmsExchangeMessageHelper {
                 // log at trace level to not spam log
                 LOGGER.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
                 if (headerName.equalsIgnoreCase("JMSDestination") || headerName.equalsIgnoreCase("JMSMessageID") || headerName.equalsIgnoreCase("JMSTimestamp")
-                    || headerName.equalsIgnoreCase("JMSRedelivered")) {
+                        || headerName.equalsIgnoreCase("JMSRedelivered")) {
                     // The following properties are set by the MessageProducer:
                     // JMSDestination
                     // The following are set on the underlying JMS provider:
@@ -465,13 +464,13 @@ public final class SjmsExchangeMessageHelper {
         }
         return exchange;
     }
-    
+
     public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy) throws Exception {
         Message answer = null;
         Object body = null;
         Map<String, Object> bodyHeaders = null;
 
-        
+
         if (exchange.getOut().getBody() != null) {
             body = exchange.getOut().getBody();
             bodyHeaders = new HashMap<String, Object>(exchange.getOut().getHeaders());
@@ -479,9 +478,9 @@ public final class SjmsExchangeMessageHelper {
             body = exchange.getIn().getBody();
             bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
         }
-        
+
         answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy);
-        
+
         return answer;
     }
 

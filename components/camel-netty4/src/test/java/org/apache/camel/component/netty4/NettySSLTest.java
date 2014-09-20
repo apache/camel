@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4;
 
 import java.io.File;
 import java.security.Principal;
+
 import javax.net.ssl.SSLSession;
 
 import org.apache.camel.Exchange;

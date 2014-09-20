@@ -18,7 +18,12 @@ package org.apache.camel.component.salesforce;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +83,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         OperationName operationName = null;
         String topicName = null;
         try {
-            LOG.debug("Creating endpoint for ", remaining);
+            LOG.debug("Creating endpoint for: {}", remaining);
             operationName = OperationName.fromValue(remaining);
         } catch (IllegalArgumentException ex) {
             // if its not an operation name, treat is as topic name for consumer endpoints
@@ -107,10 +112,22 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return endpoint;
     }
 
+    private Map<String, Class<?>> parsePackages() {
+        Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+        Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
+                findImplementations(AbstractSObjectBase.class, packages);
+        for (Class<?> aClass : classes) {
+            // findImplementations also returns AbstractSObjectBase for some reason!!!
+            if (AbstractSObjectBase.class != aClass) {
+                result.put(aClass.getSimpleName(), aClass);
+            }
+        }
+
+        return result;
+    }
+
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         // validate properties
         ObjectHelper.notNull(loginConfig, "loginConfig");
 
@@ -153,10 +170,11 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         if (packages != null && packages.length > 0) {
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
+            LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work");
-            classMap = Collections.unmodifiableMap(new HashMap<String, Class<?>>());
+            classMap = new HashMap<String, Class<?>>(0);
         }
 
         if (subscriptionHelper != null) {
@@ -164,29 +182,18 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
     }
 
-    private Map<String, Class<?>> parsePackages() {
-        Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-        Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
-            findImplementations(AbstractSObjectBase.class, packages);
-        for (Class<?> aClass : classes) {
-            // findImplementations also returns AbstractSObjectBase for some reason!!!
-            if (AbstractSObjectBase.class != aClass) {
-                result.put(aClass.getSimpleName(), aClass);
-            }
-        }
-
-        return Collections.unmodifiableMap(result);
-    }
-
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        if (classMap != null) {
+            classMap.clear();
+        }
 
         try {
             if (subscriptionHelper != null) {
                 // shutdown all streaming connections
                 // note that this is done in the component, and not in consumer
                 ServiceHelper.stopService(subscriptionHelper);
+                subscriptionHelper = null;
             }
             if (session != null && session.getAccessToken() != null) {
                 try {
@@ -199,6 +206,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (httpClient != null) {
                 // shutdown http client connections
                 httpClient.stop();
+                httpClient.destroy();
+                httpClient = null;
             }
         }
     }
@@ -300,6 +309,13 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     public void setPackages(String[] packages) {
         this.packages = packages;
+    }
+
+    public void setPackages(String packages) {
+        // split using comma
+        if (packages != null) {
+            setPackages(packages.split(","));
+        }
     }
 
     public SalesforceSession getSession() {

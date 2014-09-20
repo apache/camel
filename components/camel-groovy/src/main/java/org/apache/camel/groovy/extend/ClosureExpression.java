@@ -29,7 +29,6 @@ class ClosureExpression extends ExpressionSupport {
     private Closure<?> closure;
 
     ClosureExpression(Closure<?> closure) {
-        super();
         this.closure = closure;
     }
 

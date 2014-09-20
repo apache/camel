@@ -185,12 +185,15 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     config = builder.build();
                 }
             }
-            
-            if (config == null) {
-                client = new AsyncHttpClient();
-            } else {
-                client = new AsyncHttpClient(config);
-            }
+            client = createClient(config);
+        }
+    }
+
+    protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
+        if (config == null) {
+            return new AsyncHttpClient();
+        } else {
+            return new AsyncHttpClient(config);
         }
     }
 

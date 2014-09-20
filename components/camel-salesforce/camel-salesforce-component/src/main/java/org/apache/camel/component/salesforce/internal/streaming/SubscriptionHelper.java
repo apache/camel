@@ -26,11 +26,11 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceConsumer;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityListener;
+import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
@@ -50,7 +50,7 @@ import static org.cometd.bayeux.Channel.META_UNSUBSCRIBE;
 import static org.cometd.bayeux.Message.ERROR_FIELD;
 import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
-public class SubscriptionHelper implements Service {
+public class SubscriptionHelper extends ServiceSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
@@ -62,10 +62,10 @@ public class SubscriptionHelper implements Service {
     private final SalesforceComponent component;
     private final SalesforceSession session;
     private final BayeuxClient client;
+    private final long timeout = 60 * 1000L;
 
     private final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> listenerMap;
 
-    private boolean started;
     private ClientSessionChannel.MessageListener handshakeListener;
     private ClientSessionChannel.MessageListener connectListener;
 
@@ -85,12 +85,7 @@ public class SubscriptionHelper implements Service {
     }
 
     @Override
-    public void start() throws Exception {
-        if (started) {
-            // no need to start again
-            return;
-        }
-
+    protected void doStart() throws Exception {
         // listener for handshake error or exception
         if (handshakeListener == null) {
             // first start
@@ -174,18 +169,16 @@ public class SubscriptionHelper implements Service {
                         String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
             }
         }
-
-        started = true;
     }
 
     @Override
-    public void stop() {
-        if (started) {
-            started = false;
-            // TODO find and log any disconnect errors
-            client.disconnect();
-            client.getChannel(META_CONNECT).removeListener(connectListener);
-            client.getChannel(META_HANDSHAKE).removeListener(handshakeListener);
+    protected void doStop() throws Exception {
+        client.getChannel(META_CONNECT).removeListener(connectListener);
+        client.getChannel(META_HANDSHAKE).removeListener(handshakeListener);
+
+        boolean disconnected = client.disconnect(timeout);
+        if (!disconnected) {
+            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(), timeout);
         }
     }
 
@@ -226,9 +219,7 @@ public class SubscriptionHelper implements Service {
         };
 
         BayeuxClient client = new BayeuxClient(getEndpointUrl(), transport);
-
         client.setDebugEnabled(false);
-
         return client;
     }
 

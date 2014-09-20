@@ -51,7 +51,6 @@ public class GreeterImpl implements Greeter {
      */
     public String sayHi() {
         LOG.info("Executing operation sayHi");
-        System.out.println("Executing operation sayHi\n");
         return "Bonjour";
     }
 }

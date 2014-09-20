@@ -51,12 +51,14 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
-    private static final ChannelGroup ALL_CHANNELS = new DefaultChannelGroup("NettyProducer");
+    private final ChannelGroup allChannels = new DefaultChannelGroup("NettyProducer");
     private CamelContext context;
     private NettyConfiguration configuration;
     private ChannelFactory channelFactory;
@@ -66,6 +68,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     private BossPool bossPool;
     private WorkerPool workerPool;
     private ObjectPool<Channel> pool;
+    private Timer timer;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -123,6 +126,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
+        timer = new HashedWheelTimer();
+
         // setup pipeline factory
         ClientPipelineFactory factory = configuration.getClientPipelineFactory();
         if (factory != null) {
@@ -148,8 +153,8 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
         // close all channels
-        LOG.trace("Closing {} channels", ALL_CHANNELS.size());
-        ChannelGroupFuture future = ALL_CHANNELS.close();
+        LOG.trace("Closing {} channels", allChannels.size());
+        ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
         // and then release other resources
@@ -173,6 +178,11 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             pool.close();
             pool = null;
+        }
+
+        if (timer != null) {
+            timer.stop();
+            timer = null;
         }
 
         super.doStop();
@@ -327,6 +337,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             if (bp == null) {
                 // create new pool which we should shutdown when stopping as its not shared
                 bossPool = new NettyClientBossPoolBuilder()
+                        .withTimer(timer)
                         .withBossCount(configuration.getBossCount())
                         .withName("NettyClientTCPBoss")
                         .build();
@@ -400,7 +411,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
             // bind and store channel so we can close it when stopping
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-            ALL_CHANNELS.add(channel);
+            allChannels.add(channel);
             answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
 
             if (LOG.isDebugEnabled()) {
@@ -442,7 +453,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
         Channel answer = channelFuture.getChannel();
         // to keep track of all channels in use
-        ALL_CHANNELS.add(answer);
+        allChannels.add(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
@@ -467,7 +478,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     public ChannelGroup getAllChannels() {
-        return ALL_CHANNELS;
+        return allChannels;
     }
 
     /**
@@ -514,7 +525,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
-            // noop
+            NettyHelper.close(channel);
+            allChannels.remove(channel);
         }
 
         @Override

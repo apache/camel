@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
+import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
@@ -41,6 +42,8 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         this.bundleContext = bundleContext;
         this.registry = registry;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
+        // setup the application context classloader with the bundle classloader
+        setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
     }
 
     @Override

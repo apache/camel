@@ -22,8 +22,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.restlet.Component;
@@ -44,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
@@ -57,14 +65,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private Integer inboundBufferSize;
     private Integer minThreads;
     private Integer maxThreads;
+    private Integer lowThreads;
     private Integer maxConnectionsPerHost;
     private Integer maxTotalConnections;
     private Integer outboundBufferSize;
+    private Integer maxQueued;
     private Boolean persistingConnections;
     private Boolean pipeliningConnections;
     private Integer threadMaxIdleTimeMs;
     private Boolean useForwardedForHeader;
     private Boolean reuseAddress;
+    private boolean disableStreamCache;
+    private int port;
 
     public RestletComponent() {
         this(new Component());
@@ -73,12 +85,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public RestletComponent(Component component) {
         // Allow the Component to be injected, so that the RestletServlet may be
         // configured within a webapp
+        super(RestletEndpoint.class);
         this.component = component;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
+        result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
         // set the endpoint uri according to the parameter
@@ -97,6 +111,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         String host = u.getHost();
         if (u.getPort() > 0) {
             port = u.getPort();
+        } else {
+            port = this.port;
         }
 
         result.setProtocol(protocol);
@@ -112,6 +128,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // configure component options
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restle"))) {
+            // configure additional options on spark configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(this, config.getComponentProperties());
+            }
+        }
+
         component.start();
     }
 
@@ -237,6 +263,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 if (getMaxThreads() != null) {
                     params.add("maxThreads", getMaxThreads().toString());
                 }
+                if (getLowThreads() != null) {
+                    params.add("lowThreads", getLowThreads().toString());
+                }
+                if (getMaxQueued() != null) {
+                    params.add("maxQueued", getMaxQueued().toString());
+                }
                 if (getMaxConnectionsPerHost() != null) {
                     params.add("maxConnectionsPerHost", getMaxConnectionsPerHost().toString());
                 }
@@ -261,6 +293,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 if (getReuseAddress() != null) {
                     params.add("reuseAddress", getReuseAddress().toString());
                 }
+                
                 LOG.debug("Setting parameters: {} to server: {}", params, server);
                 server.getContext().setParameters(params);
 
@@ -372,6 +405,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
+    
+    public Integer getLowThreads() {
+        return lowThreads;
+    }
+
+    public void setLowThreads(Integer lowThreads) {
+        this.lowThreads = lowThreads;
+    }
 
     public Integer getMaxTotalConnections() {
         return maxTotalConnections;
@@ -435,5 +476,102 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
 
     public void setReuseAddress(Boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
+    }
+
+    public Integer getMaxQueued() {
+        return maxQueued;
+    }
+
+    public void setMaxQueued(Integer maxQueued) {
+        this.maxQueued = maxQueued;
+    }
+
+    public boolean isDisableStreamCache() {
+        return disableStreamCache;
+    }
+
+    public void setDisableStreamCache(boolean disableStreamCache) {
+        this.disableStreamCache = disableStreamCache;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
+        path = FileUtil.stripLeadingSeparator(path);
+
+        String scheme = "http";
+        String host = "";
+        int port = 0;
+
+        // if no explicit port/host configured, then use port from rest configuration
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config.getComponent() == null || config.getComponent().equals("restlet")) {
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
+            }
+            if (config.getHost() != null) {
+                host = config.getHost();
+            }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
+        }
+
+        // if no explicit hostname set then resolve the hostname
+        if (ObjectHelper.isEmpty(host)) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
+            }
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        // build query string, and append any endpoint configuration properties
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        String query = URISupport.createQueryString(map);
+
+        String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
+        // get the endpoint
+        url = String.format(url, scheme, host, port, path, verb);
+        RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
+        setProperties(endpoint, parameters);
+
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
+        return consumer;
     }
 }

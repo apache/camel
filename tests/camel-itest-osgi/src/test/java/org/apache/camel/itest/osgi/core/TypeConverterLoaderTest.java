@@ -20,9 +20,9 @@ import org.apache.camel.spi.FactoryFinder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class TypeConverterLoaderTest extends OSGiIntegrationTestSupport {
     
     @Test

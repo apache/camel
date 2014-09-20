@@ -20,7 +20,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.spi.StreamCachingStrategy;
 
-public interface ManagedStreamCachingStrategyMBean {
+public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Whether stream caching is enabled")
     boolean isEnabled();

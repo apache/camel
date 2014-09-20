@@ -19,14 +19,14 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>12</version>
+    <version>14</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.13-SNAPSHOT</version>
+  <version>2.15-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -43,11 +43,15 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-    <jdk.version>1.6</jdk.version>
-    <compiler.fork>1.6</compiler.fork>
+    <jdk.version>1.7</jdk.version>
+    <compiler.fork>false</compiler.fork>
+
+    <!-- use maven compiler 2.5.1 as 3.0/3.1 recompiles everything even if nothingh has changed, or only 1 file,
+         so 2.5.1 is much faster to use for development -->
+    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <jaxb-version>2.1.13</jaxb-version>
+    <jaxb-version>2.2.7</jaxb-version>
   </properties>
 
   <mailingLists>
@@ -120,6 +124,7 @@
     <module>tooling</module>
     <module>tests</module>
     <module>examples</module>
+    <module>etc</module>
   </modules>
 
   <scm>
@@ -131,20 +136,12 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
           <version>2.9</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>false</downloadJavadocs>
@@ -160,11 +157,10 @@
             <downloadJavadocs>false</downloadJavadocs>
           </configuration>
         </plugin>
-        
+
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <version>0.9</version>
             <configuration>
               <excludeSubProjects>false</excludeSubProjects>
               <excludes>
@@ -177,7 +173,7 @@
                 <exclude>**/test/data*/**/*</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
-                <!-- tooling/camel-manual/src/styles/print.css use a different 
+                <!-- tooling/camel-manual/src/styles/print.css use a different
                   license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- cxf does not handle comments here -->
@@ -189,7 +185,7 @@
                 <exclude>**/.*</exclude>
                 <exclude>**/.settings/**/*</exclude>
                 <exclude>**/*.iml</exclude>
-                <exclude>.idea/**/*</exclude>
+                <exclude>**/.idea/**/*</exclude>
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
@@ -197,12 +193,19 @@
               </excludes>
             </configuration>
           </plugin>
-          
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
-          <version>2.4.1</version>
+          <version>2.4.2</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-provider-gitexe</artifactId>
+              <version>1.9</version>
+            </dependency>
+          </dependencies>
           <configuration>
             <localCheckout>true</localCheckout>
             <pushChanges>true</pushChanges>
@@ -210,7 +213,8 @@
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate</arguments>
+            <!-- The profile we want to use when doing the release -->
+            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate,osgi.test,performance.test</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
@@ -232,18 +236,20 @@
     </profile>
     <profile>
       <id>setup.eclipse</id>
-      <!-- set up the eclipse workspace and generate the .classpath and .project 
+      <!-- set up the eclipse workspace and generate the .classpath and .project
         files for modules -->
       <properties>
         <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
+        <maven.test.skip.exec>true</maven.test.skip.exec>
       </properties>
       <build>
-        <defaultGoal>process-test-sources</defaultGoal>
+        <defaultGoal>package</defaultGoal>
         <pluginManagement>
           <plugins>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
+              <version>${maven-compiler-plugin-version}</version>
               <configuration>
                 <source>${jdk.version}</source>
                 <target>${jdk.version}</target>
@@ -276,13 +282,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <inherited>false</inherited>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-buildtools</artifactId>
-                <version>${project.version}</version>
-              </dependency>
-            </dependencies>
             <executions>
               <execution>
                 <id>setup.workspace</id>
@@ -293,10 +292,16 @@
                     <property name="full.eclipse.workspace" refid="ecp.ws.path" />
                     <path path="${basedir}/etc" id="etc.path" />
 
-                    <whichresource resource="/camel-eclipse-pmd" property="pmd.url" />
-                    <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" />
-                    <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" />
-                    <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url" />
+                    <path id="buildtools.classpath">
+                        <fileset dir="${basedir}/buildingtools/target" includes="*.jar" />
+                        <pathelement location="${basedir}/buildingtools/target/classes" />
+                        <pathelement location="${basedir}/buildingtools/src/main/resources" />
+                    </path>
+
+                    <whichresource resource="/camel-eclipse-pmd" property="pmd.url" classpathref="buildtools.classpath" />
+                    <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" classpathref="buildtools.classpath" />
+                    <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" classpathref="buildtools.classpath" />
+                    <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url" classpathref="buildtools.classpath" />
 
                     <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
                     <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core" />
@@ -356,9 +361,9 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
-      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin 
+      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
         for schemagen to work -->
       <id>not-mac</id>
       <activation>
@@ -372,7 +377,6 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-antrun-plugin</artifactId>
-              <version>1.6</version>
               <dependencies>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
@@ -381,8 +385,13 @@
                 </dependency>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
-                  <artifactId>jaxb-xjc</artifactId>
+                  <artifactId>jaxb-jxc</artifactId>
                   <version>${jaxb-version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesImpl</artifactId>
+                  <version>2.11.0</version>
                 </dependency>
                 <dependency>
                   <groupId>ant-contrib</groupId>
@@ -446,7 +455,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>deploy</id>
       <build>
@@ -499,44 +508,63 @@
         </plugins>
       </build>
     </profile>
-
     <profile>
-      <id>apache-release</id>
-      <activation>
+       <id>release</id>
+       <activation>
         <property>
-          <name>apache-release</name>
+          <name>release</name>
         </property>
       </activation>
       <build>
         <plugins>
-          <!-- waiting for release -->
+          <!-- We want to deploy the artifact to a staging location for perusal -->
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <updateReleaseInfo>true</updateReleaseInfo>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+              <useAgent>${gpg.useagent}</useAgent>
+            </configuration>
             <executions>
               <execution>
                 <goals>
-                  <goal>single</goal>
+                  <goal>sign</goal>
                 </goals>
-                <phase>package</phase>
-                <configuration>
-                  <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                  <descriptorRefs>
-                    <descriptorRef>source-release</descriptorRef>
-                  </descriptorRefs>
-                </configuration>
               </execution>
             </executions>
-            <dependencies>
-              <dependency>
-                <!-- apache version not yet released -->
-                <!--<groupId>org.apache</groupId> -->
-                <groupId>org.apache.geronimo.genesis</groupId>
-                <artifactId>apache-source-release-assembly-descriptor</artifactId>
-                <!-- apache version not yet known -->
-                <version>2.0</version>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>

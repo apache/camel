@@ -79,7 +79,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
         Object marshalled = template.requestBody("direct:inAgeView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        assertEquals("{\"height\":190,\"age\":30}", marshalledAsString);
+        assertEquals("{\"age\":30,\"height\":190}", marshalledAsString);
 
         template.sendBody("direct:backAgeView", marshalled);
 

@@ -41,11 +41,12 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
 
     private CamelContext context1;
     private ProducerTemplate template1;
+    private AbstractApplicationContext applicationContext;
 
     @Before
     public void setUp() throws Exception {
-        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
-        context1 = SpringCamelContext.springCamelContext(ac, false);
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
+        context1 = SpringCamelContext.springCamelContext(applicationContext, false);
         context1.start();
         template1 = context1.createProducerTemplate();
         template1.start();
@@ -56,6 +57,10 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
         if (context1 != null) {
             context1.stop();
             template1.stop();
+        }
+        // need to shutdown the application context to shutdown the bus
+        if (applicationContext != null) {
+            applicationContext.close();
         }
     }
     

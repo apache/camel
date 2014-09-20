@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.sql;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 
 public class SqlProducer extends DefaultProducer {
     private String query;
@@ -57,7 +61,33 @@ public class SqlProducer extends DefaultProducer {
         final String sql = queryHeader != null ? queryHeader : query;
         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
-        jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Map<?, ?>>() {
+        // CAMEL-7313 - check whether to return generated keys
+        final Boolean shouldRetrieveGeneratedKeys =
+            exchange.getIn().getHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+
+        PreparedStatementCreator statementCreator = new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                if (!shouldRetrieveGeneratedKeys) {
+                    return con.prepareStatement(preparedQuery);
+                } else {
+                    Object expectedGeneratedColumns = exchange.getIn().getHeader(SqlConstants.SQL_GENERATED_COLUMNS);
+                    if (expectedGeneratedColumns == null) {
+                        return con.prepareStatement(preparedQuery, Statement.RETURN_GENERATED_KEYS);
+                    } else if (expectedGeneratedColumns instanceof String[]) {
+                        return con.prepareStatement(preparedQuery, (String[]) expectedGeneratedColumns);
+                    } else if (expectedGeneratedColumns instanceof int[]) {
+                        return con.prepareStatement(preparedQuery, (int[]) expectedGeneratedColumns);
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Header specifying expected returning columns isn't an instance of String[] or int[] but "
+                                        + expectedGeneratedColumns.getClass());
+                    }
+                }
+            }
+        };
+
+        jdbcTemplate.execute(statementCreator, new PreparedStatementCallback<Map<?, ?>>() {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
 
@@ -78,6 +108,8 @@ public class SqlProducer extends DefaultProducer {
                     }
                 }
 
+                boolean isResultSet = false;
+
                 // execute the prepared statement and populate the outgoing message
                 if (batch) {
                     int[] updateCounts = ps.executeBatch();
@@ -87,7 +119,7 @@ public class SqlProducer extends DefaultProducer {
                     }
                     exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
                 } else {
-                    boolean isResultSet = ps.execute();
+                    isResultSet = ps.execute();
                     if (isResultSet) {
                         // preserve headers first, so we can override the SQL_ROW_COUNT header
                         exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
@@ -96,7 +128,7 @@ public class SqlProducer extends DefaultProducer {
                         SqlOutputType outputType = getEndpoint().getOutputType();
                         log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                         if (outputType == SqlOutputType.SelectList) {
-                            List<Map<String, Object>> data = getEndpoint().queryForList(ps.getResultSet());
+                            List<Map<String, Object>> data = getEndpoint().queryForList(rs);
                             // for noop=true we still want to enrich with the row count header
                             if (getEndpoint().isNoop()) {
                                 exchange.getOut().setBody(exchange.getIn().getBody());
@@ -105,7 +137,7 @@ public class SqlProducer extends DefaultProducer {
                             }
                             exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
                         } else if (outputType == SqlOutputType.SelectOne) {
-                            Object data = getEndpoint().queryForObject(ps.getResultSet());
+                            Object data = getEndpoint().queryForObject(rs);
                             if (data != null) {
                                 // for noop=true we still want to enrich with the row count header
                                 if (getEndpoint().isNoop()) {
@@ -120,6 +152,18 @@ public class SqlProducer extends DefaultProducer {
                         }
                     } else {
                         exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
+                    }
+                }
+
+                if (shouldRetrieveGeneratedKeys) {
+                    if (isResultSet) {
+                        // we won't return generated keys for SELECT statements
+                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
+                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
+                    } else {
+                        List<Map<String, Object>> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys());
+                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
+                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, generatedKeys.size());
                     }
                 }
 

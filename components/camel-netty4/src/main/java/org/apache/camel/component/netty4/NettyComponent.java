@@ -20,28 +20,32 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timer;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
-import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
 
-public class NettyComponent extends DefaultComponent {
-    // use a shared timer for Netty (see javadoc for HashedWheelTimer)
-    private static volatile Timer timer;
+public class NettyComponent extends UriEndpointComponent {
     private NettyConfiguration configuration;
-    private OrderedMemoryAwareThreadPoolExecutor executorService;
+    private volatile EventExecutorGroup executorService;
 
     public NettyComponent() {
+        super(NettyEndpoint.class);
+    }
+
+    public NettyComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
     public NettyComponent(CamelContext context) {
-        super(context);
+        super(context, NettyEndpoint.class);
     }
 
     @Override
@@ -67,7 +71,6 @@ public class NettyComponent extends DefaultComponent {
         config.validateConfiguration();
 
         NettyEndpoint nettyEndpoint = new NettyEndpoint(remaining, this, config);
-        nettyEndpoint.setTimer(getTimer());
         setProperties(nettyEndpoint.getConfiguration(), parameters);
         return nettyEndpoint;
     }
@@ -89,12 +92,12 @@ public class NettyComponent extends DefaultComponent {
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
-
-    public static Timer getTimer() {
-        return timer;
+    
+    public void setExecutorService(EventExecutorGroup executorServcie) {
+        this.executorService = executorService;
     }
 
-    public synchronized OrderedMemoryAwareThreadPoolExecutor getExecutorService() {
+    public synchronized EventExecutorGroup getExecutorService() {
         if (executorService == null) {
             executorService = createExecutorService();
         }
@@ -103,35 +106,29 @@ public class NettyComponent extends DefaultComponent {
 
     @Override
     protected void doStart() throws Exception {
-        if (timer == null) {
-            timer = new HashedWheelTimer();
-        }
-
+        
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }
-        if (configuration.isOrderedThreadPoolExecutor()) {
+        
+        if (configuration.isUsingExecutorService() && executorService == null) {
             executorService = createExecutorService();
         }
 
         super.doStart();
     }
 
-    protected OrderedMemoryAwareThreadPoolExecutor createExecutorService() {
-        // use ordered thread pool, to ensure we process the events in order, and can send back
-        // replies in the expected order. eg this is required by TCP.
+    protected EventExecutorGroup createExecutorService() {
+        // Provide the executor service for the application 
         // and use a Camel thread factory so we have consistent thread namings
         // we should use a shared thread pool as recommended by Netty
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
-        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
-        return new OrderedMemoryAwareThreadPoolExecutor(configuration.getMaximumPoolSize(),
-                0L, 0L, 30, TimeUnit.SECONDS, factory);
+        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyEventExecutorGroup", true);
+        return new DefaultEventExecutorGroup(configuration.getMaximumPoolSize(), factory);
     }
 
     @Override
     protected void doStop() throws Exception {
-        timer.stop();
-        timer = null;
 
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);

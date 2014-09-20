@@ -18,8 +18,8 @@
 package org.apache.camel.itest.osgi.aws;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 

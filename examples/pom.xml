@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -34,6 +34,7 @@
     <module>camel-example-activemq-tomcat</module>
     <module>camel-example-aggregate</module>
     <module>camel-example-bam</module>
+    <module>camel-example-box-osgi</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cdi</module>
     <module>camel-example-cxf</module>
@@ -63,10 +64,14 @@
     <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
+    <module>camel-example-servlet-rest-blueprint</module>
+    <module>camel-example-servlet-rest-tomcat</module>
     <module>camel-example-servlet-tomcat</module>
     <module>camel-example-servlet-tomcat-blueprintweb</module>
     <module>camel-example-servlet-tomcat-no-spring</module>
     <module>camel-example-simplejirabot</module>
+    <module>camel-example-spark-rest-tomcat</module>
+    <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
@@ -76,6 +81,7 @@
     <module>camel-example-ssh</module>
     <module>camel-example-ssh-security</module>
     <module>camel-example-sql</module>
+    <module>camel-example-sql-blueprint</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
     <module>camel-example-twitter-websocket-blueprint</module>    

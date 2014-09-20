@@ -23,8 +23,11 @@ import java.io.OutputStream;
  * Tagging interface to indicate that a type is capable of caching the underlying data stream.
  * <p/>
  * This is a useful feature for avoiding message re-readability issues.
- * This interface is mainly used by the {@link org.apache.camel.processor.interceptor.StreamCachingInterceptor}
+ * This interface is mainly used by the {@link org.apache.camel.spi.StreamCachingStrategy}
  * for determining if/how to wrap a stream-based message.
+ * <p/>
+ * The Camel routing engine uses the {@link org.apache.camel.processor.CamelInternalProcessor.StreamCachingAdvice}
+ * to apply the stream cache during routing.
  *
  * @version 
  */

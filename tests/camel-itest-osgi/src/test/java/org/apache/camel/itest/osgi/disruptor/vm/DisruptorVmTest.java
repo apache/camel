@@ -18,11 +18,14 @@ package org.apache.camel.itest.osgi.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
@@ -31,7 +34,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 /**
  * @version 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class DisruptorVmTest extends OSGiIntegrationTestSupport {
     
     @Override
@@ -69,7 +72,11 @@ public class DisruptorVmTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            // using the features to install the other camel components             
+            // disruptor requires sun.misc packages
+            new KarafDistributionConfigurationFileExtendOption("etc/jre.properties", "jre-1.6", ",sun.misc"),
+            new KarafDistributionConfigurationFileExtendOption("etc/jre.properties", "jre-1.7", ",sun.misc"),
+            new KarafDistributionConfigurationFileExtendOption("etc/jre.properties", "jre-1.8", ",sun.misc"),
+            // using the features to install the other camel components
             loadCamelFeatures("camel-disruptor"));
         
         return options;

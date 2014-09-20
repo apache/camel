@@ -24,7 +24,7 @@
        http://activemq.apache.org/schema/core http://activemq.org/config/1.0/1.0.xsd">
 
     <!-- camel stuff below to send and listen to broker with a spring JMS transaction manager -->
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>

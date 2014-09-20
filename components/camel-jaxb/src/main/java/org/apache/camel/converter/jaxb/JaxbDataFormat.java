@@ -77,6 +77,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private JAXBContext context;
     private String contextPath;
     private String schema;
+    private String schemaLocation;
+   
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
     private boolean filterNonXmlChars;
@@ -91,6 +93,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
+    private Schema cachedSchema;
 
     public JaxbDataFormat() {
     }
@@ -121,6 +124,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             }
             if (isFragment()) {
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            }
+            if (ObjectHelper.isNotEmpty(schemaLocation)) {
+                marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
             }
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
@@ -320,6 +326,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     public void setXmlStreamWriterWrapper(JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper) {
         this.xmlStreamWriterWrapper = xmlStreamWriterWrapper;
     }
+    
+    public String getSchemaLocation() {
+        return schemaLocation;
+    }
+
+    public void setSchemaLocation(String schemaLocation) {
+        this.schemaLocation = schemaLocation;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -340,6 +354,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             namespacePrefixMapper = NamespacePrefixMapperFactory.newNamespacePrefixMapper(camelContext, namespacePrefix);
         }
         typeConverter = camelContext.getTypeConverter();
+        if (schema != null) {
+            cachedSchema = createSchema(getSources());
+        }
     }
 
     @Override
@@ -367,46 +384,48 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         }
     }
     
-    protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
+    protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException,
+        MalformedURLException {
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
-            SchemaFactory factory = getOrCreateSchemaFactory();
-            try {
-                Schema newSchema = factory.newSchema(getSources());
-                unmarshaller.setSchema(newSchema);
-                unmarshaller.setEventHandler(new ValidationEventHandler() {
-                    public boolean handleEvent(ValidationEvent event) {
-                        // stop unmarshalling if the event is an ERROR or FATAL ERROR
-                        return event.getSeverity() == ValidationEvent.WARNING;
-                    }
-                });
-            } finally {
-                returnSchemaFactory(factory);
-            }
+            unmarshaller.setSchema(cachedSchema);
+            unmarshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    // stop unmarshalling if the event is an ERROR or FATAL
+                    // ERROR
+                    return event.getSeverity() == ValidationEvent.WARNING;
+                }
+            });
+
         }
 
         return unmarshaller;
     }
 
-    protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
+    protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException,
+        MalformedURLException {
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
-            SchemaFactory factory = getOrCreateSchemaFactory();
-            try {
-                Schema newSchema = factory.newSchema(getSources());
-                marshaller.setSchema(newSchema);
-                marshaller.setEventHandler(new ValidationEventHandler() {
-                    public boolean handleEvent(ValidationEvent event) {
-                        // stop marshalling if the event is an ERROR or FATAL ERROR
-                        return event.getSeverity() == ValidationEvent.WARNING;
-                    }
-                });
-            } finally {
-                returnSchemaFactory(factory);
-            }
+            marshaller.setSchema(cachedSchema);
+            marshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    // stop marshalling if the event is an ERROR or FATAL ERROR
+                    return event.getSeverity() == ValidationEvent.WARNING;
+                }
+            });
+
         }
 
         return marshaller;
+    }
+    
+    private Schema createSchema(Source[] sources) throws SAXException {
+        SchemaFactory factory = getOrCreateSchemaFactory();
+        try {
+            return factory.newSchema(sources);
+        } finally {
+            returnSchemaFactory(factory);
+        }
     }
 
     private Source[] getSources() throws FileNotFoundException, MalformedURLException {

@@ -310,10 +310,6 @@ public class MongoDbProducer extends DefaultProducer {
             resultMessage.setBody(ret.toArray());
             resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret.count());
             resultMessage.setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ret.size());
-
-        } catch (Exception e) {
-            // rethrow the exception
-            throw e;
         } finally {
             // make sure the cursor is closed
             if (ret != null) {
@@ -342,7 +338,13 @@ public class MongoDbProducer extends DefaultProducer {
 
     protected void doCount(Exchange exchange) throws Exception {
         DBCollection dbCol = calculateCollection(exchange);
-        Long answer = Long.valueOf(dbCol.count());
+        DBObject query = exchange.getIn().getBody(DBObject.class);
+        Long answer;
+        if (query == null) {
+            answer = dbCol.count();
+        } else {
+            answer = dbCol.count(query);
+        }
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.count);
         resultMessage.setBody(answer);
     }
@@ -360,28 +362,21 @@ public class MongoDbProducer extends DefaultProducer {
 
         // Impossible with java driver to get the batch size and number to skip
         Iterable<DBObject> dbIterator = null;
-        try {
-            AggregationOutput aggregationResult = null;
+        AggregationOutput aggregationResult = null;
 
-            // Allow body to be a pipeline
-            // @see http://docs.mongodb.org/manual/core/aggregation/
-            if (query instanceof BasicDBList) {
-                BasicDBList queryList = (BasicDBList)query;
-                aggregationResult = dbCol.aggregate((DBObject)queryList.get(0), queryList
-                    .subList(1, queryList.size()).toArray(new BasicDBObject[queryList.size() - 1]));
-            } else {
-                aggregationResult = dbCol.aggregate(query);
-            }
-
-            dbIterator = aggregationResult.results();
-            Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.aggregate);
-            resultMessage.setBody(dbIterator);
-
-            // Mongo Driver does not allow to read size and to paginate aggregate result
-        } catch (Exception e) {
-            // rethrow the exception
-            throw e;
+        // Allow body to be a pipeline
+        // @see http://docs.mongodb.org/manual/core/aggregation/
+        if (query instanceof BasicDBList) {
+            BasicDBList queryList = (BasicDBList)query;
+            aggregationResult = dbCol.aggregate((DBObject)queryList.get(0), queryList
+                .subList(1, queryList.size()).toArray(new BasicDBObject[queryList.size() - 1]));
+        } else {
+            aggregationResult = dbCol.aggregate(query);
         }
+
+        dbIterator = aggregationResult.results();
+        Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.aggregate);
+        resultMessage.setBody(dbIterator);
     }
     // --------- Convenience methods -----------------------
     

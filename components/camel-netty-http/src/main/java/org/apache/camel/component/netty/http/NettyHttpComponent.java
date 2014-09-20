@@ -18,16 +18,25 @@ package org.apache.camel.component.netty.http;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -37,7 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Netty HTTP based component.
  */
-public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
+public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
@@ -50,9 +59,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
+        super(NettyHttpEndpoint.class);
         setConfiguration(new NettyHttpConfiguration());
         setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
-        setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
+        // use the binding that supports Rest DSL
+        setNettyHttpBinding(new RestNettyHttpBinding(getHeaderFilterStrategy()));
     }
 
     @Override
@@ -63,6 +74,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         } else {
             config = new NettyHttpConfiguration();
         }
+
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // merge any custom bootstrap configuration on the config
         NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
@@ -92,17 +105,27 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
+        URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
+        
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
         NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
         answer.setTimer(getTimer());
 
-        // set component options on endpoint as defaults
+        // must use a copy of the binding on the endpoint to avoid sharing same instance that can cause side-effects
         if (answer.getNettyHttpBinding() == null) {
-            answer.setNettyHttpBinding(getNettyHttpBinding());
+            Object binding = getNettyHttpBinding();
+            if (binding instanceof RestNettyHttpBinding) {
+                NettyHttpBinding copy = ((RestNettyHttpBinding) binding).copy();
+                answer.setNettyHttpBinding(copy);
+            } else if (binding instanceof DefaultNettyHttpBinding) {
+                NettyHttpBinding copy = ((DefaultNettyHttpBinding) binding).copy();
+                answer.setNettyHttpBinding(copy);
+            }
         }
-        if (answer.getHeaderFilterStrategy() == null) {
+        if (headerFilterStrategy != null) {
+            answer.setHeaderFilterStrategy(headerFilterStrategy);
+        } else if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
 
@@ -130,7 +153,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     @Override
     protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
         // ensure uri is encoded to be valid
-        String safe = UnsafeUriCharactersEncoder.encode(remaining);
+        String safe = UnsafeUriCharactersEncoder.encodeHttpURI(remaining);
         URI uri = new URI(safe);
         configuration.parseURI(uri, parameters, this, "http", "https");
 
@@ -189,6 +212,82 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             bootstrapFactories.put(key, answer);
         }
         return answer;
+    }
+
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
+        path = FileUtil.stripLeadingSeparator(path);
+
+        String scheme = "http";
+        String host = "";
+        int port = 0;
+
+        // if no explicit port/host configured, then use port from rest configuration
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
+            }
+            if (config.getHost() != null) {
+                host = config.getHost();
+            }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
+        }
+
+        // if no explicit hostname set then resolve the hostname
+        if (ObjectHelper.isEmpty(host)) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
+            }
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        // build query string, and append any endpoint configuration properties
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("netty-http"))) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        String query = URISupport.createQueryString(map);
+
+        String url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
+
+        // get the endpoint
+        url = String.format(url, scheme, host, port, path, restrict);
+        NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
+        setProperties(endpoint, parameters);
+
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
+        return consumer;
     }
 
     @Override

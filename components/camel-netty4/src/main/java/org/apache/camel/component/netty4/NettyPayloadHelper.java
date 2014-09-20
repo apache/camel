@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.net.InetSocketAddress;
+
+import io.netty.channel.AddressedEnvelope;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 
@@ -57,6 +61,18 @@ public final class NettyPayloadHelper {
     public static void setIn(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder) {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
+        } else if (payload instanceof AddressedEnvelope) {
+            @SuppressWarnings("unchecked")
+            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload; 
+            // need to check if the content is ExchangeHolder
+            if (dp.content() instanceof DefaultExchangeHolder) {
+                DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) dp.content());    
+            } else {
+                // need to take out the payload here 
+                exchange.getIn().setBody(dp.content());
+            }
+            // setup the sender address here for sending the response message back
+            exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
             // normal transfer using the body only
             exchange.getIn().setBody(payload);
@@ -66,11 +82,24 @@ public final class NettyPayloadHelper {
     public static void setOut(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder) {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
+        } else if (payload instanceof AddressedEnvelope) {
+            @SuppressWarnings("unchecked")
+            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload;
+            // need to check if the content is ExchangeHolder
+            if (dp.content() instanceof DefaultExchangeHolder) {
+                DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) dp.content());    
+            } else {
+                // need to take out the payload here 
+                exchange.getOut().setBody(dp.content());
+            }
+            // setup the sender address here for sending the response message back
+            exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
             // normal transfer using the body only and preserve the headers
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
     }
+    
 
 }

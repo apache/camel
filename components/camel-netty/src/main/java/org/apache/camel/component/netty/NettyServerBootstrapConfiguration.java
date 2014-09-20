@@ -53,8 +53,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected File trustStoreFile;
     protected String keyStoreResource;
     protected String trustStoreResource;
-    protected String keyStoreFormat;
-    protected String securityProvider;
+    protected String keyStoreFormat = "JKS";
+    protected String securityProvider = "SunX509";
     protected String passphrase;
     protected BossPool bossPool;
     protected WorkerPool workerPool;

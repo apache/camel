@@ -16,21 +16,22 @@
  */
 package org.apache.camel.itest.osgi.script;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 /**
  * Test camel-script for groovy expressions in OSGi
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class GroovyScriptOsgiTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -48,7 +49,15 @@ public class GroovyScriptOsgiTest extends OSGiIntegrationTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // without this, "groovy.lang.*" classes will be loaded by classloader of camel-spring bundle
+        context.setApplicationContextClassLoader(this.getClass().getClassLoader());
+        return context;
+    }
+
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(

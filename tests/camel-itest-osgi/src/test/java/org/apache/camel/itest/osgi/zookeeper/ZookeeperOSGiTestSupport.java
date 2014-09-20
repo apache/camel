@@ -52,8 +52,8 @@ import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

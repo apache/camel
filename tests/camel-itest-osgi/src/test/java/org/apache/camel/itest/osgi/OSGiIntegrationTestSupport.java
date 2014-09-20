@@ -16,8 +16,10 @@
  */
 package org.apache.camel.itest.osgi;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
@@ -25,10 +27,10 @@ import javax.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
-import org.apache.karaf.tooling.exam.options.LogLevelOption;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.Bundle;
@@ -36,12 +38,8 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 public class OSGiIntegrationTestSupport extends CamelTestSupport {
@@ -84,6 +82,12 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         return getCamelKarafFeatureUrl(null);
     }
 
+    public static MavenArtifactProvisionOption getJUnitBundle() {
+        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.servicemix.bundles")
+            .artifactId("org.apache.servicemix.bundles.junit");
+        mavenOption.versionAsInProject().start(true).startLevel(10);
+        return mavenOption;
+    }
     public static UrlReference getCamelKarafFeatureUrl(String version) {
 
         String type = "xml/features";
@@ -125,26 +129,74 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         }
         return scanFeatures(getCamelKarafFeatureUrl(), result.toArray(new String[4 + features.length]));
     }
-              
+    public static Option scanFeatures(UrlReference ref, String ... features) {
+        return KarafDistributionOption.features(ref, features);
+    }
+    public static Option scanFeatures(String ref, String ... features) {
+        return KarafDistributionOption.features(ref, features);
+    }
+    public static Option felix() {
+        return KarafDistributionOption.editConfigurationFileExtend("etc/config.properties",
+                                                                   "karaf.framework",
+                                                                   "felix");
+    }
+    public static Option equinox() {
+        return KarafDistributionOption.editConfigurationFileExtend("etc/config.properties",
+                                                                   "karaf.framework",
+                                                                   "equinox");
+    }
+
+    private static String getKarafVersion() {
+        InputStream ins = OSGiIntegrationTestSupport.class.getResourceAsStream("/META-INF/maven/dependencies.properties");
+        Properties p = new Properties();
+        try {
+            p.load(ins);
+        } catch (Throwable t) {
+            //
+        }
+        String karafVersion = p.getProperty("org.apache.karaf/apache-karaf/version");
+        if (karafVersion == null) {
+            karafVersion = System.getProperty("karafVersion");
+        }
+        if (karafVersion == null) {
+            // setup the default version of it
+            karafVersion = "2.3.7";
+        }
+        return karafVersion;
+    }
+
     public static Option[] getDefaultCamelKarafOptions() {
+        String karafVersion = getKarafVersion();
+        LOG.info("*** The karaf version is " + karafVersion + " ***");
+
         Option[] options =
         // Set the karaf environment with some customer configuration
             new Option[] {
-                      karafDistributionConfiguration()
-                          .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                          .karafVersion("2.3.3")
+                      // for remote debugging
+                      //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
+                      //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+
+                      KarafDistributionOption.karafDistributionConfiguration()
+                          .frameworkUrl(maven().groupId("org.apache.karaf")
+                                        .artifactId("apache-karaf").type("tar.gz").versionAsInProject())
+                          .karafVersion(karafVersion)
                           .name("Apache Karaf")
-                          .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+                          .useDeployFolder(false)
+                          .unpackDirectory(new File("target/paxexam/unpack/")),
 
-                      KarafDistributionOption.keepRuntimeFolder(),
+                      //KarafDistributionOption.keepRuntimeFolder(),
                       // override the config.properties (to fix pax-exam bug)
-                      replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
-                      replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
-
-                     // we need INFO logging otherwise we cannot see what happens
-                     logLevel(LogLevelOption.LogLevel.INFO),
-                      // install the cxf jaxb spec as the karaf doesn't provide it by default
-                      scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-test")};
+                      // KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+                      KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
+                      KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
+               
+                //Grab JUnit and put it very early in the startup to make sure any bundles that are loaded 
+                //will use the same version/bundle
+                getJUnitBundle(),
+                // we need INFO logging otherwise we cannot see what happens
+                new LogLevelOption(LogLevelOption.LogLevel.INFO),
+                // install the cxf jaxb spec as the karaf doesn't provide it by default
+                scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-test")};
 
         return options;
 
@@ -153,10 +205,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            getDefaultCamelKarafOptions());
-
-        // for remote debugging
-        // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+            getDefaultCamelKarafOptions()
+        );
 
         return options;
     }

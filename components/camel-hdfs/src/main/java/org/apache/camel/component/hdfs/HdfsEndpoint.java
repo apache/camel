@@ -24,9 +24,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "hdfs", consumerClass = HdfsConsumer.class)
 public class HdfsEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private final HdfsConfiguration config;
 
     @SuppressWarnings("deprecation")

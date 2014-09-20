@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.rest.RestDefinition;
 
 /**
  * Model level interface for the {@link CamelContext}
@@ -93,6 +94,21 @@ public interface ModelCamelContext extends CamelContext {
      * @throws Exception if the route definition could not be removed for whatever reason
      */
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
+
+    /**
+     * Returns a list of the current REST definitions
+     *
+     * @return list of the current REST definitions
+     */
+    List<RestDefinition> getRestDefinitions();
+
+    /**
+     * Adds a collection of rest definitions to the context
+     *
+     * @param restDefinitions the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be created for whatever reason
+     */
+    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
 
     /**
      * Starts the given route if it has been previously stopped

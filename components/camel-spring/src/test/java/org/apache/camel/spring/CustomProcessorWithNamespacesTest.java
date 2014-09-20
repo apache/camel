@@ -25,6 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.example.MyProcessor;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -75,8 +76,6 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
     }
 }

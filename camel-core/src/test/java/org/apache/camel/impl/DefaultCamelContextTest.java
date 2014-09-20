@@ -335,6 +335,19 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals("Stopped", my.getStatus().name());
     }
 
+    public void testAddServiceType() throws Exception {
+        MyService my = new MyService();
+
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        assertNull(ctx.hasService(MyService.class));
+
+        ctx.addService(my);
+        assertSame(my, ctx.hasService(MyService.class));
+
+        ctx.stop();
+        assertNull(ctx.hasService(MyService.class));
+    }
+
     private static class MyService extends ServiceSupport implements CamelContextAware {
 
         private CamelContext camelContext;

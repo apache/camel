@@ -120,9 +120,21 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
 
         for (FileStatus status : fileStatuses) {
+
             if (normalFileIsDirectoryNoSuccessFile(status, info)) {
                 continue;
             }
+
+            if (config.getOwner() != null) {
+                // must match owner
+                if (!config.getOwner().equals(status.getOwner())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping file: {} as not matching owner: {}", status.getPath().toString(), config.getOwner());
+                    }
+                    continue;
+                }
+            }
+
             try {
                 this.rwlock.writeLock().lock();
                 this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
@@ -138,6 +150,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                     Message message = new DefaultMessage();
                     String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
                     message.setHeader(Exchange.FILE_NAME, fileName);
+                    message.setHeader(Exchange.FILE_PATH, status.getPath().toString());
                     if (key.value != null) {
                         message.setHeader(HdfsHeader.KEY.name(), key.value);
                     }

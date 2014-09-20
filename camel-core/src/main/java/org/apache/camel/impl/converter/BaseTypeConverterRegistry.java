@@ -43,6 +43,7 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +128,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             if (e instanceof TypeConversionException) {
                 throw (TypeConversionException) e;
             } else {
-                throw new TypeConversionException(value, type, e);
+                throw createTypeConversionException(exchange, type, value, e);
             }
         }
         if (answer == Void.TYPE) {
@@ -170,7 +171,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             if (e instanceof TypeConversionException) {
                 throw (TypeConversionException) e;
             } else {
-                throw new TypeConversionException(value, type, e);
+                throw createTypeConversionException(exchange, type, value, e);
             }
         }
         if (answer == Void.TYPE || value == null) {
@@ -513,6 +514,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return null;
     }
 
+    public List<Class<?>[]> listAllTypeConvertersFromTo() {
+        List<Class<?>[]> answer = new ArrayList<Class<?>[]>(typeMappings.size());
+        for (TypeMapping mapping : typeMappings.keySet()) {
+            answer.add(new Class<?>[]{mapping.getFromType(), mapping.getToType()});
+        }
+        return answer;
+    }
+
     /**
      * Loads the core type converters which is mandatory to use Camel
      */
@@ -545,9 +554,26 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
+    protected TypeConversionException createTypeConversionException(Exchange exchange, Class<?> type, Object value, Throwable cause) {
+        Object body;
+        // extract the body for logging which allows to limit the message body in the exception/stacktrace
+        // and also can be used to turn off logging sensitive message data
+        if (exchange != null) {
+            body = MessageHelper.extractValueForLogging(value, exchange.getIn());
+        } else {
+            body = value;
+        }
+        return new TypeConversionException(body, type, cause);
+    }
+
     @Override
     public Statistics getStatistics() {
         return statistics;
+    }
+
+    @Override
+    public int size() {
+        return typeMappings.size();
     }
 
     @Override

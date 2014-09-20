@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -30,6 +31,7 @@ import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Represents an XML &lt;interceptToEndpoint/&gt; element
@@ -95,7 +97,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
                 if (endpoint instanceof InterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
-                } else if (getUri() == null || EndpointHelper.matchEndpoint(routeContext.getCamelContext(), uri, getUri())) {
+                } else if (getUri() == null || matchPattern(routeContext.getCamelContext(), uri, getUri())) {
                     // only proxy if the uri is matched decorate endpoint with our proxy
                     // should be false by default
                     boolean skip = isSkipSendToOriginalEndpoint();
@@ -118,6 +120,29 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         outputs.remove(this);
 
         return new InterceptEndpointProcessor(uri, detour);
+    }
+
+    /**
+     * Does the uri match the pattern.
+     *
+     * @param camelContext the CamelContext
+     * @param uri the uri
+     * @param pattern the pattern, which can be an endpoint uri as well
+     * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt> if not matched, and not intercept.
+     */
+    protected boolean matchPattern(CamelContext camelContext, String uri, String pattern) {
+        // match using the pattern as-is
+        boolean match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
+        if (!match) {
+            try {
+                // the pattern could be an uri, so we need to normalize it before matching again
+                pattern = URISupport.normalizeUri(pattern);
+                match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return match;
     }
 
     /**

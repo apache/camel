@@ -79,6 +79,22 @@ public class CamelJaxbTest extends CamelTestSupport {
         assertTrue("Non-xml character unexpectedly did not get into marshalled contents", body
                 .contains("\u0004"));
     }
+    
+    @Test
+    public void testMarshalWithSchemaLocation() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("foo");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:marshal", person);
+        resultEndpoint.assertIsSatisfied();
+
+        String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue("We should get the schemaLocation here", body
+                .contains("schemaLocation=\"person.xsd\""));
+    }
 
     @Test
     public void testCustomXmlStreamWriter() throws InterruptedException {
@@ -143,6 +159,7 @@ public class CamelJaxbTest extends CamelTestSupport {
 
             public void configure() throws Exception {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
+                dataFormat.setSchemaLocation("person.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
                 JaxbDataFormat filterEnabledFormat = new JaxbDataFormat("org.apache.camel.foo.bar");

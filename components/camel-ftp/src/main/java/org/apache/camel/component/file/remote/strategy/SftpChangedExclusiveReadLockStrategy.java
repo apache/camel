@@ -161,4 +161,9 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     public void setFastExistsCheck(boolean fastExistsCheck) {
         this.fastExistsCheck = fastExistsCheck;
     }
+
+    @Override
+    public void setMarkerFiler(boolean markerFiler) {
+        // noop - not supported by ftp
+    }
 }

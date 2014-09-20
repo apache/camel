@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.format;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -26,6 +27,10 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
 
     private String pattern;
     private Locale locale;
+    private String decimalSeparator;
+    private String groupingSeparator;
+    private int precision;
+    private String rounding;
 
     public NumberPatternFormat() {
     }
@@ -33,6 +38,15 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     public NumberPatternFormat(String pattern, Locale locale) {
         this.pattern = pattern;
         this.locale = locale;
+    }
+
+    public NumberPatternFormat(String pattern, Locale locale, int precision, String rounding, String decimalSeparator, String groupingSeparator) {
+        this.pattern = pattern;
+        this.locale = locale;
+        this.decimalSeparator = decimalSeparator;
+        this.groupingSeparator = groupingSeparator;
+        this.precision = precision;
+        this.rounding = rounding;
     }
 
     public String format(T object) throws Exception {
@@ -57,7 +71,18 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
 
         NumberFormat format = NumberFormat.getNumberInstance(locale);
         if (format instanceof DecimalFormat) {
-            ((DecimalFormat)format).applyLocalizedPattern(pattern);
+            DecimalFormat df = (DecimalFormat) format;
+            if (decimalSeparator != null && groupingSeparator != null) {
+                if (!decimalSeparator.isEmpty() && !groupingSeparator.isEmpty()) {
+                    DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
+                    dfs.setDecimalSeparator(decimalSeparator.charAt(0));
+                    dfs.setGroupingSeparator(groupingSeparator.charAt(0));
+                    df.setDecimalFormatSymbols(dfs);
+                }
+            }
+            if (!pattern.isEmpty()) {
+                df.applyPattern(pattern);
+            }
         }
         return format;
     }
@@ -69,4 +94,29 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
+
+    public int getPrecision() {
+        return precision;
+    }
+
+    public void setPrecision(int precision) {
+        this.precision = precision;
+    }
+
+    public String getRounding() {
+        return rounding;
+    }
+
+    public void setRounding(String rounding) {
+        this.rounding = rounding;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
 }

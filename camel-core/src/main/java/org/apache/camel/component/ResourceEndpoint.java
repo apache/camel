@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ResourceEndpoint extends ProcessorEndpoint implements ManagedResourceEndpointMBean {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private volatile byte[] buffer;
+    @UriParam
     private String resourceUri;
     @UriParam
     private boolean contentCache;

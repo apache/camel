@@ -36,7 +36,8 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
         if (!list.isEmpty()) {
             Processor processor = chooseProcessor(list, exchange);
             if (processor == null) {
-                throw new IllegalStateException("No processors could be chosen to process " + exchange);
+                Exception e = new IllegalStateException("No processors could be chosen to process " + exchange);
+                exchange.setException(e);
             } else {
                 if (processor instanceof AsyncProcessor) {
                     AsyncProcessor async = (AsyncProcessor) processor;

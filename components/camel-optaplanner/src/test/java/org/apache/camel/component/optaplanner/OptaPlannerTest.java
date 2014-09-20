@@ -47,8 +47,9 @@ public class OptaPlannerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in").
-                        to("optaplanner:/org/apache/camel/component/optaplanner/solverConfig.xml");
+                        to("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml");
             }
         };
     }
+
 }

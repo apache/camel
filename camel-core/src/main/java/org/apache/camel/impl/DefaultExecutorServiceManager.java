@@ -53,6 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Default {@link org.apache.camel.spi.ExecutorServiceManager}.
+ *
  * @version 
  */
 public class DefaultExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {

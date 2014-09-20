@@ -66,7 +66,7 @@ public class FacebookComponent extends UriEndpointComponent {
 
         // create endpoint configuration with component properties
         FacebookEndpointConfiguration config = new FacebookEndpointConfiguration();
-        IntrospectionSupport.setProperties(config, componentProperties, null);
+        IntrospectionSupport.setProperties(config, componentProperties);
         return config;
     }
 

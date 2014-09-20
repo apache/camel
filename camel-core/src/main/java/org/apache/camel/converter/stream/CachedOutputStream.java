@@ -66,12 +66,14 @@ public class CachedOutputStream extends OutputStream {
     private File tempFile;
     private FileInputStreamCache fileInputStreamCache;
     private CipherPair ciphers;
+    private final boolean closedOnCompletion;
 
     public CachedOutputStream(Exchange exchange) {
         this(exchange, true);
     }
 
     public CachedOutputStream(Exchange exchange, final boolean closedOnCompletion) {
+        this.closedOnCompletion = closedOnCompletion;
         this.strategy = exchange.getContext().getStreamCachingStrategy();
         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
         
@@ -85,14 +87,14 @@ public class CachedOutputStream extends OutputStream {
                     }
                     if (closedOnCompletion) {
                         close();
+                        try {
+                            cleanUpTempFile();
+                        } catch (Exception e) {
+                            LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                        }
                     }
                 } catch (Exception e) {
                     LOG.warn("Error closing streams. This exception will be ignored.", e);
-                }
-                try {
-                    cleanUpTempFile();
-                } catch (Exception e) {
-                    LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
                 }
             }
     
@@ -109,6 +111,14 @@ public class CachedOutputStream extends OutputStream {
 
     public void close() throws IOException {
         currentStream.close();
+        // need to clean up the temp file this time
+        if (!closedOnCompletion) {
+            try {
+                cleanUpTempFile();
+            } catch (Exception e) {
+                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+            }
+        }
     }
 
     public boolean equals(Object obj) {

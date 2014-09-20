@@ -19,8 +19,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -59,5 +61,10 @@
   </camelContext>
 
   <bean id="myProcessor" class="org.apache.camel.component.cxf.jaxrs.CxfRsProducerTest$JettyProcessor"/>
+  <bean id ="testFeature" class="org.apache.camel.component.cxf.jaxrs.CxfRsProducerTest$TestFeature" />
+  
+  <util:list id="myFeatures" >
+     <ref bean="testFeature"/>
+  </util:list>
   
 </beans>

@@ -27,10 +27,10 @@ public enum JmsMessageHeaderType {
     JMSReplyTo,
     JMSType,
     JMSRedelivered,
-    
+
     /*
      * Add known custom headers
      */
     JMSXGroupID
-    
+
 }

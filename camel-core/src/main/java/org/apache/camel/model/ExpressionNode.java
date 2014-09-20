@@ -121,7 +121,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     }
 
     @Override
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         // reuse the logic from pre create processor
         preCreateProcessor();
     }

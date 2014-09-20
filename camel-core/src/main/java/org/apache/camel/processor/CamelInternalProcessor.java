@@ -284,6 +284,35 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
+     * Advice to invoke callbacks for before and after routing.
+     */
+    public static class RouteLifecycleAdvice implements CamelInternalProcessorAdvice<Object> {
+
+        private Route route;
+
+        public void setRoute(Route route) {
+            this.route = route;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                uow.beforeRoute(exchange, route);
+            }
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object object) throws Exception {
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                uow.afterRoute(exchange, route);
+            }
+        }
+    }
+
+    /**
      * Advice for JMX instrumentation of the process being invoked.
      * <p/>
      * This advice keeps track of JMX metrics for performance statistics.
@@ -519,7 +548,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(), backlogTracer.getBodyMaxChars());
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
-                String routeId = routeDefinition.getId();
+                String routeId = routeDefinition != null ? routeDefinition.getId() : null;
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
@@ -726,7 +755,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            // noop
+            Object body = exchange.getIn().getBody();
+            if (body != null && body instanceof StreamCache) {
+                // reset so the cache is ready to be reused after processing
+                ((StreamCache) body).reset();
+            }
         }
     }
 

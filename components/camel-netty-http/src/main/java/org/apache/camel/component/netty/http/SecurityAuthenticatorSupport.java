@@ -67,7 +67,7 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
         }
 
         // check each role class name if they match the principal class name
-        Iterator it = ObjectHelper.createIterator(roleClassNames);
+        Iterator<Object> it = ObjectHelper.createIterator(roleClassNames);
         while (it.hasNext()) {
             String name = it.next().toString().trim();
             if (principal.getClass().getName().equals(name)) {

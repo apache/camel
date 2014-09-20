@@ -54,6 +54,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     private String driver;
     @XmlAttribute
     private String driverRef;
+    @XmlAttribute
+    private String mode;
+    
     @XmlJavaTypeAdapter(ConvertersAdapter.class)
     @XmlElement(name = "converters")
     private List<String> converters;
@@ -66,6 +69,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlJavaTypeAdapter(ImplicitCollectionsAdapter.class)
     @XmlElement(name = "implicitCollections")
     private Map<String, String[]> implicitCollections;
+    
 
     public XStreamDataFormat() {
         super("xstream");
@@ -98,6 +102,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     public void setDriverRef(String driverRef) {
         this.driverRef = driverRef;
+    }
+    
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     public List<String> getConverters() {
@@ -162,7 +174,12 @@ public class XStreamDataFormat extends DataFormatDefinition {
         if (this.implicitCollections != null) {
             setProperty(camelContext, dataFormat, "implicitCollections", this.implicitCollections);
         }
+        if (this.mode != null) {
+            setProperty(camelContext, dataFormat, "mode", mode);
+        }
     }
+    
+    
 
     @XmlTransient
     public static class ConvertersAdapter extends XmlAdapter<ConverterList, List<String>> {

@@ -34,16 +34,20 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * Represents a <a href="http://camel.apache.org/gtask.html">Google App Engine Task Queueing endpoint</a>.
  */
+@UriEndpoint(scheme = "gtask")
 public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSupport<GTaskEndpoint, TaskOptions, Void> {
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;
     private InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
+    @UriParam
     private String workerRoot;
     private Queue queue;
     

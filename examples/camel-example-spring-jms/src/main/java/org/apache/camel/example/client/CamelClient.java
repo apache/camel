@@ -18,6 +18,7 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -46,7 +47,7 @@ public final class CamelClient {
         System.out.println("... the result is: " + response);
 
         // we're done so let's properly close the application context
-        context.close();
+        IOHelper.close(context);
     }
     // END SNIPPET: e1
 

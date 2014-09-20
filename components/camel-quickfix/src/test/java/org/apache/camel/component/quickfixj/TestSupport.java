@@ -93,8 +93,12 @@ public final class TestSupport {
         
         return factory.create(sessionID, settings);
     }
-    
+
     public static QuickfixjEngine createEngine() throws ConfigError, FieldConvertError, IOException, JMException {       
+        return createEngine(false);
+    }
+
+    public static QuickfixjEngine createEngine(boolean lazy) throws ConfigError, FieldConvertError, IOException, JMException {       
         SessionID sessionID = new SessionID("FIX.4.4:SENDER->TARGET");
 
         MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
@@ -114,6 +118,6 @@ public final class TestSupport {
         return new QuickfixjEngine("", settings, 
             mockMessageStoreFactory, 
             Mockito.mock(LogFactory.class), 
-            Mockito.mock(MessageFactory.class));
+            Mockito.mock(MessageFactory.class), lazy);
     }
 }

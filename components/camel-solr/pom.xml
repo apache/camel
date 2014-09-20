@@ -20,10 +20,9 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-solr</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Solr</name>
@@ -37,10 +36,15 @@
     <java.awt.headless>true</java.awt.headless>
   </properties>
 
-  <dependencies>
+  <dependencies> 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+      <version>${solr-version}</version>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
@@ -48,9 +52,27 @@
       <version>${commons-codec-version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>${httpclient4-version}</version>
+    </dependency>
+    
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.solr</groupId>
-      <artifactId>solr-solrj</artifactId>
+      <artifactId>solr-test-framework</artifactId>
       <version>${solr-version}</version>
+      <scope>test</scope>
       <exclusions>
         <!-- exclude rome 0.9 which is not a valid Maven artifact -->
         <!-- rome is not a needed dependency -->
@@ -58,77 +80,43 @@
           <groupId>rome</groupId>
           <artifactId>rome</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-core</artifactId>
-      <version>${solr-version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <!-- exclude jdk14 as we want to use log4j -->
         <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jdk14</artifactId>
+          <groupId>jdk.tools</groupId>
+          <artifactId>jdk.tools</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
+    </dependency>    
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-cell</artifactId>
       <version>${solr-version}</version>
       <scope>test</scope>
       <exclusions>
-        <!-- exclude netcdf as it has a slf4j binding -->
-        <exclusion>
-          <groupId>edu.ucar</groupId>
-          <artifactId>netcdf</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-        </exclusion>
+        <!-- exclude rome 0.9 which is not a valid Maven artifact -->
         <!-- rome is not a needed dependency -->
         <exclusion>
           <groupId>rome</groupId>
           <artifactId>rome</artifactId>
-        </exclusion>        
+        </exclusion>
+        <exclusion>
+          <groupId>jdk.tools</groupId>
+          <artifactId>jdk.tools</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${httpclient4-version}</version>
-     </dependency>
-     <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpmime</artifactId>
-        <version>${httpclient4-version}</version>
-     </dependency>
-
-    <!-- test dependencies -->
-    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
-      <version>${xml-apis-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

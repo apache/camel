@@ -19,14 +19,21 @@ package org.apache.camel.component.elasticsearch;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
+
+@UriParams
 public class ElasticsearchConfiguration {
 
     public static final String PARAM_OPERATION = "operation";
     public static final String OPERATION_INDEX = "INDEX";
+    public static final String OPERATION_BULK_INDEX = "BULK_INDEX";
     public static final String OPERATION_GET_BY_ID = "GET_BY_ID";
     public static final String OPERATION_DELETE = "DELETE";
     public static final String PARAM_INDEX_ID = "indexId";
@@ -40,15 +47,25 @@ public class ElasticsearchConfiguration {
     private static final Integer DEFAULT_PORT = 9300;
 
     private URI uri;
+    @UriParam
     private String protocolType;
+    @UriParam
     private String authority;
+    @UriParam
     private String clusterName;
+    @UriParam
     private String indexName;
+    @UriParam
     private String indexType;
+    @UriParam
     private boolean local;
+    @UriParam
     private Boolean data;
+    @UriParam
     private String operation;
+    @UriParam
     private String ip;
+    @UriParam
     private Integer port;
 
     public ElasticsearchConfiguration(URI uri, Map<String, Object> parameters) throws Exception {

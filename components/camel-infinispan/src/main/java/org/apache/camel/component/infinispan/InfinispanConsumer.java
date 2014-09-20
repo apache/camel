@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.infinispan.Cache;
-import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.manager.EmbeddedCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class InfinispanConsumer extends DefaultConsumer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
     private final InfinispanConfiguration configuration;
     private final InfinispanSyncEventListener listener;
-    private DefaultCacheManager defaultCacheManager;
+    private EmbeddedCacheManager cacheManager;
 
     public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, InfinispanConfiguration configuration) {
         super(endpoint, processor);
@@ -56,13 +56,13 @@ public class InfinispanConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        if (configuration.getCacheContainer() instanceof DefaultCacheManager) {
-            defaultCacheManager = (DefaultCacheManager) configuration.getCacheContainer();
+        if (configuration.getCacheContainer() instanceof EmbeddedCacheManager) {
+            cacheManager = (EmbeddedCacheManager) configuration.getCacheContainer();
             Cache<Object, Object> cache;
             if (configuration.getCacheName() != null) {
-                cache = defaultCacheManager.getCache(configuration.getCacheName());
+                cache = cacheManager.getCache(configuration.getCacheName());
             } else {
-                cache = defaultCacheManager.getCache();
+                cache = cacheManager.getCache();
             }
             cache.addListener(listener);
         } else {
@@ -73,8 +73,8 @@ public class InfinispanConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (defaultCacheManager != null) {
-            defaultCacheManager.removeListener(listener);
+        if (cacheManager != null) {
+            cacheManager.removeListener(listener);
         }
         super.doStop();
     }

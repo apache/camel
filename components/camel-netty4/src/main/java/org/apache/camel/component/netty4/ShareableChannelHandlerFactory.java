@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.jboss.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler;
 
 /**
  * A {@link ChannelHandlerFactory} returning a shareable {@link ChannelHandler}.
  */
-public class ShareableChannelHandlerFactory implements ChannelHandlerFactory {
+public class ShareableChannelHandlerFactory extends DefaultChannelHandlerFactory {
 
     private final ChannelHandler channelHandler;
 
     public ShareableChannelHandlerFactory(ChannelHandler channelHandler) {
         this.channelHandler = channelHandler;
     }
-
-    @Override
+    
     public ChannelHandler newChannelHandler() {
         return channelHandler;
     }
+
 }

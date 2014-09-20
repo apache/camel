@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz2;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,6 +29,9 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.EndpointHelper;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -39,7 +43,6 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
@@ -48,24 +51,35 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  * call back into {@link #onConsumerStart(QuartzConsumer)} to add/resume or {@link #onConsumerStop(QuartzConsumer)}
  * to pause the scheduler trigger.
  */
+@UriEndpoint(scheme = "quartz2", consumerClass = QuartzComponent.class)
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
+    @UriParam
     private String cron;
     private LoadBalancer consumerLoadBalancer;
     private Map<String, Object> triggerParameters;
     private Map<String, Object> jobParameters;
+    @UriParam
     private boolean stateful;
+    @UriParam
     private boolean fireNow;
+    @UriParam
     private boolean deleteJob = true;
+    @UriParam
     private boolean pauseJob;
+    @UriParam
+    private boolean durableJob;
+    @UriParam
+    private boolean recoverableJob;
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
+    @UriParam
     private long triggerStartDelay = 500; // in millis second
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
-    private AtomicBoolean jobAdded = new AtomicBoolean(false);
-    private AtomicBoolean jobPaused = new AtomicBoolean(false);
+    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
+    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
     
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
@@ -113,6 +127,22 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public void setStateful(boolean stateful) {
         this.stateful = stateful;
+    }
+
+    public boolean isDurableJob() {
+        return durableJob;
+    }
+
+    public void setDurableJob(boolean durableJob) {
+        this.durableJob = durableJob;
+    }
+
+    public boolean isRecoverableJob() {
+        return recoverableJob;
+    }
+
+    public void setRecoverableJob(boolean recoverableJob) {
+        this.recoverableJob = recoverableJob;
     }
 
     public void setTriggerParameters(Map<String, Object> triggerParameters) {
@@ -192,13 +222,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 jobAdded.set(false);
             }
         } else if (pauseJob) {
-            boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
-            if (!scheduler.isShutdown() && !isClustered) {
-                LOG.info("Pausing job {}", triggerKey);
-                scheduler.pauseTrigger(triggerKey);
-
-                jobAdded.set(false);
-            }
+            pauseTrigger();
         }
 
         // Decrement camel job count for this endpoint
@@ -215,9 +239,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         if (trigger == null) {
             jobDetail = createJobDetail();
-            trigger = createTrigger();
+            trigger = createTrigger(jobDetail);
 
-            updateJobDataMap(jobDetail);
+            QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
 
             // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
             Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
@@ -251,17 +275,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    private void updateJobDataMap(JobDetail jobDetail) {
-        // Store this camelContext name into the job data
-        JobDataMap jobDataMap = jobDetail.getJobDataMap();
-        String camelContextName = getCamelContext().getManagementName();
-        String endpointUri = getEndpointUri();
-        LOG.debug("Adding camelContextName={}, endpointUri={} into job data map.", camelContextName, endpointUri);
-        jobDataMap.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, camelContextName);
-        jobDataMap.put(QuartzConstants.QUARTZ_ENDPOINT_URI, endpointUri);
-    }
-
-    private Trigger createTrigger() throws Exception {
+    private Trigger createTrigger(JobDetail jobDetail) throws Exception {
         Trigger result;
         Date startTime = new Date();
         if (getComponent().getScheduler().isStarted()) {
@@ -269,24 +283,45 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
-            result = TriggerBuilder.newTrigger()
-                    .withIdentity(triggerKey)
-                    .startAt(startTime)
-                    .withSchedule(cronSchedule(cron).withMisfireHandlingInstructionFireAndProceed())
-                    .build();
+            String timeZone = (String)triggerParameters.get("timeZone");
+            if (timeZone != null) {
+                result = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(cronSchedule(cron)
+                                .withMisfireHandlingInstructionFireAndProceed()
+                                .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                        .build();
+                jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
+            } else {
+                result = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(cronSchedule(cron)
+                                .withMisfireHandlingInstructionFireAndProceed())
+                        .build();
+            }
+
+            // enrich job map with details
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
         } else {
             LOG.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
             String repeatString = (String) triggerParameters.get("repeatCount");
             if (repeatString != null) {
-                repeat = Integer.valueOf(repeatString);
+                repeat = EndpointHelper.resolveParameter(getCamelContext(), repeatString, Integer.class);
+                // need to update the parameters
+                triggerParameters.put("repeatCount", repeat);
             }
 
             // default use 1 sec interval
             long interval = 1000;
             String intervalString = (String) triggerParameters.get("repeatInterval");
             if (intervalString != null) {
-                interval = Long.valueOf(intervalString);
+                interval = EndpointHelper.resolveParameter(getCamelContext(), intervalString, Long.class);
+                // need to update the parameters
+                triggerParameters.put("repeatInterval", interval);
             }
 
             TriggerBuilder<SimpleTrigger> triggerBuilder = TriggerBuilder.newTrigger()
@@ -296,10 +331,15 @@ public class QuartzEndpoint extends DefaultEndpoint {
                             .withRepeatCount(repeat).withIntervalInMilliseconds(interval));
 
             if (fireNow) {
-                triggerBuilder.startNow();
+                triggerBuilder = triggerBuilder.startNow();
             }
 
             result = triggerBuilder.build();
+
+            // enrich job map with details
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER, repeat);
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
         }
 
         if (triggerParameters != null && triggerParameters.size() > 0) {
@@ -318,9 +358,17 @@ public class QuartzEndpoint extends DefaultEndpoint {
         Class<? extends Job> jobClass = stateful ? StatefulCamelJob.class : CamelJob.class;
         LOG.debug("Creating new {}.", jobClass.getSimpleName());
 
-        JobDetail result = JobBuilder.newJob(jobClass)
-                .withIdentity(name, group)
-                .build();
+        JobBuilder builder = JobBuilder.newJob(jobClass)
+                .withIdentity(name, group);
+
+        if (durableJob) {
+            builder = builder.storeDurably();
+        }
+        if (recoverableJob) {
+            builder = builder.requestRecovery();
+        }
+
+        JobDetail result = builder.build();
 
         // Let user parameters to further set JobDetail properties.
         if (jobParameters != null && jobParameters.size() > 0) {
@@ -338,13 +386,15 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void pauseTrigger() throws Exception {
-        if (jobPaused.get()) {
+        Scheduler scheduler = getComponent().getScheduler();
+        boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
+
+        if (jobPaused.get() || isClustered) {
             return;
         }
+        
         jobPaused.set(true);
-
-        Scheduler scheduler = getComponent().getScheduler();
-        if (scheduler != null && !scheduler.isShutdown()) {
+        if (!scheduler.isShutdown()) {
             LOG.info("Pausing trigger {}", triggerKey);
             scheduler.pauseTrigger(triggerKey);
         }

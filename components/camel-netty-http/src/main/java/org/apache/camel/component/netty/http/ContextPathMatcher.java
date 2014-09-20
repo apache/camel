@@ -27,10 +27,29 @@ package org.apache.camel.component.netty.http;
 public interface ContextPathMatcher {
 
     /**
-     * Whether the target context-path matches.
+     * Whether the target context-path matches a regular url.
      *
-     * @param target  the context-path from the incoming HTTP request
+     * @param path  the context-path from the incoming HTTP request
      * @return <tt>true</tt> to match, <tt>false</tt> if not.
      */
-    boolean matches(String target);
+    boolean matches(String path);
+
+    /**
+     * Whether the target context-path matches a REST url.
+     *
+     * @param path  the context-path from the incoming HTTP request
+     * @param wildcard whether to match strict or by wildcards
+     * @return <tt>true</tt> to match, <tt>false</tt> if not.
+     */
+    boolean matchesRest(String path, boolean wildcard);
+
+    /**
+     * Matches the given request HTTP method with the configured HTTP method of the consumer
+     *
+     * @param method    the request HTTP method
+     * @param restrict  the consumer configured HTTP restrict method
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    boolean matchMethod(String method, String restrict);
+
 }

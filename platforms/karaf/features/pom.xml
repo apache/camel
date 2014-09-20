@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.karaf</groupId>
@@ -39,7 +39,6 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>${osgi-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -63,13 +62,11 @@
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.configadmin</artifactId>
-      <version>${felix-configadmin-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint</artifactId>
-      <version>${aries-blueprint-core-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -143,14 +140,14 @@
         </repository>
       </repositories>
     </profile>
-    
+
     <profile>
       <id>validate</id>
       <!-- Added the repository for the google script -->
       <repositories>
         <repository>
           <id>google.script.repo</id>
-          <name>Google Script Engine Deploy Repository </name>
+          <name>Google Script Engine Deploy Repository</name>
           <url>http://scriptengines.googlecode.com/svn/m2-repo/</url>
           <releases>
             <enabled>true</enabled>
@@ -166,6 +163,13 @@
             <groupId>org.apache.karaf.tooling</groupId>
             <artifactId>features-maven-plugin</artifactId>
             <version>${karaf-version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>biz.aQute</groupId>
+                <artifactId>bndlib</artifactId>
+                <version>1.50.0</version>
+              </dependency>
+            </dependencies>
             <configuration>
               <file>${project.build.directory}/classes/${features.file}</file>
               <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>
@@ -191,6 +195,11 @@
       <id>com.springsource.repository.bundles.release</id>
       <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
       <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
   </repositories>
 </project>

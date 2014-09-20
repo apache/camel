@@ -25,7 +25,7 @@
     <bean id="myProcessor" class="org.apache.camel.processor.OnCompletionUseOriginalBodyTest$MyProcessor"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <onCompletion useOriginalMessage="true">
+        <onCompletion useOriginalMessage="true" parallelProcessing="true">
             <to uri="mock:before"/>
             <delay>
                 <constant>1000</constant>

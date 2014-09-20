@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -31,10 +31,14 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 /**
  * @version 
  */
-public class MyBatisComponent extends DefaultComponent {
+public class MyBatisComponent extends UriEndpointComponent {
 
     private SqlSessionFactory sqlSessionFactory;
     private String configurationUri = "SqlMapConfig.xml";
+
+    public MyBatisComponent() {
+        super(MyBatisEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

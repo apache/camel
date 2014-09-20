@@ -235,13 +235,7 @@
         </wsdl:port>
 
         <wsdl:port binding="tns:JMSGreeterPortBinding" name="SoapOverJms">
-            <jms:address
-                destinationStyle="queue"
-                jndiConnectionFactoryName="ConnectionFactory"
-                jndiDestinationName="dynamicQueues/test.soap.jmstransport.queue">
-                <jms:JMSNamingProperty name="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
-                <jms:JMSNamingProperty name="java.naming.provider.url" value="vm://localhost"/>
-            </jms:address>
+            <soap:address location="jms:jndi:dynamicQueues/test.soap.jmstransport.queue?jndiInitialContextFactory=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;jndiConnectionFactoryName=ConnectionFactory&amp;jndiURL=vm://localhost"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

@@ -15,15 +15,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -49,43 +48,47 @@
       javax.xml.bind.annotation.adapters;resolution:=optional,
       javax.xml.stream;resolution:=optional,
       javax.xml.transform.stax;resolution:=optional,
+      net.sf.saxon.event;resolution:=optional,
+      net.sf.saxon.serialize;resolution:=optional,
       *
     </camel.osgi.import>
     <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=direct,
-      org.apache.camel.spi.ComponentResolver;component=vm,
       org.apache.camel.spi.ComponentResolver;component=bean,
-      org.apache.camel.spi.ComponentResolver;component=mock,
-      org.apache.camel.spi.ComponentResolver;component=test,
-      org.apache.camel.spi.ComponentResolver;component=stub,
-      org.apache.camel.spi.ComponentResolver;component=validator,
-      org.apache.camel.spi.ComponentResolver;component=class,
-      org.apache.camel.spi.ComponentResolver;component=properties,
-      org.apache.camel.spi.ComponentResolver;component=direct-vm,
-      org.apache.camel.spi.ComponentResolver;component=log,
-      org.apache.camel.spi.ComponentResolver;component=ref,
-      org.apache.camel.spi.ComponentResolver;component=xslt,
+      org.apache.camel.spi.ComponentResolver;component=binding,
       org.apache.camel.spi.ComponentResolver;component=browse,
+      org.apache.camel.spi.ComponentResolver;component=class,
+      org.apache.camel.spi.ComponentResolver;component=controlbus,
       org.apache.camel.spi.ComponentResolver;component=dataformat,
       org.apache.camel.spi.ComponentResolver;component=dataset,
-      org.apache.camel.spi.ComponentResolver;component=timer,
+      org.apache.camel.spi.ComponentResolver;component=direct,
+      org.apache.camel.spi.ComponentResolver;component=direct-vm,
       org.apache.camel.spi.ComponentResolver;component=file,
-      org.apache.camel.spi.ComponentResolver;component=controlbus,
-      org.apache.camel.spi.ComponentResolver;component=binding,
-      org.apache.camel.spi.ComponentResolver;component=seda,
       org.apache.camel.spi.ComponentResolver;component=language,
+      org.apache.camel.spi.ComponentResolver;component=log,
+      org.apache.camel.spi.ComponentResolver;component=mock,
+      org.apache.camel.spi.ComponentResolver;component=properties,
+      org.apache.camel.spi.ComponentResolver;component=ref,
+      org.apache.camel.spi.ComponentResolver;component=rest,
+      org.apache.camel.spi.ComponentResolver;component=seda,
+      org.apache.camel.spi.ComponentResolver;component=stub,
+      org.apache.camel.spi.ComponentResolver;component=test,
+      org.apache.camel.spi.ComponentResolver;component=timer,
+      org.apache.camel.spi.ComponentResolver;component=validator,
+      org.apache.camel.spi.ComponentResolver;component=vm,
+      org.apache.camel.spi.ComponentResolver;component=xslt,
       org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
       org.apache.camel.spi.DataFormatResolver;dataformat=string,
       org.apache.camel.spi.DataFormatResolver;dataformat=zip,
-      org.apache.camel.spi.LanguageResolver;language=ref,
-      org.apache.camel.spi.LanguageResolver;language=constant,
       org.apache.camel.spi.LanguageResolver;language=bean,
-      org.apache.camel.spi.LanguageResolver;language=simple,
+      org.apache.camel.spi.LanguageResolver;language=constant,
       org.apache.camel.spi.LanguageResolver;language=file,
-      org.apache.camel.spi.LanguageResolver;language=property,
       org.apache.camel.spi.LanguageResolver;language=header,
+      org.apache.camel.spi.LanguageResolver;language=property,
+      org.apache.camel.spi.LanguageResolver;language=ref,
+      org.apache.camel.spi.LanguageResolver;language=simple,
+      org.apache.camel.spi.LanguageResolver;language=tokenize,
       org.apache.camel.spi.LanguageResolver;language=xpath,
-      org.apache.camel.spi.LanguageResolver;language=tokenize
+      org.apache.camel.spi.LanguageResolver;language=xtokenize
     </camel.osgi.export.service>
     <camel.osgi.dynamic>
       org.apache.camel.spring.util;${camel.osgi.import.strict.version},
@@ -98,7 +101,7 @@
       org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests></platform.skip.tests>
+    <platform.skip.tests />
   </properties>
 
   <dependencies>
@@ -137,7 +140,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -174,6 +176,35 @@
 
 
   <build>
+    <pluginManagement>
+        <plugins>
+            <!-- Eclipse m2e Lifecycle Management -->
+            <plugin>
+                <groupId>org.eclipse.m2e</groupId>
+                <artifactId>lifecycle-mapping</artifactId>
+                <version>${lifecycle-mapping-version}</version>
+                <configuration>
+                    <lifecycleMappingMetadata>
+                        <pluginExecutions>
+                            <pluginExecution>
+                                <pluginExecutionFilter>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-package-maven-plugin</artifactId>
+                                    <versionRange>${project.version}</versionRange>
+                                    <goals>
+                                        <goal>generate-components-list</goal>
+                                    </goals>
+                                </pluginExecutionFilter>
+                                <action>
+                                    <ignore />
+                                </action>
+                            </pluginExecution>
+                        </pluginExecutions>
+                    </lifecycleMappingMetadata>
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
     <plugins>
 
       <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
@@ -265,7 +296,6 @@
           <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>256m</maxmemory>
-          <source>1.6</source>
 
           <groups>
             <group>
@@ -348,8 +378,6 @@
               <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
               <linksource>true</linksource>
               <maxmemory>256m</maxmemory>
-              <source>1.6</source>
-
               <groups>
                 <group>
                   <title>Camel API</title>
@@ -418,8 +446,7 @@
     <profile>
       <id>apt</id>
       <activation>
-        <!-- don't enable on jdk 1.6 as it would not work and also it causes build problems by the CI-Server -->
-        <jdk>[1.7,)</jdk>
+        <activeByDefault>true</activeByDefault>
       </activation>
 
       <dependencies>
@@ -445,7 +472,43 @@
         <platform.skip.tests>org/apache/camel/management/**/*.java</platform.skip.tests>
       </properties>
     </profile>
-
+    <profile>
+       <id>xalan</id>
+       <dependencies>
+        <!-- enable the Xalan processor -->
+        <dependency>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+          <version>${xalan-version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+       <id>xerces</id>
+       <dependencies>
+        <!-- enable the xerces processor -->
+        <dependency>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+          <version>${xerces-version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+       <id>woodstox</id>
+       <activation>
+         <activeByDefault>true</activeByDefault>
+       </activation>
+       <dependencies>
+          <!-- xmltokenizer using woodstox -->
+          <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox-version}</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+    </profile>
   </profiles>
 
 </project>

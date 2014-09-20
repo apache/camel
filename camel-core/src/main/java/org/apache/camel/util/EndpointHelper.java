@@ -362,6 +362,35 @@ public final class EndpointHelper {
     }
 
     /**
+     * Resolves a parameter, by doing a reference lookup if the parameter is a reference, and converting
+     * the parameter to the given type.
+     *
+     * @param <T>     type of object to convert the parameter value as.
+     * @param context Camel context to use for lookup.
+     * @param value   parameter or reference parameter value.
+     * @param type    type of object to lookup.
+     * @return lookup result if it was a reference parameter, or the value converted to the given type
+     * @throws IllegalArgumentException if referenced object was not found in registry.
+     */
+    public static <T> T resolveParameter(CamelContext context, String value, Class<T> type) {
+        T result;
+        if (EndpointHelper.isReferenceParameter(value)) {
+            result = EndpointHelper.resolveReferenceParameter(context, value, type);
+        } else {
+            result = context.getTypeConverter().convertTo(type, value);
+        }
+        return result;
+    }
+
+    /**
+     * @deprecated use {@link #resolveParameter(org.apache.camel.CamelContext, String, Class)}
+     */
+    @Deprecated
+    public static <T> T resloveStringParameter(CamelContext context, String value, Class<T> type) {
+        return resolveParameter(context, value, type);
+    }
+
+    /**
      * Gets the route id for the given endpoint in which there is a consumer listening.
      *
      * @param endpoint  the endpoint

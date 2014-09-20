@@ -29,6 +29,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -50,7 +51,11 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -189,6 +194,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addService(Object object) throws Exception;
 
     /**
+     * Adds a service to this context.
+     * <p/>
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will also be enlisted in JMX for management (if JMX is enabled).
+     * The service will be started, if its not already started.
+     * <p/>
+     * If the option <tt>closeOnShutdown</tt> is <tt>true</tt> then this context will control the lifecycle, ensuring
+     * the service is stopped when the context stops.
+     * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
+     *
+     * @param object the service
+     * @param closeOnShutdown whether to close the service when this CamelContext shutdown.
+     * @throws Exception can be thrown when starting the service
+     */
+    void addService(Object object, boolean closeOnShutdown) throws Exception;
+
+    /**
      * Removes a service from this context.
      * <p/>
      * The service is assumed to have been previously added using {@link #addService(Object)} method.
@@ -207,6 +229,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return <tt>true</tt> if already added, <tt>false</tt> if not.
      */
     boolean hasService(Object object);
+
+    /**
+     * Has the given service type already been added to this context?
+     *
+     * @param type the class type
+     * @return the service instance or <tt>null</tt> if not already added.
+     */
+    <T> T hasService(Class<T> type);
 
     /**
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.
@@ -251,7 +281,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a component from the context by name.
      *
-     * @param componentName the name of the component
+     * @param name                 the name of the component
      * @param autoCreateComponents whether or not the component should
      *                             be lazily created if it does not already exist
      * @return the component
@@ -367,6 +397,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
+     * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
+     *
+     * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
+     * @see #isSetupRoutes()
+     */
+    void setupRoutes(boolean done);
+
+    /**
      * Returns a list of the current route definitions
      *
      * @return list of the current route definitions
@@ -384,6 +422,38 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     @Deprecated
     RouteDefinition getRouteDefinition(String id);
+
+    /**
+     * Returns a list of the current REST definitions
+     *
+     * @return list of the current REST definitions
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRestDefinitions()}
+     */
+    @Deprecated
+    List<RestDefinition> getRestDefinitions();
+
+    /**
+     * Adds a collection of rest definitions to the context
+     *
+     * @param restDefinitions the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be created for whatever reason
+     */
+    @Deprecated
+    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void setRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the current REST configuration
+     *
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration();
 
     /**
      * Returns the order in which the route inputs was started.
@@ -489,6 +559,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
+
+    /**
+     * Starts all the routes which currently is not started.
+     *
+     * @throws Exception is thrown if a route could not be started for whatever reason
+     */
+    void startAllRoutes() throws Exception;
 
     /**
      * Starts the given route if it has been previously stopped
@@ -638,6 +715,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     boolean isStartingRoutes();
 
+    /**
+     * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
+     * they need to react differently.
+     * <p/>
+     * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
+     * Spring or Blueprint, then we need to know when Spring/Blueprint is setting up the routes, which
+     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature
+     * of especially Blueprint.
+     *
+     * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
+     */
+    boolean isSetupRoutes();
+
     // Properties
     //-----------------------------------------------------------------------
 
@@ -662,6 +754,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the registry
      */
     Registry getRegistry();
+
+    /**
+     * Returns the registry used to lookup components by name and as the given type
+     *
+     * @param type the registry type such as {@link org.apache.camel.impl.JndiRegistry}
+     * @return the registry, or <tt>null</tt> if the given type was not found as a registry implementation
+     */
+    <T> T getRegistry(Class<T> type);
 
     /**
      * Returns the injector used to instantiate objects by type
@@ -1251,6 +1351,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**
+     * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).
+     *
+     * @param routeId for a particular route, or <tt>null</tt> for all routes
+     * @return a JSON string
+     */
+    String createRouteStaticEndpointJson(String routeId);
+
+    /**
+     * Creates a JSON representation of all the <b>static</b> (and possible <b>dynamic</b>) configured endpoints defined in the given route(s).
+     *
+     * @param routeId for a particular route, or <tt>null</tt> for all routes
+     * @param includeDynamic whether to include dynamic endpoints
+     * @return a JSON string
+     */
+    String createRouteStaticEndpointJson(String routeId, boolean includeDynamic);
+
+    /**
      * Gets the {@link StreamCachingStrategy} to use.
      */
     StreamCachingStrategy getStreamCachingStrategy();
@@ -1269,5 +1386,39 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link UnitOfWorkFactory} to use.
      */
     void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use, or <tt>null</tt> if none is in use.
+     */
+    RuntimeEndpointRegistry getRuntimeEndpointRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
+     */
+    void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.RestRegistry} to use
+     */
+    RestRegistry getRestRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
+     */
+    void setRestRegistry(RestRegistry restRegistry);
+
+    /**
+     * Adds the given route policy factory
+     *
+     * @param routePolicyFactory the factory
+     */
+    void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory);
+
+    /**
+     * Gets the route policy factories
+     *
+     * @return the list of current route policy factories
+     */
+    List<RoutePolicyFactory> getRoutePolicyFactories();
 
 }

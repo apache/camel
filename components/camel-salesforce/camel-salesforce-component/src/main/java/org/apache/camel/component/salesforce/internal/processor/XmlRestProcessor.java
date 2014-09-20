@@ -205,6 +205,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                                 mapper.flushCache();
                             }
                         } catch (CannotResolveClassException ignore) {
+                            // recent XStream versions add a ClassNotFoundException to cache
+                            mapper.flushCache();
                         }
                         localXStream.alias(responseAlias, responseClass);
                     }

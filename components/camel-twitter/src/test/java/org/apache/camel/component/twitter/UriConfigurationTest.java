@@ -17,7 +17,9 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,4 +62,27 @@ public class UriConfigurationTest extends Assert {
         assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
         assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
     }
+    
+    @Test
+    public void testComponentConfiguration() throws Exception {
+        TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
+
+        assertEquals("camel", conf.getParameter("keywords"));
+
+        ComponentConfiguration compConf = comp.createComponentConfiguration();
+        String json = compConf.createParameterJsonSchema();
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"accessToken\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"consumerKey\": { \"type\": \"string\" }"));
+    }
+
+    @Test
+    public void testComponentDocumentation() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String html = context.getComponentDocumentation("twitter");
+        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+    }
+
 }

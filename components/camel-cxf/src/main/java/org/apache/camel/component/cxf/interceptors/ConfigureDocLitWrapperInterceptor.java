@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf.interceptors;
 
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
-import org.apache.cxf.interceptor.DocLiteralInInterceptor;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
@@ -33,12 +32,14 @@ public class ConfigureDocLitWrapperInterceptor extends AbstractInDatabindingInte
     
     public ConfigureDocLitWrapperInterceptor(boolean unwrapParameterFlag) {
         super(Phase.UNMARSHAL);        
-        addBefore(DocLiteralInInterceptor.class.getName());
+        addBefore("org.apache.cxf.interceptor.DocLiteralInInterceptor");
+        addBefore("org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor");
         this.unwrapParameterFlag = unwrapParameterFlag;
     }
 
     public void handleMessage(Message message) throws Fault {
-        message.put(DocLiteralInInterceptor.KEEP_PARAMETERS_WRAPPER, unwrapParameterFlag);
+        message.put("org.apache.cxf.interceptor.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper", unwrapParameterFlag);
+        message.put("org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper", unwrapParameterFlag);
     }
     
     public boolean isUnwrapParameterFlag() {

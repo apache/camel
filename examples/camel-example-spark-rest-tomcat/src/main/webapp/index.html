@@ -1,0 +1,66 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html>
+
+<body>
+<h2>Spark REST and Apache Tomcat example</h2>
+
+This example shows how to use Spark REST to define REST endpoints in Camel routes using the Java DSL
+
+<br/>
+The routes are defined in Java code, in the <tt>org.apache.camel.example.sparkrest.UserRouteBuilder</tt> class.
+
+<p/>
+There is a <i>user</i> REST service that supports the following operations
+ <ul>
+   <li>view/<i>id</i> - to view a user with the given id </li>
+   <li>list - to view all users</li>
+   <li>update - to update/create an user</li>
+ </ul>
+
+The view and list operations are HTTP GET, and update is using HTTP PUT.
+
+From a web browser you can access the first two services using the following links
+
+<ul>
+  <li><a href="user/view/123">user/view/123</a> - to view the user with id 123</li>
+  <li><a href="user/list">user/list</a> - to list all users</li>
+</ul>
+
+From the command shell you can use curl to access the service as shown below:
+<pre>
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-spark-rest-tomcat-{version}/user/view/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-spark-rest-tomcat-{version}/user/list
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-spark-rest-tomcat-{version}/user/update
+</pre>
+
+This assume you installed the example by copying the .war as <tt>camel-example-spark-rest-tomcat-VERSION.war</tt>
+, where VERSION is the Camel version such as 2.14.0, into the <b>webapps</b> directory of Apache Tomcat.
+
+<p/>
+If you hit any problems please let us know on the
+<a href="http://camel.apache.org/discussion-forums.html">Camel Forums</a>
+<br/>
+<br/>
+Please help us make Apache Camel better - we appreciate any feedback you may
+have. Enjoy!
+<br/>
+<br/>
+The Camel riders!
+</body>
+
+</html>
