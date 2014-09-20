@@ -58,6 +58,10 @@ public final class XmlSignatureConstants {
 
     public static final String HEADER_CONTENT_REFERENCE_TYPE = "CamelXmlSignatureContentReferenceType";
 
+    public static final String HEADER_SCHEMA_RESOURCE_URI = "CamelXmlSignatureSchemaResourceUri";
+    
+    public static final String HEADER_XPATHS_TO_ID_ATTRIBUTES = "CamelXmlSignatureXpathsToIdAttributes";
+
     private XmlSignatureConstants() {
         // no instance
     }

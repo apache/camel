@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@Deprecated
 public class GraphSupport {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();

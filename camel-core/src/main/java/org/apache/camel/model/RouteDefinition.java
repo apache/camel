@@ -44,10 +44,12 @@ import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -80,6 +82,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler configured)
     private boolean contextScopedErrorHandler = true;
+    private Boolean rest;
+    private RestDefinition restDefinition;
 
     public RouteDefinition() {
     }
@@ -90,6 +94,14 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     public RouteDefinition(Endpoint endpoint) {
         from(endpoint);
+    }
+
+    /**
+     * This route is created from the REST DSL.
+     */
+    public void fromRest(String uri) {
+        from(uri);
+        rest = true;
     }
 
     /**
@@ -765,6 +777,20 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    @XmlAttribute
+    public Boolean isRest() {
+        return rest;
+    }
+
+    public RestDefinition getRestDefinition() {
+        return restDefinition;
+    }
+
+    @XmlTransient
+    public void setRestDefinition(RestDefinition restDefinition) {
+        this.restDefinition = restDefinition;
+    }
+
     @SuppressWarnings("deprecation")
     public boolean isContextScopedErrorHandler(CamelContext context) {
         if (!contextScopedErrorHandler) {
@@ -862,6 +888,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RoutePolicy.class);
                 log.debug("RoutePolicy is enabled: {} on route: {}", policy, getId());
                 routeContext.getRoutePolicyList().add(policy);
+            }
+        }
+        if (camelContext.getRoutePolicyFactories() != null) {
+            for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
+                RoutePolicy policy = factory.createRoutePolicy(camelContext, getId(), this);
+                if (policy != null) {
+                    log.debug("RoutePolicy is enabled: {} on route: {}", policy, getId());
+                    routeContext.getRoutePolicyList().add(policy);
+                }
             }
         }
 

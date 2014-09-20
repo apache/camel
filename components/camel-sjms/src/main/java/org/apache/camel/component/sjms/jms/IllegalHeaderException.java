@@ -24,7 +24,7 @@ import org.apache.camel.RuntimeCamelException;
  */
 public class IllegalHeaderException extends RuntimeCamelException {
 
-   
+
     private static final long serialVersionUID = 3136304415267471091L;
 
     /**

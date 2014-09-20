@@ -22,7 +22,6 @@ import org.apache.camel.impl.SimpleRegistry;
 public class GaeDefaultCamelContext extends DefaultCamelContext {
 
     public GaeDefaultCamelContext() {
-        super();
         // disable JMX and use the simple registry as JNDI is not allowed
         disableJMX();
         setRegistry(new SimpleRegistry());

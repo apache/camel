@@ -45,6 +45,6 @@
 
   <jaxws:endpoint id="serviceEndpoint"
                   implementor="org.apache.camel.example.cxf.httptojms.GreeterImpl"
-                  address="jms://"/>
+                  address="jms:jndi:dynamicQueues/test.soap.jmstransport.queue?jndiInitialContextFactory=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;jndiConnectionFactoryName=ConnectionFactory&amp;jndiURL=vm://localhost"/>
 
 </beans>

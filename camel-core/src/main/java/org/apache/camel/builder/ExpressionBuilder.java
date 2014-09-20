@@ -49,6 +49,7 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
+import org.apache.camel.support.XMLTokenExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
@@ -829,6 +830,29 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for invoking a method (support OGNL syntax) on the given expression
+     *
+     * @param exp   the expression to evaluate and invoke the method on its result
+     * @param ognl  methods to invoke on the evaluated expression in a simple OGNL syntax
+     */
+    public static Expression ognlExpression(final Expression exp, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object value = exp.evaluate(exchange, Object.class);
+                if (value == null) {
+                    return null;
+                }
+                return new MethodCallExpression(value, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "ognl(" + exp + ", " + ognl + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges camelContext invoking methods defined
      * in a simple OGNL notation
      *
@@ -1227,8 +1251,19 @@ public final class ExpressionBuilder {
                 inheritNamespaceTagName = inheritNamespaceTagName + ">";
             }
         }
-
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode) {
+        ObjectHelper.notEmpty(path, "path");
+
+        return new XMLTokenExpressionIterator(path, mode);
+    }
+    
+    public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
+        ObjectHelper.notEmpty(path, "path");
+
+        return new XMLTokenExpressionIterator(path, mode, group);
     }
 
     /**

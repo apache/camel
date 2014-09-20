@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HBaseIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
+
     private static final Logger LOG = LoggerFactory.getLogger(HBaseIdempotentRepository.class);
 
     private final String tableName;

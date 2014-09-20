@@ -27,6 +27,7 @@ import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
+import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
@@ -50,6 +51,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String beanType;
     @XmlAttribute
     private Boolean cache;
+    @XmlAttribute
+    private Boolean multiParameterArray;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -139,6 +142,14 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public void setCache(Boolean cache) {
         this.cache = cache;
     }
+    
+    public Boolean getMultiParameterArray() {
+        return multiParameterArray;
+    }
+    
+    public void setMultiParameterArray(Boolean multiParameterArray) {
+        this.multiParameterArray = multiParameterArray;
+    }
 
     // Fluent API
     //-------------------------------------------------------------------------
@@ -212,14 +223,16 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         BeanHolder beanHolder;
 
         if (ObjectHelper.isNotEmpty(ref)) {
-            if (cache != null && cache) {
+            // lets cache by default
+            if (isCacheBean()) {
                 // cache the registry lookup which avoids repeat lookup in the registry
                 beanHolder = new RegistryBean(routeContext.getCamelContext(), ref).createCacheHolder();
+                // bean holder will check if the bean exists
+                bean = beanHolder.getBean();
             } else {
+                // we do not cache so we invoke on-demand
                 beanHolder = new RegistryBean(routeContext.getCamelContext(), ref);
             }
-            // bean holder will check if the bean exists
-            bean = beanHolder.getBean();
             answer = new BeanProcessor(beanHolder);
         } else {
             if (bean == null) {
@@ -240,7 +253,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
                 }
 
                 // create a bean if there is a default public no-arg constructor
-                if (ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                if (isCacheBean() && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
                     bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
                     ObjectHelper.notNull(bean, "bean", this);
                 }
@@ -254,8 +267,27 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             }
 
             // the holder should either be bean or type based
-            beanHolder = bean != null ? new ConstantBeanHolder(bean, routeContext.getCamelContext()) : new ConstantTypeBeanHolder(clazz, routeContext.getCamelContext());
+            if (bean != null) {
+                beanHolder = new ConstantBeanHolder(bean, routeContext.getCamelContext());
+            } else {
+                if (isCacheBean() && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                    // we can only cache if we can create an instance of the bean, and for that we need a public constructor
+                    beanHolder = new ConstantTypeBeanHolder(clazz, routeContext.getCamelContext()).createCacheHolder();
+                } else {
+                    if (ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                        beanHolder = new ConstantTypeBeanHolder(clazz, routeContext.getCamelContext());
+                    } else {
+                        // this is only for invoking static methods on the bean
+                        beanHolder = new ConstantStaticTypeBeanHolder(clazz, routeContext.getCamelContext());
+                    }
+                }
+            }
             answer = new BeanProcessor(beanHolder);
+        }
+        
+        // check for multiParameterArray setting
+        if (multiParameterArray != null) {
+            answer.setMultiParameterArray(multiParameterArray);
         }
 
         // check for method exists
@@ -263,21 +295,29 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             answer.setMethod(method);
 
             // check there is a method with the given name, and leverage BeanInfo for that
-            BeanInfo beanInfo = beanHolder.getBeanInfo();
-            if (bean != null) {
-                // there is a bean instance, so check for any methods
-                if (!beanInfo.hasMethod(method)) {
-                    throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
-                }
-            } else if (clazz != null) {
-                // there is no bean instance, so check for static methods only
-                if (!beanInfo.hasStaticMethod(method)) {
-                    throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
+            // which we only do if we are caching the bean as otherwise we will create a bean instance for this check
+            // which we only want to do if we cache the bean
+            if (isCacheBean()) {
+                BeanInfo beanInfo = beanHolder.getBeanInfo();
+                if (bean != null) {
+                    // there is a bean instance, so check for any methods
+                    if (!beanInfo.hasMethod(method)) {
+                        throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+                    }
+                } else if (clazz != null) {
+                    // there is no bean instance, so check for static methods only
+                    if (!beanInfo.hasStaticMethod(method)) {
+                        throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
+                    }
                 }
             }
         }
 
         return answer;
+    }
+
+    private boolean isCacheBean() {
+        return cache == null || cache;
     }
 
 }

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,13 +29,15 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Marhsal tests with List objects.
+ * Marshal tests with List objects.
  */
 public class MarshalListTest extends CamelTestSupport {
 
+    @EndpointInject(uri = "mock:result")
+    MockEndpoint mock;
+
     @Test
     public void testMarshalList() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<?xml version='1.0' encoding='ISO-8859-1'?>"
             + "<list><string>Hello World</string></list>");
@@ -49,7 +52,6 @@ public class MarshalListTest extends CamelTestSupport {
 
     @Test
     public void testMarshalListWithMap() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><list><map><entry><string>city</string>"
@@ -64,10 +66,9 @@ public class MarshalListTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSetEncodingOnXstream() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><list><map><entry><string>city</string>"
@@ -86,8 +87,8 @@ public class MarshalListTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").marshal().xstream().to("mock:result");
-                from("direct:in-UTF-8").marshal().xstream("UTF-8").to("mock:result");
+                from("direct:in").marshal().xstream().to(mock);
+                from("direct:in-UTF-8").marshal().xstream("UTF-8").to(mock);
             }
         };
     }

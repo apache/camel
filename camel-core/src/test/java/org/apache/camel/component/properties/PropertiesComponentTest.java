@@ -289,7 +289,30 @@ public class PropertiesComponentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
+    public void testPropertiesComponentParameterizedPropertyPrefix() throws Exception {
+        System.setProperty("myPrefix", "cool");
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setPropertyPrefix("${myPrefix}.");
+        pc.setPropertySuffix(".xx");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:end");
+                from("direct:foo").to("properties:mock:{{result}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testPropertiesComponentPropertyPrefixFallbackDefault() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertyPrefix("cool.");

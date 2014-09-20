@@ -18,6 +18,9 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 
+/**
+ * Factory to create {@link org.apache.camel.spi.UnitOfWork}.
+ */
 public interface UnitOfWorkFactory {
 
     /**

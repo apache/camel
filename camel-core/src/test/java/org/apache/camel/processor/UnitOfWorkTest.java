@@ -34,6 +34,8 @@ public class UnitOfWorkTest extends ContextTestSupport {
     protected Exchange failed;
     protected String uri = "direct:foo";
     protected CountDownLatch doneLatch = new CountDownLatch(1);
+    protected Object foo;
+    protected Object baz;
 
     public void testSuccess() throws Exception {
         sendMessage();
@@ -41,6 +43,8 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have failed", failed);
         assertNotNull("Should have received completed notification", completed);
+        assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
+        assertNull("The Synchronization.onFailure() callback should have not been invoked", baz);
 
         log.info("Received completed: " + completed);
     }
@@ -51,6 +55,8 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have completed", completed);
         assertNotNull("Should have received failed notification", failed);
+        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bat", baz);
+        assertNull("The Synchronization.onComplete() callback should have not been invoked", foo);
 
         log.info("Received fail: " + failed);
     }
@@ -61,6 +67,8 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have completed", completed);
         assertNotNull("Should have received failed notification", failed);
+        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bat", baz);
+        assertNull("The Synchronization.onComplete() callback should have not been invoked", foo);
 
         log.info("Received fail: " + failed);
     }
@@ -70,11 +78,13 @@ public class UnitOfWorkTest extends ContextTestSupport {
         synchronization = new Synchronization() {
             public void onComplete(Exchange exchange) {
                 completed = exchange;
+                foo = exchange.getIn().getHeader("foo");
                 doneLatch.countDown();
             }
 
             public void onFailure(Exchange exchange) {
                 failed = exchange;
+                baz = exchange.getIn().getHeader("baz");
                 doneLatch.countDown();
             }
         };
@@ -86,6 +96,8 @@ public class UnitOfWorkTest extends ContextTestSupport {
         
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("foo", "bar");
+                exchange.getIn().setHeader("baz", "bat");
                 exchange.getIn().setBody("<hello>world!</hello>");
             }
         });

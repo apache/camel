@@ -20,20 +20,26 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.MessageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with SMPP
  */
 public class SmppMessage extends DefaultMessage {
-
+    private static final Logger LOG = LoggerFactory.getLogger(SmppMessage.class);
     private Command command;
     private SmppConfiguration configuration;
+    
+    
     
     public SmppMessage(SmppConfiguration configuration) {
         this.configuration = configuration;
@@ -85,12 +91,16 @@ public class SmppMessage extends DefaultMessage {
             }
             if (SmppUtils.parseAlphabetFromDataCoding(msgRequest.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
                 return shortMessage;
-            } else if (Charset.isSupported(configuration.getEncoding())) {
-                try {
-                    return new String(shortMessage, configuration.getEncoding());
-                } catch (UnsupportedEncodingException e) {
-                    // ignore
-                }
+            }
+            
+            String encoding = IOHelper.getCharsetName(getExchange(), false);
+            if (ObjectHelper.isEmpty(encoding) || !Charset.isSupported(encoding)) {
+                encoding = configuration.getEncoding();
+            }
+            try {
+                return new String(shortMessage, encoding);
+            } catch (UnsupportedEncodingException e) {
+                LOG.info("Unsupported encoding \"{}\". Using system default encoding.", encoding);
             }
             return new String(shortMessage);
         }

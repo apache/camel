@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -33,7 +34,9 @@ import org.junit.Test;
 public class HL7DataFormatTest extends CamelTestSupport {
     private static final String NONE_ISO_8859_1 = 
         "\u221a\u00c4\u221a\u00e0\u221a\u00e5\u221a\u00ed\u221a\u00f4\u2248\u00ea";
-    
+
+    private HL7DataFormat hl7;
+
     @Test
     public void testMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
@@ -91,6 +94,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
         mock.expectedHeaderReceived(HL7Constants.HL7_MESSAGE_CONTROL, "1234");
         mock.expectedHeaderReceived(HL7Constants.HL7_PROCESSING_ID, "P");
         mock.expectedHeaderReceived(HL7Constants.HL7_VERSION_ID, "2.4");
+        mock.expectedHeaderReceived(HL7Constants.HL7_CONTEXT, hl7.getHapiContext());
 
         String body = createHL7AsString();
         template.sendBody("direct:unmarshal", body);
@@ -104,11 +108,12 @@ public class HL7DataFormatTest extends CamelTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
+
         return new RouteBuilder() {
             public void configure() throws Exception {
+                hl7 = new HL7DataFormat();
                 from("direct:marshal").marshal().hl7().to("mock:marshal");
-
-                from("direct:unmarshal").unmarshal().hl7().to("mock:unmarshal");
+                from("direct:unmarshal").unmarshal(hl7).to("mock:unmarshal");
             }
         };
     }

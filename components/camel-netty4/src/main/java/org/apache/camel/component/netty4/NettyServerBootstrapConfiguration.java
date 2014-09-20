@@ -19,10 +19,10 @@ package org.apache.camel.component.netty4;
 import java.io.File;
 import java.util.Map;
 
+import io.netty.channel.EventLoopGroup;
+import io.netty.handler.ssl.SslHandler;
+
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.jboss.netty.channel.socket.nio.BossPool;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.handler.ssl.SslHandler;
 
 public class NettyServerBootstrapConfiguration implements Cloneable {
 
@@ -30,17 +30,17 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String host;
     protected int port;
     protected boolean broadcast;
-    protected long sendBufferSize = 65536;
-    protected long receiveBufferSize = 65536;
+    protected int sendBufferSize = 65536;
+    protected int receiveBufferSize = 65536;
     protected int receiveBufferSizePredictor;
     protected int bossCount = 1;
     protected int workerCount;
     protected boolean keepAlive = true;
     protected boolean tcpNoDelay = true;
     protected boolean reuseAddress = true;
-    protected long connectTimeout = 10000;
+    protected int connectTimeout = 10000;
     protected int backlog;
-    protected ServerPipelineFactory serverPipelineFactory;
+    protected ServerInitializerFactory serverPipelineFactory;
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
@@ -56,8 +56,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String keyStoreFormat;
     protected String securityProvider;
     protected String passphrase;
-    protected BossPool bossPool;
-    protected WorkerPool workerPool;
+    protected EventLoopGroup bossGroup;
+    protected EventLoopGroup workerGroup;
     protected String networkInterface;
 
     public String getAddress() {
@@ -100,19 +100,19 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.broadcast = broadcast;
     }
 
-    public long getSendBufferSize() {
+    public int getSendBufferSize() {
         return sendBufferSize;
     }
 
-    public void setSendBufferSize(long sendBufferSize) {
+    public void setSendBufferSize(int sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
     }
 
-    public long getReceiveBufferSize() {
+    public int getReceiveBufferSize() {
         return receiveBufferSize;
     }
 
-    public void setReceiveBufferSize(long receiveBufferSize) {
+    public void setReceiveBufferSize(int receiveBufferSize) {
         this.receiveBufferSize = receiveBufferSize;
     }
 
@@ -164,11 +164,11 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.reuseAddress = reuseAddress;
     }
 
-    public long getConnectTimeout() {
+    public int getConnectTimeout() {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(long connectTimeout) {
+    public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
@@ -280,11 +280,11 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.passphrase = passphrase;
     }
 
-    public ServerPipelineFactory getServerPipelineFactory() {
+    public ServerInitializerFactory getServerPipelineFactory() {
         return serverPipelineFactory;
     }
 
-    public void setServerPipelineFactory(ServerPipelineFactory serverPipelineFactory) {
+    public void setServerPipelineFactory(ServerInitializerFactory serverPipelineFactory) {
         this.serverPipelineFactory = serverPipelineFactory;
     }
 
@@ -304,20 +304,20 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.options = options;
     }
 
-    public BossPool getBossPool() {
-        return bossPool;
+    public EventLoopGroup getBossGroup() {
+        return bossGroup;
     }
 
-    public void setBossPool(BossPool bossPool) {
-        this.bossPool = bossPool;
+    public void setBossGroup(EventLoopGroup bossGroup) {
+        this.bossGroup = bossGroup;
     }
 
-    public WorkerPool getWorkerPool() {
-        return workerPool;
+    public EventLoopGroup getWorkerGroup() {
+        return workerGroup;
     }
 
-    public void setWorkerPool(WorkerPool workerPool) {
-        this.workerPool = workerPool;
+    public void setWorkerGroup(EventLoopGroup workerGroup) {
+        this.workerGroup = workerGroup;
     }
 
     public String getNetworkInterface() {
@@ -401,9 +401,9 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (passphrase != null && !passphrase.equals(other.passphrase)) {
             isCompatible = false;
-        } else if (bossPool != other.bossPool) {
+        } else if (bossGroup != other.bossGroup) {
             isCompatible = false;
-        } else if (workerPool != other.workerPool) {
+        } else if (workerGroup != other.workerGroup) {
             isCompatible = false;
         } else if (networkInterface != null && !networkInterface.equals(other.networkInterface)) {
             isCompatible = false;
@@ -442,8 +442,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", keyStoreFormat='" + keyStoreFormat + '\''
                 + ", securityProvider='" + securityProvider + '\''
                 + ", passphrase='" + passphrase + '\''
-                + ", bossPool=" + bossPool
-                + ", workerPool=" + workerPool
+                + ", bossGroup=" + bossGroup
+                + ", workerGroup=" + workerGroup
                 + ", networkInterface='" + networkInterface + '\''
                 + '}';
     }

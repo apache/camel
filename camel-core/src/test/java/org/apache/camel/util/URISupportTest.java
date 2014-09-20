@@ -94,6 +94,12 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(out1, out2);
         assertTrue("Should have //", out1.startsWith("http://"));
         assertTrue("Should have //", out2.startsWith("http://"));
+        
+    }
+    
+    public void testNormalizeIPv6HttpEndpoint() throws Exception {
+        String result = URISupport.normalizeUri("http://[2a00:8a00:6000:40::1413]:30300/test");
+        assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test", result);
     }
 
     public void testNormalizeHttpEndpointUnicodedParameter() throws Exception {

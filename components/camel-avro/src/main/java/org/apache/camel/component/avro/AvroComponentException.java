@@ -21,7 +21,6 @@ public class AvroComponentException extends Exception {
     private static final long serialVersionUID = 8915917806189741165L;
 
     public AvroComponentException() {
-        super();
     }
 
     public AvroComponentException(String message, Throwable cause) {

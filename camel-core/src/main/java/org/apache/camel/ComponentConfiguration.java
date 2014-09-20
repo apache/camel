@@ -50,7 +50,7 @@ public interface ComponentConfiguration {
     void setBaseUri(String baseUri);
 
     /**
-     * Returns the current parameters of the configuration (usually encoded as ?foo=bar&whatnot=something URI query parameters)
+     * Returns the current parameters of the configuration (usually encoded as <tt>?foo=bar&whatnot=something</tt> URI query parameters)
      */
     Map<String, Object> getParameters();
 
@@ -74,7 +74,6 @@ public interface ComponentConfiguration {
      * @param value the new value of the parameter
      */
     void setParameter(String name, Object value);
-
 
     /**
      * Returns the URI string (without schema) with query parameters for the current
@@ -111,7 +110,7 @@ public interface ComponentConfiguration {
      * <p/>
      * Note that typically parts of the URI are not injected into the Endpoint; this method purely
      *
-     * @param endpoint
+     * @param endpoint the endpoint instance
      */
     void configureEndpoint(Endpoint endpoint);
 
@@ -137,15 +136,12 @@ public interface ComponentConfiguration {
 
     /**
      * A helper method for tools such as CLIs, IDEs or web tools that provides a completion list for Endpoint Paths
-     * rather like bash tab completion or Karaf attribute or option completion handers.
+     * rather like bash tab completion or Karaf attribute or option completion handlers.
      *
      * So given the current configuration data, return a list of completions given the specified text.
-     *
      * e.g. return the files in a directory, the matching queues in a message broker, the database tables in a database component etc
      *
      * @param completionText the prefix text used to complete on (usually a matching bit of text)
-     *
-     * @return a list of matches
      * @return a list of matches
      */
     List<String> completeEndpointPath(String completionText);

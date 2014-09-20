@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>examples</artifactId>
-		<version>2.13-SNAPSHOT</version>
+		<version>2.15-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>camel-example-activemq-tomcat</artifactId>
@@ -35,7 +35,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tomcat-maven-plugin</artifactId>
-				<version>1.1</version>
 				<configuration>
 					<server>myTomcat</server>
 					<url>${tomcat.url}</url>

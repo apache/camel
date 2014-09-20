@@ -21,21 +21,22 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * @version
  */
-public class JdbcComponent extends DefaultComponent {
+public class JdbcComponent extends UriEndpointComponent {
     private DataSource ds;
 
     public JdbcComponent() {
+        super(JdbcEndpoint.class);
     }
 
     public JdbcComponent(CamelContext context) {
-        super(context);
+        super(context, JdbcEndpoint.class);
     }
 
     @Override

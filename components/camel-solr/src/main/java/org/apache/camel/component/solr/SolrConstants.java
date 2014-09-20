@@ -33,6 +33,7 @@ public final class SolrConstants {
     public static final String PARAM_STREAMING_QUEUE_SIZE = "streamingQueueSize";
     public static final String PARAM_STREAMING_THREAD_COUNT = "streamingThreadCount";
     public static final int DEFUALT_STREAMING_QUEUE_SIZE = 10;
+    public static final boolean DEFAULT_SHOULD_HTTPS = false;
     public static final int DEFAULT_STREAMING_THREAD_COUNT = 2;
 
     private SolrConstants() {

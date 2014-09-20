@@ -27,8 +27,9 @@ import org.apache.camel.processor.Throttler.TimeSlot;
 
 import static org.apache.camel.builder.Builder.constant;
 
+
 /**
- * @version 
+ * @version
  */
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -37,7 +38,7 @@ public class ThrottlerTest extends ContextTestSupport {
     public void testSendLotsOfMessagesButOnly3GetThrough() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(3);
-        resultEndpoint.setResultWaitTime(5000);
+        resultEndpoint.setResultWaitTime(2000);
 
         for (int i = 0; i < messageCount; i++) {
             template.sendBody("seda:a", "<message>" + i + "</message>");
@@ -48,6 +49,25 @@ public class ThrottlerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
     
+    public void testSendLotsOfMessagesWithRejctExecution() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.setResultWaitTime(2000);
+        
+        MockEndpoint errorEndpoint = resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
+        errorEndpoint.expectedMessageCount(4);
+        errorEndpoint.setResultWaitTime(2000);
+
+        for (int i = 0; i < 6; i++) {
+            template.sendBody("direct:start", "<message>" + i + "</message>");
+        }
+
+        // lets pause to give the requests time to be processed
+        // to check that the throttle really does kick in
+        resultEndpoint.assertIsSatisfied();
+        errorEndpoint.assertIsSatisfied();
+    }
+
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
@@ -75,7 +95,7 @@ public class ThrottlerTest extends ContextTestSupport {
     }
 
     public void testTimeSlotCalculus() throws Exception {
-        Throttler throttler = new Throttler(context, null, constant(3), 1000, null, false);
+        Throttler throttler = new Throttler(context, null, constant(3), 1000, null, false, false);
         // calculate will assign a new slot
         throttler.calculateDelay(new DefaultExchange(context));
         TimeSlot slot = throttler.nextSlot();
@@ -85,7 +105,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertSame(slot, throttler.nextSlot());
         assertTrue(slot.isFull());
         assertTrue(slot.isActive());
-        
+
         TimeSlot next = throttler.nextSlot();
         // now we should have a new slot that starts somewhere in the future
         assertNotSame(slot, next);
@@ -93,7 +113,7 @@ public class ThrottlerTest extends ContextTestSupport {
     }
 
     public void testTimeSlotCalculusForPeriod() throws InterruptedException {
-        Throttler throttler = new Throttler(context, null, constant(3), 1000, null, false);
+        Throttler throttler = new Throttler(context, null, constant(3), 1000, null, false, false);
         throttler.calculateDelay(new DefaultExchange(context));
 
         TimeSlot slot = throttler.getSlot();
@@ -159,9 +179,54 @@ public class ThrottlerTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
+    public void testConfigurationWithChangingHeaderExpression() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        sendMessagesWithHeaderExpression(executor, resultEndpoint, 1);
+
+        resultEndpoint.reset();
+        sendMessagesWithHeaderExpression(executor, resultEndpoint, 10);
+
+        resultEndpoint.reset();
+        sendMessagesWithHeaderExpression(executor, resultEndpoint, 1);
+
+        executor.shutdownNow();
+    }
+
+    private void sendMessagesWithHeaderExpression(ExecutorService executor, MockEndpoint resultEndpoint, final int
+            throttle) throws InterruptedException {
+        resultEndpoint.expectedMessageCount(messageCount);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < messageCount; i++) {
+            executor.execute(new Runnable() {
+                public void run() {
+                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue",
+                            throttle);
+                }
+            });
+        }
+
+        // let's wait for the exchanges to arrive
+        resultEndpoint.assertIsSatisfied();
+
+        // now assert that they have actually been throttled
+        long minimumTime = (messageCount - 1) * INTERVAL / throttle;
+        // add a little slack
+        long delta = System.currentTimeMillis() - start + 200;
+        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        long maxTime = (messageCount - 1) * INTERVAL / throttle * 3;
+        assertTrue("Should take at most " + maxTime + "ms, was: " + delta, delta <= maxTime);
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                
+                onException(ThrottlerRejectedExecutionException.class)
+                    .handled(true)
+                    .to("mock:error");
+                
                 // START SNIPPET: ex
                 from("seda:a").throttle(3).timePeriodMillis(10000).to("log:result", "mock:result");
                 // END SNIPPET: ex
@@ -171,6 +236,8 @@ public class ThrottlerTest extends ContextTestSupport {
                 from("direct:expressionConstant").throttle(constant(1)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
 
                 from("direct:expressionHeader").throttle(header("throttleValue")).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                
+                from("direct:start").throttle(2).timePeriodMillis(10000).rejectExecution(true).to("log:result", "mock:result");
             }
         };
     }

@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.junit.Test;
 
 /**
@@ -115,9 +114,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(
-                    new String(((BigEndianHeapChannelBuffer) exchange.getIn()
-                            .getBody()).array()));
+            exchange.getOut().setBody(exchange.getIn().getBody(String.class));
         }
     }
 }

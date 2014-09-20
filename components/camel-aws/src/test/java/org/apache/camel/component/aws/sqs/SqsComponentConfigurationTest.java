@@ -36,12 +36,14 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getAmazonSQSClient());
         assertNull(endpoint.getConfiguration().getAttributeNames());
+        assertNull(endpoint.getConfiguration().getMessageAttributeNames());
         assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
         assertNull(endpoint.getConfiguration().getMaximumMessageSize());
         assertNull(endpoint.getConfiguration().getMessageRetentionPeriod());
         assertNull(endpoint.getConfiguration().getPolicy());
+        assertNull(endpoint.getConfiguration().getRegion());
     }
     
     @Test
@@ -58,12 +60,14 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSecretKey());
         assertSame(mock, endpoint.getConfiguration().getAmazonSQSClient());
         assertNull(endpoint.getConfiguration().getAttributeNames());
+        assertNull(endpoint.getConfiguration().getMessageAttributeNames());
         assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
         assertNull(endpoint.getConfiguration().getMaximumMessageSize());
         assertNull(endpoint.getConfiguration().getMessageRetentionPeriod());
         assertNull(endpoint.getConfiguration().getPolicy());
+        assertNull(endpoint.getConfiguration().getRegion());
     }
     
     @Test
@@ -71,22 +75,27 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         List<String> attributeNames = new ArrayList<String>();
         attributeNames.add("color");
         attributeNames.add("size");
+        List<String> messageAttributeNames = new ArrayList<String>();
+        messageAttributeNames.add("msgColor");
+        messageAttributeNames.add("msgSize");
         
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("attributeNames", attributeNames);
-        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("messageAttributeNames", messageAttributeNames);
+
         SqsComponent component = new SqsComponent(context);
         SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?amazonSQSEndpoint=sns.eu-west-1.amazonaws.com&accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"
-                + "&DefaultVisibilityTimeout=1000&visibilityTimeout=2000&maximumMessageSize=65536&messageRetentionPeriod=1209600&policy="
+                + "&messageAttributeNames=#messageAttributeNames&DefaultVisibilityTimeout=1000&visibilityTimeout=2000&maximumMessageSize=65536&messageRetentionPeriod=1209600&policy="
                 + "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyQueue%2FSQSDefaultPolicy%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22"
                 + "Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyQueue%22%7D%5D%7D"
                 + "&delaySeconds=123&receiveMessageWaitTimeSeconds=10&waitTimeSeconds=20"
-                + "&queueOwnerAWSAccountId=111222333");
+                + "&queueOwnerAWSAccountId=111222333&region=us-east-1");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getAmazonSQSClient());
         assertSame(attributeNames, endpoint.getConfiguration().getAttributeNames());
+        assertSame(messageAttributeNames, endpoint.getConfiguration().getMessageAttributeNames());
         assertEquals(new Integer(1000), endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertEquals(new Integer(2000), endpoint.getConfiguration().getVisibilityTimeout());
         assertEquals("sns.eu-west-1.amazonaws.com", endpoint.getConfiguration().getAmazonSQSEndpoint());
@@ -99,6 +108,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Integer.valueOf(10), endpoint.getConfiguration().getReceiveMessageWaitTimeSeconds());
         assertEquals(Integer.valueOf(20), endpoint.getConfiguration().getWaitTimeSeconds());
         assertEquals("111222333", endpoint.getConfiguration().getQueueOwnerAWSAccountId());
+        assertEquals("us-east-1", endpoint.getConfiguration().getRegion());
     }
     
     @Test

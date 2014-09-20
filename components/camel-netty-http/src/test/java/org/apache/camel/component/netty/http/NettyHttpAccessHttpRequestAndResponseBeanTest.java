@@ -64,7 +64,7 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
 
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         response.setContent(ChannelBuffers.copiedBuffer(reply.getBytes()));
-        response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, reply.length());
+        response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, reply.length());
 
         return response;
     }

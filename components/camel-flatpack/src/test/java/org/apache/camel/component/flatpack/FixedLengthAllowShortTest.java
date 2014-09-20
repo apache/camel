@@ -32,9 +32,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 /**
- * @version 
+ * @version
  */
 @ContextConfiguration
 public class FixedLengthAllowShortTest extends AbstractJUnit4SpringContextTests {
@@ -45,6 +44,9 @@ public class FixedLengthAllowShortTest extends AbstractJUnit4SpringContextTests 
 
     @EndpointInject(uri = "mock:results-df")
     protected MockEndpoint resultsdf;
+
+    @EndpointInject(uri = "mock:results-xml")
+    protected MockEndpoint resultsxml;
 
     protected String[] expectedFirstName = {"JOHN-SHORT", "JIMMY-SHORT", "JANE-SHORT", "FRED-SHORT"};
 
@@ -72,6 +74,20 @@ public class FixedLengthAllowShortTest extends AbstractJUnit4SpringContextTests 
         resultsdf.assertIsSatisfied();
 
         Exchange exchange = resultsdf.getReceivedExchanges().get(0);
+        DataSetList data = exchange.getIn().getBody(DataSetList.class);
+        int counter = 0;
+        for (Map<String, Object> map : data) {
+            assertEquals("FIRSTNAME", expectedFirstName[counter], map.get("FIRSTNAME"));
+            counter++;
+        }
+    }
+
+    @Test
+    public void testFlatpackDataFormatXML() throws Exception {
+        resultsxml.expectedMessageCount(1);
+        resultsxml.assertIsSatisfied();
+
+        Exchange exchange = resultsxml.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
         int counter = 0;
         for (Map<String, Object> map : data) {

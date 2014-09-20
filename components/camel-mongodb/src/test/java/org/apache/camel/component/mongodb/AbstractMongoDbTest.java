@@ -37,9 +37,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.After;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -81,8 +79,8 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         
     }
 
-    @Before
-    public void initTestCase() {
+    @Override
+    public void doPostSetup() {
         // Refresh the test collection - drop it and recreate it. We don't do this for the database because MongoDB would create large
         // store files each time
         testCollectionName = properties.getProperty("mongodb.testCollection");
@@ -97,10 +95,12 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     }
 
-    @After
-    public void cleanup() {
+    @Override
+    public void tearDown() throws Exception {
         testCollection.drop();
         dynamicCollection.drop();
+
+        super.tearDown();
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.FailedToCreateConsumerException;
@@ -24,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -31,13 +34,16 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP endpoint
  */
+@UriEndpoint(scheme = "ftp", consumerClass = FtpConsumer.class)
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
     protected FTPClient ftpClient;
     protected FTPClientConfig ftpClientConfig;
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
+    @UriParam
     protected int soTimeout;
+    @UriParam
     protected int dataTimeout;
 
     public FtpEndpoint() {
@@ -89,17 +95,18 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
         // then lookup ftp client parameters and set those
         if (ftpClientParameters != null) {
+            Map<String, Object> localParameters = new HashMap<String, Object>(ftpClientParameters);
             // setting soTimeout has to be done later on FTPClient (after it has connected)
-            Object timeout = ftpClientParameters.remove("soTimeout");
+            Object timeout = localParameters.remove("soTimeout");
             if (timeout != null) {
                 soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
             // and we want to keep data timeout so we can log it later
-            timeout = ftpClientParameters.remove("dataTimeout");
+            timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
                 dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
-            setProperties(client, ftpClientParameters);
+            setProperties(client, localParameters);
         }
         
         if (ftpClientConfigParameters != null) {
@@ -107,7 +114,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            setProperties(ftpClientConfig, ftpClientConfigParameters);
+            Map<String, Object> localConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
+            setProperties(ftpClientConfig, localConfigParameters);
         }
 
         if (dataTimeout > 0) {
@@ -175,7 +183,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
      * Used by FtpComponent to provide additional parameters for the FTPClientConfig
      */
     void setFtpClientConfigParameters(Map<String, Object> ftpClientConfigParameters) {
-        this.ftpClientConfigParameters = ftpClientConfigParameters;
+        this.ftpClientConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
     }
 
     public int getSoTimeout() {

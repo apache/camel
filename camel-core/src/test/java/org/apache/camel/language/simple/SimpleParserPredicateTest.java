@@ -30,6 +30,18 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
+    public void testSimpleBooleanValue() throws Exception {
+        exchange.getIn().setBody("foo");
+
+        SimplePredicateParser parser = new SimplePredicateParser("true", true);
+        Predicate pre = parser.parsePredicate();
+        assertTrue(pre.matches(exchange));
+
+        parser = new SimplePredicateParser("false", true);
+        pre = parser.parsePredicate();
+        assertFalse(pre.matches(exchange));
+    }
+
     public void testSimpleEq() throws Exception {
         exchange.getIn().setBody("foo");
 

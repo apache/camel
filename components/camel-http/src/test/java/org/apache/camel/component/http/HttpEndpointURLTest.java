@@ -39,5 +39,11 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         assertNotNull("We should find the basicAuthenticationConfigurer", basicAuthenticationConfigurer);
         assertEquals("pa&&word", basicAuthenticationConfigurer.getPassword());
     }
+    
+    @Test
+    public void testHttpEndpointURLWithIPv6() {
+        HttpEndpoint endpoint = (HttpEndpoint)context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
+        assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
+    }
 
 }

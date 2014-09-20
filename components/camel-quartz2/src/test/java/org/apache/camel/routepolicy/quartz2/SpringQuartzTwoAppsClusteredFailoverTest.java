@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -60,7 +61,7 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
-        app.close();
+        IOHelper.close(app);
 
         log.warn("Crashed...");
         log.warn("Crashed...");
@@ -86,11 +87,8 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         mock2.assertIsSatisfied();
 
-        // close the second app as we're done now
-        app2.close();
-
-        // and as the last step shutdown the database...
-        db.close();
+        // and as the last step shutdown the second app as well as the database
+        IOHelper.close(app2, db);
     }
 
 }

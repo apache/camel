@@ -41,6 +41,15 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         userids.add(getKeyUserId());
         return userids;
     }
+    
+    // setup a wrong signature userids
+    @Override
+    protected List<String> getSignatureKeyUserIds() {
+        List<String> userids = new ArrayList<String>(2);
+        userids.add("wrong1");
+        userids.add(getKeyUserId());
+        return userids;
+    }
 
     // setup a wrong password
     @Override
@@ -69,14 +78,15 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
     // override wrong userid and password with correct userid and password in the headers
     protected Map<String, Object> getHeaders() {
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PGPDataFormat.KEY_USERID, "sdude@nowhere.net");
-        headers.put(PGPDataFormat.KEY_USERIDS, Collections.singletonList("second"));
-        headers.put(PGPDataFormat.SIGNATURE_KEY_USERID, "sdude@nowhere.net");
+        headers.put(PGPKeyAccessDataFormat.KEY_USERID, "sdude@nowhere.net");
+        headers.put(PGPKeyAccessDataFormat.KEY_USERIDS, Collections.singletonList("second"));
+        headers.put(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID, "sdude@nowhere.net");
         headers.put(PGPDataFormat.KEY_PASSWORD, "sdude");
         headers.put(PGPDataFormat.SIGNATURE_KEY_PASSWORD, "sdude");
-        headers.put(PGPDataFormat.ENCRYPTION_ALGORITHM, SymmetricKeyAlgorithmTags.AES_128);
-        headers.put(PGPDataFormat.SIGNATURE_HASH_ALGORITHM, HashAlgorithmTags.SHA512);
-        headers.put(PGPDataFormat.COMPRESSION_ALGORITHM, CompressionAlgorithmTags.ZLIB);
+        headers.put(PGPKeyAccessDataFormat.ENCRYPTION_ALGORITHM, SymmetricKeyAlgorithmTags.AES_128);
+        headers.put(PGPKeyAccessDataFormat.SIGNATURE_HASH_ALGORITHM, HashAlgorithmTags.SHA512);
+        headers.put(PGPKeyAccessDataFormat.COMPRESSION_ALGORITHM, CompressionAlgorithmTags.ZLIB);
+        headers.put(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERIDS, Collections.singletonList("second"));
         return headers;
     }
 }

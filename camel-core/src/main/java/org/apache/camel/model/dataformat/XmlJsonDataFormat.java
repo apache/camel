@@ -96,10 +96,10 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
             rootName = options.get(ROOT_NAME);
         }
         if (options.containsKey(ELEMENT_NAME)) {
-            encoding = options.get(ELEMENT_NAME);
+            elementName = options.get(ELEMENT_NAME);
         }
         if (options.containsKey(ARRAY_NAME)) {
-            elementName = options.get(ARRAY_NAME);
+            arrayName = options.get(ARRAY_NAME);
         }
         if (options.containsKey(EXPANDABLE_PROPERTIES)) {
             expandableProperties = Arrays.asList(options.get(EXPANDABLE_PROPERTIES).split(" "));

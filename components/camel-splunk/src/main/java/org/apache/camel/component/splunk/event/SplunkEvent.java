@@ -24,7 +24,6 @@ import java.util.Map;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-@SuppressWarnings("serial")
 public class SplunkEvent implements Serializable {
 
     // ----------------------------------
@@ -204,6 +203,8 @@ public class SplunkEvent implements Serializable {
     private static final String THROWABLE_STACKTRACE_ELEMENTS = "stacktrace_elements";
 
     private static final String LINEBREAK = "\n";
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Whether or not to put quotes around values

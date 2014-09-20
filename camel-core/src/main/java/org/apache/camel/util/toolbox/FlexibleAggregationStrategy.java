@@ -272,14 +272,14 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         try {
             if (oldValue == null || oldExchange.getProperty(COLLECTION_AGGR_GUARD_PROPERTY, Boolean.class) == null) {
                 try {
-                    collection = (Collection<E>) collectionType.newInstance();
+                    collection = collectionType.newInstance();
                 } catch (Exception e) {
                     LOG.warn("Could not instantiate collection of type {}. Aborting aggregation.", collectionType);
                     throw ObjectHelper.wrapCamelExecutionException(oldExchange, e);
                 }
                 oldExchange.setProperty(COLLECTION_AGGR_GUARD_PROPERTY, Boolean.FALSE);
             } else {
-                collection = (Collection<E>) collectionType.cast(oldValue);
+                collection = collectionType.cast(oldValue);
             }
             
             if (collection != null) {
@@ -345,7 +345,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
 
         @Override @SuppressWarnings("unchecked")
         public Collection<E> getValueAsCollection(Exchange exchange) {
-            return (Collection<E>) exchange.getProperty(propertyName, Collection.class);
+            return exchange.getProperty(propertyName, Collection.class);
         }
 
         @Override
@@ -380,7 +380,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
 
         @Override @SuppressWarnings("unchecked")
         public Collection<E> getValueAsCollection(Exchange exchange) {
-            return (Collection<E>) exchange.getIn().getHeader(headerName, Collection.class);
+            return exchange.getIn().getHeader(headerName, Collection.class);
         }
         
         @Override
@@ -411,7 +411,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
 
         @Override @SuppressWarnings("unchecked")
         public Collection<E> getValueAsCollection(Exchange exchange) {
-            return (Collection<E>) exchange.getIn().getBody(Collection.class);
+            return exchange.getIn().getBody(Collection.class);
         }
         
         @Override

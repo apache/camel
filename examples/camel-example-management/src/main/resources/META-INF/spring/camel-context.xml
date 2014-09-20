@@ -29,7 +29,7 @@
   <!-- create a CamelContext -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" depends-on="broker">
     <!-- Default JMX connector url: "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel" -->
-    <jmxAgent id="agent" createConnector="true"/>
+    <jmxAgent id="agent" createConnector="true" loadStatisticsEnabled="true"/>
 
     <route>
       <from uri="timer://inbox?period=5000"/>

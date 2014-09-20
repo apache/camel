@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.gae.auth;
 
-@SuppressWarnings("serial")
 public class GAuthException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
 
     public GAuthException() {
     }

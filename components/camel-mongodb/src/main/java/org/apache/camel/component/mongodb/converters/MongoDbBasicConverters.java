@@ -43,7 +43,7 @@ public final class MongoDbBasicConverters {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
 
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private MongoDbBasicConverters() {
     }
@@ -117,7 +117,7 @@ public final class MongoDbBasicConverters {
     public static DBObject fromAnyObjectToDBObject(Object value) {
         BasicDBObject answer;
         try {
-            Map<?, ?> m = MongoDbBasicConverters.objectMapper.convertValue(value, Map.class);
+            Map<?, ?> m = OBJECT_MAPPER.convertValue(value, Map.class);
             answer = new BasicDBObject(m);
         } catch (Exception e) {
             LOG.warn("Conversion has fallen back to generic Object -> DBObject, but unable to convert type {}. Returning null.", 

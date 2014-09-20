@@ -373,9 +373,9 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
     }
     
     @Override
-    public void initTestCase() {
-        super.initTestCase();
-        // drop the capped collection and let each test create what they need
+    public void doPostSetup() {
+        super.doPostSetup();
+        // drop the capped collection and let each test create what it needs
         cappedTestCollectionName = properties.getProperty("mongodb.cappedTestCollection");
         cappedTestCollection = db.getCollection(cappedTestCollectionName);
         cappedTestCollection.drop();

@@ -19,21 +19,25 @@ package org.apache.camel.itest.osgi.blueprint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 /**
  * @version 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
 public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
 
     @Test
@@ -103,28 +107,30 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-19.xml"))
                         .add("org/apache/camel/itest/osgi/blueprint/example.xsl", OSGiBlueprintTestSupport.class.getResource("example.xsl"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle19")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-20.xml"))
                         .add("org/apache/camel/itest/osgi/blueprint/example.vm", OSGiBlueprintTestSupport.class.getResource("example.vm"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle20")
                         .build()).noStart(),
                 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-21.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle21")
                         .build()).noStart(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle22")
                         .add(TestRouteBuilder.class)
-                        .build(withBnd())).noStart(),
+                        .set(Constants.EXPORT_PACKAGE, TestRouteBuilder.class.getPackage().getName())
+                        .build(TinyBundles.withBnd())).noStart(),
 
                 // using the features to install the camel components
                 loadCamelFeatures("camel-blueprint", "camel-velocity"));

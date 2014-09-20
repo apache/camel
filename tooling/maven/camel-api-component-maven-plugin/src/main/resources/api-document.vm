@@ -1,0 +1,226 @@
+## ------------------------------------------------------------------------
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+##
+## http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ------------------------------------------------------------------------
+## api-document.vm
+<!DOCTYPE html>
+<html>
+<head>
+    <title>${componentName} Component</title>
+</head>
+<style>
+    table,th,td
+    {
+    border:1px solid black;
+    border-collapse:collapse;
+    }
+    th,td
+    {
+    padding:5px;
+    }
+    th
+    {
+    text-align:left;
+    }
+</style>
+<body>
+    <h2>${componentName} Component</h2>
+    <hr/>
+    <h3>Component Description</h3>
+    <p>Maven users will need to add the following dependency to their pom.xml for this component:</p>
+    <code>
+        <pre>
+    &lt;dependency&gt;
+            &lt;groupId&gt;${groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;${artifactId}&lt;/artifactId&gt;
+            &lt;version&gt;${version}&lt;/version&gt;
+    &lt;/dependency&gt;
+        </pre>
+    </code>
+
+    <h3>URI Format</h3>
+    <hr/>
+    <p>The ${componentName} Component uses the following URI format:</p>
+    <pre>
+        ${uriFormat}
+    </pre>
+#set( $hasApiPrefix = $uriFormat.contains("-prefix") )
+#if( $hasApiPrefix )
+    <p>Endpoint prefix can be one of:</p>
+    <ul>
+#foreach( $name in $apiNames )
+        <li>$name</li>
+#end
+#end
+    </ul>
+    <h3>${componentName}Component</h3>
+    <hr/>
+    <p>
+        The ${componentName} Component can be configured with the options below.
+        These options can be provided using the component's bean property <code>configuration</code> of type <code>$componentConfig.Name</code>.
+    </p>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+        </tr>
+#foreach( $field in $componentConfigFields.entrySet() )
+        <tr>
+            <td>$field.Key</td>
+            <td>$field.Value</td>
+        </tr>
+#end
+    </table>
+    <h3>Producer Endpoints</h3>
+    <hr/>
+#if( !$hasApiPrefix )
+    <p>
+        Producer endpoints can use endpoint names and options listed next.
+        A shorthand alias can be used for some endpoints.
+    </p>
+#else
+    <p>
+        Producer endpoints can use endpoint prefixes followed by endpoint names and associated options described next.
+        A shorthand alias can be used for some endpoints. The endpoint URI MUST contain a prefix.
+    </p>
+#end
+    <p>
+        Endpoint options that are not mandatory are denoted by [].
+        When there are no mandatory options for an endpoint, one of the set of [] options MUST be provided.
+        Producer endpoints can also use a special option <b><code>inBody</code></b> that in turn should contain
+        the name of the endpoint option whose value will be contained in the Camel Exchange In message.
+    </p>
+    <p>
+        Any of the endpoint options can be provided in either the endpoint URI, or dynamically in a message header.
+        The message header name must be of the format <code>Camel${componentName}.&lt;option&gt;</code>.
+        Note that the <code>inBody</code> option overrides message header,
+        i.e. the endpoint option <code>inBody=option</code> would override a <code>Camel${componentName}.option</code> header.
+    </p>
+## single API use case, only list methods and options
+#if( !$hasApiPrefix )
+#set( $endpointConfig = $apiConfigs.get("") )
+#set( $endpoints = $helper.getEndpoints($apiMethods.get(""), $apiHelpers.get(""), $endpointConfig) )
+    <table>
+        <tr>
+            <th>Endpoint</th>
+            <th>Shorthand Alias</th>
+            <th>Options</th>
+            <th>Result Body Type</th>
+        </tr>
+#foreach( $endpoint in $endpoints )
+        <tr>
+            <td>$endpoint.endpoint</td>
+            <td>$endpoint.aliases</td>
+            <td>$endpoint.options</td>
+            <td>$endpoint.resultTypes</td>
+        </tr>
+#end
+    </table>
+    <h3>URI Options</h3>
+    <hr/>
+#set ( $nullableArguments = $apiHelpers.get("").NullableArguments )
+#if( !$nullableArguments.isEmpty )
+    <p>
+        If a value is not provided for one of the option(s) ${nullableArguments.toString()}
+        either in the endpoint URI or in a message header, it will be assumed to be <code>null</code>.
+        Note that the <code>null</code> value(s) will only be used if other options do not satisfy matching endpoints.
+    </p>
+#end
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+#foreach( $field in $endpointConfig.DeclaredFields )
+        <tr>
+            <td>$field.Name</td>
+            <td>$helper.getCanonicalName($field.Type)</td>
+        </tr>
+#end
+    </table>
+#else
+## multiple API use case, list API names and their methods and options
+#foreach( $apiMethod in $apiMethods.entrySet() )
+#set( $apiName = $apiMethod.Key )
+    <h3>${foreach.count}. Endpoint Prefix <em>$apiName</em></h3>
+    <hr/>
+    <p>The following endpoints can be invoked with the prefix <code>$apiName</code> as follows:</p>
+    <pre>
+        ${scheme}://${apiName}/endpoint?[options]
+    </pre>
+    <table>
+        <tr>
+            <th>Endpoint</th>
+            <th>Shorthand Alias</th>
+            <th>Options</th>
+            <th>Result Body Type</th>
+        </tr>
+#set( $endpointConfig = $apiConfigs.get($apiName) )
+#set( $anApiHelper = $apiHelpers.get($apiName) )
+#set( $endpoints = $helper.getEndpoints($apiMethod.Value, $anApiHelper, $endpointConfig) )
+#foreach( $endpoint in $endpoints )
+        <tr>
+            <td>$endpoint.Endpoint</td>
+            <td>$endpoint.Aliases</td>
+            <td>$endpoint.Options</td>
+            <td>$endpoint.ResultTypes</td>
+        </tr>
+#end
+    </table>
+    <h4>URI Options for <em>$apiName</em></h4>
+    <hr/>
+#set ( $nullableArguments = $anApiHelper.NullableArguments )
+#if( !$nullableArguments.Empty )
+    <p>
+        If a value is not provided for one of the option(s) ${nullableArguments.toString()}
+        either in the endpoint URI or in a message header, it will be assumed to be <code>null</code>.
+        Note that the <code>null</code> value(s) will only be used if other options do not satisfy matching endpoints.
+    </p>
+#end
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+#foreach( $field in $endpointConfig.DeclaredFields )
+        <tr>
+            <td>$field.Name</td>
+            <td>$helper.getCanonicalName($field)</td>
+        </tr>
+#end
+    </table>
+#end
+#end
+    <h3>Consumer Endpoints</h3>
+    <hr/>
+    <p>
+        Any of the producer endpoints can be used as a consumer endpoint.
+        Consumer endpoints can use <a href="http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions">Scheduled Poll Consumer Options</a> with a <code>consumer.</code> prefix to schedule endpoint invocation.
+        Consumer endpoints that return an array or collection will generate one exchange per element, and their routes will be executed once for each exchange.
+    </p>
+    <h3>Message Headers</h3>
+    <hr/>
+    <p>
+        Any URI option can be provided in a message header for producer endpoints with a <code>Camel${componentName}.</code> prefix.
+    </p>
+    <h3>Message Body</h3>
+    <hr/>
+    <p>
+        All result message bodies utilize objects provided by the underlying APIs used by the ${componentName}Component. Producer endpoints can specify the option name for incoming message body in the <code>inBody</code> endpoint URI parameter.
+        For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages.
+    </p>
+</body>
+</html>
+

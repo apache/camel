@@ -83,6 +83,14 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public DataFormat getDataFormat(RouteContext routeContext) {
         if (dataFormat == null) {
+
+            // resolve properties before we create the data format
+            try {
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, this);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
+            }
+
             dataFormat = createDataFormat(routeContext);
             if (dataFormat != null) {
                 configureDataFormat(dataFormat, routeContext.getCamelContext());

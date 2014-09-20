@@ -17,22 +17,43 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"
            default-activation="lazy">
 
     <ext:property-placeholder id="external" placeholder-prefix="$[" placeholder-suffix="]"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+    <bean id="hdfsOsgiHelper" class="org.apache.camel.component.hdfs2.HdfsOsgiHelper">
+        <description>
+        Bean created as prerequisite for camel-hdfs2 component. It's role is to properly initialize Hadoop's internal
+        map of file systems which is normally (non-OSGi) initialized using java.util.ServiceLoader.
+        In OSGi ServiceLoader doesn't see *all* JARs to scan for services.
+        The map must be initialized with correct URIs - not pure schemes + "://", as the URI is then used to
+        initialize particular hadoop filesystem initialization which needs more URI components than just scheme.
+        </description>
+        <argument>
+            <map>
+                <entry key="file:///" value="org.apache.hadoop.fs.LocalFileSystem"  />
+                <entry key="hdfs://localhost:9000" value="org.apache.hadoop.hdfs.DistributedFileSystem" />
+            </map>
+        </argument>
+    </bean>
 
+    <bean id="hdfs2" class="org.apache.camel.component.hdfs2.HdfsComponent" depends-on="hdfsOsgiHelper" />
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint" xsi:schemaLocation="http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.2.xsd">
         <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
         <propertyPlaceholder id="properties" location="blueprint:external"
                              prefixToken="[[" suffixToken="]]"
-                             propertyPrefix="prefix."/>
+                             />
         <route>
             <from uri="direct:start"/>
-            <to uri="hdfs://[[karaf.base]]/hdfs/test-camel?fileSystemType=LOCAL&amp;splitStrategy=BYTES:5,IDLE:1000"/>
+<!--             <to uri="hdfs2://localhost:9000/hdfs/test-camel?fileSystemType=HDFS&amp;splitStrategy=BYTES:5,IDLE:1000"/> -->
+            <to uri="hdfs2://[[karaf.base]]/hdfs/test-camel?fileSystemType=LOCAL&amp;splitStrategy=BYTES:5,IDLE:1000"/>
         </route>
         <route>
-            <from uri="hdfs://[[karaf.base]]/hdfs/test-camel?pattern=seg*&amp;initialDelay=2000&amp;fileSystemType=LOCAL&amp;chunkSize=5"/>
+<!--             <from uri="hdfs2://localhost:9000/hdfs/test-camel?pattern=*&amp;initialDelay=2000&amp;fileSystemType=HDFS&amp;chunkSize=5"/> -->
+            <from uri="hdfs2://[[karaf.base]]/hdfs/test-camel?pattern=*&amp;initialDelay=2000&amp;fileSystemType=LOCAL&amp;chunkSize=5"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

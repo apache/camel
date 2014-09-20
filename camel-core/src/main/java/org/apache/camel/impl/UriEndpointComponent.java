@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public abstract class UriEndpointComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(UriEndpointComponent.class);
 
-    private final Class<? extends Endpoint> endpointClass;
+    private Class<? extends Endpoint> endpointClass;
     private SortedMap<String, ParameterConfiguration> parameterConfigurationMap;
 
     public UriEndpointComponent(Class<? extends Endpoint> endpointClass) {
@@ -46,6 +46,15 @@ public abstract class UriEndpointComponent extends DefaultComponent {
 
     public UriEndpointComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
         super(context);
+        this.endpointClass = endpointClass;
+    }
+
+    /**
+     * To use a specific endpoint class, instead of what has been provided by the constructors.
+     *
+     * @param endpointClass the endpoint class to use
+     */
+    public void setEndpointClass(Class<? extends Endpoint> endpointClass) {
         this.endpointClass = endpointClass;
     }
 

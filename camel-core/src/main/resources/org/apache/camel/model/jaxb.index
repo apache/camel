@@ -43,6 +43,7 @@ LoopDefinition
 MarshalDefinition
 MulticastDefinition
 OnCompletionDefinition
+OnCompletionMode
 OnExceptionDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition
@@ -58,6 +59,7 @@ RemoveHeaderDefinition
 RemoveHeadersDefinition
 RemovePropertyDefinition
 ResequenceDefinition
+RestContextRefDefinition
 RollbackDefinition
 RouteBuilderDefinition
 RouteDefinition

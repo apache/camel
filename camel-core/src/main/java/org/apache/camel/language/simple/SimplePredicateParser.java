@@ -86,6 +86,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !unaryOperator()
                     && !binaryOperator()
                     && !logicalOperator()
+                    && !isBooleanValue()
                     && !token.getType().isWhitespace()
                     && !token.getType().isEol()) {
                 // okay the symbol was not one of the above, so its not supported
@@ -448,6 +449,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // --------------------------------------------------------------
 
     // the predicate parser understands a lot more than the expression parser
+    // - boolean value = either true or false value (literal)
     // - single quoted = block of nodes enclosed by single quotes
     // - double quoted = block of nodes enclosed by double quotes
     // - single quoted with functions = block of nodes enclosed by single quotes allowing embedded functions
@@ -459,6 +461,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // - unary operator = operator attached to the left hand side node
     // - binary operator = operator attached to both the left and right hand side nodes
     // - logical operator = operator attached to both the left and right hand side nodes
+
+    protected boolean isBooleanValue() {
+        if (accept(TokenType.booleanValue)) {
+            return true;
+        }
+        return false;
+    }
 
     protected boolean singleQuotedLiteralWithFunctionsText() {
         if (accept(TokenType.singleQuote)) {

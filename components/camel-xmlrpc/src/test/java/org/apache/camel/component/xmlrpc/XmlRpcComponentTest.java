@@ -69,7 +69,6 @@ public class XmlRpcComponentTest extends CamelTestSupport {
         verifyHeadersPreserved("direct:async");
     }
 
-    @SuppressWarnings("serial")
     private void verifyHeadersPreserved(String uri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
@@ -77,6 +76,9 @@ public class XmlRpcComponentTest extends CamelTestSupport {
         mock.expectedHeaderReceived("UserHeader", "test-header-value");
         template.requestBodyAndHeaders(uri, new Object[] {"me"},
                 new HashMap<String, Object>() {
+
+                    private static final long serialVersionUID = 1L;
+
                     {
                         put(XmlRpcConstants.METHOD_NAME, "hello");
                         put("UserHeader", "test-header-value");

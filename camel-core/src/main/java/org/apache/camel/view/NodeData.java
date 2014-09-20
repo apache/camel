@@ -43,6 +43,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *
  * @version 
  */
+@Deprecated
 public class NodeData {
     public String id;
     public String image;

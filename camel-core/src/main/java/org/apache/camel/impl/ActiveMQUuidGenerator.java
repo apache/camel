@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.UuidGenerator} which is a fast implementation based on
- * how <a href="http://activemq.apache.org/>Apache ActiveMQ</a> generates its UUID.
+ * how <a href="http://activemq.apache.org/">Apache ActiveMQ</a> generates its UUID.
  * <p/>
  * This implementation is not synchronized but it leverages API which may not be accessible
  * in the cloud (such as Google App Engine).
@@ -70,11 +70,15 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 ss = new ServerSocket(idGeneratorPort);
                 stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
                 Thread.sleep(100);
-            } catch (Exception ioe) {
+            } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, ioe);
+                    LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, e);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + ioe.getMessage());
+                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + e.getMessage());
+                }
+                // Restore interrupted state so higher level code can deal with it.
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
                 }
             } finally {
                 // some environments, such as a PaaS may not allow us to create the ServerSocket

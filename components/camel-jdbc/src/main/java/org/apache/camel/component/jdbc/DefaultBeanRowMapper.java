@@ -39,7 +39,7 @@ public class DefaultBeanRowMapper implements BeanRowMapper {
                 continue;
             }
             if (toUpper) {
-                char upper = Character.toLowerCase(ch);
+                char upper = Character.toUpperCase(ch);
                 sb.append(upper);
                 // reset flag
                 toUpper = false;

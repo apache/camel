@@ -57,7 +57,7 @@
     </property>
   </bean>
 
-  <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext2" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
     <route id="myRoute">
       <from uri="quartz2://app/test?trigger.repeatInterval=1000&amp;trigger.repeatCount=-1" />

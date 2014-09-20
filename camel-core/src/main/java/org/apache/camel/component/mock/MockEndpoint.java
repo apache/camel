@@ -49,6 +49,8 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.ExchangeHelper;
@@ -72,15 +74,26 @@ import org.slf4j.LoggerFactory;
  * set expectations before the test is being started (eg before the mock receives messages).
  * The latter is used after the test has been executed, to verify the expectations; or
  * other assertions which you can perform after the test has been completed.
+ * <p/>
+ * <b>Beware:</b> If you want to expect a mock does not receive any messages, by calling
+ * {@link #setExpectedMessageCount(int)} with <tt>0</tt>, then take extra care,
+ * as <tt>0</tt> matches when the tests starts, so you need to set a assert period time
+ * to let the test run for a while to make sure there are still no messages arrived; for
+ * that use {@link #setAssertPeriod(long)}.
+ * An alternative is to use <a href="http://camel.apache.org/notifybuilder.html">NotifyBuilder</a>, and use the notifier
+ * to know when Camel is done routing some messages, before you call the {@link #assertIsSatisfied()} method on the mocks.
+ * This allows you to not use a fixed assert period, to speedup testing times.
  *
  * @version 
  */
+@UriEndpoint(scheme = "mock")
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
     protected boolean copyOnExchange = true;
+    @UriParam
     private volatile int expectedCount;
     private volatile int counter;
     private volatile Processor defaultProcessor;
@@ -89,10 +102,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile List<Throwable> failures;
     private volatile List<Runnable> tests;
     private volatile CountDownLatch latch;
+    @UriParam
     private volatile long sleepForEmptyTest;
+    @UriParam
     private volatile long resultWaitTime;
+    @UriParam
     private volatile long resultMinimumWaitTime;
+    @UriParam
     private volatile long assertPeriod;
+    @UriParam
     private volatile int expectedMinimumCount;
     private volatile List<?> expectedBodyValues;
     private volatile List<Object> actualBodyValues;
@@ -100,7 +118,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile Map<String, Object> actualHeaderValues;
     private volatile Map<String, Object> expectedPropertyValues;
     private volatile Map<String, Object> actualPropertyValues;
+    @UriParam
     private volatile int retainFirst;
+    @UriParam
     private volatile int retainLast;
 
     public MockEndpoint(String endpointUri, Component component) {
@@ -1019,6 +1039,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint.
+     * <p/>
+     * <b>Beware:</b> If you want to expect that <tt>0</tt> messages, then take extra care,
+     * as <tt>0</tt> matches when the tests starts, so you need to set a assert period time
+     * to let the test run for a while to make sure there are still no messages arrived; for
+     * that use {@link #setAssertPeriod(long)}.
+     * An alternative is to use <a href="http://camel.apache.org/notifybuilder.html">NotifyBuilder</a>, and use the notifier
+     * to know when Camel is done routing some messages, before you call the {@link #assertIsSatisfied()} method on the mocks.
+     * This allows you to not use a fixed assert period, to speedup testing times.
      * <p/>
      * If you want to assert that <b>exactly</b> n'th message arrives to this mock
      * endpoint, then see also the {@link #setAssertPeriod(long)} method for further details.

@@ -69,6 +69,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 throw new RuntimeException("Could not connect to XMPP server.", e);
             }  else {
                 LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+                if (getExceptionHandler() != null) {
+                    getExceptionHandler().handleException(XmppEndpoint.getXmppExceptionLogMessage(e), e);
+                }
                 scheduleDelayedStart();
                 return;
             }

@@ -29,7 +29,7 @@
         
         <!-- we define the json xstream data formats to be used (xstream is default) -->
         <dataFormats>
-            <xstream id="xstream-1">
+            <xstream id="xstream-1" mode="NO_REFERENCES">
                 <converters>
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>
@@ -43,7 +43,7 @@
                 </implicitCollections>
             </xstream>
             
-           <xstream id="xstream-json" driver="json">
+           <xstream id="xstream-json" driver="json" mode="ID_REFERENCES">
                 <converters>
                     <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
                 </converters>

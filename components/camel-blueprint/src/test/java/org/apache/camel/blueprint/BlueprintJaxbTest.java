@@ -27,18 +27,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
-
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-
-public class BlueprintJaxbTest {
+public class BlueprintJaxbTest extends TestSupport {
 
     @Test
     public void test() throws Exception {
+        if (isJava16() && isJavaVendor("ibm")) {
+            // does not test well on java6 with ibm
+            return;
+        }
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -59,7 +59,8 @@ public class BlueprintJaxbTest {
                                                         + "org.apache.camel.model.config:"
                                                         + "org.apache.camel.model.dataformat:"
                                                         + "org.apache.camel.model.language:"
-                                                        + "org.apache.camel.model.loadbalancer");
+                                                        + "org.apache.camel.model.loadbalancer:"
+                                                        + "org.apache.camel.model.rest");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Object object = unmarshaller.unmarshal(elem);
         assertNotNull(object);

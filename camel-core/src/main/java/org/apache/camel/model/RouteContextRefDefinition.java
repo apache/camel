@@ -50,8 +50,7 @@ public class RouteContextRefDefinition {
     public void setRef(String ref) {
         this.ref = ref;
     }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    
     public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
         return RouteContextRefDefinitionHelper.lookupRoutes(camelContext, ref);
     }

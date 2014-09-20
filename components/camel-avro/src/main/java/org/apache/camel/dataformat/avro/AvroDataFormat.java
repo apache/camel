@@ -105,7 +105,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
 
         if (genericContainer.isAssignableFrom(instanceClass)) {
             try {
-                Method method = instanceClass.getMethod("getSchema", new Class[0]);
+                Method method = instanceClass.getMethod("getSchema");
                 return (Schema) method.invoke(camelContext.getInjector().newInstance(instanceClass));
             } catch (Exception ex) {
                 throw new CamelException("Error calling getSchema on " + instanceClass, ex);

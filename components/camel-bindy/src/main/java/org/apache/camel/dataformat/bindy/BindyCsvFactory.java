@@ -250,7 +250,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
-                if (LOG.isDebugEnabled()) {
+                
+                if (obj != null && LOG.isDebugEnabled()) {
                     LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
                 }
                 if (obj != null) {
@@ -555,7 +556,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                     quoting = record.quoting();
-                    LOG.debug("CSV will be quoted: {}", messageOrdered);
+                    LOG.debug("CSV will be quoted: {}", quoting);
 
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);

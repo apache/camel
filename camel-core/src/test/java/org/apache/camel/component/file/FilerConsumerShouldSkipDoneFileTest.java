@@ -67,7 +67,9 @@ public class FilerConsumerShouldSkipDoneFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=done&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/done?doneFileName=done&initialDelay=0&delay=10")
+                    .convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }

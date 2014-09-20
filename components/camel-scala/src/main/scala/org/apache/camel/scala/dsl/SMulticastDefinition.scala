@@ -35,7 +35,12 @@ case class SMulticastDefinition(override val target: MulticastDefinition)(implic
 
   def strategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
 
+  @Deprecated
   def parallel = wrap(target.parallelProcessing)
+
+  def parallelProcessing = wrap(target.parallelProcessing)
+
+  def parallelAggregate = wrap(target.parallelAggregate)
 
   def streaming = wrap(target.streaming)
   

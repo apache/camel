@@ -26,9 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
  */
-public class QuartzComponent extends DefaultComponent implements StartupListener {
+public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private SchedulerFactory schedulerFactory;
     private Scheduler scheduler;
@@ -58,10 +60,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private boolean enableJmx = true;
 
     public QuartzComponent() {
+        super(QuartzEndpoint.class);
     }
 
     public QuartzComponent(CamelContext camelContext) {
-        super(camelContext);
+        super(camelContext, QuartzEndpoint.class);
     }
 
     public int getStartDelayedSeconds() {
@@ -155,6 +158,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 prop.load(is);
             } catch (IOException e) {
                 throw new SchedulerException("Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
+            } finally {
+                IOHelper.close(is);
             }
 
             // camel context name will be a suffix to use one scheduler per context
@@ -185,7 +190,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
 
         // camel context name will be a suffix to use one scheduler per context
-        String identity = getCamelContext().getManagementName();
+        String identity = QuartzHelper.getQuartzContextName(getCamelContext());
         if (identity != null) {
             if (instName == null) {
                 instName = "scheduler-" + identity;
@@ -206,16 +211,16 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private Properties loadProperties() throws SchedulerException {
         Properties answer = getProperties();
         if (answer == null && getPropertiesFile() != null) {
-            LOG.info("Loading Quartz properties file from classpath: {}", getPropertiesFile());
-            InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(getPropertiesFile());
-            if (is == null) {
-                throw new SchedulerException("Quartz properties file not found in classpath: " + getPropertiesFile());
-            }
-            answer = new Properties();
+            LOG.info("Loading Quartz properties file from: {}", getPropertiesFile());
+            InputStream is = null;
             try {
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                answer = new Properties();
                 answer.load(is);
             } catch (IOException e) {
-                throw new SchedulerException("Error loading Quartz properties file from classpath: " + getPropertiesFile(), e);
+                throw new SchedulerException("Error loading Quartz properties file: " + getPropertiesFile(), e);
+            } finally {
+                IOHelper.close(is);
             }
         }
         return answer;
@@ -295,7 +300,6 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             name = host;
         }
 
-
         if (prefixJobNameWithEndpointId) {
             name = endpoint.getId() + "_" + name;
         }
@@ -318,7 +322,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         // Store CamelContext into QuartzContext space
         SchedulerContext quartzContext = scheduler.getContext();
-        String camelContextName = getCamelContext().getManagementName();
+        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
         LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
         quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
 

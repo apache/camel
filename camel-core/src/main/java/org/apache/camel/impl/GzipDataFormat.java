@@ -26,6 +26,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 
+/**
+ * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
+ */
 public class GzipDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {

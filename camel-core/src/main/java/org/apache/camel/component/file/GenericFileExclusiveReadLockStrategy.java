@@ -76,7 +76,6 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      */
     void setTimeout(long timeout);
 
-
     /**
      * Sets the check interval period.
      * <p/>
@@ -100,5 +99,11 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      */
     void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel);
 
+    /**
+     * Sets whether marker file should be used or not.
+     *
+     * @param markerFile <tt>true</tt> to use marker files.
+     */
+    void setMarkerFiler(boolean markerFile);
 
 }

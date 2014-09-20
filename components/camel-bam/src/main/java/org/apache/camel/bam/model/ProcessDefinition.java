@@ -16,19 +16,19 @@
  */
 package org.apache.camel.bam.model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Table;
+
+import org.apache.camel.bam.EntityManagerCallback;
+import org.apache.camel.bam.EntityManagerTemplate;
 import org.apache.camel.bam.QueryUtils;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * @version 
@@ -49,33 +49,43 @@ public class ProcessDefinition extends EntitySupport {
         this.name = name;
     }
 
-    public static ProcessDefinition getRefreshedProcessDefinition(JpaTemplate template, ProcessDefinition definition) {
+    public static ProcessDefinition getRefreshedProcessDefinition(EntityManagerTemplate entityManagerTemplate, ProcessDefinition definition) {
         // TODO refresh doesn't tend to work - maybe its a spring thing?
         // template.refresh(definition);
 
         ObjectHelper.notNull(definition, "definition");
-        Long id = definition.getId();
+        final Long id = definition.getId();
         if (id == null) {
             LOG.warn("No primary key is available!");
-            return findOrCreateProcessDefinition(template, definition.getName());
+            return findOrCreateProcessDefinition(entityManagerTemplate, definition.getName());
         }
-        definition = template.find(ProcessDefinition.class, id);
-        return definition;
+        return entityManagerTemplate.execute(new EntityManagerCallback<ProcessDefinition>() {
+            @Override
+            public ProcessDefinition execute(EntityManager entityManager) {
+                return entityManager.find(ProcessDefinition.class, id);
+            }
+        });
     }
 
-    public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, String processName) {
-        Map<String, Object> params = new HashMap<String, Object>(1);
-        params.put("processName", processName);
-
-        List<ProcessDefinition> list = CastUtils.cast(template.findByNamedParams("select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
-                                                                                 + " x where x.name = :processName", params));
+    public static ProcessDefinition findOrCreateProcessDefinition(EntityManagerTemplate entityManagerTemplate, final String processName) {
+        final String definitionsQuery = "select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
+                + " x where x.name = :processName";
+        List<ProcessDefinition> list = entityManagerTemplate.execute(new EntityManagerCallback<List<ProcessDefinition>>() {
+            @Override
+            public List<ProcessDefinition> execute(EntityManager entityManager) {
+                return entityManager.createQuery(definitionsQuery, ProcessDefinition.class).
+                        setParameter("processName", processName).
+                        getResultList();
+            }
+        });
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
             ProcessDefinition answer = new ProcessDefinition();
             answer.setName(processName);
-            template.persist(answer);
+            entityManagerTemplate.persist(answer);
             return answer;
         }
     }
+
 }

@@ -38,6 +38,8 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -89,31 +91,10 @@ public class CxfRsProducer extends DefaultProducer {
             invokeProxyClient(exchange);
         }
     }
-
+    
     @SuppressWarnings("unchecked")
-    protected void invokeHttpClient(Exchange exchange) throws Exception {
+    protected void setupClientQueryAndHeaders(WebClient client, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
-        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
-            .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-        
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
-        WebClient client = cfb.createWebClient();
-        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-        Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
-        Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
-        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("HTTP method = {}", httpMethod);
-            LOG.trace("path = {}", path);
-            LOG.trace("responseClass = {}", responseClass);
-        }
-
-        // set the path
-        if (path != null) {
-            client.path(path);
-        }
-
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         // check if there is a query map in the message header
         Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
@@ -133,6 +114,51 @@ public class CxfRsProducer extends DefaultProducer {
                 client.query(entry.getKey(), entry.getValue());
             }
         }
+        
+        setupClientHeaders(client, exchange);
+        
+    }
+    
+    protected void setupClientHeaders(Client client, Exchange exchange) throws Exception {
+        Message inMessage = exchange.getIn();
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
+        CxfRsBinding binding = cxfRsEndpoint.getBinding();
+        // set headers
+        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
+    }
+
+    protected void invokeHttpClient(Exchange exchange) throws Exception {
+        Message inMessage = exchange.getIn();
+        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
+            .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
+        WebClient client = cfb.createWebClient();
+        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
+        Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
+        Object[] pathValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
+        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method = {}", httpMethod);
+            LOG.trace("path = {}", path);
+            LOG.trace("responseClass = {}", responseClass);
+        }
+
+        // set the path
+        if (path != null) {
+            if (ObjectHelper.isNotEmpty(pathValues) && pathValues.length > 0) {
+                client.path(path, pathValues);
+            } else {
+                client.path(path);
+            }
+        }
+
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
 
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
 
@@ -146,9 +172,8 @@ public class CxfRsProducer extends DefaultProducer {
             }
         }
 
-        // set headers
-        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
-
+        setupClientQueryAndHeaders(client, exchange);
+        
         // invoke the client
         Object response = null;
         if (responseClass == null || Response.class.equals(responseClass)) {
@@ -196,14 +221,19 @@ public class CxfRsProducer extends DefaultProducer {
         
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
                                    .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
-        
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
         if (varValues == null) {
             target = cfb.create();
         } else {
             target = cfb.createWithValues(varValues);
         }
+        
+        setupClientHeaders(target, exchange);
+        
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
         sfb.getResourceClasses();
@@ -238,6 +268,10 @@ public class CxfRsProducer extends DefaultProducer {
         }
     }
     
+    protected ClientFactoryBeanCache getClientFactoryBeanCache() { 
+        return clientFactoryBeanCache;
+    }
+    
     private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
         Map<String, String> answer  = new LinkedHashMap<String, String>();
         for (String param : queryString.split("&")) {
@@ -253,21 +287,34 @@ public class CxfRsProducer extends DefaultProducer {
         return answer;
     }
 
-    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class<?>[] parameterTypes) throws NoSuchMethodException {
-        Method answer = null;
+    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName,
+                                   Class<?>[] parameterTypes) throws NoSuchMethodException {
         for (Class<?> clazz : resourceClasses) {
             try {
-                answer = clazz.getMethod(methodName, parameterTypes);
-            } catch (NoSuchMethodException ex) {
-                // keep looking 
+                Method[] m = clazz.getMethods();
+            iterate_on_methods:
+                for (Method method : m) {
+                    if (!method.getName().equals(methodName)) {
+                        continue;
+                    }
+                    Class<?>[] params = method.getParameterTypes();
+                    if (params.length != parameterTypes.length) {
+                        continue;
+                    }
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        if (!params[i].isAssignableFrom(parameterTypes[i])) {
+                            continue iterate_on_methods;
+                        }
+                    }
+                    return method;
+                }
             } catch (SecurityException ex) {
                 // keep looking
             }
-            if (answer != null) {
-                return answer;
-            }
         }
-        throw new NoSuchMethodException("Cannot find method with name: " + methodName + " having parameters: " + arrayToString(parameterTypes));
+        throw new NoSuchMethodException("Cannot find method with name: " + methodName
+                                        + " having parameters assignable from: "
+                                        + arrayToString(parameterTypes));
     }
 
     private Class<?>[] getParameterTypes(Object[] objects) {
@@ -337,7 +384,7 @@ public class CxfRsProducer extends DefaultProducer {
     /**
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
-    private class ClientFactoryBeanCache {
+    class ClientFactoryBeanCache {
         private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
         
         public ClientFactoryBeanCache(final int maxCacheSize) {

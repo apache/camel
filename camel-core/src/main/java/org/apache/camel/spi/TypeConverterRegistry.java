@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
+
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 
@@ -108,6 +110,13 @@ public interface TypeConverterRegistry extends StaticService {
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**
+     * Gets a read-only list of the type converter from / to classes
+     *
+     * @return a list containing fromType/toType class names
+     */
+    List<Class<?>[]> listAllTypeConvertersFromTo();
+
+    /**
      * Sets the injector to be used for creating new instances during type conversions.
      *
      * @param injector the injector
@@ -127,5 +136,12 @@ public interface TypeConverterRegistry extends StaticService {
      * @return the utilization statistics
      */
     Statistics getStatistics();
+
+    /**
+     * Number of type converters in the registry.
+     *
+     * @return number of type converters in the registry.
+     */
+    int size();
 
 }

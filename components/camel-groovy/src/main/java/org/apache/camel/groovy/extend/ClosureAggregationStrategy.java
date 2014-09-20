@@ -26,7 +26,6 @@ class ClosureAggregationStrategy implements AggregationStrategy {
     private Closure<Exchange> closure;
 
     ClosureAggregationStrategy(Closure<Exchange> closure) {
-        super();
         this.closure = closure;
     }
 

@@ -17,26 +17,17 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.CamelContext;
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 /**
  * Command to start a Camel context.
  */
 @Command(scope = "camel", name = "context-start", description = "Start a Camel context.")
-public class ContextStart extends CamelCommandSupport {
+public class ContextStart extends AbstractContextCommand {
 
-    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
-    String context;
-
-    public Object doExecute() throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(context);
-        if (camelContext == null) {
-            System.err.println("Camel context " + context + " not found.");
-            return null;
-        }
+    @Override
+    protected void performContextCommand(CamelContext camelContext) throws Exception {
         camelContext.start();
-        return null;
     }
 
 }

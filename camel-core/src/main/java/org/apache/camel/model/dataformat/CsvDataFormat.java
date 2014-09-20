@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a CSV (Comma Separated Values) {@link org.apache.camel.spi.DataFormat}
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,6 +46,10 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String strategyRef;
     @XmlAttribute
     private Boolean skipFirstLine;
+    @XmlAttribute
+    private Boolean lazyLoad;
+    @XmlAttribute
+    private Boolean useMaps;
 
     public CsvDataFormat() {
         super("csv");
@@ -54,6 +58,11 @@ public class CsvDataFormat extends DataFormatDefinition {
     public CsvDataFormat(String delimiter) {
         this();
         setDelimiter(delimiter);
+    }
+
+    public CsvDataFormat(boolean lazyLoad) {
+        this();
+        setLazyLoad(lazyLoad);
     }
 
     public Boolean isAutogenColumns() {
@@ -96,6 +105,22 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.skipFirstLine = skipFirstLine;
     }
 
+    public Boolean getLazyLoad() {
+        return lazyLoad;
+    }
+
+    public void setLazyLoad(Boolean lazyLoad) {
+        this.lazyLoad = lazyLoad;
+    }
+
+    public Boolean getUseMaps() {
+        return useMaps;
+    }
+
+    public void setUseMaps(Boolean useMaps) {
+        this.useMaps = useMaps;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         DataFormat csvFormat = super.createDataFormat(routeContext);
@@ -130,6 +155,14 @@ public class CsvDataFormat extends DataFormatDefinition {
 
         if (skipFirstLine != null) {
             setProperty(camelContext, dataFormat, "skipFirstLine", skipFirstLine);
+        }
+
+        if (lazyLoad != null) {
+            setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
+        }
+
+        if (useMaps != null) {
+            setProperty(camelContext, dataFormat, "useMaps", useMaps);
         }
     }
 }

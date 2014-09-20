@@ -17,7 +17,7 @@
 package org.apache.camel
 package scala.dsl
 
-import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
+import org.apache.camel.processor.OnCompletionTest.MyProcessor
 import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
 import processor.OnCompletionOnFailureOnlyTest
 
@@ -26,14 +26,14 @@ class SOnCompletionOnFailureOnlyTest extends OnCompletionOnFailureOnlyTest with 
   override def createRouteBuilder = new RouteBuilder {
 
     "direct:start" ==> {
-      onCompletion(failureOnly) {
+      onCompletion.onFailureOnly {
+        to("log:sync")
         to("mock:sync")
       }
       process(new MyProcessor())
       to("mock:result")
     }
 
-    def containsHello(exchange: Exchange) = exchange.getIn.getBody(classOf[String]).contains("Hello")
   }
 
 }

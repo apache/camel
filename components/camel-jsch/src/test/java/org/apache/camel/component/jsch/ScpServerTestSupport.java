@@ -29,13 +29,12 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
-import org.apache.camel.component.ssh.FileKeyPairProvider;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
-// import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.PublickeyAuthenticator;
@@ -178,7 +177,10 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
             jsch.setKnownHosts(knownHostsFile);
             Session s = jsch.getSession("admin", "localhost", getPort());
             s.setConfig("StrictHostKeyChecking",  "ask");
-            s.setConfig("HashKnownHosts",  "yes");
+
+            // TODO: by the current jsch (0.1.50) setting "HashKnownHosts" to "no" is a workaround
+            // to make the tests run green, see also http://sourceforge.net/p/jsch/bugs/63/
+            s.setConfig("HashKnownHosts",  "no");
             s.setUserInfo(new UserInfo() {
                 @Override
                 public String getPassphrase() {

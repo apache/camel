@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
 
     public void testSplitterStreamingWithError() throws Exception {
-        if (isJavaVersion("1.7") || isPlatform("aix") || isJavaVendor("ibm")) {
+        if (isPlatform("aix") || isJavaVendor("ibm")) {
             return;
         }
 

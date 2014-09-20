@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.util.Map;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
@@ -25,7 +26,7 @@ import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * An <a href="http://camel.apache.org/xslt.html">XSLT Component</a>
  * for performing XSLT transforms of messages
  */
-public class XsltComponent extends DefaultComponent {
+public class XsltComponent extends UriEndpointComponent {
 
     private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
@@ -43,6 +44,10 @@ public class XsltComponent extends DefaultComponent {
     private URIResolver uriResolver;
     private boolean contentCache = true;
     private boolean saxon;
+
+    public XsltComponent() {
+        super(XsltEndpoint.class);
+    }
 
     public XmlConverter getXmlConverter() {
         return xmlConverter;
@@ -125,8 +130,13 @@ public class XsltComponent extends DefaultComponent {
         String output = getAndRemoveParameter(parameters, "output", String.class);
         configureOutput(xslt, output);
         
-        Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, Integer.valueOf(0));
+        Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, 0);
         xslt.transformerCacheSize(cs);
+
+        ErrorListener errorListener = resolveAndRemoveReferenceParameter(parameters, "errorListener", ErrorListener.class);
+        if (errorListener != null) {
+            xslt.errorListener(errorListener);
+        }
 
         // default to use the cache option from the component if the endpoint did not have the contentCache parameter
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);

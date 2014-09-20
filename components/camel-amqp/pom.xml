@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-amqp</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: AMQP</name>
-  <description>Camel AMQP support</description>
+  <description>Camel AMQP component which is based on the Apache Qid project</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>
@@ -46,13 +46,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-client</artifactId>
+      <artifactId>qpid-amqp-1-0-client-jms</artifactId>
       <version>${qpid-version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-common</artifactId>
-      <version>${qpid-version}</version>
+        <groupId>org.apache.qpid</groupId>
+        <artifactId>qpid-client</artifactId>
+        <version>${qpid-version}</version>
+        <optional>true</optional>
     </dependency>
 
     <!-- testing -->

@@ -22,6 +22,7 @@ package org.apache.camel.component.stringtemplate;
 public final class StringTemplateConstants {
 
     public static final String STRINGTEMPLATE_RESOURCE_URI = "CamelStringTemplateResourceUri";
+    public static final String STRINGTEMPLATE_VARIABLE_MAP = "CamelStringTemplateVariableMap";
 
     private StringTemplateConstants() {
         // Utility class

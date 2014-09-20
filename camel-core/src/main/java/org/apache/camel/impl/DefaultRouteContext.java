@@ -182,6 +182,9 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in JMX instrumentation processor that is used for performance stats
             internal.addAdvice(new CamelInternalProcessor.InstrumentationAdvice("route"));
 
+            // wrap in route lifecycle
+            internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
@@ -189,11 +192,20 @@ public class DefaultRouteContext implements RouteContext {
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
             }
+            String rest = "false";
+            if (route.isRest() != null && route.isRest()) {
+                rest = "true";
+            }
+            edcr.getProperties().put(Route.REST_PROPERTY, rest);
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
             if (task != null) {
                 task.setRoute(edcr);
+            }
+            CamelInternalProcessor.RouteLifecycleAdvice task2 = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
+            if (task2 != null) {
+                task2.setRoute(edcr);
             }
 
             // invoke init on route policy
@@ -318,6 +330,14 @@ public class DefaultRouteContext implements RouteContext {
 
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
+    }
+
+    public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
+        throw new IllegalArgumentException("This option can only be configured on CamelContext");
+    }
+
+    public Boolean isAllowUseOriginalMessage() {
+        return getCamelContext().isAllowUseOriginalMessage();
     }
 
     public ShutdownRoute getShutdownRoute() {

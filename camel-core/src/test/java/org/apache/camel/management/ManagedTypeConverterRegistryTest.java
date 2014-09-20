@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -88,6 +89,20 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         assertEquals(0, failed.intValue());
         miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
         assertEquals(0, miss.intValue());
+
+        // we have more than 150 converters out of the box
+        Integer converters = (Integer) mbeanServer.getAttribute(name, "NumberOfTypeConverters");
+        assertTrue("Should be more than 150 converters, was: " + converters, converters >= 150);
+
+        Boolean has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"String", "java.io.InputStream"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertTrue("Should have type converter", has.booleanValue());
+
+        has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"java.math.BigInteger", "int"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertFalse("Should not have type converter", has.booleanValue());
+
+        // we have more than 150 converters out of the box
+        TabularData data = (TabularData) mbeanServer.invoke(name, "listTypeConverters", null, null);
+        assertTrue("Should be more than 150 converters, was: " + data.size(), data.size() >= 150);
     }
 
     @Override

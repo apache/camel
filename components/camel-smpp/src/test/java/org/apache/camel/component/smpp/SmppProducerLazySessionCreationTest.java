@@ -100,7 +100,7 @@ public class SmppProducerLazySessionCreationTest {
         expect(binding.createSmppCommand(session, exchange)).andReturn(command);
         expect(exchange.getIn()).andReturn(in);
         expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn(null);
-        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn(null);
+        expect(in.getHeader("CamelSmppPassword", String.class)).andReturn(null);
         command.execute(exchange);
         
         replay(session, endpoint, binding, exchange, in, command);
@@ -140,7 +140,7 @@ public class SmppProducerLazySessionCreationTest {
         expect(binding.createSmppCommand(session, exchange)).andReturn(command);
         expect(exchange.getIn()).andReturn(in);
         expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("smppclient2");
-        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("password2");
+        expect(in.getHeader("CamelSmppPassword", String.class)).andReturn("password2");
         command.execute(exchange);
         
         replay(session, endpoint, binding, exchange, in, command);

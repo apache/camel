@@ -17,177 +17,213 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
-    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="camel/context-list">
-            <action class="org.apache.camel.karaf.commands.ContextList">
-                <property name="camelController" ref="camelController"/>
-            </action>
-        </command>
-        <command name="camel/context-info">
-            <action class="org.apache.camel.karaf.commands.ContextInfo">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/context-start">
-            <action class="org.apache.camel.karaf.commands.ContextStart">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/context-stop">
-            <action class="org.apache.camel.karaf.commands.ContextStop">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-list">
-            <action class="org.apache.camel.karaf.commands.RouteList">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-info">
-            <action class="org.apache.camel.karaf.commands.RouteInfo">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-profile">
-            <action class="org.apache.camel.karaf.commands.RouteProfile">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-reset-stats">
-            <action class="org.apache.camel.karaf.commands.RouteResetStats">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-show">
-            <action class="org.apache.camel.karaf.commands.RouteShow">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-start">
-            <action class="org.apache.camel.karaf.commands.RouteStart">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-stop">
-            <action class="org.apache.camel.karaf.commands.RouteStop">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-resume">
-            <action class="org.apache.camel.karaf.commands.RouteResume">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/route-suspend">
-            <action class="org.apache.camel.karaf.commands.RouteSuspend">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="routeCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/endpoint-list">
-            <action class="org.apache.camel.karaf.commands.EndpointList">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/backlog-tracer-info">
-            <action class="org.apache.camel.karaf.commands.BacklogTracerInfo">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/backlog-tracer-dump">
-            <action class="org.apache.camel.karaf.commands.BacklogTracerDump">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/backlog-tracer-start">
-            <action class="org.apache.camel.karaf.commands.BacklogTracerStart">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/backlog-tracer-stop">
-            <action class="org.apache.camel.karaf.commands.BacklogTracerStop">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-    </command-bundle>
-
-    <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">
+  <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
+    <command name="camel/context-list">
+      <action class="org.apache.camel.karaf.commands.ContextList">
         <property name="camelController" ref="camelController"/>
-    </bean>
-
-    <bean id="routeCompleter" class="org.apache.camel.karaf.commands.completers.RouteCompleter">
+      </action>
+    </command>
+    <command name="camel/context-info">
+      <action class="org.apache.camel.karaf.commands.ContextInfo">
         <property name="camelController" ref="camelController"/>
-    </bean>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/context-start">
+      <action class="org.apache.camel.karaf.commands.ContextStart">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/context-stop">
+      <action class="org.apache.camel.karaf.commands.ContextStop">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/context-suspend">
+      <action class="org.apache.camel.karaf.commands.ContextSuspend">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/context-resume">
+      <action class="org.apache.camel.karaf.commands.ContextResume">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-list">
+      <action class="org.apache.camel.karaf.commands.RouteList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-info">
+      <action class="org.apache.camel.karaf.commands.RouteInfo">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-profile">
+      <action class="org.apache.camel.karaf.commands.RouteProfile">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-reset-stats">
+      <action class="org.apache.camel.karaf.commands.RouteResetStats">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-show">
+      <action class="org.apache.camel.karaf.commands.RouteShow">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-start">
+      <action class="org.apache.camel.karaf.commands.RouteStart">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-stop">
+      <action class="org.apache.camel.karaf.commands.RouteStop">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-resume">
+      <action class="org.apache.camel.karaf.commands.RouteResume">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/route-suspend">
+      <action class="org.apache.camel.karaf.commands.RouteSuspend">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="routeCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/endpoint-list">
+      <action class="org.apache.camel.karaf.commands.EndpointList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/backlog-tracer-info">
+      <action class="org.apache.camel.karaf.commands.BacklogTracerInfo">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/backlog-tracer-dump">
+      <action class="org.apache.camel.karaf.commands.BacklogTracerDump">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/backlog-tracer-start">
+      <action class="org.apache.camel.karaf.commands.BacklogTracerStart">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/backlog-tracer-stop">
+      <action class="org.apache.camel.karaf.commands.BacklogTracerStop">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/rest-registry-list">
+      <action class="org.apache.camel.karaf.commands.RestRegistryList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/rest-show">
+      <action class="org.apache.camel.karaf.commands.RestShow">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+  </command-bundle>
 
-    <bean id="camelController" class="org.apache.camel.karaf.commands.internal.CamelControllerImpl">
-        <property name="bundleContext" ref="blueprintBundleContext"/>
-    </bean>
+  <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">
+    <property name="camelController" ref="camelController"/>
+  </bean>
+
+  <bean id="routeCompleter" class="org.apache.camel.karaf.commands.completers.RouteCompleter">
+    <property name="camelController" ref="camelController"/>
+  </bean>
+
+  <bean id="camelController" class="org.apache.camel.karaf.commands.internal.CamelControllerImpl">
+    <property name="bundleContext" ref="blueprintBundleContext"/>
+  </bean>
 
 </blueprint>

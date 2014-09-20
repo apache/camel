@@ -95,7 +95,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     }
 
     @Override
-    protected KeyPair[] loadKeys() {
+    public Iterable<KeyPair> loadKeys() {
         if (!SecurityUtils.isBouncyCastleRegistered()) {
             throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
         }
@@ -136,7 +136,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             }
         }
 
-        return keys.toArray(new KeyPair[keys.size()]);
+        return keys;
     }
     
 }

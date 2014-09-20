@@ -37,6 +37,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -59,7 +60,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
     private ApplicationContext applicationContext;
-    private EventEndpoint eventEndpoint;
+    private EventComponent eventComponent;
+    private boolean shutdownEager = true;
 
     public SpringCamelContext() {
     }
@@ -119,7 +121,17 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
+        } else if (event instanceof ContextClosedEvent) {
+            // ContextClosedEvent is emitted when Spring is about to be shutdown
+            if (isShutdownEager()) {
+                try {
+                    maybeStop();
+                } catch (Exception e) {
+                    throw wrapRuntimeCamelException(e);
+                }
+            }
         } else if (event instanceof ContextStoppedEvent) {
+            // ContextStoppedEvent is emitted when Spring is end of shutdown
             try {
                 maybeStop();
             } catch (Exception e) {
@@ -127,10 +139,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             }
         }
 
-        if (eventEndpoint != null) {
-            eventEndpoint.onApplicationEvent(event);
-        } else {
-            LOG.info("No spring-event endpoint enabled to handle event: {}", event);
+        if (eventComponent != null) {
+            eventComponent.onApplicationEvent(event);
         }
     }
 
@@ -158,29 +168,45 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (applicationContext instanceof ConfigurableApplicationContext) {
             // only add if not already added
             if (hasComponent("spring-event") == null) {
-                addComponent("spring-event", new EventComponent(applicationContext));
+                eventComponent = new EventComponent(applicationContext);
+                addComponent("spring-event", eventComponent);
             }
         }
     }
 
+    @Deprecated
     public EventEndpoint getEventEndpoint() {
-        return eventEndpoint;
+        return null;
     }
 
+    @Deprecated
     public void setEventEndpoint(EventEndpoint eventEndpoint) {
-        this.eventEndpoint = eventEndpoint;
+        // noop
+    }
+
+    /**
+     * Whether to shutdown this {@link org.apache.camel.spring.SpringCamelContext} eager (first)
+     * when Spring {@link org.springframework.context.ApplicationContext} is being stopped.
+     * <p/>
+     * <b>Important:</b> This option is default <tt>true</tt> which ensures we shutdown Camel
+     * before other beans. Setting this to <tt>false</tt> restores old behavior in earlier
+     * Camel releases, which can be used for special cases to behave as before.
+     *
+     * @return <tt>true</tt> to shutdown eager (first), <tt>false</tt> to shutdown last
+     */
+    public boolean isShutdownEager() {
+        return shutdownEager;
+    }
+
+    /**
+     * @see #isShutdownEager()
+     */
+    public void setShutdownEager(boolean shutdownEager) {
+        this.shutdownEager = shutdownEager;
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (eventEndpoint == null) {
-            eventEndpoint = createEventEndpoint();
-        }
-    }
 
     @Override
     protected Injector createInjector() {

@@ -49,6 +49,8 @@ public class RestletProducer extends DefaultAsyncProducer {
         this.throwException = endpoint.isThrowExceptionOnFailure();
         client = new Client(endpoint.getProtocol());
         client.setContext(new Context());
+        client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
+        client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
     }
 
     @Override
@@ -97,11 +99,13 @@ public class RestletProducer extends DefaultAsyncProducer {
                     }
                 } catch (Exception e) {
                     exchange.setException(e);
+                } finally {
+                    callback.done(false);
                 }
-                callback.done(false);
             }
         });
 
+        // we continue routing async
         return false;
     }
 

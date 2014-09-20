@@ -79,6 +79,23 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Sets the description of this node
      *
+     * @param text  sets the text description, use null to not set a text
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public T description(String text) {
+        if (text != null) {
+            if (description == null) {
+                description = new DescriptionDefinition();
+            }
+            description.setText(text);
+        }
+        return (T) this;
+    }
+
+    /**
+     * Sets the description of this node
+     *
      * @param id  sets the id, use null to not set an id
      * @param text  sets the text description, use null to not set a text
      * @param lang  sets the language for the description, use null to not set a language

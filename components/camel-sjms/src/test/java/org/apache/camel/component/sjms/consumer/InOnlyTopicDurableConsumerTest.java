@@ -29,7 +29,7 @@ import org.junit.Test;
 public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
     
     private static final String CONNECTION_ID = "test-connection-1";
-    private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=true";
+    private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=false";
     
     @Override
     protected boolean useJmx() {

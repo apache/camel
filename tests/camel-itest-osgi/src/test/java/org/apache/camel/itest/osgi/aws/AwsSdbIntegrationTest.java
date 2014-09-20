@@ -32,10 +32,10 @@ import org.apache.camel.component.aws.sdb.SdbOperations;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class AwsSdbIntegrationTest extends AwsTestSupport {
     

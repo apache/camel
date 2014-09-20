@@ -23,6 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -35,17 +37,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an Elasticsearch endpoint.
  */
+@UriEndpoint(scheme = "elasticsearch")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);
 
     private Node node;
     private Client client;
-    private ElasticsearchConfiguration config;
+    @UriParam
+    private ElasticsearchConfiguration configuration;
 
     public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, Map<String, Object> parameters) throws Exception {
         super(uri, component);
-        this.config = new ElasticsearchConfiguration(new URI(uri), parameters);
+        this.configuration = new ElasticsearchConfiguration(new URI(uri), parameters);
     }
 
     public Producer createProducer() throws Exception {
@@ -63,32 +67,39 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (config.isLocal()) {
+        if (configuration.isLocal()) {
             LOG.info("Starting local ElasticSearch server");
         } else {
-            LOG.info("Joining ElasticSearch cluster " + config.getClusterName());
+            LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
         }
-        node = config.buildNode();
-        if (config.getIp() != null && !config.isLocal()) {
+        if (configuration.getIp() != null) {
+            LOG.info("REMOTE ELASTICSEARCH: {}", configuration.getIp());
             Settings settings = ImmutableSettings.settingsBuilder()
-                    .put("cluster.name", config.getClusterName()).put("node.client", true).build();
+                    .put("cluster.name", configuration.getClusterName())
+                    .put("client.transport.ignore_cluster_name", false)
+                    .put("node.client", true)
+                    .put("client.transport.sniff", true)
+                    .build();
             Client client = new TransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(config.getIp(), config.getPort()));
+                    .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
             this.client = client;
         } else {
+            node = configuration.buildNode();
             client = node.client();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (config.isLocal()) {
+        if (configuration.isLocal()) {
             LOG.info("Stopping local ElasticSearch server");
         } else {
-            LOG.info("Leaving ElasticSearch cluster " + config.getClusterName());
+            LOG.info("Leaving ElasticSearch cluster " + configuration.getClusterName());
         }
         client.close();
-        node.close();
+        if (node != null) {
+            node.close();
+        }
         super.doStop();
     }
 
@@ -97,11 +108,11 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     }
 
     public ElasticsearchConfiguration getConfig() {
-        return config;
+        return configuration;
     }
 
     public void setOperation(String operation) {
-        config.setOperation(operation);
+        configuration.setOperation(operation);
     }
 
 }

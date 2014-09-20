@@ -131,6 +131,7 @@ public class JpaWithNamedQueryTest extends Assert {
                     } else {
                         // dummy row
                         assertEquals("dummy row step for: " + row, 4, row.getStep());
+                        assertEquals("Not the expected row: " + row, "cheese", row.getAddress());
                     }
                 }
                 return null;

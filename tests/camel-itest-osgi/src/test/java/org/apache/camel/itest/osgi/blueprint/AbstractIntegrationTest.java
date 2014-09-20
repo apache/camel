@@ -53,7 +53,7 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
     }
 
     protected <T> T getOsgiService(Class<T> type, String filter, long timeout) {
-        ServiceTracker tracker = null;
+        ServiceTracker<?, ?> tracker = null;
         try {
             String flt;
             if (filter != null) {
@@ -66,7 +66,7 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
                 flt = "(" + Constants.OBJECTCLASS + "=" + type.getName() + ")";
             }
             Filter osgiFilter = FrameworkUtil.createFilter(flt);
-            tracker = new ServiceTracker(bundleContext, osgiFilter, null);
+            tracker = new ServiceTracker<Object, Object>(bundleContext, osgiFilter, null);
             tracker.open(true);
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
@@ -76,11 +76,11 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
                 Dictionary dic = bundleContext.getBundle().getHeaders();
                 LOG.warn("Test bundle headers: " + explode(dic));
 
-                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
+                for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
                     LOG.warn("ServiceReference: " + ref);
                 }
 
-                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
+                for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
                     LOG.warn("Filtered ServiceReference: " + ref);
                 }
 
@@ -130,8 +130,9 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
     /*
      * Provides an iterable collection of references, even if the original array is null
      */
-    private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        return references != null ? Arrays.asList(references) : Collections.<ServiceReference>emptyList();
+    private static Collection<ServiceReference<?>> asCollection(ServiceReference<?>[] references) {
+        return (Collection<ServiceReference<?>>)(references != null ? Arrays.asList(references) 
+            : Collections.<ServiceReference<?>>emptyList());
     }
 
     /**

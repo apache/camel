@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
@@ -35,8 +34,8 @@ import org.slf4j.LoggerFactory;
 public class CxfRsInvoker extends JAXRSInvoker {
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsInvoker.class);
     private static final String SUSPENED = "org.apache.camel.component.cxf.jaxrs.suspend";
-    private CxfRsConsumer cxfRsConsumer;
-    private CxfRsEndpoint endpoint;
+    private final CxfRsConsumer cxfRsConsumer;
+    private final CxfRsEndpoint endpoint;
     
     public CxfRsInvoker(CxfRsEndpoint endpoint, CxfRsConsumer consumer) {
         this.endpoint = endpoint;
@@ -83,9 +82,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 cxfRsConsumer.createUoW(camelExchange);
                 // Now we don't set up the timeout value
                 LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
-                // TODO Support to set the timeout in case the Camel can't send the response back on time.
                 // The continuation could be called before the suspend is called
-                continuation.suspend(0);
+                continuation.suspend(endpoint.getContinuationTimeout());
                 cxfExchange.put(SUSPENED, Boolean.TRUE);
                 cxfRsConsumer.getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
@@ -156,12 +154,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 } else {
                     throw (WebApplicationException)exception;
                 }
-            } else {
-                // Send the exception message back 
-                WebApplicationException webApplicationException = new WebApplicationException(exception, Response.serverError().entity(exception.toString()).build());
-                throw webApplicationException;
-            }
-            
+            } 
+            //CAMEL-7357 throw out other exception to make sure the ExceptionMapper work
         }
         return endpoint.getBinding().populateCxfRsResponseFromExchange(camelExchange, cxfExchange);
     }

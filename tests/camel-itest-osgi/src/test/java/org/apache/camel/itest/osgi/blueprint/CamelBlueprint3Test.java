@@ -17,21 +17,23 @@
 package org.apache.camel.itest.osgi.blueprint;
 
 import org.apache.camel.CamelContext;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
  * @version 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CamelBlueprint3Test extends OSGiBlueprintTestSupport {
 
     @Test
@@ -73,27 +75,27 @@ public class CamelBlueprint3Test extends OSGiBlueprintTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-6.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle6")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-7.xml"))
                         .add(TestInterceptStrategy.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle7")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-8.xml"))
                         .add("org/apache/camel/component/properties/cheese.properties", OSGiBlueprintTestSupport.class.getResource("cheese.properties"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle8")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-9.xml"))
                         .add(TestRouteBuilder.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle9")

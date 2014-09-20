@@ -26,6 +26,8 @@ import org.apache.camel.ShutdownableService;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@UriEndpoint(scheme = "quartz", consumerClass = QuartzConsumer.class)
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
@@ -49,8 +52,11 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private Trigger trigger;
     private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
+    @UriParam
     private volatile boolean stateful;
+    @UriParam
     private boolean deleteJob = true;
+    @UriParam
     private boolean pauseJob;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
@@ -73,7 +79,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         }
         detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT_URI, getEndpointUri());
         // must use management name as it should be unique in the same JVM
-        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, getCamelContext().getManagementName());
+        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, QuartzHelper.getQuartzContextName(getCamelContext()));
         if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }

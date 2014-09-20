@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Acquires exclusive read lock to the given file by checking whether the file is being
  * changed by scanning the file at different intervals (to detect changes).
+ * <p/>
+ * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows to turn off using marker files.
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);

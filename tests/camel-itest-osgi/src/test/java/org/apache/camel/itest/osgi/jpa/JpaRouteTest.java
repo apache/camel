@@ -19,22 +19,25 @@ package org.apache.camel.itest.osgi.jpa;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
-import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.orm.jpa.JpaTransactionManager;
+
+
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,15 +45,28 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class JpaRouteTest extends OSGiIntegrationTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     protected OsgiBundleXmlApplicationContext applicationContext;
+
+    protected TransactionTemplate transactionTemplate;
+    protected EntityManager entityManager;
     
     @Inject
     protected BundleContext bundleContext;
-    protected JpaTemplate jpaTemplate;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory",
+                EntityManagerFactory.class);
+        transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
+        entityManager = entityManagerFactory.createEntityManager();
+        cleanupRepository();
+    }
+
 
     @Test
     public void testRouteJpa() throws Exception {
@@ -60,7 +76,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
         template.sendBody("direct:start", new SendEmail(1L, "someone@somewhere.org"));
 
         assertMockEndpointsSatisfied();
-        assertEntityInDB();
+        assertEntityInDB(1);
     }
     
     @After
@@ -69,7 +85,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             super.tearDown();
             if (applicationContext != null) {                
                 if (applicationContext.isActive()) {
-                    applicationContext.destroy();
+                    IOHelper.close(applicationContext);
                 }
                 applicationContext = null;
             }
@@ -87,37 +103,25 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             applicationContext.setBundleContext(bundleContext);
             applicationContext.refresh();
         }
-        cleanupRepository();
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
-    private void assertEntityInDB() throws Exception {
-        // must type cast with Spring 2.x
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+    private void assertEntityInDB(int size) throws Exception {
+        List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
+        assertEquals(size, list.size());
 
-        @SuppressWarnings("rawtypes")
-        List list = jpaTemplate.find(SELECT_ALL_STRING);
-        assertEquals(1, list.size());
-        
         assertIsInstanceOf(SendEmail.class, list.get(0));
     }
 
-    protected void cleanupRepository() {
-        // must type cast with Spring 2.x
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
-
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus arg0) {
-                @SuppressWarnings("rawtypes")
-                List list = jpaTemplate.find(SELECT_ALL_STRING);
+    private void cleanupRepository() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                entityManager.joinTransaction();
+                List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
                 for (Object item : list) {
-                    jpaTemplate.remove(item);
+                    entityManager.remove(item);
                 }
-                jpaTemplate.flush();
+                entityManager.flush();
                 return Boolean.TRUE;
             }
         });

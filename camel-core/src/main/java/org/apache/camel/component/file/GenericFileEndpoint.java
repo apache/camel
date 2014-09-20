@@ -134,6 +134,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam
     protected long readLockTimeout = 10000;
     @UriParam
+    protected boolean readLockMarkerFile = true;
+    @UriParam
     protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     @UriParam
     protected long readLockMinLength = 1;
@@ -599,6 +601,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockTimeout = readLockTimeout;
     }
 
+    public boolean isReadLockMarkerFile() {
+        return readLockMarkerFile;
+    }
+
+    public void setReadLockMarkerFile(boolean readLockMarkerFile) {
+        this.readLockMarkerFile = readLockMarkerFile;
+    }
+
     public LoggingLevel getReadLockLoggingLevel() {
         return readLockLoggingLevel;
     }
@@ -830,6 +840,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLockTimeout > 0) {
             params.put("readLockTimeout", readLockTimeout);
         }
+        params.put("readLockMarkerFile", readLockMarkerFile);
         params.put("readLockMinLength", readLockMinLength);
         params.put("readLockLoggingLevel", readLockLoggingLevel);
 

@@ -33,6 +33,8 @@ public class VertxEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String address;
+    @UriParam
+    private Boolean pubSub;
 
     public VertxEndpoint(String uri, VertxComponent component, String address) {
         super(uri, component);
@@ -68,6 +70,18 @@ public class VertxEndpoint extends DefaultEndpoint {
 
     public String getAddress() {
         return address;
+    }
+
+    public boolean isPubSub() {
+        return pubSub != null && pubSub;
+    }
+
+    public Boolean getPubSub() {
+        return pubSub;
+    }
+
+    public void setPubSub(Boolean pubSub) {
+        this.pubSub = pubSub;
     }
 
     /**

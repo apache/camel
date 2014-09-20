@@ -37,6 +37,11 @@ public class SftpChmodTest extends SftpServerTestSupport {
             return;
         }
 
+        // see https://issues.apache.org/jira/browse/SSHD-267
+        if (isJava16()) {
+            return;
+        }
+
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&chmod=777", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");

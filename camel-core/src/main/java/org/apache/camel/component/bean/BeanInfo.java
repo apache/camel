@@ -228,6 +228,8 @@ public class BeanInfo {
                     List<ParameterInfo> lpi = new ArrayList<ParameterInfo>(1);
                     lpi.add(pi);
                     methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
+                    // Need to update the message body to be pojo for the invocation
+                    exchange.getIn().setBody(pojo);
                 } catch (NoSuchMethodException e) {
                     throw new MethodNotFoundException(exchange, pojo, "getClass");
                 }

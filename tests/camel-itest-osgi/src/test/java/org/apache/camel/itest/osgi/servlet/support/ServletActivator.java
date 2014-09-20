@@ -37,7 +37,7 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
     /**
      * HttpService reference.
      */
-    private ServiceReference httpServiceRef;
+    private ServiceReference<?> httpServiceRef;
     
     /**
      * Called when the OSGi framework starts our bundle

@@ -33,17 +33,10 @@ public class MvelExpression extends ExpressionSupport {
         this.expressionString = expressionString;
         this.type = type;
 
-        // see http://jira.codehaus.org/browse/MVEL-250
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
-            // set the TCCL to the MVEL
-            Thread.currentThread().setContextClassLoader(org.mvel2.MVEL.class.getClassLoader());
             this.compiled = org.mvel2.MVEL.compileExpression(expressionString);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expressionString, e);
-        } finally {
-            // restore
-            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 

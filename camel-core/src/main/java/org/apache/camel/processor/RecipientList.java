@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -34,6 +35,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -46,15 +49,20 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
+    private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
     private boolean parallelProcessing;
+    private boolean parallelAggregate;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
     private long timeout;
+    private int cacheSize;
     private Processor onPrepare;
     private boolean shareUnitOfWork;
     private ExecutorService executorService;
@@ -116,11 +124,17 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
+        Iterator<Object> iter;
+
+        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+            iter = ObjectHelper.createIterator(recipientList, null);
+        } else {
+            iter = ObjectHelper.createIterator(recipientList, delimiter);
+        }
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork()) {
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -163,7 +177,16 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext);
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("RecipientList {} is not using ProducerCache", this);
+            } else if (cacheSize == 0) {
+                producerCache = new ProducerCache(this, camelContext);
+                LOG.debug("RecipientList {} using ProducerCache with default cache size", this);
+            } else {
+                producerCache = new ProducerCache(this, camelContext, cacheSize);
+                LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
         ServiceHelper.startServices(aggregationStrategy, producerCache);
     }
@@ -202,6 +225,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    public void setParallelAggregate(boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
     }
 
     public boolean isStopOnException() {
@@ -258,5 +289,13 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setShareUnitOfWork(boolean shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
     }
 }

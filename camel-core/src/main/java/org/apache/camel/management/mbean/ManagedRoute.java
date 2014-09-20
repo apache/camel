@@ -145,15 +145,33 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String getLoad01() {
-        return String.format("%.2f", load.getLoad1());
+        double load1 = load.getLoad1();
+        if (Double.isNaN(load1)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", load1);
+        }
     }
 
     public String getLoad05() {
-        return String.format("%.2f", load.getLoad5());
+        double load5 = load.getLoad5();
+        if (Double.isNaN(load5)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", load5);
+        }
     }
 
     public String getLoad15() {
-        return String.format("%.2f", load.getLoad15());
+        double load15 = load.getLoad15();
+        if (Double.isNaN(load15)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", load15);
+        }
     }
 
     @Override
@@ -337,6 +355,15 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 }
             }
         }
+    }
+
+    public String createRouteStaticEndpointJson() {
+        return getContext().createRouteStaticEndpointJson(getRouteId());
+    }
+
+    @Override
+    public String createRouteStaticEndpointJson(boolean includeDynamic) {
+        return getContext().createRouteStaticEndpointJson(getRouteId(), includeDynamic);
     }
 
     @Override

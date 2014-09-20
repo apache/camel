@@ -55,6 +55,8 @@ public class ZookeeperProducer extends DefaultProducer {
     private ZooKeeperConfiguration configuration;
 
     private ZooKeeperConnectionManager zkm;
+    
+    private ZooKeeper connection;
 
     public ZookeeperProducer(ZooKeeperEndpoint endpoint) {
         super(endpoint);
@@ -63,8 +65,7 @@ public class ZookeeperProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-
-        ZooKeeper connection = zkm.getConnection();
+        
         ProductionContext context = new ProductionContext(connection, exchange);
 
         String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);
@@ -98,6 +99,23 @@ public class ZookeeperProducer extends DefaultProducer {
             } else {
                 asynchronouslySetDataOnNode(connection, context);
             }
+        }
+        
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        connection = zkm.getConnection();
+        if (log.isTraceEnabled()) {
+            log.trace(String.format("Starting zookeeper producer of '%s'", configuration.getPath()));
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (log.isTraceEnabled()) {
+            log.trace(String.format("Shutting down zookeeper producer of '%s'", configuration.getPath()));
         }
     }
 

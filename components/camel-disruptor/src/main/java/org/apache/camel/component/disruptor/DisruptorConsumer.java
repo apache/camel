@@ -62,7 +62,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
     public ExceptionHandler getExceptionHandler() {
         if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
+            exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
         }
         return exceptionHandler;
     }

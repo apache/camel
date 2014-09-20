@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-flatpack</artifactId>
@@ -43,29 +43,28 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <!-- Using the servicemix wrapped one as the centrl mvn repo doesn't have one -->
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.flatpack</artifactId>
-      <version>${flatpack-bundle-version}</version>
+      <groupId>net.sf.flatpack</groupId>
+      <artifactId>flatpack</artifactId>
+      <version>${flatpack-version}</version>
     </dependency>
-	<dependency> 
-	  <groupId>org.jdom</groupId> 
-	  <artifactId>jdom</artifactId> 
-	  <version>${jdom-version}</version> 
-	</dependency>
+    <dependency> 
+	    <groupId>org.jdom</groupId> 
+	    <artifactId>jdom</artifactId> 
+	    <version>${jdom-version}</version> 
+	  </dependency>
     <dependency> 
       <groupId>jexcelapi</groupId> 
       <artifactId>jxl</artifactId> 
       <version>${jexcelapi-version}</version>
     </dependency>
 
-	<!-- logging -->
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-		<scope>test</scope>
-	</dependency>
+	  <!-- logging -->
+	  <dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-log4j12</artifactId>
+		  <scope>test</scope>
+	  </dependency>
 
     <!-- testing -->
     <dependency>

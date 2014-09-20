@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -28,6 +29,7 @@ import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
+@UriParams
 public class TwitterConfiguration {
 
     /**
@@ -97,7 +99,7 @@ public class TwitterConfiguration {
     private long sinceId  = 1;
 
     /**
-     * Used ot set the preferred language on which to search
+     * Used to set the preferred language on which to search
      */
     @UriParam
     private String lang;
@@ -115,7 +117,7 @@ public class TwitterConfiguration {
      * Number of page to iterate before stop (default is 1)
      */
     @UriParam
-    private Integer numberOfPages = new Integer(1);
+    private Integer numberOfPages = 1;
     
     @UriParam
     private String httpProxyHost;
@@ -128,7 +130,7 @@ public class TwitterConfiguration {
 
     @UriParam
     private Integer httpProxyPort;
-
+    
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
      * This should not be created by an endpoint's doStart(), etc., since
@@ -208,7 +210,7 @@ public class TwitterConfiguration {
     public void setAccessTokenSecret(String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
     }
-
+    
     public String getUser() {
         return user;
     }
@@ -330,7 +332,7 @@ public class TwitterConfiguration {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 

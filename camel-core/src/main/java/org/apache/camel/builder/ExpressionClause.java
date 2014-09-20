@@ -162,7 +162,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -175,7 +175,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      *
@@ -188,7 +188,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -201,7 +201,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -215,7 +215,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      *
@@ -229,7 +229,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -569,6 +569,18 @@ public class ExpressionClause<T> extends ExpressionDefinition {
         return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName, group);
     }
 
+    public T xtokenize(String path, Namespaces namespaces) {
+        return xtokenize(path, 'i', namespaces);
+    }
+
+    public T xtokenize(String path, char mode, Namespaces namespaces) {
+        return xtokenize(path, mode, namespaces, 0);
+    }
+
+    public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
+        return delegate.xtokenize(path, mode, namespaces, group);
+    }
+
     /**
      * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
      * expression using the VTD-XML library</a>
@@ -766,7 +778,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * href="http://camel.apache.org/xquery.html">XQuery expression</a>
      * with the specified result type
      * 
-     * @param text the expression to be evaluated
      * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param headerName the name of the header to apply the expression to

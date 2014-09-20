@@ -69,6 +69,9 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
             // try to add an other one
             assertTrue(repository.add(key02));
             assertTrue(repository.contains(key02));
+
+            // try to add the first key again
+            assertFalse(repository.add(key01));
         }
     }
 
@@ -101,6 +104,14 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     }
 
     @Test
+    public void testConfirm() throws Exception {
+        if (systemReady) {
+            // it always return true
+            assertTrue(repository.confirm(key01));
+        }
+    }
+
+    @Test
     public void testRepositoryInRoute() throws Exception {
         if (systemReady) {
             MockEndpoint mock = (MockEndpoint) context.getEndpoint("mock:out");
@@ -127,10 +138,9 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                        .idempotentConsumer(header("messageId"), repository)
-                        .to("mock:out");
+                    .idempotentConsumer(header("messageId"), repository)
+                    .to("mock:out");
             }
         };
     }
-
 }

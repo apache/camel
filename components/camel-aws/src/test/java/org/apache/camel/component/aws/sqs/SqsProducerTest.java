@@ -16,21 +16,25 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -43,6 +47,14 @@ public class SqsProducerTest {
     private static final String MESSAGE_MD5 = "00000000000000000000000000000000";
     private static final String MESSAGE_ID = "11111111111111111111111111111111";
     private static final String QUEUE_URL = "some://queue/url";
+    private static final String SAMPLE_MESSAGE_HEADER_NAME_1 = "header_name_1";
+    private static final String SAMPLE_MESSAGE_HEADER_VALUE_1 = "heder_value_1";
+    private static final String SAMPLE_MESSAGE_HEADER_NAME_2 = "header_name_2";
+    private static final ByteBuffer SAMPLE_MESSAGE_HEADER_VALUE_2 = ByteBuffer.wrap(new byte[10]);
+    private static final String SAMPLE_MESSAGE_HEADER_NAME_3 = "header_name_3";
+    private static final String SAMPLE_MESSAGE_HEADER_VALUE_3 = "heder_value_3";
+    private static final String SAMPLE_MESSAGE_HEADER_NAME_4 = "CamelHeader_1";
+    private static final String SAMPLE_MESSAGE_HEADER_VALUE_4 = "testValue";
     
     Exchange exchange = mock(Exchange.class, RETURNS_DEEP_STUBS);
 
@@ -61,6 +73,7 @@ public class SqsProducerTest {
         underTest = new SqsProducer(sqsEndpoint);
         sendMessageResult = new SendMessageResult().withMD5OfMessageBody(MESSAGE_MD5).withMessageId(MESSAGE_ID);
         sqsConfiguration = new SqsConfiguration();
+        HeaderFilterStrategy headerFilterStrategy = new SqsHeaderFilterStrategy();
         sqsConfiguration.setDelaySeconds(Integer.valueOf(0));
         when(sqsEndpoint.getClient()).thenReturn(amazonSQSClient);
         when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
@@ -70,6 +83,7 @@ public class SqsProducerTest {
         when(exchange.getPattern()).thenReturn(ExchangePattern.InOnly);
         when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
         when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
+        when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
     }
 
     @Test
@@ -121,5 +135,67 @@ public class SqsProducerTest {
         underTest.process(exchange);
         verify(inMessage).setHeader(SqsConstants.MD5_OF_BODY, MESSAGE_MD5);
     }
+    
+    @Test
+    public void isAttributeMessageStringHeaderOnTheRequest() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(SAMPLE_MESSAGE_HEADER_NAME_1, SAMPLE_MESSAGE_HEADER_VALUE_1);
+        when(inMessage.getHeaders()).thenReturn(headers);
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_1,
+                     capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1)
+                         .getStringValue());
+        assertNull(capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1)
+            .getBinaryValue());
+    }
+    
+    @Test
+    public void isAttributeMessageByteBufferHeaderOnTheRequest() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(SAMPLE_MESSAGE_HEADER_NAME_2, SAMPLE_MESSAGE_HEADER_VALUE_2);
+        when(inMessage.getHeaders()).thenReturn(headers);
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_2,
+                     capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2)
+                         .getBinaryValue());
+        assertNull(capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2)
+            .getStringValue());
+    }
+
+    @Test
+    public void isAllAttributeMessagesOnTheRequest() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(SAMPLE_MESSAGE_HEADER_NAME_1, SAMPLE_MESSAGE_HEADER_VALUE_1);
+        headers.put(SAMPLE_MESSAGE_HEADER_NAME_2, SAMPLE_MESSAGE_HEADER_VALUE_2);
+        headers.put(SAMPLE_MESSAGE_HEADER_NAME_3, SAMPLE_MESSAGE_HEADER_VALUE_3);
+        headers.put(SAMPLE_MESSAGE_HEADER_NAME_4, SAMPLE_MESSAGE_HEADER_VALUE_4);
+        when(inMessage.getHeaders()).thenReturn(headers);
+        underTest.process(exchange);
+
+        ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+        verify(amazonSQSClient).sendMessage(capture.capture());
+
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_1,
+                     capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1)
+                         .getStringValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_2,
+                     capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2)
+                         .getBinaryValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_3,
+                     capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_3)
+                         .getStringValue());
+        assertEquals(3, capture.getValue().getMessageAttributes().size());
+    }
+    
+    
+
 
 }

@@ -20,9 +20,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * A strategy capable of applying interceptors to a processor
+ * A strategy capable of applying interceptors to a processor.
  * <p/>
- * Its <b>strongly</b> adviced to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
+ * Its <b>strongly</b> advised to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
  * {@link Processor} which ensures the policy works well with the asynchronous routing engine.
  * You can use the {@link org.apache.camel.processor.DelegateAsyncProcessor} to easily return an
  * {@link org.apache.camel.AsyncProcessor} and override the

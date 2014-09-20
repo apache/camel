@@ -19,9 +19,7 @@ package org.apache.camel.example.cdi;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
@@ -36,37 +34,20 @@ import org.apache.camel.cdi.Uri;
 public class MyRoutes extends RouteBuilder {
 
     @Inject
-    //@Uri("activemq:test.MyQueue")
-    @Uri("file://target/testdata/queue")
-    private Endpoint queueEndpoint;
-
-    @Inject
-    @Uri("file://target/testdata/result?noop=true")
+    @Uri("file://target/testdata/result")
     private Endpoint resultEndpoint;
 
+    @Inject
+    private SomeBean someBean;
 
     @Override
     public void configure() throws Exception {
         // you can configure the route rule with Java DSL here
 
         // populate the message queue with some messages
-        from("file:src/data?noop=true").
-                to(queueEndpoint);
-
-        // consume from message queue to a result endpoint and process with a bean
-        from(queueEndpoint).
-                to(resultEndpoint).
-                bean(new SomeBean());
-    }
-
-    /**
-     * Configure ActiveMQ endpoints
-     */
-    @Named("activemq")
-    public ActiveMQComponent createActiveMQComponent() {
-        ActiveMQComponent answer = new ActiveMQComponent();
-        answer.setBrokerURL("vm://localhost.cdi?marshal=false&broker.persistent=false&broker.useJmx=false");
-        return answer;
+        from("file:src/data?noop=true")
+            .bean(someBean)
+            .to(resultEndpoint);
     }
 
     public Endpoint getResultEndpoint() {

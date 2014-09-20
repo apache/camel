@@ -22,36 +22,64 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.URISupport;
 import org.apache.hadoop.io.SequenceFile;
 
+@UriParams
 public class HdfsConfiguration {
 
     private URI uri;
+    @UriParam
     private String hostName;
+    @UriParam
     private int port = HdfsConstants.DEFAULT_PORT;
+    @UriParam
     private String path;
+    @UriParam
     private boolean overwrite = true;
+    @UriParam
     private boolean append;
+    @UriParam
     private boolean wantAppend;
+    @UriParam
     private int bufferSize = HdfsConstants.DEFAULT_BUFFERSIZE;
+    @UriParam
     private short replication = HdfsConstants.DEFAULT_REPLICATION;
+    @UriParam
     private long blockSize = HdfsConstants.DEFAULT_BLOCKSIZE;
+    @UriParam
     private SequenceFile.CompressionType compressionType = HdfsConstants.DEFAULT_COMPRESSIONTYPE;
+    @UriParam
     private HdfsCompressionCodec compressionCodec = HdfsConstants.DEFAULT_CODEC;
+    @UriParam
     private HdfsFileType fileType = HdfsFileType.NORMAL_FILE;
+    @UriParam
     private HdfsFileSystemType fileSystemType = HdfsFileSystemType.HDFS;
+    @UriParam
     private HdfsWritableFactories.WritableType keyType = HdfsWritableFactories.WritableType.NULL;
+    @UriParam
     private HdfsWritableFactories.WritableType valueType = HdfsWritableFactories.WritableType.BYTES;
+    @UriParam
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
+    @UriParam
     private String readSuffix = HdfsConstants.DEFAULT_READ_SUFFIX;
+    @UriParam
     private long initialDelay;
+    @UriParam
     private long delay = HdfsConstants.DEFAULT_DELAY;
+    @UriParam
     private String pattern = HdfsConstants.DEFAULT_PATTERN;
+    @UriParam
     private int chunkSize = HdfsConstants.DEFAULT_BUFFERSIZE;
+    @UriParam
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     private List<HdfsProducer.SplitStrategy> splitStrategies;
+    @UriParam
     private boolean connectOnStartup = true;
+    @UriParam
+    private String owner;
 
     public HdfsConfiguration() {
     }
@@ -406,5 +434,13 @@ public class HdfsConfiguration {
 
     public void setConnectOnStartup(boolean connectOnStartup) {
         this.connectOnStartup = connectOnStartup;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

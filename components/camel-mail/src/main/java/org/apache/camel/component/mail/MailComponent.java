@@ -25,7 +25,7 @@ import javax.mail.search.SearchTerm;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -34,20 +34,22 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class MailComponent extends DefaultComponent {
+public class MailComponent extends UriEndpointComponent {
     private MailConfiguration configuration;
     private ContentTypeResolver contentTypeResolver;
 
     public MailComponent() {
+        super(MailEndpoint.class);
         this.configuration = new MailConfiguration();
     }
 
     public MailComponent(MailConfiguration configuration) {
+        super(MailEndpoint.class);
         this.configuration = configuration;
     }
 
     public MailComponent(CamelContext context) {
-        super(context);
+        super(context, MailEndpoint.class);
         this.configuration = new MailConfiguration();
     }
 

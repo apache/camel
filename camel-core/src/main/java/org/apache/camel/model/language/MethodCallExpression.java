@@ -29,7 +29,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.ConstantBeanHolder;
-import org.apache.camel.component.bean.ConstantTypeBeanHolder;
+import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
@@ -171,7 +171,7 @@ public class MethodCallExpression extends ExpressionDefinition {
                 instance = camelContext.getInjector().newInstance(beanType);
                 holder = new ConstantBeanHolder(instance, camelContext);
             } else {
-                holder = new ConstantTypeBeanHolder(beanType, camelContext);
+                holder = new ConstantStaticTypeBeanHolder(beanType, camelContext);
             }
         } else if (instance != null) {
             holder = new ConstantBeanHolder(instance, camelContext);

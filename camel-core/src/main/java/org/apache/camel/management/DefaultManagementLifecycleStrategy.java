@@ -58,7 +58,9 @@ import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedProducerCache;
+import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
@@ -83,7 +85,9 @@ import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWork;
@@ -460,6 +464,10 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
         } else if (service instanceof TypeConverterRegistry) {
             answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
+        } else if (service instanceof RestRegistry) {
+            answer = new ManagedRestRegistry(context, (RestRegistry) service);
+        } else if (service instanceof RuntimeEndpointRegistry) {
+            answer = new ManagedRuntimeEndpointRegistry(context, (RuntimeEndpointRegistry) service);
         } else if (service instanceof StreamCachingStrategy) {
             answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
         } else if (service != null) {
@@ -803,7 +811,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
      */
     protected void manageObject(Object me) throws Exception {
         getManagementStrategy().manageObject(me);
-        if (timerListenerManager != null && me instanceof TimerListener) {
+        if (me instanceof TimerListener) {
             TimerListener timer = (TimerListener) me;
             timerListenerManager.addTimerListener(timer);
         }
@@ -816,7 +824,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
      * @throws Exception is thrown if error unregistering the managed object
      */
     protected void unmanageObject(Object me) throws Exception {
-        if (timerListenerManager != null && me instanceof TimerListener) {
+        if (me instanceof TimerListener) {
             TimerListener timer = (TimerListener) me;
             timerListenerManager.removeTimerListener(timer);
         }
@@ -851,6 +859,11 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // always register if we are starting CamelContext
         if (getCamelContext().getStatus().isStarting()) {
+            return true;
+        }
+
+        // always register if we are setting up routes
+        if (getCamelContext().isSetupRoutes()) {
             return true;
         }
 

@@ -45,7 +45,6 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
             fail("Should throw a CamelExchangeException");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("The OUT message was not received within"));
         }
 
         mock.assertIsSatisfied();

@@ -22,17 +22,9 @@ import javax.jcr.Session;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
 import org.junit.Test;
 
 public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory("target/repository");
-        super.setUp();
-    }
 
     @Test
     public void testCreateNodeAndSubNode() throws Exception {
@@ -41,7 +33,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
         try {
             // create node
             Exchange exchange1 = ExchangeBuilder.anExchange(context)
-                .withProperty(JcrConstants.JCR_NODE_NAME, "node")
+                .withHeader(JcrConstants.JCR_NODE_NAME, "node")
                 .build();
             Exchange out1 = template.send("direct:a", exchange1);
             assertNotNull(out1);
@@ -53,7 +45,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
             
             // create sub node
             Exchange exchange2 = ExchangeBuilder.anExchange(context)
-                .withProperty(JcrConstants.JCR_NODE_NAME, "node/subnode")
+                .withHeader(JcrConstants.JCR_NODE_NAME, "node/subnode")
                 .build();
             Exchange out2 = template.send("direct:a", exchange2);
             assertNotNull(out2);

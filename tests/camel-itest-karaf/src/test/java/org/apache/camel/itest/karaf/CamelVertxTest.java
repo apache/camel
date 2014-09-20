@@ -18,17 +18,22 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
+import static org.junit.Assume.assumeTrue;
+
+@RunWith(PaxExam.class)
 public class CamelVertxTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelVertxTest.class);
 
     @Test
     public void test() throws Exception {
+//        Vert.x can be deployed only to Java 7 JVM
+        String javaVersion = System.getProperty("java.version");
+        assumeTrue(javaVersion.startsWith("1.7"));
         testComponent(COMPONENT);
     }
 

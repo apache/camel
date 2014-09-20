@@ -148,13 +148,16 @@ public class SimpleLanguage extends LanguageSupport {
      * if the resultType is a <tt>Boolean</tt>, or <tt>boolean</tt> type).
      */
     public static Expression simple(String expression, Class<?> resultType) {
-        SimpleLanguage answer = new SimpleLanguage();
+        return new SimpleLanguage().createExpression(expression, resultType);
+    }
+
+    public Expression createExpression(String expression, Class<?> resultType) {
         if (resultType == Boolean.class || resultType == boolean.class) {
             // if its a boolean as result then its a predicate
-            Predicate predicate = answer.createPredicate(expression);
+            Predicate predicate = createPredicate(expression);
             return PredicateToExpressionAdapter.toExpression(predicate);
         } else {
-            Expression exp = answer.createExpression(expression);
+            Expression exp = createExpression(expression);
             if (resultType != null) {
                 exp = ExpressionBuilder.convertToExpression(exp, resultType);
             }

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tests</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-itest-osgi</artifactId>
@@ -39,54 +39,66 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit4</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.runner</groupId>
-      <artifactId>pax-runner-no-jcl</artifactId>
-      <scope>test</scope>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-invoker-junit</artifactId>
+        <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.swissbox</groupId>
-      <artifactId>pax-swissbox-tinybundles</artifactId>
-      <scope>test</scope>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam</artifactId>
+        <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.karaf.tooling.exam</groupId>
-      <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
-      <scope>test</scope>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-container-karaf</artifactId>
+        <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-link-mvn</artifactId>
+        <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>apache-karaf</artifactId>
       <version>${karaf-version}</version>
       <type>tar.gz</type>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.karaf.shell</groupId>
-          <artifactId>org.apache.karaf.shell.dev</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse</groupId>
-          <artifactId>osgi</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <version>${osgi-version}</version>
-      <scope>compile</scope>
-      <optional>true</optional>
-    </dependency> 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>${osgi-version}</version>
-      <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.apache.karaf.shell</groupId>
+                <artifactId>org.apache.karaf.shell.dev</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.eclipse</groupId>
+                <artifactId>osgi</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.karaf</groupId>
+                <artifactId>org.apache.karaf.client</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.framework</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -182,12 +194,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mvel</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-hazelcast</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs</artifactId>
+      <artifactId>camel-hdfs2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -213,6 +230,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mybatis</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-quartz2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -246,14 +268,19 @@
       <artifactId>camel-xmljson</artifactId>
       <scope>test</scope>
     </dependency>
-	<dependency>
-	  <groupId>org.apache.camel.tests</groupId>
-	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-	  <scope>test</scope>
+    <dependency>
+      <groupId>org.apache.camel.tests</groupId>
+      <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+      <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-base64</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>      
+      <artifactId>spring-context-support</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -286,12 +313,12 @@
     </dependency>
 	<dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mail</artifactId>      
+      <artifactId>camel-mail</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>      
+      <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -314,6 +341,11 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.junit</artifactId>
+        <version>${junit-bundle-version}</version>
     </dependency>
     <dependency>
         <groupId>org.apache.aries.blueprint</groupId>
@@ -361,19 +393,19 @@
           <artifactId>cxf-rt-rs-extension-providers</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
-      </dependency>  
+      </dependency>
       <dependency>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-transports-http-jetty</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
-      </dependency>  
+      </dependency>
       <dependency>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-ws-security</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
-      </dependency>  
+      </dependency>
       <dependency>
           <groupId>org.codehaus.jettison</groupId>
           <artifactId>jettison</artifactId>
@@ -408,6 +440,48 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.servicemix.tooling</groupId>
+                    <artifactId>depends-maven-plugin</artifactId>
+                    <versionRange>${depends-maven-plugin-version}</versionRange>
+                    <goals>
+                      <goal>generate-depends-file</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa-maven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>test-enhance</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <!-- generate dependencies versions -->
       <plugin>
@@ -430,15 +504,15 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
-                  <exclude>**/CxfRsBlueprintRouterTest.*</exclude>
                   <exclude>**/BlobStoreRouteTest.*</exclude> <!-- CAMEL-6134 -->
                   <exclude>**/BlobStoreBlueprintRouteTest.*</exclude> <!-- CAMEL-6134 -->
+                  <exclude>**/BlueprintTracerTest.*</exclude> <!-- We get a Gave up waiting for service (&(objectClass=org.apache.camel.CamelContext) -->
               </excludes>
               <systemPropertyVariables>
                   <karafVersion>${karaf-version}</karafVersion>
               </systemPropertyVariables>
           </configuration>
-      </plugin>      
+      </plugin>
 
         <!-- CXF wsdl2java generator, will plugin to the compile goal -->
         <plugin>
@@ -452,6 +526,7 @@
                         <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
                         <wsdlOptions>
                             <wsdlOption>
+                                <frontEnd>jaxws21</frontEnd>
                                 <wsdl>${basedir}/src/test/resources/report_incident.wsdl</wsdl>
                             </wsdlOption>
                         </wsdlOptions>
@@ -492,7 +567,7 @@
 		</plugin>
     </plugins>
   </build>
-   
+
   <profiles>
 	<profile>
         <id>ci-build-profile</id>
@@ -517,8 +592,6 @@
                             <include>**/*Test.*</include>
                         </includes>
                         <excludes>
-			            <!-- TODO: temporary disable unit test to let TC not hang -->
-	                    <exclude>**/*Test.*</exclude>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
                                 so I comment out these JAXB related tests -->
                             <exclude>**/OSGiIntegrationSpringTest.*</exclude>
@@ -535,6 +608,12 @@
                 </plugin>
             </plugins>
         </build>
+    </profile>
+    <profile>
+        <id>karaf3</id>
+        <properties>
+            <karaf-version>${karaf3-version}</karaf-version>
+        </properties>
     </profile>
 </profiles>
 

@@ -32,6 +32,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
  */
 public class XmlRpcEndpoint extends DefaultEndpoint {
     private String address;
+    private String defaultMethodName;
     private XmlRpcClientConfigurer clientConfigurer;
     private XmlRpcClientConfigImpl clientConfig = new XmlRpcClientConfigImpl();
 
@@ -96,6 +97,14 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
     
     public XmlRpcClientConfigImpl getClientConfig() {
         return clientConfig;
+    }
+
+    public String getDefaultMethodName() {
+        return defaultMethodName;
+    }
+
+    public void setDefaultMethodName(String defaultMethodName) {
+        this.defaultMethodName = defaultMethodName;
     }
     
     

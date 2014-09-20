@@ -17,23 +17,25 @@
 package org.apache.camel.itest.osgi.jetty;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
  * CAMEL-5722: Test to verify that routes sitting in different bundles but listening on the same Jetty port,
  * and thus, sharing the same container-wide Jetty Connector, do not share the classloader. The TCCL should
  * be different in each case, as for each route it should be the Classloader of their containing bundle.
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class OSGiJettyCamelContextsClassloaderTest extends OSGiIntegrationTestSupport {
     
     @Test
@@ -85,7 +87,7 @@ public class OSGiJettyCamelContextsClassloaderTest extends OSGiIntegrationTestSu
             // using the features to install the other camel components             
             loadCamelFeatures("camel-jetty"),
             //set up the camel context bundle1          
-            provision(newBundle().add("META-INF/spring/Classloader-CamelContext1.xml", OSGiJettyCamelContextsClassloaderTest.class.getResource("Classloader-CamelContext1.xml"))
+            provision(TinyBundles.bundle().add("META-INF/spring/Classloader-CamelContext1.xml", OSGiJettyCamelContextsClassloaderTest.class.getResource("Classloader-CamelContext1.xml"))
                       .add(JettyClassloaderCheckProcessor.class)
                       .set(Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextBundle1")
                       .set(Constants.BUNDLE_NAME, "CamelContext1")
@@ -93,7 +95,7 @@ public class OSGiJettyCamelContextsClassloaderTest extends OSGiIntegrationTestSu
                       .build()),
                   
             //set up the camel context bundle1          
-            provision(newBundle().add("META-INF/spring/Classloader-CamelContext2.xml", OSGiJettyCamelContextsClassloaderTest.class.getResource("Classloader-CamelContext2.xml"))
+            provision(TinyBundles.bundle().add("META-INF/spring/Classloader-CamelContext2.xml", OSGiJettyCamelContextsClassloaderTest.class.getResource("Classloader-CamelContext2.xml"))
                       .add(JettyClassloaderCheckProcessor.class)
                       .set(Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextBundle2")
                       .set(Constants.BUNDLE_NAME, "CamelContext2")

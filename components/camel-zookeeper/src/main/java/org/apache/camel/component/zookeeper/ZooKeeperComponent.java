@@ -23,23 +23,25 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Component that creates {@link ZooKeeperEndpoint}s for interacting with a ZooKeeper cluster.
  */
-public class ZooKeeperComponent extends DefaultComponent {
+public class ZooKeeperComponent extends UriEndpointComponent {
 
     private ZooKeeperConfiguration configuration;
 
     public ZooKeeperComponent() {
+        super(ZooKeeperEndpoint.class);
     }
 
     public ZooKeeperComponent(CamelContext context) {
-        super(context);
+        super(context, ZooKeeperEndpoint.class);
     }
 
     public ZooKeeperComponent(ZooKeeperConfiguration configuration) {
+        super(ZooKeeperEndpoint.class);
         this.configuration = configuration;
     }
 
@@ -56,9 +58,12 @@ public class ZooKeeperComponent extends DefaultComponent {
     }
 
     private void extractConfigFromUri(String remaining, ZooKeeperConfiguration config) throws URISyntaxException {
-        URI u = new URI(remaining);
-        config.addZookeeperServer(u.getHost() + (u.getPort() != -1 ? ":" + u.getPort() : ""));
-        config.setPath(u.getPath());
+        URI fullUri = new URI(remaining);
+        String[] hosts = fullUri.getAuthority().split(",");
+        for (String host : hosts) {
+            config.addZookeeperServer(host.trim());
+        }
+        config.setPath(fullUri.getPath());
     }
 
     public ZooKeeperConfiguration getConfiguration() {

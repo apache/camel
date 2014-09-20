@@ -34,6 +34,9 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class MessageDump {
 
+    /**
+     * A model of a message dump header.
+     */
     @XmlRootElement(name = "header")
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Header {
@@ -72,6 +75,9 @@ public final class MessageDump {
         }
     }
 
+    /**
+     * A model of a message dump body.
+     */
     @XmlRootElement(name = "body")
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Body {

@@ -44,20 +44,20 @@
             <constructor-arg value="0"/>
             <constructor-arg value="4"/>
         </bean>
-        <bean class="org.jboss.netty.handler.codec.string.StringDecoder"/>
+        <bean class="io.netty.handler.codec.string.StringDecoder"/>
     </util:list>
 
     <util:list id="encoders" list-class="java.util.LinkedList">
-        <bean class="org.jboss.netty.handler.codec.frame.LengthFieldPrepender">
+        <bean class="io.netty.handler.codec.LengthFieldPrepender">
             <constructor-arg value="4"/>
         </bean>
-        <bean class="org.jboss.netty.handler.codec.string.StringEncoder"/>
+        <bean class="io.netty.handler.codec.string.StringEncoder"/>
     </util:list>
 
-    <bean id="length-encoder" class="org.jboss.netty.handler.codec.frame.LengthFieldPrepender">
+    <bean id="length-encoder" class="io.netty.handler.codec.LengthFieldPrepender">
         <constructor-arg value="4"/>
     </bean>
-    <bean id="string-encoder" class="org.jboss.netty.handler.codec.string.StringEncoder"/>
+    <bean id="string-encoder" class="io.netty.handler.codec.string.StringEncoder"/>
 
     <bean id="length-decoder" class="org.apache.camel.component.netty4.ChannelHandlerFactories" factory-method="newLengthFieldBasedFrameDecoder">
         <constructor-arg value="1048576"/>
@@ -66,7 +66,7 @@
         <constructor-arg value="0"/>
         <constructor-arg value="4"/>
     </bean>
-    <bean id="string-decoder" class="org.jboss.netty.handler.codec.string.StringDecoder"/>
+    <bean id="string-decoder" class="io.netty.handler.codec.string.StringDecoder"/>
     <!-- START SNIPPET: registry-beans -->
 
 </beans>

@@ -29,13 +29,14 @@ Apache Karaf / ServiceMix
 You will need to compile this example first:
   mvn compile
 
-To install Apache Camel in Karaf you type in the shell (we use version 2.12.0):
+To install Apache Camel in Karaf you type in the shell (we use version ${project.version}):
 
-  features:chooseurl camel 2.12.0
+  features:chooseurl camel ${project.version}
   features:install camel
 
 First you need to install the following features in Karaf/ServiceMix with:
 
+  features:install camel-spring
   features:install camel-sql
 
 Then you need to install JDBC connection pool and the Derby Database:
@@ -46,7 +47,7 @@ Then you need to install JDBC connection pool and the Derby Database:
 
 Then you can install the Camel example:
 
-  osgi:install -s mvn:org.apache.camel/camel-example-sql/2.12.0
+  osgi:install -s mvn:org.apache.camel/camel-example-sql/${project.version}
 
 And you can see the application running by tailing the logs
 

@@ -51,7 +51,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/bar").execute(
+        WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -94,7 +94,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
         c = new AsyncHttpClient();
 
-        websocket = c.prepareGet("ws://127.0.0.1:" + port + "/pub").execute(
+        websocket = c.prepareGet("ws://localhost:" + port + "/pub").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override

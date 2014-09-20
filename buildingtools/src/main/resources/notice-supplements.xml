@@ -20,7 +20,7 @@
   <supplement>
     <project>
       <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-xjc</artifactId>
+      <artifactId>jaxb-jxc</artifactId>
       <name>Sun JAXB Reference Implementation Tools</name>
       <organization>
         <name>Sun Microsystems</name>

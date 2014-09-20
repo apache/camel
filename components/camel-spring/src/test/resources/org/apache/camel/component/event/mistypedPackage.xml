@@ -29,7 +29,7 @@
         </package>
 
         <route>
-            <from uri="spring-event:default"/>
+            <from uri="spring-event:foo"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

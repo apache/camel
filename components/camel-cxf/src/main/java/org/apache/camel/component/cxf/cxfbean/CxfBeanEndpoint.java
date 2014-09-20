@@ -115,8 +115,8 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
             bean.setServiceClass(serviceBeans.get(0).getClass());
             // set the bean instance as well, otherwise CXF will re-create a new instance of the class
             bean.setServiceBean(serviceBeans.get(0));
-            if (bean.getServiceFactory() != null) {
-                bean.getServiceFactory().setPopulateFromClass(isPopulateFromClass());
+            if (bean.getJaxWsServiceFactory() != null) {
+                bean.getJaxWsServiceFactory().setPopulateFromClass(isPopulateFromClass());
             }
             bean.setBus(bus);
             bean.setStart(true);

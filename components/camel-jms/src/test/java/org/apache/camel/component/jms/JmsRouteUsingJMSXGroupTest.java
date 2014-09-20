@@ -27,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
+
 /**
  * @version 
  */
@@ -51,8 +53,8 @@ public class JmsRouteUsingJMSXGroupTest extends CamelTestSupport {
             final int index = i;
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    template.sendBodyAndHeader("direct:start", "IBM: " + index, "JMSXGroupID", "IBM");
-                    template.sendBodyAndHeader("direct:start", "SUN: " + index, "JMSXGroupID", "SUN");
+                    template.sendBodyAndHeader("direct:start", "IBM: " + index, JMS_X_GROUP_ID, "IBM");
+                    template.sendBodyAndHeader("direct:start", "SUN: " + index, JMS_X_GROUP_ID, "SUN");
 
                     return null;
                 }

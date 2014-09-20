@@ -21,31 +21,25 @@ import org.apache.camel.example.reportincident.OutputReportIncident;
 import org.apache.camel.example.reportincident.ReportIncidentEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
 
-    protected static ReportIncidentEndpoint createCXFClient() {
-        // we use CXF to create a client for us as its easier than JAXWS and works
-        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-        factory.setServiceClass(ReportIncidentEndpoint.class);
-        factory.setAddress("http://localhost:9080/camel-itest-osgi/webservices/incident");
-        return (ReportIncidentEndpoint) factory.create();
-    }
-    
     @Test
     public void testCxfProxy() throws Exception {
+        
         // create input parameter
         InputReportIncident input = new InputReportIncident();
         input.setIncidentId("123");
@@ -58,7 +52,11 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
         input.setPhone("12345678");
 
         // create the webservice client and send the request
-        ReportIncidentEndpoint client = createCXFClient();
+        // we use CXF to create a client for us as its easier than JAXWS and works
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+        factory.setServiceClass(ReportIncidentEndpoint.class);
+        factory.setAddress("http://localhost:9080/camel-itest-osgi/webservices/incident");
+        ReportIncidentEndpoint client = factory.create(ReportIncidentEndpoint.class);
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back
@@ -80,16 +78,17 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
             getDefaultCamelKarafOptions(),
            
             // using the features to install the camel components
-            loadCamelFeatures("camel-http", "camel-cxf"),
+            loadCamelFeatures("camel-http", "cxf", "camel-cxf"),
                                         
             // need to install the generated src as the pax-exam doesn't wrap this bundles
-            provision(newBundle()
+            provision(TinyBundles.bundle()
                             .add(org.apache.camel.example.reportincident.InputReportIncident.class)
                             .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
                             .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
                             .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
                             .add(org.apache.camel.example.reportincident.ObjectFactory.class)
-                            .build(withBnd())));
+                            .set("Export-Package", "org.apache.camel.example.reportincident")
+                            .build(TinyBundles.withBnd())));
           
         return options;
     }

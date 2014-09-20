@@ -28,7 +28,8 @@
       id="scp"
       sessionTimeout="1"
       secureSocketProtocol="protocol"
-      provider="provider">
+      provider="provider"
+      certAlias="alice">
     
     <camel:cipherSuites>
       <camel:cipherSuite>cipherSuite</camel:cipherSuite>

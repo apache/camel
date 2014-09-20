@@ -42,6 +42,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -71,6 +72,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected int connectionsPerRoute = 20;
     // It's MILLISECONDS, the default value is always keep alive
     protected long connectionTimeToLive = -1;
+
+    public HttpComponent() {
+        super(HttpEndpoint.class);
+    }
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -208,15 +213,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
 
         // need to set scheme on address uri depending on if its secure or not
-        String addressUri = remaining.startsWith("http") ? remaining : null;
-        if (addressUri == null) {
-            if (secure) {
-                addressUri = "https://" + remaining;
-            } else {
-                addressUri = "http://" + remaining;
-            }
-        }
-        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
+        String addressUri = (secure ? "https://" : "http://") + remaining;
+        
+        addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI uriHttpUriAddress = new URI(addressUri);
 
         // validate http uri that end-user did not duplicate the http part that can be a common error
@@ -252,7 +251,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         LOG.debug("Creating endpoint uri {}", endpointUriString);
         HttpClientConnectionManager localConnectionManager = clientConnectionManager;
         if (localConnectionManager == null) {
-            localConnectionManager = createConnectionManager(createConnectionRegistry(x509HostnameVerifier, sslContextParameters));
+            // need to check the parameters of maxTotalConnections and connectionsPerRoute
+            int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
+            int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
+            localConnectionManager = createConnectionManager(createConnectionRegistry(x509HostnameVerifier, sslContextParameters), maxTotalConnections, connectionsPerRoute);
         }
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
         if (urlRewrite != null) {
@@ -265,14 +267,14 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         setProperties(endpoint, parameters);
 
         // determine the portnumber (special case: default portnumber)
-        int port = getPort(uriHttpUriAddress);
+        //int port = getPort(uriHttpUriAddress);
 
         // we can not change the port of an URI, we must create a new one with an explicit port value
         URI httpUri = URISupport.createRemainingURI(
                 new URI(uriHttpUriAddress.getScheme(),
                         uriHttpUriAddress.getUserInfo(),
                         uriHttpUriAddress.getHost(),
-                        port,
+                        uriHttpUriAddress.getPort(),
                         uriHttpUriAddress.getPath(),
                         uriHttpUriAddress.getQuery(),
                         uriHttpUriAddress.getFragment()),
@@ -301,20 +303,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         
         return endpoint;
     }
-   
-    private static int getPort(URI uri) {
-        int port = uri.getPort();
-        if (port < 0) {
-            if ("http4".equals(uri.getScheme()) || "http".equals(uri.getScheme())) {
-                port = 80;
-            } else if ("https4".equals(uri.getScheme()) || "https".equals(uri.getScheme())) {
-                port = 443;
-            } else {
-                throw new IllegalArgumentException("Unknown scheme, cannot determine port number for uri: " + uri);
-            }
-        }
-        return port;
-    }
     
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(X509HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
         throws GeneralSecurityException, IOException {
@@ -326,26 +314,39 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(), x509HostnameVerifier));
             builder.register("https4", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(), x509HostnameVerifier));
         } else {
-            builder.register("https4", SSLConnectionSocketFactory.getSocketFactory());
-            builder.register("https", SSLConnectionSocketFactory.getSocketFactory());
+            builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
+            builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
         }
         return builder.build();
     }
     
     protected HttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry) {
+        return createConnectionManager(registry, 0, 0);
+    }
+    
+    protected HttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute) {
         // setup the connection live time
         PoolingHttpClientConnectionManager answer = 
             new PoolingHttpClientConnectionManager(registry, null, null, null, getConnectionTimeToLive(), TimeUnit.MILLISECONDS);
-        if (getMaxTotalConnections() > 0) {
-            answer.setMaxTotal(getMaxTotalConnections());
+        int localMaxTotalConnections = maxTotalConnections;
+        if (localMaxTotalConnections == 0) {
+            localMaxTotalConnections = getMaxTotalConnections();
         }
-        if (getConnectionsPerRoute() > 0) {
-            answer.setDefaultMaxPerRoute(getConnectionsPerRoute());
+        if (localMaxTotalConnections > 0) {
+            answer.setMaxTotal(localMaxTotalConnections);
+        }
+        int localConnectionsPerRoute = connectionsPerRoute;
+        if (localConnectionsPerRoute == 0) {
+            localConnectionsPerRoute = getConnectionsPerRoute();
+        }
+        if (localConnectionsPerRoute > 0) {
+            answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
         LOG.info("Created ClientConnectionManager " + answer);
 
         return answer;
     }
+    
 
     @Override
     protected boolean useIntrospectionOnEndpoint() {

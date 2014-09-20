@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -47,6 +50,22 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         map.put("content", "test");
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    public void testBulkIndex() throws Exception {
+        List<Map<String, String>> documents = new ArrayList<Map<String, String>>();
+        Map<String, String> document1 = new HashMap<String, String>();
+        document1.put("content1", "test1");
+        Map<String, String> document2 = new HashMap<String, String>();
+        document2.put("content2", "test2");
+
+        documents.add(document1);
+        documents.add(document2);
+
+        List indexIds = template.requestBody("direct:bulk_index", documents, List.class);
+        assertNotNull("indexIds should be set", indexIds);
+        assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
 
     @Test
@@ -189,6 +208,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
+                from("direct:bulk_index").to("elasticsearch://local?operation=BULK_INDEX&indexName=twitter&indexType=tweet");
                 //from("direct:indexWithIp").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost");
                 //from("direct:indexWithIpAndPort").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
             }

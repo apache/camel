@@ -46,7 +46,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
 
         quartz.start();
 
-        assertEquals("MyScheduler", quartz.getScheduler().getSchedulerName());
+        assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
 
@@ -60,7 +60,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
             quartz.start();
             fail("Should have thrown exception");
         } catch (SchedulerException e) {
-            assertEquals("Quartz properties file not found in classpath: doesnotexist.properties", e.getMessage());
+            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
 
         quartz.start();
 
-        assertEquals("MyScheduler", quartz.getScheduler().getSchedulerName());
+        assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
 

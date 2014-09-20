@@ -72,6 +72,14 @@ public class DefaultEventFactory implements EventFactory {
         return new RouteStoppedEvent(route);
     }
 
+    public EventObject createRouteAddedEvent(Route route) {
+        return new RouteAddedEvent(route);
+    }
+
+    public EventObject createRouteRemovedEvent(Route route) {
+        return new RouteRemovedEvent(route);
+    }
+
     public EventObject createExchangeCreatedEvent(Exchange exchange) {
         return new ExchangeCreatedEvent(exchange);
     }

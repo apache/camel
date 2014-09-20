@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.sjms;
 
-/**
- * TODO Add Class documentation for SjmsConstants
- */
 public final class SjmsConstants {
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";

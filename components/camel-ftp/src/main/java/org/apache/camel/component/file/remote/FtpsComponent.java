@@ -34,10 +34,12 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpsComponent extends FtpComponent {
 
     public FtpsComponent() {
+        setEndpointClass(FtpsEndpoint.class);
     }
 
     public FtpsComponent(CamelContext context) {
         super(context);
+        setEndpointClass(FtpsEndpoint.class);
     }
 
     @Override

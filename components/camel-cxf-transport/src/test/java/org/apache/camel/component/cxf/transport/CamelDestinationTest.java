@@ -172,7 +172,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                     //verifyHeaders(m, outMessage);
                     // setup the message for
                     Conduit backConduit;
-                    backConduit = destination.getBackChannel(m, null, null);
+                    backConduit = getBackChannel(destination, m);
                     // wait for the message to be got from the conduit
                     Message replyMessage = new MessageImpl();
                     sendoutMessage(backConduit, replyMessage, true, "HelloWorld Response");
@@ -221,7 +221,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                     //verifyHeaders(m, outMessage);
                     // setup the message for
                     Conduit backConduit;
-                    backConduit = destination.getBackChannel(m, null, null);
+                    backConduit = getBackChannel(destination, m);
                     // wait for the message to be got from the conduit
                     Message replyMessage = new MessageImpl();
                     replyMessage.setContent(Exception.class, new RuntimeCamelException());
@@ -247,6 +247,10 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         error.assertIsSatisfied();
         
         destination.shutdown();
+    }
+    
+    private Conduit getBackChannel(CamelDestination destination, Message m) throws IOException {
+        return destination.getInbuiltBackChannel(m);
     }
     
     @Test

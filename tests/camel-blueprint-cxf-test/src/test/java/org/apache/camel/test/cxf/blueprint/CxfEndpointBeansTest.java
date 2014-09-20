@@ -31,7 +31,6 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.cxf.transport.http.HTTPException;
-
 import org.junit.Test;
 
 public class CxfEndpointBeansTest extends CamelBlueprintTestSupport {
@@ -54,6 +53,14 @@ public class CxfEndpointBeansTest extends CamelBlueprintTestSupport {
         extra.put("test.address", "http://localhost:" + CXFTestSupport.getPort3() + "/testEndpoint");
         return extra;
     }
+    
+    @Test
+    public void testCxfBusInjection() {
+        CxfEndpoint serviceEndpoint = context.getEndpoint("cxf:bean:serviceEndpoint", CxfEndpoint.class);
+        CxfEndpoint routerEndpoint = context.getEndpoint("cxf:bean:routerEndpoint", CxfEndpoint.class);
+        assertEquals("These endpoints don't share the same bus", serviceEndpoint.getBus().getId(), routerEndpoint.getBus().getId());
+    }
+
     
     @Test
     public void testCxfEndpointBeanDefinitionParser() {

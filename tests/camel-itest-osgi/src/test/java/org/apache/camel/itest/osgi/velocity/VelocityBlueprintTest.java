@@ -23,18 +23,19 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class VelocityBlueprintTest extends OSGiBlueprintTestSupport {
     private CamelContext camelContext;
     private ProducerTemplate mytemplate;
@@ -71,11 +72,11 @@ public class VelocityBlueprintTest extends OSGiBlueprintTestSupport {
                 loadCamelFeatures(
                         "camel-blueprint", "camel-velocity"),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", VelocityBlueprintTest.class.getResource("VelocityBlueprintRouter.xml"))
                         .add("example.vm", VelocityBlueprintTest.class.getResource("example.vm"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "VelocityBlueprintRouterTest")
-                        .build(withBnd())).noStart()
+                        .build(TinyBundles.withBnd())).noStart()
 
         );
 

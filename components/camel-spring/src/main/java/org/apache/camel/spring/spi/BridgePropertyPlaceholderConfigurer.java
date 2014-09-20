@@ -49,6 +49,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private String configuredValueSeparator;
     private Boolean configuredIgnoreUnresolvablePlaceholders;
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
+    private Boolean ignoreResourceNotFound;
 
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
@@ -105,6 +106,12 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         super.setIgnoreUnresolvablePlaceholders(ignoreUnresolvablePlaceholders);
         this.configuredIgnoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
     }
+    
+    @Override
+    public void setIgnoreResourceNotFound(boolean ignoreResourceNotFound) {
+        super.setIgnoreResourceNotFound(ignoreResourceNotFound);
+        this.ignoreResourceNotFound = ignoreResourceNotFound;
+    }
 
     @Override
     public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
@@ -115,7 +122,12 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
             if (ref.equals(u)) {
                 answer.putAll(properties);
             } else if (resolver != null) {
-                Properties p = resolver.resolveProperties(context, ignoreMissingLocation, u);
+                boolean flag = ignoreMissingLocation;
+                // Override the setting by using ignoreResourceNotFound
+                if (ignoreResourceNotFound != null) {
+                    flag = ignoreResourceNotFound;
+                }
+                Properties p = resolver.resolveProperties(context, flag, u);
                 if (p != null) {
                     answer.putAll(p);
                 }

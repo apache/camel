@@ -380,6 +380,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition backOffMultiplier(double backOffMultiplier) {
+        getOrCreateRedeliveryPolicy().useExponentialBackOff();
         getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
@@ -391,6 +392,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition backOffMultiplier(String backOffMultiplier) {
+        getOrCreateRedeliveryPolicy().useExponentialBackOff();
         getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
@@ -402,6 +404,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
+        getOrCreateRedeliveryPolicy().useCollisionAvoidance();
         getOrCreateRedeliveryPolicy().collisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
@@ -413,6 +416,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition collisionAvoidanceFactor(String collisionAvoidanceFactor) {
+        getOrCreateRedeliveryPolicy().useCollisionAvoidance();
         getOrCreateRedeliveryPolicy().collisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
@@ -424,6 +428,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition collisionAvoidancePercent(double collisionAvoidancePercent) {
+        getOrCreateRedeliveryPolicy().useCollisionAvoidance();
         getOrCreateRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }

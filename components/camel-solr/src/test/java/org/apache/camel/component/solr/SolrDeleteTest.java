@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.solr;
 
-import java.util.*;
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class SolrDeleteTest extends SolrComponentTestSupport {
+
+    public SolrDeleteTest(SolrFixtures.TestServerType serverToTest) {
+        super(serverToTest);
+    }
 
     @Test
     public void testDeleteById() throws Exception {

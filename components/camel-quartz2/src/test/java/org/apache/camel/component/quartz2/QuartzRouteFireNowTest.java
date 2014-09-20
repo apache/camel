@@ -17,11 +17,26 @@
 package org.apache.camel.component.quartz2;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class QuartzRouteFireNowTest extends BaseQuartzTest {
+
+    protected MockEndpoint resultEndpoint;
+
+    @Test
+    public void testQuartzRoute() throws Exception {
+        resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");
+        resultEndpoint.message(0).header("triggerGroup").isEqualTo("myGroup");
+
+        // lets test the receive worked
+        resultEndpoint.assertIsSatisfied();
+    }
     
     @Override
     protected RouteBuilder createRouteBuilder() {

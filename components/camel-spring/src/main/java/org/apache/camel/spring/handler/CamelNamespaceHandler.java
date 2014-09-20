@@ -46,6 +46,7 @@ import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean;
+import org.apache.camel.spring.CamelRestContextFactoryBean;
 import org.apache.camel.spring.CamelRouteContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
@@ -98,9 +99,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
+        // register restContext parser
+        registerParser("restContext", new RestContextDefinitionParser());
         // register routeContext parser
         registerParser("routeContext", new RouteContextDefinitionParser());
-        
+
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
         addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
         registerBeanDefinitionParser("sslContextParameters", new SSLContextParametersFactoryBeanBeanDefinitionParser());
@@ -189,6 +192,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     protected Set<Class<?>> getJaxbPackages() {
+        // we nedd to have a class from each different package with jaxb models
         Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(CamelJMXAgentDefinition.class);
@@ -198,6 +202,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
+        classes.add(org.apache.camel.model.rest.RestDefinition.class);
         classes.add(org.apache.camel.util.spring.SSLContextParametersFactoryBean.class);
         return classes;
     }
@@ -274,6 +279,36 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
+    protected class RestContextDefinitionParser extends BeanDefinitionParser {
+
+        public RestContextDefinitionParser() {
+            super(CamelRestContextFactoryBean.class, false);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            renameNamespaceRecursive(element);
+            super.doParse(element, parserContext, builder);
+
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
+
+            if (value instanceof CamelRestContextFactoryBean) {
+                CamelRestContextFactoryBean factoryBean = (CamelRestContextFactoryBean) value;
+                builder.addPropertyValue("rests", factoryBean.getRests());
+            }
+
+            // lets inject the namespaces into any namespace aware POJOs
+            injectNamespaces(element, binder);
+        }
+    }
+
     protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
 
         public CamelContextBeanDefinitionParser(Class<?> type) {
@@ -311,6 +346,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 CamelContextFactoryBean factoryBean = (CamelContextFactoryBean) value;
                 builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("implicitId", implicitId);
+                builder.addPropertyValue("restConfiguration", factoryBean.getRestConfiguration());
+                builder.addPropertyValue("rests", factoryBean.getRests());
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("interceptFroms", factoryBean.getInterceptFroms());
@@ -320,6 +357,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
                 builder.addPropertyValue("routeRefs", factoryBean.getRouteRefs());
+                builder.addPropertyValue("restRefs", factoryBean.getRestRefs());
                 builder.addPropertyValue("properties", factoryBean.getProperties());
                 builder.addPropertyValue("packageScan", factoryBean.getPackageScan());
                 builder.addPropertyValue("contextScan", factoryBean.getContextScan());

@@ -317,6 +317,40 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
+     * Gets the parameter and remove it from the parameter map. This method resolves
+     * reference parameters in the registry as well.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @return  the converted value parameter
+     */
+    public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
+        return getAndRemoveOrResolveReferenceParameter(parameters, key, type, null);
+    }
+
+    /**
+     * Gets the parameter and remove it from the parameter map. This method resolves
+     * reference parameters in the registry as well.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @param defaultValue  use this default value if the parameter does not contain the key
+     * @return  the converted value parameter
+     */
+    public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
+        String value = getAndRemoveParameter(parameters, key, String.class);
+        if (value == null) {
+            return defaultValue;
+        } else if (EndpointHelper.isReferenceParameter(value)) {
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
+        } else {
+            return getCamelContext().getTypeConverter().convertTo(type, value);
+        }
+    }
+
+    /**
      * Resolves a reference parameter in the registry and removes it from the map. 
      * 
      * @param <T>           type of object to lookup in the registry.

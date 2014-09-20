@@ -30,6 +30,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -220,6 +221,24 @@ public class IOConverterTest extends ContextTestSupport {
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
         String result = IOConverter.toString(is, exchange);
         assertEquals("Get a wrong result", data, result);
+    }
+
+    public void testToPropertiesFromReader() throws Exception {
+        Reader br = IOHelper.buffered(new StringReader("foo=123\nbar=456"));
+        Properties p = IOConverter.toProperties(br);
+        assertNotNull(p);
+        assertEquals(2, p.size());
+        assertEquals("123", p.get("foo"));
+        assertEquals("456", p.get("bar"));
+    }
+
+    public void testToPropertiesFromFile() throws Exception {
+        Properties p = IOConverter.toProperties(new File("src/test/resources/log4j.properties"));
+        assertNotNull(p);
+        assertTrue("Should be 8 or more properties, was " + p.size(), p.size() >= 8);
+        String root = (String) p.get("log4j.rootLogger");
+        assertNotNull(root);
+        assertTrue(root.contains("INFO"));
     }
 
 }

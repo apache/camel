@@ -21,6 +21,7 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -49,11 +50,10 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static org.jboss.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static org.jboss.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -74,6 +74,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         this.consumer = consumer;
     }
 
+    public NettyHttpConsumer getConsumer() {
+        return consumer;
+    }
+
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         // store request, as this channel handler is created per pipeline
@@ -81,21 +85,32 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         LOG.debug("Message received: {}", request);
 
-        if (is100ContinueExpected(request)) {
-            // send back http 100 response to continue
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, CONTINUE);
-            messageEvent.getChannel().write(response);
-            return;
-        }
-
         if (consumer.isSuspended()) {
             // are we suspended?
             LOG.debug("Consumer suspended, cannot service request {}", request);
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
+            messageEvent.getChannel().write(response);
+            return;
+        }
+
+        // if its an OPTIONS request then return which methods is allowed
+        if ("OPTIONS".equals(request.getMethod().getName())) {
+            String s;
+            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
+            } else {
+                // allow them all
+                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
+            response.setChunked(false);
+            response.headers().set("Allow", s);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             messageEvent.getChannel().write(response);
             return;
         }
@@ -103,8 +118,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().getName())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
@@ -112,18 +127,18 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
         }
         // must include HOST header as required by HTTP 1.1
-        if (!request.getHeaderNames().contains(HttpHeaders.Names.HOST)) {
+        if (!request.headers().names().contains(HttpHeaders.Names.HOST)) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
@@ -183,9 +198,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     }
                     // restricted resource, so send back 401 to require valid username/password
                     HttpResponse response = new DefaultHttpResponse(HTTP_1_1, UNAUTHORIZED);
-                    response.setHeader("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
-                    response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                    response.setHeader(Exchange.CONTENT_LENGTH, 0);
+                    response.headers().set("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
+                    response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                    response.headers().set(Exchange.CONTENT_LENGTH, 0);
                     response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
                     messageEvent.getChannel().write(response);
                     return;
@@ -206,7 +221,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // see if any of the user roles is contained in the roles list
-        Iterator it = ObjectHelper.createIterator(userRoles);
+        Iterator<Object> it = ObjectHelper.createIterator(userRoles);
         while (it.hasNext()) {
             String userRole = it.next().toString();
             if (roles.contains(userRole)) {
@@ -226,7 +241,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
      * @return {@link HttpPrincipal} with username and password details, or <tt>null</tt> if not possible to extract
      */
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
-        String auth = request.getHeader("Authorization");
+        String auth = request.headers().get("Authorization");
         if (auth != null) {
             String constraint = ObjectHelper.before(auth, " ");
             if (constraint != null) {
@@ -269,11 +284,13 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected void beforeProcess(Exchange exchange, MessageEvent messageEvent) {
         if (consumer.getConfiguration().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
+        
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
 

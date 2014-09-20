@@ -43,6 +43,7 @@ trait DSL {
   def dynamicRouter(expression: Exchange => Any) : DSL
 
   def enrich(uri:String, strategy: AggregationStrategy) : DSL
+  def enrich(uri:String, strategy: AggregationStrategy, aggregateOnException: Boolean) : DSL
 
   def filter(predicate: Exchange => Any) : SFilterDefinition
 
@@ -71,12 +72,14 @@ trait DSL {
   def pipeline : SPipelineDefinition
   def policy(policy: Policy) : DSL
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) : DSL
+  def pollEnrich(uri: String, strategy: AggregationStrategy, timeout: Long, aggregateOnException: Boolean) : DSL
   def process(function: Exchange => Unit) : DSL
   def process(processor: Processor) : DSL
 
   def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
+  def routeId(id: String) : DSL
   def routingSlip(header: String) : DSL
   def routingSlip(header: String, separator: String) : DSL
   def routingSlip(expression: Exchange => Any) : DSL
@@ -84,9 +87,11 @@ trait DSL {
   def setBody(expression: Exchange => Any) : DSL
   def setFaultBody(expression: Exchange => Any) : DSL
   def setHeader(header: String, expression: Exchange => Any) : DSL
+  def setExchangePattern(mep: ExchangePattern) : DSL
   def setProperty(header: String, expression: Exchange => Any) : DSL
   def sort[T](expression: Exchange => Any, comparator: Comparator[T] = null) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
+  def startupOrder(startupOrder :Int) : DSL
   def stop : DSL
 
   def threads : SThreadsDefinition

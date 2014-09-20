@@ -21,19 +21,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.osgi.framework.Constants;
 
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
     @Test
@@ -61,7 +62,7 @@ public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                provision(newBundle()
+                provision(TinyBundles.bundle()
                     .add(SampleObject.class)
                     .add(XstreamRouteBuilder.class)
                     .add("OSGI-INF/blueprint/test.xml", XstreamBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))

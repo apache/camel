@@ -22,17 +22,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.Subject;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +75,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     
     public Object populateCxfRsResponseFromExchange(Exchange camelExchange,
                                                     org.apache.cxf.message.Exchange cxfExchange) throws Exception {
-        if (camelExchange.isFailed()) {
+        // Need to check if the exchange has the exception
+        if (camelExchange.isFailed() && camelExchange.getException() != null) {
             throw camelExchange.getException();
         }
 
@@ -100,28 +104,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         org.apache.cxf.message.Message cxfMessage = cxfExchange.getInMessage();
         
         // TODO use header filter strategy and cxfToCamelHeaderMap
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.REQUEST_URI, Exchange.HTTP_URI);
-       
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
-        
-        // We need remove the BASE_PATH from the PATH_INFO
-        String pathInfo = (String)cxfMessage.get(org.apache.cxf.message.Message.PATH_INFO);
-        String basePath = (String)cxfMessage.get(org.apache.cxf.message.Message.BASE_PATH);
-        if (pathInfo != null && basePath != null && pathInfo.startsWith(basePath)) {
-            pathInfo = pathInfo.substring(basePath.length());
-        }
-        if (pathInfo != null) {
-            camelMessage.setHeader(Exchange.HTTP_PATH, pathInfo);
-        }
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.CONTENT_TYPE, Exchange.CONTENT_TYPE);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ENCODING, Exchange.HTTP_CHARACTER_ENCODING);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.QUERY_STRING, Exchange.HTTP_QUERY);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
+        CxfUtils.copyHttpHeadersFromCxfToCamel(cxfMessage, camelMessage);
         
         //copy the protocol header
         copyProtocolHeader(cxfMessage, camelMessage, camelMessage.getExchange());
@@ -136,7 +119,15 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         
         camelMessage.setHeader(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
         
-        camelMessage.setBody(new MessageContentsList(paramArray));        
+        camelMessage.setBody(new MessageContentsList(paramArray));
+        
+        // propagate the security subject from CXF security context
+        SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
+        if (securityContext != null && securityContext.getUserPrincipal() != null) {
+            Subject subject = new Subject();
+            subject.getPrincipals().add(securityContext.getUserPrincipal());
+            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+        }
     }
 
     
@@ -272,7 +263,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         Map<String, List<String>> headers = (Map<String, List<String>>)cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
         for (Map.Entry<String, List<String>>entry : headers.entrySet()) {
             // just make sure the first String element is not null
-            if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange) 
+            if (headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), camelExchange) 
                 || entry.getValue().get(0) == null) {
                 LOG.trace("Drop CXF message protocol header: {}={}", entry.getKey(), entry.getValue());
             } else {

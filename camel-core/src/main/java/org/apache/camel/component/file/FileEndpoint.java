@@ -41,6 +41,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriParam
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam
+    private boolean renameUsingCopy;
+    @UriParam
     private boolean forceWrites = true;
 
     public FileEndpoint() {
@@ -101,9 +103,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     public GenericFileProducer<File> createProducer() throws Exception {
         ObjectHelper.notNull(operations, "operations");
 
-        // you cannot use temp prefix and file exists append
-        if (getFileExist() == GenericFileExist.Append && getTempPrefix() != null) {
-            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix options");
+        // you cannot use temp file and file exists append
+        if (getFileExist() == GenericFileExist.Append && ((getTempPrefix() != null) || (getTempFileName() != null))) {
+            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
 
         // ensure fileExist and moveExisting is configured correctly if in use
@@ -172,6 +174,14 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
         this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
+    }
+
+    public boolean isRenameUsingCopy() {
+        return renameUsingCopy;
+    }
+
+    public void setRenameUsingCopy(boolean renameUsingCopy) {
+        this.renameUsingCopy = renameUsingCopy;
     }
 
     public boolean isForceWrites() {

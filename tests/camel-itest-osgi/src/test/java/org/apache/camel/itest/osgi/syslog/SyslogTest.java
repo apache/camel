@@ -26,20 +26,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.syslog.Rfc3164SyslogDataFormat;
+import org.apache.camel.component.syslog.SyslogDataFormat;
 import org.apache.camel.component.syslog.SyslogMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spi.DataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class SyslogTest extends OSGiIntegrationTestSupport {
 
     private final int serverPort = 10514;
@@ -80,7 +80,7 @@ public class SyslogTest extends OSGiIntegrationTestSupport {
             public void configure() throws Exception {
 
                 //context.setTracing(true);
-                DataFormat syslogDataFormat = new Rfc3164SyslogDataFormat();
+                DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
                 from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
@@ -98,7 +98,7 @@ public class SyslogTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            loadCamelFeatures("camel-mina", "camel-syslog"));
+            loadCamelFeatures("camel-mina", "camel-netty", "camel-syslog"));
         
         return options;
     }

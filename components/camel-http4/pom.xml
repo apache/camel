@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.15-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-http4</artifactId>
@@ -30,10 +30,10 @@
     <description>Camel HTTP (Apache HttpClient 4.x) support</description>
 
     <properties>
-      <!-- Now we move to the 4.2 -->
+      <!-- CAMEL-7010 Now we move to HttpClient 4.3 API -->
       <camel.osgi.import.before.defaults>
         javax.servlet.*;version="${servlet-version-range}",
-        org.apache.http.*;version="[4.2,5)"
+        org.apache.http.*;version="[4.3,5)"
       </camel.osgi.import.before.defaults>
       <camel.osgi.export.pkg>org.apache.camel.component.http4.*</camel.osgi.export.pkg>
       <camel.osgi.export.service>

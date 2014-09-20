@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- START SNIPPET: e1 -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <!-- OSGI blueprint property placeholder -->
+  <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
+      <cm:default-properties>
+          <cm:property name="example" value="Default Value"/>
+          <cm:property name="dev.example" value="Dev Value"/>
+          <cm:property name="test.example" value="Test Value"/>
+          <cm:property name="prod.example" value="Prod Value"/>
+      </cm:default-properties>
+  </cm:property-placeholder>
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <!-- use placeholder, and refer to the jasyp parser so we support the encrypted values -->
+    <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder" propertyPrefix="${container.stage}." />
+
+    <route>
+      <from uri="direct:start"/>
+      <transform>
+        <simple>{{example}}</simple>
+      </transform>
+      <to uri="mock:result"/>
+    </route>
+
+  </camelContext>
+
+</blueprint>
+<!-- END SNIPPET: e1 -->

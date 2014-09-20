@@ -36,6 +36,14 @@ public final class CamelJmsTestHelper {
     private CamelJmsTestHelper() {
     }
 
+    public static PooledConnectionFactory createPooledConnectionFactory() {
+        ConnectionFactory cf = createConnectionFactory(null);
+        PooledConnectionFactory pooled = new PooledConnectionFactory();
+        pooled.setConnectionFactory(cf);
+        pooled.setMaxConnections(8);
+        return pooled;
+    }
+
     public static ConnectionFactory createConnectionFactory() {
         return createConnectionFactory(null);
     }
@@ -52,17 +60,12 @@ public final class CamelJmsTestHelper {
         connectionFactory.setCopyMessageOnSend(false);
         connectionFactory.setOptimizeAcknowledge(true);
         connectionFactory.setOptimizedMessageDispatch(true);
-
-        // When using asyncSend, producers will not be guaranteed to send in the order we 
+        // When using asyncSend, producers will not be guaranteed to send in the order we
         // have in the tests (which may be confusing for queues) so we need this set to false.
         // Another way of guaranteeing order is to use persistent messages or transactions.
         connectionFactory.setUseAsyncSend(false);
-
         connectionFactory.setAlwaysSessionAsync(false);
-        // use a pooled connection factory
-        PooledConnectionFactory pooled = new PooledConnectionFactory(connectionFactory);
-        pooled.setMaxConnections(8);
-        return pooled;
+        return connectionFactory;
     }
 
     public static ConnectionFactory createPersistentConnectionFactory() {
@@ -88,12 +91,7 @@ public final class CamelJmsTestHelper {
         connectionFactory.setCopyMessageOnSend(false);
         connectionFactory.setOptimizeAcknowledge(true);
         connectionFactory.setOptimizedMessageDispatch(true);
-        connectionFactory.setUseAsyncSend(true);
         connectionFactory.setAlwaysSessionAsync(false);
-
-        // use a pooled connection factory
-        PooledConnectionFactory pooled = new PooledConnectionFactory(connectionFactory);
-        pooled.setMaxConnections(8);
-        return pooled;
+        return connectionFactory;
     }
 }

@@ -104,7 +104,8 @@ public interface RuntimeConfiguration {
      * <br/>
      * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence
      * and <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using
-     * the {@link org.apache.camel.CamelContext#start()} method, to start the context and the routes.
+     * the {@link org.apache.camel.CamelContext#start()} method, to start the context, and then
+     * you would need to start the routes manually using {@link CamelContext#startRoute(String)}.
      * <p/>
      * Default is <tt>true</tt> to always start up.
      *
@@ -150,5 +151,25 @@ public interface RuntimeConfiguration {
      * @return the option
      */
     ShutdownRunningTask getShutdownRunningTask();
+
+    /**
+     * Sets whether to allow access to the original message from Camel's error handler,
+     * or from {@link org.apache.camel.spi.UnitOfWork#getOriginalInMessage()}.
+     * <p/>
+     * Turning this off can optimize performance, as defensive copy of the original message is not needed.
+     *
+     * @param allowUseOriginalMessage the option to use.
+     */
+    void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage);
+
+    /**
+     * Sets whether to allow access to the original message from Camel's error handler,
+     * or from {@link org.apache.camel.spi.UnitOfWork#getOriginalInMessage()}.
+     * <p/>
+     * Turning this off can optimize performance, as defensive copy of the original message is not needed.
+     *
+     * @return the option
+     */
+    Boolean isAllowUseOriginalMessage();
 
 }

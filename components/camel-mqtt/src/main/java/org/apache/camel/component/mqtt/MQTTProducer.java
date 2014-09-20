@@ -47,7 +47,8 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
 
             // where should we publish to
             String topicName = configuration.getPublishTopicName();
-            Object topicValue = exchange.getProperty(configuration.getMqttTopicPropertyName());
+            // get the topic name by using the header of MQTT_PUBLISH_TOPIC
+            Object topicValue = exchange.getIn().getHeader(MQTTConfiguration.MQTT_PUBLISH_TOPIC);
             if (topicValue != null) {
                 topicName = topicValue.toString();
             }

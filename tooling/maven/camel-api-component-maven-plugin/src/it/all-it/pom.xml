@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-api-component-maven-plugin-it</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <description>Integration Test to verify all goals.</description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <outPackage>org.apache.camel.component.test.internal</outPackage>
+    <componentPackage>org.apache.camel.component.test</componentPackage>
+    <scheme>testComponent</scheme>
+    <componentName>Test</componentName>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>@velocity-version@</version>
+    </dependency>
+    <!-- VelocityEngine javadoc for generating API classes -->
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>@velocity-version@</version>
+      <classifier>javadoc</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>@project.version@</version>
+      <!-- compile scope to avoid having to move AbstractTestTestSupport to src/test/java -->
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- execute api-component plugin -->
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+        <executions>
+          <!-- using generate-test-sources instead of generate-sources to be able to load TestProxy.class -->
+<!--
+          <execution>
+            <id>generate-file-api-method</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>fromFile</goal>
+            </goals>
+            <configuration>
+              <proxyClass>org.apache.camel.component.test.TestProxy</proxyClass>
+              <substitutions>
+                <substitution>
+                  <method>.+</method>
+                  <argName>(.+)</argName>
+                  <argType>java.util.List</argType>
+                  <replacement>$1List</replacement>
+                </substitution>
+                <substitution>
+                  <method>.+</method>
+                  <argName>(.+)</argName>
+                  <argType>.*?(\w++)\[\]</argType>
+                  <replacement>$1Array</replacement>
+                  <replaceWithType>true</replaceWithType>
+                </substitution>
+              </substitutions>
+              <signatureFile>../../../src/test/resources/test-proxy-signatures.txt</signatureFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-velocity-context-api-method</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>fromJavadoc</goal>
+            </goals>
+            <configuration>
+              <proxyClass>org.apache.velocity.VelocityContext</proxyClass>
+              <substitutions>
+                <substitution>
+                  <method>.+</method>
+                  <argName>key</argName>
+                  <argType>java.lang.Object</argType>
+                  <replacement>applicationKey</replacement>
+                </substitution>
+              </substitutions>
+              <excludeClasses>InternalContextBase</excludeClasses>
+              <excludeMethods>clone|Current|internal|icache</excludeMethods>
+            </configuration>
+          </execution>
+-->
+          <execution>
+            <id>generate-test-component-classes</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>fromApis</goal>
+            </goals>
+            <configuration>
+              <apis>
+                <api>
+                  <apiName>test</apiName>
+                  <proxyClass>org.apache.camel.component.test.TestProxy</proxyClass>
+                  <substitutions>
+                    <substitution>
+                      <method>.+</method>
+                      <argName>(.+)</argName>
+                      <argType>java.util.List</argType>
+                      <replacement>$1List</replacement>
+                    </substitution>
+                    <substitution>
+                      <method>.+</method>
+                      <argName>(.+)</argName>
+                      <argType>.*?(\w++)\[\]</argType>
+                      <replacement>$1Array</replacement>
+                      <replaceWithType>true</replaceWithType>
+                    </substitution>
+                  </substitutions>
+                  <extraOptions>
+                    <extraOption>
+                      <type>java.util.List&lt;String&gt;</type>
+                      <name>extraString</name>
+                    </extraOption>
+                  </extraOptions>
+                  <nullableOptions>
+                    <nullableOption>namesList</nullableOption>
+                  </nullableOptions>
+                  <fromSignatureFile>../../../src/test/resources/test-proxy-signatures.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>velocity</apiName>
+                  <proxyClass>org.apache.velocity.VelocityContext</proxyClass>
+                  <substitutions>
+                    <substitution>
+                      <method>.+</method>
+                      <argName>key</argName>
+                      <argType>java.lang.Object</argType>
+                      <replacement>applicationKey</replacement>
+                    </substitution>
+                  </substitutions>
+                  <extraOptions>
+                    <extraOption>
+                      <type>java.util.Map&lt;String, String&gt;</type>
+                      <name>extraMap</name>
+                    </extraOption>
+                  </extraOptions>
+                  <fromJavadoc>
+                    <excludeClasses>InternalContextBase</excludeClasses>
+                    <excludeMethods>clone|Current|internal|icache</excludeMethods>
+                  </fromJavadoc>
+                  <aliases>
+                    <alias>
+                      <methodPattern>[gs]et(.+)</methodPattern>
+                      <methodAlias>$1</methodAlias>
+                    </alias>
+                  </aliases>
+                </api>
+              </apis>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- add generated source and test source to build for test-compile -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>@build-helper-maven-plugin-version@</version>
+        <executions>
+          <execution>
+            <id>add-generated-test-sources</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/camel-component</source>
+                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
+          <version>@project.version@</version>
+          <configuration>
+            <scheme>${scheme}</scheme>
+            <componentName>${componentName}</componentName>
+            <outPackage>${outPackage}</outPackage>
+            <componentPackage>${componentPackage}</componentPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <outPackage>${outPackage}</outPackage>
+          <componentPackage>${componentPackage}</componentPackage>
+          <scheme>${scheme}</scheme>
+          <componentName>${componentName}</componentName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>

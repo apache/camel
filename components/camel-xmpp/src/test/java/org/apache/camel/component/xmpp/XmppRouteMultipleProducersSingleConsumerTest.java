@@ -58,6 +58,7 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
                     .to(getProducer2Uri());
 
                 from(getConsumerUri())
+                    .removeHeader(XmppConstants.TO)
                     .to(getConsumerUri());
 
                 from(getProducer1Uri())

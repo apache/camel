@@ -19,6 +19,10 @@ package org.apache.camel.component.rabbitmq;
 import java.net.URI;
 import java.util.Map;
 
+import javax.net.ssl.TrustManager;
+
+import com.rabbitmq.client.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
@@ -42,13 +46,27 @@ public class RabbitMQComponent extends DefaultComponent {
         URI host = new URI("http://" + remaining);
         String hostname = host.getHost();
         int portNumber = host.getPort();
+        if (host.getPath().trim().length() <= 1) {
+            throw new IllegalArgumentException("No URI path as the exchangeName for the RabbitMQEndpoint, the URI is " + uri);
+        }
         String exchangeName = host.getPath().substring(1);
 
-        RabbitMQEndpoint endpoint = new RabbitMQEndpoint(uri, this);
+        // ConnectionFactory reference
+        ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory", ConnectionFactory.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> clientProperties = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class);
+        TrustManager trustManager = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class);
+        RabbitMQEndpoint endpoint;
+        if (connectionFactory == null) {
+            endpoint = new RabbitMQEndpoint(uri, this);
+        } else {
+            endpoint = new RabbitMQEndpoint(uri, this, connectionFactory);
+        }
         endpoint.setHostname(hostname);
         endpoint.setPortNumber(portNumber);
         endpoint.setExchangeName(exchangeName);
-
+        endpoint.setClientProperties(clientProperties);
+        endpoint.setTrustManager(trustManager);
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {

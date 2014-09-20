@@ -35,6 +35,7 @@ import static org.mockito.Mockito.*;
 
 public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Mock
     private IMap<Object, Object> map;
 
