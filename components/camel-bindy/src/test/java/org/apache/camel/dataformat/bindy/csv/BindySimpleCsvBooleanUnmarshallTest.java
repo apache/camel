@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -65,17 +64,17 @@ public class BindySimpleCsvBooleanUnmarshallTest extends AbstractJUnit4SpringCon
 
         template.sendBody(expected);
 
-        List<Map<String, BooleanExample>> examples = (List<Map<String, BooleanExample>>) result.getExchanges().get(0).getIn().getBody();
+        List<BooleanExample> examples = (List<BooleanExample>)result.getExchanges().get(0).getIn().getBody();
         
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         
-        assertFalse(examples.get(0).get(BooleanExample.class.getName()).getName().isEmpty());
-        assertEquals(examples.get(0).get(BooleanExample.class.getName()).getName(), "andrew");
-        assertTrue(examples.get(0).get(BooleanExample.class.getName()).getExist());
-        assertFalse(examples.get(1).get(BooleanExample.class.getName()).getName().isEmpty());
-        assertEquals(examples.get(1).get(BooleanExample.class.getName()).getName(), "andrew");
-        assertFalse(examples.get(1).get(BooleanExample.class.getName()).getExist());
+        assertFalse(examples.get(0).getName().isEmpty());
+        assertEquals(examples.get(0).getName(), "andrew");
+        assertTrue(examples.get(0).getExist());
+        assertFalse(examples.get(1).getName().isEmpty());
+        assertEquals(examples.get(1).getName(), "andrew");
+        assertFalse(examples.get(1).getExist());
         assertNotNull(examples);
     }
     
@@ -89,25 +88,26 @@ public class BindySimpleCsvBooleanUnmarshallTest extends AbstractJUnit4SpringCon
 
         template.sendBody(expected);
 
-        List<Map<String, BooleanExample>> examples = (List<Map<String, BooleanExample>>) result.getExchanges().get(0).getIn().getBody();
+        List<BooleanExample> examples = (List<BooleanExample>)result.getExchanges().get(0).getIn().getBody();
         
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         
-        assertFalse(examples.get(0).get(BooleanExample.class.getName()).getName().isEmpty());
-        assertEquals(examples.get(0).get(BooleanExample.class.getName()).getName(), "andrew");
-        assertTrue(examples.get(0).get(BooleanExample.class.getName()).getExist());
-        assertFalse(examples.get(1).get(BooleanExample.class.getName()).getName().isEmpty());
-        assertEquals(examples.get(1).get(BooleanExample.class.getName()).getName(), "joseph");
-        assertFalse(examples.get(1).get(BooleanExample.class.getName()).getExist());
-        assertFalse(examples.get(2).get(BooleanExample.class.getName()).getName().isEmpty());
-        assertEquals(examples.get(2).get(BooleanExample.class.getName()).getName(), "nicholas");
-        assertTrue(examples.get(2).get(BooleanExample.class.getName()).getExist());
+        assertFalse(examples.get(0).getName().isEmpty());
+        assertEquals(examples.get(0).getName(), "andrew");
+        assertTrue(examples.get(0).getExist());
+        assertFalse(examples.get(1).getName().isEmpty());
+        assertEquals(examples.get(1).getName(), "joseph");
+        assertFalse(examples.get(1).getExist());
+        assertFalse(examples.get(2).getName().isEmpty());
+        assertEquals(examples.get(2).getName(), "nicholas");
+        assertTrue(examples.get(2).getExist());
         assertNotNull(examples);
     }
     
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.bool");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
+            org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
 
         public void configure() {
             // from("file://src/test/data?move=./target/done").unmarshal(camelDataFormat).to("mock:result");

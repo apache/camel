@@ -88,7 +88,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
                 dataFormat.setLocale("en");
 
                 from("direct:out")
-                    .unmarshal().bindy(BindyType.Csv,type)
+                    .unmarshal().bindy(BindyType.Csv, type)
                     .to("mock:out");
                 from("direct:in")
                     .marshal(dataFormat)

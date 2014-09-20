@@ -16,10 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
@@ -37,6 +33,10 @@ import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {

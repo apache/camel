@@ -45,7 +45,7 @@ public class BindySimpleKeyValuePairUnmarshallDslTest extends CommonBindyTest {
 
         public void configure() {
             from(URI_FILE_FIX).unmarshal()
-                .bindy(BindyType.KeyValue,Order.class)
+                .bindy(BindyType.KeyValue, Order.class)
                 .to(URI_MOCK_RESULT);
         }
 
