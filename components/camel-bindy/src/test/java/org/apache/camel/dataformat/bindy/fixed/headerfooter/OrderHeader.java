@@ -21,7 +21,7 @@ import java.util.Date;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 
-@FixedLengthRecord(isHeader = true)
+@FixedLengthRecord
 public  class OrderHeader {
     @DataField(pos = 1, length = 1)
     private int recordType = 1;

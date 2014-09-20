@@ -18,8 +18,6 @@ package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trimfield;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -61,8 +59,8 @@ public class BindySimpleFixedLengthUnmarshallTrimFieldTest extends AbstractJUnit
         result.assertIsSatisfied();
 
         // check the model
-        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        BindySimpleFixedLengthUnmarshallTrimFieldTest.Order order = (BindySimpleFixedLengthUnmarshallTrimFieldTest.Order) map.values().iterator().next();
+        
+        BindySimpleFixedLengthUnmarshallTrimFieldTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTrimFieldTest.Order.class);
         Assert.assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         Assert.assertEquals("Pauline", order.getFirstName());
@@ -71,7 +69,7 @@ public class BindySimpleFixedLengthUnmarshallTrimFieldTest extends AbstractJUnit
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trimfield");
+        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat(Order.class);
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);

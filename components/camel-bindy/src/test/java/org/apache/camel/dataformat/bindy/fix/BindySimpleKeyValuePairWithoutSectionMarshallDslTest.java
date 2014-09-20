@@ -96,7 +96,7 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyKeyValuePairDataFormat orderBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.withoutsection");
+        BindyKeyValuePairDataFormat orderBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order.class);
 
         public void configure() {
 

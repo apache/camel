@@ -31,8 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,38 +62,27 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private char paddingChar;
     private int recordLength;
     private boolean ignoreTrailingChars;
-
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        super(resolver, packageNames);
-
-        // initialize specific parameters of the fixed length model
-        initFixedLengthModel();
-    }
     
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, PackageScanFilter scanFilter, String... packageNames) throws Exception {
-        super(resolver, packageNames, scanFilter);
-        initFixedLengthModel();
-    }
+    private Class<?> header;
+    private Class<?> footer;
 
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        super(resolver, type);
+    public BindyFixedLengthFactory(Class<?> type) throws Exception {
+        super(type);
+        
+        header = void.class;
+        footer = void.class;
         
         // initialize specific parameters of the fixed length model
         initFixedLengthModel();
     }
-
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, PackageScanFilter scanFilter, Class<?> type) throws Exception  {
-        super(resolver, type, scanFilter);
-        initFixedLengthModel();
-    }
-
+    
     /**
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the
      * package name provided, check the annotated classes and fields
      */
-    public void initFixedLengthModel() throws Exception {
-
+    public void initFixedLengthModel() throws Exception {      
+        
         // Find annotated fields declared in the Model classes
         initAnnotatedFields();
 
@@ -478,16 +465,20 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 crlf = record.crlf();
                 LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
-                // Get hasHeader parameter
-                hasHeader = record.hasHeader();
+                // Get header parameter
+                header =  record.header();
+                LOG.debug("Header: {}", header);                
+                hasHeader = header != void.class;
                 LOG.debug("Has Header: {}", hasHeader);
-                
+                                
                 // Get skipHeader parameter
                 skipHeader = record.skipHeader();
                 LOG.debug("Skip Header: {}", skipHeader);
 
-                // Get hasFooter parameter
-                hasFooter = record.hasFooter();
+                // Get footer parameter
+                footer =  record.footer();
+                LOG.debug("Footer: {}", footer);                
+                hasFooter = record.footer() != void.class;
                 LOG.debug("Has Footer: {}", hasFooter);
                 
                 // Get skipFooter parameter
@@ -495,11 +486,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 LOG.debug("Skip Footer: {}", skipFooter);
                 
                 // Get isHeader parameter
-                isHeader = record.isHeader();
+                isHeader = hasHeader ? cl.equals(header) : false;
                 LOG.debug("Is Header: {}", isHeader);
                 
                 // Get isFooter parameter
-                isFooter = record.isFooter();
+                isFooter = hasFooter ? cl.equals(footer) : false;
                 LOG.debug("Is Footer: {}", isFooter);
 
                 // Get padding character
@@ -530,12 +521,28 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
         
     }
-        
+       
+    /**
+     * 
+     * @return
+     */
+    public Class<?> header() {
+        return header;
+    }
+    
     /**
      * Flag indicating if we have a header
      */
     public boolean hasHeader() {
         return hasHeader;
+    } 
+    
+    /**
+     * 
+     * @return
+     */
+    public Class<?> footer() {
+        return footer;
     }
     
     /**

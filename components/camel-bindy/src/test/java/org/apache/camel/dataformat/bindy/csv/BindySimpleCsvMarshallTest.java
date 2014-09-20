@@ -109,7 +109,7 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
 
             getContext().addInterceptStrategy(tracer);
 
-            BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+            BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             camelDataFormat.setLocale("en");
 
             // default should errors go to mock:error

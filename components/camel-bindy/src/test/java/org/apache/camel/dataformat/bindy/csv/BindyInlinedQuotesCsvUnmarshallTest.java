@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -56,15 +53,14 @@ public class BindyInlinedQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCon
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        Order order = (Order) map.values().iterator().next();
+        Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
         Assert.assertEquals(10, order.getOrderNr());
         Assert.assertEquals("Pauline", order.getFirstName());
         Assert.assertEquals("O'Donald", order.getLastName());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
