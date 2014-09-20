@@ -71,6 +71,7 @@
     <module>camel-bindy</module>
     <module>camel-box</module>
     <module>camel-cache</module>
+    <module>camel-cassandraql</module>
     <module>camel-castor</module>
     <module>camel-cdi</module>
     <module>camel-chunk</module>
