@@ -26,7 +26,7 @@
 
     <artifactId>camel-test-blueprint</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Test Blueprint</name>
+    <name>Camel :: Test :: Blueprint</name>
     <description>Camel Testing Blueprint Library using JUnit</description>
 
     <properties>

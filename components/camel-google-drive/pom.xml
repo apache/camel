@@ -27,7 +27,7 @@
 
   <artifactId>camel-google-drive</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel GoogleDrive Component</name>
+  <name>Camel :: GoogleDrive</name>
   <description>Camel Component for GoogleDrive</description>
 
   <properties>

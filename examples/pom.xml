@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>examples</artifactId>
-  <name>Camel :: Examples</name>
+  <name>Camel :: Example</name>
   <description>Camel Examples</description>
   <packaging>pom</packaging>
 

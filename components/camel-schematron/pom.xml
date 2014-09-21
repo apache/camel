@@ -23,15 +23,19 @@
         <artifactId>components</artifactId>
         <version>2.15-SNAPSHOT</version>
     </parent>
+    
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-schematron</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: SCHEMATRON</name>
+    <name>Camel :: Schematron</name>
+    <description>Camel Schematron support</description>
+
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.schematron.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=schematron</camel.osgi.export.service>
     </properties>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -66,4 +70,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
 </project>
