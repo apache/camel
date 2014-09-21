@@ -86,8 +86,11 @@ public class CassandraQlComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-
-    Cluster.Builder clusterBuilder(String remaining, Map<String, Object> parameters) throws NumberFormatException {
+    /**
+     * Parse URI of the form cql://host1,host2:9042/keyspace and create a
+     * {@link Cluster.Builder}
+     */
+    protected Cluster.Builder clusterBuilder(String remaining, Map<String, Object> parameters) throws NumberFormatException {
         Cluster.Builder clusterBuilder = Cluster.builder();
         Matcher matcher = HOSTS_PORT_KEYSPACE_PATTERN.matcher(remaining);
         if (matcher.matches()) {
@@ -116,6 +119,12 @@ public class CassandraQlComponent extends DefaultComponent {
         String clusterName = getAndRemoveParameter(parameters, "clusterName", String.class);
         if (clusterName != null) {
             clusterBuilder = clusterBuilder.withClusterName(clusterName);
+        }
+        // Username and password
+        String username = getAndRemoveOrResolveReferenceParameter(parameters, "username", String.class);
+        String password = getAndRemoveOrResolveReferenceParameter(parameters, "password", String.class);
+        if (username != null && !username.isEmpty() && password!=null) {
+            clusterBuilder.withCredentials(username, password);
         }
         return clusterBuilder;
     }
