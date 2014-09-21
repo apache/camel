@@ -18,9 +18,8 @@ package org.apache.camel.component.beanstalk;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Beanstalk Camel component.
@@ -40,7 +39,7 @@ import org.apache.camel.impl.DefaultComponent;
  * @see BeanstalkEndpoint
  * @see ConnectionSettingsFactory
  */
-public class BeanstalkComponent extends DefaultComponent {
+public class BeanstalkComponent extends UriEndpointComponent {
     public static final String DEFAULT_TUBE = "default";
 
     public static final String COMMAND_BURY = "bury";
@@ -57,10 +56,7 @@ public class BeanstalkComponent extends DefaultComponent {
     private static ConnectionSettingsFactory connectionSettingsFactory = ConnectionSettingsFactory.DEFAULT;
 
     public BeanstalkComponent() {
-    }
-
-    public BeanstalkComponent(final CamelContext context) {
-        super(context);
+        super(BeanstalkEndpoint.class);
     }
 
     @Override

@@ -29,17 +29,26 @@ import org.apache.camel.component.beanstalk.processors.PutCommand;
 import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
 import org.apache.camel.component.beanstalk.processors.TouchCommand;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "beanstalk", consumerClass = BeanstalkConsumer.class)
 public class BeanstalkEndpoint extends ScheduledPollEndpoint {
     final ConnectionSettings conn;
 
+    @UriParam
     private String command = BeanstalkComponent.COMMAND_PUT;
+    @UriParam
     private long jobPriority = BeanstalkComponent.DEFAULT_PRIORITY;
+    @UriParam
     private int jobDelay = BeanstalkComponent.DEFAULT_DELAY;
+    @UriParam
     private int jobTimeToRun = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
-
+    @UriParam
     private String onFailure = BeanstalkComponent.COMMAND_BURY;
+    @UriParam
     private boolean useBlockIO = true;
+    @UriParam
     private boolean awaitJob = true;
 
     public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn) {
