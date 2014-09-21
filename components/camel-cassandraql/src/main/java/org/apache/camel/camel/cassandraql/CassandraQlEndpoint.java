@@ -43,10 +43,9 @@ public class CassandraQlEndpoint extends DefaultEndpoint {
     @UriParam
     private ConsistencyLevel consistencyLevel;
     /**
-     * Execute queries asynchronously
+     * How many rows should be retrieved in message body
      */
-    private boolean async = false;
-
+    private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
     /**
      * Cassandra URI
      *
@@ -124,12 +123,16 @@ public class CassandraQlEndpoint extends DefaultEndpoint {
         this.consistencyLevel = consistencyLevel;
     }
 
-    public boolean isAsync() {
-        return async;
+    public ResultSetConversionStrategy getResultSetConversionStrategy() {
+        return resultSetConversionStrategy;
     }
 
-    public void setAsync(boolean async) {
-        this.async = async;
+    public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
+        this.resultSetConversionStrategy = resultSetConversionStrategy;
+    }
+
+    public void setResultSetConversionStrategy(String converter) {
+        this.resultSetConversionStrategy = ResultSetConversionStrategies.fromName(converter);
     }
 
     /**
@@ -152,7 +155,7 @@ public class CassandraQlEndpoint extends DefaultEndpoint {
      * Copy ResultSet into Message.
      */
     protected void fillMessage(ResultSet resultSet, Message message) {
-        message.setBody(resultSet.all());
+        message.setBody(resultSetConversionStrategy.getBody(resultSet));
     }
 
 }

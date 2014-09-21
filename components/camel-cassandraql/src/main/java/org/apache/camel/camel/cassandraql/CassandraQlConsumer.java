@@ -12,27 +12,32 @@ import org.apache.camel.impl.ScheduledPollConsumer;
  * Cassandra 2 CQL3 consumer.
  */
 public class CassandraQlConsumer extends ScheduledPollConsumer {
-    private final CassandraQlEndpoint endpoint;
+
+    /**
+     * Prepared statement used for polling
+     */
     private PreparedStatement preparedStatement;
-    
+
     public CassandraQlConsumer(CassandraQlEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
     }
+
     @Override
     public CassandraQlEndpoint getEndpoint() {
-        return (CassandraQlEndpoint) super.getEndpoint(); 
+        return (CassandraQlEndpoint) super.getEndpoint();
     }
 
     @Override
     protected int poll() throws Exception {
+        // Execute CQL Query
         Session session = getEndpoint().getSession();
         if (preparedStatement == null) {
             preparedStatement = getEndpoint().prepareStatement();
         }
         ResultSet resultSet = session.execute(preparedStatement.bind());
         
-        Exchange exchange = endpoint.createExchange();
+        // Create message from ResultSet
+        Exchange exchange = getEndpoint().createExchange();
         Message message = exchange.getIn();
         getEndpoint().fillMessage(resultSet, message);
 
