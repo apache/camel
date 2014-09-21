@@ -39,10 +39,6 @@ public final class BeanstalkExchangeHelper {
     }
 
     public static long getJobID(final Exchange exchange) throws NoSuchHeaderException {
-        Long jobId = exchange.getProperty(Headers.JOB_ID, Long.class);
-        if (jobId != null) {
-            return jobId;
-        }
         return ExchangeHelper.getMandatoryHeader(exchange, Headers.JOB_ID, Long.class);
     }
 }

@@ -39,7 +39,7 @@ public class ConsumerIntegrationTest extends BeanstalkCamelTestSupport {
         final long jobId = writer.put(prio, 0, ttr, Helper.stringToBytes(testMessage));
 
         result.expectedMessageCount(1);
-        result.expectedPropertyReceived(Headers.JOB_ID, jobId);
+        result.expectedHeaderReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Exchange.CREATED_TIMESTAMP).isNotNull();
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
         result.message(0).header(Headers.PRIORITY).isEqualTo(prio);

@@ -59,7 +59,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMinimumMessageCount(1);
         result.expectedBodiesReceived(testMessage);
-        result.expectedPropertyReceived(Headers.JOB_ID, jobId);
+        result.expectedHeaderReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
         result.assertIsSatisfied(2000);
 
@@ -106,7 +106,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         result.expectedBodiesReceived(testMessage);
-        result.expectedPropertyReceived(Headers.JOB_ID, jobId);
+        result.expectedHeaderReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
         result.assertIsSatisfied(100);
 

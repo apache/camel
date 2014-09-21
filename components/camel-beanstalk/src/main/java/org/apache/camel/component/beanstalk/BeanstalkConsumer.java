@@ -91,24 +91,24 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                 }
 
                 final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
-                exchange.setProperty(Headers.JOB_ID, job.getJobId());
+                exchange.getIn().setHeader(Headers.JOB_ID, job.getJobId());
                 exchange.getIn().setBody(job.getData(), byte[].class);
 
                 Map<String, String> jobStats = client.statsJob(job.getJobId());
-                if (jobStats != null) {
+                if (jobStats != null && !jobStats.isEmpty()) {
                     for (String key : STATS_KEY_STR) {
                         if (jobStats.containsKey(key)) {
-                            exchange.setProperty(Headers.PREFIX + key, jobStats.get(key).trim());
+                            exchange.getIn().setHeader(Headers.PREFIX + key, jobStats.get(key).trim());
                         }
                     }
 
                     if (jobStats.containsKey("pri")) {
-                        exchange.setProperty(Headers.PRIORITY, Long.parseLong(jobStats.get("pri").trim()));
+                        exchange.getIn().setHeader(Headers.PRIORITY, Long.parseLong(jobStats.get("pri").trim()));
                     }
 
                     for (String key : STATS_KEY_INT) {
                         if (jobStats.containsKey(key)) {
-                            exchange.setProperty(Headers.PREFIX + key, Integer.parseInt(jobStats.get(key).trim()));
+                            exchange.getIn().setHeader(Headers.PREFIX + key, Integer.parseInt(jobStats.get(key).trim()));
                         }
                     }
                 }
