@@ -33,6 +33,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -40,7 +42,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 // START SNIPPET: e1
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 // must tell Spring to bootstrap with Camel
 @BootstrapWith(CamelTestContextBootstrapper.class)
 @ContextConfiguration()
@@ -48,6 +50,9 @@ import static org.junit.Assert.assertTrue;
 // from this test and therefore use the same Spring context.  Also because we want to reset the
 // Camel context and mock endpoints between test methods automatically.
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@TestExecutionListeners(listeners = {CamelSpringTestContextLoaderTestExecutionListener.class,
+        DisableJmxTestExecutionListener.class, StopWatchTestExecutionListener.class},
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class CamelSpringJUnit4ClassRunnerPlainTest {
     
     @Autowired
