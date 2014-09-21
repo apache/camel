@@ -27,8 +27,8 @@
 
     <artifactId>camel-test-spring3</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Test :: Spring</name>
-    <description>Camel Testing Library using JUnit and Spring3</description>
+    <name>Camel :: Test :: Spring 3.x</name>
+    <description>Camel Testing Library using JUnit and Spring 3.x</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
