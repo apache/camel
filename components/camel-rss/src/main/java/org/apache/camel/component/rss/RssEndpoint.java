@@ -22,6 +22,7 @@ import java.util.Date;
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
@@ -39,6 +40,11 @@ public class RssEndpoint extends FeedEndpoint {
 
     public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
+    }
+    
+    @Override
+    public Producer createProducer() throws Exception {
+        throw new UnsupportedOperationException("RssProducer is not implemented");
     }
 
     @Override
