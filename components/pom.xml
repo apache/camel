@@ -64,6 +64,7 @@
     <module>camel-aws</module>
     <module>camel-base64</module>
     <module>camel-beanio</module>
+    <module>camel-beanstalk</module>
     <module>camel-bean-validator</module>
     <module>camel-barcode</module>
     <module>camel-bindy</module>
