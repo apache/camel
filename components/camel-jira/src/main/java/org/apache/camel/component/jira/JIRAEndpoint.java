@@ -42,16 +42,16 @@ import org.apache.camel.impl.DefaultEndpoint;
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
 public class JIRAEndpoint extends DefaultEndpoint {
-	
-	private String serverUrl = null;
-	
-	private String username = null;
-	
-	private String password = null;
-	
-	private String jql = null;
 
-	public JIRAEndpoint(String uri, JIRAComponent component) {
+    private String serverUrl;
+
+    private String username;
+
+    private String password;
+
+    private String jql;
+
+    public JIRAEndpoint(String uri, JIRAComponent component) {
         super(uri, component);
     }
 
@@ -93,34 +93,34 @@ public class JIRAEndpoint extends DefaultEndpoint {
     }
 
     public String getServerUrl() {
-		return serverUrl;
-	}
+        return serverUrl;
+    }
 
-	public void setServerUrl(String serverUrl) {
-		this.serverUrl = serverUrl;
-	}
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getJql() {
-		return jql;
-	}
+    public String getJql() {
+        return jql;
+    }
 
-	public void setJql(String jql) {
-		this.jql = jql;
-	}
+    public void setJql(String jql) {
+        this.jql = jql;
+    }
 }

@@ -23,12 +23,12 @@ import org.apache.camel.impl.DefaultProducer;
  * The Camel :: JIRA producer.
  */
 public class JIRAProducer extends DefaultProducer {
-	
-    public JIRAProducer(JIRAEndpoint endpoint) {
+
+    public JIRAProducer(final JIRAEndpoint endpoint) {
         super(endpoint);
     }
 
-    public void process(Exchange exchange) throws Exception {
+    public void process(final Exchange exchange) throws Exception {
         // nothing to do, yet
     }
 
