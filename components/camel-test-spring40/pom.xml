@@ -26,15 +26,14 @@
     <version>2.15-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-test-spring41</artifactId>
+  <artifactId>camel-test-spring40</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Test :: Spring 4.1</name>
-  <description>Camel Testing Library using JUnit and Spring 4.1</description>
+  <name>Camel :: Test :: Spring 4.0</name>
+  <description>Camel Testing Library using JUnit and Spring 4.0</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
-    <spring-version>${spring41-version}</spring-version>
-    <spring4-version>${spring41-version}</spring4-version>
+    <spring-version>${spring40-version}</spring-version>
   </properties>
 
   <dependencies>
@@ -50,38 +49,38 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
     <!-- we need to override the other spring version -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>${spring4-version}</version>
+      <version>${spring40-version}</version>
     </dependency>
 
 

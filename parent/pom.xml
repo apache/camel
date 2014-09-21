@@ -410,8 +410,8 @@
     <spring-version-range>[3.2,4)</spring-version-range>
     <spring-version>${spring4-version}</spring-version>
     <spring32-version>3.2.11.RELEASE</spring32-version>
-    <spring4-version>4.0.7.RELEASE</spring4-version>
-    <spring41-version>4.1.0.RELEASE</spring41-version>
+    <spring40-version>4.0.7.RELEASE</spring40-version>
+    <spring4-version>4.1.0.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.2.5.RELEASE</spring-security-version>
     <spring-ws-version>2.1.4.RELEASE</spring-ws-version>
@@ -1361,7 +1361,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test-spring41</artifactId>
+        <artifactId>camel-test-spring40</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

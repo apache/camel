@@ -16,8 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.runners.model.InitializationError;
 import org.springframework.test.context.TestContextManager;
@@ -44,18 +43,7 @@ public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
      */
     @Override
     protected TestContextManager createTestContextManager(Class<?> clazz) {
-        return new CamelTestContextManager(clazz, getDefaultContextLoaderClassName(clazz));
-    }
-
-    /**
-     * Returns the specialized loader for tight integration between Camel testing features
-     * and the application context initialization.
-     *
-     * @return Returns the class name for {@link org.apache.camel.test.spring.CamelSpringTestContextLoader}
-     */
-    @Override
-    protected String getDefaultContextLoaderClassName(Class<?> clazz) {
-        return CamelSpringTestContextLoader.class.getName();
+        return new CamelTestContextManager(clazz);
     }
 
     /**
@@ -64,25 +52,17 @@ public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
      */
     public static final class CamelTestContextManager extends TestContextManager {
 
-        public CamelTestContextManager(Class<?> testClass, String defaultContextLoaderClassName) {
-            super(testClass, defaultContextLoaderClassName);
+        public CamelTestContextManager(Class<?> testClass) {
+            super(testClass);
+
+            // inject Camel first, and then disable jmx and add the stop-watch
+            List<TestExecutionListener> list = getTestExecutionListeners();
+            list.add(0, new CamelSpringTestContextLoaderTestExecutionListener());
+            list.add(new DisableJmxTestExecutionListener());
+            list.add(new StopWatchTestExecutionListener());
+            registerTestExecutionListeners(list);
         }
 
-        /**
-         * Augments the default listeners with additional listeners to provide support
-         * for the Camel testing features.
-         */
-        @Override
-        protected Set<Class<? extends TestExecutionListener>> getDefaultTestExecutionListenerClasses() {
-            Set<Class<? extends TestExecutionListener>> classes = new LinkedHashSet<Class<? extends TestExecutionListener>>();
-
-            classes.add(CamelSpringTestContextLoaderTestExecutionListener.class);
-            classes.addAll(super.getDefaultTestExecutionListenerClasses());
-            classes.add(DisableJmxTestExecutionListener.class);
-            classes.add(StopWatchTestExecutionListener.class);
-
-            return classes;
-        }
     }
 
 }

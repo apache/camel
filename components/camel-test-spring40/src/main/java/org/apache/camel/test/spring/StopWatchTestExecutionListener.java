@@ -41,22 +41,20 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
     public void beforeTestMethod(TestContext testContext) throws Exception {
         StopWatch stopWatch = new StopWatch();
         threadStopWatch.set(stopWatch);
+        
+        stopWatch.restart();
     }
 
     @Override
     public void afterTestMethod(TestContext testContext) throws Exception {
-        StopWatch watch = threadStopWatch.get();
-        if (watch != null) {
-            long time = watch.stop();
-            Logger log = LoggerFactory.getLogger(testContext.getTestClass());
+        long time = threadStopWatch.get().stop();
+        threadStopWatch.remove();
+        Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
-            log.info("********************************************************************************");
-            log.info("Testing done: " + testContext.getTestMethod().getName() + "(" + testContext.getTestClass().getName() + ")");
-            log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
-            log.info("********************************************************************************");
-
-            threadStopWatch.remove();
-        }
+        log.info("********************************************************************************");
+        log.info("Testing done: " + testContext.getTestMethod().getName() + "(" + testContext.getTestClass().getName() + ")");
+        log.info("Took: " + TimeUtils.printDuration(time) + " ("  + time + " millis)");
+        log.info("********************************************************************************");
     }
 
 }

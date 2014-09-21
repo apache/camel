@@ -187,7 +187,7 @@
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-test-spring3</include>
-        <include>org.apache.camel:camel-test-spring41</include>
+        <include>org.apache.camel:camel-test-spring40</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-urlrewrite</include>

@@ -28,8 +28,8 @@
 
   <artifactId>camel-test-spring</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Test :: Spring 4.0</name>
-  <description>Camel Testing Library using JUnit and Spring 4.0</description>
+  <name>Camel :: Test :: Spring</name>
+  <description>Camel Testing Library using JUnit and Spring 4.1+</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
