@@ -485,28 +485,32 @@ public final class Olingo2AppImpl implements Olingo2App {
                             // get the response content as Map<String, Object>
                             final List<EdmProperty> complexPropertyPath = uriInfo.getPropertyPath();
                             final EdmProperty complexProperty = complexPropertyPath.get(complexPropertyPath.size() - 1);
-                            responseHandler.onResponse(
-                                (T) EntityProvider.readProperty(getContentType(), complexProperty,
-                                result.getEntity().getContent(),
-                                EntityProviderReadProperties.init().build()));
+                            responseHandler.onResponse((T)EntityProvider.readProperty(getContentType(),
+                                                                                      complexProperty, result
+                                                                                          .getEntity()
+                                                                                          .getContent(),
+                                                                                      EntityProviderReadProperties
+                                                                                          .init().build()));
                             break;
 
                         case URI7A:
                             // $links with 0..1 cardinality property
                             // get the response content as String
                             final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
-                            responseHandler.onResponse(
-                                (T) EntityProvider.readLink(getContentType(), targetLinkEntitySet,
-                                result.getEntity().getContent()));
+                            responseHandler.onResponse((T)EntityProvider.readLink(getContentType(),
+                                                                                  targetLinkEntitySet, result
+                                                                                      .getEntity()
+                                                                                      .getContent()));
                             break;
 
                         case URI7B:
                             // $links with * cardinality property
                             // get the response content as java.util.List<String>
                             final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
-                            responseHandler.onResponse(
-                                (T) EntityProvider.readLinks(getContentType(), targetLinksEntitySet,
-                                result.getEntity().getContent()));
+                            responseHandler.onResponse((T)EntityProvider.readLinks(getContentType(),
+                                                                                   targetLinksEntitySet,
+                                                                                   result.getEntity()
+                                                                                       .getContent()));
                             break;
 
                         case URI1:
