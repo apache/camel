@@ -56,7 +56,7 @@ public class JIRAEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new JIRAProducer(this);
+        throw new UnsupportedOperationException("JIRAProducer is not implemented");
     }
     
     public Consumer createConsumer(Processor processor) throws Exception {
