@@ -16,20 +16,19 @@
  */
 package org.apache.camel.component.beanstalk;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
 import com.surftools.BeanstalkClient.Client;
 import com.surftools.BeanstalkClientImpl.ClientImpl;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Represents the connection to Beanstalk.
- * <p>
+ * <p/>
  * Along with the list of tubes it may watch.
- *
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
  */
 public class ConnectionSettings {
     final String host;
@@ -54,24 +53,24 @@ public class ConnectionSettings {
         while (scanner.hasNext()) {
             final String tubeRaw = scanner.next();
             try {
-                buffer.add( URLDecoder.decode(tubeRaw, "UTF-8") );
+                buffer.add(URLDecoder.decode(tubeRaw, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 buffer.add(tubeRaw);
             }
         }
-        this.tubes = buffer.toArray(new String[0]);
+        this.tubes = buffer.toArray(new String[buffer.size()]);
         scanner.close();
     }
 
     /**
      * Returns the {@link Client} instance ready for writing
      * operations, e.g. "put".
-     * <p>
+     * <p/>
      * <code>use(tube)</code> is applied during this call.
      *
      * @return {@link Client} instance
      * @throws IllegalArgumentException the exception is raised when this ConnectionSettings
-     * has more than one tube.
+     *                                  has more than one tube.
      */
     public Client newWritingClient() throws IllegalArgumentException {
         if (tubes.length > 1) {
@@ -93,7 +92,7 @@ public class ConnectionSettings {
     /**
      * Returns the {@link Client} instance for reading operations with all
      * the tubes aleady watched
-     * <p>
+     * <p/>
      * <code>watch(tube)</code> is applied for every tube during this call.
      *
      * @param useBlockIO configuration param to {@link Client}
@@ -106,8 +105,9 @@ public class ConnectionSettings {
            when using uniqueConnectionPerThread=false. The symptom is that ProtocolHandler
            breaks the protocol, reading incomplete messages. To be investigated. */
         //client.setUniqueConnectionPerThread(false);
-        for (String tube : tubes)
+        for (String tube : tubes) {
             client.watch(tube);
+        }
         return client;
     }
 
@@ -122,11 +122,11 @@ public class ConnectionSettings {
 
     @Override
     public int hashCode() {
-        return 41*(41*(41+host.hashCode())+port)+Arrays.hashCode(tubes);
+        return 41 * (41 * (41 + host.hashCode()) + port) + Arrays.hashCode(tubes);
     }
 
     @Override
     public String toString() {
-        return "beanstalk://"+host+":"+port+"/"+Arrays.toString(tubes);
+        return "beanstalk://" + host + ":" + port + "/" + Arrays.toString(tubes);
     }
 }

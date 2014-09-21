@@ -22,10 +22,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.reset;
 
 public class BeanstalkMockTestSupport extends CamelTestSupport {
-    @Mock Client client;
+    @Mock
+    Client client;
 
     @Before
     @Override

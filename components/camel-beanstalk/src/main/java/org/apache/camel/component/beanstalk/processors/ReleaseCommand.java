@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.beanstalk.processors;
 
-import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
-import org.apache.camel.component.beanstalk.BeanstalkExchangeHelper;
-import org.apache.camel.component.beanstalk.Headers;
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
+import org.apache.camel.component.beanstalk.BeanstalkExchangeHelper;
+import org.apache.camel.component.beanstalk.Headers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReleaseCommand extends DefaultCommand {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(ReleaseCommand.class);
 
     public ReleaseCommand(BeanstalkEndpoint endpoint) {
         super(endpoint);
@@ -41,11 +41,12 @@ public class ReleaseCommand extends DefaultCommand {
         final long priority = BeanstalkExchangeHelper.getPriority(endpoint, in);
         final int delay = BeanstalkExchangeHelper.getDelay(endpoint, in);
 
-        final boolean result = client.release(jobId.longValue(), priority, delay);
-        if (!result && log.isWarnEnabled())
-            log.warn(String.format("Failed to release job %d (priority %d, delay %d)", jobId, priority, delay));
-        else if (log.isDebugEnabled())
-            log.debug(String.format("Job %d released with priority %d, delay %d seconds. Result is %b", jobId, priority, delay, result));
+        final boolean result = client.release(jobId, priority, delay);
+        if (!result && LOG.isWarnEnabled()) {
+            LOG.warn(String.format("Failed to release job %d (priority %d, delay %d)", jobId, priority, delay));
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Job %d released with priority %d, delay %d seconds. Result is %b", jobId, priority, delay, result));
+        }
 
         answerWith(exchange, Headers.RESULT, result);
     }

@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.beanstalk.processors;
 
-import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KickCommand extends DefaultCommand {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(KickCommand.class);
 
     public KickCommand(BeanstalkEndpoint endpoint) {
         super(endpoint);
@@ -36,8 +36,9 @@ public class KickCommand extends DefaultCommand {
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException, InvalidPayloadException {
         final Integer jobs = exchange.getIn().getMandatoryBody(Integer.class);
         final int result = client.kick(jobs);
-        if (log.isDebugEnabled())
-            log.debug(String.format("Kick %d jobs. Kicked %d actually.", jobs, result));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Kick %d jobs. Kicked %d actually.", jobs, result));
+        }
 
         final Message answer = getAnswerMessage(exchange);
         answer.setBody(result, Integer.class);

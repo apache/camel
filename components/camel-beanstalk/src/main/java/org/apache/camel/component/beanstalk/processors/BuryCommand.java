@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.beanstalk.processors;
 
-import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
-import org.apache.camel.component.beanstalk.BeanstalkExchangeHelper;
-import org.apache.camel.component.beanstalk.Headers;
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
+import org.apache.camel.component.beanstalk.BeanstalkExchangeHelper;
+import org.apache.camel.component.beanstalk.Headers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BuryCommand extends DefaultCommand {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(BuryCommand.class);
 
     public BuryCommand(BeanstalkEndpoint endpoint) {
         super(endpoint);
@@ -36,14 +36,14 @@ public class BuryCommand extends DefaultCommand {
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException {
         final Long jobId = BeanstalkExchangeHelper.getJobID(exchange);
         final long priority = BeanstalkExchangeHelper.getPriority(endpoint, exchange.getIn());
-        final boolean result = client.bury(jobId.longValue(), priority);
+        final boolean result = client.bury(jobId, priority);
 
-        if (!result && log.isWarnEnabled())
-            log.warn(String.format("Failed to bury job %d (with priority %d)", jobId, priority));
-        else if (log.isDebugEnabled())
-            log.debug(String.format("Job %d buried with priority %d. Result is %b", jobId, priority, result));
+        if (!result && LOG.isWarnEnabled()) {
+            LOG.warn(String.format("Failed to bury job %d (with priority %d)", jobId, priority));
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Job %d buried with priority %d. Result is %b", jobId, priority, result));
+        }
 
         answerWith(exchange, Headers.RESULT, result);
-
     }
 }

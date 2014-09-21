@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.beanstalk.processors;
 
-import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 
 abstract class DefaultCommand implements Command {

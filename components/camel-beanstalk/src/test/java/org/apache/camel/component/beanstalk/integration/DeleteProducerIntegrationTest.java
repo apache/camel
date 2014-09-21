@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.beanstalk.integration;
 
-import org.apache.camel.component.beanstalk.Headers;
-import com.surftools.BeanstalkClient.Job;
 import java.io.IOException;
+
+import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.beanstalk.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
     @EndpointInject(uri = "mock:result")
@@ -55,7 +55,7 @@ public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
         assertNull("Job has been deleted", job);
     }
 
-    @Test(expected=CamelExecutionException.class)
+    @Test(expected = CamelExecutionException.class)
     public void testNoJobId() throws InterruptedException, IOException {
         resultEndpoint.expectedMessageCount(0);
         direct.sendBody(new byte[0]);
@@ -69,7 +69,7 @@ public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("beanstalk:"+tubeName+"?command=delete").to("mock:result");
+                from("direct:start").to("beanstalk:" + tubeName + "?command=delete").to("mock:result");
             }
         };
     }

@@ -20,5 +20,6 @@ import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.Exchange;
 
 public interface Command {
-    public void act(Client client, Exchange exchange) throws Exception;
+
+    void act(Client client, Exchange exchange) throws Exception;
 }

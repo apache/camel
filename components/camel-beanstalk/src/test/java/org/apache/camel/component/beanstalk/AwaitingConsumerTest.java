@@ -16,19 +16,26 @@
  */
 package org.apache.camel.component.beanstalk;
 
-import com.surftools.BeanstalkClient.Job;
 import com.surftools.BeanstalkClient.BeanstalkException;
+import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
-    final String testMessage = "hello, world";
 
     @EndpointInject(uri = "beanstalk:tube")
     protected BeanstalkEndpoint endpoint;
+
+    private String testMessage = "hello, world";
 
     @Test
     public void testReceive() throws Exception {
@@ -39,8 +46,8 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
         when(jobMock.getJobId()).thenReturn(jobId);
         when(jobMock.getData()).thenReturn(payload);
         when(client.reserve(anyInt()))
-            .thenReturn(jobMock)
-            .thenReturn(null);
+                .thenReturn(jobMock)
+                .thenReturn(null);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -62,8 +69,8 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
         when(jobMock.getJobId()).thenReturn(jobId);
         when(jobMock.getData()).thenReturn(payload);
         when(client.reserve(anyInt()))
-            .thenThrow(new BeanstalkException("test"))
-            .thenReturn(jobMock);
+                .thenThrow(new BeanstalkException("test"))
+                .thenReturn(jobMock);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -71,7 +78,7 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
         result.expectedPropertyReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
         result.assertIsSatisfied(100);
-        
+
         verify(client, atLeast(1)).reserve(anyInt());
         verify(client, times(1)).close();
     }

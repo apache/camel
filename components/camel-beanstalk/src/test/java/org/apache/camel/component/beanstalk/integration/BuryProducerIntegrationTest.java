@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.beanstalk.integration;
 
-import org.apache.camel.component.beanstalk.Headers;
-import com.surftools.BeanstalkClient.Job;
 import java.io.IOException;
+
+import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.beanstalk.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class BuryProducerIntegrationTest extends BeanstalkCamelTestSupport {
     @EndpointInject(uri = "mock:result")
@@ -61,7 +61,7 @@ public class BuryProducerIntegrationTest extends BeanstalkCamelTestSupport {
         assertEquals("Buried job id", jobId, buried.getJobId());
     }
 
-    @Test(expected=CamelExecutionException.class)
+    @Test(expected = CamelExecutionException.class)
     public void testNoJobId() throws InterruptedException, IOException {
         resultEndpoint.expectedMessageCount(0);
         direct.sendBody(new byte[0]);
@@ -75,7 +75,7 @@ public class BuryProducerIntegrationTest extends BeanstalkCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("beanstalk:"+tubeName+"?command=bury").to("mock:result");
+                from("direct:start").to("beanstalk:" + tubeName + "?command=bury").to("mock:result");
             }
         };
     }

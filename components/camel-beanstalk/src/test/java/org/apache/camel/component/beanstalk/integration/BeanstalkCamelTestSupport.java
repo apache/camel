@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.beanstalk.integration;
 
+import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.component.beanstalk.ConnectionSettings;
 import org.apache.camel.component.beanstalk.ConnectionSettingsFactory;
-import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 
 public abstract class BeanstalkCamelTestSupport extends CamelTestSupport {
-    final ConnectionSettingsFactory connFactory = ConnectionSettingsFactory.DEFAULT;
-    final String tubeName = String.format("test%d", System.currentTimeMillis());
-
-    protected Client reader = null;
-    protected Client writer = null;
+    protected final ConnectionSettingsFactory connFactory = ConnectionSettingsFactory.DEFAULT;
+    protected final String tubeName = String.format("test%d", System.currentTimeMillis());
+    protected Client reader;
+    protected Client writer;
 
     @Before
     @Override

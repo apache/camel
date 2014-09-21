@@ -23,16 +23,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
-    final String testMessage = "hello, world";
-
-    boolean shouldIdie = false;
-    final Processor processor = new Processor() {
+    private String testMessage = "hello, world";
+    private boolean shouldIdie;
+    private Processor processor = new Processor() {
         @Override
         public void process(Exchange exchange) throws InterruptedException {
-            if (shouldIdie) throw new InterruptedException("die");
+            if (shouldIdie) {
+                throw new InterruptedException("die");
+            }
         }
     };
 

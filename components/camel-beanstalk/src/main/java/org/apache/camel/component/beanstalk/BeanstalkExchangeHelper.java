@@ -21,27 +21,28 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.util.ExchangeHelper;
 
-/**
- *
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
- */
 public final class BeanstalkExchangeHelper {
+
+    private BeanstalkExchangeHelper() {
+    }
+
     public static long getPriority(final BeanstalkEndpoint endpoint, final Message in) {
-        return in.getHeader(Headers.PRIORITY, Long.valueOf(endpoint.getJobPriority()), Long.class).longValue();
+        return in.getHeader(Headers.PRIORITY, endpoint.getJobPriority(), Long.class);
     }
 
     public static int getDelay(final BeanstalkEndpoint endpoint, final Message in) {
-        return in.getHeader(Headers.DELAY, Integer.valueOf(endpoint.getJobDelay()), Integer.class).intValue();
+        return in.getHeader(Headers.DELAY, endpoint.getJobDelay(), Integer.class);
     }
 
     public static int getTimeToRun(final BeanstalkEndpoint endpoint, final Message in) {
-        return in.getHeader(Headers.TIME_TO_RUN, Integer.valueOf(endpoint.getJobTimeToRun()), Integer.class).intValue();
+        return in.getHeader(Headers.TIME_TO_RUN, endpoint.getJobTimeToRun(), Integer.class);
     }
 
     public static long getJobID(final Exchange exchange) throws NoSuchHeaderException {
         Long jobId = exchange.getProperty(Headers.JOB_ID, Long.class);
-        if (jobId != null)
+        if (jobId != null) {
             return jobId;
+        }
         return ExchangeHelper.getMandatoryHeader(exchange, Headers.JOB_ID, Long.class);
     }
 }

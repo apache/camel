@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.beanstalk;
 
-import com.surftools.BeanstalkClient.Client;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.CamelContext;
 
 public final class Helper {
+
+    private Helper() {
+    }
+
     public static ConnectionSettings mockConn(final Client client) {
         return new MockConnectionSettings(client);
     }

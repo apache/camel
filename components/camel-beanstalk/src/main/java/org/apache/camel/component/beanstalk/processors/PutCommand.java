@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.beanstalk.processors;
 
-import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
-import org.apache.camel.component.beanstalk.BeanstalkExchangeHelper;
-import org.apache.camel.component.beanstalk.Headers;
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
+import org.apache.camel.component.beanstalk.BeanstalkExchangeHelper;
+import org.apache.camel.component.beanstalk.Headers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PutCommand extends DefaultCommand {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(PutCommand.class);
 
     public PutCommand(BeanstalkEndpoint endpoint) {
         super(endpoint);
@@ -42,8 +42,9 @@ public class PutCommand extends DefaultCommand {
         final int timeToRun = BeanstalkExchangeHelper.getTimeToRun(endpoint, in);
 
         final long jobId = client.put(priority, delay, timeToRun, in.getBody(byte[].class));
-        if (log.isDebugEnabled())
-            log.debug(String.format("Created job %d with priority %d, delay %d seconds and time to run %d", jobId, priority, delay, timeToRun));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Created job %d with priority %d, delay %d seconds and time to run %d", jobId, priority, delay, timeToRun));
+        }
 
         answerWith(exchange, Headers.JOB_ID, jobId);
     }

@@ -16,109 +16,116 @@
  */
 package org.apache.camel.component.beanstalk;
 
-import org.apache.camel.component.beanstalk.processors.*;
-import com.surftools.BeanstalkClient.BeanstalkException;
-import com.surftools.BeanstalkClient.Client;
-import com.surftools.BeanstalkClient.Job;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+
+import com.surftools.BeanstalkClient.BeanstalkException;
+import com.surftools.BeanstalkClient.Client;
+import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.beanstalk.processors.BuryCommand;
+import org.apache.camel.component.beanstalk.processors.Command;
+import org.apache.camel.component.beanstalk.processors.DeleteCommand;
+import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * PollingConsumer to read Beanstalk jobs.
- *
+ * <p/>
  * The consumer may delete the job immediately or based on successful {@link Exchange}
  * completion. The behavior is configurable by <code>consumer.awaitJob</code>
  * flag (by default <code>true</code>)
- *
+ * <p/>
  * This consumer will add a {@link Synchronization} object to every {@link Exchange}
  * object it creates in order to react on successful exchange completion or failure.
- *
+ * <p/>
  * In the case of successful completion, Beanstalk's <code>delete</code> method is
  * called upon the job. In the case of failure the default reaction is to call
  * <code>bury</code>.
- *
+ * <p/>
  * The reaction on failures is configurable: possible variants are "bury", "release" or "delete"
- *
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
  */
 public class BeanstalkConsumer extends ScheduledPollConsumer {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(BeanstalkConsumer.class);
+    private static final String[] STATS_KEY_STR = new String[]{"tube", "state"};
+    private static final String[] STATS_KEY_INT = new String[]{"age", "time-left", "timeouts", "releases", "buries", "kicks"};
 
-    String onFailure = BeanstalkComponent.COMMAND_BURY;
-    boolean useBlockIO = true;
-    boolean deleteImmediately = false;
-
-    private Client client = null;
-    private ExecutorService executor = null;
-    private Synchronization sync = null;
-
-    private static String[] statsKeysStr = new String[] {"tube", "state"};
-    private static String[] statsKeysInt = new String[] {"age", "time-left", "timeouts", "releases", "buries", "kicks"};
+    private String onFailure = BeanstalkComponent.COMMAND_BURY;
+    private boolean useBlockIO = true;
+    private boolean deleteImmediately;
+    private Client client;
+    private ExecutorService executor;
+    private Synchronization sync;
 
     private final Runnable initTask = new Runnable() {
-            @Override
-            public void run() {
-                client = getEndpoint().getConnection().newReadingClient(useBlockIO);
-            }
-        };
+        @Override
+        public void run() {
+            client = getEndpoint().getConnection().newReadingClient(useBlockIO);
+        }
+    };
+
     private final Callable<Exchange> pollTask = new Callable<Exchange>() {
-        final Integer NO_WAIT = Integer.valueOf(0);
-        
+        final Integer noWait = 0;
+
         @Override
         public Exchange call() throws Exception {
-            if (client == null)
+            if (client == null) {
                 throw new RuntimeCamelException("Beanstalk client not initialized");
+            }
 
             try {
-                final Job job = client.reserve(NO_WAIT);
-                if (job == null)
+                final Job job = client.reserve(noWait);
+                if (job == null) {
                     return null;
+                }
 
-                if (log.isDebugEnabled())
-                    log.debug(String.format("Received job ID %d (data length %d)", job.getJobId(), job.getData().length));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(String.format("Received job ID %d (data length %d)", job.getJobId(), job.getData().length));
+                }
 
                 final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
                 exchange.setProperty(Headers.JOB_ID, job.getJobId());
                 exchange.getIn().setBody(job.getData(), byte[].class);
 
-                Map<String,String> jobStats = client.statsJob(job.getJobId());
+                Map<String, String> jobStats = client.statsJob(job.getJobId());
                 if (jobStats != null) {
-                    for (String key : statsKeysStr) {
-                      if (jobStats.containsKey(key))
-                          exchange.setProperty(Headers.PREFIX+key, jobStats.get(key).trim());
+                    for (String key : STATS_KEY_STR) {
+                        if (jobStats.containsKey(key)) {
+                            exchange.setProperty(Headers.PREFIX + key, jobStats.get(key).trim());
+                        }
                     }
 
-                    if (jobStats.containsKey("pri"))
+                    if (jobStats.containsKey("pri")) {
                         exchange.setProperty(Headers.PRIORITY, Long.parseLong(jobStats.get("pri").trim()));
+                    }
 
-                    for (String key : statsKeysInt) {
-                      if (jobStats.containsKey(key))
-                          exchange.setProperty(Headers.PREFIX+key, Integer.parseInt(jobStats.get(key).trim()));
+                    for (String key : STATS_KEY_INT) {
+                        if (jobStats.containsKey(key)) {
+                            exchange.setProperty(Headers.PREFIX + key, Integer.parseInt(jobStats.get(key).trim()));
+                        }
                     }
                 }
 
-                if (deleteImmediately)
+                if (deleteImmediately) {
                     client.delete(job.getJobId());
-                else
+                } else {
                     exchange.addOnCompletion(sync);
+                }
 
                 return exchange;
             } catch (BeanstalkException e) {
-                log.error("Beanstalk client error", e);
+                getExceptionHandler().handleException("Beanstalk client error", e);
                 resetClient();
                 return null;
             }
         }
-
     };
 
     public BeanstalkConsumer(final BeanstalkEndpoint endpoint, final Processor processor) {
@@ -130,8 +137,9 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         int messagesPolled = 0;
         while (isPollAllowed()) {
             final Exchange exchange = executor.submit(pollTask).get();
-            if (exchange == null)
+            if (exchange == null) {
                 break;
+            }
 
             ++messagesPolled;
             getProcessor().process(exchange);
@@ -179,13 +187,15 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (executor != null)
-          executor.shutdown();
+        if (executor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
+        }
     }
 
     protected void resetClient() {
-        if (client != null)
+        if (client != null) {
             client.close();
+        }
         initTask.run();
     }
 
@@ -196,14 +206,15 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         public Sync() {
             successCommand = new DeleteCommand(getEndpoint());
 
-            if (BeanstalkComponent.COMMAND_BURY.equals(onFailure))
+            if (BeanstalkComponent.COMMAND_BURY.equals(onFailure)) {
                 failureCommand = new BuryCommand(getEndpoint());
-            else if (BeanstalkComponent.COMMAND_RELEASE.equals(onFailure))
+            } else if (BeanstalkComponent.COMMAND_RELEASE.equals(onFailure)) {
                 failureCommand = new ReleaseCommand(getEndpoint());
-            else if (BeanstalkComponent.COMMAND_DELETE.equals(onFailure))
+            } else if (BeanstalkComponent.COMMAND_DELETE.equals(onFailure)) {
                 failureCommand = new DeleteCommand(getEndpoint());
-            else
+            } else {
                 throw new IllegalArgumentException(String.format("Unknown failure command: %s", onFailure));
+            }
         }
 
         @Override
@@ -211,8 +222,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(successCommand, exchange)).get();
             } catch (Exception e) {
-                if (log.isErrorEnabled())
-                    log.error(String.format("Could not run completion of exchange %s", exchange), e);
+                LOG.error(String.format("Could not run completion of exchange %s", exchange), e);
             }
         }
 
@@ -221,8 +231,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(failureCommand, exchange)).get();
             } catch (Exception e) {
-                if (log.isErrorEnabled())
-                    log.error(String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange), e);
+                LOG.error(String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange), e);
             }
         }
 
@@ -241,14 +250,12 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                     try {
                         command.act(client, exchange);
                     } catch (BeanstalkException e) {
-                        if (log.isWarnEnabled())
-                            log.warn(String.format("Post-processing %s of exchange %s failed, retrying.", command.getClass().getName(), exchange), e);
+                        LOG.warn(String.format("Post-processing %s of exchange %s failed, retrying.", command.getClass().getName(), exchange), e);
                         resetClient();
                         command.act(client, exchange);
                     }
                 } catch (final Exception e) {
-                    if (log.isErrorEnabled())
-                        log.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange), e);
+                    LOG.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange), e);
                     exchange.setException(e);
                 }
             }

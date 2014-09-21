@@ -17,15 +17,16 @@
 package org.apache.camel.component.beanstalk;
 
 import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Beanstalk Camel component.
- *
+ * <p/>
  * URI is <code>beanstalk://[host[:port]][/tube]?query</code>
- * <p>
+ * <p/>
  * Parameters:<ul>
  * <li><code>command</code> - one of "put", "release", "bury", "touch", "delete", "kick".
  * "put" is the default for Producers.</li>
@@ -36,25 +37,24 @@ import org.apache.camel.impl.DefaultComponent;
  * <li><code>consumer.awaitJob</code></li>
  * </ul>
  *
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
  * @see BeanstalkEndpoint
  * @see ConnectionSettingsFactory
  */
 public class BeanstalkComponent extends DefaultComponent {
-    public static final String DEFAULT_TUBE     = "default";
+    public static final String DEFAULT_TUBE = "default";
 
-    public final static String COMMAND_BURY     = "bury";
-    public final static String COMMAND_RELEASE  = "release";
-    public final static String COMMAND_PUT      = "put";
-    public final static String COMMAND_TOUCH    = "touch";
-    public final static String COMMAND_DELETE   = "delete";
-    public final static String COMMAND_KICK     = "kick";
+    public static final String COMMAND_BURY = "bury";
+    public static final String COMMAND_RELEASE = "release";
+    public static final String COMMAND_PUT = "put";
+    public static final String COMMAND_TOUCH = "touch";
+    public static final String COMMAND_DELETE = "delete";
+    public static final String COMMAND_KICK = "kick";
 
-    public final static long DEFAULT_PRIORITY       = 1000; // 0 is highest
-    public final static int  DEFAULT_DELAY          = 0;
-    public final static int  DEFAULT_TIME_TO_RUN    = 60; // if 0 the daemon sets 1.
+    public static final long DEFAULT_PRIORITY = 1000; // 0 is highest
+    public static final int DEFAULT_DELAY = 0;
+    public static final int DEFAULT_TIME_TO_RUN = 60; // if 0 the daemon sets 1.
 
-    static ConnectionSettingsFactory connFactory = ConnectionSettingsFactory.DEFAULT;
+    private static ConnectionSettingsFactory connectionSettingsFactory = ConnectionSettingsFactory.DEFAULT;
 
     public BeanstalkComponent() {
     }
@@ -69,20 +69,24 @@ public class BeanstalkComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String,Object> parameters) throws Exception {
-        return new BeanstalkEndpoint(uri, this, connFactory.parseUri(remaining));
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        return new BeanstalkEndpoint(uri, this, connectionSettingsFactory.parseUri(remaining));
     }
 
     /**
-     * Custom ConnectionSettingsFactory.
-     * <p>
+     * Custom {@link ConnectionSettingsFactory}.
+     * <p/>
      * Specify which {@link ConnectionSettingsFactory} to use to make connections to Beanstalkd. Especially
      * useful for unit testing without beanstalkd daemon (you can mock {@link ConnectionSettings})
-     * 
-     * @param connFactory
+     *
+     * @param connFactory the connection factory
      * @see ConnectionSettingsFactory
      */
     public static void setConnectionSettingsFactory(ConnectionSettingsFactory connFactory) {
-        BeanstalkComponent.connFactory = connFactory;
+        BeanstalkComponent.connectionSettingsFactory = connFactory;
+    }
+
+    public static ConnectionSettingsFactory getConnectionSettingsFactory() {
+        return connectionSettingsFactory;
     }
 }

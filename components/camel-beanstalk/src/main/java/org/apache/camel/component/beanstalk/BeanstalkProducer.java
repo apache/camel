@@ -17,28 +17,28 @@
 package org.apache.camel.component.beanstalk;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future; 
-import org.apache.camel.component.beanstalk.processors.Command;
+import java.util.concurrent.Future;
+
 import com.surftools.BeanstalkClient.BeanstalkException;
 import com.surftools.BeanstalkClient.Client;
-import org.apache.camel.Exchange;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.beanstalk.processors.Command;
 import org.apache.camel.impl.DefaultProducer;
 
-/**
- *
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
- */
 public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor {
-    private ExecutorService executor = null;
-
-    Client client = null;
-    final Command command;
+    private ExecutorService executor;
+    private Client client;
+    private final Command command;
 
     public BeanstalkProducer(BeanstalkEndpoint endpoint, final Command command) throws Exception {
         super(endpoint);
         this.command = command;
+    }
+
+    public Command getCommand() {
+        return command;
     }
 
     @Override
@@ -65,8 +65,9 @@ public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor
     }
 
     protected void closeClient() {
-        if (client != null)
+        if (client != null) {
             client.close();
+        }
     }
 
     protected void initClient() {
@@ -78,15 +79,15 @@ public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor
         super.doStart();
         executor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "Beanstalk-Producer");
         executor.execute(new Runnable() {
-                public void run() {
-                    initClient();
-                }
-            });
+            public void run() {
+                initClient();
+            }
+        });
     }
 
     @Override
     protected void doStop() throws Exception {
-        executor.shutdown();
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
         closeClient();
         super.doStop();
     }
@@ -122,8 +123,9 @@ public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor
             } catch (Throwable t) {
                 exchange.setException(t);
             } finally {
-                if (callback != null)
+                if (callback != null) {
                     callback.done(false);
+                }
             }
         }
     }

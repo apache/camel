@@ -21,13 +21,15 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class EndpointTest {
-    CamelContext context = null;
+    CamelContext context;
 
     @Before
     public void setUp() throws Exception {
@@ -61,19 +63,19 @@ public class EndpointTest {
     public void testCommand() {
         BeanstalkEndpoint endpoint = context.getEndpoint("beanstalk:default?command=release", BeanstalkEndpoint.class);
         assertNotNull("Beanstalk endpoint", endpoint);
-        assertEquals("Command", BeanstalkComponent.COMMAND_RELEASE, endpoint.command);
+        assertEquals("Command", BeanstalkComponent.COMMAND_RELEASE, endpoint.getCommand());
     }
 
     @Test
     public void testTubes() {
         BeanstalkEndpoint endpoint = context.getEndpoint("beanstalk:host:11303/tube1+tube%2B+tube%3F?command=kick", BeanstalkEndpoint.class);
         assertNotNull("Beanstalk endpoint", endpoint);
-        assertEquals("Command", BeanstalkComponent.COMMAND_KICK, endpoint.command);
+        assertEquals("Command", BeanstalkComponent.COMMAND_KICK, endpoint.getCommand());
         assertEquals("Host", "host", endpoint.conn.host);
-        assertArrayEquals("Tubes", new String[] {"tube1", "tube+", "tube?"}, endpoint.conn.tubes);
+        assertArrayEquals("Tubes", new String[]{"tube1", "tube+", "tube?"}, endpoint.conn.tubes);
     }
 
-    @Test(expected=FailedToCreateProducerException.class)
+    @Test(expected = FailedToCreateProducerException.class)
     public void testWrongCommand() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

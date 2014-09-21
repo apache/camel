@@ -18,28 +18,28 @@ package org.apache.camel.component.beanstalk;
 
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.Component;
-import org.apache.camel.Producer;
-import org.apache.camel.component.beanstalk.processors.*;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.component.beanstalk.processors.BuryCommand;
+import org.apache.camel.component.beanstalk.processors.Command;
+import org.apache.camel.component.beanstalk.processors.DeleteCommand;
+import org.apache.camel.component.beanstalk.processors.KickCommand;
+import org.apache.camel.component.beanstalk.processors.PutCommand;
+import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
+import org.apache.camel.component.beanstalk.processors.TouchCommand;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 
-/**
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
- * @see BeanstalkConsumer
- * @see org.apache.camel.component.beanstalk.processors.PutCommand
- */
 public class BeanstalkEndpoint extends ScheduledPollEndpoint {
     final ConnectionSettings conn;
 
-    String command      = BeanstalkComponent.COMMAND_PUT;
-    long priority       = BeanstalkComponent.DEFAULT_PRIORITY;
-    int delay           = BeanstalkComponent.DEFAULT_DELAY;
-    int timeToRun       = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
+    private String command = BeanstalkComponent.COMMAND_PUT;
+    private long jobPriority = BeanstalkComponent.DEFAULT_PRIORITY;
+    private int jobDelay = BeanstalkComponent.DEFAULT_DELAY;
+    private int jobTimeToRun = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
 
-    BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn) {
+    public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn) {
         super(uri, component);
-
         this.conn = conn;
     }
 
@@ -47,66 +47,70 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return conn;
     }
 
-    /**
-     * The command {@link Producer} must execute
-     *
-     * @param command
-     */
-    public void setCommand(final String command) {
+    public ConnectionSettings getConn() {
+        return conn;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
         this.command = command;
     }
 
-    public void setJobPriority(final long priority) {
-        this.priority = priority;
-    }
-
     public long getJobPriority() {
-        return priority;
+        return jobPriority;
     }
 
-    public void setJobDelay(final int delay) {
-        this.delay = delay;
+    public void setJobPriority(long jobPriority) {
+        this.jobPriority = jobPriority;
     }
 
     public int getJobDelay() {
-        return delay;
+        return jobDelay;
     }
 
-    public void setJobTimeToRun(final int timeToRun) {
-        this.timeToRun = timeToRun;
+    public void setJobDelay(int jobDelay) {
+        this.jobDelay = jobDelay;
     }
 
     public int getJobTimeToRun() {
-        return timeToRun;
+        return jobTimeToRun;
+    }
+
+    public void setJobTimeToRun(int jobTimeToRun) {
+        this.jobTimeToRun = jobTimeToRun;
     }
 
     /**
      * Creates Camel producer.
-     * <p>
+     * <p/>
      * Depending on the command parameter (see {@link BeanstalkComponent} URI) it
      * will create one of the producer implementations.
      *
      * @return {@link Producer} instance
      * @throws IllegalArgumentException when {@link ConnectionSettings} cannot
-     * create a writable {@link Client}
+     *                                  create a writable {@link Client}
      */
     @Override
     public Producer createProducer() throws Exception {
-        Command cmd = null;
-        if (BeanstalkComponent.COMMAND_PUT.equals(command))
+        Command cmd;
+        if (BeanstalkComponent.COMMAND_PUT.equals(command)) {
             cmd = new PutCommand(this);
-        else if (BeanstalkComponent.COMMAND_RELEASE.equals(command))
+        } else if (BeanstalkComponent.COMMAND_RELEASE.equals(command)) {
             cmd = new ReleaseCommand(this);
-        else if (BeanstalkComponent.COMMAND_BURY.equals(command))
+        } else if (BeanstalkComponent.COMMAND_BURY.equals(command)) {
             cmd = new BuryCommand(this);
-        else if (BeanstalkComponent.COMMAND_TOUCH.equals(command))
+        } else if (BeanstalkComponent.COMMAND_TOUCH.equals(command)) {
             cmd = new TouchCommand(this);
-        else if (BeanstalkComponent.COMMAND_DELETE.equals(command))
+        } else if (BeanstalkComponent.COMMAND_DELETE.equals(command)) {
             cmd = new DeleteCommand(this);
-        else if (BeanstalkComponent.COMMAND_KICK.equals(command))
+        } else if (BeanstalkComponent.COMMAND_KICK.equals(command)) {
             cmd = new KickCommand(this);
-        else
+        } else {
             throw new IllegalArgumentException(String.format("Unknown command for Beanstalk endpoint: %s", command));
+        }
 
         return new BeanstalkProducer(this, cmd);
     }

@@ -16,23 +16,24 @@
  */
 package org.apache.camel.component.beanstalk;
 
-import com.surftools.BeanstalkClient.Client;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- *
- * @author <a href="mailto:azarov@osinka.com">Alexander Azarov</a>
- */
-public class ConnectionSettingsFactory {
-    public static final ConnectionSettingsFactory DEFAULT = new ConnectionSettingsFactory();
+import com.surftools.BeanstalkClient.Client;
 
-    final Pattern HostPortTubeRE = Pattern.compile("^(([\\w.-]+)(:([\\d]+))?/)?([\\w%+]*)$");
+public class ConnectionSettingsFactory {
+
+    public static final ConnectionSettingsFactory DEFAULT = new ConnectionSettingsFactory();
+    private static final Pattern HOST_PORT_TUBE_RE = Pattern.compile("^(([\\w.-]+)(:([\\d]+))?/)?([\\w%+]*)$");
+
+    public ConnectionSettingsFactory() {
+    }
 
     public ConnectionSettings parseUri(final String remaining) throws IllegalArgumentException {
-        final Matcher m = HostPortTubeRE.matcher(remaining);
-        if (!m.matches())
+        final Matcher m = HOST_PORT_TUBE_RE.matcher(remaining);
+        if (!m.matches()) {
             throw new IllegalArgumentException(String.format("Invalid path format: %s - should be [<hostName>[:<port>]/][<tubes>]", remaining));
+        }
 
         final String host = m.group(2) != null ? m.group(2) : Client.DEFAULT_HOST;
         final int port = m.group(4) != null ? Integer.parseInt(m.group(4)) : Client.DEFAULT_PORT;

@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.beanstalk.integration;
 
-import org.apache.camel.component.beanstalk.Headers;
-import org.apache.camel.component.beanstalk.Helper;
 import java.io.IOException;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.beanstalk.Headers;
+import org.apache.camel.component.beanstalk.Helper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
@@ -33,15 +34,15 @@ public class ConsumerIntegrationTest extends BeanstalkCamelTestSupport {
 
     @Test
     public void testReceive() throws IOException, InterruptedException {
-        long PRIO = 0;
-        int TTR = 10;
-        final long jobId = writer.put(PRIO, 0, TTR, Helper.stringToBytes(testMessage));
+        long prio = 0;
+        int ttr = 10;
+        final long jobId = writer.put(prio, 0, ttr, Helper.stringToBytes(testMessage));
 
         result.expectedMessageCount(1);
         result.expectedPropertyReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Exchange.CREATED_TIMESTAMP).isNotNull();
-        result.message(0).header(Headers.JOB_ID).isEqualTo(Long.valueOf(jobId));
-        result.message(0).header(Headers.PRIORITY).isEqualTo(Long.valueOf(PRIO));
+        result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
+        result.message(0).header(Headers.PRIORITY).isEqualTo(prio);
         result.message(0).header(Headers.TUBE).isEqualTo(tubeName);
         result.message(0).header(Headers.STATE).isEqualTo("reserved");
         result.message(0).header(Headers.AGE).isGreaterThan(0);
@@ -59,7 +60,7 @@ public class ConsumerIntegrationTest extends BeanstalkCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("beanstalk:"+tubeName).to("mock:result");
+                from("beanstalk:" + tubeName).to("mock:result");
             }
         };
     }
