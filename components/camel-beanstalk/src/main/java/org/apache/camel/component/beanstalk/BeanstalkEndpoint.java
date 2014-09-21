@@ -38,6 +38,10 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
     private int jobDelay = BeanstalkComponent.DEFAULT_DELAY;
     private int jobTimeToRun = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
 
+    private String onFailure = BeanstalkComponent.COMMAND_BURY;
+    private boolean useBlockIO = true;
+    private boolean awaitJob = true;
+
     public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn) {
         super(uri, component);
         this.conn = conn;
@@ -83,6 +87,30 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         this.jobTimeToRun = jobTimeToRun;
     }
 
+    public String getOnFailure() {
+        return onFailure;
+    }
+
+    public void setOnFailure(String onFailure) {
+        this.onFailure = onFailure;
+    }
+
+    public boolean isUseBlockIO() {
+        return useBlockIO;
+    }
+
+    public void setUseBlockIO(boolean useBlockIO) {
+        this.useBlockIO = useBlockIO;
+    }
+
+    public boolean isAwaitJob() {
+        return awaitJob;
+    }
+
+    public void setAwaitJob(boolean awaitJob) {
+        this.awaitJob = awaitJob;
+    }
+
     /**
      * Creates Camel producer.
      * <p/>
@@ -118,6 +146,9 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         BeanstalkConsumer consumer = new BeanstalkConsumer(this, processor);
+        consumer.setAwaitJob(isAwaitJob());
+        consumer.setOnFailure(getOnFailure());
+        consumer.setUseBlockIO(isUseBlockIO());
         configureConsumer(consumer);
         return consumer;
     }

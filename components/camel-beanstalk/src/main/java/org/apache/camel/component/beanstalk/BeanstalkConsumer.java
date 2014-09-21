@@ -57,9 +57,9 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
     private static final String[] STATS_KEY_STR = new String[]{"tube", "state"};
     private static final String[] STATS_KEY_INT = new String[]{"age", "time-left", "timeouts", "releases", "buries", "kicks"};
 
-    private String onFailure = BeanstalkComponent.COMMAND_BURY;
-    private boolean useBlockIO = true;
-    private boolean deleteImmediately;
+    private String onFailure;
+    private boolean useBlockIO;
+    private boolean awaitJob;
     private Client client;
     private ExecutorService executor;
     private Synchronization sync;
@@ -113,7 +113,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                     }
                 }
 
-                if (deleteImmediately) {
+                if (!awaitJob) {
                     client.delete(job.getJobId());
                 } else {
                     exchange.addOnCompletion(sync);
@@ -155,7 +155,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         this.onFailure = onFailure;
     }
 
-    public boolean getUseBlockIO() {
+    public boolean isUseBlockIO() {
         return useBlockIO;
     }
 
@@ -163,12 +163,12 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         this.useBlockIO = useBlockIO;
     }
 
-    public boolean getAwaitJob() {
-        return !deleteImmediately;
+    public boolean isAwaitJob() {
+        return awaitJob;
     }
 
-    public void setAwaitJob(boolean awaitingCompletion) {
-        this.deleteImmediately = !awaitingCompletion;
+    public void setAwaitJob(boolean awaitJob) {
+        this.awaitJob = awaitJob;
     }
 
     @Override
