@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -28,6 +23,11 @@ import org.elasticsearch.action.get.GetResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ElasticsearchComponentTest extends CamelTestSupport {
 
@@ -119,6 +119,22 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    public void testIndexWithIDInHeader() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("content", "test");
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_ID, "123");
+
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+        assertEquals("indexId should be equals to the provided id", "123", indexId);
     }
 
     @Test
