@@ -227,6 +227,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-geocoder</artifactId>
     </dependency>
+     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-github</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-google-drive</artifactId>
