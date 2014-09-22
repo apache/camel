@@ -23,7 +23,7 @@ import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.PullRequestService;
 
 /**
- * Producer endpoint that adds one of two types of comments on a GitHub pullrequest:
+ * Producer endpoint that adds one of two types of comments on a GitHub pull request:
  * 
  * 1.) Response to an in-line comment made on a pull request commit review.  To use, include the
  *     "GitHubInResponseTo" header, identifying the comment ID (integer) that you're responding to.
@@ -32,9 +32,9 @@ import org.eclipse.egit.github.core.service.PullRequestService;
  * Both endpoints require the "GitHubPullRequest" header, identifying the pull request number (integer).
  */
 public class PullRequestCommentProducer extends AbstractGitHubProducer {
-    private PullRequestService pullRequestService = null;
+    private PullRequestService pullRequestService;
 
-    private IssueService issueService = null;
+    private IssueService issueService;
 
     public PullRequestCommentProducer(GitHubEndpoint endpoint) throws Exception {
         super(endpoint);
@@ -52,10 +52,10 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         
         Comment response;
         if (inResponseTo != null && inResponseTo > 0) {
-        	response = pullRequestService.replyToComment(getRepository(), pullRequestNumber, inResponseTo, text);
+            response = pullRequestService.replyToComment(getRepository(), pullRequestNumber, inResponseTo, text);
         } else {
             // Otherwise, just comment on the pull request itself.
-        	response = issueService.createComment(getRepository(), pullRequestNumber, text);
+            response = issueService.createComment(getRepository(), pullRequestNumber, text);
         }
         
         // support InOut

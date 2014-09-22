@@ -32,11 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
-	private static final transient Logger LOG = LoggerFactory.getLogger(PullRequestCommentConsumer.class);
-	
-    private PullRequestService pullRequestService = null;
+    private static final transient Logger LOG = LoggerFactory.getLogger(PullRequestCommentConsumer.class);
 
-    private IssueService issueService = null;
+    private PullRequestService pullRequestService;
+
+    private IssueService issueService;
     
     private List<Long> commentIds = new ArrayList<Long>();
     
@@ -47,26 +47,27 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         initService(pullRequestService);
         issueService = new IssueService();
         initService(issueService);
-    	
+
         LOG.info("GitHub PullRequestCommentConsumer: Indexing current pull request comments...");
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
-		for (PullRequest pullRequest : pullRequests) {
-		    List<CommitComment> commitComments = pullRequestService.getComments(getRepository(), pullRequest.getNumber());
-		    for (Comment comment : commitComments) {
-		        commentIds.add(comment.getId());
-		    }
-		    List<Comment> comments = issueService.getComments(getRepository(), pullRequest.getNumber());
-		    for (Comment comment : comments) {
+        for (PullRequest pullRequest : pullRequests) {
+            List<CommitComment> commitComments = pullRequestService.getComments(getRepository(),
+                                                                                pullRequest.getNumber());
+            for (Comment comment : commitComments) {
                 commentIds.add(comment.getId());
             }
-		}
+            List<Comment> comments = issueService.getComments(getRepository(), pullRequest.getNumber());
+            for (Comment comment : comments) {
+                commentIds.add(comment.getId());
+            }
+        }
     }
 
     @Override
     protected int poll() throws Exception {
-    	List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
-    	// In the end, we want comments oldest to newest.
-    	Stack<Comment> newComments = new Stack<Comment>();
+        List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
+        // In the end, we want comments oldest to newest.
+        Stack<Comment> newComments = new Stack<Comment>();
         for (PullRequest pullRequest : pullRequests) {
             List<CommitComment> commitComments = pullRequestService.getComments(getRepository(), pullRequest.getNumber());
             for (Comment comment : commitComments) {
@@ -84,9 +85,9 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
             }
         }
         
-        while(!newComments.empty()) {
+        while (!newComments.empty()) {
             Comment newComment = newComments.pop();
-        	Exchange e = getEndpoint().createExchange();
+            Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newComment);
             getProcessor().process(e);
         }

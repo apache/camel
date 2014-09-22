@@ -29,9 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommitConsumer extends AbstractGitHubConsumer {
-	private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
-	
-    private CommitService commitService = null;
+    private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
+    
+    private CommitService commitService;
     
     private List<String> commitHashes = new ArrayList<String>();
     
@@ -43,26 +43,26 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         
         LOG.info("GitHub CommitConsumer: Indexing current commits...");
         List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
-		for (RepositoryCommit commit : commits) {
-		    commitHashes.add(commit.getSha());
-		}
+        for (RepositoryCommit commit : commits) {
+            commitHashes.add(commit.getSha());
+        }
     }
 
     @Override
     protected int poll() throws Exception {
         List<RepositoryCommit> commits = commitService.getCommits(getRepository());
-    	// In the end, we want tags oldest to newest.
-    	Stack<RepositoryCommit> newCommits = new Stack<RepositoryCommit>();
-    	for (RepositoryCommit commit : commits) {
-        	if (!commitHashes.contains(commit.getSha())) {
-        	    newCommits.push(commit);
-        	    commitHashes.add(commit.getSha());
-        	}
+        // In the end, we want tags oldest to newest.
+        Stack<RepositoryCommit> newCommits = new Stack<RepositoryCommit>();
+        for (RepositoryCommit commit : commits) {
+            if (!commitHashes.contains(commit.getSha())) {
+                newCommits.push(commit);
+                commitHashes.add(commit.getSha());
+            }
         }
         
-        while(!newCommits.empty()) {
+        while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
-        	Exchange e = getEndpoint().createExchange();
+            Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newCommit);
             getProcessor().process(e);
         }

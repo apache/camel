@@ -53,15 +53,15 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class GitHubEndpoint extends DefaultEndpoint {
     
-    private String username = null;
+    private String username;
     
-    private String password = null;
+    private String password;
     
-    private String oauthToken = null;
+    private String oauthToken;
     
-    private String repoOwner = null;
+    private String repoOwner;
     
-    private String repoName = null;
+    private String repoName;
     
     public GitHubEndpoint(String uri, GitHubComponent component) {
         super(uri, component);

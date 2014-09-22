@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TagConsumer extends AbstractGitHubConsumer {
-	private static final transient Logger LOG = LoggerFactory.getLogger(TagConsumer.class);
-	
+    private static final transient Logger LOG = LoggerFactory.getLogger(TagConsumer.class);
+
     private List<String> tagNames = new ArrayList<String>();
     
     public TagConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
@@ -37,26 +37,26 @@ public class TagConsumer extends AbstractGitHubConsumer {
         
         LOG.info("GitHub TagConsumer: Indexing current tags...");
         List<RepositoryTag> tags = getRepositoryService().getTags(getRepository());
-		for (RepositoryTag tag : tags) {
-		    tagNames.add(tag.getName());
-		}
+        for (RepositoryTag tag : tags) {
+            tagNames.add(tag.getName());
+        }
     }
 
     @Override
     protected int poll() throws Exception {
         List<RepositoryTag> tags = getRepositoryService().getTags(getRepository());
-    	// In the end, we want tags oldest to newest.
-    	Stack<RepositoryTag> newTags = new Stack<RepositoryTag>();
-    	for (RepositoryTag tag : tags) {
-        	if (!tagNames.contains(tag.getName())) {
-        	    newTags.push(tag);
-        	    tagNames.add(tag.getName());
-        	}
+        // In the end, we want tags oldest to newest.
+        Stack<RepositoryTag> newTags = new Stack<RepositoryTag>();
+        for (RepositoryTag tag : tags) {
+            if (!tagNames.contains(tag.getName())) {
+                newTags.push(tag);
+                tagNames.add(tag.getName());
+            }
         }
         
-        while(!newTags.empty()) {
+        while (!newTags.empty()) {
             RepositoryTag newTag = newTags.pop();
-        	Exchange e = getEndpoint().createExchange();
+            Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newTag);
             getProcessor().process(e);
         }

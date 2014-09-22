@@ -28,45 +28,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PullRequestConsumer extends AbstractGitHubConsumer {
-	private static final transient Logger LOG = LoggerFactory.getLogger(PullRequestConsumer.class);
-	
-    private PullRequestService pullRequestService = null;
+    private static final transient Logger LOG = LoggerFactory.getLogger(PullRequestConsumer.class);
+
+    private PullRequestService pullRequestService;
     
-    private int lastOpenPullRequest = 0;
+    private int lastOpenPullRequest;
 
     public PullRequestConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         
         pullRequestService = new PullRequestService();
-    	initService(pullRequestService);
-    	
-    	LOG.info("GitHub PullRequestConsumer: Indexing current pull requests...");
+        initService(pullRequestService);
+
+        LOG.info("GitHub PullRequestConsumer: Indexing current pull requests...");
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
-		if (pullRequests.size() > 0) {
-			lastOpenPullRequest = pullRequests.get(0).getNumber();
-		}
+        if (pullRequests.size() > 0) {
+            lastOpenPullRequest = pullRequests.get(0).getNumber();
+        }
     }
 
     @Override
     protected int poll() throws Exception {
-    	List<PullRequest> openPullRequests = pullRequestService.getPullRequests(getRepository(), "open");
-    	// In the end, we want PRs oldest to newest.
-    	Stack<PullRequest> newPullRequests = new Stack<PullRequest>();
+        List<PullRequest> openPullRequests = pullRequestService.getPullRequests(getRepository(), "open");
+        // In the end, we want PRs oldest to newest.
+        Stack<PullRequest> newPullRequests = new Stack<PullRequest>();
         for (PullRequest pullRequest : openPullRequests) {
-        	if (pullRequest.getNumber() > lastOpenPullRequest) {
-        		newPullRequests.push(pullRequest);
-        	} else {
-        		break;
-        	}
+            if (pullRequest.getNumber() > lastOpenPullRequest) {
+                newPullRequests.push(pullRequest);
+            } else {
+                break;
+            }
         }
         
         if (newPullRequests.size() > 0) {
-        	lastOpenPullRequest = openPullRequests.get(0).getNumber();
+            lastOpenPullRequest = openPullRequests.get(0).getNumber();
         }
-        
-        while(!newPullRequests.empty()) {
-        	PullRequest newPullRequest = newPullRequests.pop();
-        	Exchange e = getEndpoint().createExchange();
+
+        while (!newPullRequests.empty()) {
+            PullRequest newPullRequest = newPullRequests.pop();
+            Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newPullRequest);
             getProcessor().process(e);
         }
