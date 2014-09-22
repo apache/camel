@@ -919,6 +919,11 @@
         <artifactId>camel-jibx</artifactId>
         <version>${project.version}</version>
       </dependency>
+       <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jira</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jing</artifactId>
