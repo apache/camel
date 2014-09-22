@@ -18,7 +18,6 @@ package org.apache.camel.component.atmosphere.websocket;
 
 import java.util.UUID;
 
-import org.apache.camel.component.atmosphere.websocket.MemoryWebSocketStore;
 import org.atmosphere.websocket.WebSocket;
 import org.easymock.EasyMock;
 import org.junit.Assert;
