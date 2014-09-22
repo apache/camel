@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.wsservlet;
+package org.apache.camel.component.atmosphere.websocket;
 
 import org.apache.camel.component.atmosphere.websocket.CamelWebSocketServlet;
 import org.apache.camel.test.AvailablePortFinder;
