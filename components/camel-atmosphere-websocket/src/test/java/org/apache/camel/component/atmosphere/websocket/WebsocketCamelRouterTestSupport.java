@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atmosphere.websocket;
 
-import org.apache.camel.component.atmosphere.websocket.CamelWebSocketServlet;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.server.Connector;
