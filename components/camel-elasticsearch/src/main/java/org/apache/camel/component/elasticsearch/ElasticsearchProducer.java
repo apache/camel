@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
@@ -34,6 +30,10 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an Elasticsearch producer.
@@ -119,7 +119,9 @@ public class ElasticsearchProducer extends DefaultProducer {
             indexType = getEndpoint().getConfig().getIndexType();
         }
 
-        IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);
+        String indexId = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_ID, String.class);
+
+        IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType, indexId);
 
         Object document = extractDocumentFromMessage(exchange.getIn());
 
