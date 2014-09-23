@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -30,7 +29,6 @@ public class CamelMsvTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        Thread.sleep(2000);
         testComponent(COMPONENT);
     }
 
