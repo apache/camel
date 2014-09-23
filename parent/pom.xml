@@ -131,6 +131,7 @@
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-version>2.8.3</ehcache-version>
+    <egit-github-core-version>2.1.5</egit-github-core-version>
     <elasticsearch-bundle-version>1.0.0_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.0.0</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>

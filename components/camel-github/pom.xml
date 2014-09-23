@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.eclipse.mylyn.github</groupId>
       <artifactId>org.eclipse.egit.github.core</artifactId>
-      <version>2.1.5</version>
+      <version>${egit-github-core-version}</version>
       <scope>provided</scope>
     </dependency>
 
