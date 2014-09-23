@@ -29,6 +29,9 @@ import org.apache.camel.component.github.consumer.TagConsumer;
 import org.apache.camel.component.github.producer.ProducerType;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
 /**
  * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
@@ -51,16 +54,18 @@ import org.apache.camel.impl.DefaultEndpoint;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
+@UriEndpoint(scheme = "github")
+@UriParams
 public class GitHubEndpoint extends DefaultEndpoint {
-    
+    @UriParam
     private String username;
-    
+    @UriParam
     private String password;
-    
+    @UriParam
     private String oauthToken;
-    
+    @UriParam
     private String repoOwner;
-    
+    @UriParam
     private String repoName;
     
     public GitHubEndpoint(String uri, GitHubComponent component) {
