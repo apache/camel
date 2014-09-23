@@ -24,13 +24,13 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-@Ignore("Fails for some unknown reason")
 public class CamelMsvTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelMsvTest.class);
 
     @Test
     public void test() throws Exception {
+        Thread.sleep(2000);
         testComponent(COMPONENT);
     }
 
