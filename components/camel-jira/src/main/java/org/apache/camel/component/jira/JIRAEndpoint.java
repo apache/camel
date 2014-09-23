@@ -25,6 +25,9 @@ import org.apache.camel.component.jira.consumer.ConsumerType;
 import org.apache.camel.component.jira.consumer.NewCommentConsumer;
 import org.apache.camel.component.jira.consumer.NewIssueConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
 /**
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK.
@@ -41,14 +44,16 @@ import org.apache.camel.impl.DefaultEndpoint;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
+@UriParams
+@UriEndpoint(scheme = "jira")
 public class JIRAEndpoint extends DefaultEndpoint {
-
+    @UriParam
     private String serverUrl;
-
+    @UriParam
     private String username;
-
+    @UriParam
     private String password;
-
+    @UriParam
     private String jql;
 
     public JIRAEndpoint(String uri, JIRAComponent component) {
