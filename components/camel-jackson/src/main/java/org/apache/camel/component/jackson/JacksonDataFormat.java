@@ -73,13 +73,28 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
      *                 See also http://wiki.fasterxml.com/JacksonJsonViews
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+        this(unmarshalType, jsonView, true);
+    }
+    
+    /**
+     * Use the default Jackson {@link ObjectMapper} and with a custom
+     * unmarshal type and JSON view
+     *
+     * @param unmarshalType the custom unmarshal type
+     * @param jsonView marker class to specify properties to be included during marshalling.
+     *                 See also http://wiki.fasterxml.com/JacksonJsonViews
+     * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
+     */
+    public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
         this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
 
-        // Enables JAXB processing
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        this.objectMapper.registerModule(module);
+        if (enableJaxbAnnotationModule) {
+            // Enables JAXB processing
+            JaxbAnnotationModule module = new JaxbAnnotationModule();
+            this.objectMapper.registerModule(module);
+        }
     }
 
     /**
