@@ -51,6 +51,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     @UriParam
     private boolean transform = true;
     @UriParam
+    private boolean binary;
+    @UriParam
     private boolean contentResolvedFromResource;
     @UriParam
     private boolean cacheScript;
@@ -151,6 +153,21 @@ public class LanguageEndpoint extends ResourceEndpoint {
      */
     public void setTransform(boolean transform) {
         this.transform = transform;
+    }
+
+    public boolean isBinary() {
+        return binary;
+    }
+
+    /**
+     * Whether the script is binary content or text content.
+     * <p/>
+     * By default the script is read as text content (eg <tt>java.lang.String</tt>)
+     *
+     * @param binary <tt>true</tt> to read the script as binary, instead of text based.
+     */
+    public void setBinary(boolean binary) {
+        this.binary = binary;
     }
 
     /**
