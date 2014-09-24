@@ -64,23 +64,23 @@ public final class Helper {
             byteOS.close();
         }
     }
-}
 
-class MockConnectionSettings extends ConnectionSettings {
-    final Client client;
+    static class MockConnectionSettings extends ConnectionSettings {
+        final Client client;
 
-    public MockConnectionSettings(Client client) {
-        super("tube");
-        this.client = client;
-    }
+        public MockConnectionSettings(Client client) {
+            super("tube");
+            this.client = client;
+        }
 
-    @Override
-    public Client newReadingClient(boolean useBlockIO) {
-        return client;
-    }
+        @Override
+        public Client newReadingClient(boolean useBlockIO) {
+            return client;
+        }
 
-    @Override
-    public Client newWritingClient() {
-        return client;
+        @Override
+        public Client newWritingClient() {
+            return client;
+        }
     }
 }
