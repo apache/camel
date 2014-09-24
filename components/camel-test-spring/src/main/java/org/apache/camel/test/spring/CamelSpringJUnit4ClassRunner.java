@@ -19,6 +19,7 @@ package org.apache.camel.test.spring;
 import java.util.List;
 
 import org.junit.runners.model.InitializationError;
+import org.springframework.core.OrderComparator;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -57,9 +58,10 @@ public class CamelSpringJUnit4ClassRunner extends SpringJUnit4ClassRunner {
 
             // inject Camel first, and then disable jmx and add the stop-watch
             List<TestExecutionListener> list = getTestExecutionListeners();
-            list.add(0, new CamelSpringTestContextLoaderTestExecutionListener());
+            list.add(new CamelSpringTestContextLoaderTestExecutionListener());
             list.add(new DisableJmxTestExecutionListener());
             list.add(new StopWatchTestExecutionListener());
+            OrderComparator.sort(list);
             registerTestExecutionListeners(list);
         }
 
