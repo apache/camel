@@ -43,6 +43,8 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private SearchTerm searchTerm;
     private SortTerm[] sortTerm;
 
+    private MailBoxPostProcessAction postProcessAction;
+
     public MailEndpoint() {
     }
 
@@ -197,4 +199,18 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.sortTerm = (sortTerm == null ? null : sortTerm.clone());
     }
 
+    /**
+     * @return Post processor that can e.g. delete old email. Gets called once the messages have been polled and
+     * processed.
+     */
+    public MailBoxPostProcessAction getPostProcessAction() {
+        return postProcessAction;
+    }
+
+    /**
+     * @param postProcessAction {@link #getPostProcessAction()}
+     */
+    public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
+        this.postProcessAction = postProcessAction;
+    }
 }
