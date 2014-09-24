@@ -64,6 +64,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
        <from uri="cxfrs://bean://rsServer"/>
+       <to uri="log:body?level=INFO"/>
        <!-- We can remove this configure as the CXFRS producer is using the HttpAPI by default -->
        <setHeader headerName="CamelCxfRsUsingHttpAPI">
          <constant>True</constant>        
