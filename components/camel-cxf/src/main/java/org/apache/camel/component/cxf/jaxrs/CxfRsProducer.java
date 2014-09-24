@@ -164,8 +164,8 @@ public class CxfRsProducer extends DefaultProducer {
 
         // set the body
         Object body = null;
-        if (!"GET".equals(httpMethod)) {
-            // need to check the request object.           
+        if (!"GET".equals(httpMethod) && !"DELETE".equals(httpMethod)) {
+            // need to check the request object if the http Method is not GET or DELETE           
             body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Request body = " + body);
