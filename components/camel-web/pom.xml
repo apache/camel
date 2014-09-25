@@ -245,9 +245,9 @@
             </plugin>
 
             <!-- mvn tomcat7:run -->
-            <plugin>  
-              <groupId>org.apache.tomcat.maven</groupId>  
-              <artifactId>tomcat7-maven-plugin</artifactId>  
+            <plugin>
+              <groupId>org.apache.tomcat.maven</groupId>
+              <artifactId>tomcat7-maven-plugin</artifactId>
             </plugin>
 
 
@@ -371,7 +371,7 @@
                         </docletArtifact>
                     </docletArtifacts>
                     <additionalparam>-output
-                        ${project.build.outputDirectory}/resourcedoc.xml
+                      ${project.build.outputDirectory}${file.separator}resourcedoc.xml
                     </additionalparam>
                 </configuration>
             </plugin>
