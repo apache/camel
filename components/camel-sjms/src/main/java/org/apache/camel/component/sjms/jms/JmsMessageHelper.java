@@ -139,7 +139,7 @@ public final class JmsMessageHelper {
                 break;
             }
         } catch (Exception e) {
-            LOGGER.error("Error creating a message of type: " + messageType.toString());
+            LOGGER.error("Error creating a message of type: {}", messageType, e);
             throw e;
         }
         if (messageHeaders != null && !messageHeaders.isEmpty()) {
@@ -317,9 +317,7 @@ public final class JmsMessageHelper {
         try {
             message.setJMSType(type);
         } catch (JMSException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Error setting the message type: {}", type);
-            }
+            LOGGER.debug("Error setting the message type: {}", type, e);
         }
     }
 
@@ -335,9 +333,7 @@ public final class JmsMessageHelper {
         try {
             message.setJMSCorrelationID(correlationId);
         } catch (JMSException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Error setting the correlationId: {}", correlationId);
-            }
+            LOGGER.debug("Error setting the correlationId: {}", correlationId, e);
         }
     }
 
