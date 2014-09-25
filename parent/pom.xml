@@ -175,7 +175,7 @@
     <google-api-client-version>1.18.0-rc</google-api-client-version>
     <google-api-services-drive-version>v2-rev123-1.18.0-rc</google-api-services-drive-version>
     <grizzly-websockets-version>2.3.11</grizzly-websockets-version>
-    <groovy-version>2.3.6</groovy-version>
+    <groovy-version>2.3.7</groovy-version>
     <gson-version>2.2.4</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
