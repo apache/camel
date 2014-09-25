@@ -29,10 +29,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
-public class JsonToXmlAttributesTest extends CamelTestSupport {
+public class JsonToXmlAttributesTest extends AbstractJsonTestSupport {
 
     @Test
     public void shouldCreateAttribute() {

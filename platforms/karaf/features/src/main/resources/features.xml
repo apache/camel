@@ -1381,7 +1381,8 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ezmorph/${ezmorph-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:xom/xom/${xom-version}</bundle>
+    <!-- NOTICE: XOM cannot be included by default due to an incompatible license; please review its license model and install the dependency manually if you agree. -->
+    <!--<bundle dependency='true'>mvn:xom/xom/${xom-version}</bundle>-->
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json-lib/${jsonlib-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version-xmljson}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
