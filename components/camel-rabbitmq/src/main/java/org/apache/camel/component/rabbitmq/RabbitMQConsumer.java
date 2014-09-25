@@ -28,6 +28,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
@@ -181,6 +183,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             mergeAmqpProperties(exchange, properties);
 
+            boolean sendReply = properties.getReplyTo() != null;
+            if (sendReply && !exchange.getPattern().isOutCapable()) {
+                exchange.setPattern(ExchangePattern.InOut);
+            }
+
             log.trace("Created exchange [exchange={}]", exchange);
             long deliveryTag = envelope.getDeliveryTag();
             try {
@@ -191,6 +198,19 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
             if (!exchange.isFailed()) {
                 // processing success
+                if (sendReply && exchange.getPattern().isOutCapable()) {
+                    Message msg;
+                    if (exchange.hasOut()) {
+                        msg = exchange.getOut();
+                    } else {
+                        msg = exchange.getIn();
+                    }
+                    AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
+                            .headers(msg.getHeaders())
+                            .correlationId(properties.getCorrelationId())
+                            .build();
+                    channel.basicPublish("", properties.getReplyTo(), replyProps, msg.getBody(byte[].class));
+                }
                 if (!consumer.endpoint.isAutoAck()) {
                     log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
                     channel.basicAck(deliveryTag, false);
