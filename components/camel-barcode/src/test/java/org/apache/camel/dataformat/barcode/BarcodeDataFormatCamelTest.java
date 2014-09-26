@@ -69,7 +69,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code1", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 100, 100, BarcodeImageType.PNG.toString());
+        this.checkImage(image, 100, 100, BarcodeImageType.PNG.toString(), BarcodeFormat.QR_CODE);
     }
     
     /**
@@ -85,7 +85,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code2", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 200, 200, BarcodeImageType.PNG.toString());
+        this.checkImage(image, 200, 200, BarcodeImageType.PNG.toString(), BarcodeFormat.QR_CODE);
     }
     
     /**
@@ -101,7 +101,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code3", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 100, 100, "JPEG");
+        this.checkImage(image, 100, 100, "JPEG", BarcodeFormat.QR_CODE);
     }
     
     /**
@@ -117,7 +117,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code4", MSG);
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
-        this.checkImage(image, "JPEG");
+        this.checkImage(image, "JPEG", BarcodeFormat.PDF_417);
     }
 
     @Override
