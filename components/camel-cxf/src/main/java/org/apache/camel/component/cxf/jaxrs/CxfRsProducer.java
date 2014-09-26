@@ -57,12 +57,15 @@ public class CxfRsProducer extends DefaultProducer {
 
     private boolean throwException;
     
+    private CxfRsEndpoint cxfRsEndpoint;
+    
     // using a cache of factory beans instead of setting the address of a single cfb
     // to avoid concurrent issues
     private ClientFactoryBeanCache clientFactoryBeanCache;
     
     public CxfRsProducer(CxfRsEndpoint endpoint) {
         super(endpoint);
+        cxfRsEndpoint = endpoint;
         this.throwException = endpoint.isThrowExceptionOnFailure();
         clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
     }
@@ -158,11 +161,15 @@ public class CxfRsProducer extends DefaultProducer {
 
         // set the body
         Object body = null;
-        if (!"GET".equals(httpMethod) && !"DELETE".equals(httpMethod)) {
-            // need to check the request object if the http Method is not GET or DELETE           
-            body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Request body = " + body);
+        if (!"GET".equals(httpMethod)) {
+            // need to check the request object if the http Method is not GET      
+            if ("DELETE".equals(httpMethod) && cxfRsEndpoint.isIgnoreDeleteMethodMessageBody()) {
+                // just ignore the message body if the ignoreDeleteMethodMessageBody is true
+            } else {
+                body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Request body = " + body);
+                }
             }
         }
 
