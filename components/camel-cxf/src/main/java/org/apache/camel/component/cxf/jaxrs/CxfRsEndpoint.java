@@ -91,6 +91,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @UriParam
     private boolean httpClientAPI = true;
     @UriParam
+    private boolean ignoreDeleteMethodMessageBody;
+    @UriParam
     private String address;
     @UriParam
     private boolean throwExceptionOnFailure = true;
@@ -400,6 +402,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return isSetDefaultBus;
     }
     
+    public boolean isIgnoreDeleteMethodMessageBody() {
+        return ignoreDeleteMethodMessageBody;
+    }
+
+    public void setIgnoreDELETEMethodMessageBody(boolean ignoreDELETEMethodMessageBody) {
+        this.ignoreDeleteMethodMessageBody = ignoreDELETEMethodMessageBody;
+    }
+
     public BindingStyle getBindingStyle() {
         return bindingStyle;
     }
