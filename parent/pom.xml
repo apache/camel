@@ -208,6 +208,8 @@
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
+    <isorelax-version>20090621</isorelax-version>
+    <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson2-version>2.4.1</jackson2-version>
@@ -322,7 +324,7 @@
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.12.0</mongo-java-driver-version>
     <mqtt-client-version>1.10</mqtt-client-version>
-    <msv-version>20050913</msv-version>
+    <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.8.16</mustache-java-version>
     <mustache-bundle-version>0.8.15_1/</mustache-bundle-version>
     <mvel-version>2.2.1.Final</mvel-version>
