@@ -103,13 +103,13 @@ public class KafkaEndpoint extends DefaultEndpoint {
     //-------------------------------------------------------------------------
 
     public String getZookeeperConnect() {
-    	return configuration.getZookeeperConnect();
+        return configuration.getZookeeperConnect();
     }
 
     public void setZookeeperConnect(String zookeeperConnect) {
-		configuration.setZookeeperConnect(zookeeperConnect);
-	}
-        
+        configuration.setZookeeperConnect(zookeeperConnect);
+    }
+
     public String getZookeeperHost() {
         return configuration.getZookeeperHost();
     }
