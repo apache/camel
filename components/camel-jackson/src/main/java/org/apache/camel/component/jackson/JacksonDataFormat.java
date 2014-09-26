@@ -46,6 +46,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
     private boolean prettyPrint;
     private boolean allowJmsType;
     private boolean useList;
+    private boolean enableJaxbAnnotationModule;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -89,12 +90,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
-
-        if (enableJaxbAnnotationModule) {
-            // Enables JAXB processing
-            JaxbAnnotationModule module = new JaxbAnnotationModule();
-            this.objectMapper.registerModule(module);
-        }
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
     /**
@@ -203,6 +199,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.useList = useList;
     }
 
+    public boolean isEnableJaxbAnnotationModule() {
+        return enableJaxbAnnotationModule;
+    }
+
+    public void setEnableJaxbAnnotationModule(boolean enableJaxbAnnotationModule) {
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+    }
+
     /**
      * Uses {@link java.util.ArrayList} when unmarshalling.
      */
@@ -229,6 +233,13 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
 
     @Override
     protected void doStart() throws Exception {
+        
+        if (enableJaxbAnnotationModule) {
+            // Enables JAXB processing
+            JaxbAnnotationModule module = new JaxbAnnotationModule();
+            objectMapper.registerModule(module);
+        }
+        
         if (useList) {
             setCollectionType(ArrayList.class);
         }

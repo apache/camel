@@ -56,6 +56,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Class<?> collectionType;
     @XmlAttribute
     private Boolean useList;
+    @XmlAttribute
+    private Boolean enableJaxbAnnotationModule;
 
     public JsonDataFormat() {
     }
@@ -186,6 +188,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (useList != null) {
             setProperty(camelContext, dataFormat, "useList", useList);
+        }
+        if (enableJaxbAnnotationModule != null) {
+            setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
         }
     }
 
