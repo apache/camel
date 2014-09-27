@@ -170,7 +170,7 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
         }
         if (prettyPrint != null) {
-            setProperty(camelContext, dataFormat, "prettyPrint", unmarshalType);
+            setProperty(camelContext, dataFormat, "prettyPrint", prettyPrint);
         }
         if (jsonView != null) {
             setProperty(camelContext, dataFormat, "jsonView", jsonView);

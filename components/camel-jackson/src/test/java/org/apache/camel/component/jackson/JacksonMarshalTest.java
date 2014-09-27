@@ -28,7 +28,6 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-
         Map<String, Object> in = new HashMap<String, Object>();
         in.put("name", "Camel");
 
@@ -47,8 +46,29 @@ public class JacksonMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshalAndUnmarshalPojo() throws Exception {
+    public void testMarshalAndUnmarshalMapWithPrettyPrint() throws Exception {
+        Map<String, Object> in = new HashMap<String, Object>();
+        in.put("name", "Camel");
 
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:pretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = "{\n"
+                         + "  \"name\" : \"Camel\""
+                         + "\n}";
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:backPretty", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalPojo() throws Exception {
         TestPojo in = new TestPojo();
         in.setName("Camel");
 
@@ -77,6 +97,12 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
+
+                JacksonDataFormat prettyPrintDataFormat = new JacksonDataFormat();
+                prettyPrintDataFormat.setPrettyPrint(true);
+
+                from("direct:pretty").marshal(prettyPrintDataFormat);
+                from("direct:backPretty").unmarshal(prettyPrintDataFormat).to("mock:reverse");
 
                 JacksonDataFormat formatPojo = new JacksonDataFormat(TestPojo.class);
 
