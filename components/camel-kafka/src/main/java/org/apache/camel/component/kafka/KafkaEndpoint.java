@@ -102,6 +102,14 @@ public class KafkaEndpoint extends DefaultEndpoint {
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------
 
+    public String getZookeeperConnect() {
+        return configuration.getZookeeperConnect();
+    }
+
+    public void setZookeeperConnect(String zookeeperConnect) {
+        configuration.setZookeeperConnect(zookeeperConnect);
+    }
+
     public String getZookeeperHost() {
         return configuration.getZookeeperHost();
     }
@@ -417,4 +425,5 @@ public class KafkaEndpoint extends DefaultEndpoint {
     public int getRequestTimeoutMs() {
         return configuration.getRequestTimeoutMs();
     }
+
 }
