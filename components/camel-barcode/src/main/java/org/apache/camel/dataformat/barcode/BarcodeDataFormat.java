@@ -186,6 +186,10 @@ public class BarcodeDataFormat implements DataFormat {
      * Sets hints optimized for different barcode types.
      */
     protected final void optimizeHints() {
+        // clear hints for re-optimization
+        this.writerHintMap.clear();
+        this.readerHintMap.clear();
+
         // writer hints
         this.writerHintMap
                 .put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
@@ -357,6 +361,7 @@ public class BarcodeDataFormat implements DataFormat {
     
     public void setBarcodeFormat(BarcodeFormat format) {
         this.params.setFormat(format);
+        this.optimizeHints();
     }
     
     public void setWidth(Integer width) {
