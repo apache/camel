@@ -191,11 +191,15 @@ public class BarcodeDataFormat implements DataFormat {
         this.readerHintMap.clear();
 
         // writer hints
-        this.writerHintMap
-                .put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-        
-        if (this.params.getFormat().toString()
-                .equals(BarcodeFormat.DATA_MATRIX.toString())) {
+        String format = this.params.getFormat().toString();
+
+        // only for QR code. AZTEC uses zxing's default error correction 33%.
+        if (format.equals(BarcodeFormat.QR_CODE.toString())) {
+            this.writerHintMap
+                  .put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        }
+
+        if (format.equals(BarcodeFormat.DATA_MATRIX.toString())) {
             this.writerHintMap
                     .put(EncodeHintType.DATA_MATRIX_SHAPE
                             , SymbolShapeHint.FORCE_SQUARE);

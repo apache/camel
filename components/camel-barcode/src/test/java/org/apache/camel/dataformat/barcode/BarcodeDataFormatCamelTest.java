@@ -120,6 +120,23 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         this.checkImage(image, "JPEG", BarcodeFormat.PDF_417);
     }
 
+    /**
+     * tests barcode (AZTEC).
+     *
+     * @throws Exception 
+     * @see CAMEL-7681
+     */
+    @Test
+    public void testAZTECWidthModifiedSizeAndImageType() throws Exception {
+        out.expectedBodiesReceived(MSG);
+        image.expectedMessageCount(1);
+
+        template.sendBody("direct:code5", MSG);
+
+        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        this.checkImage(image, 200, 200, "PNG", BarcodeFormat.AZTEC);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -154,6 +171,12 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
                         .marshal(code4)
                         .to(FILE_ENDPOINT);
 
+                // AZTEC with modified size and PNG type
+                DataFormat code5 = new BarcodeDataFormat(200, 200, BarcodeImageType.PNG, BarcodeFormat.AZTEC);
+
+                from("direct:code5")
+                        .marshal(code5)
+                        .to(FILE_ENDPOINT);
 
                 // generic file read --->
                 // 
