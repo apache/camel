@@ -31,6 +31,7 @@
       <barcode id="code2" width="200" height="200" />
       <barcode id="code3" imageType="JPG" />
       <barcode id="code4" width="200" height="200" imageType="JPG" barcodeFormat="PDF_417"/>
+      <barcode id="code5" width="200" height="200" imageType="PNG" barcodeFormat="AZTEC"/>
       
     </dataFormats>
 
@@ -57,7 +58,13 @@
       <marshal ref="code4"/>
       <to uri="file:target/out"/>
     </route>
-    
+
+     <route>
+      <from uri="direct:code5"/>
+      <marshal ref="code5"/>
+      <to uri="file:target/out"/>
+    </route>
+
     <route>
       <from uri="file:target/out?noop=true"/>
       <multicast>
