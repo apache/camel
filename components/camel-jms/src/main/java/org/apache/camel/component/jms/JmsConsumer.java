@@ -230,8 +230,13 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
 
     @Override
     protected void doResume() throws Exception {
-        if (listenerContainer != null) {
-            startListenerContainer();
+        // we may not have been started before, and now the end user calls resume, so lets handle that and start it first
+        if (!initialized) {
+            doStart();
+        } else {
+            if (listenerContainer != null) {
+                startListenerContainer();
+            }
         }
     }
 
