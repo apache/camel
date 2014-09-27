@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 
 /**
@@ -37,7 +37,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
  */
 public final class GroupIterator implements Iterator<Object>, Closeable {
 
-    private final CamelContext camelContext;
+    private final Exchange exchange;
     private final Iterator<?> it;
     private final String token;
     private final int group;
@@ -53,8 +53,8 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
      * @param group         number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
-    public GroupIterator(CamelContext camelContext, Iterator<?> it, String token, int group) {
-        this.camelContext = camelContext;
+    public GroupIterator(Exchange exchange, Iterator<?> it, String token, int group) {
+        this.exchange = exchange;
         this.it = it;
         this.token = token;
         this.group = group;
@@ -130,15 +130,15 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
                 bos.write(bytes);
             } else if (data != null) {
                 // convert to input stream
-                InputStream is = camelContext.getTypeConverter().mandatoryConvertTo(InputStream.class, data);
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, data);
                 IOHelper.copy(is, bos);
             }
 
             count++;
         }
 
-        // prepare and return answer as String
-        String answer = bos.toString();
+        // prepare and return answer as String using exchange's charset
+        String answer = bos.toString(IOHelper.getCharsetName(exchange));
         bos.reset();
         return answer;
     }
