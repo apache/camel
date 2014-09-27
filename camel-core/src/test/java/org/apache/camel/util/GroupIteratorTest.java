@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import org.apache.camel.CamelContext;
@@ -73,7 +72,7 @@ public class GroupIteratorTest extends TestSupport {
             return;
         }
 
-        byte[] buf = "Â£1\nÂ£2\n".getBytes(StandardCharsets.UTF_8);
+        byte[] buf = "£1\n£2\n".getBytes(StandardCharsets.UTF_8);
 
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
@@ -84,8 +83,8 @@ public class GroupIteratorTest extends TestSupport {
         GroupIterator gi = new GroupIterator(exchange, scanner, "\n", 1);
 
         assertTrue(gi.hasNext());
-        assertEquals("Â£1", gi.next());
-        assertEquals("Â£2", gi.next());
+        assertEquals("£1", gi.next());
+        assertEquals("£2", gi.next());
         assertFalse(gi.hasNext());
 
         IOHelper.close(gi);
