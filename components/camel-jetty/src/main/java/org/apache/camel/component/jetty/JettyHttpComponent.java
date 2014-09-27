@@ -995,7 +995,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
 
         String url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
         if (!query.isEmpty()) {
-            url = url + "?" + query;
+            url = url + "&" + query;
         }
 
         // must use upper case for restrict
