@@ -406,8 +406,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return ignoreDeleteMethodMessageBody;
     }
 
-    public void setIgnoreDELETEMethodMessageBody(boolean ignoreDELETEMethodMessageBody) {
-        this.ignoreDeleteMethodMessageBody = ignoreDELETEMethodMessageBody;
+    public void setIgnoreDeleteMethodMessageBody(boolean ignoreDeleteMethodMessageBody) {
+        this.ignoreDeleteMethodMessageBody = ignoreDeleteMethodMessageBody;
     }
 
     public BindingStyle getBindingStyle() {
