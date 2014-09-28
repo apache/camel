@@ -126,20 +126,8 @@ public class JavaConfigContextLoader implements ContextLoader {
         }
         
         context.refresh();
-
-        // Have to create a child context that implements BeanDefinitionRegistry
-        // to pass to registerAnnotationConfigProcessors, since
-        // JavaConfigApplicationContext does not
-        final GenericApplicationContext gac = new GenericApplicationContext(context);
-        AnnotationConfigUtils.registerAnnotationConfigProcessors(gac);
-        // copy BeanPostProcessors to the child context
-        for (String bppName : context.getBeanFactory().getBeanNamesForType(BeanPostProcessor.class)) {
-            gac.registerBeanDefinition(bppName, context.getBeanFactory().getBeanDefinition(bppName));
-        }
-        gac.refresh();
-        gac.registerShutdownHook();
-
-        return gac;
+        
+        return context;
     }
 
 }
