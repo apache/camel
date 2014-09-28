@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.List;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerPipelineFactory;
@@ -81,6 +84,26 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             sslHandler.setCloseOnSSLException(true);
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
+        }
+        
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
+        for (int x = 0; x < decoders.size(); x++) {
+            ChannelHandler decoder = decoders.get(x);
+            if (decoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+            }
+            pipeline.addLast("decoder-" + x, decoder);
+        }
+        
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        for (int x = 0; x < encoders.size(); x++) {
+            ChannelHandler encoder = encoders.get(x);
+            if (encoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+            }
+            pipeline.addLast("encoder-" + x, encoder);
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
