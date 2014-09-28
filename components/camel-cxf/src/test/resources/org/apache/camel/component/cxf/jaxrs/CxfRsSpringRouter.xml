@@ -56,9 +56,9 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
        <!-- Just need to ignoreDeleteMethodMessageBody -->
-       <from uri="cxfrs://bean://rsServer?ignoreDeleteMethodMessageBody=true"/>
+       <from uri="cxfrs://bean://rsServer"/>
        <to uri="log:body?level=INFO"/>
-       <to uri="cxfrs://bean://rsClient"/>
+       <to uri="cxfrs://bean://rsClient?ignoreDeleteMethodMessageBody=true"/>
     </route>
   </camelContext>
   
