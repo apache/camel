@@ -32,6 +32,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
+        <spring-version>${spring32-version}</spring-version>
     </properties>
 
     <dependencies>
@@ -47,38 +48,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring32-version}</version>
-        </dependency>
-        <!-- we need to override the other spring version -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring32-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring32-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-expression</artifactId>
-            <version>${spring32-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring32-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring32-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring32-version}</version>
+            <version>${spring-version}</version>
         </dependency>
 
         <!-- test dependencies -->
