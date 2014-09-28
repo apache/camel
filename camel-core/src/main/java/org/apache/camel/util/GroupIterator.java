@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 
@@ -37,13 +38,14 @@ import org.apache.camel.NoTypeConversionAvailableException;
  */
 public final class GroupIterator implements Iterator<Object>, Closeable {
 
+    private final CamelContext camelContext;
     private final Exchange exchange;
     private final Iterator<?> it;
     private final String token;
     private final int group;
     private boolean closed;
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+    
     /**
      * Creates a new group iterator
      *
@@ -52,9 +54,32 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
      * @param token         then token used to separate between the parts, use <tt>null</tt> to not add the token
      * @param group         number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
+     * @deprecated  Please use GroupIterator(Exchange exchange, Iterator<?> it, String token, int group) instead
+     */
+    @Deprecated 
+    public GroupIterator(CamelContext camelContext, Iterator<?> it, String token, int group) {
+        this.exchange = null;
+        this.camelContext = camelContext;
+        this.it = it;
+        this.token = token;
+        this.group = group;
+        if (group <= 0) {
+            throw new IllegalArgumentException("Group must be a positive number, was: " + group);
+        }
+    }
+
+    /**
+     * Creates a new group iterator
+     *
+     * @param exchange  the exchange used to create this group iterator
+     * @param it            the iterator to group
+     * @param token         then token used to separate between the parts, use <tt>null</tt> to not add the token
+     * @param group         number of parts to group together
+     * @throws IllegalArgumentException is thrown if group is not a positive number
      */
     public GroupIterator(Exchange exchange, Iterator<?> it, String token, int group) {
         this.exchange = exchange;
+        this.camelContext = exchange.getContext();
         this.it = it;
         this.token = token;
         this.group = group;
@@ -130,7 +155,7 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
                 bos.write(bytes);
             } else if (data != null) {
                 // convert to input stream
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, data);
+                InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, data);
                 IOHelper.copy(is, bos);
             }
 
