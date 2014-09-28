@@ -138,6 +138,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.useList = useList;
     }
 
+    public Boolean getEnableJaxbAnnotationModule() {
+        return enableJaxbAnnotationModule;
+    }
+
+    public void setEnableJaxbAnnotationModule(Boolean enableJaxbAnnotationModule) {
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
