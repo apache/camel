@@ -72,7 +72,7 @@ public class GroupIteratorTest extends TestSupport {
             return;
         }
 
-        byte[] buf = "£1\n£2\n".getBytes(StandardCharsets.UTF_8);
+        byte[] buf = "\u00A31\n\u00A32\n".getBytes(StandardCharsets.UTF_8);
 
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
@@ -83,8 +83,8 @@ public class GroupIteratorTest extends TestSupport {
         GroupIterator gi = new GroupIterator(exchange, scanner, "\n", 1);
 
         assertTrue(gi.hasNext());
-        assertEquals("£1", gi.next());
-        assertEquals("£2", gi.next());
+        assertEquals("\u00A31", gi.next());
+        assertEquals("\u00A32", gi.next());
         assertFalse(gi.hasNext());
 
         IOHelper.close(gi);
