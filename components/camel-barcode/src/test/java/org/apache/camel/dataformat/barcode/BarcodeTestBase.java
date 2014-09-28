@@ -16,6 +16,14 @@
  */
 package org.apache.camel.dataformat.barcode;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -24,13 +32,6 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -74,8 +75,7 @@ public class BarcodeTestBase extends CamelTestSupport {
     
     private void checkFormat(File file, BarcodeFormat format) throws IOException {
         Reader reader = new MultiFormatReader();
-        BinaryBitmap bitmap = new BinaryBitmap((new HybridBinarizer(
-                new BufferedImageLuminanceSource(ImageIO.read(file)))));
+        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(file))));
         Result result;
         try {
             result = reader.decode(bitmap);
