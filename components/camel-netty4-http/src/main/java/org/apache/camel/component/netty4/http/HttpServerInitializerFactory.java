@@ -17,6 +17,8 @@
 package org.apache.camel.component.netty4.http;
 
 
+import java.util.List;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -30,6 +32,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.netty4.ChannelHandlerFactory;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
@@ -83,6 +86,26 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
+       
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
+        for (int x = 0; x < decoders.size(); x++) {
+            ChannelHandler decoder = decoders.get(x);
+            if (decoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+            }
+            pipeline.addLast("decoder-" + x, decoder);
+        }
+        
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        for (int x = 0; x < encoders.size(); x++) {
+            ChannelHandler encoder = encoders.get(x);
+            if (encoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+            }
+            pipeline.addLast("encoder-" + x, encoder);
+        }
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
@@ -91,7 +114,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
-
+        
         int port = consumer.getConfiguration().getPort();
         ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port).getChannelHandler();
         
@@ -101,7 +124,6 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         } else {
             pipeline.addLast("handler", handler);
         }
-        
     }
 
     private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration) throws Exception {
