@@ -122,9 +122,6 @@ public class BarcodeDataFormatTest {
     @Test
     public final void testOptimizieHintsForDataMatrix() {
         BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX);
-        assertTrue("error correction hint incorrect.", 
-                instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.ERROR_CORRECTION));
         assertTrue("data matrix shape hint incorrect.", 
                 instance.getWriterHintMap()
                         .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
@@ -141,16 +138,12 @@ public class BarcodeDataFormatTest {
         // DATA-MATRIX
         BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX);
         assertTrue(instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.ERROR_CORRECTION));
-        assertTrue(instance.getWriterHintMap()
                         .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
         assertTrue(instance.getReaderHintMap()
                         .containsKey(DecodeHintType.TRY_HARDER));
 
         // -> QR-CODE
         instance.setBarcodeFormat(BarcodeFormat.QR_CODE);
-        assertTrue(instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.ERROR_CORRECTION));
         assertFalse(instance.getWriterHintMap()
                         .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
         assertTrue(instance.getReaderHintMap()
