@@ -187,7 +187,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
         // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
-            if (allowDefaultCodec) {
+            if (isAllowDefaultCodec()) {
                 if ("udp".equalsIgnoreCase(protocol)) {
                     encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
                 }
