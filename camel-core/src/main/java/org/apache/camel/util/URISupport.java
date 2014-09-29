@@ -321,6 +321,9 @@ public final class URISupport {
         // assemble string as new uri and replace parameters with the query instead
         String s = uri.toString();
         String before = ObjectHelper.before(s, "?");
+        if (before == null) {
+            before = ObjectHelper.before(s, "#");
+        }
         if (before != null) {
             s = before;
         }

@@ -155,6 +155,13 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("smtp://localhost#fragmentOne", resultUri.toString());
     }
 
+    public void testCreateURIWithQueryHasOneFragmentAndQueryParameter() throws Exception {
+        URI uri = new URI("smtp://localhost#fragmentOne");
+        URI resultUri = URISupport.createURIWithQuery(uri, "utm_campaign=launch");
+        assertNotNull(resultUri);
+        assertEquals("smtp://localhost?utm_campaign=launch#fragmentOne", resultUri.toString());
+    }
+
     public void testNormalizeEndpointWithEqualSignInParameter() throws Exception {
         String out = URISupport.normalizeUri("jms:queue:foo?selector=somekey='somevalue'&foo=bar");
         assertNotNull(out);
