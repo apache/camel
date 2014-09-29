@@ -160,5 +160,14 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     public void setChunkedMaxContentLength(int chunkedMaxContentLength) {
         this.chunkedMaxContentLength = chunkedMaxContentLength;
     }
+    
+    // Don't support allowDefaultCodec
+    public boolean isAllowDefaultCodec() {
+        return false;
+    }
+    
+    public void setAllowDefaultCodec(boolean allowDefaultCodec) {
+        throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
+    }
 
 }
