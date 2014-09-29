@@ -96,7 +96,7 @@
         </dependency>		
         <dependency>
             <groupId>org.jruby</groupId>
-            <artifactId>jruby</artifactId>
+            <artifactId>jruby-complete</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
