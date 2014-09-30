@@ -21,27 +21,28 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
  * Default header filtering strategy for Restlet
- * 
- * @version 
+ *
+ * @version
  */
 public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public RestletHeaderFilterStrategy() {
         // No IN filters and copy all headers from Restlet to Camel
-        
+
         // OUT filters (from Camel headers to Restlet headers)
         // filter headers used internally by this component
-        getOutFilter().add(RestletConstants.RESTLET_LOGIN);
-        getOutFilter().add(RestletConstants.RESTLET_PASSWORD);
-        
-        // The "CamelAcceptContentType" header is not added to the outgoing HTTP 
+        getOutFilter().add(RestletConstants.RESTLET_LOGIN.toLowerCase());
+        getOutFilter().add(RestletConstants.RESTLET_PASSWORD.toLowerCase());
+
+        // The "CamelAcceptContentType" header is not added to the outgoing HTTP
         // headers but it will be going out as "Accept.
-        getOutFilter().add(Exchange.ACCEPT_CONTENT_TYPE);
-        
+        getOutFilter().add(Exchange.ACCEPT_CONTENT_TYPE.toLowerCase());
+
         // As we don't set the transfer_encoding protocol header for the restlet service
         // we need to remove the transfer_encoding which could let the client wait forever
-        getOutFilter().add(Exchange.TRANSFER_ENCODING);
-        setCaseInsensitive(true);
+        getOutFilter().add(Exchange.TRANSFER_ENCODING.toLowerCase());
+        // Support to filter case insensitive
+        setLowerCase(true);
     }
 
 }
