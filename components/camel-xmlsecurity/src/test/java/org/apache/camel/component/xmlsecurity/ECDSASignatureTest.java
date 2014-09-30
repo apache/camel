@@ -46,7 +46,7 @@ import org.junit.Test;
  */
 public class ECDSASignatureTest extends CamelTestSupport {
     
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     
     private boolean canTest = true;

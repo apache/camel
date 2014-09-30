@@ -117,7 +117,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     private String getEnumName() throws MojoExecutionException {
-        return getProxyType().getSimpleName() + "ApiMethod";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
     }
 
     private VelocityContext getApiTestContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -138,7 +139,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     private String getUnitTestName() throws MojoExecutionException {
-        return getProxyType().getSimpleName() + "IntegrationTest";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "IntegrationTest";
     }
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -199,9 +201,14 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     private String getConfigName() throws MojoExecutionException {
-        return getProxyType().getSimpleName() + "EndpointConfiguration";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
     }
 
+    private String getProxyClassWithCanonicalName(String proxyClass) {
+        return proxyClass.replace("$", "");
+    }
+    
     private VelocityContext getCommonContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = new VelocityContext();
         context.put("models", models);

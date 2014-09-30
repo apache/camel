@@ -21,12 +21,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.14-SNAPSHOT</version>
+        <version>2.15-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-http4</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: HTTP4 (HttpClient 4.x)</name>
+    <name>Camel :: HTTP4</name>
     <description>Camel HTTP (Apache HttpClient 4.x) support</description>
 
     <properties>

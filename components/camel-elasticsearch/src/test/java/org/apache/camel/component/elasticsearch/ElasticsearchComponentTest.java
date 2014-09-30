@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+
 public class ElasticsearchComponentTest extends CamelTestSupport {
 
     @Override
@@ -119,6 +120,22 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    public void testIndexWithIDInHeader() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("content", "test");
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_ID, "123");
+
+        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+        assertEquals("indexId should be equals to the provided id", "123", indexId);
     }
 
     @Test

@@ -56,6 +56,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Class<?> collectionType;
     @XmlAttribute
     private Boolean useList;
+    @XmlAttribute
+    private Boolean enableJaxbAnnotationModule;
 
     public JsonDataFormat() {
     }
@@ -136,6 +138,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.useList = useList;
     }
 
+    public Boolean getEnableJaxbAnnotationModule() {
+        return enableJaxbAnnotationModule;
+    }
+
+    public void setEnableJaxbAnnotationModule(Boolean enableJaxbAnnotationModule) {
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
@@ -170,7 +180,7 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
         }
         if (prettyPrint != null) {
-            setProperty(camelContext, dataFormat, "prettyPrint", unmarshalType);
+            setProperty(camelContext, dataFormat, "prettyPrint", prettyPrint);
         }
         if (jsonView != null) {
             setProperty(camelContext, dataFormat, "jsonView", jsonView);
@@ -186,6 +196,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (useList != null) {
             setProperty(camelContext, dataFormat, "useList", useList);
+        }
+        if (enableJaxbAnnotationModule != null) {
+            setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
         }
     }
 

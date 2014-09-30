@@ -19,6 +19,8 @@ package org.apache.camel.component.quartz;
 import java.io.Serializable;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateEndpoint;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -70,13 +72,17 @@ public class CamelJob implements Job, Serializable {
             // check all active routes for the quartz endpoint this task matches
             // as we prefer to use the existing endpoint from the routes
             for (Route route : camelContext.getRoutes()) {
-                if (route.getEndpoint() instanceof QuartzEndpoint) {
-                    QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
+                Endpoint endpoint = route.getEndpoint();
+                if (endpoint instanceof DelegateEndpoint) {
+                    endpoint = ((DelegateEndpoint)endpoint).getEndpoint();   
+                }
+                if (endpoint instanceof QuartzEndpoint) {
+                    QuartzEndpoint quartzEndpoint = (QuartzEndpoint) endpoint;
                     String triggerName = quartzEndpoint.getTrigger().getName();
                     String triggerGroup = quartzEndpoint.getTrigger().getGroup();
                     LOG.trace("Checking route trigger {}.{}", triggerName, triggerGroup);
                     if (triggerName.equals(targetTriggerName) && triggerGroup.equals(targetTriggerGroup)) {
-                        return (QuartzEndpoint) route.getEndpoint();
+                        return (QuartzEndpoint) endpoint;
                     }
                 }
             }

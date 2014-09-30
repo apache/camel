@@ -67,7 +67,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
          * This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
          * onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
          */
-        Default
+        Default,
+
+        /**
+         * A custom binding set by the user.
+         */
+        Custom
+
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
@@ -84,6 +90,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private CxfRsBinding binding;
     @UriParam
     private boolean httpClientAPI = true;
+    @UriParam
+    private boolean ignoreDeleteMethodMessageBody;
     @UriParam
     private String address;
     @UriParam
@@ -394,6 +402,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return isSetDefaultBus;
     }
     
+    public boolean isIgnoreDeleteMethodMessageBody() {
+        return ignoreDeleteMethodMessageBody;
+    }
+
+    public void setIgnoreDeleteMethodMessageBody(boolean ignoreDeleteMethodMessageBody) {
+        this.ignoreDeleteMethodMessageBody = ignoreDeleteMethodMessageBody;
+    }
+
     public BindingStyle getBindingStyle() {
         return bindingStyle;
     }
@@ -486,8 +502,25 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfRsHeaderFilterStrategy();
         }
-        
-        binding = bindingStyle == null || bindingStyle == BindingStyle.Default ? new DefaultCxfRsBinding() : new SimpleCxfRsBinding();
+
+        // if the user explicitly selected the Custom binding style, he must provide a binding
+        if (bindingStyle == BindingStyle.Custom && binding == null) {
+            throw new IllegalArgumentException("Custom binding style selected, but no binding was supplied");
+        }
+
+        // if the user has set a binding, do nothing, just make sure that BindingStyle = Custom for coherency purposes
+        if (binding != null) {
+            bindingStyle = BindingStyle.Custom;
+        } 
+
+        // set the right binding based on the binding style
+        if (bindingStyle == BindingStyle.SimpleConsumer) {
+            binding = new SimpleCxfRsBinding();
+        } else if (bindingStyle == BindingStyle.Custom) {
+            // do nothing
+        } else {
+            binding = new DefaultCxfRsBinding();
+        }
         
         if (binding instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(getHeaderFilterStrategy());

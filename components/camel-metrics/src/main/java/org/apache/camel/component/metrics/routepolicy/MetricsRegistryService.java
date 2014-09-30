@@ -48,6 +48,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
     private TimeUnit rateUnit = TimeUnit.SECONDS;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private transient ObjectMapper mapper;
+    private transient ObjectMapper secondsMapper;
 
     public MetricRegistry getMetricsRegistry() {
         return metricsRegistry;
@@ -126,6 +127,12 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
 
         // json mapper
         this.mapper = new ObjectMapper().registerModule(new MetricsModule(getRateUnit(), getDurationUnit(), false));
+        if (getRateUnit() == TimeUnit.SECONDS && getDurationUnit() == TimeUnit.SECONDS) {
+            // they both use same units so reuse
+            this.secondsMapper = this.mapper;
+        } else {
+            this.secondsMapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+        }
     }
 
     @Override
@@ -149,4 +156,15 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         }
     }
 
+    public String dumpStatisticsAsJsonTimeUnitSeconds() {
+        ObjectWriter writer = secondsMapper.writer();
+        if (isPrettyPrint()) {
+            writer = writer.withDefaultPrettyPrinter();
+        }
+        try {
+            return writer.writeValueAsString(getMetricsRegistry());
+        } catch (JsonProcessingException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
 }

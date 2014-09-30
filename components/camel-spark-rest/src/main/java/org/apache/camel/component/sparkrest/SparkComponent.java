@@ -39,6 +39,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
     private int port = SparkBase.SPARK_DEFAULT_PORT;
+    private String ipAddress;
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
@@ -52,6 +53,14 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public SparkConfiguration getSparkConfiguration() {
@@ -105,6 +114,9 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
                     Spark.setPort(port);
                 }
             }
+        }
+        if (getIpAddress() != null) {
+            Spark.setIpAddress(getIpAddress());
         }
 
         // configure component options

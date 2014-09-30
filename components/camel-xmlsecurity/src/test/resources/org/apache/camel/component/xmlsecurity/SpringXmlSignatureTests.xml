@@ -30,6 +30,7 @@
         <route>
             <from uri="direct:enveloping" />
             <to uri="xmlsecurity:sign://enveloping?keyAccessor=#accessorRsa" />
+            <to uri="mock:signed" />
             <to
                 uri="xmlsecurity:verify://enveloping?keySelector=#selectorRsa" />
             <to uri="mock:result" />
@@ -52,6 +53,7 @@
             <from uri="direct:enveloped" />
             <to
                 uri="xmlsecurity:sign://enveloped?keyAccessor=#accessorRsa&amp;parentLocalName=root&amp;parentNamespace=http://test/test" />
+            <to uri="mock:signed" />
             <to
                 uri="xmlsecurity:verify://enveloped?keySelector=#selectorRsa" />
             <to uri="mock:result" />
@@ -270,6 +272,16 @@
         </route>
         <!-- END SNIPPET: detached -->
 
+        <!-- START SNIPPET: enveloped XML signature with parent XPath -->
+        <route>
+            <from uri="direct:envelopedParentXpath" />
+            <to
+                uri="xmlsecurity:sign://enveloped?keyAccessor=#accessorRsa&amp;parentXpath=#parentXpathBean" />
+            <to
+                uri="xmlsecurity:verify://enveloped?keySelector=#selectorRsa" />
+            <to uri="mock:result" />
+        </route>
+        <!-- END SNIPPET: enveloped XML signature with parent XPath -->
 
     </camelContext>
 
@@ -436,4 +448,8 @@
             </list>
         </constructor-arg>
     </bean>
+
+    <bean id="parentXpathBean"
+        class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+        factory-method="getParentXPathBean" />
 </beans>

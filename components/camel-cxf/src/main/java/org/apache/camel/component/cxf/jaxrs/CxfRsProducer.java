@@ -38,6 +38,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
@@ -57,12 +58,15 @@ public class CxfRsProducer extends DefaultProducer {
 
     private boolean throwException;
     
+    private CxfRsEndpoint cxfRsEndpoint;
+    
     // using a cache of factory beans instead of setting the address of a single cfb
     // to avoid concurrent issues
     private ClientFactoryBeanCache clientFactoryBeanCache;
     
     public CxfRsProducer(CxfRsEndpoint endpoint) {
         super(endpoint);
+        cxfRsEndpoint = endpoint;
         this.throwException = endpoint.isThrowExceptionOnFailure();
         clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
     }
@@ -139,6 +143,7 @@ public class CxfRsProducer extends DefaultProducer {
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
+        Object[] pathValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
 
         if (LOG.isTraceEnabled()) {
@@ -149,7 +154,11 @@ public class CxfRsProducer extends DefaultProducer {
 
         // set the path
         if (path != null) {
-            client.path(path);
+            if (ObjectHelper.isNotEmpty(pathValues) && pathValues.length > 0) {
+                client.path(path, pathValues);
+            } else {
+                client.path(path);
+            }
         }
 
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
@@ -159,10 +168,14 @@ public class CxfRsProducer extends DefaultProducer {
         // set the body
         Object body = null;
         if (!"GET".equals(httpMethod)) {
-            // need to check the request object.           
-            body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Request body = " + body);
+            // need to check the request object if the http Method is not GET      
+            if ("DELETE".equals(httpMethod) && cxfRsEndpoint.isIgnoreDeleteMethodMessageBody()) {
+                // just ignore the message body if the ignoreDeleteMethodMessageBody is true
+            } else {
+                body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Request body = " + body);
+                }
             }
         }
 

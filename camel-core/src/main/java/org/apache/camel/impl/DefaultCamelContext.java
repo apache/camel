@@ -653,7 +653,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return routeStartupOrder;
     }
 
-    public List<Route> getRoutes() {
+    public synchronized List<Route> getRoutes() {
         // lets return a copy of the collection as objects are removed later when services are stopped
         if (routes.isEmpty()) {
             return Collections.emptyList();
@@ -1101,6 +1101,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "atmosphere/websocket";
         } else if ("netty-http".equals(componentName)) {
             return "netty/http";
+        } else if ("netty4-http".equals(componentName)) {
+            return "netty4/http";
         }
         return componentName.replaceAll("-", "");
     }
@@ -1970,6 +1972,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // but clear any suspend routes
         suspendedRouteServices.clear();
+
+        // stop consumers from the services to close first, such as POJO consumer (eg @Consumer)
+        // which we need to stop after the routes, as a POJO consumer is essentially a route also
+        for (Service service : servicesToClose) {
+            if (service instanceof Consumer) {
+                shutdownServices(service);
+            }
+        }
 
         // the stop order is important
 

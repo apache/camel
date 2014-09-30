@@ -80,19 +80,19 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
                 port2 = getNextPort();
                 port3 = getNextPort();
 
-                from("netty4:tcp://localhost:" + port + "?textline=true&sync=true&workerGroup=#sharedServerPool&orderedThreadPoolExecutor=false")
+                from("netty4:tcp://localhost:" + port + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
                     .validate(body().isInstanceOf(String.class))
                     .to("log:result")
                     .to("mock:result")
                     .transform(body().regexReplaceAll("Hello", "Bye"));
 
-                from("netty4:tcp://localhost:" + port2 + "?textline=true&sync=true&workerGroup=#sharedServerPool&orderedThreadPoolExecutor=false")
+                from("netty4:tcp://localhost:" + port2 + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
                     .validate(body().isInstanceOf(String.class))
                     .to("log:result")
                     .to("mock:result")
                     .transform(body().regexReplaceAll("Hello", "Hi"));
 
-                from("netty4:tcp://localhost:" + port3 + "?textline=true&sync=true&workerGroup=#sharedServerPool&orderedThreadPoolExecutor=false")
+                from("netty4:tcp://localhost:" + port3 + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
                     .validate(body().isInstanceOf(String.class))
                     .to("log:result")
                     .to("mock:result")

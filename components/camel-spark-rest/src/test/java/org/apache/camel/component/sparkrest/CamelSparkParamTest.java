@@ -26,7 +26,7 @@ public class CamelSparkParamTest extends BaseSparkTest {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("name", "world");
 
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/hello/world", null, String.class);
+        String out = template.requestBody("http://localhost:" + getPort() + "/hello/world", null, String.class);
         assertEquals("Bye world", out);
 
         assertMockEndpointsSatisfied();

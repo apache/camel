@@ -151,7 +151,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             if (fireNow) {
                 String intervalString = (String) triggerParameters.get("repeatInterval");
                 if (intervalString != null) {
-                    long interval = EndpointHelper.resloveStringParameter(getCamelContext(), intervalString, Long.class);
+                    long interval = EndpointHelper.resolveParameter(getCamelContext(), intervalString, Long.class);
                     
                     trigger.setStartTime(new Date(System.currentTimeMillis() - interval));
                 }
@@ -165,18 +165,18 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         if (cron != null) {
             answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
             answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
-            String timeZone = EndpointHelper.resloveStringParameter(getCamelContext(), (String)triggerParameters.get("timeZone"), String.class);
+            String timeZone = EndpointHelper.resolveParameter(getCamelContext(), (String)triggerParameters.get("timeZone"), String.class);
             if (timeZone != null) {
                 answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
             }
         } else {
             answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
-            Long interval = EndpointHelper.resloveStringParameter(getCamelContext(), (String)triggerParameters.get("repeatInterval"), Long.class);
+            Long interval = EndpointHelper.resolveParameter(getCamelContext(), (String)triggerParameters.get("repeatInterval"), Long.class);
             if (interval != null) {
                 triggerParameters.put("repeatInterval", interval);
                 answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
             }
-            Integer counter = EndpointHelper.resloveStringParameter(getCamelContext(), (String)triggerParameters.get("repeatCount"), Integer.class);
+            Integer counter = EndpointHelper.resolveParameter(getCamelContext(), (String)triggerParameters.get("repeatCount"), Integer.class);
             if (counter != null) {
                 triggerParameters.put("repeatCount", counter);
                 answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER, counter);

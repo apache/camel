@@ -70,6 +70,11 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         setSharedProjectState(true);
 
         try {
+            // fix apiName for single API use-case since Maven configurator sets empty parameters as null!!!
+            if (apis.length == 1 && apis[0].getApiName() == null) {
+                apis[0].setApiName("");
+            }
+
             // generate API methods for each API proxy
             for (ApiProxy api : apis) {
                 // validate API configuration
@@ -225,11 +230,17 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     }
 
     public static String getApiMethod(String proxyClass) {
-        return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "ApiMethod";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);        
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
     }
 
     public static String getEndpointConfig(String proxyClass) {
-        return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+    }
+
+    private static String getProxyClassWithCanonicalName(String proxyClass) {
+        return proxyClass.replace("$", "");
     }
 
     public static String getEnumConstant(String enumValue) {

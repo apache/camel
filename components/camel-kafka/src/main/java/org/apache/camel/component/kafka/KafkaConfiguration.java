@@ -21,6 +21,7 @@ import java.util.Properties;
 import kafka.producer.DefaultPartitioner;
 
 public class KafkaConfiguration {
+    private String zookeeperConnect;
     private String zookeeperHost;
     private int zookeeperPort = 2181;
     private String topic;
@@ -127,13 +128,31 @@ public class KafkaConfiguration {
             props.put(key, value.toString());
         }
     }
+    
+    public String getZookeeperConnect() {
+        if (this.zookeeperConnect != null) {
+            return zookeeperConnect;
+        } else {
+            return getZookeeperHost() + ":" + getZookeeperPort();
+        }
+    }
+
+    public void setZookeeperConnect(String zookeeperConnect) {
+        this.zookeeperConnect = zookeeperConnect;
+        
+        // connect overrides host and port
+        this.zookeeperHost = null;
+        this.zookeeperPort = -1;
+    }
 
     public String getZookeeperHost() {
         return zookeeperHost;
     }
 
     public void setZookeeperHost(String zookeeperHost) {
-        this.zookeeperHost = zookeeperHost;
+        if (this.zookeeperConnect == null) {
+            this.zookeeperHost = zookeeperHost;
+        }
     }
 
     public int getZookeeperPort() {
@@ -141,7 +160,9 @@ public class KafkaConfiguration {
     }
 
     public void setZookeeperPort(int zookeeperPort) {
-        this.zookeeperPort = zookeeperPort;
+        if (this.zookeeperConnect == null) {
+            this.zookeeperPort = zookeeperPort;
+        }
     }
 
     public String getGroupId() {

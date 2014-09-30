@@ -17,7 +17,6 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -72,8 +71,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * 
-     * @param endpointUri
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
     @Deprecated
@@ -88,9 +85,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * 
-     * @param endpointUri
-     * @param entityManagerFactory
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
     @Deprecated
@@ -100,10 +94,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * 
-     * @param endpointUri
-     * @param entityManagerFactory
-     * @param transactionManager
      * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
      */
     @Deprecated
@@ -292,6 +282,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return tm;
     }
 
+    /**
+     * @deprecated use {@link #getEntityManagerFactory()} to get hold of factory and create an entity manager using the factory.
+     */
+    @Deprecated
     protected EntityManager createEntityManager() {
         return getEntityManagerFactory().createEntityManager();
     }

@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
@@ -49,8 +49,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
     private static final Map<String, Object> NOWAIT;
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
+    private EntityManager entityManager;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
     private DeleteHandler<Object> preDeleteHandler;
@@ -78,7 +79,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManagerFactory = endpoint.getEntityManagerFactory();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -168,10 +169,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
-
             if (lockEntity(result, entityManager)) {
                 // Run the @PreConsumed callback
-                createPreDeleteHandler().deleteObject(entityManager, result);
+                createPreDeleteHandler().deleteObject(entityManager, result, exchange);
 
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
@@ -182,7 +182,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 }
 
                 // Run the @Consumed callback
-                getDeleteHandler().deleteObject(entityManager, result);
+                getDeleteHandler().deleteObject(entityManager, result, exchange);
             }
         }
 
@@ -392,7 +392,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     protected DeleteHandler<Object> createPreDeleteHandler() {
         // Look for @PreConsumed to allow custom callback before the Entity has been consumed
-        Class<?> entityType = getEndpoint().getEntityType();
+        final Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
             // Inspect the method(s) annotated with @PreConsumed
             List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
@@ -400,16 +400,19 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 throw new IllegalStateException("Only one method can be annotated with the @PreConsumed annotation but found: " + methods);
             } else if (methods.size() == 1) {
                 // Inspect the parameters of the @PreConsumed method
-                Class<?>[] parameters = methods.get(0).getParameterTypes();
-                if (parameters.length != 0) {
-                    throw new IllegalStateException("@PreConsumed annotated method cannot have parameters!");
-                }
-
                 final Method method = methods.get(0);
+                final boolean useExchangeParameter = checkParameters(method);
                 return new DeleteHandler<Object>() {
                     @Override
-                    public void deleteObject(EntityManager entityManager, Object entityBean) {
-                        ObjectHelper.invokeMethod(method, entityBean);
+                    public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
+                        // The entityBean could be an Object array
+                        if (entityType.isInstance(entityBean)) {
+                            if (useExchangeParameter) {
+                                ObjectHelper.invokeMethod(method, entityBean, exchange);
+                            } else {
+                                ObjectHelper.invokeMethod(method, entityBean);
+                            }
+                        }
                     }
                 };
             }
@@ -418,7 +421,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         // else do nothing
         return new DeleteHandler<Object>() {
             @Override
-            public void deleteObject(EntityManager entityManager, Object entityBean) {
+            public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
                 // Do nothing
             }
         };
@@ -426,34 +429,52 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     protected DeleteHandler<Object> createDeleteHandler() {
         // look for @Consumed to allow custom callback when the Entity has been consumed
-        Class<?> entityType = getEndpoint().getEntityType();
+        final Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
             List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);
             if (methods.size() > 1) {
                 throw new IllegalArgumentException("Only one method can be annotated with the @Consumed annotation but found: " + methods);
             } else if (methods.size() == 1) {
                 final Method method = methods.get(0);
-
+                final boolean useExchangeParameter = checkParameters(method);
                 return new DeleteHandler<Object>() {
-                    public void deleteObject(EntityManager entityManager, Object entityBean) {
-                        ObjectHelper.invokeMethod(method, entityBean);
+                    public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
+                        if (entityType.isInstance(entityBean)) {
+                            if (useExchangeParameter) {
+                                ObjectHelper.invokeMethod(method, entityBean, exchange);
+                            } else {
+                                ObjectHelper.invokeMethod(method, entityBean);
+                            }
+                        }
                     }
                 };
             }
         }
         if (getEndpoint().isConsumeDelete()) {
             return new DeleteHandler<Object>() {
-                public void deleteObject(EntityManager entityManager, Object entityBean) {
+                public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
                     entityManager.remove(entityBean);
                 }
             };
         } else {
             return new DeleteHandler<Object>() {
-                public void deleteObject(EntityManager entityManager, Object entityBean) {
+                public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
                     // do nothing
                 }
             };
         }
+    }
+    
+    protected boolean checkParameters(Method method) {
+        boolean result = false;
+        Class<?>[] parameters = method.getParameterTypes();
+        if (parameters.length == 1 && parameters[0].isAssignableFrom(Exchange.class)) {
+            result = true;
+        } 
+        if (parameters.length > 0 && !result) {
+            throw new IllegalStateException("@PreConsumed annotated method cannot have parameter other than Exchange");
+        }
+        return result;
     }
 
     protected void configureParameters(Query query) {
@@ -477,10 +498,21 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        entityManager.close();
-        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.entityManager = entityManagerFactory.createEntityManager();
+        LOG.trace("Created EntityManager {} on {}", entityManager, this);
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        this.entityManager.close();
+        LOG.trace("Closed EntityManager {} on {}", entityManager, this);
+    }
 }

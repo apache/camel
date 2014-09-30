@@ -1259,6 +1259,12 @@ public final class ExpressionBuilder {
 
         return new XMLTokenExpressionIterator(path, mode);
     }
+    
+    public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
+        ObjectHelper.notEmpty(path, "path");
+
+        return new XMLTokenExpressionIterator(path, mode, group);
+    }
 
     /**
      * Returns a tokenize expression which will tokenize the string with the
@@ -1288,7 +1294,7 @@ public final class ExpressionBuilder {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange.getContext(), it, token, group);
+                return new GroupIterator(exchange, it, token, group);
             }
 
             @Override

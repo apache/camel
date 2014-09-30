@@ -40,7 +40,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected boolean reuseAddress = true;
     protected int connectTimeout = 10000;
     protected int backlog;
-    protected ServerPipelineFactory serverPipelineFactory;
+    protected ServerInitializerFactory serverPipelineFactory;
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
@@ -280,11 +280,11 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.passphrase = passphrase;
     }
 
-    public ServerPipelineFactory getServerPipelineFactory() {
+    public ServerInitializerFactory getServerPipelineFactory() {
         return serverPipelineFactory;
     }
 
-    public void setServerPipelineFactory(ServerPipelineFactory serverPipelineFactory) {
+    public void setServerPipelineFactory(ServerInitializerFactory serverPipelineFactory) {
         this.serverPipelineFactory = serverPipelineFactory;
     }
 

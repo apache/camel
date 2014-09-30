@@ -108,6 +108,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     private XmlSignatureProperties properties;
 
     private List<XPathFilterParameterSpec> xpathsToIdAttributes = Collections.emptyList();
+    
+    private XPathFilterParameterSpec parentXpath;
 
     /* references that should be resolved when the context changes */
     private String keyAccessorName;
@@ -279,13 +281,19 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     /**
      * Local name of the parent element to which the XML signature element will
-     * be added. Only relevant for enveloped XML signature. Default value is
+     * be added. Only relevant for enveloped XML signature. Alternatively you can 
+     * also use {@link #setParentXpath(XPathFilterParameterSpec)}.
+     * 
+     * <p> Default value is
      * <code>null</code>. The value must be <code>null</code> for enveloping and
      * detached XML signature.
      * <p>
-     * This parameter for enveloped signature and the parameter
-     * {@link #setXpathsToIdAttributes(List)} for detached signature must not be
-     * set in the same configuration.
+     * This parameter or the parameter {@link #setParentXpath(XPathFilterParameterSpec)}
+     * for enveloped signature and the parameter {@link #setXpathsToIdAttributes(List)} 
+     * for detached signature must not be set in the same configuration.
+     * <p>
+     * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified
+     * in the same configuration then an exception is thrown.
      * 
      * @param parentLocalName
      *            local name
@@ -455,9 +463,9 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * You can also set the XPATH list dynamically via the header
      * {@link XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES}.
      * <p>
-     * The parameter {@link #setParentLocalName(String)} for enveloped signature
-     * and this parameter for detached signature must not be set in the same
-     * configuration.
+     * The parameter {@link #setParentLocalName(String)} or {@link #setParentXpath(XPathFilterParameterSpec)}
+     * for enveloped signature and this parameter for detached signature must not
+     * be set in the same configuration.
      * 
      * @param xpathsToIdAttributes
      */
@@ -469,4 +477,24 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         }
     }
 
+    public XPathFilterParameterSpec getParentXpath() {
+        return parentXpath;
+    }
+
+    /** Sets the XPath to find the parent node in the enveloped case. 
+     * Either you specify the parent node via this method or the local name and namespace of the parent 
+     * with the methods {@link #setParentLocalName(String)} and {@link #setParentNamespace(String)}. 
+     * <p>
+     * Default value is <code>null</code>. The value must be <code>null</code> for enveloping and
+     * detached XML signature.
+     * <p>
+     * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified
+     * in the same configuration then an exception is thrown.
+     * 
+     * @param parentXpath xpath to the parent node, if the xpath returns several values then the first Element node is used
+     */
+    public void setParentXpath(XPathFilterParameterSpec parentXpath) {
+        this.parentXpath = parentXpath;
+    }
+    
 }

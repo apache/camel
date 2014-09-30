@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 
 /**
@@ -23,6 +25,24 @@ import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
  */
 public interface CxfEndpointConfigurer {
     
-    void configure(AbstractWSDLBasedEndpointFactory factoryBean); 
+    /**
+     * Configure the CXF Server/Client factory bean
+     * @param factoryBean
+     */
+    void configure(AbstractWSDLBasedEndpointFactory factoryBean);
+    
+    /**
+     * Configure the CXF Client such as setting some parameters on the client conduit 
+     *
+     * @param client the CXF client
+     */
+    void configureClient(Client client);
+
+    /**
+     * Configure the CXF Server such as setting some parameters on the server destination 
+     *
+     * @param server the CXF server
+     */
+    void configureServer(Server server);
 
 }

@@ -53,6 +53,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
     private AggregationStrategy aggregationStrategy;
     private Producer producer;
+    private boolean aggregateOnException;
 
     /**
      * Creates a new {@link Enricher}. The default aggregation strategy is to
@@ -84,6 +85,22 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
      */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public boolean isAggregateOnException() {
+        return aggregateOnException;
+    }
+
+    /**
+     * Whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     * an exception was thrown.
+     */
+    public void setAggregateOnException(boolean aggregateOnException) {
+        this.aggregateOnException = aggregateOnException;
     }
 
     /**
@@ -128,7 +145,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
                 long timeTaken = watch.stop();
                 EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
                 
-                if (resourceExchange.isFailed()) {
+                if (!isAggregateOnException() && resourceExchange.isFailed()) {
                     // copy resource exchange onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, resourceExchange);
                 } else {
@@ -171,7 +188,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
         long timeTaken = watch.stop();
         EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
         
-        if (resourceExchange.isFailed()) {
+        if (!isAggregateOnException() && resourceExchange.isFailed()) {
             // copy resource exchange onto original exchange (preserving pattern)
             copyResultsPreservePattern(exchange, resourceExchange);
         } else {

@@ -831,7 +831,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     /**
-     * Aggregate the {@link Exchange) with the current result.
+     * Aggregate the {@link Exchange} with the current result.
      * This method is unsynchronized and is called directly when parallelAggregate is enabled.
      * In all other cases, this method is called from the doAggregate which is a synchronized method
      *

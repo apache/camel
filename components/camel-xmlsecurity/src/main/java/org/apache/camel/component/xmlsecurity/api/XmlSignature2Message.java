@@ -22,7 +22,6 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 
 import org.w3c.dom.Document;
-
 import org.apache.camel.Message;
 
 /**
@@ -89,6 +88,15 @@ public interface XmlSignature2Message {
          * the document set to the output message.
          */
         Boolean getRemoveSignatureElements();
+
+        /**
+         * The character encoding of the resulting XML document. Can be
+         * <code>null</code>. If <code>null</code> then the encoding of the
+         * original XML document is used.
+         * 
+         */
+        String getOutputXmlEncoding();
+
     }
 
 }

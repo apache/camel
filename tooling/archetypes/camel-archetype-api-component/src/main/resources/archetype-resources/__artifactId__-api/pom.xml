@@ -52,10 +52,10 @@
             </goals>
             <configuration>
               <attach>true</attach>
-              <source>1.6</source>
+              <source>1.7</source>
               <quiet>true</quiet>
               <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>1.6</javadocVersion>
+              <javadocVersion>1.7</javadocVersion>
               <encoding>UTF-8</encoding>
             </configuration>
           </execution>

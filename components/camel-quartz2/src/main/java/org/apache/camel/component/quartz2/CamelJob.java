@@ -18,6 +18,8 @@ package org.apache.camel.component.quartz2;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.DelegateEndpoint;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.quartz.Job;
@@ -96,8 +98,12 @@ public class CamelJob implements Job {
         // check all active routes for the quartz endpoint this task matches
         // as we prefer to use the existing endpoint from the routes
         for (Route route : camelContext.getRoutes()) {
-            if (route.getEndpoint() instanceof QuartzEndpoint) {
-                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
+            Endpoint endpoint = route.getEndpoint();
+            if (endpoint instanceof DelegateEndpoint) {
+                endpoint = ((DelegateEndpoint)endpoint).getEndpoint();   
+            }
+            if (endpoint instanceof QuartzEndpoint) {
+                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) endpoint;
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);

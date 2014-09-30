@@ -17,23 +17,19 @@
 package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class RestConfigurationCamelSparkTest extends CamelTestSupport {
-
-    private int port;
+public class RestConfigurationCamelSparkTest extends BaseSparkTest {
 
     @Test
     public void testSparkHello() throws Exception {
-        String out = template.requestBody("http://0.0.0.0:" + port + "/spark/hello", null, String.class);
+        String out = template.requestBody("http://localhost:" + port + "/spark/hello", null, String.class);
         assertEquals("Hello World", out);
     }
 
     @Test
     public void testSparkBye() throws Exception {
-        String out = template.requestBody("http://0.0.0.0:" + port + "/spark/bye", null, String.class);
+        String out = template.requestBody("http://localhost:" + port + "/spark/bye", null, String.class);
         assertEquals("Bye World", out);
     }
 
@@ -41,7 +37,7 @@ public class RestConfigurationCamelSparkTest extends CamelTestSupport {
     public void testSparkPost() throws Exception {
         getMockEndpoint("mock:update").expectedBodiesReceived("I did this");
 
-        template.requestBody("http://0.0.0.0:" + port + "/spark/bye", "I did this", String.class);
+        template.requestBody("http://localhost:" + port + "/spark/bye", "I did this", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -51,8 +47,6 @@ public class RestConfigurationCamelSparkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port = AvailablePortFinder.getNextAvailable(24500);
-
                 // configure port on rest configuration which spark-rest will pickup and use
                 restConfiguration().component("spark-rest").port(port);
 

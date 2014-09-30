@@ -310,7 +310,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
             String repeatString = (String) triggerParameters.get("repeatCount");
             if (repeatString != null) {
-                repeat = EndpointHelper.resloveStringParameter(getCamelContext(), repeatString, Integer.class);
+                repeat = EndpointHelper.resolveParameter(getCamelContext(), repeatString, Integer.class);
                 // need to update the parameters
                 triggerParameters.put("repeatCount", repeat);
             }
@@ -319,7 +319,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             long interval = 1000;
             String intervalString = (String) triggerParameters.get("repeatInterval");
             if (intervalString != null) {
-                interval = EndpointHelper.resloveStringParameter(getCamelContext(), intervalString, Long.class);
+                interval = EndpointHelper.resolveParameter(getCamelContext(), intervalString, Long.class);
                 // need to update the parameters
                 triggerParameters.put("repeatInterval", interval);
             }

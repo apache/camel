@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf-transport</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: CXF :: Transport</name>
   <description>Camel Transport for CXF </description>
-  
+
    <properties>
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
@@ -63,13 +63,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -96,7 +96,7 @@
       <artifactId>org.apache.aries.blueprint.core</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -152,14 +152,14 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- logging -->      
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -195,5 +195,4 @@
     </plugins>
   </build>
 
-  
 </project>

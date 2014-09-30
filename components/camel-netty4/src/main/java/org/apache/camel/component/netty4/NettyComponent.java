@@ -33,8 +33,6 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 public class NettyComponent extends UriEndpointComponent {
-    // use a shared timer for Netty (see javadoc for HashedWheelTimer)
-    private static volatile Timer timer;
     private NettyConfiguration configuration;
     private volatile EventExecutorGroup executorService;
 
@@ -73,7 +71,6 @@ public class NettyComponent extends UriEndpointComponent {
         config.validateConfiguration();
 
         NettyEndpoint nettyEndpoint = new NettyEndpoint(remaining, this, config);
-        nettyEndpoint.setTimer(getTimer());
         setProperties(nettyEndpoint.getConfiguration(), parameters);
         return nettyEndpoint;
     }
@@ -95,9 +92,9 @@ public class NettyComponent extends UriEndpointComponent {
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
-
-    public static Timer getTimer() {
-        return timer;
+    
+    public void setExecutorService(EventExecutorGroup executorServcie) {
+        this.executorService = executorService;
     }
 
     public synchronized EventExecutorGroup getExecutorService() {
@@ -109,14 +106,12 @@ public class NettyComponent extends UriEndpointComponent {
 
     @Override
     protected void doStart() throws Exception {
-        if (timer == null) {
-            timer = new HashedWheelTimer();
-        }
-
+        
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }
-        if (configuration.isOrderedThreadPoolExecutor()) {
+        
+        if (configuration.isUsingExecutorService() && executorService == null) {
             executorService = createExecutorService();
         }
 
@@ -134,8 +129,6 @@ public class NettyComponent extends UriEndpointComponent {
 
     @Override
     protected void doStop() throws Exception {
-        timer.stop();
-        timer = null;
 
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);

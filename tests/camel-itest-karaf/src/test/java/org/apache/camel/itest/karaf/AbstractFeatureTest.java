@@ -195,7 +195,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.3.6";
+            karafVersion = "2.4.0";
         }
         return karafVersion;
     }
@@ -227,6 +227,8 @@ public abstract class AbstractFeatureTest {
             //KarafDistributionOption.keepRuntimeFolder(),
             // override the config.properties (to fix pax-exam bug)
             //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+            // Update the jre.properties to export the sun.misc package
+            KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
             KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
             KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
             

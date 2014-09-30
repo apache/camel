@@ -36,6 +36,7 @@ import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TimerListener;
@@ -250,6 +251,20 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public void startAllRoutes() throws Exception {
         context.startAllRoutes();
+    }
+
+    public boolean canSendToEndpoint(String endpointUri) {
+        try {
+            Endpoint endpoint = context.getEndpoint(endpointUri);
+            if (endpoint != null) {
+                Producer producer = endpoint.createProducer();
+                return producer != null;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return false;
     }
 
     public void sendBody(String endpointUri, Object body) throws Exception {

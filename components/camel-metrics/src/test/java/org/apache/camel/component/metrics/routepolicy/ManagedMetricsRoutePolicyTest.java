@@ -66,12 +66,12 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be 2x4 names
-        assertEquals(8, registry.getNames().size());
+        // there should be 2 names
+        assertEquals(2, registry.getNames().size());
 
-        // there should be 8 mbeans
+        // there should be 2 mbeans
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
-        assertEquals(8, set.size());
+        assertEquals(2, set.size());
 
         String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsRegistryService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
@@ -79,10 +79,8 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         assertNotNull(json);
         log.info(json);
 
-        assertTrue(json.contains("foo.total"));
-        assertTrue(json.contains("bar.total"));
-        assertTrue(json.contains("bar.requests"));
-        assertTrue(json.contains("foo.requests"));
+        assertTrue(json.contains("bar.responses"));
+        assertTrue(json.contains("foo.responses"));
     }
 
     @Override

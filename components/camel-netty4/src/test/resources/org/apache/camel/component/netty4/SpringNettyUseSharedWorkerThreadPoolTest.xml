@@ -31,19 +31,19 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="netty4:tcp://localhost:5021?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;orderedThreadPoolExecutor=false"/>
+      <from uri="netty4:tcp://localhost:5021?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
 
     <route>
-      <from uri="netty4:tcp://localhost:5022?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;orderedThreadPoolExecutor=false"/>
+      <from uri="netty4:tcp://localhost:5022?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
 
     <route>
-      <from uri="netty4:tcp://localhost:5023?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;orderedThreadPoolExecutor=false"/>
+      <from uri="netty4:tcp://localhost:5023?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>

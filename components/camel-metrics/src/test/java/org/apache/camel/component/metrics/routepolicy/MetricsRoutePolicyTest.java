@@ -52,8 +52,8 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be 2x4 names
-        assertEquals(8, registry.getNames().size());
+        // there should be 2 names
+        assertEquals(2, registry.getNames().size());
     }
 
     @Override

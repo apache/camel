@@ -74,6 +74,15 @@ import org.slf4j.LoggerFactory;
  * set expectations before the test is being started (eg before the mock receives messages).
  * The latter is used after the test has been executed, to verify the expectations; or
  * other assertions which you can perform after the test has been completed.
+ * <p/>
+ * <b>Beware:</b> If you want to expect a mock does not receive any messages, by calling
+ * {@link #setExpectedMessageCount(int)} with <tt>0</tt>, then take extra care,
+ * as <tt>0</tt> matches when the tests starts, so you need to set a assert period time
+ * to let the test run for a while to make sure there are still no messages arrived; for
+ * that use {@link #setAssertPeriod(long)}.
+ * An alternative is to use <a href="http://camel.apache.org/notifybuilder.html">NotifyBuilder</a>, and use the notifier
+ * to know when Camel is done routing some messages, before you call the {@link #assertIsSatisfied()} method on the mocks.
+ * This allows you to not use a fixed assert period, to speedup testing times.
  *
  * @version 
  */
@@ -1030,6 +1039,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint.
+     * <p/>
+     * <b>Beware:</b> If you want to expect that <tt>0</tt> messages, then take extra care,
+     * as <tt>0</tt> matches when the tests starts, so you need to set a assert period time
+     * to let the test run for a while to make sure there are still no messages arrived; for
+     * that use {@link #setAssertPeriod(long)}.
+     * An alternative is to use <a href="http://camel.apache.org/notifybuilder.html">NotifyBuilder</a>, and use the notifier
+     * to know when Camel is done routing some messages, before you call the {@link #assertIsSatisfied()} method on the mocks.
+     * This allows you to not use a fixed assert period, to speedup testing times.
      * <p/>
      * If you want to assert that <b>exactly</b> n'th message arrives to this mock
      * endpoint, then see also the {@link #setAssertPeriod(long)} method for further details.

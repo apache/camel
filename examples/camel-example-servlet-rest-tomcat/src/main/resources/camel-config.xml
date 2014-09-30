@@ -23,9 +23,8 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <!--<bean id="generator" class="org.apache.camel.example.rest.DeleteMe" init-method="generate">-->
-    <!--<property name="camelContext" ref="myCamel"/>-->
-  <!--</bean>-->
+  <!-- use camel-metrics route policy to gather metrics for all routes -->
+  <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
 
   <!-- a rest service which uses binding to/from pojos -->
   <bean id="userRoutes" class="org.apache.camel.example.rest.UserRouteBuilder"/>

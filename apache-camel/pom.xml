@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -94,6 +94,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-beanio</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-beanstalk</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -173,6 +177,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-dropbox</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-eclipse</artifactId>
     </dependency>
     <dependency>
@@ -218,6 +226,14 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-geocoder</artifactId>
+    </dependency>
+     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-github</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-drive</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -305,6 +321,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jclouds</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jcr</artifactId>
     </dependency>
     <dependency>
@@ -326,6 +346,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jira</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -395,6 +419,14 @@
       <artifactId>camel-leveldb</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel.component.linkedin</groupId>
+      <artifactId>camel-linkedin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.linkedin</groupId>
+      <artifactId>camel-linkedin</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mail</artifactId>
     </dependency>
@@ -452,7 +484,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-netty4-http</artifactId>
+    </dependency>
+     <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-ognl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.olingo2</groupId>
+      <artifactId>camel-olingo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.olingo2</groupId>
+      <artifactId>camel-olingo2</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -529,6 +573,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-scala</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-schematron</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -661,6 +709,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring40</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

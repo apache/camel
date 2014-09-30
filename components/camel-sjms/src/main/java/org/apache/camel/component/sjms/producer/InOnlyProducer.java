@@ -74,7 +74,7 @@ public class InOnlyProducer extends SjmsProducer {
 
             answer = new MessageProducerResources(session, messageProducer, commitStrategy);
         } catch (Exception e) {
-            log.error("Unable to create the MessageProducer: " + e.getLocalizedMessage());
+            log.error("Unable to create the MessageProducer", e);
         } finally {
             if (conn != null) {
                 getConnectionResource().returnConnection(conn);
@@ -123,7 +123,7 @@ public class InOnlyProducer extends SjmsProducer {
                 producer.getMessageProducer().send(message);
             }
         } catch (Exception e) {
-            exchange.setException(new Exception("Unable to complete sending the message: " + e.getLocalizedMessage()));
+            exchange.setException(new Exception("Unable to complete sending the message: ", e));
         } finally {
             if (producer != null) {
                 getProducers().returnObject(producer);

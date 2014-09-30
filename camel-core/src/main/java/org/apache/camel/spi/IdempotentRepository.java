@@ -30,8 +30,12 @@ import org.apache.camel.Service;
  *     <li>non-eager: calls <tt>contains</tt> and <tt>add</tt> if complete, or <tt>remove</tt> if failed</li>
  * </ul>
  * Notice the remove callback, can be configured to be disabled.
+ * <p/>
+ * Implementations for the <a href="http://camel.apache.org/idempotent-consumer.html">idempotent consumer EIP</a>
+ * should favor using {@link org.apache.camel.spi.ExchangeIdempotentRepository} instead.
  *
- * @version 
+ * @version
+ * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
 public interface IdempotentRepository<E> extends Service {
 

@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -54,7 +54,7 @@
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.6.2</aspectj-version>
-    <atmosphere-version>2.2.0</atmosphere-version>
+    <atmosphere-version>2.2.1</atmosphere-version>
     <atmosphere-version-range>[2.0,3.0)</atmosphere-version-range>
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
@@ -62,20 +62,22 @@
     <avro-version>1.7.6</avro-version>
     <avro-bundle-version>1.7.6_2</avro-bundle-version>
     <avro-ipc-bundle-version>1.7.6_1</avro-ipc-bundle-version>
-    <aws-java-sdk-bundle-version>1.8.3_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-bundle-version>1.8.3_2</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.8.3</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <beanio-version>2.0.7</beanio-version>
+    <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bsh-version>2.0b5</bsh-version>
     <!-- bouncycastle 1.50 does not work in OSGi - http://www.bouncycastle.org/jira/browse/BJA-476 -->
     <bouncycastle-version>1.49</bouncycastle-version>
     <boxjavalibv2.version>3.0.9</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
     <c3p0-version>0.9.1.2</c3p0-version>
-    <camel-test-spring-artifactId>camel-test-spring3</camel-test-spring-artifactId>
+    <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
+    <cdi-api-version>1.2</cdi-api-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
     <classmate-version>1.0.0</classmate-version>
@@ -104,7 +106,7 @@
     <commons-jxpath-version>1.3</commons-jxpath-version>
     <commons-lang-version>2.6</commons-lang-version>
     <commons-lang-version-xmljson>2.5</commons-lang-version-xmljson>
-    <commons-lang3-version>3.1</commons-lang3-version>
+    <commons-lang3-version>3.3.2</commons-lang3-version>
     <commons-logging-version>1.1.3</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
     <commons-math3-version>3.3</commons-math3-version>
@@ -116,7 +118,7 @@
     <cxf-version>3.0.1</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>3.0.1</cxf-xjc-utils-version>
-    <deltaspike-version>1.0.2</deltaspike-version>
+    <deltaspike-version>1.0.3</deltaspike-version>
     <derby-version>10.10.2.0</derby-version>
     <disruptor-version>3.3.0</disruptor-version>
     <dnsjava-version>2.1.1</dnsjava-version>
@@ -129,6 +131,7 @@
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-version>2.8.3</ehcache-version>
+    <egit-github-core-version>2.1.5</egit-github-core-version>
     <elasticsearch-bundle-version>1.0.0_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.0.0</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -140,7 +143,7 @@
     <felix-fileinstall-version>3.2.6</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
-    <flatpack-bundle-version>3.2.0_2</flatpack-bundle-version>
+    <flatpack-version>3.4.2</flatpack-version>
     <fop-bundle-version>1.1_1</fop-bundle-version>
     <fop-version>1.1</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
@@ -168,8 +171,11 @@
     <google-app-engine-bundle-version>1.8.3_1</google-app-engine-bundle-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
-    <google-guava-version>17.0</google-guava-version>
-    <groovy-version>2.3.6</groovy-version>
+    <google-guava-version>18.0</google-guava-version>
+    <google-api-client-version>1.18.0-rc</google-api-client-version>
+    <google-api-services-drive-version>v2-rev123-1.18.0-rc</google-api-services-drive-version>
+    <grizzly-websockets-version>2.3.11</grizzly-websockets-version>
+    <groovy-version>2.3.7</groovy-version>
     <gson-version>2.2.4</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
@@ -193,6 +199,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
     <httpclient4-version>4.3.3</httpclient4-version>
+    <httpasyncclient-version>4.0.2</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
@@ -201,6 +208,8 @@
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
+    <isorelax-version>20090621</isorelax-version>
+    <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson2-version>2.4.1</jackson2-version>
@@ -248,7 +257,7 @@
     <jodatime2-bundle-version>2.3</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.7.12</jruby-version>
+    <jruby-version>1.7.16</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-version>0.1.50</jsch-version>
@@ -270,7 +279,7 @@
     <jython-version>2.5.3</jython-version>
     <kafka-version>0.8.1</kafka-version>
     <kafka-bundle-version>0.8.1_1</kafka-bundle-version>
-    <karaf-version>2.3.6</karaf-version>
+    <karaf-version>2.4.0</karaf-version>
     <karaf3-version>3.0.1</karaf3-version>
     <kie-version>6.1.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
@@ -306,15 +315,15 @@
     <maven-surefire-report-plugin-version>2.13</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>2.4</maven-war-plugin-version>
     <maven-version>2.0</maven-version>
-    <metrics-version>3.0.2</metrics-version>
+    <metrics-version>3.1.0</metrics-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
-    <mina2-version>2.0.7</mina2-version>
+    <mina2-version>2.0.8</mina2-version>
     <mock-javamail-version>1.7</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.12.0</mongo-java-driver-version>
     <mqtt-client-version>1.10</mqtt-client-version>
-    <msv-version>20050913</msv-version>
+    <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.8.16</mustache-java-version>
     <mustache-bundle-version>0.8.15_1/</mustache-bundle-version>
     <mvel-version>2.2.1.Final</mvel-version>
@@ -324,7 +333,9 @@
     <netty-version>4.0.23.Final</netty-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
-    <openwebbeans-version>1.1.5</openwebbeans-version>
+    <openwebbeans-version>1.2.0</openwebbeans-version>
+    <olingo2-version>2.0.0</olingo2-version>
+    <olingo-odata2-core-bundle-version>2.0.0_1</olingo-odata2-core-bundle-version>
     <ognl-version>3.0.8_1</ognl-version>
     <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
@@ -360,7 +371,7 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>0.20.2</rxjava-version>
+    <rxjava-version>0.20.4</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
     <saxon-version>9.5.1-5</saxon-version>
@@ -388,7 +399,7 @@
     <solr-version-range>[4.8,5)</solr-version-range>
     <spark-rest-version>2.0.0</spark-rest-version>
     <splunk-version>1.3.0_1</splunk-version>
-    <spring-batch-version>2.2.5.RELEASE</spring-batch-version>
+    <spring-batch-version>2.2.7.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.5.0.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.3.4.RELEASE</spring-data-redis-version>
@@ -399,11 +410,12 @@
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->
     <spring-version-range>[3.2,4)</spring-version-range>
-    <spring-version>${spring32-version}</spring-version>
-    <spring32-version>3.2.9.RELEASE</spring32-version>
-    <spring4-version>4.0.5.RELEASE</spring4-version>
+    <spring-version>${spring4-version}</spring-version>
+    <spring32-version>3.2.11.RELEASE</spring32-version>
+    <spring40-version>4.0.7.RELEASE</spring40-version>
+    <spring4-version>4.1.0.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>3.1.6.RELEASE</spring-security-version>
+    <spring-security-version>3.2.5.RELEASE</spring-security-version>
     <spring-ws-version>2.1.4.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
@@ -428,9 +440,7 @@
     <velocity-version>1.7</velocity-version>
     <vertx-version>2.1.2</vertx-version>
     <vysper-version>0.7</vysper-version>
-    <!-- should be in-sync with deltaspike -->
-    <weld-version>1.1.18.Final</weld-version>
-    <weld2-version>2.1.2.Final</weld2-version>
+    <weld2-version>2.2.4.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.2.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
@@ -517,8 +527,8 @@
     <camel.osgi.dynamic />
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
-    <camel.osgi.require.capability/>
-    <camel.osgi.provide.capability/>
+    <camel.osgi.require.capability />
+    <camel.osgi.provide.capability />
   </properties>
 
   <dependencyManagement>
@@ -583,6 +593,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-beanio</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-beanstalk</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -698,6 +713,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-dropbox</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-eclipse</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -744,6 +764,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ftp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-github</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+       <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-drive</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -891,6 +921,11 @@
         <artifactId>camel-jibx</artifactId>
         <version>${project.version}</version>
       </dependency>
+       <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jira</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jing</artifactId>
@@ -972,6 +1007,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.camel.component.linkedin</groupId>
+        <artifactId>camel-linkedin-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.component.linkedin</groupId>
+        <artifactId>camel-linkedin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mail</artifactId>
         <version>${project.version}</version>
@@ -1042,8 +1087,23 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-netty4-http</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ognl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.component.olingo2</groupId>
+        <artifactId>camel-olingo2-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.component.olingo2</groupId>
+        <artifactId>camel-olingo2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1142,6 +1202,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-schematron</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-script</artifactId>
         <version>${project.version}</version>
@@ -1304,6 +1369,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-spring3</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-test-spring40</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1619,6 +1689,11 @@
             <artifactId>jsr181-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>${jaxb-version}</version>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
@@ -1978,7 +2053,7 @@
           <artifactId>pax-exam-invoker-junit</artifactId>
           <version>${pax-exam-version}</version>
       </dependency>
-      
+
 
 
       <!-- optional Saxon support -->
@@ -2138,7 +2213,7 @@
       <!-- optional misc -->
       <dependency>
         <groupId>org.jruby</groupId>
-        <artifactId>jruby</artifactId>
+        <artifactId>jruby-complete</artifactId>
         <version>${jruby-version}</version>
       </dependency>
       <dependency>
@@ -2424,10 +2499,10 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin-version}</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-            <maxmem>256M</maxmem>
-            <fork>${compiler.fork}</fork>
+              <source>${jdk.version}</source>
+              <target>${jdk.version}</target>
+              <maxmem>256M</maxmem>
+              <fork>${compiler.fork}</fork>
           </configuration>
         </plugin>
         <plugin>
@@ -2459,11 +2534,11 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <configuration>
             <attach>true</attach>
-            <source>1.6</source>
+            <source>${jdk.version}</source>
             <quiet>true</quiet>
             <bottom>Apache Camel</bottom>
             <detectOfflineLinks>false</detectOfflineLinks>
-            <javadocVersion>1.6</javadocVersion>
+            <javadocVersion>${jdk.version}</javadocVersion>
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
@@ -2803,7 +2878,7 @@
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>500m</maxmemory>
-          <source>1.6</source>
+          <source>${jdk.version}</source>
         </configuration>
       </plugin>
       <plugin>
@@ -2919,23 +2994,6 @@
       </dependencies>
     </profile>
 
-    <profile>
-      <id>jdk1.8</id>
-        <activation>
-          <jdk>1.8</jdk>
-        </activation>
-
-        <properties>
-          <jaxb-version>2.2.10-b140310.1920</jaxb-version>
-        </properties>
-
-        <dependencies>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-          </dependency>
-        </dependencies>
-    </profile>
   </profiles>
 
 </project>

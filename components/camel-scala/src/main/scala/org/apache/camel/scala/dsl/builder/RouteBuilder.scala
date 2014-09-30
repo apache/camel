@@ -110,6 +110,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def dynamicRouter(expression: Exchange => Any) = stack.top.dynamicRouter(expression)
 
   def enrich(uri: String, strategy: AggregationStrategy) = stack.top.enrich(uri, strategy)
+  def enrich(uri: String, strategy: AggregationStrategy, aggregateOnException: Boolean) = stack.top.enrich(uri, strategy, aggregateOnException)
   def errorHandler(error: ErrorHandlerBuilder) { builder.setErrorHandlerBuilder(error) }
   def deadLetterChannel(uri: String) = {
     val dlc = new DeadLetterChannelBuilder
@@ -163,6 +164,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
 
   def pipeline = stack.top.pipeline
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) = stack.top.pollEnrich(uri, strategy, timeout)
+  def pollEnrich(uri: String, strategy: AggregationStrategy, timeout: Long, aggregateOnException: Boolean) = stack.top.pollEnrich(uri, strategy, timeout, aggregateOnException)
   def policy(policy: Policy) = stack.top.policy(policy)
   def process(function: Exchange => Unit) = stack.top.process(function)
   def process(processor: Processor) = stack.top.process(processor)
@@ -178,6 +180,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def setBody(expression : Exchange => Any) = stack.top.setBody(expression)
   def setFaultBody(expression: Exchange => Any) = stack.top.setFaultBody(expression)
   def setHeader(name: String, expression: Exchange => Any) = stack.top.setHeader(name, expression)
+  def setExchangePattern(mep: ExchangePattern) = stack.top.setExchangePattern(mep)
   def setProperty(name: String, expression: Exchange => Any) = stack.top.setProperty(name, expression)
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = stack.top.sort(expression, comparator)
   def split(expression: Exchange => Any) = stack.top.split(expression)
