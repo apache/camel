@@ -18,7 +18,7 @@ package org.apache.camel.component.github.producer;
 
 public enum ProducerType {
 
-    PULLREQUESTCOMMENT, UNKNOWN;
+    CLOSEPULLREQUEST, PULLREQUESTCOMMENT, UNKNOWN;
 
     public static ProducerType fromUri(String uri) {
         for (ProducerType producerType : ProducerType.values()) {
