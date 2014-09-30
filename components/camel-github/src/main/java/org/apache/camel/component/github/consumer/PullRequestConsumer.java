@@ -68,6 +68,10 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
             PullRequest newPullRequest = newPullRequests.pop();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newPullRequest);
+            
+            // Required by the producers.  Set it here for convenience.
+            e.getIn().setHeader("GitHubPullRequest", newPullRequest.getNumber());
+            
             getProcessor().process(e);
         }
         return newPullRequests.size();

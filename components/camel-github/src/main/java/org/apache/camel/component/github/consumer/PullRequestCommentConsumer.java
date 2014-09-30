@@ -17,7 +17,9 @@
 package org.apache.camel.component.github.consumer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.camel.Exchange;
@@ -65,6 +67,10 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
 
     @Override
     protected int poll() throws Exception {
+        // Do this here, rather than at the class level.  We only care about it for setting the Exchange header, so
+        // there's no point growing memory over time.
+        Map<Long, PullRequest> commentIdToPullRequest = new HashMap<Long, PullRequest>();
+        
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
         // In the end, we want comments oldest to newest.
         Stack<Comment> newComments = new Stack<Comment>();
@@ -74,6 +80,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
                 if (!commentIds.contains(comment.getId())) {
                     newComments.add(comment);
                     commentIds.add(comment.getId());
+                    commentIdToPullRequest.put(comment.getId(), pullRequest);
                 }
             }
             List<Comment> comments = issueService.getComments(getRepository(), pullRequest.getNumber());
@@ -81,6 +88,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
                 if (!commentIds.contains(comment.getId())) {
                     newComments.add(comment);
                     commentIds.add(comment.getId());
+                    commentIdToPullRequest.put(comment.getId(), pullRequest);
                 }
             }
         }
@@ -89,6 +97,10 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
             Comment newComment = newComments.pop();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newComment);
+            
+            // Required by the producers.  Set it here for convenience.
+            e.getIn().setHeader("GitHubPullRequest", commentIdToPullRequest.get(newComment.getId()));
+            
             getProcessor().process(e);
         }
         return newComments.size();

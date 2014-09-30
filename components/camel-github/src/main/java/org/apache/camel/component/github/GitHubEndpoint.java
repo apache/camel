@@ -26,6 +26,7 @@ import org.apache.camel.component.github.consumer.ConsumerType;
 import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
+import org.apache.camel.component.github.producer.ClosePullRequestProducer;
 import org.apache.camel.component.github.producer.ProducerType;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -78,6 +79,8 @@ public class GitHubEndpoint extends DefaultEndpoint {
         
         if (uriSplit.length > 0) {
             switch (ProducerType.fromUri(uriSplit[0])) {
+            case CLOSEPULLREQUEST:
+                return new ClosePullRequestProducer(this);
             case PULLREQUESTCOMMENT:
                 return new PullRequestCommentProducer(this);
             default:
