@@ -194,11 +194,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // if set, stop processing and return false to indicate that the shutdown is aborting
             if (!forceShutdown && abortAfterTimeout) {
-                LOG.warn("Timeout occurred. Aborting the shutdown now.  Some resources may still be running.");
+                LOG.warn("Timeout occurred during graceful shutdown. Aborting the shutdown now."
+                        + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
                 return false;
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
-                    LOG.warn("Timeout occurred. Forcing the routes to be shutdown now.  Some resources may still be running.");
+                    LOG.warn("Timeout occurred during graceful shutdown. Forcing the routes to be shutdown now."
+                            + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
 
@@ -209,7 +211,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         }
                     }
                 } else {
-                    LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes. Some resources may still be running.");
+                    LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
+                            + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
                 }
             }
         } finally {
