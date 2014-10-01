@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
@@ -44,6 +45,11 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+    }
+
+    @Override
+    public TimerEndpoint getEndpoint() {
+        return (TimerEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -81,7 +87,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
         // only configure task if CamelContext already started, otherwise the StartupListener
         // is configuring the task later
         if (!configured && endpoint.getCamelContext().getStatus().isStarted()) {
-            Timer timer = endpoint.getTimer();
+            Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
         }
     }
@@ -93,12 +99,15 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
         }
         task = null;
         configured = false;
+
+        // remove timer
+        endpoint.removeTimer(this);
     }
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
         if (task != null && !configured) {
-            Timer timer = endpoint.getTimer();
+            Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
         }
     }
