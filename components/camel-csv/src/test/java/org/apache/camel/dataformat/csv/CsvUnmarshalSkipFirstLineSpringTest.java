@@ -19,13 +19,17 @@ package org.apache.camel.dataformat.csv;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 
 import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
+/**
+ * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of
+ * the <tt>skipFirstLine</tt> option.
+ */
+public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
@@ -35,7 +39,8 @@ public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
     public void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "123\tCamel in Action\t1\n124\tActiveMQ in Action\t2");
+        // the first line contains the column names which we intend to skip
+        template.sendBody("direct:start", "OrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
         assertMockEndpointsSatisfied();
 
@@ -54,7 +59,9 @@ public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
     public void testCsvUnMarshalSingleLine() throws Exception {
         result.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "123\tCamel in Action\t1");
+        // the first line contains a data row but as we set skipFirstLine
+        // to true the first line gets simply skipped and not unmarshalled
+        template.sendBody("direct:start", "124|ActiveMQ in Action|2\n123|Camel in Action|1");
 
         assertMockEndpointsSatisfied();
 
@@ -65,18 +72,21 @@ public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
         assertEquals("1", body.get(0).get(2));
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat()
-                        .setDelimiter('\t');
+    @Test
+    public void testCsvUnMarshalNoLine() throws Exception {
+        result.expectedMessageCount(1);
 
-                from("direct:start").unmarshal(csv)
-                        .to("mock:result");
-            }
-        };
+        // the first and last line we intend to skip
+        template.sendBody("direct:start", "123|Camel in Action|1\n");
+
+        assertMockEndpointsSatisfied();
+
+        List<?> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(0, body.size());
     }
 
+    @Override
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalSkipFirstLineSpringTest-context.xml");
+    }
 }

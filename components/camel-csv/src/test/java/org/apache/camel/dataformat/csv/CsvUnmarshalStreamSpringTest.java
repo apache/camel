@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -43,7 +44,7 @@ public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         Iterator<?> body = result.getReceivedExchanges().get(0).getIn().getBody(Iterator.class);
-        CsvIterator iterator = assertIsInstanceOf(CsvIterator.class, body);
+        Iterator iterator = assertIsInstanceOf(Iterator.class, body);
         assertTrue(iterator.hasNext());
         assertEquals(Arrays.asList(MESSAGE), iterator.next());
         assertFalse(iterator.hasNext());

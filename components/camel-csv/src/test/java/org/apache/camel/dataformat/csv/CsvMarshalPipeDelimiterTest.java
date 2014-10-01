@@ -25,12 +25,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.csv.writer.CSVConfig;
+
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -46,22 +43,22 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
         String body = result.getReceivedExchanges().get(0).getIn().getBody(
                 String.class);
-        String[] lines = body.split("\n");
+        String[] lines = body.split(System.lineSeparator());
         assertEquals(2, lines.length);
         assertEquals("123|Camel in Action|1", lines[0]);
         assertEquals("124|ActiveMQ in Action|2", lines[1]);
     }
 
     private List<Map<String, Object>> createBody() {
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> data = new ArrayList<>();
 
-        Map<String, Object> row1 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row1 = new LinkedHashMap<>();
         row1.put("orderId", 123);
         row1.put("item", "Camel in Action");
         row1.put("amount", 1);
         data.add(row1);
 
-        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row2 = new LinkedHashMap<>();
         row2.put("orderId", 124);
         row2.put("item", "ActiveMQ in Action");
         row2.put("amount", 2);
@@ -74,14 +71,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                CSVConfig config = new CSVConfig();
-                config.setDelimiter('|');
-                csv.setConfig(config);
-                
-                // also possible
-                // CsvDataFormat csv = new CsvDataFormat();
-                // csv.setDelimiter("|");
+                CsvDataFormat csv = new CsvDataFormat().setDelimiter('|').setHeaderDisabled(true);
 
                 from("direct:start").marshal(csv).convertBodyTo(String.class)
                         .to("mock:result");
