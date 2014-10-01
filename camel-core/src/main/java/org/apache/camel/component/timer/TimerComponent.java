@@ -35,7 +35,7 @@ import org.apache.camel.impl.UriEndpointComponent;
  */
 public class TimerComponent extends UriEndpointComponent {
     private final Map<String, Timer> timers = new HashMap<String, Timer>();
-    private final Map<String, AtomicInteger> refCounts = new HashMap<>();
+    private final Map<String, AtomicInteger> refCounts = new HashMap<String, AtomicInteger>();
 
     public TimerComponent() {
         super(TimerEndpoint.class);
@@ -60,7 +60,9 @@ public class TimerComponent extends UriEndpointComponent {
             } else {
                 // increase reference counter
                 AtomicInteger counter = refCounts.get(key);
-                counter.incrementAndGet();
+                if (counter != null) {
+                    counter.incrementAndGet();
+                }
             }
         }
         return answer;
@@ -75,7 +77,7 @@ public class TimerComponent extends UriEndpointComponent {
         synchronized (timers) {
             // decrease reference counter
             AtomicInteger counter = refCounts.get(key);
-            if (counter.decrementAndGet() <= 0) {
+            if (counter != null && counter.decrementAndGet() <= 0) {
                 refCounts.remove(key);
                 // remove timer as its no longer in use
                 Timer timer = timers.remove(key);
