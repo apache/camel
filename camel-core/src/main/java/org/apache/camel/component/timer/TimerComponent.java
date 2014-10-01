@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -34,14 +35,15 @@ import org.apache.camel.impl.UriEndpointComponent;
  */
 public class TimerComponent extends UriEndpointComponent {
     private final Map<String, Timer> timers = new HashMap<String, Timer>();
+    private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
     public TimerComponent() {
         super(TimerEndpoint.class);
     }
 
-    public Timer getTimer(TimerEndpoint endpoint) {
-        String key = endpoint.getTimerName();
-        if (!endpoint.isDaemon()) {
+    public Timer getTimer(TimerConsumer consumer) {
+        String key = consumer.getEndpoint().getTimerName();
+        if (!consumer.getEndpoint().isDaemon()) {
             key = "nonDaemon:" + key;
         }
 
@@ -50,12 +52,38 @@ public class TimerComponent extends UriEndpointComponent {
             answer = timers.get(key);
             if (answer == null) {
                 // the timer name is also the thread name, so lets resolve a name to be used
-                String name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName("timer://" + endpoint.getTimerName());
-                answer = new Timer(name, endpoint.isDaemon());
+                String name = consumer.getEndpoint().getCamelContext().getExecutorServiceManager().resolveThreadName("timer://" + consumer.getEndpoint().getTimerName());
+                answer = new Timer(name, consumer.getEndpoint().isDaemon());
                 timers.put(key, answer);
+                // store new reference counter
+                refCounts.put(key, new AtomicInteger(1));
+            } else {
+                // increase reference counter
+                AtomicInteger counter = refCounts.get(key);
+                counter.incrementAndGet();
             }
         }
         return answer;
+    }
+
+    public void removeTimer(TimerConsumer consumer) {
+        String key = consumer.getEndpoint().getTimerName();
+        if (!consumer.getEndpoint().isDaemon()) {
+            key = "nonDaemon:" + key;
+        }
+
+        synchronized (timers) {
+            // decrease reference counter
+            AtomicInteger counter = refCounts.get(key);
+            if (counter.decrementAndGet() <= 0) {
+                refCounts.remove(key);
+                // remove timer as its no longer in use
+                Timer timer = timers.remove(key);
+                if (timer != null) {
+                    timer.cancel();
+                }
+            }
+        }
     }
 
     @Override
@@ -89,5 +117,6 @@ public class TimerComponent extends UriEndpointComponent {
             timer.cancel();
         }
         timers.clear();
+        refCounts.clear();
     }
 }
