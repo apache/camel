@@ -21,6 +21,6 @@ The plugin configuration has the following properties.
 Fro obvious security reasons it is recommended that the clientId, clientSecret, userName and password fields be not set in the pom.xml. 
 The plugin should be configured for the rest of the properties, and can be executed using the following command:
 
-	mvn camel-salesforce:generate -DclientId=<clientid> -DclientSecret=<clientsecret> -DuserName=<username> -Dpassword=<password>
+	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
 
 The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. Date and time fields are mapped to Joda DateTime, and picklist fields are mapped to generated Java Enumerations. 
