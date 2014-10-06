@@ -107,6 +107,11 @@ public class JndiRegistry implements Registry {
         return answer;
     }
 
+    @Override
+    public void add(String name, Object object) {
+        bind(name, object);
+    }
+
     public Object lookup(String name) {
         return lookupByName(name);
     }

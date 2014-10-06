@@ -72,6 +72,11 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         return result;
     }
 
+    @Override
+    public void add(String name, Object object) {
+        put(name, object);
+    }
+
     public Object lookup(String name) {
         return lookupByName(name);
     }

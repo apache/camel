@@ -62,6 +62,14 @@ public interface Registry {
     <T> Set<T> findByType(Class<T> type);
 
     /**
+     * Adds a service in the registry.
+     *
+     * @param name the name of the service
+     * @param object the service object to add
+     */
+    void add(String name, Object object);
+
+    /**
      * Looks up a service in the registry based purely on name,
      * returning the service or <tt>null</tt> if it could not be found.
      *
@@ -95,5 +103,4 @@ public interface Registry {
      */
     @Deprecated
     <T> Map<String, T> lookupByType(Class<T> type);
-
 }

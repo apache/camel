@@ -30,10 +30,12 @@ public class JndiRegistryTest extends TestCase {
         JndiRegistry jndi = new JndiRegistry(JndiTest.createInitialContext());
         jndi.bind("foo", new SimpleLanguage());
         jndi.bind("bar", "Hello bar");
+        jndi.add("direct", "something");
 
         assertEquals("Hello bar", jndi.lookup("bar"));
         assertEquals("Hello bar", jndi.lookupByName("bar"));
         assertEquals("Hello bar", jndi.lookupByNameAndType("bar", String.class));
+        assertEquals("something", jndi.lookup("direct"));
         assertNull(jndi.lookup("unknown"));
         assertNull(jndi.lookupByName("unknown"));
 

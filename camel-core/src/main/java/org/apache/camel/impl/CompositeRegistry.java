@@ -107,6 +107,13 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
+    @Override
+    public void add(String name, Object object) {
+        if (null != registryList.get(0)) {
+            registryList.get(0).add(name, object);
+        }
+    }
+
     public Object lookup(String name) {
         return lookupByName(name);
     }

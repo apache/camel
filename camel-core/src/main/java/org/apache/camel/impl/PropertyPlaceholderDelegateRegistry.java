@@ -74,6 +74,11 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
         return delegate.findByType(type);
     }
 
+    @Override
+    public void add(String name, Object object) {
+        delegate.add(name, object);
+    }
+
     public Object lookup(String name) {
         return lookupByName(name);
     }

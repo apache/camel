@@ -90,6 +90,11 @@ public class CdiBeanRegistry implements Registry {
     }
 
     @Override
+    public void add(String name, Object object) {
+        // not implemented
+    }
+
+    @Override
     public Object lookup(String name) {
         return lookupByName(name);
     }
