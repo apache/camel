@@ -171,7 +171,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
             request.setEntity(form.getWebRepresentation());
         } else {
-            request.setEntity(body, mediaType);
+            if (body == null) {
+                request.setEntity(null);
+            } else {
+                request.setEntity(body, mediaType);
+            }
         }
 
         MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
