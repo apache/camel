@@ -30,6 +30,9 @@ public class NettyHttpProducerSimpleGetTest extends BaseNettyTest {
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
+        
+        out = template.requestBody("netty4-http:http://localhost:{{port}}/foo", null, String.class);
+        assertEquals("Bye World", out);
     }
 
     @Test
