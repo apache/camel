@@ -150,9 +150,7 @@ public class PropertiesComponent extends DefaultComponent {
         if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
             Properties override = new Properties();
-            if (null != prop) {
-                override.putAll(prop);
-            }
+            override.putAll(prop);
             override.putAll(overrideProperties);
             prop = override;
         }
