@@ -222,7 +222,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         }
     }
 
-    private Exchange getExchange(ChannelHandlerContext ctx) {
+    protected Exchange getExchange(ChannelHandlerContext ctx) {
         NettyCamelState state = producer.getState(ctx.getChannel());
         return state != null ? state.getExchange() : null;
     }
