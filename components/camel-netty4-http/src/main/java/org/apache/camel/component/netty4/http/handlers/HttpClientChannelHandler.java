@@ -18,9 +18,10 @@ package org.apache.camel.component.netty4.http.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
-
+import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.http.NettyHttpProducer;
 
@@ -40,6 +41,10 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     @Override
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
         FullHttpResponse response = (FullHttpResponse) message;
+        if (!HttpHeaders.isKeepAlive(response)) {
+            // just want to make sure we close the channel if the keepAlive is not true
+            exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        }
         // use the binding
         return producer.getEndpoint().getNettyHttpBinding().toCamelMessage(response, exchange, producer.getConfiguration());
     }
