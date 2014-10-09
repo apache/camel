@@ -28,7 +28,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.language.NamespaceAwareExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -49,17 +48,17 @@ public final class RestContextRefDefinitionHelper {
      * Lookup the rests from the {@link org.apache.camel.model.RestContextRefDefinition}.
      * <p/>
      * This implementation must be used to lookup the rests as it performs a deep clone of the rests
-     * as a {@link org.apache.camel.model.RestContextRefDefinition} can be re-used with multiple {@link org.apache.camel.CamelContext} and each
+     * as a {@link org.apache.camel.model.RestContextRefDefinition} can be re-used with multiple {@link org.apache.camel.model.ModelCamelContext} and each
      * context should have their own instances of the routes. This is to ensure no side-effects and sharing
      * of instances between the contexts. For example such as property placeholders may be context specific
-     * so the routes should not use placeholders from another {@link org.apache.camel.CamelContext}.
+     * so the routes should not use placeholders from another {@link org.apache.camel.model.ModelCamelContext}.
      *
      * @param camelContext the CamelContext
      * @param ref          the id of the {@link org.apache.camel.model.RestContextRefDefinition} to lookup and get the routes.
      * @return the rests.
      */
     @SuppressWarnings("unchecked")
-    public static synchronized List<RestDefinition> lookupRests(CamelContext camelContext, String ref) {
+    public static synchronized List<RestDefinition> lookupRests(ModelCamelContext camelContext, String ref) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
 
@@ -73,7 +72,7 @@ public final class RestContextRefDefinitionHelper {
         // the CamelContext - for example property placeholder resolutions etc.
         List<RestDefinition> clones = new ArrayList<RestDefinition>(answer.size());
         try {
-            JAXBContext jaxb = getOrCreateJAXBContext();
+            JAXBContext jaxb = getOrCreateJAXBContext(camelContext);
             for (RestDefinition def : answer) {
                 RestDefinition clone = cloneRestDefinition(jaxb, def);
                 if (clone != null) {
@@ -87,10 +86,10 @@ public final class RestContextRefDefinitionHelper {
         return clones;
     }
 
-    private static synchronized JAXBContext getOrCreateJAXBContext() throws JAXBException {
+    private static synchronized JAXBContext getOrCreateJAXBContext(final ModelCamelContext camelContext) throws JAXBException {
         if (jaxbContext == null) {
             // must use classloader from CamelContext to have JAXB working
-            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
+            jaxbContext = camelContext.getModelJAXBContextFactory().newJAXBContext();
         }
         return jaxbContext;
     }

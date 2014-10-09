@@ -34,8 +34,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -421,7 +423,13 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected abstract ModelFileGenerator createModelFileGenerator() throws JAXBException;
+    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
+        return new ModelFileGenerator(getModelJAXBContextFactory().newJAXBContext());
+    }
+
+    public ModelJAXBContextFactory getModelJAXBContextFactory() {
+        return new DefaultModelJAXBContextFactory();
+    }
 
     protected void generateDot(String name, CamelContext camelContext, int size) throws IOException {
         String outputDir = dotOutputDir;

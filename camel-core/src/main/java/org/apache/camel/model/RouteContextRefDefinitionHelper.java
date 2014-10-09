@@ -28,7 +28,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.language.NamespaceAwareExpression;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -47,17 +46,17 @@ public final class RouteContextRefDefinitionHelper {
      * Lookup the routes from the {@link RouteContextRefDefinition}.
      * <p/>
      * This implementation must be used to lookup the routes as it performs a deep clone of the routes
-     * as a {@link RouteContextRefDefinition} can be re-used with multiple {@link CamelContext} and each
+     * as a {@link RouteContextRefDefinition} can be re-used with multiple {@link ModelCamelContext} and each
      * context should have their own instances of the routes. This is to ensure no side-effects and sharing
      * of instances between the contexts. For example such as property placeholders may be context specific
-     * so the routes should not use placeholders from another {@link CamelContext}.
+     * so the routes should not use placeholders from another {@link ModelCamelContext}.
      *
      * @param camelContext the CamelContext
      * @param ref          the id of the {@link RouteContextRefDefinition} to lookup and get the routes.
      * @return the routes.
      */
     @SuppressWarnings("unchecked")
-    public static synchronized List<RouteDefinition> lookupRoutes(CamelContext camelContext, String ref) {
+    public static synchronized List<RouteDefinition> lookupRoutes(ModelCamelContext camelContext, String ref) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
 
@@ -71,7 +70,7 @@ public final class RouteContextRefDefinitionHelper {
         // the CamelContext - for example property placeholder resolutions etc.
         List<RouteDefinition> clones = new ArrayList<RouteDefinition>(answer.size());
         try {
-            JAXBContext jaxb = getOrCreateJAXBContext();
+            JAXBContext jaxb = getOrCreateJAXBContext(camelContext);
             for (RouteDefinition def : answer) {
                 RouteDefinition clone = cloneRouteDefinition(jaxb, def);
                 if (clone != null) {
@@ -85,10 +84,9 @@ public final class RouteContextRefDefinitionHelper {
         return clones;
     }
 
-    private static synchronized JAXBContext getOrCreateJAXBContext() throws JAXBException {
+    private static synchronized JAXBContext getOrCreateJAXBContext(final ModelCamelContext camelContext) throws JAXBException {
         if (jaxbContext == null) {
-            // must use classloader from CamelContext to have JAXB working
-            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
+            jaxbContext = camelContext.getModelJAXBContextFactory().newJAXBContext();
         }
         return jaxbContext;
     }

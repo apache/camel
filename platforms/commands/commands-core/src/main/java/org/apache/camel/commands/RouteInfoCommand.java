@@ -59,7 +59,9 @@ public class RouteInfoCommand extends AbstractRouteCommand {
 
             RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
             out.println(stringEscape.unescapeJava("\tState: " + route.getState()));
+            out.println(stringEscape.unescapeJava("\tState: " + route.getState()));
 
+            out.println("");
             out.println("");
             out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
             long total = route.getExchangesCompleted() + route.getExchangesFailed();

@@ -80,7 +80,6 @@ import org.apache.camel.management.DefaultManagementMBeanAssembler;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagementStrategyFactory;
-import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -115,6 +114,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -244,6 +244,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private UnitOfWorkFactory unitOfWorkFactory = new DefaultUnitOfWorkFactory();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
+    private ModelJAXBContextFactory modelJAXBContextFactory;
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -712,7 +713,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // load routes using JAXB
         if (jaxbContext == null) {
             // must use classloader from CamelContext to have JAXB working
-            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
+            jaxbContext = getModelJAXBContextFactory().newJAXBContext();
         }
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -2904,6 +2905,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             return answer;
         }
+    }
+
+    public ModelJAXBContextFactory getModelJAXBContextFactory() {
+        if (modelJAXBContextFactory == null) {
+            modelJAXBContextFactory = new DefaultModelJAXBContextFactory();
+        }
+        return modelJAXBContextFactory;
+    }
+
+    public void setModelJAXBContextFactory(final ModelJAXBContextFactory modelJAXBContextFactory) {
+        this.modelJAXBContextFactory = modelJAXBContextFactory;
     }
 
     public NodeIdFactory getNodeIdFactory() {

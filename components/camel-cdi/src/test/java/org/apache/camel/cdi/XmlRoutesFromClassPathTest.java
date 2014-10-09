@@ -41,7 +41,7 @@ public class XmlRoutesFromClassPathTest extends CdiTestSupport {
     @Produces
     @ContextName
     public RoutesDefinition createRoutes() throws Exception {
-        return RoutesXml.loadRoutesFromClasspath("routes.xml");
+        return RoutesXml.loadRoutesFromClasspath(new CdiCamelContext(), "routes.xml");
     }
     
     @Test

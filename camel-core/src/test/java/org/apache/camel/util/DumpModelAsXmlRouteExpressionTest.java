@@ -35,7 +35,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
     }
 
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -43,7 +43,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
     }
 
     public void testDumpModelAsXmlXPath() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myOtherRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myOtherRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -51,7 +51,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
     }
 
     public void testDumpModelAsXmlHeader() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myFooRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myFooRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -59,7 +59,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
     }
 
     public void testDumpModelAsXmlBean() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myBeanRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myBeanRoute"));
         assertNotNull(xml);
         log.info(xml);
 

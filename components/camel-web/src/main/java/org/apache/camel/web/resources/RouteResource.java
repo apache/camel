@@ -103,7 +103,7 @@ public class RouteResource extends CamelChildResourceSupport {
      * Returns the XML text
      */
     public String getRouteXml() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(Constants.JAXB_PACKAGES);
+        JAXBContext context = ((ModelCamelContext)getCamelContext()).getModelJAXBContextFactory().newJAXBContext();
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         // TODO fix to use "" namespace prefix
@@ -209,7 +209,7 @@ public class RouteResource extends CamelChildResourceSupport {
      */
     private Response parseXml(String xml) {
         try {
-            JAXBContext context = JAXBContext.newInstance(Constants.JAXB_PACKAGES);
+            JAXBContext context = ((ModelCamelContext)getCamelContext()).getModelJAXBContextFactory().newJAXBContext();
             Unmarshaller unmarshaller = context.createUnmarshaller();
             Object value = unmarshaller.unmarshal(new StringReader(xml));
             if (value instanceof RouteDefinition) {

@@ -171,8 +171,4 @@ public class Main extends MainSupport {
         }
         return answer;
     }
-
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES));
-    }
 }

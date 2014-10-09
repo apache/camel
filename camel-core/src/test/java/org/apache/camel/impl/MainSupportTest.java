@@ -17,13 +17,11 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
-import org.apache.camel.view.ModelFileGenerator;
 
 /**
  * @version 
@@ -37,10 +35,6 @@ public class MainSupportTest extends ContextTestSupport {
         }
 
         protected Map<String, CamelContext> getCamelContextMap() {
-            return null;
-        }
-
-        protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
             return null;
         }
     }

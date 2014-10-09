@@ -51,7 +51,7 @@ public class RouteContextRefDefinition {
         this.ref = ref;
     }
     
-    public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
+    public List<RouteDefinition> lookupRoutes(ModelCamelContext camelContext) {
         return RouteContextRefDefinitionHelper.lookupRoutes(camelContext, ref);
     }
 

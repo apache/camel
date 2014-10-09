@@ -32,7 +32,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.MainSupport;
-import org.apache.camel.spring.handler.CamelNamespaceHandler;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.springframework.context.ApplicationContext;
@@ -231,7 +230,7 @@ public class Main extends MainSupport {
     }
 
     protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(new CamelNamespaceHandler().getJaxbContext());
+        return new ModelFileGenerator(new SpringModelJAXBContextFactory().newJAXBContext());
     }
 
     protected AbstractApplicationContext createAdditionalLocationsFromClasspath() throws IOException {

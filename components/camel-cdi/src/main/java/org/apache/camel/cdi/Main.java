@@ -17,17 +17,15 @@
 package org.apache.camel.cdi;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.main.MainSupport;
-import org.apache.camel.view.ModelFileGenerator;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 
 /**
@@ -82,38 +80,8 @@ public abstract class Main extends MainSupport { // abstract to prevent cdi mana
         return answer;
     }
 
-    @Override
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(getJaxbContext());
-    }
-
-    public JAXBContext getJaxbContext() throws JAXBException {
-        if (jaxbContext == null) {
-            jaxbContext = createJaxbContext();
-        }
-        return jaxbContext;
-    }
-
-    protected JAXBContext createJaxbContext() throws JAXBException {
-        StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
-            if (packages.length() > 0) {
-                packages.append(":");
-            }
-            packages.append(cl.getPackage().getName());
-        }
-        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
-    }
-
-    protected Set<Class<?>> getJaxbPackages() {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(org.apache.camel.ExchangePattern.class);
-        classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
-        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
-        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        return classes;
+    public ModelJAXBContextFactory getModelJAXBContextFactory() {
+        return new DefaultModelJAXBContextFactory();
     }
 
     @Override

@@ -332,7 +332,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        return ModelHelper.dumpModelAsXml(def);
+        return ModelHelper.dumpModelAsXml(context, def);
     }
 
     public String dumpRoutesAsXml() throws Exception {
@@ -344,7 +344,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the routes
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
-        return ModelHelper.dumpModelAsXml(def);
+        return ModelHelper.dumpModelAsXml(context, def);
     }
 
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {

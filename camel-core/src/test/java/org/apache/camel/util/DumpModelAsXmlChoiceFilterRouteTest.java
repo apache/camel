@@ -26,7 +26,7 @@ import org.apache.camel.model.ModelHelper;
 public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -36,7 +36,7 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
     }
 
     public void testDumpModelAsXmAl() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("a"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("a"));
         assertNotNull(xml);
         log.info(xml);
 

@@ -23,9 +23,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import junit.framework.TestCase;
-import org.apache.camel.model.Constants;
 import org.apache.camel.spring.CamelContextFactoryBean;
-import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.SpringModelJAXBContextFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ public class CamelContextModelErrorHandlerIssueTest extends TestCase {
 
     @Test
     public void testCamelContextModel() throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.spring", SpringCamelContext.class.getClassLoader());
+        JAXBContext jaxbContext = new SpringModelJAXBContextFactory().newJAXBContext();
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object obj = unmarshaller.unmarshal(new File("src/test/resources/org/apache/camel/spring/issues/CamelContextModelErrorHandlerIssueTest.xml"));
