@@ -19,10 +19,8 @@ package org.apache.camel.component.netty4.http;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("TODO fix it")
 public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest {
 
     @Override
