@@ -21,7 +21,7 @@ import org.apache.camel.component.netty4.http.RestContextPathMatcher;
 
 public class RestPathMatchingTest extends TestCase {
 
-    private RestContextPathMatcher matcher = new RestContextPathMatcher("", "", true);
+    private RestContextPathMatcher matcher = new RestContextPathMatcher("", "", null, true);
 
     public void testRestPathMatcher() throws Exception {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", true));
