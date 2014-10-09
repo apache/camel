@@ -72,7 +72,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
         // use rest path matcher in case Rest DSL is in use
-        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getConfiguration().isMatchOnUriPrefix());
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.put(matcher, new HttpServerChannelHandler(consumer));
     }
 
@@ -80,7 +80,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
         // use rest path matcher in case Rest DSL is in use
-        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getConfiguration().isMatchOnUriPrefix());
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.remove(matcher);
     }
 
