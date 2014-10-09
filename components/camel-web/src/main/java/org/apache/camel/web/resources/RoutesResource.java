@@ -169,7 +169,7 @@ public class RoutesResource extends CamelChildResourceSupport {
      */
     private Response parseXml(String xml) {
         try {
-            JAXBContext context = JAXBContext.newInstance(Constants.JAXB_PACKAGES);
+            JAXBContext context = ((ModelCamelContext)getCamelContext()).getModelJAXBContextFactory().newJAXBContext();
             Unmarshaller unmarshaller = context.createUnmarshaller();
             Object value = unmarshaller.unmarshal(new StringReader(xml));
             if (value instanceof RouteDefinition) {

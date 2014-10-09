@@ -40,6 +40,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.spring.SpringModelJAXBContextFactory;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
@@ -200,36 +201,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     public JAXBContext getJaxbContext() throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = createJaxbContext();
+            jaxbContext = new SpringModelJAXBContextFactory().newJAXBContext();
         }
         return jaxbContext;
-    }
-
-    protected JAXBContext createJaxbContext() throws JAXBException {
-        StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
-            if (packages.length() > 0) {
-                packages.append(":");
-            }
-            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
-        }
-        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
-    }
-
-    protected Set<Class<?>> getJaxbPackages() {
-        // we nedd to have a class from each different package with jaxb models
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
-        classes.add(CamelJMXAgentDefinition.class);
-        classes.add(org.apache.camel.ExchangePattern.class);
-        classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
-        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
-        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        classes.add(org.apache.camel.model.rest.RestDefinition.class);
-        classes.add(org.apache.camel.util.spring.SSLContextParametersFactoryBean.class);
-        return classes;
     }
     
     protected class SSLContextParametersFactoryBeanBeanDefinitionParser extends BeanDefinitionParser {

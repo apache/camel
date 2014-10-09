@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -57,7 +56,7 @@ public class RestContextRefDefinition {
         this.ref = ref;
     }
     
-    public List<RestDefinition> lookupRests(CamelContext camelContext) {
+    public List<RestDefinition> lookupRests(ModelCamelContext camelContext) {
         return RestContextRefDefinitionHelper.lookupRests(camelContext, ref);
     }
 

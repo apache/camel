@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
@@ -40,48 +41,48 @@ public final class RoutesXml {
     /**
      * Loads the routes from the given XML content
      */
-    public static RoutesDefinition loadRoutesFromXML(String xml) throws JAXBException {
-        return ModelHelper.createModelFromXml(xml, RoutesDefinition.class);
+    public static RoutesDefinition loadRoutesFromXML(ModelCamelContext camelContext, String xml) throws JAXBException {
+        return ModelHelper.createModelFromXml(camelContext, xml, RoutesDefinition.class);
     }
 
     /**
      * Loads the routes from the classpath
      */
-    public static RoutesDefinition loadRoutesFromClasspath(String uri) throws JAXBException {
+    public static RoutesDefinition loadRoutesFromClasspath(ModelCamelContext camelContext, String uri) throws JAXBException {
         InputStream stream = ObjectHelper.loadResourceAsStream(uri);
         ObjectHelper.notNull(stream, "Could not find resource '" + uri + "' on the ClassLoader");
-        return ModelHelper.createModelFromXml(stream, RoutesDefinition.class);
+        return ModelHelper.createModelFromXml(camelContext, stream, RoutesDefinition.class);
     }
 
     /**
      * Loads the routes from a {@link URL}
      */
-    public static RoutesDefinition loadRoutesFromURL(URL url) throws JAXBException, IOException {
+    public static RoutesDefinition loadRoutesFromURL(ModelCamelContext camelContext, URL url) throws JAXBException, IOException {
         ObjectHelper.notNull(url, "url");
-        return ModelHelper.createModelFromXml(url.openStream(), RoutesDefinition.class);
+        return ModelHelper.createModelFromXml(camelContext, url.openStream(), RoutesDefinition.class);
     }
 
     /**
      * Loads the routes from a {@link URL}
      */
-    public static RoutesDefinition loadRoutesFromURL(String url) throws IOException, JAXBException {
-        return loadRoutesFromURL(new URL(url));
+    public static RoutesDefinition loadRoutesFromURL(ModelCamelContext camelContext, String url) throws IOException, JAXBException {
+        return loadRoutesFromURL(camelContext, new URL(url));
     }
 
     /**
      * Loads the routes from a {@link File}
      */
-    public static RoutesDefinition loadRoutesFromFile(File file) throws JAXBException, FileNotFoundException {
+    public static RoutesDefinition loadRoutesFromFile(ModelCamelContext camelContext, File file) throws JAXBException, FileNotFoundException {
         ObjectHelper.notNull(file, "file");
-        return ModelHelper.createModelFromXml(new FileInputStream(file), RoutesDefinition.class);
+        return ModelHelper.createModelFromXml(camelContext, new FileInputStream(file), RoutesDefinition.class);
     }
 
     /**
      * Loads the routes from a {@link File}
      */
-    public static RoutesDefinition loadRoutesFromFile(String fileName)
+    public static RoutesDefinition loadRoutesFromFile(ModelCamelContext camelContext, String fileName)
         throws JAXBException, FileNotFoundException {
-        return loadRoutesFromFile(new File(fileName));
+        return loadRoutesFromFile(camelContext, new File(fileName));
     }
 
 }

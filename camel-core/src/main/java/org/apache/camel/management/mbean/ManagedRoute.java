@@ -236,14 +236,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String id = route.getId();
         RouteDefinition def = context.getRouteDefinition(id);
         if (def != null) {
-            return ModelHelper.dumpModelAsXml(def);
+            return ModelHelper.dumpModelAsXml(context, def);
         }
         return null;
     }
 
     public void updateRouteFromXml(String xml) throws Exception {
         // convert to model from xml
-        RouteDefinition def = ModelHelper.createModelFromXml(xml, RouteDefinition.class);
+        RouteDefinition def = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
         if (def == null) {
             return;
         }
