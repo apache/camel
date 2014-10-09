@@ -34,7 +34,11 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
 
         if (answer == null) {
             for (String key : consumers.keySet()) {
-                if (consumers.get(key).getEndpoint().isMatchOnUriPrefix() && path.startsWith(key)) {
+                //We need to look up the consumer path here
+                String consumerPath = consumers.get(key).getPath();
+                HttpConsumer consumer = consumers.get(key);
+                // Just make sure the we get the right consumer path first
+                if (consumerPath.equals(path) || (consumer.getEndpoint().isMatchOnUriPrefix() && path.startsWith(consumerPath))) {
                     answer = consumers.get(key);
                     break;
                 }
