@@ -22,6 +22,7 @@ import java.util.Stack;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.github.GitHubEndpoint;
+import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.slf4j.Logger;
@@ -36,8 +37,16 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
 
     public PullRequestConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
-        
-        pullRequestService = new PullRequestService();
+
+        Registry registry = endpoint.getCamelContext().getRegistry();
+        Object service = registry.lookupByName("githubPullRequestService");
+        if (service !=null) {
+            LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
+            pullRequestService = (PullRequestService) service;
+        } else {
+            pullRequestService = new PullRequestService();
+        }
+
         initService(pullRequestService);
 
         LOG.info("GitHub PullRequestConsumer: Indexing current pull requests...");

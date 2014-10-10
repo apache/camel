@@ -18,9 +18,13 @@ package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubEndpoint;
+import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
+import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.PullRequestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer endpoint that adds one of two types of comments on a GitHub pull request:
@@ -32,6 +36,7 @@ import org.eclipse.egit.github.core.service.PullRequestService;
  * Both endpoints require the "GitHubPullRequest" header, identifying the pull request number (integer).
  */
 public class PullRequestCommentProducer extends AbstractGitHubProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(PullRequestCommentProducer.class);
     private PullRequestService pullRequestService;
 
     private IssueService issueService;
@@ -39,9 +44,22 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
     public PullRequestCommentProducer(GitHubEndpoint endpoint) throws Exception {
         super(endpoint);
         
-        pullRequestService = new PullRequestService();
+        Registry registry = endpoint.getCamelContext().getRegistry();
+        Object service = registry.lookupByName("githubPullRequestService");
+        if (service !=null) {
+            LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
+            pullRequestService = (PullRequestService) service;
+        } else {
+            pullRequestService = new PullRequestService();
+        }
         initService(pullRequestService);
-        issueService = new IssueService();
+
+        service = registry.lookupByName("githbIssueService");
+        if (service != null) {
+            issueService = (IssueService) service;
+        } else {
+            issueService = new IssueService();
+        }
         initService(issueService);
     }
 
