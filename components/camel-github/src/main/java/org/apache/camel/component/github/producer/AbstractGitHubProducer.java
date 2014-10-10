@@ -43,6 +43,7 @@ public abstract class AbstractGitHubProducer extends DefaultProducer {
         } else {
             repositoryService = new RepositoryService();
         }
+        initService(repositoryService);
         repository = repositoryService.getRepository(endpoint.getRepoOwner(), endpoint.getRepoName());
     }
     
