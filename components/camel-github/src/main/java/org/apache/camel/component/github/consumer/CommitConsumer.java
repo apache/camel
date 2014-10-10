@@ -23,6 +23,7 @@ import java.util.Stack;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.github.GitHubEndpoint;
+import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.slf4j.Logger;
@@ -37,8 +38,15 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     
     public CommitConsumer(String branchName, GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
-        
-        commitService = new CommitService();
+
+        Registry registry = endpoint.getCamelContext().getRegistry();
+        Object service = registry.lookupByName("githubCommitService");
+        if (service !=null) {
+            LOG.debug("Using CommitService found in registry " + service.getClass().getCanonicalName());
+            commitService = (CommitService) service;
+        } else {
+            commitService = new CommitService();
+        }
         initService(commitService);
         
         LOG.info("GitHub CommitConsumer: Indexing current commits...");

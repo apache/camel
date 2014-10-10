@@ -23,6 +23,7 @@ import java.util.Stack;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.github.GitHubEndpoint;
+import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.CommitComment;
 import org.eclipse.egit.github.core.PullRequest;
@@ -42,10 +43,23 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
     
     public PullRequestCommentConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
-        
-        pullRequestService = new PullRequestService();
+
+        Registry registry = endpoint.getCamelContext().getRegistry();
+        Object service = registry.lookupByName("githubPullRequestService");
+        if (service !=null) {
+            LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
+            pullRequestService = (PullRequestService) service;
+        } else {
+            pullRequestService = new PullRequestService();
+        }
         initService(pullRequestService);
-        issueService = new IssueService();
+
+        service = registry.lookupByName("githbIssueService");
+        if (service != null) {
+            issueService = (IssueService) service;
+        } else {
+            issueService = new IssueService();
+        }
         initService(issueService);
 
         LOG.info("GitHub PullRequestCommentConsumer: Indexing current pull request comments...");
