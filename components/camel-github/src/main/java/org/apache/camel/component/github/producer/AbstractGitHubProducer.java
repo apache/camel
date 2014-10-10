@@ -38,7 +38,7 @@ public abstract class AbstractGitHubProducer extends DefaultProducer {
 
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName("githubRepositoryService");
-        if (service !=null) {
+        if (service != null) {
             repositoryService = (RepositoryService) service;
         } else {
             repositoryService = new RepositoryService();

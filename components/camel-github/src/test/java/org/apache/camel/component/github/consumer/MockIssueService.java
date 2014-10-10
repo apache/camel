@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.github.consumer;
 
-import org.eclipse.egit.github.core.Comment;
-import org.eclipse.egit.github.core.IRepositoryIdProvider;
-import org.eclipse.egit.github.core.service.IssueService;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.egit.github.core.Comment;
+import org.eclipse.egit.github.core.IRepositoryIdProvider;
+import org.eclipse.egit.github.core.service.IssueService;
 
 public class MockIssueService extends IssueService {
 

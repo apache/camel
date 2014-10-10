@@ -18,7 +18,6 @@ package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubEndpoint;
-import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.service.IssueService;
@@ -46,7 +45,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName("githubPullRequestService");
-        if (service !=null) {
+        if (service != null) {
             LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {

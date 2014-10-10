@@ -30,11 +30,11 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 public abstract class GitHubComponentTestBase extends CamelTestSupport {
-    public String USERNAME = "someguy";
-    public String PASSWORD = "apassword";
-    public String REPO_OWNER = "anotherguy";
-    public String REPO_NAME = "somerepo";
-    public String GITHUB_CREDENTIALS_STRING = "username=" + USERNAME + "&password=" + PASSWORD + "&repoOwner=" + REPO_OWNER + "&repoName=" + REPO_NAME;
+    public static final String USERNAME = "someguy";
+    public static final String PASSWORD = "apassword";
+    public static final String REPO_OWNER = "anotherguy";
+    public static final String REPO_NAME = "somerepo";
+    public static final String GITHUB_CREDENTIALS_STRING = "username=" + USERNAME + "&password=" + PASSWORD + "&repoOwner=" + REPO_OWNER + "&repoName=" + REPO_NAME;
 
     @Rule
     public TestName testName = new TestName();

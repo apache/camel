@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryTag;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MockRepositoryService extends RepositoryService {
     protected static final Logger LOG = LoggerFactory.getLogger(MockRepositoryService.class);

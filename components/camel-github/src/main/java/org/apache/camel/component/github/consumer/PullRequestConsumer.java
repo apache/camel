@@ -40,7 +40,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
 
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName("githubPullRequestService");
-        if (service !=null) {
+        if (service != null) {
             LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {

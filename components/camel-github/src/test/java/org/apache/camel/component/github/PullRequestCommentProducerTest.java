@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.github;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,13 +31,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
     protected static final Logger LOG = LoggerFactory.getLogger(PullRequestCommentProducerTest.class);
-    private long latestPullRequestId = 0;
+    private long latestPullRequestId;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

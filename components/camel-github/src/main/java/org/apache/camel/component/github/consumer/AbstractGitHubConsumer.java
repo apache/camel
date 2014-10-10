@@ -41,7 +41,7 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
 
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName("githubRepositoryService");
-        if (service !=null) {
+        if (service != null) {
             LOG.debug("Using RepositoryService found in registry " + service.getClass().getCanonicalName());
             repositoryService = (RepositoryService) service;
         } else {

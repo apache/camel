@@ -41,7 +41,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
 
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName("githubCommitService");
-        if (service !=null) {
+        if (service != null) {
             LOG.debug("Using CommitService found in registry " + service.getClass().getCanonicalName());
             commitService = (CommitService) service;
         } else {
