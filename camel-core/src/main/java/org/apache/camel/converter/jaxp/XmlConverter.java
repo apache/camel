@@ -603,6 +603,7 @@ public class XmlConverter {
                     LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
                 }
             }
+            sfactory.setNamespaceAware(true);
             SAXParser parser = sfactory.newSAXParser();
             xmlReader = parser.getXMLReader();
         } catch (Exception ex) {
