@@ -79,7 +79,7 @@ public class HL7MLLPCodecTest extends HL7TestSupport {
         in.append("\n");
         in.append(line2);
 
-        String out = (String)template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString());
+        String out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(), String.class);
         // END SNIPPET: e2
 
         String[] lines = out.split("\r");
