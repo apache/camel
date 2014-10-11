@@ -47,7 +47,7 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         // send plain hello world as String
-        Object out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World");
+        Object out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World", String.class);
 
         assertMockEndpointsSatisfied();
 
