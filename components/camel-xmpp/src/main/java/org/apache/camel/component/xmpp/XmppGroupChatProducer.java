@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.io.IOException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
-import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -48,7 +51,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (connection == null) {
             try {
                 connection = endpoint.createConnection();
-            } catch (XMPPException e) {
+            } catch (XMPPException | SmackException | IOException e) {
                 throw new RuntimeExchangeException("Could not connect to XMPP server.", exchange, e);
             }
         }
@@ -79,12 +82,12 @@ public class XmppGroupChatProducer extends DefaultProducer {
             // must invoke nextMessage to consume the response from the server
             // otherwise the client local queue will fill up (CAMEL-1467)
             chat.pollMessage();
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException | IOException e) {
             throw new RuntimeExchangeException("Could not send XMPP message: " + message, exchange, e);
         }
     }
 
-    private synchronized void reconnect() throws XMPPException {
+    private synchronized void reconnect() throws XMPPException, SmackException, IOException {
         if (!connection.isConnected()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
@@ -98,7 +101,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (connection == null) {
             try {
                 connection = endpoint.createConnection();
-            } catch (XMPPException e) {
+            } catch (XMPPErrorException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
                     throw new RuntimeException("Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
                 } else {
@@ -114,13 +117,13 @@ public class XmppGroupChatProducer extends DefaultProducer {
         super.doStart();
     }
 
-    protected synchronized void initializeChat() throws XMPPException {
+    protected synchronized void initializeChat() throws XMPPException, SmackException {
         if (chat == null) {
             room = endpoint.resolveRoom(connection);
             chat = new MultiUserChat(connection, room);
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
-            chat.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
+            chat.join(endpoint.getNickname(), null, history, connection.getPacketReplyTimeout());
             if (LOG.isInfoEnabled()) {
                 LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
             }

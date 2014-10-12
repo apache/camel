@@ -47,12 +47,17 @@
     </dependency>
     <dependency>
       <groupId>org.igniterealtime.smack</groupId>
-      <artifactId>smack</artifactId>
+      <artifactId>smack-tcp</artifactId>
       <version>${smack-version}</version>
     </dependency>
     <dependency>
       <groupId>org.igniterealtime.smack</groupId>
-      <artifactId>smackx</artifactId>
+      <artifactId>smack-resolver-javax</artifactId>
+      <version>${smack-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.igniterealtime.smack</groupId>
+      <artifactId>smack-extensions</artifactId>
       <version>${smack-version}</version>
     </dependency>
 

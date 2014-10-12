@@ -391,8 +391,7 @@
     <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.7.7</slf4j-version>
-    <smack-bundle-version>3.2.1_1</smack-bundle-version>
-    <smack-version>3.2.1</smack-version>
+    <smack-version>4.0.5</smack-version>
     <snappy-version>1.1.0.1</snappy-version>
     <snmp4j-version>2.3.0_1</snmp4j-version>
     <solr-bundle-version>4.8.1_1</solr-bundle-version>
@@ -498,7 +497,6 @@
       org.eclipse.jetty.*;version="[7.5,10)",
       com.thoughtworks.xstream.*;version="[1.3,2)",
       org.antlr.stringtemplate.*;version="[3.0,4)",
-      org.jivesoftware.smack.*;version="[3.0,4)",
       org.ccil.cowan.tagsoup.*;version="[1.2,2)",
       org.mortbay.cometd.*;version="[6.1,7)",
       org.slf4j.*;version="[1.6,2)",
