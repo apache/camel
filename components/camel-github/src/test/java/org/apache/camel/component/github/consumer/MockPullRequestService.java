@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class MockPullRequestService extends PullRequestService {
     protected static final Logger LOG = LoggerFactory.getLogger(MockPullRequestService.class);
 
-    private List<PullRequest> pullRequestsList = new ArrayList<>();
+    private Map<Long, PullRequest> pullRequests = new HashMap<>();
     private List<CommitComment> emptyComments = new ArrayList<>();
     private AtomicInteger pullRequestNumber = new AtomicInteger(101);
     private AtomicInteger commentId = new AtomicInteger(500);
@@ -68,7 +69,6 @@ public class MockPullRequestService extends PullRequestService {
         commitComment.setBody(bodyText);
         commitComment.setBodyText(bodyText);
 
-
         List<CommitComment> comments;
         if (allComments.containsKey(pullRequestId)) {
             comments = allComments.get(pullRequestId);
@@ -90,17 +90,37 @@ public class MockPullRequestService extends PullRequestService {
         pullRequest.setTitle(title);
         pullRequest.setNumber(pullRequestNumber.get());
         pullRequest.setId(pullRequestNumber.get());
-        pullRequestNumber.incrementAndGet();
+        pullRequest.setState("open");
+        pullRequests.put(pullRequest.getId(), pullRequest);
 
-        pullRequestsList.add(pullRequest);
+        pullRequestNumber.incrementAndGet();
         return pullRequest;
     }
 
     @Override
-    public synchronized List<PullRequest> getPullRequests(IRepositoryIdProvider repository, String state) {
-        LOG.debug("Returning list of " + pullRequestsList.size() + " pull requests");
-        return pullRequestsList;
+    public PullRequest getPullRequest(IRepositoryIdProvider repository, int id) throws IOException {
+        PullRequest pullRequest = pullRequests.get((long) id);
+        return pullRequest;
     }
 
+    @Override
+    public PullRequest editPullRequest(IRepositoryIdProvider repository, PullRequest request) throws IOException {
+        pullRequests.put(request.getId(), request);
+        return request;
+    }
 
+    @Override
+    public synchronized List<PullRequest> getPullRequests(IRepositoryIdProvider repository, String state) {
+        List<PullRequest> result = new ArrayList<>();
+
+        for (Long id : pullRequests.keySet()) {
+            PullRequest pr = pullRequests.get(id);
+            if (pr.getState().equals(state)) {
+                result.add(pr);
+            }
+        }
+
+        LOG.debug("Returning list of " + result.size() + " pull requests with state " + state);
+        return result;
+    }
 }

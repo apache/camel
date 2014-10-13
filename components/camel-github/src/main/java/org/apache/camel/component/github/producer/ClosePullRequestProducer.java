@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubEndpoint;
+import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.service.PullRequestService;
 
@@ -34,7 +35,13 @@ public class ClosePullRequestProducer extends AbstractGitHubProducer {
     public ClosePullRequestProducer(GitHubEndpoint endpoint) throws Exception {
         super(endpoint);
         
-        pullRequestService = new PullRequestService();
+        Registry registry = endpoint.getCamelContext().getRegistry();
+        Object service = registry.lookupByName("githubPullRequestService");
+        if (service != null) {
+            pullRequestService = (PullRequestService) service;
+        } else {
+            pullRequestService = new PullRequestService();
+        }
         initService(pullRequestService);
     }
 
