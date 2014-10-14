@@ -56,6 +56,8 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         }
         // to keep track of open sockets
         producer.getAllChannels().add(channelStateEvent.getChannel());
+        // make sure the event can be processed by other handlers
+        super.channelOpen(ctx, channelStateEvent);
     }
 
     @Override
@@ -119,6 +121,8 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             // signal callback
             callback.done(false);
         }
+        // make sure the event can be processed by other handlers
+        super.channelClosed(ctx, e);
     }
 
     @Override
