@@ -56,6 +56,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         }
         // to keep track of open sockets
         consumer.getNettyServerBootstrapFactory().addChannel(e.getChannel());
+       // make sure the event can be processed by other handlers
+        super.channelOpen(ctx, e);
     }
 
     @Override
@@ -65,6 +67,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         }
         // to keep track of open sockets
         consumer.getNettyServerBootstrapFactory().removeChannel(e.getChannel());
+        // make sure the event can be processed by other handlers
+        super.channelClosed(ctx, e);
     }
 
     @Override
