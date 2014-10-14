@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -67,7 +68,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public DefaultNettyHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
-    
+
     public DefaultNettyHttpBinding copy() {
         try {
             return (DefaultNettyHttpBinding)this.clone();
@@ -384,7 +385,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             if (buffer.readerIndex() == buffer.writerIndex()) {
                 buffer.setIndex(0, buffer.writerIndex());
             }
-            // TODO How to enable the chunk transport 
+            // TODO How to enable the chunk transport
             int len = buffer.readableBytes();
             // set content-length
             response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
@@ -411,6 +412,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
         response.setHeader(HttpHeaders.Names.CONNECTION, connection);
+        // Just make sure we close the channel when the connection value is close
+        if (connection.equalsIgnoreCase(HttpHeaders.Values.CLOSE)) {
+            message.setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        }
         LOG.trace("Connection: {}", connection);
 
         return response;
