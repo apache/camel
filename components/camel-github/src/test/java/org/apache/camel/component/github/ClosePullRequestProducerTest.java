@@ -16,25 +16,24 @@
  */
 package org.apache.camel.component.github;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.egit.github.core.CommitComment;
 import org.eclipse.egit.github.core.PullRequest;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
+    public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
     protected static final Logger LOG = LoggerFactory.getLogger(ClosePullRequestProducerTest.class);
     private long latestPullRequestId;
-    public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -72,7 +71,7 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
         List<PullRequest> closedPullRequests = pullRequestService.getPullRequests(null, "closed");
         assertNotNull(closedPullRequests);
         boolean found = false;
-        for(PullRequest pr : closedPullRequests) {
+        for (PullRequest pr : closedPullRequests) {
             if (pr.getId() == latestPullRequestId) {
                 found = true;
                 break;
