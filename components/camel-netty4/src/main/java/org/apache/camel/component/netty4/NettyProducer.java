@@ -464,8 +464,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         public void done(boolean doneSync) {
             // put back in pool
             try {
-                LOG.trace("Putting channel back to pool {}", channel);
-                pool.returnObject(channel);
+                // Only put the connected channel back to the pool
+                if (channel.isActive()) {
+                    LOG.trace("Putting channel back to pool {}", channel);
+                    pool.returnObject(channel);
+                }
             } catch (Exception e) {
                 LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel);
             } finally {
@@ -491,7 +494,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
-            NettyHelper.close(channel);
+            if (channel.isOpen()) {
+                NettyHelper.close(channel);
+            }
             allChannels.remove(channel);
         }
 
@@ -506,11 +511,13 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void activateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("activateObject channel: {} -> {}", channel);
         }
 
         @Override
         public void passivateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("passivateObject channel: {} -> {}", channel);
         }
     }
 

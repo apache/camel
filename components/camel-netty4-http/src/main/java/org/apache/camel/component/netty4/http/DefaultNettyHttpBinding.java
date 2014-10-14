@@ -45,6 +45,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -418,6 +419,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
         response.headers().set(HttpHeaders.Names.CONNECTION, connection);
+        // Just make sure we close the channel when the connection value is close
+        if (connection.equalsIgnoreCase(HttpHeaders.Values.CLOSE)) {
+            message.setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        }
         LOG.trace("Connection: {}", connection);
 
         return response;
