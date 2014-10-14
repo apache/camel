@@ -295,18 +295,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     }
 
     @Override
-    protected ChannelFutureListener createResponseFutureListener(NettyConsumer consumer, Exchange exchange, SocketAddress remoteAddress) {
-        // make sure to close channel if not keep-alive
-        if (request != null && isKeepAlive(request)) {
-            LOG.trace("Request has Connection: keep-alive so Channel is not being closed");
-            return null;
-        } else {
-            LOG.trace("Request is not Connection: close so Channel is being closed");
-            return ChannelFutureListener.CLOSE;
-        }
-    }
-
-    @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
         // use the binding
         if (exchange.hasOut()) {
