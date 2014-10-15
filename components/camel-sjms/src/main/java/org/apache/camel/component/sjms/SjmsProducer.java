@@ -146,7 +146,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
             getProducers().drainPool();
             setProducers(null);
         }
-        if(this.executor!=null){
+        if (this.executor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
         }
     }

@@ -157,7 +157,7 @@ public class SjmsConsumer extends DefaultConsumer {
             consumers.drainPool();
             consumers = null;
         }
-        if(this.executor!=null){
+        if (this.executor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
         }
     }

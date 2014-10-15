@@ -36,77 +36,80 @@ import org.slf4j.LoggerFactory;
  */
 public class ThreadPoolTest extends JmsTestSupport {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPoolTest.class);
-	private static final String FROM_ROUTE = "from";
-	private static final String TO_ROUTE = "to";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPoolTest.class);
+    private static final String FROM_ROUTE = "from";
+    private static final String TO_ROUTE = "to";
 
-	@Override
-	protected boolean useJmx() {
-		return true;
-	}
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:start").to("sjms:queue:foo").routeId(FROM_ROUTE);
-				from("sjms:queue:foo").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
-			}
-		};
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("sjms:queue:foo").routeId(FROM_ROUTE);
+                from("sjms:queue:foo").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
+            }
+        };
+    }
 
-	/**
-	 * Test that only 2 thread pools are created on start
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testContextStart() throws Exception {
-		assertProducerThreadPoolCount(1);
-		assertConsumerThreadPoolCount(1);
-	}
+    /**
+     * Test that only 2 thread pools are created on start
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testContextStart() throws Exception {
+        assertProducerThreadPoolCount(1);
+        assertConsumerThreadPoolCount(1);
+    }
 
-	/**
-	 * Test that ThreadPool is removed when producer is removed
-	 * @throws Exception
-	 */
-	@Test
-	public void testProducerThreadThreadPoolRemoved() throws Exception {
-		context.stopRoute(FROM_ROUTE);
-		assertProducerThreadPoolCount(0);
-	}
+    /**
+     * Test that ThreadPool is removed when producer is removed
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProducerThreadThreadPoolRemoved() throws Exception {
+        context.stopRoute(FROM_ROUTE);
+        assertProducerThreadPoolCount(0);
+    }
 
-	/**
-	 * Test that ThreadPool is removed when consumer is removed
-	 * @throws Exception
-	 */
-	@Test
-	public void testConsumerThreadThreadPoolRemoved() throws Exception {
-		context.stopRoute(TO_ROUTE);
-		assertConsumerThreadPoolCount(0);
-	}
+    /**
+     * Test that ThreadPool is removed when consumer is removed
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerThreadThreadPoolRemoved() throws Exception {
+        context.stopRoute(TO_ROUTE);
+        assertConsumerThreadPoolCount(0);
+    }
 
-	private void assertProducerThreadPoolCount(final int count) throws Exception {
-		assertEquals(count, getMbeanCount("\"InOnlyProducer"));
-	}
+    private void assertProducerThreadPoolCount(final int count) throws Exception {
+        assertEquals(count, getMbeanCount("\"InOnlyProducer"));
+    }
 
-	private void assertConsumerThreadPoolCount(final int count) throws Exception {
-		assertEquals(count, getMbeanCount("\"SjmsConsumer"));
-	}
+    private void assertConsumerThreadPoolCount(final int count) throws Exception {
+        assertEquals(count, getMbeanCount("\"SjmsConsumer"));
+    }
 
-	private int getMbeanCount(final String name) throws MalformedObjectNameException {
-		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-		Set<ObjectInstance> mbeans = mbs.queryMBeans(new ObjectName("org.apache.camel:type=threadpools,*"), null);
-		LOGGER.debug("mbeans size: " + mbeans.size());
-		int count = 0;
-		for (ObjectInstance mbean : mbeans) {
-			LOGGER.debug("mbean: {}", mbean);
-			if (mbean.getObjectName().getKeyProperty("name").startsWith(name)) {
-				count++;
-			}
-		}
-		return count;
-	}
+    private int getMbeanCount(final String name) throws MalformedObjectNameException {
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        Set<ObjectInstance> mbeans = mbs.queryMBeans(new ObjectName("org.apache.camel:type=threadpools,*"),
+                                                     null);
+        LOGGER.debug("mbeans size: " + mbeans.size());
+        int count = 0;
+        for (ObjectInstance mbean : mbeans) {
+            LOGGER.debug("mbean: {}", mbean);
+            if (mbean.getObjectName().getKeyProperty("name").startsWith(name)) {
+                count++;
+            }
+        }
+        return count;
+    }
 
 }
