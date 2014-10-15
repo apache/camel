@@ -64,6 +64,10 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.timerName = timerName;
     }
 
+    protected TimerEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
+
     @Override
     public TimerComponent getComponent() {
         return (TimerComponent) super.getComponent();
@@ -185,10 +189,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @ManagedAttribute(description = "Endpoint State")
     public String getState() {
         return getStatus().name();
-    }
-
-    protected TimerEndpoint(String endpointUri, Component component) {
-        super(endpointUri, component);
     }
 
     public Timer getTimer(TimerConsumer consumer) {
