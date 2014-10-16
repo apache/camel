@@ -43,10 +43,10 @@ public class CustomExchangeFormatterTest extends SpringTestSupport {
             
             LogEndpoint log = (LogEndpoint) ep;
             
-            aaa = log.getEndpointUri().contains("aaa") ? 
-                    (TestExchangeFormatter) f.get(((CamelLogProcessor) log.getLogger())) : aaa;
-            bbb = log.getEndpointUri().contains("bbb") ? 
-                    (TestExchangeFormatter) f.get(((CamelLogProcessor) log.getLogger())) : bbb;
+            aaa = log.getEndpointUri().contains("aaa")
+                ? (TestExchangeFormatter) f.get((CamelLogProcessor) log.getLogger()) : aaa;
+            bbb = log.getEndpointUri().contains("bbb")
+                ? (TestExchangeFormatter) f.get((CamelLogProcessor) log.getLogger()) : bbb;
         }
         
         assertNotNull(aaa);
