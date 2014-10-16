@@ -24,6 +24,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.jira.consumer.ConsumerType;
 import org.apache.camel.component.jira.consumer.NewCommentConsumer;
 import org.apache.camel.component.jira.consumer.NewIssueConsumer;
+import org.apache.camel.component.jira.producer.NewIssueProducer;
+import org.apache.camel.component.jira.producer.ProducerType;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -61,7 +63,20 @@ public class JIRAEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("JIRAProducer is not implemented");
+        String uri = getEndpointUri();
+        String[] uriSplit = splitUri(getEndpointUri());
+        
+        if (uriSplit.length > 0) {
+            switch (ProducerType.fromUri(uriSplit[0])) {
+            case NEWISSUE:
+                return new NewIssueProducer(this);
+            default:
+                break;
+            }
+        }
+
+        throw new IllegalArgumentException("Cannot create any producer with uri " + uri
+                + ". A producer type was not provided (or an incorrect pairing was used).");
     }
     
     public Consumer createConsumer(Processor processor) throws Exception {
