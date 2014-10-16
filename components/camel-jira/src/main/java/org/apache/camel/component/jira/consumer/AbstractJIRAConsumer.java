@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
+import com.atlassian.jira.rest.client.SearchRestClient;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
@@ -29,6 +30,7 @@ import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactor
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JIRAEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.spi.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +48,17 @@ public abstract class AbstractJIRAConsumer extends ScheduledPollConsumer {
         
         // Use a more reasonable default.
         setDelay(6000);
-        
-        final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
+
+        Registry registry = endpoint.getCamelContext().getRegistry();
+        Object target = registry.lookupByName("jiraRestClientFactory");
+        JerseyJiraRestClientFactory factory;
+        if (target != null) {
+            LOG.debug("Using JerseyJiraRestClientFactory found in registry " + target.getClass().getCanonicalName());
+            factory = (JerseyJiraRestClientFactory) target;
+        } else {
+            factory = new JerseyJiraRestClientFactory();
+        }
+
         final URI jiraServerUri = URI.create(endpoint.getServerUrl());
         client = factory.createWithBasicHttpAuthentication(jiraServerUri, endpoint.getUsername(),
                                                            endpoint.getPassword());
@@ -63,8 +74,8 @@ public abstract class AbstractJIRAConsumer extends ScheduledPollConsumer {
 
         List<BasicIssue> issues = new ArrayList<BasicIssue>();
         while (true) {
-            SearchResult searchResult = client.getSearchClient().searchJqlWithFullIssues(jql, maxPerQuery,
-                                                                                         start, null);
+            SearchRestClient searchRestClient = client.getSearchClient();
+            SearchResult searchResult = searchRestClient.searchJqlWithFullIssues(jql, maxPerQuery, start, null);
 
             for (BasicIssue issue : searchResult.getIssues()) {
                 issues.add(issue);
