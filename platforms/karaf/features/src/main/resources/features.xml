@@ -987,6 +987,7 @@
     <bundle dependency='true'>mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-core/${spring-ws-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-support/${spring-ws-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-sql' version='${project.version}' resolver='(obr)' start-level='50'>
