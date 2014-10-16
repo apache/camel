@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 public class MockPullRequestService extends PullRequestService {
     protected static final Logger LOG = LoggerFactory.getLogger(MockPullRequestService.class);
 
-    private Map<Long, PullRequest> pullRequests = new HashMap<>();
-    private List<CommitComment> emptyComments = new ArrayList<>();
+    private Map<Long, PullRequest> pullRequests = new HashMap<Long, PullRequest>();
+    private List<CommitComment> emptyComments = new ArrayList<CommitComment>();
     private AtomicInteger pullRequestNumber = new AtomicInteger(101);
     private AtomicInteger commentId = new AtomicInteger(500);
-    private Map<Long, List<CommitComment>> allComments = new HashMap<>();
+    private Map<Long, List<CommitComment>> allComments = new HashMap<Long, List<CommitComment>>();
 
     public List<CommitComment> getComments(IRepositoryIdProvider repository, int pullRequestId) {
         Long id = new Long(pullRequestId);
@@ -111,7 +111,7 @@ public class MockPullRequestService extends PullRequestService {
 
     @Override
     public synchronized List<PullRequest> getPullRequests(IRepositoryIdProvider repository, String state) {
-        List<PullRequest> result = new ArrayList<>();
+        List<PullRequest> result = new ArrayList<PullRequest>();
 
         for (Long id : pullRequests.keySet()) {
             PullRequest pr = pullRequests.get(id);
