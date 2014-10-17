@@ -51,8 +51,6 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +66,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     private BossPool bossPool;
     private WorkerPool workerPool;
     private ObjectPool<Channel> pool;
-    private Timer timer;
+   
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -126,8 +124,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
-        timer = new HashedWheelTimer();
-
         // setup pipeline factory
         ClientPipelineFactory factory = configuration.getClientPipelineFactory();
         if (factory != null) {
@@ -178,11 +174,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             pool.close();
             pool = null;
-        }
-
-        if (timer != null) {
-            timer.stop();
-            timer = null;
         }
 
         super.doStop();
@@ -337,7 +328,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             if (bp == null) {
                 // create new pool which we should shutdown when stopping as its not shared
                 bossPool = new NettyClientBossPoolBuilder()
-                        .withTimer(timer)
+                        .withTimer(getEndpoint().getTimer())
                         .withBossCount(configuration.getBossCount())
                         .withName("NettyClientTCPBoss")
                         .build();
