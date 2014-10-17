@@ -64,6 +64,15 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private int producerPoolMaxIdle = 100;
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     private boolean producerPoolEnabled = true;
+    private boolean clientMode;
+
+    public boolean isClientMode() {
+        return clientMode;
+    }
+
+    public void setClientMode(boolean clientMode) {
+        this.clientMode = clientMode;
+    }
 
     /**
      * Returns a copy of this configuration

@@ -59,7 +59,11 @@ public class NettyConsumer extends DefaultConsumer {
             }
 
             if (isTcp()) {
-                nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory();
+                if (configuration.isClientMode()) {
+                    nettyServerBootstrapFactory = new ClientModeTCPNettyServerBootstrapFactory();
+                } else {
+                    nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory();
+                }
             } else {
                 nettyServerBootstrapFactory = new SingleUDPNettyServerBootstrapFactory();
             }
