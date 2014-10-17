@@ -16,6 +16,8 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -60,12 +62,16 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
         LOG.trace("AddingService: {}", serviceReference);
         TypeConverterLoader loader = bundleContext.getService(serviceReference);
-        if (loader != null) {
+        // just make sure we don't load the bundle converter this time
+        if (delegate != null) {
             try {
-                loader.load(getDelegate());
-            } catch (Throwable t) {
-                throw ObjectHelper.wrapRuntimeCamelException(t);
+                ServiceHelper.stopService(this.delegate);
+            } catch (Exception e) {
+                // ignore
+                LOG.debug("Error stopping service due: " + e.getMessage() + ". This exception will be ignored.", e);
             }
+            // It can force camel to reload the type converter again
+            this.delegate = null;
         }
         return loader;
     }
@@ -81,6 +87,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             // ignore
             LOG.debug("Error stopping service due: " + e.getMessage() + ". This exception will be ignored.", e);
         }
+        // It can force camel to reload the type converter again
         this.delegate = null;
     }
 
@@ -185,14 +192,20 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             throw new RuntimeCamelException("Error loading CoreTypeConverter due: " + e.getMessage(), e);
         }
 
-        // load the type converters the tracker has been tracking
-        Object[] services = this.tracker.getServices();
-        if (services != null) {
-            for (Object o : services) {
+        // Load the type converters the tracker has been tracking
+        // Here we need to use the ServiceReference to check the ranking
+        ServiceReference<TypeConverterLoader>[] serviceReferences = this.tracker.getServiceReferences();
+        if (serviceReferences != null) {
+            ArrayList<ServiceReference<TypeConverterLoader>> servicesList = 
+                new ArrayList<ServiceReference<TypeConverterLoader>>(Arrays.asList(serviceReferences));
+            // Just make sure we install the high ranking fallback converter at last
+            Collections.sort(servicesList);
+            for (ServiceReference<TypeConverterLoader> sr : servicesList) {
                 try {
-                    ((TypeConverterLoader) o).load(answer);
+                    LOG.debug("loading the type converter from bundle{} ", sr.getBundle().getSymbolicName());
+                    ((TypeConverterLoader)this.tracker.getService(sr)).load(answer);
                 } catch (Throwable t) {
-                    throw new RuntimeCamelException("Error loading type converters from service: " + o + " due: " + t.getMessage(), t);
+                    throw new RuntimeCamelException("Error loading type converters from service: " + sr + " due: " + t.getMessage(), t);
                 }
             }
         }

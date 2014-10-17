@@ -61,8 +61,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +176,8 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             URL url1 = bundle.getEntry(META_INF_TYPE_CONVERTER);
             URL url2 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
             if (url1 != null || url2 != null) {
-                resolvers.add(new BundleTypeConverterLoader(bundle));
+                LOG.debug("Found TypeConverter in bundle {}", bundle.getSymbolicName());
+                resolvers.add(new BundleTypeConverterLoader(bundle, url2 != null));
             }
         }
     }
@@ -264,11 +265,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         private final AnnotationTypeConverterLoader loader = new Loader();
         private final Bundle bundle;
+        private final boolean hasFallbackTypeConverter;
 
-        public BundleTypeConverterLoader(Bundle bundle) {
+        public BundleTypeConverterLoader(Bundle bundle, boolean hasFallbackTypeConverter) {
             super(bundle, TypeConverter.class);
             ObjectHelper.notNull(bundle, "bundle");
             this.bundle = bundle;
+            this.hasFallbackTypeConverter = hasFallbackTypeConverter;
         }
 
         public synchronized void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
@@ -282,7 +285,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
 
         public void register() {
-            doRegister(TypeConverterLoader.class);
+            if (hasFallbackTypeConverter) {
+                // The FallbackTypeConverter should have a higher ranking
+                doRegister(TypeConverterLoader.class, Constants.SERVICE_RANKING, new Integer(100));
+            } else {
+                // The default service ranking is Integer(0);
+                doRegister(TypeConverterLoader.class);
+            }
         }
 
         class Loader extends AnnotationTypeConverterLoader {
@@ -360,6 +369,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 // register fallback converters
                 URL fallbackUrl = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
                 if (fallbackUrl != null) {
+                    LOG.debug("Found {} to load the FallbackTypeConverter", META_INF_FALLBACK_TYPE_CONVERTER);
                     TypeConverter tc = createInstance("FallbackTypeConverter", fallbackUrl, registry.getInjector());
                     registry.addFallbackTypeConverter(tc, false);
                 }
