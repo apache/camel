@@ -31,6 +31,15 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
         super(mqttEndpoint);
         this.mqttEndpoint = mqttEndpoint;
     }
+    
+    protected void doStart() throws Exception {
+        // check the mqttEndpoint connection when it is started
+        if (!mqttEndpoint.isConnected()) {
+            mqttEndpoint.connect();
+        }
+        super.doStart();
+    }
+
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
