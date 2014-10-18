@@ -29,10 +29,12 @@ public class SimpleRegistryTest extends TestCase {
         registry = new SimpleRegistry();
         registry.put("a", "b");
         registry.put("c", 1);
+        registry.add("direct", "something");
     }
 
     public void testLookupByName() {
         assertEquals("b", registry.lookupByName("a"));
+        assertEquals("something", registry.lookup("direct"));
     }
 
     public void testLookupByWrongName() {
@@ -56,10 +58,10 @@ public class SimpleRegistryTest extends TestCase {
     
     public void testLookupByType() {
         Map<?, ?> map = registry.findByTypeWithName(String.class);
-        assertEquals(1, map.size());
+        assertEquals(2, map.size());
         assertEquals("b", map.get("a"));
         map = registry.findByTypeWithName(Object.class);
-        assertEquals(2, map.size());
+        assertEquals(3, map.size());
         assertEquals("b", map.get("a"));
         assertEquals(1, map.get("c"));
     }

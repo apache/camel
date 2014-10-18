@@ -34,6 +34,7 @@ public class CompositeRegistryTest {
         registry = new CompositeRegistry();
         registry.addRegistry(sr2);
         registry.addRegistry(sr1);
+        registry.add("direct", "something");
     }
     
     @Test
@@ -41,6 +42,10 @@ public class CompositeRegistryTest {
         Object result = registry.lookupByNameAndType("name", String.class);
         assertNotNull(result);
         assertEquals("Get a wrong result", result, "12");
+
+        result = registry.lookup("direct");
+        assertNotNull(result);
+        assertEquals("something", result);
         
         result = registry.lookup("test", Integer.class);
         assertNull(result);
