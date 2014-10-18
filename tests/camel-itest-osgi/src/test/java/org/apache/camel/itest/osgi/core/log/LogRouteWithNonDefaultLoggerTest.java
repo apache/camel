@@ -16,23 +16,23 @@
  */
 package org.apache.camel.itest.osgi.core.log;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.ops4j.pax.exam.OptionUtils.combine;
+
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.osgi.CamelContextFactory;
-import org.apache.karaf.tooling.exam.options.DoNotModifyLogOption;
-import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFileReplacementOption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openengsb.labs.paxexam.karaf.options.DoNotModifyLogOption;
+import org.openengsb.labs.paxexam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.ops4j.pax.exam.OptionUtils.combine;
 
 @RunWith(JUnit4TestRunner.class)
 public class LogRouteWithNonDefaultLoggerTest extends OSGiIntegrationTestSupport {
