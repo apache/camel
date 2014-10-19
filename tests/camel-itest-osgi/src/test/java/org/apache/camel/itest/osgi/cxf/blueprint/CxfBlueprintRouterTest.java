@@ -16,9 +16,6 @@
  */
 package org.apache.camel.itest.osgi.cxf.blueprint;
 
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 import org.apache.camel.CamelContext;
 import org.apache.camel.example.reportincident.InputReportIncident;
 import org.apache.camel.example.reportincident.OutputReportIncident;
@@ -36,6 +33,10 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
+
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 @RunWith(JUnit4TestRunner.class)
 public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {

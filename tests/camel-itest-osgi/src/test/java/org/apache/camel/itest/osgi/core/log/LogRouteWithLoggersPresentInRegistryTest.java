@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.osgi.core.log;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
@@ -28,8 +30,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
