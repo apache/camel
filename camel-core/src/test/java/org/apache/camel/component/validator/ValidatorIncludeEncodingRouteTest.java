@@ -18,9 +18,7 @@ package org.apache.camel.component.validator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -38,7 +36,7 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
         
         String body = "<t:text xmlns:t=\"org.text\">\n"
-                + "  <t:sentence>J'aime les camélidés</t:sentence>\n"
+                + "  <t:sentence>J'aime les cam\u00E9lid\u00E9s</t:sentence>\n"
                 + "</t:text>";
 
         template.sendBody("direct:start", body);
@@ -67,13 +65,12 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
                         .to("validator:org/apache/camel/component/validator/text.xsd")
                         .to("mock:valid")
                     .doCatch(NumberFormatException.class)
-                 .process(new Processor() {
-                    
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-System.err.println("helo " + exchange.getException());                        
-                    }
-                })
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            System.err.println("helo " + exchange.getException());                        
+                        }
+                    })
                         .to("mock:invalid")
                     .doFinally()
                         .to("mock:finally")
