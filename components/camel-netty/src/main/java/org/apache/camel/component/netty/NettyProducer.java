@@ -153,11 +153,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
-        // and then release other resources
-        if (channelFactory != null) {
-            channelFactory.releaseExternalResources();
-        }
-
+        // release the external resource here and we keep the timer open
         // and then shutdown the thread pools
         if (bossPool != null) {
             bossPool.shutdown();

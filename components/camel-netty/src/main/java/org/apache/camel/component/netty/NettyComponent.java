@@ -104,7 +104,9 @@ public class NettyComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         if (timer == null) {
-            timer = new HashedWheelTimer();
+            HashedWheelTimer hashedWheelTimer = new HashedWheelTimer();
+            hashedWheelTimer.start();
+            timer = hashedWheelTimer;
         }
 
         if (configuration == null) {
