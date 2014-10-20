@@ -117,6 +117,11 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
 
                 polledMessages = processBatch(CastUtils.cast(createExchanges(messages)));
+
+                final MailBoxPostProcessAction postProcessor = getEndpoint().getPostProcessAction();
+                if (postProcessor != null) {
+                    postProcessor.process(folder);
+                }
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
             }

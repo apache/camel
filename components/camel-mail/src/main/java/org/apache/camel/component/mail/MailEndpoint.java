@@ -47,6 +47,8 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private int maxMessagesPerPoll;
     private SearchTerm searchTerm;
 
+    private MailBoxPostProcessAction postProcessAction;
+
     public MailEndpoint() {
     }
 
@@ -185,4 +187,19 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.searchTerm = searchTerm;
     }
 
+
+    /**
+     * @return Post processor that can e.g. delete old email. Gets called once the messages have been polled and
+     * processed.
+     */
+    public MailBoxPostProcessAction getPostProcessAction() {
+        return postProcessAction;
+    }
+
+    /**
+     * @param postProcessAction {@link #getPostProcessAction()}
+     */
+    public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
+        this.postProcessAction = postProcessAction;
+    }
 }
