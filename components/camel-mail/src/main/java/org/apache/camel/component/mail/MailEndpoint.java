@@ -16,14 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Message;
-import javax.mail.search.SearchTerm;
-
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import com.sun.mail.imap.SortTerm;
+import org.apache.camel.*;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
@@ -31,10 +25,11 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+import javax.mail.Message;
+import javax.mail.search.SearchTerm;
+
 /**
  * Endpoint for Camel Mail.
- *
- * @version 
  */
 @UriEndpoint(scheme = "mail", consumerClass = MailConsumer.class)
 public class MailEndpoint extends ScheduledPollEndpoint {
@@ -46,6 +41,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private int maxMessagesPerPoll;
     private SearchTerm searchTerm;
+    private SortTerm[] sortTerm;
 
     public MailEndpoint() {
     }
@@ -84,7 +80,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
             throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
-                + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
+                    + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
@@ -111,7 +107,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public boolean isSingleton() {
         return false;
     }
-    
+
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return createExchange(pattern, null);
@@ -183,6 +179,22 @@ public class MailEndpoint extends ScheduledPollEndpoint {
 
     public void setSearchTerm(SearchTerm searchTerm) {
         this.searchTerm = searchTerm;
+    }
+
+    /**
+     * @return Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
+     * or when IMAP server does not have the SORT capability.
+     * @see com.sun.mail.imap.SortTerm
+     */
+    public SortTerm[] getSortTerm() {
+        return sortTerm == null ? null : sortTerm.clone();
+    }
+
+    /**
+     * @param sortTerm {@link #getSortTerm()}
+     */
+    public void setSortTerm(SortTerm[] sortTerm) {
+        this.sortTerm = (sortTerm == null ? null : sortTerm.clone());
     }
 
 }
