@@ -109,7 +109,9 @@ public class NettyComponent extends UriEndpointComponent {
     @Override
     protected void doStart() throws Exception {
         if (timer == null) {
-            timer = new HashedWheelTimer();
+            HashedWheelTimer hashedWheelTimer = new HashedWheelTimer();
+            hashedWheelTimer.start();
+            timer = hashedWheelTimer;
         }
 
         if (configuration == null) {
