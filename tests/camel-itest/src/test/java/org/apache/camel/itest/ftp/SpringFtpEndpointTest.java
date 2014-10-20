@@ -33,7 +33,6 @@ import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,12 +42,11 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * Unit testing FTP configured using spring bean
  */
 @ContextConfiguration
-@Ignore
 public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
     private static int ftpPort = AvailablePortFinder.getNextAvailable(20125);
     static {
         //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
+        //things to set them into the URL's in the spring contexts
         System.setProperty("SpringFtpEndpointTest.ftpPort", Integer.toString(ftpPort));
     }
     protected FtpServer ftpServer;
