@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.Store;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -24,11 +29,6 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
 
 /**
  * Tests if post process action is called if it is set
@@ -67,7 +67,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private void waitForActionCalled() throws InterruptedException {
         // Wait for a maximum of 500 ms for the action to be called
         for (int i = 0; i < 50; i++) {
-            if(action.hasBeenCalled()) {
+            if (action.hasBeenCalled()) {
                 break;
             }
             LOG.debug("Sleeping for 10 millis to wait for action call");
