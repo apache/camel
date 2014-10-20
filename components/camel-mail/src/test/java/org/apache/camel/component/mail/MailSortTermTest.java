@@ -16,24 +16,21 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Date;
+
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.Store;
+import javax.mail.internet.MimeMessage;
+
 import com.sun.mail.imap.SortTerm;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
-
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
-
-import java.util.Date;
-
-import static org.apache.camel.component.mail.SearchTermBuilder.Op;
 
 /**
  * This is a test that checks integration of the sort term in camel. The actual sorting logic is tested in the

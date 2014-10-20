@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.mail;
 
-import com.sun.mail.imap.SortTerm;
-import org.apache.camel.component.mail.MailSorter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.Date;
 
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
-import java.util.Date;
+
+import com.sun.mail.imap.SortTerm;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
@@ -35,29 +35,26 @@ import static org.mockito.Mockito.when;
  * Tests mail sort util
  */
 public class MailSorterTest extends CamelTestSupport {
-    private final static Message[] messages = new Message[3];
-    private final static Message tieBreaker;
+    private static final Message[] MESSAGES = new Message[3];
+    private static final Message TIE_BREAKER;
 
     /**
      * All possible sort terms
      */
-    private final static SortTerm[] possibleTerms = new SortTerm[]{
-            SortTerm.ARRIVAL,
-            SortTerm.CC,
-            SortTerm.DATE,
-            SortTerm.FROM,
-            SortTerm.SIZE,
-            SortTerm.TO,
-            SortTerm.SUBJECT
-    };
+    private static final SortTerm[] POSSIBLE_TERMS = 
+        new SortTerm[] {
+            SortTerm.ARRIVAL, SortTerm.CC,
+            SortTerm.DATE, SortTerm.FROM,
+            SortTerm.SIZE, SortTerm.TO,
+            SortTerm.SUBJECT};
 
     static {
         try {
-            messages[0] = createMessage("to1", "cc1", "from1", new Date(1), new Date(1001), 1, "subject1");
-            messages[1] = createMessage("to2", "cc2", "from2", new Date(2), new Date(1002), 2, "subject2");
-            messages[2] = createMessage("to3", "cc3", "from3", new Date(3), new Date(1003), 3, "subject3");
+            MESSAGES[0] = createMessage("to1", "cc1", "from1", new Date(1), new Date(1001), 1, "subject1");
+            MESSAGES[1] = createMessage("to2", "cc2", "from2", new Date(2), new Date(1002), 2, "subject2");
+            MESSAGES[2] = createMessage("to3", "cc3", "from3", new Date(3), new Date(1003), 3, "subject3");
             // Message that creates a tie on all fields except for one
-            tieBreaker = createMessage("to3", "cc3", "from3", new Date(3), new Date(1003), 3, "subject0TieBreaker");
+            TIE_BREAKER = createMessage("to3", "cc3", "from3", new Date(3), new Date(1003), 3, "subject0TieBreaker");
         } catch (MessagingException e) {
             // Rethrow as unchecked. Can not occur anyways
             throw new IllegalStateException(e);
@@ -68,7 +65,7 @@ public class MailSorterTest extends CamelTestSupport {
      * Create a new message with the specified data
      */
     private static Message createMessage(String to, String cc, String from, Date received, Date sent, int size, String subject)
-            throws MessagingException {
+        throws MessagingException {
         final Message msg = Mockito.mock(Message.class);
         when(msg.getFrom()).thenReturn(new Address[]{new InternetAddress(from)});
         when(msg.getRecipients(Message.RecipientType.TO)).thenReturn(new Address[]{new InternetAddress(to)});
@@ -82,11 +79,11 @@ public class MailSorterTest extends CamelTestSupport {
 
     @Test
     public void testSortMessages() throws Exception {
-        Message[] expected = new Message[]{messages[0], messages[1], messages[2]};
+        Message[] expected = new Message[]{MESSAGES[0], MESSAGES[1], MESSAGES[2]};
 
         // Sort using all the terms. Message order should be the same no matter what term is used
-        for (SortTerm term : possibleTerms) {
-            Message[] actual = messages.clone();
+        for (SortTerm term : POSSIBLE_TERMS) {
+            Message[] actual = MESSAGES.clone();
             MailSorter.sortMessages(actual, new SortTerm[]{term});
             try {
                 assertArrayEquals(actual, expected);
@@ -98,11 +95,11 @@ public class MailSorterTest extends CamelTestSupport {
 
     @Test
     public void testSortMessagesReverse() throws Exception {
-        Message[] expected = new Message[]{messages[2], messages[1], messages[0]};
+        Message[] expected = new Message[]{MESSAGES[2], MESSAGES[1], MESSAGES[0]};
 
         // Sort using all the terms. Message order should be the same no matter what term is used
-        for (SortTerm term : possibleTerms) {
-            Message[] actual = messages.clone();
+        for (SortTerm term : POSSIBLE_TERMS) {
+            Message[] actual = MESSAGES.clone();
             MailSorter.sortMessages(actual, new SortTerm[]{SortTerm.REVERSE, term});
             try {
                 assertArrayEquals(actual, expected);
@@ -114,13 +111,13 @@ public class MailSorterTest extends CamelTestSupport {
 
     @Test
     public void testSortMessagesMulti() throws Exception {
-        Message[] expected = new Message[]{messages[0], messages[1], messages[2]};
+        Message[] expected = new Message[]{MESSAGES[0], MESSAGES[1], MESSAGES[2]};
 
         // Sort using all the terms. Message order should be the same no matter what term is used. The second term
         // should be ignored since it is already the decider.
-        for (SortTerm term1 : possibleTerms) {
-            for (SortTerm term2 : possibleTerms) {
-                Message[] actual = messages.clone();
+        for (SortTerm term1 : POSSIBLE_TERMS) {
+            for (SortTerm term2 : POSSIBLE_TERMS) {
+                Message[] actual = MESSAGES.clone();
                 MailSorter.sortMessages(actual, new SortTerm[]{term1, SortTerm.REVERSE, term2});
                 try {
                     assertArrayEquals(actual, expected);
@@ -134,21 +131,21 @@ public class MailSorterTest extends CamelTestSupport {
 
     @Test
     public void testSortMessagesWithTie() throws Exception {
-        Message[] given = new Message[]{messages[2], tieBreaker};
+        Message[] given = new Message[]{MESSAGES[2], TIE_BREAKER};
 
         // Sort according to the whole list. Only the last element breaks the tie
         Message[] actual1 = given.clone();
-        MailSorter.sortMessages(actual1, possibleTerms);
-        assertArrayEquals(actual1, new Message[]{tieBreaker, messages[2]});
+        MailSorter.sortMessages(actual1, POSSIBLE_TERMS);
+        assertArrayEquals(actual1, new Message[]{TIE_BREAKER, MESSAGES[2]});
 
         // now reverse the last element (the tie breaker)
-        SortTerm[] reversed = new SortTerm[possibleTerms.length + 1];
-        System.arraycopy(possibleTerms, 0, reversed, 0, possibleTerms.length - 1);
+        SortTerm[] reversed = new SortTerm[POSSIBLE_TERMS.length + 1];
+        System.arraycopy(POSSIBLE_TERMS, 0, reversed, 0, POSSIBLE_TERMS.length - 1);
         reversed[reversed.length - 2] = SortTerm.REVERSE;
-        reversed[reversed.length - 1] = possibleTerms[possibleTerms.length - 1];
+        reversed[reversed.length - 1] = POSSIBLE_TERMS[POSSIBLE_TERMS.length - 1];
         // And check again
         Message[] actual2 = given.clone();
         MailSorter.sortMessages(actual2, reversed);
-        assertArrayEquals(actual2, new Message[]{messages[2], tieBreaker});
+        assertArrayEquals(actual2, new Message[]{MESSAGES[2], TIE_BREAKER});
     }
 }

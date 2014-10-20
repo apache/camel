@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.mail;
 
-import com.sun.mail.imap.SortTerm;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
-import java.util.*;
+
+import com.sun.mail.imap.SortTerm;
 
 /**
  * Utility class for sorting of mail messages

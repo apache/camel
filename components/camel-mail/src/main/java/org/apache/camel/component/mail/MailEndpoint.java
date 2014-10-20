@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.Message;
+import javax.mail.search.SearchTerm;
+
 import com.sun.mail.imap.SortTerm;
-import org.apache.camel.*;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-
-import javax.mail.Message;
-import javax.mail.search.SearchTerm;
 
 /**
  * Endpoint for Camel Mail.
@@ -196,7 +201,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      * @param sortTerm {@link #getSortTerm()}
      */
     public void setSortTerm(SortTerm[] sortTerm) {
-        this.sortTerm = (sortTerm == null ? null : sortTerm.clone());
+        this.sortTerm = sortTerm == null ? null : sortTerm.clone();
     }
 
     /**
