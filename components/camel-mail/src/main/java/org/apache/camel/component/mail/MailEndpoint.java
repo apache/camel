@@ -45,9 +45,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private ContentTypeResolver contentTypeResolver;
     @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
     private SearchTerm searchTerm;
+    @UriParam
     private SortTerm[] sortTerm;
-
+    @UriParam
     private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
