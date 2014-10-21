@@ -25,7 +25,6 @@
 	</parent>
 
 	<artifactId>camel-crypto</artifactId>
-	<version>2.11.1-PATCH1</version>
 	<packaging>bundle</packaging>
 	<name>Camel :: Crypto</name>
 	<description>Camel Cryptographic Support</description>
@@ -47,30 +46,11 @@
 			org.apache.camel.spi.DataFormatResolver;dataformat=gpg
 		</camel.osgi.export.service>
 	</properties>
-	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-package-maven-plugin</artifactId>
-				<version>${parent.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate-components-list</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -97,19 +77,6 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring</artifactId>
-			<version>${parent.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test</artifactId>
-			<version>${parent.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-			<version>${parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
