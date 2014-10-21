@@ -387,6 +387,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 && !getConfiguration().getPrefixForXmlSignatureNamespace().isEmpty()) {
             dsc.putNamespacePrefix("http://www.w3.org/2000/09/xmldsig#", getConfiguration().getPrefixForXmlSignatureNamespace());
         }
+        dsc.putNamespacePrefix("http://www.w3.org/2001/10/xml-exc-c14n#", "ec");
         setCryptoContextProperties(dsc);
         setUriDereferencerAndBaseUri(dsc);
         return dsc;
