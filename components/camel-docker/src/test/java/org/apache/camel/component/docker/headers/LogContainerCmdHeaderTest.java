@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.LogContainerCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.LogContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -45,7 +45,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         boolean tailAll = true;
         int tail = 5;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_FOLLOW_STREAM, followStream);
         headers.put(DockerConstants.DOCKER_STD_OUT, stdOut);
@@ -54,15 +54,15 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         headers.put(DockerConstants.DOCKER_TAIL, tail);
         headers.put(DockerConstants.DOCKER_TAIL_ALL, tailAll);
 
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).logContainerCmd(containerId);
-        Mockito.verify(mockObject,Mockito.times(1)).withFollowStream(Mockito.eq(followStream));
-        Mockito.verify(mockObject,Mockito.times(1)).withTail(Mockito.eq(tail));
-        Mockito.verify(mockObject,Mockito.times(1)).withTailAll();
-        Mockito.verify(mockObject,Mockito.times(1)).withStdErr(Mockito.eq(stdErr));
-        Mockito.verify(mockObject,Mockito.times(1)).withStdOut(Mockito.eq(stdOut));
-        Mockito.verify(mockObject,Mockito.times(1)).withTimestamps(Mockito.eq(timestamps));
+        Mockito.verify(dockerClient, Mockito.times(1)).logContainerCmd(containerId);
+        Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Mockito.eq(followStream));
+        Mockito.verify(mockObject, Mockito.times(1)).withTail(Mockito.eq(tail));
+        Mockito.verify(mockObject, Mockito.times(1)).withTailAll();
+        Mockito.verify(mockObject, Mockito.times(1)).withStdErr(Mockito.eq(stdErr));
+        Mockito.verify(mockObject, Mockito.times(1)).withStdOut(Mockito.eq(stdOut));
+        Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(Mockito.eq(timestamps));
         
     }
 

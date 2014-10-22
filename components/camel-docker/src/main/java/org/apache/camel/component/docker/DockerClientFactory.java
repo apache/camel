@@ -26,7 +26,11 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Methods for communicating with Docker
  */
-public class DockerClientFactory {
+public final class DockerClientFactory {
+    
+    private DockerClientFactory() {
+        //Helper class
+    }
     
     
     /**
@@ -69,22 +73,19 @@ public class DockerClientFactory {
         clientProfile.setRequestTimeout(requestTimeout);
         clientProfile.setServerAddress(serverAddress);
         
-        if(secure != null && secure) {
+        if (secure != null && secure) {
             clientProfile.setSecure(secure);
         }
         
         client = dockerConfiguration.getClient(clientProfile);
         
-        if(client != null) {
+        if (client != null) {
             return client;
         }
         
         DockerClientConfig.DockerClientConfigBuilder configBuilder = new DockerClientConfig.DockerClientConfigBuilder()
-        .withUsername(username)
-        .withPassword(password)
-        .withEmail(email)
-        .withReadTimeout(requestTimeout)
-        .withUri(clientProfile.toUrl());
+            .withUsername(username).withPassword(password).withEmail(email).withReadTimeout(requestTimeout)
+            .withUri(clientProfile.toUrl());
         
         DockerClientConfig config = configBuilder.build();
         

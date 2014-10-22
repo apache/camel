@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.PingCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.PingCmd;
 
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -36,11 +36,11 @@ public class PingCmdHeaderTest extends BaseDockerHeaderTest<PingCmd> {
     @Test
     public void pingHeaderTest() {
                 
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).pingCmd();
+        Mockito.verify(dockerClient, Mockito.times(1)).pingCmd();
         
     }
 

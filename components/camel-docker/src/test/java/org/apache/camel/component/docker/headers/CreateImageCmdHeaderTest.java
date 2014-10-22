@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.CreateImageCmd;
-
 import java.io.InputStream;
 import java.util.Map;
+
+import com.github.dockerjava.api.command.CreateImageCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -40,12 +40,12 @@ public class CreateImageCmdHeaderTest extends BaseDockerHeaderTest<CreateImageCm
         
         String repository = "docker/empty";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_REPOSITORY, repository);
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).createImageCmd(Mockito.eq(repository), Mockito.any(InputStream.class));
+        Mockito.verify(dockerClient, Mockito.times(1)).createImageCmd(Mockito.eq(repository), Mockito.any(InputStream.class));
         
 
         

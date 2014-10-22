@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.docker.headers;
 
+import java.util.Map;
+
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.model.ExposedPort;
-
-import java.util.Map;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -43,15 +43,15 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         ExposedPort tcp22 = ExposedPort.tcp(22);
 
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE_ID, imageId);
         headers.put(DockerConstants.DOCKER_EXPOSED_PORTS, tcp22);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).createContainerCmd(imageId);
-        Mockito.verify(mockObject,Mockito.times(1)).withExposedPorts(Mockito.any(ExposedPort.class));
+        Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(imageId);
+        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Mockito.any(ExposedPort.class));
         
     }
 

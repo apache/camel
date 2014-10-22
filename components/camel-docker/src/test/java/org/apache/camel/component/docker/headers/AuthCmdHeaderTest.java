@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.AuthCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.AuthCmd;
 
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
@@ -47,41 +47,39 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
         String email = "jdoe@example.com";
         String serverAddress = "http://docker.io/v1";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_USERNAME, userName);
         headers.put(DockerConstants.DOCKER_PASSWORD, password);
         headers.put(DockerConstants.DOCKER_EMAIL, email);
         headers.put(DockerConstants.DOCKER_SERVER_ADDRESS, serverAddress);
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).authCmd();
+        Mockito.verify(dockerClient, Mockito.times(1)).authCmd();
         
     }
     
     @Override
     public DockerClientProfile getClientProfile() {
-       DockerClientProfile clientProfile = super.getClientProfile();
-       clientProfile.setEmail(email);
-       clientProfile.setPassword(password);
-       clientProfile.setUsername(userName);
-       clientProfile.setServerAddress(serverAddress);
-       
-       return clientProfile;
-       
+        DockerClientProfile clientProfile = super.getClientProfile();
+        clientProfile.setEmail(email);
+        clientProfile.setPassword(password);
+        clientProfile.setUsername(userName);
+        clientProfile.setServerAddress(serverAddress);
+
+        return clientProfile;
+
     }
-
-
 
     @Override
     protected void setupMocks() {
-       Mockito.when(dockerClient.authCmd()).thenReturn(mockObject);
-        
+        Mockito.when(dockerClient.authCmd()).thenReturn(mockObject);
+
     }
 
     @Override
     protected DockerOperation getOperation() {
-       return DockerOperation.AUTH;
+        return DockerOperation.AUTH;
     }
 
 }

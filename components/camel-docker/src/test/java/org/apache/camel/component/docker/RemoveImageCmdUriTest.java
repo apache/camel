@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker;
 
-import com.github.dockerjava.api.command.RemoveImageCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.RemoveImageCmd;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.headers.BaseDockerHeaderTest;
@@ -44,7 +44,7 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
             
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("docker://"+getOperation().toString()+"?imageId="+imageId+"&noPrune="+noPrune+"&force="+force);
+                from("direct:in").to("docker://" + getOperation().toString() + "?imageId=" + imageId + "&noPrune=" + noPrune + "&force=" + force);
                 
             }
         };
@@ -56,13 +56,13 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
         
 
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).removeImageCmd(imageId);
-        Mockito.verify(mockObject,Mockito.times(0)).withNoPrune();
-        Mockito.verify(mockObject,Mockito.times(1)).withForce();
+        Mockito.verify(dockerClient, Mockito.times(1)).removeImageCmd(imageId);
+        Mockito.verify(mockObject, Mockito.times(0)).withNoPrune();
+        Mockito.verify(mockObject, Mockito.times(1)).withForce();
 
         
         

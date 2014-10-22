@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.ListImagesCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.ListImagesCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -41,16 +41,16 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
         String filter = "filter";
         Boolean showAll = true;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_FILTER, filter);
         headers.put(DockerConstants.DOCKER_SHOW_ALL, showAll);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).listImagesCmd();
-        Mockito.verify(mockObject,Mockito.times(1)).withFilter(Mockito.eq(filter));
-        Mockito.verify(mockObject,Mockito.times(1)).withShowAll(Mockito.eq(showAll));
+        Mockito.verify(dockerClient, Mockito.times(1)).listImagesCmd();
+        Mockito.verify(mockObject, Mockito.times(1)).withFilter(Mockito.eq(filter));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Mockito.eq(showAll));
         
     }
 

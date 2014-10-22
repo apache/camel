@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.DockerClient;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.dockerjava.api.DockerClient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,7 +51,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
             
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("docker://"+getOperation().toString());
+                from("direct:in").to("docker://" + getOperation().toString());
                 
             }
         };
@@ -97,8 +97,8 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return mockObject;
     }
     
-    protected Map<String,Object> getDefaultParameters() {
-        Map<String,Object> parameters = new HashMap<String,Object>();
+    protected Map<String, Object> getDefaultParameters() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(DockerConstants.DOCKER_HOST, getHost());
         parameters.put(DockerConstants.DOCKER_PORT, getPort());
         parameters.put(DockerConstants.DOCKER_EMAIL, getEmail());

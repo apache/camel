@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.BuildImageCmd;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
+
+import com.github.dockerjava.api.command.BuildImageCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -51,26 +51,26 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
     @Test
     public void buildImageFromInputStreamHeaderTest() {
         
-        template.sendBodyAndHeaders("direct:in", inputStream,getHeaders());
+        template.sendBodyAndHeaders("direct:in", inputStream, getHeaders());
         
-        Mockito.verify(dockerClient,Mockito.times(1)).buildImageCmd(Mockito.any(InputStream.class));
-        Mockito.verify(mockObject,Mockito.times(1)).withQuiet();
-        Mockito.verify(mockObject,Mockito.times(1)).withNoCache();
-        Mockito.verify(mockObject,Mockito.times(1)).withRemove();
-        Mockito.verify(mockObject,Mockito.times(1)).withTag(tag);
+        Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Mockito.any(InputStream.class));
+        Mockito.verify(mockObject, Mockito.times(1)).withQuiet();
+        Mockito.verify(mockObject, Mockito.times(1)).withNoCache();
+        Mockito.verify(mockObject, Mockito.times(1)).withRemove();
+        Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
         
     }
     
     @Test
     public void buildImageFromFileHeaderTest() {
         
-        template.sendBodyAndHeaders("direct:in", file,getHeaders());
+        template.sendBodyAndHeaders("direct:in", file, getHeaders());
         
-        Mockito.verify(dockerClient,Mockito.times(1)).buildImageCmd(Mockito.any(File.class));
-        Mockito.verify(mockObject,Mockito.times(1)).withQuiet();
-        Mockito.verify(mockObject,Mockito.times(1)).withNoCache();
-        Mockito.verify(mockObject,Mockito.times(1)).withRemove();
-        Mockito.verify(mockObject,Mockito.times(1)).withTag(tag);
+        Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Mockito.any(File.class));
+        Mockito.verify(mockObject, Mockito.times(1)).withQuiet();
+        Mockito.verify(mockObject, Mockito.times(1)).withNoCache();
+        Mockito.verify(mockObject, Mockito.times(1)).withRemove();
+        Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
         
     }
     
@@ -86,8 +86,8 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         return DockerOperation.BUILD_IMAGE;
     }
     
-    private Map<String,Object> getHeaders() {
-        Map<String,Object> headers = getDefaultParameters();
+    private Map<String, Object> getHeaders() {
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_REPOSITORY, repository);
         headers.put(DockerConstants.DOCKER_QUIET, quiet);
         headers.put(DockerConstants.DOCKER_NO_CACHE, noCache);

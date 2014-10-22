@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.RemoveContainerCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.RemoveContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -41,17 +41,17 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
         boolean force = true;
         boolean removeVolumes = true;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_FORCE, force);
         headers.put(DockerConstants.DOCKER_REMOVE_VOLUMES, removeVolumes);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).removeContainerCmd(containerId);
-        Mockito.verify(mockObject,Mockito.times(1)).withForce(Mockito.eq(force));
-        Mockito.verify(mockObject,Mockito.times(1)).withRemoveVolumes(Mockito.eq(removeVolumes));
+        Mockito.verify(dockerClient, Mockito.times(1)).removeContainerCmd(containerId);
+        Mockito.verify(mockObject, Mockito.times(1)).withForce(Mockito.eq(force));
+        Mockito.verify(mockObject, Mockito.times(1)).withRemoveVolumes(Mockito.eq(removeVolumes));
 
 
         

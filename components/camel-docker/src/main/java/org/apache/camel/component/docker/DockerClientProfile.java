@@ -94,7 +94,7 @@ public class DockerClientProfile {
         try {
             uri = new URL(secure, this.host, this.port, "");
         } catch (MalformedURLException e) {
-           throw new DockerException(e);
+            throw new DockerException(e);
         }
 
         return uri.toString();
@@ -116,50 +116,68 @@ public class DockerClientProfile {
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DockerClientProfile other = (DockerClientProfile)obj;
         if (email == null) {
-            if (other.email != null)
+            if (other.email != null) {
                 return false;
-        } else if (!email.equals(other.email))
+            }
+        } else if (!email.equals(other.email)) {
             return false;
+        }
         if (host == null) {
-            if (other.host != null)
+            if (other.host != null) {
                 return false;
-        } else if (!host.equals(other.host))
+            }
+        } else if (!host.equals(other.host)) {
             return false;
+        }
         if (password == null) {
-            if (other.password != null)
+            if (other.password != null) {
                 return false;
-        } else if (!password.equals(other.password))
+            }
+        } else if (!password.equals(other.password)) {
             return false;
+        }
         if (port == null) {
-            if (other.port != null)
+            if (other.port != null) {
                 return false;
-        } else if (!port.equals(other.port))
+            }
+        } else if (!port.equals(other.port)) {
             return false;
+        }
         if (requestTimeout == null) {
-            if (other.requestTimeout != null)
+            if (other.requestTimeout != null) {
                 return false;
-        } else if (!requestTimeout.equals(other.requestTimeout))
+            }
+        } else if (!requestTimeout.equals(other.requestTimeout)) {
             return false;
-        if (secure != other.secure)
+        }
+        if (secure != other.secure) {
             return false;
+        }
         if (serverAddress == null) {
-            if (other.serverAddress != null)
+            if (other.serverAddress != null) {
                 return false;
-        } else if (!serverAddress.equals(other.serverAddress))
+            }
+        } else if (!serverAddress.equals(other.serverAddress)) {
             return false;
+        }
         if (username == null) {
-            if (other.username != null)
+            if (other.username != null) {
                 return false;
-        } else if (!username.equals(other.username))
+            }
+        } else if (!username.equals(other.username)) {
             return false;
+        }
         return true;
     }
   

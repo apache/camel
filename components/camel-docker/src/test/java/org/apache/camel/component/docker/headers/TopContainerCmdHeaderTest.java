@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.TopContainerCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.TopContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -40,15 +40,15 @@ public class TopContainerCmdHeaderTest extends BaseDockerHeaderTest<TopContainer
         String containerId = "9c09acd48a25";
         String psArgs = "aux";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_PS_ARGS, psArgs);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).topContainerCmd(containerId);
-        Mockito.verify(mockObject,Mockito.times(1)).withPsArgs(Mockito.eq(psArgs));
+        Mockito.verify(dockerClient, Mockito.times(1)).topContainerCmd(containerId);
+        Mockito.verify(mockObject, Mockito.times(1)).withPsArgs(Mockito.eq(psArgs));
         
     }
 

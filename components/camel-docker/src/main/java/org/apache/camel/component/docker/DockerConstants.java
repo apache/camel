@@ -22,11 +22,11 @@ import java.util.Map;
 /**
  * Docker Component constants
  */
-public class DockerConstants {
-    
+public final class DockerConstants {
+   
     public static final String DOCKER_PREFIX = "CamelDocker";
 
-    public static final Map<String,Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<String,Class<?>>();
+    public static final Map<String, Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<String, Class<?>>();
 
 
     /** Connectivity **/
@@ -161,4 +161,9 @@ public class DockerConstants {
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SERVER_ADDRESS, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SECURE, Boolean.class);
     }
+    
+    private DockerConstants() {
+        // Helper class
+    }
+    
 }

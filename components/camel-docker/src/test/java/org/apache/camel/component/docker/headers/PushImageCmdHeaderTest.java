@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.PushImageCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.PushImageCmd;
 
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
@@ -46,7 +46,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     public void pushImageHeaderTest() {
         
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_USERNAME, userName);
         headers.put(DockerConstants.DOCKER_PASSWORD, password);
         headers.put(DockerConstants.DOCKER_EMAIL, email);
@@ -54,9 +54,9 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         headers.put(DockerConstants.DOCKER_NAME, name);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).pushImageCmd(name);
+        Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
         
     }
 
@@ -72,14 +72,14 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     
     @Override
     public DockerClientProfile getClientProfile() {
-       DockerClientProfile clientProfile = super.getClientProfile();
-       clientProfile.setEmail(email);
-       clientProfile.setPassword(password);
-       clientProfile.setUsername(userName);
-       clientProfile.setServerAddress(serverAddress);
-       
-       return clientProfile;
-       
+        DockerClientProfile clientProfile = super.getClientProfile();
+        clientProfile.setEmail(email);
+        clientProfile.setPassword(password);
+        clientProfile.setUsername(userName);
+        clientProfile.setServerAddress(serverAddress);
+
+        return clientProfile;
+
     }
 
 

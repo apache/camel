@@ -25,63 +25,63 @@ import java.util.Map;
  */
 public enum DockerOperation {
     
-    EVENTS("events",false,true,
+    EVENTS("events", false, true,
          DockerConstants.DOCKER_INITIAL_RANGE, Long.class),        
-    AUTH("auth",false,true,
+    AUTH("auth", false, true,
          DockerConstants.DOCKER_USERNAME, String.class,
          DockerConstants.DOCKER_PASSWORD, String.class,
          DockerConstants.DOCKER_EMAIL, String.class,
          DockerConstants.DOCKER_SERVER_ADDRESS, String.class),
-    INFO("info",false,true),
-    PING("ping",false,true),
-    VERSION("version",false,true),
-    LIST_IMAGES("imagelist",false,true,
+    INFO("info", false, true),
+    PING("ping", false, true),
+    VERSION("version", false, true),
+    LIST_IMAGES("imagelist", false, true,
          DockerConstants.DOCKER_FILTER, String.class,
          DockerConstants.DOCKER_SHOW_ALL, Boolean.class),
-    PULL_IMAGE("imagepull",false,true,
+    PULL_IMAGE("imagepull", false, true,
          DockerConstants.DOCKER_REGISTRY, String.class,
          DockerConstants.DOCKER_TAG, String.class,
          DockerConstants.DOCKER_REPOSITORY, String.class),
-    PUSH_IMAGE("imagepush",false,true,
+    PUSH_IMAGE("imagepush", false, true,
          DockerConstants.DOCKER_NAME, String.class,
          DockerConstants.DOCKER_USERNAME, String.class,
          DockerConstants.DOCKER_PASSWORD, String.class,
          DockerConstants.DOCKER_EMAIL, String.class,
          DockerConstants.DOCKER_SERVER_ADDRESS, String.class),
-    CREATE_IMAGE("imagecreate",false,true,
+    CREATE_IMAGE("imagecreate", false, true,
          DockerConstants.DOCKER_REPOSITORY, String.class),
-    SEARCH_IMAGES("imagesearch",false,true,
+    SEARCH_IMAGES("imagesearch", false, true,
          DockerConstants.DOCKER_TERM, String.class),
-    REMOVE_IMAGE("imageremove",false,true,
+    REMOVE_IMAGE("imageremove", false, true,
          DockerConstants.DOCKER_IMAGE_ID, String.class,
          DockerConstants.DOCKER_FORCE, Boolean.class,
          DockerConstants.DOCKER_NO_PRUNE, String.class),
-    INSPECT_IMAGE("imageinspect",false,true,
+    INSPECT_IMAGE("imageinspect", false, true,
          DockerConstants.DOCKER_IMAGE_ID, String.class,
          DockerConstants.DOCKER_NO_PRUNE, Boolean.class,
          DockerConstants.DOCKER_FORCE, Boolean.class),
-    LIST_CONTAINERS("containerlist",false,true,
+    LIST_CONTAINERS("containerlist", false, true,
          DockerConstants.DOCKER_LIMIT, String.class,
          DockerConstants.DOCKER_SHOW_ALL, Boolean.class,
          DockerConstants.DOCKER_SHOW_SIZE, Boolean.class,
          DockerConstants.DOCKER_BEFORE, String.class,
          DockerConstants.DOCKER_SINCE, String.class),   
-    WAIT_CONTAINER("containerwait",false,true,
+    WAIT_CONTAINER("containerwait", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class),
-    INSPECT_CONTAINER("inspectcontainer",false,true,
+    INSPECT_CONTAINER("inspectcontainer", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class),  
-    REMOVE_CONTAINER("removecontainer",false,true,
+    REMOVE_CONTAINER("removecontainer", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_FORCE, Boolean.class,
          DockerConstants.DOCKER_REMOVE_VOLUMES, Boolean.class),
-    ATTACH_CONTAINER("containerattach",false,true,
+    ATTACH_CONTAINER("containerattach", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_FOLLOW_STREAM, Boolean.class,
          DockerConstants.DOCKER_TIMESTAMPS, Boolean.class,
          DockerConstants.DOCKER_STD_OUT, Boolean.class,
          DockerConstants.DOCKER_STD_ERR, Boolean.class,
          DockerConstants.DOCKER_LOGS, Boolean.class), 
-    LOG_CONTAINER("containerlog",false,true,
+    LOG_CONTAINER("containerlog", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_FOLLOW_STREAM, Boolean.class,
          DockerConstants.DOCKER_TIMESTAMPS, Boolean.class,
@@ -89,37 +89,37 @@ public enum DockerOperation {
          DockerConstants.DOCKER_STD_ERR, Boolean.class,
          DockerConstants.DOCKER_TAIL, Integer.class,
          DockerConstants.DOCKER_TAIL_ALL, Boolean.class),
-    CONTAINER_COPY_FILE("containercopyfile",false,true,
+    CONTAINER_COPY_FILE("containercopyfile", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_RESOURCE, String.class,
          DockerConstants.DOCKER_HOST_PATH, String.class),
-    DIFF_CONTAINER("containerdiff",false,true,
+    DIFF_CONTAINER("containerdiff", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class),
-    STOP_CONTAINER("containerstop",false,true,
+    STOP_CONTAINER("containerstop", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_TIMEOUT, Integer.class),
-    KILL_CONTAINER("containerkill",false,true,
+    KILL_CONTAINER("containerkill", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_SIGNAL, String.class),
-    RESTART_CONTAINER("containerrestart",false,true,
+    RESTART_CONTAINER("containerrestart", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_TIMEOUT, Integer.class),
-    TOP_CONTAINER("containertop",false,true,
+    TOP_CONTAINER("containertop", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_TIMEOUT, Integer.class),    
-    TAG_IMAGE("imagetag",false,true,
+    TAG_IMAGE("imagetag", false, true,
          DockerConstants.DOCKER_IMAGE_ID, String.class,
          DockerConstants.DOCKER_REPOSITORY, String.class,
          DockerConstants.DOCKER_FORCE, Boolean.class),
-    PAUSE_CONTAINER("containerpause",false,true,
+    PAUSE_CONTAINER("containerpause", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class),
-    UNPAUSE_CONTAINER("containerunpause",false,true,
+    UNPAUSE_CONTAINER("containerunpause", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class),
-    BUILD_IMAGE("imagebuild",false,true,
+    BUILD_IMAGE("imagebuild", false, true,
          DockerConstants.DOCKER_NO_CACHE, Boolean.class,
          DockerConstants.DOCKER_REMOVE, Boolean.class,
          DockerConstants.DOCKER_QUIET, Boolean.class),
-    COMMIT_CONTAINER("containercommit",false,true,
+    COMMIT_CONTAINER("containercommit", false, true,
          DockerConstants.DOCKER_CONTAINER_ID, String.class,
          DockerConstants.DOCKER_REPOSITORY, String.class,
          DockerConstants.DOCKER_TAG, String.class,
@@ -138,7 +138,7 @@ public enum DockerOperation {
          DockerConstants.DOCKER_STD_IN_ONCE, Boolean.class,
          DockerConstants.DOCKER_TTY, Boolean.class,
          DockerConstants.DOCKER_WORKING_DIR, String.class),
-   CREATE_CONTAINER("containercreate",false,true,
+   CREATE_CONTAINER("containercreate", false, true,
          DockerConstants.DOCKER_IMAGE_ID, String.class,
          DockerConstants.DOCKER_NAME, String.class,
          DockerConstants.DOCKER_WORKING_DIR, String.class,
@@ -160,7 +160,7 @@ public enum DockerOperation {
          DockerConstants.DOCKER_DNS, String.class,
          DockerConstants.DOCKER_IMAGE, String.class,
          DockerConstants.DOCKER_VOLUMES_FROM, String.class),   
-    START_CONTAINER("containerstart",false,true,
+    START_CONTAINER("containerstart", false, true,
          DockerConstants.DOCKER_PUBLISH_ALL_PORTS, Boolean.class,
          DockerConstants.DOCKER_PRIVILEGED, Boolean.class,
          DockerConstants.DOCKER_DNS, String.class,
@@ -173,7 +173,8 @@ public enum DockerOperation {
     
     
     private String text;
-    private boolean canConsume, canProduce;
+    private boolean canConsume;
+    private boolean canProduce;
     private Map<String, Class<?>> parameters;
     
     
@@ -183,18 +184,18 @@ public enum DockerOperation {
         this.canConsume = canConsume;
         this.canProduce = canProduce;
         
-        parameters = new HashMap<String,Class<?>>();
+        parameters = new HashMap<String, Class<?>>();
               
-        if(params.length > 0) {
+        if (params.length > 0) {
             
-            if(params.length % 2 != 0) {
+            if (params.length % 2 != 0) {
                 throw new IllegalArgumentException("Invalid parameter list, "
                     + "must be of the form 'String name1, Class class1, String name2, Class class2...");
             }
             
             int nParameters = params.length / 2;
             
-            for(int i = 0; i < nParameters; i++) {
+            for (int i = 0; i < nParameters; i++) {
                 parameters.put((String) params[i * 2], (Class<?>) params[i * 2 + 1]);
             }
             
@@ -216,13 +217,13 @@ public enum DockerOperation {
         return canProduce;
     }
     
-    public Map<String,Class<?>> getParameters() {
+    public Map<String, Class<?>> getParameters() {
         return parameters;
     }
     
     public static DockerOperation getDockerOperation(String name) {
-        for(DockerOperation dockerOperation : DockerOperation.values()) {
-            if(dockerOperation.toString().equals(name)) {
+        for (DockerOperation dockerOperation : DockerOperation.values()) {
+            if (dockerOperation.toString().equals(name)) {
                 return dockerOperation;
             }
         }

@@ -46,9 +46,9 @@ public class DockerProducerTestIT extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                .to("docker://imagelist?host="+host+"&port="+port)
-                .log("${body}")
-                  .to("mock:result");
+                    .to("docker://imagelist?host=" + host + "&port=" + port)
+                    .log("${body}")
+                    .to("mock:result");
             }
         };
     }

@@ -48,10 +48,9 @@ public class DockerEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         DockerOperation operation = configuration.getOperation();
         
-        if(operation != null && operation.canProduce()) {
+        if (operation != null && operation.canProduce()) {
             return new DockerProducer(this);
-        }
-        else {
+        } else {
             throw new DockerException(operation + " is not a valid producer operation");
         }
     }
@@ -61,10 +60,10 @@ public class DockerEndpoint extends DefaultEndpoint {
         DockerOperation operation = configuration.getOperation();
 
         switch (operation) {
-            case EVENTS:
-                return new DockerEventsConsumer(this, processor);
-            default:
-                throw new DockerException(operation + " is not a valid consumer operation");
+        case EVENTS:
+            return new DockerEventsConsumer(this, processor);
+        default:
+            throw new DockerException(operation + " is not a valid consumer operation");
         }
 
     }

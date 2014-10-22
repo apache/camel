@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.docker.consumer;
 
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+
 import com.github.dockerjava.api.command.EventCallback;
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.model.Event;
-
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DockerEventsConsumer extends DefaultConsumer implements EventCallback {
 
-    private transient static final Logger LOGGER = LoggerFactory.getLogger(DockerEventsConsumer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(DockerEventsConsumer.class);
 
     private DockerEndpoint endpoint;
         
@@ -92,7 +92,7 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
     @Override
     protected void doStop() throws Exception {
  
-        if(eventsExecutorService != null && !eventsExecutorService.isTerminated()) {
+        if (eventsExecutorService != null && !eventsExecutorService.isTerminated()) {
             LOGGER.trace("Stopping Docker events Executor Service");
             
             eventsExecutorService.shutdown();
@@ -130,7 +130,7 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
 
     @Override
     public void onException(Throwable throwable) {
-       LOGGER.error("Error Consuming from Docker Events: {}", throwable.getMessage());
+        LOGGER.error("Error Consuming from Docker Events: {}", throwable.getMessage());
         
     }
 

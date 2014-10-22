@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.docker;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class DockerHelperTest {
     

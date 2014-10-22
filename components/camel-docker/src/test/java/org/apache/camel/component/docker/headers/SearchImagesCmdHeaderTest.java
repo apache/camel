@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.SearchImagesCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.SearchImagesCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -39,12 +39,12 @@ public class SearchImagesCmdHeaderTest extends BaseDockerHeaderTest<SearchImages
         
         String term = "dockerTerm";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_TERM, term);
 
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
 
-        Mockito.verify(dockerClient,Mockito.times(1)).searchImagesCmd(Mockito.eq(term));
+        Mockito.verify(dockerClient, Mockito.times(1)).searchImagesCmd(Mockito.eq(term));
         
         
     }

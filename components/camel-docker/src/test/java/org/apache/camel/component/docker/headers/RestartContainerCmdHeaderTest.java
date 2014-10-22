@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.RestartContainerCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.RestartContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -40,15 +40,15 @@ public class RestartContainerCmdHeaderTest extends BaseDockerHeaderTest<RestartC
         String containerId = "9c09acd48a25";
         int timeout = 50;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_TIMEOUT, timeout);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).restartContainerCmd(containerId);
-        Mockito.verify(mockObject,Mockito.times(1)).withtTimeout(Mockito.eq(timeout));
+        Mockito.verify(dockerClient, Mockito.times(1)).restartContainerCmd(containerId);
+        Mockito.verify(mockObject, Mockito.times(1)).withtTimeout(Mockito.eq(timeout));
         
     }
 

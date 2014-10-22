@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.KillContainerCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.KillContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -40,15 +40,15 @@ public class KillContainerCmdHeaderTest extends BaseDockerHeaderTest<KillContain
         String containerId = "9c09acd48a25";
         String signal = "signal";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_SIGNAL, signal);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).killContainerCmd(containerId);
-        Mockito.verify(mockObject,Mockito.times(1)).withSignal(Mockito.eq(signal));
+        Mockito.verify(dockerClient, Mockito.times(1)).killContainerCmd(containerId);
+        Mockito.verify(mockObject, Mockito.times(1)).withSignal(Mockito.eq(signal));
         
     }
 

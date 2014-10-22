@@ -45,7 +45,7 @@ public class DockerComponent extends DefaultComponent {
         
         DockerOperation operation = DockerOperation.getDockerOperation(normalizedRemaining);
         
-        if(operation == null) {
+        if (operation == null) {
             throw new DockerException(remaining + " is not a valid operation");
         }
         
@@ -62,7 +62,7 @@ public class DockerComponent extends DefaultComponent {
     }
     
     protected DockerConfiguration getConfiguration() {
-        if(configuration == null) {
+        if (configuration == null) {
             configuration = new DockerConfiguration();
         }
         

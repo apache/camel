@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.RemoveImageCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.RemoveImageCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -41,17 +41,17 @@ public class RemoveImageCmdHeaderTest extends BaseDockerHeaderTest<RemoveImageCm
         Boolean noPrune = false;
         Boolean force = true;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE_ID, imageId);
         headers.put(DockerConstants.DOCKER_NO_PRUNE, noPrune);
         headers.put(DockerConstants.DOCKER_FORCE, force);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient,Mockito.times(1)).removeImageCmd(imageId);
-        Mockito.verify(mockObject,Mockito.times(0)).withNoPrune();
-        Mockito.verify(mockObject,Mockito.times(1)).withForce();
+        Mockito.verify(dockerClient, Mockito.times(1)).removeImageCmd(imageId);
+        Mockito.verify(mockObject, Mockito.times(0)).withNoPrune();
+        Mockito.verify(mockObject, Mockito.times(1)).withForce();
 
         
         

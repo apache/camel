@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.docker;
 
-import com.github.dockerjava.api.DockerClientException;
-import com.github.dockerjava.api.model.AuthConfig;
-
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.dockerjava.api.DockerClientException;
+import com.github.dockerjava.api.model.AuthConfig;
 
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
@@ -30,9 +30,13 @@ import org.apache.commons.lang.BooleanUtils;
 /**
  * Utility methods for Docker Component
  */
-public class DockerHelper {
+public final class DockerHelper {
     
     private static final String STRING_DELIMITER = ";";
+    
+    private DockerHelper() {
+        //Helpser class
+    }
     
     /**
      * Validates the URI parameters for a given {@link DockerOperation}
@@ -40,17 +44,17 @@ public class DockerHelper {
      * @param dockerOperation
      * @param parameters
      */
-    public static void validateParameters(DockerOperation dockerOperation, Map<String,Object> parameters) {
-        Map<String,Class<?>> validParamMap = new HashMap<String,Class<?>>();
+    public static void validateParameters(DockerOperation dockerOperation, Map<String, Object> parameters) {
+        Map<String, Class<?>> validParamMap = new HashMap<String, Class<?>>();
         validParamMap.putAll(DockerConstants.DOCKER_DEFAULT_PARAMETERS);
         validParamMap.putAll(dockerOperation.getParameters());
         
-        for(String key : parameters.keySet()) {
+        for (String key : parameters.keySet()) {
             
             String transformedKey = DockerHelper.transformToHeaderName(key);
             
             // Validate URI parameter name
-            if(!validParamMap.containsKey(transformedKey)) {
+            if (!validParamMap.containsKey(transformedKey)) {
                 throw new DockerClientException(key + " is not a valid URI parameter");
             }
             
@@ -59,20 +63,17 @@ public class DockerHelper {
                 Class<?> parameterClass = validParamMap.get(transformedKey);
                 Object parameterValue = parameters.get(key);
                 
-                if(parameterClass == null || parameterValue == null) {
+                if (parameterClass == null || parameterValue == null) {
                     throw new DockerClientException("Failed to validate parameter type for property " + key);
                 } 
                 
-                if(Integer.class == parameterClass) {
+                if (Integer.class == parameterClass) {
                     Integer.parseInt((String)parameterValue);
-                }
-                else if(Boolean.class == parameterClass) {
+                } else if (Boolean.class == parameterClass) {
                     BooleanUtils.toBooleanObject((String)parameterValue, "true", "false", "null");
                 }
                 
-                
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 throw new DockerClientException("Failed to validate parameter type for property " + key);                    
             }
         }
@@ -91,8 +92,8 @@ public class DockerHelper {
         
         String nameSubstring = name.substring(DockerConstants.DOCKER_PREFIX.length());
         
-        if(nameSubstring.length() > 0) {
-            formattedName.append(nameSubstring.substring(0,1).toLowerCase());
+        if (nameSubstring.length() > 0) {
+            formattedName.append(nameSubstring.substring(0, 1).toLowerCase());
             formattedName.append(nameSubstring.substring(1));   
         }
         
@@ -110,8 +111,8 @@ public class DockerHelper {
         StringBuilder formattedName = new StringBuilder(DockerConstants.DOCKER_PREFIX);
         
         
-        if(name.length() > 0) {
-            formattedName.append(name.substring(0,1).toUpperCase());
+        if (name.length() > 0) {
+            formattedName.append(name.substring(0, 1).toUpperCase());
             formattedName.append(name.substring(1));   
         }
         
@@ -132,25 +133,23 @@ public class DockerHelper {
     public static <T> T getProperty(String name, DockerConfiguration configuration, Message message, Class<T> clazz) {
         // First attempt to locate property from Message Header, then fallback to Endpoint property
        
-        if(message != null) {
+        if (message != null) {
             T headerProperty = message.getHeader(name, clazz);
             
-            if(headerProperty != null) {
+            if (headerProperty != null) {
                 return headerProperty;
             }
         }
         
         Object prop = configuration.getParameters().get(transformFromHeaderName(name));
         
-        if(prop != null) {
+        if (prop != null) {
             
-            if(prop.getClass().isAssignableFrom(clazz)) {
+            if (prop.getClass().isAssignableFrom(clazz)) {
                 return (T) prop;
-            }
-            else if(Integer.class == clazz) {
-               return (T) Integer.valueOf((String)prop);
-            }
-            else if(Boolean.class == clazz) {
+            } else if (Integer.class == clazz) {
+                return (T) Integer.valueOf((String)prop);
+            } else if (Boolean.class == clazz) {
                 return (T)BooleanUtils.toBooleanObject((String)prop, "true", "false", "null");
             }
         }
@@ -172,25 +171,25 @@ public class DockerHelper {
     @SuppressWarnings("unchecked")
     public static <T> T[] getArrayProperty(String name, Message message, Class<T> clazz) {
        
-        if(message != null) {
+        if (message != null) {
             Object header = message.getHeader(name);
-            
-            if(header != null) {
-                if(header.getClass().isAssignableFrom(clazz)) {
-                    
+
+            if (header != null) {
+                if (header.getClass().isAssignableFrom(clazz)) {
+
                     T[] headerArray = (T[])Array.newInstance(clazz, 1);
-                    headerArray[0] = (T) header;
+                    headerArray[0] = (T)header;
                     return headerArray;
-                    
+
                 }
-                
-                if(header.getClass().isArray()) {
-                    if(header.getClass().getDeclaringClass().isAssignableFrom(clazz)) {
+
+                if (header.getClass().isArray()) {
+                    if (header.getClass().getDeclaringClass().isAssignableFrom(clazz)) {
                         return (T[])header;
                     }
                 }
             }
-            
+
         }
         
         return null;
@@ -218,24 +217,22 @@ public class DockerHelper {
     }
     
     public static String[] parseDelimitedStringHeader(String headerName, Message message) {
-        
-        
+
         Object header = message.getHeader(headerName);
-        
-        if(header != null) {
-            
-            if(header instanceof String) {
-                return ((String) header).split(STRING_DELIMITER);
+
+        if (header != null) {
+
+            if (header instanceof String) {
+                return ((String)header).split(STRING_DELIMITER);
             }
-            
-            if(header instanceof String[]) {
-                return((String[]) header);
+
+            if (header instanceof String[]) {
+                return (String[])header;
             }
         }
-        
-        
+
         return null;
-        
+
     }
     
     

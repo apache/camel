@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.PullImageCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.PullImageCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -41,17 +41,17 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         String tag = "1.0";
         String registry = "registry";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_REPOSITORY, repository);
         headers.put(DockerConstants.DOCKER_TAG, tag);
         headers.put(DockerConstants.DOCKER_REGISTRY, registry);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).pullImageCmd(repository);
-        Mockito.verify(mockObject,Mockito.times(1)).withTag(Mockito.eq(tag));
-        Mockito.verify(mockObject,Mockito.times(1)).withRegistry(Mockito.eq(registry));
+        Mockito.verify(dockerClient, Mockito.times(1)).pullImageCmd(repository);
+        Mockito.verify(mockObject, Mockito.times(1)).withTag(Mockito.eq(tag));
+        Mockito.verify(mockObject, Mockito.times(1)).withRegistry(Mockito.eq(registry));
         
     }
 

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.ListContainersCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.ListContainersCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -41,19 +41,19 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         boolean showAll = true;
         int limit = 2;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_LIMIT, limit);
         headers.put(DockerConstants.DOCKER_SHOW_ALL, showAll);
         headers.put(DockerConstants.DOCKER_SHOW_SIZE, showSize);
 
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).listContainersCmd();
-        Mockito.verify(mockObject,Mockito.times(1)).withShowAll(Mockito.eq(showAll));
-        Mockito.verify(mockObject,Mockito.times(1)).withShowSize(Mockito.eq(showSize));
-        Mockito.verify(mockObject,Mockito.times(1)).withLimit(Mockito.eq(limit));
+        Mockito.verify(dockerClient, Mockito.times(1)).listContainersCmd();
+        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Mockito.eq(showAll));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowSize(Mockito.eq(showSize));
+        Mockito.verify(mockObject, Mockito.times(1)).withLimit(Mockito.eq(limit));
 
         
     }

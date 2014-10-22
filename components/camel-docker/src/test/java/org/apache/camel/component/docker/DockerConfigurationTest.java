@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class DockerConfigurationTest {
     
@@ -51,7 +52,7 @@ public class DockerConfigurationTest {
     public void testPropertyfromEndpointProperties() {
         String host = "camelhost";
         
-        Map<String,Object> parameters = new HashMap<String,Object>();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(DockerHelper.transformFromHeaderName(DockerConstants.DOCKER_HOST), host);
         configuration.setParameters(parameters);
         

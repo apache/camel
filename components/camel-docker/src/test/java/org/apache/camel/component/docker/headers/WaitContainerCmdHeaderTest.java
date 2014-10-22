@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.WaitContainerCmd;
-
 import java.util.Map;
+
+import com.github.dockerjava.api.command.WaitContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -39,13 +39,13 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
         
         String containerId = "9c09acd48a25";
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).waitContainerCmd(containerId);
+        Mockito.verify(dockerClient, Mockito.times(1)).waitContainerCmd(containerId);
         
     }
 

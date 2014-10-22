@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.StopContainerCmd;
 
 import java.util.Map;
+
+import com.github.dockerjava.api.command.StopContainerCmd;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -40,15 +41,15 @@ public class StopContainerCmdHeaderTest extends BaseDockerHeaderTest<StopContain
         String containerId = "9c09acd48a25";
         int timeout = 50;
         
-        Map<String,Object> headers = getDefaultParameters();
+        Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_TIMEOUT, timeout);
 
         
-        template.sendBodyAndHeaders("direct:in", "",headers);
+        template.sendBodyAndHeaders("direct:in", "", headers);
                 
-        Mockito.verify(dockerClient,Mockito.times(1)).stopContainerCmd(containerId);
-        Mockito.verify(mockObject,Mockito.times(1)).withTimeout(Mockito.eq(timeout));
+        Mockito.verify(dockerClient, Mockito.times(1)).stopContainerCmd(containerId);
+        Mockito.verify(mockObject, Mockito.times(1)).withTimeout(Mockito.eq(timeout));
         
     }
 
