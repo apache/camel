@@ -56,6 +56,7 @@
         <include>org.apache.camel:camel-cxf-transport</include>
         <include>org.apache.camel:camel-disruptor</include>
         <include>org.apache.camel:camel-dns</include>
+        <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
