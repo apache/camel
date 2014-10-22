@@ -81,6 +81,7 @@
     <module>camel-csv</module>
     <module>camel-disruptor</module>
     <module>camel-dns</module>
+    <module>camel-docker</module>
     <module>camel-dozer</module>
     <module>camel-dropbox</module>
     <module>camel-eclipse</module>
