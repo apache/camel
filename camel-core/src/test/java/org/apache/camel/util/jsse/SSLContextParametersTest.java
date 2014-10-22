@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
@@ -257,8 +256,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
-        assertFalse(Arrays.equals(controlEngine.getEnabledProtocols(), engine.getEnabledProtocols()));
-        assertFalse(Arrays.equals(controlSocket.getEnabledProtocols(), socket.getEnabledProtocols()));
+        assertStartsWith(engine.getEnabledProtocols(), "TLS");
+        assertStartsWith(socket.getEnabledProtocols(), "TLS");
         assertEquals(0, serverSocket.getEnabledProtocols().length);
         
         // Secure socket protocols filter on client params
@@ -752,6 +751,15 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContext context = scp.createSSLContext();
         
         assertEquals("TLS", context.getProtocol());
+
+        SSLEngine engine = context.createSSLEngine();
+        SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
+        SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+
+        // default disable the SSL* protocols
+        assertStartsWith(engine.getEnabledProtocols(), "TLS");
+        assertStartsWith(socket.getEnabledProtocols(), "TLS");
+        assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");
     }
     
     public void testSecureSocketProtocol() throws Exception {
@@ -759,8 +767,34 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         scp.setSecureSocketProtocol("SSLv3");
         
         SSLContext context = scp.createSSLContext();
-        
+
         assertEquals("SSLv3", context.getProtocol());
+
+        SSLEngine engine = context.createSSLEngine();
+        SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
+        SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+
+        // default disable the SSL* protocols
+        assertStartsWith(engine.getEnabledProtocols(), "TLS");
+        assertStartsWith(socket.getEnabledProtocols(), "TLS");
+        assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");
+
+        // allow SSL* protocols by explicitly asking for them
+        final SecureSocketProtocolsParameters protocols = new SecureSocketProtocolsParameters();
+        protocols.getSecureSocketProtocol().add("SSLv3");
+        scp.setSecureSocketProtocols(protocols);
+
+        context = scp.createSSLContext();
+        engine = context.createSSLEngine();
+        socket = (SSLSocket) context.getSocketFactory().createSocket();
+        serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+
+        assertEquals(engine.getEnabledProtocols().length, 1);
+        assertEquals(engine.getEnabledProtocols()[0], "SSLv3");
+        assertEquals(socket.getEnabledProtocols().length, 1);
+        assertEquals(socket.getEnabledProtocols()[0], "SSLv3");
+        assertEquals(serverSocket.getEnabledProtocols().length, 1);
+        assertEquals(serverSocket.getEnabledProtocols()[0], "SSLv3");
     }
     
     public void testProvider() throws Exception {
