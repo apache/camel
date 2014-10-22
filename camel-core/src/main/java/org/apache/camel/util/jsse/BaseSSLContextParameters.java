@@ -66,6 +66,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE =
         Collections.unmodifiableList(Arrays.asList(".*"));
     
+    protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE =
+        Collections.unmodifiableList(Arrays.asList("SSL.*"));
+    
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
     
     private static final String LS = System.getProperty("line.separator");
@@ -281,6 +284,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         FilterParameters filter = new FilterParameters();
         
         filter.getInclude().addAll(DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE);
+        filter.getExclude().addAll(DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE);
         
         return filter; 
     }
