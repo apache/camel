@@ -28,7 +28,7 @@ import io.netty.channel.ChannelPipeline;
  * to the given {@link NettyConsumer} using the {@link #createPipelineFactory(NettyConsumer)}
  * method.
  *
- * @see ChannelPipelineFactory
+ * @see ChannelInitializer
  */
 public abstract class ServerInitializerFactory extends ChannelInitializer<Channel> {
 
