@@ -79,10 +79,10 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-                getDefaultCamelKarafOptions(),
-                // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "camel-hdfs2")
-            );
+            getDefaultCamelKarafOptions(),
+            // using the features to install the camel components
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-hdfs2")
+        );
 
         return options;
     }
