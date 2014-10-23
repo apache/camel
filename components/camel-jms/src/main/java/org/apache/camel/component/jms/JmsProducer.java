@@ -212,10 +212,10 @@ public class JmsProducer extends DefaultAsyncProducer {
                 Destination replyTo = null;
                 String replyToOverride = endpoint.getConfiguration().getReplyToOverride();
                 if (replyToOverride != null) {
-                	replyTo = resolveOrCreateDestination(replyToOverride, session);
+                    replyTo = resolveOrCreateDestination(replyToOverride, session);
                 } else {
-	                // get the reply to destination to be used from the reply manager
-	                replyTo = replyManager.getReplyTo();
+                    // get the reply to destination to be used from the reply manager
+                    replyTo = replyManager.getReplyTo();
                 }
                 if (replyTo == null) {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
@@ -421,16 +421,19 @@ public class JmsProducer extends DefaultAsyncProducer {
         }
     }
 
-    protected Destination resolveOrCreateDestination(String destinationName, Session session) throws JMSException {
-    	Destination dest = null;
-    	
-    	boolean isPubSub = isTopicPrefix(destinationName) || (!isQueuePrefix(destinationName) && endpoint.isPubSubDomain());
+    protected Destination resolveOrCreateDestination(String destinationName, Session session)
+        throws JMSException {
+        Destination dest = null;
+
+        boolean isPubSub = isTopicPrefix(destinationName)
+                           || (!isQueuePrefix(destinationName) && endpoint.isPubSubDomain());
         // try using destination resolver to lookup the destination
         if (endpoint.getDestinationResolver() != null) {
-            dest = endpoint.getDestinationResolver().resolveDestinationName(session, destinationName, isPubSub);
+            dest = endpoint.getDestinationResolver().resolveDestinationName(session, destinationName,
+                                                                            isPubSub);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
-                        new Object[]{destinationName, endpoint.getDestinationResolver(), isPubSub, dest});
+                          new Object[] {destinationName, endpoint.getDestinationResolver(), isPubSub, dest});
             }
         }
         if (dest == null) {
@@ -448,7 +451,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 dest = session.createQueue(destinationName);
             }
         }
-    	return dest;
+        return dest;
     }
 
     protected void setMessageId(Exchange exchange) {
