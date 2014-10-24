@@ -86,6 +86,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             pipeline.addLast("ssl", sslHandler);
         }
         
+        pipeline.addLast("decoder", new HttpRequestDecoder());
         List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
@@ -95,7 +96,9 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             }
             pipeline.addLast("decoder-" + x, decoder);
         }
+        pipeline.addLast("aggregator", new HttpChunkAggregator(configuration.getChunkedMaxContentLength()));
         
+        pipeline.addLast("encoder", new HttpResponseEncoder());
         List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
@@ -105,15 +108,10 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             }
             pipeline.addLast("encoder-" + x, encoder);
         }
-
-        pipeline.addLast("decoder", new HttpRequestDecoder());
-        pipeline.addLast("aggregator", new HttpChunkAggregator(configuration.getChunkedMaxContentLength()));
-
-        pipeline.addLast("encoder", new HttpResponseEncoder());
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
-
+        
         if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
             // this must be added just before the HttpServerMultiplexChannelHandler
             // use ordered thread pool, to ensure we process the events in order, and can send back
