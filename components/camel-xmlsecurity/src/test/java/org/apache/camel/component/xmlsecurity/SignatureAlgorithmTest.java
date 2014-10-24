@@ -50,6 +50,8 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -73,7 +75,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Node;
+
 
 /**
  * Test signing using all available signature methods, apart from EC-algorithms which are
@@ -379,35 +381,35 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testRSASHA1_MGF1() throws Exception {
+    public void testRSASHA1MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha1_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testRSASHA224_MGF1() throws Exception {
+    public void testRSASHA224MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha224_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testRSASHA256_MGF1() throws Exception {
+    public void testRSASHA256MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha256_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testRSASHA384_MGF1() throws Exception {
+    public void testRSASHA384MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha384_mgf1", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testRSASHA512_MGF1() throws Exception {
+    public void testRSASHA512MGF1() throws Exception {
         setupMock();
         sendBody("direct:rsasha512_mgf1", payload);
         assertMockEndpointsSatisfied();
@@ -626,7 +628,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
             
             public String getFormat()   { return "RAW"; }
             public byte[] getEncoded()  { return secret; }
-            public String getAlgorithm(){ return "SECRET"; }
+            public String getAlgorithm() { return "SECRET"; }
         };
     }
 }

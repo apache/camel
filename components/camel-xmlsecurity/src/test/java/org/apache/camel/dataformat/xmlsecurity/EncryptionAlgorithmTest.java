@@ -86,7 +86,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testAES128_GCM() throws Exception {
+    public void testAES128GCM() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(128);
@@ -139,7 +139,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testAES192_GCM() throws Exception {
+    public void testAES192GCM() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
@@ -196,7 +196,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testAES256_GCM() throws Exception {
+    public void testAES256GCM() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
@@ -224,7 +224,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTRIPLE_DES() throws Exception {
+    public void testTRIPLEDES() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("DESede");
         keygen.init(192);
@@ -248,7 +248,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testSEED_128() throws Exception {
+    public void testSEED128() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("SEED");
         keygen.init(128);
@@ -272,7 +272,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testCAMELLIA_128() throws Exception {
+    public void testCAMELLIA128() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
         keygen.init(128);
@@ -296,7 +296,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testCAMELLIA_192() throws Exception {
+    public void testCAMELLIA192() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
@@ -324,7 +324,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     }
     
     @Test
-    public void testCAMELLIA_256() throws Exception {
+    public void testCAMELLIA256() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }

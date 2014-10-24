@@ -49,6 +49,8 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -72,7 +74,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Node;
+
 
 /**
  * Test signing using all available digest methods
@@ -277,28 +279,28 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
     
     @Test
-    public void testSHA3_224() throws Exception {
+    public void testSHA3224() throws Exception {
         setupMock();
         sendBody("direct:sha3_224", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testSHA3_256() throws Exception {
+    public void testSHA3256() throws Exception {
         setupMock();
         sendBody("direct:sha3_256", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testSHA3_384() throws Exception {
+    public void testSHA3384() throws Exception {
         setupMock();
         sendBody("direct:sha3_384", payload);
         assertMockEndpointsSatisfied();
     }
     
     @Test
-    public void testSHA3_512() throws Exception {
+    public void testSHA3512() throws Exception {
         setupMock();
         sendBody("direct:sha3_512", payload);
         assertMockEndpointsSatisfied();
