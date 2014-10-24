@@ -64,7 +64,7 @@ public class ApnsServiceFactoryTest {
         apnsServiceFactory.setFeedbackPort(FixedCertificates.TEST_FEEDBACK_PORT);
         apnsServiceFactory.setGatewayHost(FixedCertificates.TEST_HOST);
         apnsServiceFactory.setGatewayPort(FixedCertificates.TEST_GATEWAY_PORT);
-        apnsServiceFactory.setSslContext(ApnsUtils.clientContext());
+        apnsServiceFactory.setSslContextParameters(ApnsUtils.clientContext());
 
         return apnsServiceFactory;
     }
