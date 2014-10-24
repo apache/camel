@@ -85,6 +85,8 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             pipeline.addLast("ssl", sslHandler);
         }
         
+        pipeline.addLast("http", new HttpClientCodec());
+        
         List<ChannelHandler> encoders = producer.getConfiguration().getEncoders();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
@@ -104,8 +106,6 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             }
             pipeline.addLast("decoder-" + x, decoder);
         }
-        
-        pipeline.addLast("http", new HttpClientCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {

@@ -41,12 +41,18 @@
             <artifactId>camel-netty4</artifactId>
 		</dependency>
 		<dependency>
-             <groupId>io.netty</groupId>
-             <artifactId>netty-codec-http</artifactId>
-             <version>${netty-version}</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>${netty-version}</version>
         </dependency>
-
+        
 		<!-- testing -->
+		<dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jzlib</artifactId>
+            <version>${jzlib-version}</version>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring</artifactId>
