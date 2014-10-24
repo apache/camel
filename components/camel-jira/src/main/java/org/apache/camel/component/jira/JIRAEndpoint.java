@@ -57,6 +57,8 @@ public class JIRAEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private String jql;
+    @UriParam
+    private int delay = 6000;
 
     public JIRAEndpoint(String uri, JIRAComponent component) {
         super(uri, component);
@@ -142,5 +144,13 @@ public class JIRAEndpoint extends DefaultEndpoint {
 
     public void setJql(String jql) {
         this.jql = jql;
+    }
+    
+    public int getDelay() {
+        return delay;
+    }
+     
+    public void setDelay(int delay) {
+        this.delay = delay;
     }
 }

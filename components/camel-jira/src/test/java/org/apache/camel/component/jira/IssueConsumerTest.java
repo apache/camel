@@ -36,7 +36,7 @@ public class IssueConsumerTest extends CamelTestSupport {
     private static final String URL = "https://somerepo.atlassian.net";
     private static final String USERNAME = "someguy";
     private static final String PASSWORD = "xU3xjhay9yjEaZq";
-    private String JIRA_CREDENTIALS = URL + "&username=" + USERNAME + "&password=" + PASSWORD;
+    private static final String JIRA_CREDENTIALS = URL + "&username=" + USERNAME + "&password=" + PASSWORD;
     private static final String PROJECT = "camel-jira-component";
     protected MockJerseyJiraRestClientFactory factory;
 
@@ -57,28 +57,24 @@ public class IssueConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 context.addComponent("jira", new JIRAComponent());
-                from("jira://newIssue?serverUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT)
+                from("jira://newIssue?serverUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=500")
                         .process(new NewIssueProcessor())
                         .to("mock:result");
             }
         };
     }
 
-
-    @Test(timeout=60*1000)
+    @Test
     public void emptyAtStartupTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
-
-        MockJiraRestClient client = (MockJiraRestClient) factory.getClient();
-        MockSearchRestClient restClient = (MockSearchRestClient) client.getSearchClient();
+        
         mockResultEndpoint.expectedMessageCount(0);
-        Thread.sleep(8 * 1000);        // delay is 6 seconds
 
         mockResultEndpoint.assertIsSatisfied();
     }
 
 
-    @Test(timeout=60*1000)
+    @Test
     public void singleIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
@@ -87,13 +83,12 @@ public class IssueConsumerTest extends CamelTestSupport {
         BasicIssue issue1 = restClient.addIssue();
 
         mockResultEndpoint.expectedBodiesReceived(issue1);
-        Thread.sleep(8 * 1000);        // delay is 6 seconds
-
+        
         mockResultEndpoint.assertIsSatisfied();
     }
 
 
-    @Test(timeout=60*1000)
+    @Test
     public void multipleIssuesTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
@@ -104,8 +99,6 @@ public class IssueConsumerTest extends CamelTestSupport {
         BasicIssue issue3 = restClient.addIssue();
 
         mockResultEndpoint.expectedBodiesReceived(issue3, issue2, issue1);
-
-        Thread.sleep(8 * 1000);        // delay is 6 seconds
 
         mockResultEndpoint.assertIsSatisfied();
     }

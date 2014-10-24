@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.jira.mocks;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.atlassian.jira.rest.client.NullProgressMonitor;
 import com.atlassian.jira.rest.client.ProgressMonitor;
 import com.atlassian.jira.rest.client.SearchRestClient;
@@ -25,17 +31,13 @@ import com.atlassian.jira.rest.client.domain.FavouriteFilter;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class MockSearchRestClient implements SearchRestClient {
+    private static final String KEY_BASE = "CAMELJIRA-";
     private final List<BasicIssue> issues = new ArrayList<>();
     private final Map<Long, List<Comment>> comments = new HashMap<>();
     private AtomicLong basicIssueId = new AtomicLong(0);
-    private String KEY_BASE = "CAMELJIRA-";
+    
 
     @Override
     public SearchResult searchJql(String s, ProgressMonitor progressMonitor) {
@@ -88,7 +90,6 @@ public class MockSearchRestClient implements SearchRestClient {
     }
 
     public List<Comment> getCommentsForIssue(Long issueId) {
-        List<Comment> commentsForIssue = comments.get(issueId);
         return comments.get(issueId);
     }
 

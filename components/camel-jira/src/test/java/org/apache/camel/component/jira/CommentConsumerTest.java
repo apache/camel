@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jira;
 
+import java.util.Date;
+
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.Comment;
 import org.apache.camel.Exchange;
@@ -32,15 +34,15 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-
 public class CommentConsumerTest extends CamelTestSupport {
     public static final Logger LOG = LoggerFactory.getLogger(CommentConsumerTest.class);
     private static final String URL = "https://somerepo.atlassian.net";
     private static final String USERNAME = "someguy";
     private static final String PASSWORD = "xU3xjhay9yjEaZq";
-    private String JIRA_CREDENTIALS = URL + "&username=" + USERNAME + "&password=" + PASSWORD;
+    private static final String JIRA_CREDENTIALS = URL + "&username=" + USERNAME + "&password=" + PASSWORD;
     protected MockJerseyJiraRestClientFactory factory;
+   
+    
 
 
     @Override
@@ -59,26 +61,24 @@ public class CommentConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("jira://newComment?serverUrl=" + JIRA_CREDENTIALS
-                        + "&jql=RAW(project=CAMELJIRA)")
+                        + "&jql=RAW(project=CAMELJIRA)" + "&delay=500")
                         .process(new NewCommentProcessor())
                         .to("mock:result");
             }
         };
     }
-
-
-    @Test(timeout=60*1000)
+    
+    @Test
     public void emptyAtStartupTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
         mockResultEndpoint.expectedMessageCount(0);
-        Thread.sleep(8 * 1000);        // delay is 6 seconds
-
+        
         mockResultEndpoint.assertIsSatisfied();
     }
 
 
-    @Test(timeout=60*1000)
+    @Test
     public void singleIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
@@ -89,7 +89,7 @@ public class CommentConsumerTest extends CamelTestSupport {
         Comment comment1 = searchRestClient.addCommentToIssue(issue1, commentText);
 
         mockResultEndpoint.expectedBodiesReceived(comment1);
-        Thread.sleep(8 * 1000);        // delay is 6 seconds
+        
 
         mockResultEndpoint.assertIsSatisfied();
     }
@@ -107,7 +107,6 @@ public class CommentConsumerTest extends CamelTestSupport {
         Comment comment2 = searchRestClient.addCommentToIssue(issue2, "Comment added at " + new Date());
 
         mockResultEndpoint.expectedBodiesReceivedInAnyOrder(comment1, comment2);
-        Thread.sleep(8 * 1000);        // delay is 6 seconds
 
         mockResultEndpoint.assertIsSatisfied();
     }

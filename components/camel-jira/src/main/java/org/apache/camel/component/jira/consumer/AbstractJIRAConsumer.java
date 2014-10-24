@@ -46,8 +46,8 @@ public abstract class AbstractJIRAConsumer extends ScheduledPollConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         
-        // Use a more reasonable default.
-        setDelay(6000);
+        // support to set the delay from JIRA Endpoint
+        setDelay(endpoint.getDelay());
 
         JerseyJiraRestClientFactory factory;
         Registry registry = endpoint.getCamelContext().getRegistry();
@@ -76,7 +76,7 @@ public abstract class AbstractJIRAConsumer extends ScheduledPollConsumer {
         List<BasicIssue> issues = new ArrayList<BasicIssue>();
         while (true) {
             SearchRestClient searchRestClient = client.getSearchClient();
-            SearchResult searchResult = searchRestClient.searchJqlWithFullIssues(jql, maxPerQuery,start, null);
+            SearchResult searchResult = searchRestClient.searchJqlWithFullIssues(jql, maxPerQuery, start, null);
 
             for (BasicIssue issue : searchResult.getIssues()) {
                 issues.add(issue);
