@@ -62,7 +62,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -182,17 +181,20 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(XmlSignerProcessor.class);
 
     private static final String SHA512 = "sha512";
-
     private static final String SHA384 = "sha384";
-
     private static final String SHA256 = "sha256";
-
+    private static final String SHA224 = "sha224";
     private static final String SHA1 = "sha1";
+    private static final String RIPEMD160 = "ripemd160";
 
-    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA224 = 
+        "http://www.w3.org/2001/04/xmldsig-more#sha224"; // see RFC 4051
+    
+    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384 = 
+        "http://www.w3.org/2001/04/xmldsig-more#sha384"; // see RFC 4051
 
     private final XmlSignerConfiguration config;
-
+    
     public XmlSignerProcessor(XmlSignerConfiguration config) {
         this.config = config;
     }
@@ -796,12 +798,16 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             if (signatureAlgorithm != null) {
                 if (signatureAlgorithm.contains(SHA1)) {
                     result = DigestMethod.SHA1;
+                } else if (signatureAlgorithm.contains(SHA224)) {
+                    result = HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA224;
                 } else if (signatureAlgorithm.contains(SHA256)) {
                     result = DigestMethod.SHA256;
                 } else if (signatureAlgorithm.contains(SHA384)) {
                     result = HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384;
                 } else if (signatureAlgorithm.contains(SHA512)) {
                     result = DigestMethod.SHA512;
+                } else if (signatureAlgorithm.contains(RIPEMD160)) {
+                    return DigestMethod.RIPEMD160;
                 }
             }
         }

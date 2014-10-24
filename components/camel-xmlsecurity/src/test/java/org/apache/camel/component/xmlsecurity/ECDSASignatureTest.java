@@ -30,7 +30,6 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
 import org.w3c.dom.Node;
-
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,7 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test for the ECDSA algorithm.
+ * Test for the ECDSA algorithms
  */
 public class ECDSASignatureTest extends CamelTestSupport {
     
@@ -53,8 +52,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     public ECDSASignatureTest() throws Exception {
         try {
-            // BouncyCastle is required for ECDSA support for JDK 1.6
-            if (isJava16() && Security.getProvider("BC") == null) {
+            // BouncyCastle is required for some algorithms
+            if (Security.getProvider("BC") == null) {
                 Constructor<?> cons;
                 Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
                 cons = c.getConstructor(new Class[] {});
@@ -97,10 +96,60 @@ public class ECDSASignatureTest extends CamelTestSupport {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
-                from("direct:ecdsa")
-                    .to("xmlsecurity:sign://ecdsa?keyAccessor=#accessor"
+                from("direct:ecdsa_sha1")
+                    .to("xmlsecurity:sign://ecdsa_sha1?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1")
                         // .log("Body: + ${body}")
+                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha224")
+                    .to("xmlsecurity:sign://ecdsa_sha224?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224")
+                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha256")
+                    .to("xmlsecurity:sign://ecdsa_sha256?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256")
+                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha384")
+                    .to("xmlsecurity:sign://ecdsa_sha384?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384")
+                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha512")
+                    .to("xmlsecurity:sign://ecdsa_sha512?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512")
+                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_ripemd160")
+                    .to("xmlsecurity:sign://ecdsa_ripemd160?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2007/05/xmldsig-more#ecdsa-ripemd160")
                         .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
@@ -116,7 +165,57 @@ public class ECDSASignatureTest extends CamelTestSupport {
             return;
         }
         setupMock();
-        sendBody("direct:ecdsa", payload);
+        sendBody("direct:ecdsa_sha1", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA224() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha224", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA256() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha256", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA384() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha384", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA512() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha512", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSARIPEMD160() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_ripemd160", payload);
         assertMockEndpointsSatisfied();
     }
 
