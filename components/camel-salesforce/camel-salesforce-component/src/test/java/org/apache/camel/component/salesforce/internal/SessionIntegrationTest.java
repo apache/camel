@@ -17,8 +17,10 @@
 package org.apache.camel.component.salesforce.internal;
 
 import org.apache.camel.component.salesforce.LoginConfigHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -37,7 +39,9 @@ public class SessionIntegrationTest extends Assert implements SalesforceSession.
     @Test
     public void testLogin() throws Exception {
 
-        final HttpClient httpClient = new HttpClient();
+        final SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
+        final HttpClient httpClient = new HttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
         httpClient.setTimeout(TIMEOUT);
         httpClient.registerListener(RedirectListener.class.getName());
