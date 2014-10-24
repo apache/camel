@@ -48,7 +48,7 @@ public class AbstractResourceIntegrationTest extends Assert {
     @BeforeClass
     public static void beforeClass() throws Exception {
         properties = new Properties();
-        properties.load(PeopleResourceIntegrationTest.class.getResourceAsStream("/test-options.properties"));
+        properties.load(AbstractResourceIntegrationTest.class.getResourceAsStream("/test-options.properties"));
 
         requestFilter = createOAuthHelper();
     }
@@ -82,7 +82,7 @@ public class AbstractResourceIntegrationTest extends Assert {
 
         final OAuthParams oAuthParams = new OAuthParams(userName, userPassword, secureStorage,
             clientId, clientSecret, redirectUri, scopes);
-        return new LinkedInOAuthRequestFilter(oAuthParams, null, false);
+        return new LinkedInOAuthRequestFilter(oAuthParams, null, false, null);
     }
 
     @AfterClass

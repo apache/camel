@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.linkedin;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.linkedin.api.LinkedInOAuthRequestFilter;
@@ -24,7 +28,9 @@ import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +78,18 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         // validate configuration
         configuration.validate();
 
+        final String[] enabledProtocols;
+        try {
+            // use default SSP to create supported non-SSL protocols list
+            final SSLContext sslContext = new SSLContextParameters().createSSLContext();
+            enabledProtocols = sslContext.createSSLEngine().getEnabledProtocols();
+        } catch (GeneralSecurityException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (IOException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return new LinkedInOAuthRequestFilter(getOAuthParams(configuration),
-            configuration.getHttpParams(), configuration.isLazyAuth());
+            configuration.getHttpParams(), configuration.isLazyAuth(), enabledProtocols);
     }
 
     private static OAuthParams getOAuthParams(LinkedInConfiguration configuration) {
