@@ -82,6 +82,8 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
             pipeline.addLast("ssl", sslHandler);
         }
         
+        pipeline.addLast("http", new HttpClientCodec());
+        
         List<ChannelHandler> decoders = producer.getConfiguration().getDecoders();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
@@ -101,8 +103,6 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
             }
             pipeline.addLast("encoder-" + x, encoder);
         }
-
-        pipeline.addLast("http", new HttpClientCodec());
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {
             if (LOG.isTraceEnabled()) {
