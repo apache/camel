@@ -24,6 +24,7 @@ import com.box.boxjavalibv2.authorization.IAuthSecureStorage;
 import com.box.boxjavalibv2.authorization.OAuthRefreshListener;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Component configuration for Box component.
@@ -66,6 +67,9 @@ public class BoxConfiguration {
 
     @UriParam
     private Map<String, Object> httpParams;
+
+    @UriParam
+    private SSLContextParameters sslContextParameters;
 
     /**
      * Box.com login timeout in seconds, defaults to 30.
@@ -167,6 +171,14 @@ public class BoxConfiguration {
 
     public void setHttpParams(Map<String, Object> httpParams) {
         this.httpParams = httpParams;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public int getLoginTimeout() {
