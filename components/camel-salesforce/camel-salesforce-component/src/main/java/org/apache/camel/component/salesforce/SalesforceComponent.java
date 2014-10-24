@@ -41,8 +41,10 @@ import org.apache.camel.spi.EndpointCompleter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +62,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     private SalesforceLoginConfig loginConfig;
     private SalesforceEndpointConfig config;
+
+    private SSLContextParameters sslContextParameters;
     private String[] packages;
 
     // component state
@@ -136,7 +140,11 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (config != null && config.getHttpClient() != null) {
                 httpClient = config.getHttpClient();
             } else {
-                httpClient = new HttpClient();
+                final SslContextFactory sslContextFactory = new SslContextFactory();
+                final SSLContextParameters contextParameters =
+                    sslContextParameters != null ? sslContextParameters : new SSLContextParameters();
+                sslContextFactory.setSslContext(contextParameters.createSSLContext());
+                httpClient = new HttpClient(sslContextFactory);
                 httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
                 httpClient.setMaxConnectionsPerAddress(MAX_CONNECTIONS_PER_ADDRESS);
                 httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -301,6 +309,14 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     public void setConfig(SalesforceEndpointConfig config) {
         this.config = config;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public String[] getPackages() {
