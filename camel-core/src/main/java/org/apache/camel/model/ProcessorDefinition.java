@@ -1216,7 +1216,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public TryDefinition endDoTry() {
-        return (TryDefinition) end();
+        ProcessorDefinition<?> def = this;
+
+        // are we already a try?
+        if (def instanceof TryDefinition) {
+            return (TryDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (TryDefinition) def;
     }
 
     /**
