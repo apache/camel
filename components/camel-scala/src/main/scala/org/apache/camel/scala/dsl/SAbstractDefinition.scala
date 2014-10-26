@@ -77,6 +77,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def handle[E <: Throwable : ClassTag](block: => Unit) = SOnExceptionDefinition[E](target.onException(classTag[E].runtimeClass.asInstanceOf[Class[E]])).apply(block)
 
+  def autoStartup(autoStartup: String) = wrap(target.autoStartup(autoStartup))
+  def autoStartup(autoStartup: Boolean) = wrap(target.autoStartup(autoStartup))
+
   def id(id : String) = wrap(target.id(id))
   def idempotentConsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
   @Deprecated
@@ -93,6 +96,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def marshal(format: DataFormatDefinition) = wrap(target.marshal(format))
   def multicast = SMulticastDefinition(target.multicast)
+
+  def noAutoStartup() = wrap(target.autoStartup(false))
 
   def onCompletion: SOnCompletionDefinition = {
     val completion = SOnCompletionDefinition(target.onCompletion)

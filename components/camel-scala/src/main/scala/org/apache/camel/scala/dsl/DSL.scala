@@ -49,6 +49,9 @@ trait DSL {
 
   def handle[E <: Throwable : ClassTag](block: => Unit) : SOnExceptionDefinition[E]
 
+  def autoStartup(autoStartup :String) : DSL
+  def autoStartup(autoStartup :Boolean) : DSL
+
   def id(id : String): DSL
   def idempotentConsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
   def inOnly: DSL with Block
@@ -63,6 +66,8 @@ trait DSL {
 
   def marshal(format : DataFormatDefinition) : DSL
   def multicast : SMulticastDefinition
+
+  def noAutoStartup() : DSL
 
   def onCompletion : SOnCompletionDefinition
   def onCompletion(predicate: Exchange => Boolean) : SOnCompletionDefinition

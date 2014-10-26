@@ -893,6 +893,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOut, endpoints);
     }
 
+    public Type autoStartup(String autoStartup) {
+        return autoStartup(Boolean.valueOf(autoStartup));
+    }
+
+    public Type autoStartup(boolean autoStartup) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.autoStartup(autoStartup);
+        }
+
+        return (Type) this;
+    }
+
     /**
      * Sets the id of this node.
      * <p/>
@@ -1001,6 +1016,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         return answer;
+    }
+
+    public Type noAutoStartup() {
+        return autoStartup(false);
     }
 
     /**
