@@ -21,9 +21,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.springboot")
 public class CamelConfigurationProperties {
 
+    private boolean jmxEnabled = true;
+
     private int producerTemplateCacheSize = 1000;
 
     private int consumerTemplateCacheSize = 1000;
+
+    public boolean isJmxEnabled() {
+        return jmxEnabled;
+    }
+
+    public void setJmxEnabled(boolean jmxEnabled) {
+        this.jmxEnabled = jmxEnabled;
+    }
 
     public int getProducerTemplateCacheSize() {
         return producerTemplateCacheSize;

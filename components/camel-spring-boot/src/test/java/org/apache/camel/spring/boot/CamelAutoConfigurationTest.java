@@ -35,7 +35,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableAutoConfiguration
 @SpringApplicationConfiguration(classes = CamelAutoConfigurationTest.class)
-@IntegrationTest("camel.springboot.consumerTemplateCacheSize:100")
+@IntegrationTest({
+        "camel.springboot.consumerTemplateCacheSize:100",
+        "camel.springboot.jmxEnabled=false"})
 public class CamelAutoConfigurationTest extends Assert {
 
     // Collaborators fixtures

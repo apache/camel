@@ -121,11 +121,17 @@ public class CamelAutoConfiguration {
     @Bean
     CamelContext camelContext() throws Exception {
         CamelContext camelContext = new SpringCamelContext(applicationContext);
+
+        if (!configurationProperties.isJmxEnabled()) {
+            camelContext.disableJMX();
+        }
+
         if (routesBuilders != null) {
             for (RoutesBuilder routesBuilder : routesBuilders) {
                 camelContext.addRoutes(routesBuilder);
             }
         }
+
         return camelContext;
     }
 
