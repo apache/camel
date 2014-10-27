@@ -22,17 +22,17 @@ import java.io.InputStream;
 import java.util.Date;
 
 import javax.xml.transform.stream.StreamSource;
+
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteArrayPayload;
@@ -98,17 +98,14 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(InputStream is, Exchange exchange) throws IOException {
+        InputStreamPayload payload = new InputStreamPayload(is);
+        // only set the contentlength if possible
         if (is.markSupported()) {
-            InputStreamPayload payload = new InputStreamPayload(is);
             long contentLength = ByteStreams.length(payload);
             is.reset();
             payload.getContentMetadata().setContentLength(contentLength);
-            return payload;
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copy(is, cos);
-            return toPayload(cos.getWrappedInputStream(), exchange);
         }
+        return payload;
     }
 
     @Converter
