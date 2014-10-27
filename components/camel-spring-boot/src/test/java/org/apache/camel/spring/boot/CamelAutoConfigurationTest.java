@@ -32,6 +32,9 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableAutoConfiguration
 @SpringApplicationConfiguration(classes = CamelAutoConfigurationTest.class)
@@ -46,6 +49,9 @@ public class CamelAutoConfigurationTest extends Assert {
     CamelContext camelContext;
 
     @Autowired
+    CamelContextConfiguration camelContextConfiguration;
+
+    @Autowired
     ProducerTemplate producerTemplate;
 
     @Autowired
@@ -57,6 +63,11 @@ public class CamelAutoConfigurationTest extends Assert {
     // Spring context fixtures
 
     String routeId = "testRoute";
+
+    @Bean
+    CamelContextConfiguration camelContextConfiguration() {
+        return mock(CamelContextConfiguration.class);
+    }
 
     @Bean
     RouteBuilder routeBuilder() {
@@ -123,6 +134,11 @@ public class CamelAutoConfigurationTest extends Assert {
 
         // Then
         assertEquals(hundred, convertedLong);
+    }
+
+    @Test
+    public void shouldCallCamelContextConfiguration() {
+        verify(camelContextConfiguration).postConfiguration(camelContext);
     }
 
 }

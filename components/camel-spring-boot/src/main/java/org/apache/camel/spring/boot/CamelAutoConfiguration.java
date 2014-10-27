@@ -114,6 +114,9 @@ public class CamelAutoConfiguration {
     @Autowired(required = false)
     private RoutesBuilder[] routesBuilders;
 
+    @Autowired(required = false)
+    private CamelContextConfiguration camelContextConfiguration;
+
     /**
      * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring
      * context.
@@ -130,6 +133,10 @@ public class CamelAutoConfiguration {
             for (RoutesBuilder routesBuilder : routesBuilders) {
                 camelContext.addRoutes(routesBuilder);
             }
+        }
+
+        if (camelContextConfiguration != null) {
+            camelContextConfiguration.postConfiguration(camelContext);
         }
 
         return camelContext;
