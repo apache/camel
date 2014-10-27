@@ -118,6 +118,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
             openConnection();
             startConsumers();
         } catch (Exception e) {
+            log.info("Connection failed, will start background thread to retry!", e);
             // Open connection, and start message listener in background
             Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
             final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
@@ -313,7 +314,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     openConnection();
                     connectionFailed = false;
                 } catch (Exception e) {
-                    log.debug("Connection failed, will retry in {}" + connectionRetryInterval + "ms", e);
+                    log.info("Connection failed, will retry in {}" + connectionRetryInterval + "ms", e);
                     Thread.sleep(connectionRetryInterval);
                 }
             }
