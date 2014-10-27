@@ -125,9 +125,6 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
 
   def filter(predicate: Exchange => Any) = stack.top.filter(predicate)
 
-  def autoStartup(autoStartup :String) = stack.top.autoStartup(autoStartup)
-  def autoStartup(autoStartup :Boolean) = stack.top.autoStartup(autoStartup)
-
   def id(id : String) = stack.top.id(id)
   def idempotentConsumer(expression: Exchange => Any) = stack.top.idempotentConsumer(expression)
   def inOnly = stack.top.inOnly
@@ -154,8 +151,6 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
 
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
   def multicast = stack.top.multicast
-
-  def noAutoStartup() = stack.top.autoStartup(false)
 
   def onCompletion = {
     stack.size match {

@@ -29,9 +29,9 @@ class AutoStartupTest extends CamelTestSupport with FunSuiteLike with BeforeAndA
   override protected def createRouteBuilders(): Array[RouteBuilder] = {
     Array(
       createRoute(_ from s"direct:start1" id withoutDslRouteId to "mock:output"),
-      createRoute(_ from s"direct:start2" id booleanDslRouteId autoStartup false to "mock:output"),
-      createRoute(_ from s"direct:start3" id stringDslRouteId autoStartup "false" to "mock:output"),
-      createRoute(_ from s"direct:start4" id noAutoStartupDslRouteId noAutoStartup() to "mock:output")
+      createRoute(_ from s"direct:start2" autoStartup false id booleanDslRouteId to "mock:output"),
+      createRoute(_ from s"direct:start3" autoStartup "false" id stringDslRouteId  to "mock:output"),
+      createRoute(_ from s"direct:start4" noAutoStartup() id noAutoStartupDslRouteId to "mock:output")
     )
   }
 
