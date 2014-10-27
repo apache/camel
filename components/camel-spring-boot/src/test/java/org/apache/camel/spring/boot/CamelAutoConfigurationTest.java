@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -34,6 +35,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableAutoConfiguration
 @SpringApplicationConfiguration(classes = CamelAutoConfigurationTest.class)
+@IntegrationTest("camel.springboot.consumerTemplateCacheSize:100")
 public class CamelAutoConfigurationTest extends Assert {
 
     // Collaborators fixtures
@@ -88,6 +90,11 @@ public class CamelAutoConfigurationTest extends Assert {
     @Test
     public void shouldLoadConsumerTemplate() {
         assertNotNull(consumerTemplate);
+    }
+
+    @Test
+    public void shouldLoadConsumerTemplateWithSizeFromProperties() {
+        assertEquals(100, consumerTemplate.getMaximumCacheSize());
     }
 
     @Test

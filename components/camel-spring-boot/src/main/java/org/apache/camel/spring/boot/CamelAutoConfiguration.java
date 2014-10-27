@@ -25,6 +25,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -101,7 +102,11 @@ import org.springframework.context.annotation.Configuration;
  * </p>
  */
 @Configuration
+@EnableConfigurationProperties(CamelConfigurationProperties.class)
 public class CamelAutoConfiguration {
+
+    @Autowired
+    private CamelConfigurationProperties configurationProperties;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -129,7 +134,7 @@ public class CamelAutoConfiguration {
      */
     @Bean
     ProducerTemplate producerTemplate() throws Exception {
-        return camelContext().createProducerTemplate();
+        return camelContext().createProducerTemplate(configurationProperties.getProducerTemplateCacheSize());
     }
 
     /**
@@ -137,7 +142,7 @@ public class CamelAutoConfiguration {
      */
     @Bean
     ConsumerTemplate consumerTemplate() throws Exception {
-        return camelContext().createConsumerTemplate();
+        return camelContext().createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
     }
 
     @Bean
