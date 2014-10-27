@@ -119,7 +119,7 @@ public class ApnsProducer extends DefaultProducer {
             String token = tokenArray[i];
             tokenArray[i] = token.trim();
             int tokenLength = token.length();
-            if (tokenLength != 64) {
+            if (tokenLength >= 64) {
                 throw new IllegalArgumentException("Token has wrong size['" + tokenLength + "']: " + token);
             }
         }
