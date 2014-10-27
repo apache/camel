@@ -138,7 +138,7 @@ public class CamelAutoConfigurationTest extends Assert {
 
     @Test
     public void shouldCallCamelContextConfiguration() {
-        verify(camelContextConfiguration).postConfiguration(camelContext);
+        verify(camelContextConfiguration).beforeStart(camelContext);
     }
 
 }

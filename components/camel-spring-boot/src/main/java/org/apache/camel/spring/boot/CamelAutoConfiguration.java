@@ -136,7 +136,7 @@ public class CamelAutoConfiguration {
         }
 
         if (camelContextConfiguration != null) {
-            camelContextConfiguration.postConfiguration(camelContext);
+            camelContextConfiguration.beforeStart(camelContext);
         }
 
         return camelContext;
