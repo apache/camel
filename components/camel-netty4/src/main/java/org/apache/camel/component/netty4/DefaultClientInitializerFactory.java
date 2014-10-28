@@ -157,6 +157,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(true);
+            engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
             return new SslHandler(engine);
         }
 

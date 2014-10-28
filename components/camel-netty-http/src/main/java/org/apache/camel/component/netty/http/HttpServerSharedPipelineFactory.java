@@ -151,6 +151,7 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(false);
             engine.setNeedClientAuth(configuration.isNeedClientAuth());
+            engine.setEnabledProtocols(configuration.getEnabledProtocols().split(","));
             return new SslHandler(engine);
         }
 
