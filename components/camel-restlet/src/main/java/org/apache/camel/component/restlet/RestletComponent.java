@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -557,12 +558,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         String query = URISupport.createQueryString(map);
 
         String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
-
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
         // get the endpoint
-        url = String.format(url, scheme, host, port, path, verb);
+        url = String.format(url, scheme, host, port, path, restrict);
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }
+        
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 
