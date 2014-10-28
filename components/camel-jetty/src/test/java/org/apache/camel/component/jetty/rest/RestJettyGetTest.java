@@ -20,9 +20,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.jetty.JettyRestHttpBinding;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestJettyGetTest extends BaseJettyTest {
+    
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("mybinding", new JettyRestHttpBinding());
+        return jndi;
+    }
 
     @Test
     public void testJettyProducerGet() throws Exception {
@@ -36,7 +46,7 @@ public class RestJettyGetTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort());
+                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")

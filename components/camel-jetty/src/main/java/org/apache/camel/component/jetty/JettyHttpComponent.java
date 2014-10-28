@@ -997,15 +997,15 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         String query = URISupport.createQueryString(map);
 
         String url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
+        // get the endpoint
+        url = String.format(url, scheme, host, port, path, restrict);
+
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }
-
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
+        
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 
