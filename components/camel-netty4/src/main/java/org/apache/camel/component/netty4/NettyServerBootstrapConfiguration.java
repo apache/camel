@@ -55,6 +55,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String trustStoreResource;
     protected String keyStoreFormat;
     protected String securityProvider;
+    protected String enabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
     protected String passphrase;
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
@@ -328,6 +329,14 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.networkInterface = networkInterface;
     }
 
+    public String getEnabledProtocols() {
+        return enabledProtocols;
+    }
+
+    public void setEnabledProtocols(String enabledProtocols) {
+        this.enabledProtocols = enabledProtocols;
+    }
+
     /**
      * Checks if the other {@link NettyServerBootstrapConfiguration} is compatible
      * with this, as a Netty listener bound on port X shares the same common
@@ -435,6 +444,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", sslHandler=" + sslHandler
                 + ", sslContextParameters='" + sslContextParameters + '\''
                 + ", needClientAuth=" + needClientAuth
+                + ", enabledProtocols='" + enabledProtocols
                 + ", keyStoreFile=" + keyStoreFile
                 + ", trustStoreFile=" + trustStoreFile
                 + ", keyStoreResource='" + keyStoreResource + '\''
