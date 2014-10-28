@@ -20,10 +20,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.http.BaseNettyTest;
+import org.apache.camel.component.netty4.http.RestNettyHttpBinding;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestNettyHttpGetTest extends BaseNettyTest {
-
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("mybinding", new RestNettyHttpBinding());
+        return jndi;
+    }
     @Test
     public void testProducerGet() throws Exception {
         String out = template.requestBody("netty4-http:http://localhost:{{port}}/users/123/basic", null, String.class);
@@ -36,7 +44,7 @@ public class RestNettyHttpGetTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use netty4-http on localhost with the given port
-                restConfiguration().component("netty4-http").host("localhost").port(getPort());
+                restConfiguration().component("netty4-http").host("localhost").port(getPort()).endpointProperty("nettyHttpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
