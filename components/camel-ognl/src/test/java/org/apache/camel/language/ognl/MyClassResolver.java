@@ -16,46 +16,14 @@
  */
 package org.apache.camel.language.ognl;
 
-/**
- *
- */
-public class Animal {
-    private String name;
-    private int age;
-    private Animal friend;
+import org.apache.camel.impl.DefaultClassResolver;
 
-    public Animal(String name, int age) {
-        this.name = name;
-        this.age = age;
+public class MyClassResolver extends DefaultClassResolver {
+    public Class<?> resolveClass(String name) {
+        if (name.equals("org.apache.camel.language.ognl.Animal1")) {
+            name = "org.apache.camel.language.ognl.Animal";
+        }
+        return loadClass(name, DefaultClassResolver.class.getClassLoader());
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public Animal getFriend() {
-        return friend;
-    }
-
-    public void setFriend(Animal friend) {
-        this.friend = friend;
-    }
-
-    public boolean isDangerous() {
-        return name.contains("Tiger");
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-    
-    public static String getClassName() {
-        return "Animal";
-    }
 }
-

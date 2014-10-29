@@ -16,46 +16,24 @@
  */
 package org.apache.camel.language.ognl;
 
+import java.util.Map;
+
+import ognl.ClassResolver;
 /**
- *
+ * This class is used to wrap the org.apache.camel.spi.ClassResolver with ClassResolver interface
  */
-public class Animal {
-    private String name;
-    private int age;
-    private Animal friend;
-
-    public Animal(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public Animal getFriend() {
-        return friend;
-    }
-
-    public void setFriend(Animal friend) {
-        this.friend = friend;
-    }
-
-    public boolean isDangerous() {
-        return name.contains("Tiger");
+public class CamelClassResolver implements ClassResolver {
+    
+    private org.apache.camel.spi.ClassResolver delegateClassResolver;
+    
+    public CamelClassResolver(org.apache.camel.spi.ClassResolver resolver) {
+        delegateClassResolver = resolver;
     }
 
     @Override
-    public String toString() {
-        return name;
+    public Class<?> classForName(String className, Map context) throws ClassNotFoundException {
+       
+        return delegateClassResolver.resolveClass(className);
     }
-    
-    public static String getClassName() {
-        return "Animal";
-    }
-}
 
+}
