@@ -449,7 +449,7 @@ public final class ServiceHelper {
     /**
      * Gathers all child services by navigating the service to recursively gather all child services.
      * <p/>
-     * The returned set does <b>not</b> include the childern being error handler.
+     * The returned set does <b>not</b> include the children being error handler.
      *
      * @param service the service
      * @return the services, including the parent service, and all its children

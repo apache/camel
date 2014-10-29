@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
+import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -53,7 +56,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version
  */
-public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared {
+public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
@@ -207,6 +210,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public boolean supportTransacted() {
         return false;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return output != null;
+    }
+
+    @Override
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(output);
+        return answer;
     }
 
     protected boolean isRunAllowed(RedeliveryData data) {
