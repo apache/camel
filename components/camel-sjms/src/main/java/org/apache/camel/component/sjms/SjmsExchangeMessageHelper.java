@@ -454,7 +454,8 @@ public final class SjmsExchangeMessageHelper {
                     throw new IllegalHeaderException("Header " + key + " is not a legal JMS header name value");
                 }
                 Object value = jmsMessage.getObjectProperty(key);
-                headers.put(key, value);
+                String decodedName = new DefaultJmsKeyFormatStrategy().decodeKey(key);
+                headers.put(decodedName, value);
             }
         }
         if (out) {
