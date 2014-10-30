@@ -107,6 +107,13 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
 
         if (failures.get() >= threshold && System.currentTimeMillis() - lastFailure < halfOpenAfter) {
             exchange.setException(new RejectedExecutionException("CircuitBreaker Open: failures: " + failures + ", lastFailure: " + lastFailure));
+            /*
+             * If the circuit opens, we have to prevent the execution of any processor.
+             * The failures count can be set to 0.
+             */
+            failures.set(0);
+            callback.done(true);
+            return true;
         }
         Processor processor = getProcessors().get(0);
         if (processor == null) {
@@ -114,18 +121,20 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
         }
 
         AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
-        boolean sync = albp.process(exchange, callback);
-
-        boolean failed = hasFailed(exchange);
-
-        if (!failed) {
-            failures.set(0);
+        // Added a callback for processing the exchange in the callback
+        boolean sync = albp.process(exchange, new CircuitBreakerCallback(exchange, callback));
+        
+        // We need to check the exception here as albp is use sync call  
+        if (sync) {
+            boolean failed = hasFailed(exchange);
+            if (!failed) {
+                failures.set(0);
+            } else {
+                failures.incrementAndGet();
+                lastFailure = System.currentTimeMillis();
+            }
         } else {
-            failures.incrementAndGet();
-            lastFailure = System.currentTimeMillis();
-        }
-
-        if (!sync) {
+            // CircuitBreakerCallback can take care of failure check of the exchange
             log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
             return false;
         }
@@ -141,5 +150,29 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
 
     public String getTraceLabel() {
         return "circuitbreaker";
+    }
+    
+    class CircuitBreakerCallback implements AsyncCallback {
+        private final AsyncCallback callback;
+        private final Exchange exchange;
+        CircuitBreakerCallback(Exchange exchange, AsyncCallback callback) {
+            this.callback = callback;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            if (!doneSync) {
+                boolean failed = hasFailed(exchange);
+                if (!failed) {
+                    failures.set(0);
+                } else {
+                    failures.incrementAndGet();
+                    lastFailure = System.currentTimeMillis();
+                }
+            }
+            callback.done(doneSync);
+        }
+        
     }
 }
