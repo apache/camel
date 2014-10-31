@@ -303,6 +303,7 @@
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <!-- maven-checkstyle-plugin 2.10 has problems to validate the license header in properties files-->
     <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
+    <maven-checkstyle-version>5.3</maven-checkstyle-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.4.Final</maven-jboss-as-maven-plugin-version>
@@ -2462,7 +2463,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>5.3</version>
+              <version>${maven-checkstyle-version}</version>
               <exclusions>
                 <exclusion>
                   <groupId>com.sun</groupId>
