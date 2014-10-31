@@ -28,6 +28,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 
 /**
@@ -65,6 +66,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private RestletBinding restletBinding;
     private boolean throwExceptionOnFailure = true;
     private boolean disableStreamCache;
+    private SSLContextParameters scp;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -226,6 +228,14 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return scp;
+    }
+    
+    public void setSslContextParameters(SSLContextParameters scp) {
+        this.scp = scp;
     }
 
     // Update the endpointUri with the restlet method information
