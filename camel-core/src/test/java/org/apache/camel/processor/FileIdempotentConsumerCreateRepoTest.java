@@ -30,17 +30,22 @@ import static org.apache.camel.processor.idempotent.FileIdempotentRepository.fil
 public class FileIdempotentConsumerCreateRepoTest extends Assert {
 
     @Test
-    public void shouldCreateParentOfRepositoryFileStore() throws IOException {
+    public void shouldCreateParentOfRepositoryFileStore() throws Exception {
         // Given
         File parentDirectory = new File("target/repositoryParent_" + randomUUID());
         File store = new File(parentDirectory, "store");
         IdempotentRepository<String> repo = fileIdempotentRepository(store);
+
+        // must start repo
+        repo.start();
 
         // When
         repo.add("anyKey");
 
         // Then
         assertTrue(store.exists());
+
+        repo.stop();
     }
 
 }
