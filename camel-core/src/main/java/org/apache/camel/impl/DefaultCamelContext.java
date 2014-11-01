@@ -761,9 +761,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        String id = routeDefinition.idOrCreate(nodeIdFactory);
-        stopRoute(id);
-        removeRoute(id);
+        String id = routeDefinition.getId();
+        if (id != null) {
+            // remove existing route
+            stopRoute(id);
+            removeRoute(id);
+        }
         this.routeDefinitions.remove(routeDefinition);
     }
 
