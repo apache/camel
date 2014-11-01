@@ -120,7 +120,7 @@ public final class RouteDefinitionHelper {
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
         // handle custom assigned id's first, and then afterwards assign auto generated ids
-        Set<String> customIds = new HashSet<>();
+        Set<String> customIds = new HashSet<String>();
 
         for (RouteDefinition route : routes) {
             // if there was a custom id assigned, then make sure to support property placeholders
