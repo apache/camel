@@ -107,8 +107,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
             // must handle IOException as some apps on Windows etc. will still somehow hold a lock to a file
             // such as AntiVirus or MS Office that has special locks for it's supported files
             if (timeout == 0) {
-                // if not using timeout, then we cant retry, so rethrow
-                throw e;
+                // if not using timeout, then we cant retry, so return false
+                return false;
             }
             LOG.debug("Cannot acquire read lock. Will try again.", e);
             boolean interrupted = sleep();
