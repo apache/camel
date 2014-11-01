@@ -70,7 +70,9 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     public boolean process(Exchange exchange, AsyncCallback callback) {
         final String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {
-            throw new NoMessageIdException(exchange, messageIdExpression);
+            exchange.setException(new NoMessageIdException(exchange, messageIdExpression));
+            callback.done(true);
+            return true;
         }
 
         boolean newKey;
