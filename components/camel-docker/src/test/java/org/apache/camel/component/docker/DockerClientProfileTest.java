@@ -18,6 +18,7 @@ package org.apache.camel.component.docker;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+
 /**
  * Validates the {@link DockerClientProfile}
  */
@@ -25,7 +26,6 @@ public class DockerClientProfileTest {
     
     @Test
     public void clientProfileTest() {
-        
         String host = "host";
         String email = "docker@camel.apache.org";
         String username = "user";

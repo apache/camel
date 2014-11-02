@@ -60,8 +60,6 @@ public class DockerConfigurationTest {
         String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);
 
-
-        
     }
 
 }
