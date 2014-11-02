@@ -24,9 +24,10 @@ import org.slf4j.LoggerFactory;
 
 public final class QuartzHelper {
 
-    public static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
+    public static final Logger LOG = LoggerFactory.getLogger(QuartzHelper.class);
 
     private QuartzHelper() {
+        // prevent instantiation
     }
 
     public static String getQuartzContextName(CamelContext camelContext) {
@@ -38,6 +39,14 @@ public final class QuartzHelper {
         }
     }
 
+    /**
+     * Adds the current CamelContext name and endpoint URI to the Job's jobData
+     * map.
+     * 
+     * @param camelContext The currently active camelContext
+     * @param jobDetail The job for which the jobData map shall be updated
+     * @param endpointUri URI of the endpoint name, if any. May be {@code null}
+     */
     public static void updateJobDataMap(CamelContext camelContext, JobDetail jobDetail, String endpointUri) {
         // Store this camelContext name into the job data
         JobDataMap jobDataMap = jobDetail.getJobDataMap();

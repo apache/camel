@@ -26,7 +26,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.ImmediateEventExecutor;
@@ -146,9 +145,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
                     .build();
             wg = workerGroup;
         }
-
-        //channelFactory = new NioServerSocketChannelFactory(bg, wg);
-
+        
         serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
         serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
@@ -183,13 +180,10 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected void stopServerBootstrap() {
         // close all channels
         LOG.info("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
-
+        
         LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
         if (allChannels != null) {
-            allChannels.close();
+            allChannels.close().awaitUninterruptibly();
         }
 
         // and then shutdown the thread pools

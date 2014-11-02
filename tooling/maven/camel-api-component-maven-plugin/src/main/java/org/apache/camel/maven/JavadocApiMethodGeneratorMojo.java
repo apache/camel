@@ -84,7 +84,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
              aClass = aClass.getSuperclass()) {
 
             log.debug("Processing " + aClass.getName());
-            final String javaDocPath = aClass.getName().replaceAll("\\.", "/") + ".html";
+            final String javaDocPath = aClass.getName().replaceAll("\\.", "/").replace('$', '.') + ".html";
 
             // read javadoc html text for class
             InputStream inputStream = null;
@@ -169,7 +169,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             final Method method = aClass.getMethod(name, argTypes);
             int modifiers = method.getModifiers();
             if (!Modifier.isStatic(modifiers) || Boolean.TRUE.equals(includeStaticMethods)) {
-                result = method.getReturnType().getCanonicalName();
+                result = method.getReturnType().getName();
             }
         } catch (NoSuchMethodException e) {
             // could be a non-public method

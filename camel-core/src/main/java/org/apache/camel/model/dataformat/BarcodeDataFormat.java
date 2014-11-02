@@ -71,7 +71,7 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         }
 
         if (barcodeFormat != null) {
-            setProperty(camelContext, dataFormat, "barcodeDataFormat", barcodeFormat);
+            setProperty(camelContext, dataFormat, "barcodeFormat", barcodeFormat);
         }
        
     }

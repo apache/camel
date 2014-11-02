@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.karaf</groupId>
@@ -163,13 +163,6 @@
             <groupId>org.apache.karaf.tooling</groupId>
             <artifactId>features-maven-plugin</artifactId>
             <version>${karaf-version}</version>
-            <dependencies>
-              <dependency>
-                <groupId>biz.aQute</groupId>
-                <artifactId>bndlib</artifactId>
-                <version>1.50.0</version>
-              </dependency>
-            </dependencies>
             <configuration>
               <file>${project.build.directory}/classes/${features.file}</file>
               <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>

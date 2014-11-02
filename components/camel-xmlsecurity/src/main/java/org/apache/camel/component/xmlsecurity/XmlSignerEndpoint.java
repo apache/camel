@@ -184,5 +184,13 @@ public class XmlSignerEndpoint extends XmlSignatureEndpoint {
     public void setSignatureId(String signatureId) {
         getConfiguration().setSignatureId(signatureId);
     }
+    
+    public XPathFilterParameterSpec getParentXpath() {
+        return getConfiguration().getParentXpath();
+    }
+    
+    public void setParentXpath(XPathFilterParameterSpec parentXpath) {
+        getConfiguration().setParentXpath(parentXpath);
+    }
 
 }

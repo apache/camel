@@ -59,11 +59,10 @@ public class NettyProducer extends DefaultAsyncProducer {
     private final ChannelGroup allChannels = new DefaultChannelGroup("NettyProducer", ImmediateEventExecutor.INSTANCE);
     private CamelContext context;
     private NettyConfiguration configuration;
-    private ClientPipelineFactory pipelineFactory;
+    private ClientInitializerFactory pipelineFactory;
     private CamelLogger noReplyLogger;
     private EventLoopGroup workerGroup;
     private ObjectPool<Channel> pool;
-    private Timer timer;
     private Map<Channel, NettyCamelState> nettyCamelStatesMap = new ConcurrentHashMap<Channel, NettyCamelState>();
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
@@ -122,14 +121,12 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
-        timer = new HashedWheelTimer();
-
         // setup pipeline factory
-        ClientPipelineFactory factory = configuration.getClientPipelineFactory();
+        ClientInitializerFactory factory = configuration.getClientPipelineFactory();
         if (factory != null) {
             pipelineFactory = factory.createPipelineFactory(this);
         } else {
-            pipelineFactory = new DefaultClientPipelineFactory(this);
+            pipelineFactory = new DefaultClientInitializerFactory(this);
         }
 
         if (!configuration.isLazyChannelCreation()) {
@@ -159,11 +156,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             pool.close();
             pool = null;
-        }
-
-        if (timer != null) {
-            timer.stop();
-            timer = null;
         }
 
         super.doStop();
@@ -472,8 +464,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         public void done(boolean doneSync) {
             // put back in pool
             try {
-                LOG.trace("Putting channel back to pool {}", channel);
-                pool.returnObject(channel);
+                // Only put the connected channel back to the pool
+                if (channel.isActive()) {
+                    LOG.trace("Putting channel back to pool {}", channel);
+                    pool.returnObject(channel);
+                }
             } catch (Exception e) {
                 LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel);
             } finally {
@@ -499,7 +494,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
-            NettyHelper.close(channel);
+            if (channel.isOpen()) {
+                NettyHelper.close(channel);
+            }
             allChannels.remove(channel);
         }
 
@@ -514,11 +511,13 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void activateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("activateObject channel: {} -> {}", channel);
         }
 
         @Override
         public void passivateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("passivateObject channel: {} -> {}", channel);
         }
     }
 

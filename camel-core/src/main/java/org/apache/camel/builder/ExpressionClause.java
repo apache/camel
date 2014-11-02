@@ -779,7 +779,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * with the specified result type
      * 
      * @param text the expression to be evaluated
-     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param headerName the name of the header to apply the expression to
      * @return the builder to continue processing the DSL

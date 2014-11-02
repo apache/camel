@@ -192,15 +192,15 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         String query = URISupport.createQueryString(map);
 
         String url = "servlet:///%s?httpMethodRestrict=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
-
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
 
         // get the endpoint
         url = String.format(url, path, restrict);
+        
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }       
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(endpoint, parameters);
 

@@ -40,7 +40,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected boolean reuseAddress = true;
     protected int connectTimeout = 10000;
     protected int backlog;
-    protected ServerPipelineFactory serverPipelineFactory;
+    protected ServerInitializerFactory serverPipelineFactory;
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
@@ -55,6 +55,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String trustStoreResource;
     protected String keyStoreFormat;
     protected String securityProvider;
+    protected String enabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
     protected String passphrase;
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
@@ -280,11 +281,11 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.passphrase = passphrase;
     }
 
-    public ServerPipelineFactory getServerPipelineFactory() {
+    public ServerInitializerFactory getServerPipelineFactory() {
         return serverPipelineFactory;
     }
 
-    public void setServerPipelineFactory(ServerPipelineFactory serverPipelineFactory) {
+    public void setServerPipelineFactory(ServerInitializerFactory serverPipelineFactory) {
         this.serverPipelineFactory = serverPipelineFactory;
     }
 
@@ -326,6 +327,14 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
 
     public void setNetworkInterface(String networkInterface) {
         this.networkInterface = networkInterface;
+    }
+
+    public String getEnabledProtocols() {
+        return enabledProtocols;
+    }
+
+    public void setEnabledProtocols(String enabledProtocols) {
+        this.enabledProtocols = enabledProtocols;
     }
 
     /**
@@ -435,6 +444,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", sslHandler=" + sslHandler
                 + ", sslContextParameters='" + sslContextParameters + '\''
                 + ", needClientAuth=" + needClientAuth
+                + ", enabledProtocols='" + enabledProtocols
                 + ", keyStoreFile=" + keyStoreFile
                 + ", trustStoreFile=" + trustStoreFile
                 + ", keyStoreResource='" + keyStoreResource + '\''

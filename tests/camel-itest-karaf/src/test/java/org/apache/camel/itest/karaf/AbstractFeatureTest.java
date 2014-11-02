@@ -195,7 +195,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.3.6";
+            karafVersion = "2.4.0";
         }
         return karafVersion;
     }

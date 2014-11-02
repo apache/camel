@@ -31,12 +31,12 @@
     <property name="feedbackPort" value="7843"/>
     <property name="gatewayHost" value="localhost"/>
     <property name="gatewayPort" value="7654"/>
-    <property name="sslContext" ref="sslContext"/>
+    <property name="sslContextParameters" ref="sslContextParameters"/>
   </bean>
 
   <bean id="apnsService" factory-bean="apnsServiceFactory" factory-method="getApnsService"/>
 
-  <bean id="sslContext" class="org.apache.camel.component.apns.util.ApnsUtils" factory-method="clientContext"/>
+  <bean id="sslContextParameters" class="org.apache.camel.component.apns.util.ApnsUtils" factory-method="clientContext"/>
 
   <bean id="apns" class="org.apache.camel.component.apns.ApnsComponent">
     <property name="apnsService" ref="apnsService"/>

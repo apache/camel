@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
         serverPort = AvailablePortFinder.getNextAvailable(3000);
         System.setProperty("server-port", new Integer(serverPort).toString());
     }
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/syslog/applicationContext-Mina.xml");

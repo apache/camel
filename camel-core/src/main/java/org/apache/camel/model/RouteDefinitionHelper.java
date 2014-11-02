@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -118,10 +119,10 @@ public final class RouteDefinitionHelper {
      * @throws Exception is thrown if error force assign ids to the routes
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
-        for (RouteDefinition route : routes) {
-            // force id on the route
-            route.idOrCreate(context.getNodeIdFactory());
+        // handle custom assigned id's first, and then afterwards assign auto generated ids
+        Set<String> customIds = new HashSet<String>();
 
+        for (RouteDefinition route : routes) {
             // if there was a custom id assigned, then make sure to support property placeholders
             if (route.hasCustomIdAssigned()) {
                 String id = route.getId();
@@ -130,6 +131,23 @@ public final class RouteDefinitionHelper {
                 if (!route.getId().equals(id)) {
                     route.setId(id);
                 }
+                customIds.add(id);
+            }
+        }
+
+        // auto assign route ids
+        for (RouteDefinition route : routes) {
+            if (route.getId() == null) {
+                // keep assigning id's until we find a free name
+                boolean done = false;
+                String id = null;
+                while (!done) {
+                    id = context.getNodeIdFactory().createId(route);
+                    done = !customIds.contains(id);
+                }
+                route.setId(id);
+                route.setCustomId(false);
+                customIds.add(route.getId());
             }
         }
     }

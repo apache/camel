@@ -260,6 +260,10 @@ public class CxfConsumer extends DefaultConsumer {
 
         });
         server = svrBean.create();
+        // Apply the server configurer if it is possible 
+        if (cxfEndpoint.getCxfEndpointConfigurer() != null) {
+            cxfEndpoint.getCxfEndpointConfigurer().configureServer(server);
+        }
         if (ObjectHelper.isNotEmpty(endpoint.getPublishedEndpointUrl())) {
             server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", endpoint.getPublishedEndpointUrl());
         }

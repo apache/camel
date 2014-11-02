@@ -412,7 +412,12 @@ public class HttpProducer extends DefaultProducer {
                     //When ContentType.parse parse method parse "multipart/form-data;boundary=---------------------------j2radvtrk",
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
-                        contentType = ContentType.create(contentTypeString);
+                        // using ContentType.parser for charset 
+                        if (contentTypeString.indexOf("charset") > 0) {
+                            contentType = ContentType.parse(contentTypeString);
+                        } else {
+                            contentType = ContentType.create(contentTypeString);
+                        }
                     }
                                         
                     if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {

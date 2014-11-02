@@ -54,6 +54,8 @@ From the command shell you can use curl to access the service as shown below:
     curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user
 </pre>
 
+Notice when trying to get user with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some slowness in the service.
+
 <p/>
 This example offers an API browser using Swagger which is accessible from the following link
 <ul>

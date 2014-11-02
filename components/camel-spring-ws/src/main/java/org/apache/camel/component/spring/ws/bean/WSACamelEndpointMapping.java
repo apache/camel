@@ -54,21 +54,15 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
 
     @Override
     protected Object getEndpointInternal(MessageAddressingProperties map) {
+        // search the endpoint with compositeKeyFirst
         for (EndpointMappingKey key : endpoints.keySet()) {
             String compositeOrSimpleKey = null;
-            String simpleKey = null;
             switch (key.getType()) {
             case ACTION:
                 compositeOrSimpleKey = getActionCompositeLookupKey(map);
-                if (map.getAction() != null) {
-                    simpleKey = map.getAction().toString();
-                }
                 break;
             case TO:
                 compositeOrSimpleKey = getToCompositeLookupKey(map);
-                if (map.getTo() != null) {
-                    simpleKey = map.getTo().toString();
-                }
                 break;
             default:
                 throw new RuntimeCamelException(
@@ -79,6 +73,27 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
                 LOG.debug("Found mapping for key" + key);
                 return endpoints.get(key);
+            }
+        }
+        
+        // look up for the simple key
+        for (EndpointMappingKey key : endpoints.keySet()) {
+            String simpleKey = null;
+            switch (key.getType()) {
+            case ACTION:
+                if (map.getAction() != null) {
+                    simpleKey = map.getAction().toString();
+                }
+                break;
+            case TO:
+                if (map.getTo() != null) {
+                    simpleKey = map.getTo().toString();
+                }
+                break;
+            default:
+                throw new RuntimeCamelException(
+                                                "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
+                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // look up for less specific endpoint
             if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {

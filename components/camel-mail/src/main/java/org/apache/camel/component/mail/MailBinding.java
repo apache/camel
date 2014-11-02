@@ -581,7 +581,11 @@ public class MailBinding {
                                                      String type, String recipient) throws MessagingException, IOException {
         List<InternetAddress> recipientsAddresses = new ArrayList<InternetAddress>();
         for (String line : splitRecipients(recipient)) {
-            recipientsAddresses.add(asEncodedInternetAddress(line.trim(), determineCharSet(configuration, exchange)));
+            String address = line.trim();
+            // Only add the address which is not empty
+            if (ObjectHelper.isNotEmpty(address)) {
+                recipientsAddresses.add(asEncodedInternetAddress(address, determineCharSet(configuration, exchange)));
+            }
         }
 
         mimeMessage.addRecipients(asRecipientType(type), recipientsAddresses.toArray(new InternetAddress[recipientsAddresses.size()]));

@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -37,6 +37,7 @@
     <module>camel-test-blueprint</module>
     <module>camel-test-spring</module>
     <module>camel-test-spring3</module>
+    <module>camel-test-spring40</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
@@ -63,6 +64,7 @@
     <module>camel-aws</module>
     <module>camel-base64</module>
     <module>camel-beanio</module>
+    <module>camel-beanstalk</module>
     <module>camel-bean-validator</module>
     <module>camel-barcode</module>
     <module>camel-bindy</module>
@@ -78,6 +80,7 @@
     <module>camel-csv</module>
     <module>camel-disruptor</module>
     <module>camel-dns</module>
+    <module>camel-docker</module>
     <module>camel-dozer</module>
     <module>camel-dropbox</module>
     <module>camel-eclipse</module>
@@ -92,6 +95,8 @@
     <module>camel-ftp</module>
     <module>camel-gae</module>
     <module>camel-geocoder</module>
+    <module>camel-github</module>
+    <module>camel-google-drive</module>
     <module>camel-gora</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
@@ -114,7 +119,10 @@
     <module>camel-jcr</module>
     <module>camel-jdbc</module>
     <module>camel-jgroups</module>
+    <!-- camel-jibx doesn't work under JDK8, but may be build without tests -->
+    <module>camel-jibx</module>
     <module>camel-jing</module>
+    <module>camel-jira</module>
     <module>camel-jmx</module>
     <module>camel-josql</module>
     <module>camel-jpa</module>
@@ -144,6 +152,7 @@
     <module>camel-netty</module>
     <module>camel-netty4</module>
     <module>camel-netty-http</module>
+    <module>camel-netty4-http</module>
     <module>camel-ognl</module>
     <module>camel-olingo2</module>
     <module>camel-openshift</module>
@@ -165,6 +174,7 @@
     <module>camel-sap-netweaver</module>
     <module>camel-saxon</module>
     <module>camel-salesforce</module>
+    <module>camel-schematron</module>
     <module>camel-script</module>
     <module>camel-servlet</module>
     <module>camel-servletlistener</module>
@@ -178,6 +188,7 @@
     <module>camel-spark-rest</module>
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
+    <module>camel-spring-boot</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
@@ -269,27 +280,6 @@
   </reporting>
 
   <profiles>
-
-    <!-- Some components don't support Java 8 Yet. -->
-    <profile>
-      <id>jdk-7</id>
-      <modules>
-        <module>camel-jibx</module>
-      </modules>
-      <activation>
-        <jdk>1.7</jdk>
-      </activation>
-    </profile>
-    <profile>
-      <id>jdk-6</id>
-      <modules>
-        <module>camel-jibx</module>
-      </modules>
-      <activation>
-        <jdk>1.6</jdk>
-      </activation>
-    </profile>
-
     <!-- enables the APT dependency so that it can be disabled in IDE builds -->
     <profile>
       <id>apt</id>

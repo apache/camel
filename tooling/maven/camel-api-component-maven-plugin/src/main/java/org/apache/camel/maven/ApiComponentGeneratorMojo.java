@@ -230,11 +230,17 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     }
 
     public static String getApiMethod(String proxyClass) {
-        return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "ApiMethod";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);        
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
     }
 
     public static String getEndpointConfig(String proxyClass) {
-        return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+    }
+
+    private static String getProxyClassWithCanonicalName(String proxyClass) {
+        return proxyClass.replace("$", "");
     }
 
     public static String getEnumConstant(String enumValue) {

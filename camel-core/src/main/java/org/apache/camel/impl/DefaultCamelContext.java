@@ -653,7 +653,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return routeStartupOrder;
     }
 
-    public List<Route> getRoutes() {
+    public synchronized List<Route> getRoutes() {
         // lets return a copy of the collection as objects are removed later when services are stopped
         if (routes.isEmpty()) {
             return Collections.emptyList();
@@ -761,9 +761,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        String id = routeDefinition.idOrCreate(nodeIdFactory);
-        stopRoute(id);
-        removeRoute(id);
+        String id = routeDefinition.getId();
+        if (id != null) {
+            // remove existing route
+            stopRoute(id);
+            removeRoute(id);
+        }
         this.routeDefinitions.remove(routeDefinition);
     }
 
@@ -1101,6 +1104,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "atmosphere/websocket";
         } else if ("netty-http".equals(componentName)) {
             return "netty/http";
+        } else if ("netty4-http".equals(componentName)) {
+            return "netty4/http";
         }
         return componentName.replaceAll("-", "");
     }

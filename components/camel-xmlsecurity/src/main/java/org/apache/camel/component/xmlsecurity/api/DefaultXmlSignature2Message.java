@@ -17,7 +17,6 @@
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +28,6 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
@@ -40,9 +36,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Maps the XML signature to a camel message. A output node is determined from
@@ -194,12 +192,16 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     protected void transformNodeToByteArrayAndSetToOutputMessage(Input input, Message output, Node node)
-        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+        throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input));
+        XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
         output.setBody(os.toByteArray());
+        if (input.getOutputXmlEncoding() != null) {
+            output.setHeader(Exchange.CHARSET_NAME, input.getOutputXmlEncoding());
+        }
     }
+
 
     protected Node getOutputNodeViaXPath(Input input) throws Exception { //NOPMD
         checkSearchValueNotNull(input);

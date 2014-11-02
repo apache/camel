@@ -50,6 +50,10 @@ public class Olingo2BatchQueryRequest extends Olingo2BatchRequest {
         private Olingo2BatchQueryRequest request = new Olingo2BatchQueryRequest();
 
         public Olingo2BatchQueryRequest build() {
+            // avoid later NPEs
+            if (request.resourcePath == null) {
+                throw new IllegalArgumentException("Null resourcePath");
+            }
             return request;
         }
 

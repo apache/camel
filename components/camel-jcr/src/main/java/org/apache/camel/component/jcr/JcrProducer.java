@@ -53,8 +53,14 @@ public class JcrProducer extends DefaultProducer {
                 Node node = findOrCreateNode(base, getNodeName(message));
                 Map<String, Object> headers = filterComponentHeaders(message.getHeaders());
                 for (String key : headers.keySet()) {
-                    Value value = converter.convertTo(Value.class, exchange, message.getHeader(key));
-                    node.setProperty(key, value);
+                    Object header = message.getHeader(key);
+                    if (header != null && Object[].class.isAssignableFrom(header.getClass())) {
+                        Value[] value = converter.convertTo(Value[].class, exchange, header);
+                        node.setProperty(key, value);
+                    } else {
+                        Value value = converter.convertTo(Value.class, exchange, header);
+                        node.setProperty(key, value);
+                    }
                 }
                 node.addMixin("mix:referenceable");
                 exchange.getOut().setBody(node.getIdentifier());
@@ -66,7 +72,12 @@ public class JcrProducer extends DefaultProducer {
                 while (properties.hasNext()) {
                     Property property = properties.nextProperty();
                     Class<?> aClass = classForJCRType(property);
-                    Object value = converter.convertTo(aClass, exchange, property.getValue());
+                    Object value;
+                    if (property.isMultiple()) {
+                        value = converter.convertTo(aClass, exchange, property.getValues());
+                    } else {
+                        value = converter.convertTo(aClass, exchange, property.getValue());
+                    }
                     message.setHeader(property.getName(), value);
                 }
             } else {

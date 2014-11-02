@@ -27,7 +27,7 @@ public class RestCamelSparkMapHeadersFalseTest extends BaseSparkTest {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").message(0).header(Exchange.HTTP_PATH).isNull();
 
-        String out2 = template.requestBodyAndHeader("http://0.0.0.0:" + getPort() + "/hello", null, "Accept", "application/json", String.class);
+        String out2 = template.requestBodyAndHeader("http://localhost:" + getPort() + "/hello", null, "Accept", "application/json", String.class);
         assertEquals("{ \"reply\": \"Bye World\" }", out2);
 
         assertMockEndpointsSatisfied();

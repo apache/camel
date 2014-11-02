@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.box.internal;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,11 +31,16 @@ import com.box.boxjavalibv2.exceptions.AuthFatalFailureException;
 import com.box.boxjavalibv2.exceptions.BoxServerException;
 import com.box.restclientv2.IBoxRESTClient;
 import com.box.restclientv2.exceptions.BoxRestException;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +86,21 @@ public final class BoxClientHelper {
             public HttpClient getRawHttpClient() {
                 final HttpClient httpClient = super.getRawHttpClient();
                 clientConnectionManager[0] = httpClient.getConnectionManager();
+                final SchemeRegistry schemeRegistry = clientConnectionManager[0].getSchemeRegistry();
+                SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
+                if (sslContextParameters == null) {
+                    sslContextParameters = new SSLContextParameters();
+                }
+                try {
+                    final SSLSocketFactory socketFactory = new SSLSocketFactory(
+                        sslContextParameters.createSSLContext(),
+                        SSLSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+                    schemeRegistry.register(new Scheme("https", socketFactory, 443));
+                } catch (GeneralSecurityException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                } catch (IOException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
 
                 // set custom HTTP params
                 final Map<String, Object> configParams = configuration.getHttpParams();

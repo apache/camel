@@ -23,7 +23,7 @@ First you need to install the following features in Karaf/ServiceMix with:
 
 Then you can install the Camel example:
 
-  osgi:install -s mvn:org.apache.camel/camel-example-servlet-rest-blueprintt/${project.version}
+  osgi:install -s mvn:org.apache.camel/camel-example-servlet-rest-blueprint/${project.version}
 
 And you can see the application running by tailing the logs
 
@@ -42,15 +42,15 @@ The view operations are HTTP GET, and update is using HTTP PUT.
 
 From a web browser you can access the first two services using the following links
 
-      http://localhost:8181/camel-example-servlet-rest-blueprint/user/123    - to view the user with id 123
-      http://localhost:8181/camel-example-servlet-rest-blueprint/user/findAll   - to list all users
+      http://localhost:8181/camel-example-servlet-rest-blueprint/rest/user/123    - to view the user with id 123
+      http://localhost:8181/camel-example-servlet-rest-blueprint/rest/user/findAll   - to list all users
 
 
 From the command shell you can use curl to access the service as shown below:
 
-    curl -X GET -H "Accept: application/json" http://localhost:8181/camel-example-servlet-rest-blueprint/user/123
-    curl -X GET -H "Accept: application/json" http://localhost:8181/camel-example-servlet-rest-blueprint/user/findAll
-    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8181/camel-example-servlet-rest-blueprint/user
+    curl -X GET -H "Accept: application/json" http://localhost:8181/camel-example-servlet-rest-blueprint/rest/user/123
+    curl -X GET -H "Accept: application/json" http://localhost:8181/camel-example-servlet-rest-blueprint/rest/user/findAll
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8181/camel-example-servlet-rest-blueprint/rest/user
 
 
 If you hit any problems please let us know on the Camel Forums

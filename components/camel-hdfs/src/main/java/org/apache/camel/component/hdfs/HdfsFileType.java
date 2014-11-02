@@ -75,7 +75,7 @@ public enum HdfsFileType {
         public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
             try {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream(hdfsistr.getChunkSize());
-                byte buf[] = new byte[HdfsConstants.DEFAULT_BUFFERSIZE];
+                byte buf[] = new byte[hdfsistr.getChunkSize()];
                 int bytesRead = ((InputStream) hdfsistr.getIn()).read(buf);
                 if (bytesRead >= 0) {
                     bos.write(buf, 0, bytesRead);

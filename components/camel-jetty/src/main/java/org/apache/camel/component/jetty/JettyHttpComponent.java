@@ -162,7 +162,6 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
-        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
@@ -179,10 +178,14 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
+        // need to keep the httpMethodRestrict parameter for the endpointUri
+        String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
+        
+        
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -994,15 +997,15 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         String query = URISupport.createQueryString(map);
 
         String url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
-
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-
         // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
+
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }
+        
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 

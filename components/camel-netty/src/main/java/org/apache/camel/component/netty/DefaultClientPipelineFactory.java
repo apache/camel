@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -154,6 +155,7 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
             return producer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
+            engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
             engine.setUseClientMode(true);
             return new SslHandler(engine);
         }

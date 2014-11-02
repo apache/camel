@@ -23,13 +23,13 @@ public class RestCamelSparkTest extends BaseSparkTest {
 
     @Test
     public void testSparkHello() throws Exception {
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/spark/hello", null, String.class);
+        String out = template.requestBody("http://localhost:" + getPort() + "/spark/hello", null, String.class);
         assertEquals("Hello World", out);
     }
 
     @Test
     public void testSparkBye() throws Exception {
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/spark/bye", null, String.class);
+        String out = template.requestBody("http://localhost:" + getPort() + "/spark/bye", null, String.class);
         assertEquals("Bye World", out);
     }
 
@@ -37,7 +37,7 @@ public class RestCamelSparkTest extends BaseSparkTest {
     public void testSparkPost() throws Exception {
         getMockEndpoint("mock:update").expectedBodiesReceived("I did this");
 
-        template.requestBody("http://0.0.0.0:" + getPort() + "/spark/bye", "I did this", String.class);
+        template.requestBody("http://localhost:" + getPort() + "/spark/bye", "I did this", String.class);
 
         assertMockEndpointsSatisfied();
     }

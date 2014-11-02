@@ -70,7 +70,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         assertEquals(true, serverInvoked);
     }
 
-    public class TestClientChannelPipelineFactory extends ClientPipelineFactory {
+    public class TestClientChannelPipelineFactory extends ClientInitializerFactory {
         private int maxLineSize = 1024;
         private NettyProducer producer;
 
@@ -91,12 +91,12 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         }
 
         @Override
-        public ClientPipelineFactory createPipelineFactory(NettyProducer producer) {
+        public ClientInitializerFactory createPipelineFactory(NettyProducer producer) {
             return new TestClientChannelPipelineFactory(producer);
         }
     }
 
-    public class TestServerChannelPipelineFactory extends ServerPipelineFactory {
+    public class TestServerChannelPipelineFactory extends ServerInitializerFactory {
         private int maxLineSize = 1024;
         private NettyConsumer consumer;
 
@@ -116,7 +116,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         }
 
         @Override
-        public ServerPipelineFactory createPipelineFactory(NettyConsumer consumer) {
+        public ServerInitializerFactory createPipelineFactory(NettyConsumer consumer) {
             return new TestServerChannelPipelineFactory(consumer);
         }
     }

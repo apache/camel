@@ -62,7 +62,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -182,17 +181,20 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(XmlSignerProcessor.class);
 
     private static final String SHA512 = "sha512";
-
     private static final String SHA384 = "sha384";
-
     private static final String SHA256 = "sha256";
-
+    private static final String SHA224 = "sha224";
     private static final String SHA1 = "sha1";
+    private static final String RIPEMD160 = "ripemd160";
 
-    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA224 = 
+        "http://www.w3.org/2001/04/xmldsig-more#sha224"; // see RFC 4051
+    
+    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384 = 
+        "http://www.w3.org/2001/04/xmldsig-more#sha384"; // see RFC 4051
 
     private final XmlSignerConfiguration config;
-
+    
     public XmlSignerProcessor(XmlSignerConfiguration config) {
         this.config = config;
     }
@@ -217,9 +219,10 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             Document outputDoc = sign(out);
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            XmlSignatureHelper.transformNonTextNodeToOutputStream(outputDoc, outStream, omitXmlDeclaration(out));
+            XmlSignatureHelper.transformNonTextNodeToOutputStream(outputDoc, outStream, omitXmlDeclaration(out), getConfiguration().getOutputXmlEncoding());
             byte[] data = outStream.toByteArray();
             out.setBody(data);
+            setOutputEncodingToMessageHeader(out);
             clearMessageHeaders(out);
             LOG.debug("XML signature generation finished");
         } catch (Exception e) {
@@ -270,7 +273,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                     signatureId = null;
                 }
 
-                // parent only relevant for enveloping or detached signature
+                // parent only relevant for enveloped or detached signature
                 Node parent = getParentOfSignature(out, node, contentReferenceUri, signatureType);
 
                 XmlSignatureProperties.Input input = new InputBuilder().contentDigestAlgorithm(getDigestAlgorithmUri()).keyInfo(keyInfo)
@@ -314,16 +317,31 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     private SignatureType determineSignatureType(Message message) throws XmlSignatureException {
+        if (getConfiguration().getParentLocalName() != null && getConfiguration().getParentXpath() != null) {
+            throw new XmlSignatureException(
+                    "The configuration of the XML signer component is wrong. The parent local name "
+                            + getConfiguration().getParentLocalName()
+                            + " and the parent XPath " + getConfiguration().getParentXpath().getXPath() + " are specified. You must not specify both parameters.");
 
-        boolean isEnveloped = getConfiguration().getParentLocalName() != null;
+        }
+
+        boolean isEnveloped = getConfiguration().getParentLocalName() != null || getConfiguration().getParentXpath() != null;
 
         boolean isDetached = getXpathToIdAttributes(message).size() > 0;
 
         if (isEnveloped && isDetached) {
-            throw new XmlSignatureException(
+            if (getConfiguration().getParentLocalName() != null) {
+                throw new XmlSignatureException(
                     "The configuration of the XML signer component is wrong. The parent local name "
                             + getConfiguration().getParentLocalName()
                             + " for an enveloped signature and the XPATHs to ID attributes for a detached signature are specified. You must not specify both parameters.");
+            } else {
+                throw new XmlSignatureException(
+                        "The configuration of the XML signer component is wrong. The parent XPath "
+                                + getConfiguration().getParentXpath().getXPath()
+                                + " for an enveloped signature and the XPATHs to ID attributes for a detached signature are specified. You must not specify both parameters.");
+
+            }
         }
 
         SignatureType result;
@@ -371,6 +389,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 && !getConfiguration().getPrefixForXmlSignatureNamespace().isEmpty()) {
             dsc.putNamespacePrefix("http://www.w3.org/2000/09/xmldsig#", getConfiguration().getPrefixForXmlSignatureNamespace());
         }
+        dsc.putNamespacePrefix("http://www.w3.org/2001/10/xml-exc-c14n#", "ec");
         setCryptoContextProperties(dsc);
         setUriDereferencerAndBaseUri(dsc);
         return dsc;
@@ -458,19 +477,41 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
 
     }
-
+    
     protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception { //NOPMD
-
-        NodeList parents = doc.getElementsByTagNameNS(getConfiguration().getParentNamespace(), getConfiguration().getParentLocalName());
-
-        if (parents == null || parents.getLength() == 0) {
-            throw new XmlSignatureFormatException(
-                    String.format(
-                            "Incoming message has wrong format: The parent element with the local name %s and the namespace %s was not found in the message to build an enveloped XML signature.",
-                            getConfiguration().getParentLocalName(), getConfiguration().getParentNamespace()));
+        if (getConfiguration().getParentXpath() != null) {
+            XPathFilterParameterSpec xp = getConfiguration().getParentXpath();
+            XPathExpression exp;
+            try {
+                exp = XmlSignatureHelper.getXPathExpression(xp);
+            } catch (XPathExpressionException e) {
+                throw new XmlSignatureException("The parent XPath " + getConfiguration().getParentXpath().getXPath() + " is wrongly configured: The XPath " + xp.getXPath() + " is invalid.", e);
+            }
+            NodeList list = (NodeList) exp.evaluate(doc.getDocumentElement(), XPathConstants.NODESET);
+            if (list == null || list.getLength() == 0) {
+                throw new XmlSignatureException("The parent XPath " + xp.getXPath() + " returned no result. Check the configuration of the XML signer component.");
+            }
+            int length = list.getLength();
+            for (int i = 0; i < length; i++) {
+                Node node = list.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    // return the first element
+                    return (Element)node;
+                }
+            }
+            throw new XmlSignatureException("The parent XPath " + xp.getXPath() + " returned no element. Check the configuration of the XML signer component.");
+        } else {
+            // parent local name is not null!
+            NodeList parents = doc.getElementsByTagNameNS(getConfiguration().getParentNamespace(), getConfiguration().getParentLocalName());
+            if (parents == null || parents.getLength() == 0) {
+                throw new XmlSignatureFormatException(
+                        String.format(
+                                "Incoming message has wrong format: The parent element with the local name %s and the namespace %s was not found in the message to build an enveloped XML signature.",
+                                getConfiguration().getParentLocalName(), getConfiguration().getParentNamespace()));
+            }
+            // return the first element
+            return (Element) parents.item(0);
         }
-        // return the first element
-        return (Element) parents.item(0);
     }
 
     private Element getParentForDetachedCase(Document doc, Message inMessage, String referenceUri) throws XmlSignatureException {
@@ -757,12 +798,16 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             if (signatureAlgorithm != null) {
                 if (signatureAlgorithm.contains(SHA1)) {
                     result = DigestMethod.SHA1;
+                } else if (signatureAlgorithm.contains(SHA224)) {
+                    result = HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA224;
                 } else if (signatureAlgorithm.contains(SHA256)) {
                     result = DigestMethod.SHA256;
                 } else if (signatureAlgorithm.contains(SHA384)) {
                     result = HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384;
                 } else if (signatureAlgorithm.contains(SHA512)) {
                     result = DigestMethod.SHA512;
+                } else if (signatureAlgorithm.contains(RIPEMD160)) {
+                    return DigestMethod.RIPEMD160;
                 }
             }
         }
@@ -800,6 +845,13 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
         return keyInfo.getId();
     }
+    
+    protected void setOutputEncodingToMessageHeader(Message message) {
+        if (getConfiguration().getOutputXmlEncoding() != null) {
+            message.setHeader(Exchange.CHARSET_NAME, getConfiguration().getOutputXmlEncoding());
+        }
+    }
+
 
     private static class InputBuilder {
 

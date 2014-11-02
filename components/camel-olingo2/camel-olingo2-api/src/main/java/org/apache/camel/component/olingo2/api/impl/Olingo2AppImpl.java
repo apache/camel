@@ -69,6 +69,7 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -126,10 +127,7 @@ public final class Olingo2AppImpl implements Olingo2App {
      * @param builder custom HTTP client builder.
      */
     public Olingo2AppImpl(String serviceUri, HttpAsyncClientBuilder builder) {
-        if (serviceUri == null) {
-            throw new IllegalArgumentException("serviceUri");
-        }
-        this.serviceUri = serviceUri;
+        setServiceUri(serviceUri);
 
         if (builder == null) {
             this.client = HttpAsyncClients.createDefault();
@@ -142,7 +140,11 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     @Override
     public void setServiceUri(String serviceUri) {
-        this.serviceUri = serviceUri;
+        if (serviceUri == null || serviceUri.isEmpty()) {
+            throw new IllegalArgumentException("serviceUri");
+        }
+        this.serviceUri = serviceUri.endsWith(SEPARATOR) ? serviceUri.substring(0, serviceUri.length() - 1)
+            : serviceUri;
     }
 
     @Override
@@ -413,9 +415,14 @@ public final class Olingo2AppImpl implements Olingo2App {
 
                     // if a entity is created (via POST request) the response body contains the new created entity
                     HttpStatusCodes statusCode = HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode());
-                    if (statusCode != HttpStatusCodes.NO_CONTENT) {
 
-                        // TODO do we need to handle response based on other UriTypes???
+                    // look for no content, or no response body!!!
+                    final boolean noEntity = result.getEntity() == null || result.getEntity().getContentLength() == 0;
+                    if (statusCode == HttpStatusCodes.NO_CONTENT || noEntity) {
+                        responseHandler.onResponse(
+                            (T) HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode()));
+                    } else {
+
                         switch (uriInfo.getUriType()) {
                         case URI9:
                             // $batch
@@ -455,18 +462,74 @@ public final class Olingo2AppImpl implements Olingo2App {
                             responseHandler.onResponse((T) responses);
                             break;
 
-                        default:
+                        case URI4:
+                        case URI5:
+                            // simple property
+                            // get the response content as Object for $value or Map<String, Object> otherwise
+                            final List<EdmProperty> simplePropertyPath = uriInfo.getPropertyPath();
+                            final EdmProperty simpleProperty = simplePropertyPath.get(simplePropertyPath.size() - 1);
+                            if (uriInfo.isValue()) {
+                                responseHandler.onResponse(
+                                    (T) EntityProvider.readPropertyValue(simpleProperty,
+                                        result.getEntity().getContent()));
+                            } else {
+                                responseHandler.onResponse(
+                                    (T) EntityProvider.readProperty(getContentType(), simpleProperty,
+                                        result.getEntity().getContent(),
+                                        EntityProviderReadProperties.init().build()));
+                            }
+                            break;
+
+                        case URI3:
+                            // complex property
+                            // get the response content as Map<String, Object>
+                            final List<EdmProperty> complexPropertyPath = uriInfo.getPropertyPath();
+                            final EdmProperty complexProperty = complexPropertyPath.get(complexPropertyPath.size() - 1);
+                            responseHandler.onResponse((T)EntityProvider.readProperty(getContentType(),
+                                                                                      complexProperty, result
+                                                                                          .getEntity()
+                                                                                          .getContent(),
+                                                                                      EntityProviderReadProperties
+                                                                                          .init().build()));
+                            break;
+
+                        case URI7A:
+                            // $links with 0..1 cardinality property
+                            // get the response content as String
+                            final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
+                            responseHandler.onResponse((T)EntityProvider.readLink(getContentType(),
+                                                                                  targetLinkEntitySet, result
+                                                                                      .getEntity()
+                                                                                      .getContent()));
+                            break;
+
+                        case URI7B:
+                            // $links with * cardinality property
+                            // get the response content as java.util.List<String>
+                            final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
+                            responseHandler.onResponse((T)EntityProvider.readLinks(getContentType(),
+                                                                                   targetLinksEntitySet,
+                                                                                   result.getEntity()
+                                                                                       .getContent()));
+                            break;
+
+                        case URI1:
+                        case URI2:
+                        case URI6A:
+                        case URI6B:
+                            // Entity
                             // get the response content as an ODataEntry object
                             responseHandler.onResponse((T) EntityProvider.readEntry(response.getContentHeader(),
                                 uriInfo.getTargetEntitySet(),
                                 result.getEntity().getContent(),
                                 EntityProviderReadProperties.init().build()));
                             break;
+
+                        default:
+                            throw new ODataApplicationException("Unsupported resource type " + uriInfo.getTargetType(),
+                                Locale.ENGLISH);
                         }
 
-                    } else {
-                        responseHandler.onResponse(
-                            (T) HttpStatusCodes.fromStatusCode(result.getStatusLine().getStatusCode()));
                     }
                 }
             });
@@ -512,9 +575,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         case URI7A:
             // $links with 0..1 cardinality property
             final EdmEntitySet targetLinkEntitySet = uriInfo.getTargetEntitySet();
-            final URI rootLinkUri = new URI(targetLinkEntitySet.getName());
             EntityProviderWriteProperties linkProperties =
-                EntityProviderWriteProperties.serviceRoot(rootLinkUri).build();
+                EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
             @SuppressWarnings("unchecked")
             final Map<String, Object> linkMap = (Map<String, Object>) content;
             response = EntityProvider.writeLink(responseContentType, targetLinkEntitySet, linkMap, linkProperties);
@@ -523,12 +585,11 @@ public final class Olingo2AppImpl implements Olingo2App {
         case URI7B:
             // $links with * cardinality property
             final EdmEntitySet targetLinksEntitySet = uriInfo.getTargetEntitySet();
-            final URI rootLinksUri = new URI(targetLinksEntitySet.getName());
             EntityProviderWriteProperties linksProperties =
-                EntityProviderWriteProperties.serviceRoot(rootLinksUri).build();
+                EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
             @SuppressWarnings("unchecked")
-            final Map<String, Object> linksMap = (Map<String, Object>) content;
-            response = EntityProvider.writeLink(responseContentType, targetLinksEntitySet, linksMap, linksProperties);
+            final List<Map<String, Object>> linksMap = (List<Map<String, Object>>) content;
+            response = EntityProvider.writeLinks(responseContentType, targetLinksEntitySet, linksMap, linksProperties);
             break;
 
         case URI1:
@@ -537,8 +598,8 @@ public final class Olingo2AppImpl implements Olingo2App {
         case URI6B:
             // Entity
             final EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
-            final URI rootUri = new URI(targetEntitySet.getName());
-            EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(rootUri).build();
+            EntityProviderWriteProperties properties =
+                EntityProviderWriteProperties.serviceRoot(new URI(serviceUri + SEPARATOR)).build();
             @SuppressWarnings("unchecked")
             final Map<String, Object> objectMap = (Map<String, Object>) content;
             response = EntityProvider.writeEntry(responseContentType, targetEntitySet, objectMap, properties);
@@ -696,7 +757,25 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // create a dummy entity location by adding a dummy key predicate
-        final EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet(referencedEntity.toString());
+        // look for a Container name if available
+        String referencedEntityName = referencedEntity.toString();
+        final int containerSeparator = referencedEntityName.lastIndexOf('.');
+        final EdmEntityContainer entityContainer;
+        if (containerSeparator != -1) {
+            final String containerName = referencedEntityName.substring(0, containerSeparator);
+            referencedEntityName = referencedEntityName.substring(containerSeparator + 1);
+            entityContainer = edm.getEntityContainer(containerName);
+            if (entityContainer == null) {
+                throw new IllegalArgumentException("EDM does not have entity container " + containerName);
+            }
+        } else {
+            entityContainer = edm.getDefaultEntityContainer();
+            if (entityContainer == null) {
+                throw new IllegalArgumentException("EDM does not have a default entity container"
+                    + ", use a fully qualified entity set name");
+            }
+        }
+        final EdmEntitySet entitySet = entityContainer.getEntitySet(referencedEntityName);
         final List<EdmProperty> keyProperties = entitySet.getEntityType().getKeyProperties();
 
         if (keyProperties.size() == 1) {
@@ -710,7 +789,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             referencedEntity.append(')');
         }
 
-        return pathSeparator == -1 ? referencedEntity.toString()
+        return pathSeparator == -1 ? referencedEntityName
             : referencedEntity.append(entityReference.substring(pathSeparator)).toString();
     }
 

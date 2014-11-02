@@ -21,7 +21,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.jpa.Consumed;
+import org.apache.camel.component.jpa.PreConsumed;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +76,13 @@ public class MultiSteps {
     public void setStep(int step) {
         this.step = step;
     }
+    
+    @PreConsumed
+    public void beforeGoToNextStep(Exchange exchange) {
+        // we could do some thing to update the entity by using the exchange property
+        Assert.assertNotNull(exchange);
+        LOG.info("Calling beforeGoToNextStep");
+    }
 
     /**
      * This method is invoked after the entity bean is processed successfully by a Camel endpoint
@@ -80,7 +90,6 @@ public class MultiSteps {
     @Consumed
     public void goToNextStep() {
         setStep(getStep() + 1);
-
         LOG.info("Invoked the completion complete method. Now updated the step to: {}", getStep());
     }
 

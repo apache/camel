@@ -70,7 +70,6 @@ public class NettyManualEndpointTest extends BaseNettyTest {
                 // create and start endpoint, pass in null as endpoint uri
                 // as we create this endpoint manually
                 endpoint = new NettyEndpoint(null, component, nettyConfig);
-                endpoint.setTimer(NettyComponent.getTimer());
                 endpoint.start();
 
                 from(endpoint).to("mock:result");

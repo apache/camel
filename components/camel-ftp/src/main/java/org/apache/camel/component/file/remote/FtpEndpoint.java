@@ -146,10 +146,6 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     @Override
     public void setConfiguration(GenericFileConfiguration configuration) {
-        setConfiguration((FtpConfiguration)configuration);
-    }
-
-    public void setConfiguration(FtpConfiguration configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("FtpConfiguration expected");
         }

@@ -26,7 +26,7 @@ public class CamelSparkRequestBeanTest extends BaseSparkTest {
     public void testSparkGet() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/hello/camel/to/world", null, String.class);
+        String out = template.requestBody("http://localhost:" + getPort() + "/hello/camel/to/world", null, String.class);
         assertEquals("Bye big world from camel", out);
 
         assertMockEndpointsSatisfied();

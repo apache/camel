@@ -59,9 +59,8 @@ import static org.apache.camel.tools.apt.util.Strings.canonicalClassName;
 /**
  * Processes all Camel endpoints
  */
-//@SupportedOptions({"foo"})
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class EndpointAnnotationProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
@@ -284,7 +283,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             try {
                 resource = filer.getResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
             } catch (Throwable e) {
-                //resource = filer.createResource(StandardLocation.CLASS_OUTPUT, "org.apache.camel", "CamelAPT2.txt", rootElements.toArray(new Element[rootElements.size()]));
                 resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName, new Element[0]);
             }
             URI uri = resource.toUri();

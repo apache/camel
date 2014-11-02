@@ -69,7 +69,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code1", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 100, 100, BarcodeImageType.PNG.toString());
+        this.checkImage(image, 100, 100, BarcodeImageType.PNG.toString(), BarcodeFormat.QR_CODE);
     }
     
     /**
@@ -85,7 +85,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code2", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 200, 200, BarcodeImageType.PNG.toString());
+        this.checkImage(image, 200, 200, BarcodeImageType.PNG.toString(), BarcodeFormat.QR_CODE);
     }
     
     /**
@@ -101,7 +101,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code3", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 100, 100, "JPEG");
+        this.checkImage(image, 100, 100, "JPEG", BarcodeFormat.QR_CODE);
     }
     
     /**
@@ -117,7 +117,24 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         template.sendBody("direct:code4", MSG);
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
-        this.checkImage(image, "JPEG");
+        this.checkImage(image, "JPEG", BarcodeFormat.PDF_417);
+    }
+
+    /**
+     * tests barcode (AZTEC).
+     *
+     * @throws Exception 
+     * @see CAMEL-7681
+     */
+    @Test
+    public void testAZTECWidthModifiedSizeAndImageType() throws Exception {
+        out.expectedBodiesReceived(MSG);
+        image.expectedMessageCount(1);
+
+        template.sendBody("direct:code5", MSG);
+
+        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        this.checkImage(image, 200, 200, "PNG", BarcodeFormat.AZTEC);
     }
 
     @Override
@@ -154,6 +171,12 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
                         .marshal(code4)
                         .to(FILE_ENDPOINT);
 
+                // AZTEC with modified size and PNG type
+                DataFormat code5 = new BarcodeDataFormat(200, 200, BarcodeImageType.PNG, BarcodeFormat.AZTEC);
+
+                from("direct:code5")
+                        .marshal(code5)
+                        .to(FILE_ENDPOINT);
 
                 // generic file read --->
                 // 

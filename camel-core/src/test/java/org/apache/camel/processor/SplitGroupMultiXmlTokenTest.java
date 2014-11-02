@@ -36,9 +36,9 @@ public class SplitGroupMultiXmlTokenTest extends ContextTestSupport {
     public void testTokenXMLPairGroup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order><order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
-        mock.message(1).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">Spring in Action</order><order id=\"4\" xmlns=\"http:acme.com\">Scala in Action</order>");
-        mock.message(2).body().isEqualTo("<order id=\"5\" xmlns=\"http:acme.com\">Groovy in Action</order>");
+        mock.message(0).body().isEqualTo("<group><order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order><order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order></group>");
+        mock.message(1).body().isEqualTo("<group><order id=\"3\" xmlns=\"http:acme.com\">Spring in Action</order><order id=\"4\" xmlns=\"http:acme.com\">Scala in Action</order></group>");
+        mock.message(2).body().isEqualTo("<group><order id=\"5\" xmlns=\"http:acme.com\">Groovy in Action</order></group>");
 
         String body = createBody();
         template.sendBodyAndHeader("file:target/pair", body, Exchange.FILE_NAME, "orders.xml");

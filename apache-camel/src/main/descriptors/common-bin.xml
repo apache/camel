@@ -36,6 +36,7 @@
         <include>org.apache.camel:camel-barcode</include>
         <include>org.apache.camel:camel-base64</include>
         <include>org.apache.camel:camel-beanio</include>
+        <include>org.apache.camel:camel-beanstalk</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
         <include>org.apache.camel:camel-box</include>
@@ -55,6 +56,7 @@
         <include>org.apache.camel:camel-cxf-transport</include>
         <include>org.apache.camel:camel-disruptor</include>
         <include>org.apache.camel:camel-dns</include>
+        <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
@@ -69,6 +71,8 @@
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-geocoder</include>
+        <include>org.apache.camel:camel-github</include>
+        <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
@@ -97,6 +101,7 @@
         <include>org.apache.camel:camel-jgroups</include>
         <include>org.apache.camel:camel-jibx</include>
         <include>org.apache.camel:camel-jing</include>
+        <include>org.apache.camel:camel-jira</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-jmx</include>
         <include>org.apache.camel:camel-josql</include>
@@ -128,6 +133,7 @@
         <include>org.apache.camel:camel-netty</include>
         <include>org.apache.camel:camel-netty4</include>
         <include>org.apache.camel:camel-netty-http</include>
+        <include>org.apache.camel:camel-netty4-http</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel.component.olingo2:camel-olingo2-api</include>
         <include>org.apache.camel.component.olingo2:camel-olingo2</include>
@@ -150,6 +156,7 @@
         <include>org.apache.camel:camel-sap-netweaver</include>
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scala</include>
+        <include>org.apache.camel:camel-schematron</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-servletlistener</include>
@@ -183,6 +190,7 @@
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-test-spring3</include>
+        <include>org.apache.camel:camel-test-spring40</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-urlrewrite</include>

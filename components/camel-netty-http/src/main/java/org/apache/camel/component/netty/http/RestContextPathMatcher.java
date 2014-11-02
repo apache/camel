@@ -24,10 +24,12 @@ import java.util.Locale;
 public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
     private final String rawPath;
+    private final String comparePath;
 
-    public RestContextPathMatcher(String rawPath, String path, boolean matchOnUriPrefix) {
+    public RestContextPathMatcher(String rawPath, String path, String restrictMethod, boolean matchOnUriPrefix) {
         super(path, matchOnUriPrefix);
         this.rawPath = rawPath;
+        this.comparePath = rawPath + "?" + restrictMethod;
     }
 
     @Override
@@ -97,6 +99,28 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
         // assume matching
         return true;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RestContextPathMatcher that = (RestContextPathMatcher) o;
+
+        if (comparePath.equals(that.comparePath))  {
+            return super.equals(o);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * comparePath.hashCode() + (matchOnUriPrefix ? 1 : 0);
     }
 
 }

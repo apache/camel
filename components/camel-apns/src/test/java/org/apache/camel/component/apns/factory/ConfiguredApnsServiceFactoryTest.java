@@ -17,9 +17,10 @@
 package org.apache.camel.component.apns.factory;
 
 import java.io.IOException;
-import javax.net.ssl.SSLContext;
 
 import com.notnoop.apns.ApnsServiceBuilder;
+
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class ConfiguredApnsServiceFactoryTest {
 
     @Before
     public void setUp() throws IOException {
-        apnsServiceFactory.setSslContext(mock(SSLContext.class));
+        apnsServiceFactory.setSslContextParameters(mock(SSLContextParameters.class));
     }
 
     @Test

@@ -162,6 +162,7 @@ public class JmsConfiguration implements Cloneable {
     private String replyToDestination;
     @UriParam
     private String replyToDestinationSelectorName;
+    private String replyToOverride;
     private JmsMessageType jmsMessageType;
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     @UriParam
@@ -1226,6 +1227,14 @@ public class JmsConfiguration implements Cloneable {
         if (replyToDestinationSelectorName != null) {
             setAlwaysCopyMessage(true);
         }
+    }
+
+    public String getReplyToOverride() {
+        return replyToOverride;
+    }
+
+    public void setReplyToOverride(String replyToDestination) {
+        this.replyToOverride = normalizeDestinationName(replyToDestination);
     }
 
     public JmsMessageType getJmsMessageType() {

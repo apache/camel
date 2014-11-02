@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -34,6 +41,7 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
 import org.restlet.Server;
@@ -235,6 +243,67 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     protected Server createServer(RestletEndpoint endpoint) {
         return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
     }
+    
+    protected String stringArrayToString(String[] strings) {
+        StringBuffer result = new StringBuffer();
+        for (String str : strings) {
+            result.append(str);
+            result.append(" ");
+        }
+        return result.toString();
+    }
+    
+    protected void setupServerWithSSLContext(Series<Parameter> params, SSLContextParameters scp) throws GeneralSecurityException, IOException {
+        // set the SSLContext parameters
+        params.add("sslContextFactory",
+            "org.restlet.engine.ssl.DefaultSslContextFactory");
+        
+        SSLContext context = scp.createSSLContext();
+        SSLEngine engine = context.createSSLEngine();
+        
+        params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));
+        params.add("enabledCipherSuites", stringArrayToString(engine.getEnabledCipherSuites()));
+        
+        if (scp.getSecureSocketProtocol() != null) {
+            params.add("protocol", scp.getSecureSocketProtocol());
+        }
+        if (scp.getServerParameters() != null && scp.getServerParameters().getClientAuthentication() != null) {
+            boolean b = !scp.getServerParameters().getClientAuthentication().equals("NONE");
+            params.add("needClientAuthentication", String.valueOf(b));
+        }
+        if (scp.getKeyManagers() != null) { 
+            if (scp.getKeyManagers().getAlgorithm() != null) {
+                params.add("keyManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
+            }
+            if (scp.getKeyManagers().getKeyPassword() != null) {
+                params.add("keyPassword", scp.getKeyManagers().getKeyPassword());
+            }
+            if (scp.getKeyManagers().getKeyStore().getResource() != null) {
+                params.add("keyStorePath", scp.getKeyManagers().getKeyStore().getResource());
+            }
+            if (scp.getKeyManagers().getKeyStore().getPassword() != null) {
+                params.add("keyStorePassword", scp.getKeyManagers().getKeyStore().getPassword());
+            }
+            if (scp.getKeyManagers().getKeyStore().getType() != null) {
+                params.add("keyStoreType", scp.getKeyManagers().getKeyStore().getType());
+            }
+        }
+        
+        if (scp.getTrustManagers() != null) { 
+            if (scp.getTrustManagers().getAlgorithm() != null) {
+                params.add("trustManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
+            }
+            if (scp.getTrustManagers().getKeyStore().getResource() != null) {
+                params.add("trustStorePath", scp.getTrustManagers().getKeyStore().getResource());
+            }
+            if (scp.getTrustManagers().getKeyStore().getPassword() != null) {
+                params.add("trustStorePassword", scp.getTrustManagers().getKeyStore().getPassword());
+            }
+            if (scp.getTrustManagers().getKeyStore().getType() != null) {
+                params.add("trustStoreType", scp.getTrustManagers().getKeyStore().getType());
+            }
+        }
+    }
 
     protected void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
         String key = buildKey(endpoint);
@@ -247,6 +316,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
                 // Add any Restlet server parameters that were included
                 Series<Parameter> params = server.getContext().getParameters();
+                
+                if (endpoint.getProtocol().equals("https")) {
+                    SSLContextParameters scp = endpoint.getSslContextParameters();
+                    if (endpoint.getSslContextParameters() == null) {
+                        throw new InvalidParameterException("Need to specify the SSLContextParameters option here!");
+                    }
+                    setupServerWithSSLContext(params, scp);
+                }
 
                 if (getControllerDaemon() != null) {
                     params.add("controllerDaemon", getControllerDaemon().toString());
@@ -557,12 +634,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         String query = URISupport.createQueryString(map);
 
         String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
-
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
         // get the endpoint
-        url = String.format(url, scheme, host, port, path, verb);
+        url = String.format(url, scheme, host, port, path, restrict);
+        if (!query.isEmpty()) {
+            url = url + "&" + query;
+        }
+        
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 

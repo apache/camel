@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
+import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.ClientPipelineFactory;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
@@ -79,8 +81,28 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
             LOG.debug("Client SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
-
+        
         pipeline.addLast("http", new HttpClientCodec());
+        
+        List<ChannelHandler> decoders = producer.getConfiguration().getDecoders();
+        for (int x = 0; x < decoders.size(); x++) {
+            ChannelHandler decoder = decoders.get(x);
+            if (decoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+            }
+            pipeline.addLast("decoder-" + x, decoder);
+        }
+        
+        List<ChannelHandler> encoders = producer.getConfiguration().getEncoders();
+        for (int x = 0; x < encoders.size(); x++) {
+            ChannelHandler encoder = encoders.get(x);
+            if (encoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+            }
+            pipeline.addLast("encoder-" + x, encoder);
+        }
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {
             if (LOG.isTraceEnabled()) {
@@ -89,7 +111,7 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
             ChannelHandler timeout = new ReadTimeoutHandler(NettyComponent.getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             pipeline.addLast("timeout", timeout);
         }
-
+        
         // handler to route Camel messages
         pipeline.addLast("handler", new HttpClientChannelHandler(producer));
 
@@ -152,6 +174,7 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(true);
+            engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
             return new SslHandler(engine);
         }
 

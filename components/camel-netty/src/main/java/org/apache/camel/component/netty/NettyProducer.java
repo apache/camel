@@ -51,8 +51,6 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +66,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     private BossPool bossPool;
     private WorkerPool workerPool;
     private ObjectPool<Channel> pool;
-    private Timer timer;
+   
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -126,8 +124,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
-        timer = new HashedWheelTimer();
-
         // setup pipeline factory
         ClientPipelineFactory factory = configuration.getClientPipelineFactory();
         if (factory != null) {
@@ -157,11 +153,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
-        // and then release other resources
-        if (channelFactory != null) {
-            channelFactory.releaseExternalResources();
-        }
-
+        // release the external resource here and we keep the timer open
         // and then shutdown the thread pools
         if (bossPool != null) {
             bossPool.shutdown();
@@ -178,11 +170,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             pool.close();
             pool = null;
-        }
-
-        if (timer != null) {
-            timer.stop();
-            timer = null;
         }
 
         super.doStop();
@@ -337,7 +324,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             if (bp == null) {
                 // create new pool which we should shutdown when stopping as its not shared
                 bossPool = new NettyClientBossPoolBuilder()
-                        .withTimer(timer)
+                        .withTimer(getEndpoint().getTimer())
                         .withBossCount(configuration.getBossCount())
                         .withName("NettyClientTCPBoss")
                         .build();
@@ -498,8 +485,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         public void done(boolean doneSync) {
             // put back in pool
             try {
-                LOG.trace("Putting channel back to pool {}", channel);
-                pool.returnObject(channel);
+                // Only put the connected channel back to the pool
+                if (channel.isConnected()) {
+                    LOG.trace("Putting channel back to pool {}", channel);
+                    pool.returnObject(channel);
+                }
             } catch (Exception e) {
                 LOG.warn("Error returning channel to pool {}. This exception will be ignored.", channel);
             } finally {
@@ -525,7 +515,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
-            NettyHelper.close(channel);
+            if (channel.isOpen()) {
+                NettyHelper.close(channel);
+            }
             allChannels.remove(channel);
         }
 
@@ -540,11 +532,13 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void activateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("activateObject channel: {} -> {}", channel);
         }
 
         @Override
         public void passivateObject(Channel channel) throws Exception {
             // noop
+            LOG.trace("passivateObject channel: {} -> {}", channel);
         }
     }
 

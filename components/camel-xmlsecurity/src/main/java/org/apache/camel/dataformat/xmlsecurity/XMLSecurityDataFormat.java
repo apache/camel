@@ -484,10 +484,16 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         if (xmlCipherAlgorithm.equals(XMLCipher.TRIPLEDES)) {
             keyEncryptionKey = generateKeyEncryptionKey("DESede");
             dataEncryptionKey = generateDataEncryptionKey();
+        } else if (xmlCipherAlgorithm.equals(XMLCipher.SEED_128)) {
+            keyEncryptionKey = generateKeyEncryptionKey("SEED");
+            dataEncryptionKey = generateDataEncryptionKey();
+        } else if (xmlCipherAlgorithm.contains("camellia")) {
+            keyEncryptionKey = generateKeyEncryptionKey("CAMELLIA");
+            dataEncryptionKey = generateDataEncryptionKey();
         } else {
             keyEncryptionKey = generateKeyEncryptionKey("AES");
             dataEncryptionKey = generateDataEncryptionKey();
-        }
+        } 
         
         XMLCipher keyCipher = XMLCipher.getInstance(generateXmlCipherAlgorithmKeyWrap());
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
@@ -667,9 +673,14 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
                 keySpec = new DESedeKeySpec(passPhrase);
                 SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(algorithm);
                 secretKey = keyFactory.generateSecret(keySpec);
+            } else if (algorithm.equalsIgnoreCase("SEED")) { 
+                secretKey = new SecretKeySpec(passPhrase, "SEED");
+            } else if (algorithm.equalsIgnoreCase("CAMELLIA")) { 
+                secretKey = new SecretKeySpec(passPhrase, "CAMELLIA");
             } else {
                 secretKey = new SecretKeySpec(passPhrase, "AES");
             }
+            
             if (Arrays.equals(passPhrase, DEFAULT_KEY.getBytes())) {
                 LOG.warn("Using the default encryption key is not secure");
             }
@@ -691,13 +702,17 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             keyGenerator = KeyGenerator.getInstance("AES");
         
             if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
-                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.SEED_128)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_128)) {
                 keyGenerator.init(128);
             } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
-                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_192)) {
                 keyGenerator.init(192);
             } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
-                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
                 keyGenerator.init(256);
             }
         }
@@ -727,7 +742,15 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
             || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_256_KeyWrap;
-        }
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.SEED_128)) {
+            algorithmKeyWrap = XMLCipher.SEED_128_KeyWrap;
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_128)) {
+            algorithmKeyWrap = XMLCipher.CAMELLIA_128_KeyWrap;
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_192)) {
+            algorithmKeyWrap = XMLCipher.CAMELLIA_192_KeyWrap;
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
+            algorithmKeyWrap = XMLCipher.CAMELLIA_256_KeyWrap;
+        } 
 
         return algorithmKeyWrap;
     }

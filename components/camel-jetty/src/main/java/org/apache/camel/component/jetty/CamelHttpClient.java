@@ -20,11 +20,13 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.RedirectListener;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 public class CamelHttpClient extends HttpClient {
     
     private SSLContext context;
+    private boolean supportRedirect;
 
     @Override
     protected SSLContext getSSLContext() {
@@ -51,7 +53,18 @@ public class CamelHttpClient extends HttpClient {
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(this) + ")");
             setThreadPool(qtp);
         }
-
+        if (isSupportRedirect()) {
+            // setup the listener for it
+            this.registerListener(CamelRedirectListener.class.getName());
+        }
         super.doStart();
+    }
+
+    public boolean isSupportRedirect() {
+        return supportRedirect;
+    }
+
+    public void setSupportRedirect(boolean supportRedirect) {
+        this.supportRedirect = supportRedirect;
     }
 }

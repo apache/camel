@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jclouds;
 
+import java.io.IOException;
 import java.io.InputStream;
+
 import javax.ws.rs.core.MediaType;
+
 import com.google.common.base.Strings;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -83,12 +86,12 @@ public final class JcloudsBlobStoreHelper {
     /**
      * Reads from a {@link BlobStore}. It returns an Object.
      */
-    public static InputStream readBlob(BlobStore blobStore, String container, String blobName) {
+    public static InputStream readBlob(BlobStore blobStore, String container, String blobName) throws IOException {
         InputStream is = null;
         if (!Strings.isNullOrEmpty(blobName)) {
             Blob blob = blobStore.getBlob(container, blobName);
             if (blob != null && blob.getPayload() != null) {
-                is = blobStore.getBlob(container, blobName).getPayload().getInput();
+                is = blobStore.getBlob(container, blobName).getPayload().openStream();
             }
         }
         return is;

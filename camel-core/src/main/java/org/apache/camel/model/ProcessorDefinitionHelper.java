@@ -220,6 +220,9 @@ public final class ProcessorDefinitionHelper {
             if (out instanceof ChoiceDefinition) {
                 ChoiceDefinition choice = (ChoiceDefinition) out;
                 for (WhenDefinition when : choice.getWhenClauses()) {
+                    if (type.isInstance(when)) {
+                        found.add((T)when);   
+                    }
                     List<ProcessorDefinition<?>> children = when.getOutputs();
                     doFindType(children, type, found);
                 }

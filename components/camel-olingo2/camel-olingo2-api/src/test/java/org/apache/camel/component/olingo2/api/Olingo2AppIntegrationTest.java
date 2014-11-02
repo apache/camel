@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
@@ -73,12 +74,13 @@ public class Olingo2AppIntegrationTest {
     private static final long TIMEOUT = 10;
 
     private static final String MANUFACTURERS = "Manufacturers";
+    private static final String FQN_MANUFACTURERS = "DefaultContainer.Manufacturers";
     private static final String ADDRESS = "Address";
     private static final String CARS = "Cars";
 
     private static final String TEST_KEY = "'1'";
     private static final String TEST_CREATE_KEY = "'123'";
-    private static final String TEST_MANUFACTURER = MANUFACTURERS + "(" + TEST_KEY + ")";
+    private static final String TEST_MANUFACTURER = FQN_MANUFACTURERS + "(" + TEST_KEY + ")";
     private static final String TEST_CREATE_MANUFACTURER = MANUFACTURERS + "(" + TEST_CREATE_KEY + ")";
 
     private static final String TEST_RESOURCE_CONTENT_ID = "1";
@@ -99,6 +101,8 @@ public class Olingo2AppIntegrationTest {
 //    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON_CS_UTF_8;
     private static final String INDEX = "/index.jsp";
+    private static final Pattern LINK_PATTERN = Pattern.compile("[^(]+\\('([^']+)'\\)");
+    private static final String ID_PROPERTY = "Id";
 
     private static Olingo2App olingoApp;
     private static final String GEN_SAMPLE_DATA = "genSampleData=true";
@@ -107,7 +111,7 @@ public class Olingo2AppIntegrationTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
 
-        olingoApp = new Olingo2AppImpl(TEST_SERVICE_URL);
+        olingoApp = new Olingo2AppImpl(TEST_SERVICE_URL + "/");
         olingoApp.setContentType(TEST_FORMAT.toString());
 
         LOG.info("Generate sample data ");
@@ -242,7 +246,7 @@ public class Olingo2AppIntegrationTest {
     }
 
     @Test
-    public void testReadLinks() throws Exception {
+    public void testReadDeleteCreateLinks() throws Exception {
         final TestOlingo2ResponseHandler<List<String>> linksHandler = new TestOlingo2ResponseHandler<List<String>>();
 
         olingoApp.read(edm, TEST_MANUFACTURER_LINKS_CARS, null, linksHandler);
@@ -257,6 +261,53 @@ public class Olingo2AppIntegrationTest {
 
         final String link = linkHandler.await();
         LOG.info("Read link: {}", link);
+
+//Deleting relationships through links is not supported in Olingo2 at the time of writing this test
+/*
+        final TestOlingo2ResponseHandler<HttpStatusCodes> statusHandler =
+            new TestOlingo2ResponseHandler<HttpStatusCodes>();
+
+        final ArrayList<Map<String, Object>> carKeys = new ArrayList<Map<String, Object>>();
+        for (String carLink : links) {
+            final Matcher matcher = LINK_PATTERN.matcher(carLink);
+            assertTrue("Link pattern " + carLink, matcher.matches());
+            final String carId = matcher.group(1);
+
+            final HashMap<String, Object> keys = new HashMap<String, Object>();
+            keys.put(ID_PROPERTY, carId);
+            carKeys.add(keys);
+
+            // delete manufacturer->car link
+            statusHandler.reset();
+            final String resourcePath = TEST_MANUFACTURER_LINKS_CARS + "('" + carId + "')";
+            olingoApp.delete(resourcePath, statusHandler);
+
+            assertEquals("Delete car link " + resourcePath, HttpStatusCodes.OK.getStatusCode(),
+                statusHandler.await().getStatusCode());
+        }
+
+        // add links to all Cars
+        statusHandler.reset();
+        olingoApp.create(edm, TEST_MANUFACTURER_LINKS_CARS, carKeys, statusHandler);
+
+        assertEquals("Links update", HttpStatusCodes.ACCEPTED.getStatusCode(), statusHandler.await().getStatusCode());
+
+        // delete car->manufacturer link
+        statusHandler.reset();
+        olingoApp.delete(TEST_CAR_LINK_MANUFACTURER, statusHandler);
+
+        assertEquals("Delete manufacturer link " + TEST_CAR_LINK_MANUFACTURER, HttpStatusCodes.OK.getStatusCode(),
+            statusHandler.await().getStatusCode());
+
+        // add link to Manufacturer
+        statusHandler.reset();
+        final HashMap<String, Object> manufacturerKey = new HashMap<String, Object>();
+        manufacturerKey.put(ID_PROPERTY, "1");
+
+        olingoApp.create(edm, TEST_CAR_LINK_MANUFACTURER, manufacturerKey, statusHandler);
+
+        assertEquals("Link update", HttpStatusCodes.ACCEPTED.getStatusCode(), statusHandler.await().getStatusCode());
+*/
     }
 
     @Test
@@ -412,7 +463,7 @@ public class Olingo2AppIntegrationTest {
 
     private Map<String, Object> getEntityData() {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("Id", "123");
+        data.put(ID_PROPERTY, "123");
         data.put("Name", "MyCarManufacturer");
         data.put(FOUNDED_PROPERTY, new Date());
         Map<String, Object> address = new HashMap<String, Object>();

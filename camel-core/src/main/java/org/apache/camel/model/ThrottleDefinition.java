@@ -158,7 +158,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>noy</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>no</b> block while delaying.
      *
      * @return the builder
      */
@@ -172,7 +172,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * <p/>
      * Is by default <tt>false</tt>
      *
-     * @param throw the RejectExecutionException if the exchange exceeds the request limit 
+     * @param rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit 
      * @return the builder
      */
     public ThrottleDefinition rejectExecution(boolean rejectExecution) {
@@ -180,11 +180,23 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         return this;
     }
 
+    /**
+     * Sets the ExecutorService which could be used by throttle definition
+     *
+     * @param executorService  
+     * @return the builder
+     */
     public ThrottleDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * Sets the ExecutorService which could be used by throttle definition
+     *
+     * @param executorServiceRef the reference id of the Executor Service  
+     * @return the builder
+     */
     public ThrottleDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.box.internal;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLContext;
 
 import com.box.boxjavalibv2.BoxClient;
 import com.box.boxjavalibv2.authorization.IAuthFlowListener;
@@ -43,6 +47,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import org.apache.camel.component.box.BoxConfiguration;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -81,6 +87,15 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
         options.setThrowExceptionOnFailingStatusCode(true);
         options.setThrowExceptionOnScriptError(true);
         options.setPrintContentOnFailingStatusCode(LOG.isDebugEnabled());
+        try {
+            // use default SSP to create supported non-SSL protocols list
+            final SSLContext sslContext = new SSLContextParameters().createSSLContext();
+            options.setSSLClientProtocols(sslContext.createSSLEngine().getEnabledProtocols());
+        } catch (GeneralSecurityException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (IOException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
 
         // add HTTP proxy if set
         final Map<String, Object> httpParams = configuration.getHttpParams();
