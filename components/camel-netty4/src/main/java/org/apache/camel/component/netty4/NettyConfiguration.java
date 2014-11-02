@@ -75,7 +75,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam
     private boolean allowDefaultCodec = true;
     @UriParam
-    private ClientInitializerFactory clientPipelineFactory;
+    private ClientInitializerFactory clientInitializerFactory;
     @UriParam
     private int maximumPoolSize = 16;
     @UriParam
@@ -166,8 +166,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         trustStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
         keyStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
         trustStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
-        clientPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientInitializerFactory.class, clientPipelineFactory);
-        serverPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerInitializerFactory.class, serverPipelineFactory);
+        // clientPipelineFactory is @deprecated and to be removed
+        clientInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientInitializerFactory.class, clientInitializerFactory);
+        clientInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientInitializerFactory", ClientInitializerFactory.class, clientInitializerFactory);
+        // serverPipelineFactory is @deprecated and to be removed
+        serverInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerInitializerFactory.class, serverInitializerFactory);
+        serverInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverInitializerFactory", ServerInitializerFactory.class, serverInitializerFactory);
 
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);
@@ -388,12 +392,28 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.allowDefaultCodec = allowDefaultCodec;
     }
 
+    /**
+     * @deprecated use #setClientInitializerFactory
+     */
+    @Deprecated
     public void setClientPipelineFactory(ClientInitializerFactory clientPipelineFactory) {
-        this.clientPipelineFactory = clientPipelineFactory;
+        this.clientInitializerFactory = clientPipelineFactory;
     }
 
+    /**
+     * @deprecated use #getClientInitializerFactory
+     */
+    @Deprecated
     public ClientInitializerFactory getClientPipelineFactory() {
-        return clientPipelineFactory;
+        return clientInitializerFactory;
+    }
+
+    public ClientInitializerFactory getClientInitializerFactory() {
+        return clientInitializerFactory;
+    }
+
+    public void setClientInitializerFactory(ClientInitializerFactory clientInitializerFactory) {
+        this.clientInitializerFactory = clientInitializerFactory;
     }
 
     public int getMaximumPoolSize() {

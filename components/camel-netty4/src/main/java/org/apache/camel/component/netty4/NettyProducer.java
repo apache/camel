@@ -122,7 +122,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup pipeline factory
-        ClientInitializerFactory factory = configuration.getClientPipelineFactory();
+        ClientInitializerFactory factory = configuration.getClientInitializerFactory();
         if (factory != null) {
             pipelineFactory = factory.createPipelineFactory(this);
         } else {

@@ -46,8 +46,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         // we need sync=true as http is request/reply by nature
         setSync(true);
         setReuseAddress(true);
-        setServerPipelineFactory(new HttpServerInitializerFactory());
-        setClientPipelineFactory(new HttpClientInitializerFactory());
+        setServerInitializerFactory(new HttpServerInitializerFactory());
+        setClientInitializerFactory(new HttpClientInitializerFactory());
     }
 
     @Override

@@ -40,7 +40,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected boolean reuseAddress = true;
     protected int connectTimeout = 10000;
     protected int backlog;
-    protected ServerInitializerFactory serverPipelineFactory;
+    protected ServerInitializerFactory serverInitializerFactory;
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
@@ -281,12 +281,28 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.passphrase = passphrase;
     }
 
+    /**
+     * @deprecated use #getServerInitializerFactory
+     */
+    @Deprecated
     public ServerInitializerFactory getServerPipelineFactory() {
-        return serverPipelineFactory;
+        return serverInitializerFactory;
     }
 
+    /**
+     * @deprecated use #setServerInitializerFactory
+     */
+    @Deprecated
     public void setServerPipelineFactory(ServerInitializerFactory serverPipelineFactory) {
-        this.serverPipelineFactory = serverPipelineFactory;
+        this.serverInitializerFactory = serverPipelineFactory;
+    }
+
+    public ServerInitializerFactory getServerInitializerFactory() {
+        return serverInitializerFactory;
+    }
+
+    public void setServerInitializerFactory(ServerInitializerFactory serverInitializerFactory) {
+        this.serverInitializerFactory = serverInitializerFactory;
     }
 
     public NettyServerBootstrapFactory getNettyServerBootstrapFactory() {
@@ -373,7 +389,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (backlog != other.backlog) {
             isCompatible = false;
-        } else if (serverPipelineFactory != other.serverPipelineFactory) {
+        } else if (serverInitializerFactory != other.serverInitializerFactory) {
             isCompatible = false;
         } else if (nettyServerBootstrapFactory != other.nettyServerBootstrapFactory) {
             isCompatible = false;
@@ -437,7 +453,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", reuseAddress=" + reuseAddress
                 + ", connectTimeout=" + connectTimeout
                 + ", backlog=" + backlog
-                + ", serverPipelineFactory=" + serverPipelineFactory
+                + ", serverInitializerFactory=" + serverInitializerFactory
                 + ", nettyServerBootstrapFactory=" + nettyServerBootstrapFactory
                 + ", options=" + options
                 + ", ssl=" + ssl
