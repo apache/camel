@@ -18,11 +18,14 @@ package org.apache.camel.component.file;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -147,6 +150,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String doneFileName;
     @UriParam
     protected boolean allowNullBody;
+    @UriParam
+    protected String chmod;
 
     public GenericFileEndpoint() {
     }
@@ -275,6 +280,73 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy method not found", e);
         }
     }
+
+
+    public String getChmod() {
+        return chmod;
+    }
+
+
+    public void setChmod(String chmod) throws Exception {
+        if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
+            this.chmod = chmod.trim();
+        } else {
+            throw new Exception("chmod option [" + chmod + "] is not valid");
+        }
+    }
+
+
+    /**
+     *  Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
+     *
+     * @return
+     */
+    public boolean chmodPermissionsAreValid(String chmod) {
+        if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
+            return false;
+        }
+        String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
+        for (int i=0; i < permissionsString.length(); i++) {
+            Character c = permissionsString.charAt(i);
+            if (!Character.isDigit(c) || Integer.parseInt(c.toString()) > 7) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static final Integer CHMOD_WRITE_MASK = 02;
+    private static final Integer CHMOD_READ_MASK = 04;
+    private static final Integer CHMOD_EXECUTE_MASK = 01;
+
+    public Set<PosixFilePermission> getPermissions() {
+        Set<PosixFilePermission> permissions = new HashSet<>();
+        if (ObjectHelper.isEmpty(chmod)) {
+            return permissions;
+        }
+
+        String chmodString = chmod.substring(chmod.length() - 3);  // if 4 digits chop off leading one
+
+        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
+        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
+        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
+
+        if ((ownerValue & CHMOD_WRITE_MASK) > 0) { permissions.add(PosixFilePermission.OWNER_WRITE);}
+        if ((ownerValue & CHMOD_READ_MASK) > 0) { permissions.add(PosixFilePermission.OWNER_READ);}
+        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) { permissions.add(PosixFilePermission.OWNER_EXECUTE);}
+
+        if ((groupValue & CHMOD_WRITE_MASK) > 0) { permissions.add(PosixFilePermission.GROUP_WRITE);}
+        if ((groupValue & CHMOD_READ_MASK) > 0) { permissions.add(PosixFilePermission.GROUP_READ);}
+        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) { permissions.add(PosixFilePermission.GROUP_EXECUTE);}
+
+        if ((othersValue & CHMOD_WRITE_MASK) > 0) { permissions.add(PosixFilePermission.OTHERS_WRITE);}
+        if ((othersValue & CHMOD_READ_MASK) > 0) { permissions.add(PosixFilePermission.OTHERS_READ);}
+        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) { permissions.add(PosixFilePermission.OTHERS_EXECUTE);}
+
+        return permissions;
+    }
+
+
 
     public boolean isNoop() {
         return noop;
