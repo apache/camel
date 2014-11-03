@@ -40,9 +40,9 @@
   </feature>
   <feature name='camel-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version-range}'>spring</feature>
+    <feature version='${spring-version-range-karaf}'>spring</feature>
     <feature version='[1.2,2)'>spring-dm</feature>
-    <feature version='${spring-version-range}'>spring-tx</feature>
+    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring/${project.version}</bundle>
   </feature>
@@ -127,10 +127,10 @@
     <bundle>mvn:org.apache.camel/camel-aws/${project.version}</bundle>
   </feature>
   <feature name='camel-bam' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${spring-version-range}'>spring-tx</feature>
-    <feature version='${spring-version-range}'>spring-web</feature>
+    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
+    <feature version='${spring-version-range-karaf}'>spring-web</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version-range}'>spring-jdbc</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jdbc</feature>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
@@ -139,7 +139,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oscache/${oscache-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ibatis-sqlmap/${ibatis-bundle-version}</bundle>
-    <feature version='${spring-version-range}'>spring-orm</feature>
+    <feature version='${spring-version-range-karaf}'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bam/${project.version}</bundle>
   </feature>
@@ -711,11 +711,11 @@
     <bundle>mvn:org.apache.camel/camel-jing/${project.version}</bundle>
   </feature>
   <feature name='camel-jms' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${spring-version-range}'>spring</feature>
+    <feature version='${spring-version-range-karaf}'>spring</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
-    <feature version='${spring-version-range}'>spring-jms</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jms</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jms/${project.version}</bundle>
   </feature>
@@ -732,10 +732,10 @@
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${geronimo-annotation-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${geronimo-jpa2-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
-    <feature version='${spring-version-range}'>spring-tx</feature>
+    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${geronimo-el-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version-range}'>spring-jdbc</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jdbc</feature>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
@@ -745,7 +745,7 @@
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.xbean/xbean-asm4-shaded/${xbean-asm4-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>
-    <feature version='${spring-version-range}'>spring-orm</feature>
+    <feature version='${spring-version-range-karaf}'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jpa/${project.version}</bundle>
   </feature>
@@ -1214,13 +1214,13 @@
   <feature name='camel-spring-javaconfig' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-bundle-version}</bundle>
     <feature version='${project.version}'>camel-spring</feature>
-    <feature version='${spring-version-range}'>spring-test</feature>
+    <feature version='${spring-version-range-karaf}'>spring-test</feature>
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-ldap' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
-    <feature version='${spring-version-range}'>spring-tx</feature>
-    <feature version='${spring-version-range}'>spring-jdbc</feature>
+    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jdbc</feature>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ldap/${spring-ldap-bundle-version}</bundle>
@@ -1231,8 +1231,8 @@
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>spring-data-redis doesn't support importing spring version which is above 4.0.5 </details>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${spring-version-range}'>spring</feature>
-    <feature version='${spring-version-range}'>spring-tx</feature>
+    <feature version='${spring-version-range-karaf}'>spring</feature>
+    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
@@ -1242,7 +1242,7 @@
     <details>spring-security doesn't support importing spring 4.x </details>
     <feature>http</feature>
     <feature version='${project.version}'>camel-spring</feature>
-    <feature version='${spring-version-range}'>spring-web</feature>
+    <feature version='${spring-version-range-karaf}'>spring-web</feature>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-core/${spring-security-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-config/${spring-security-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-web/${spring-security-version}</bundle>
@@ -1255,18 +1255,18 @@
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.smack/${smack-bundle-version}</bundle>
-    <feature version='${spring-version-range}'>spring-jms</feature>
-    <feature version='${spring-version-range}'>spring-web</feature>
-    <feature version='${spring-version-range}'>spring-oxm</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jms</feature>
+    <feature version='${spring-version-range-karaf}'>spring-web</feature>
+    <feature version='${spring-version-range-karaf}'>spring-oxm</feature>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-core/${spring-ws-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-support/${spring-ws-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-sql' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${spring-version-range}'>spring-tx</feature>
+    <feature version='${spring-version-range-karaf}'>spring-tx</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version-range}'>spring-jdbc</feature>
+    <feature version='${spring-version-range-karaf}'>spring-jdbc</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-sql/${project.version}</bundle>
   </feature>
@@ -1321,7 +1321,7 @@
   </feature>
   <feature name='camel-test-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
-    <feature version='${spring-version-range}'>spring-test</feature>
+    <feature version='${spring-version-range-karaf}'>spring-test</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test-spring/${project.version}</bundle>
