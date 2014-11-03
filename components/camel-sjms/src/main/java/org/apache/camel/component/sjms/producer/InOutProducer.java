@@ -293,7 +293,7 @@ public class InOutProducer extends SjmsProducer {
                 exchange.setException((Throwable) responseObject);
             } else if (responseObject instanceof Message) {
                 Message response = (Message) responseObject;
-                SjmsExchangeMessageHelper.populateExchange(response, exchange, true);
+                SjmsExchangeMessageHelper.populateExchange(response, exchange, true, getEndpoint().getJmsKeyFormatStrategy());
             } else {
                 exchange.setException(new CamelException("Unknown response type: " + responseObject));
             }

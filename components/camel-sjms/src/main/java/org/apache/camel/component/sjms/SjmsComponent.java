@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
@@ -25,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -43,7 +45,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
-    private KeyFormatStrategy keyFormatStrategy;
+    private KeyFormatStrategy keyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;

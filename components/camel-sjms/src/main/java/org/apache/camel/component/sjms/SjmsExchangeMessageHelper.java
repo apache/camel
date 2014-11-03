@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -49,7 +50,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.component.sjms.SjmsConstants.JMS_MESSAGE_TYPE;
 import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
 import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;
@@ -63,13 +63,21 @@ public final class SjmsExchangeMessageHelper {
 
     public static Exchange createExchange(Message message, Endpoint endpoint) {
         Exchange exchange = endpoint.createExchange();
-        return populateExchange(message, exchange, false);
+        return populateExchange(message, exchange, false, ((SjmsEndpoint)endpoint).getJmsKeyFormatStrategy());
+    }
+    
+    @Deprecated 
+    /**
+     * Please use the one which has the parameter of keyFormatStrategy 
+     */
+    public static Exchange populateExchange(Message message, Exchange exchange, boolean out) {
+        return populateExchange(message, exchange, out, new DefaultJmsKeyFormatStrategy()); 
     }
 
     @SuppressWarnings("unchecked")
-    public static Exchange populateExchange(Message message, Exchange exchange, boolean out) {
+    public static Exchange populateExchange(Message message, Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) {
         try {
-            SjmsExchangeMessageHelper.setJmsMessageHeaders(message, exchange, out);
+            SjmsExchangeMessageHelper.setJmsMessageHeaders(message, exchange, out, keyFormatStrategy);
             if (message != null) {
                 // convert to JMS Message of the given type
 
@@ -424,9 +432,17 @@ public final class SjmsExchangeMessageHelper {
         }
         return jmsMessage;
     }
+    
+    @Deprecated
+    /**
+     * Please use the one which has the parameter of keyFormatStrategy
+     */
+    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out) throws JMSException {
+        return setJmsMessageHeaders(jmsMessage, exchange, out, new DefaultJmsKeyFormatStrategy());
+    }
 
     @SuppressWarnings("unchecked")
-    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out) throws JMSException {
+    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) throws JMSException {
         Map<String, Object> headers = new HashMap<String, Object>();
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
@@ -454,7 +470,7 @@ public final class SjmsExchangeMessageHelper {
                     throw new IllegalHeaderException("Header " + key + " is not a legal JMS header name value");
                 }
                 Object value = jmsMessage.getObjectProperty(key);
-                String decodedName = new DefaultJmsKeyFormatStrategy().decodeKey(key);
+                String decodedName = keyFormatStrategy.decodeKey(key);
                 headers.put(decodedName, value);
             }
         }
