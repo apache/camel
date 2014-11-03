@@ -75,6 +75,8 @@ public class RedeliveryPolicyDefinition {
     private String delayPattern;
     @XmlAttribute
     private String allowRedeliveryWhileStopping;
+    @XmlAttribute
+    private String exchangeFormatterRef;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
 
@@ -151,6 +153,9 @@ public class RedeliveryPolicyDefinition {
             }
             if (allowRedeliveryWhileStopping != null) {
                 answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
+            }
+            if (exchangeFormatterRef != null) {
+                answer.setExchangeFormatterRef(exchangeFormatterRef);
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -538,6 +543,17 @@ public class RedeliveryPolicyDefinition {
         setDelayPattern(delayPattern);
         return this;
     }
+    
+    /**
+     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
+     *
+     * @param reference name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition exchangeFormatterRef(String exchangeFormatterRef) {
+        setExchangeFormatterRef(exchangeFormatterRef);
+        return this;
+    }
 
     // Properties
     //-------------------------------------------------------------------------
@@ -713,4 +729,14 @@ public class RedeliveryPolicyDefinition {
     public void setAllowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
         this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
     }
+    
+    public String getExchangeFormatterRef() {
+        return exchangeFormatterRef;
+    }
+    
+    public void setExchangeFormatterRef(String exchangeFormatterRef) {
+        this.exchangeFormatterRef = exchangeFormatterRef;
+    }
+    
+    
 }

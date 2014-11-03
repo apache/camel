@@ -199,13 +199,22 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
 
-        // setup exchange formatter to be used for message history dump
-        DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
-        formatter.setShowExchangeId(true);
-        formatter.setMultiline(true);
-        formatter.setShowHeaders(true);
-        formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
-        this.exchangeFormatter = formatter;
+        if (ObjectHelper.isNotEmpty(redeliveryPolicy.getExchangeFormatterRef())) {
+            ExchangeFormatter formatter = camelContext.getRegistry().lookupByNameAndType(redeliveryPolicy.getExchangeFormatterRef(), ExchangeFormatter.class);
+            if (formatter != null) {
+                this.exchangeFormatter = formatter;
+            } else {
+                throw new IllegalArgumentException("Cannot find the exchangeFormatter by using reference id " + redeliveryPolicy.getExchangeFormatterRef());
+            }
+        } else {
+            // setup exchange formatter to be used for message history dump
+            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
+            formatter.setShowExchangeId(true);
+            formatter.setMultiline(true);
+            formatter.setShowHeaders(true);
+            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+            this.exchangeFormatter = formatter;
+        }
     }
 
     public boolean supportTransacted() {
