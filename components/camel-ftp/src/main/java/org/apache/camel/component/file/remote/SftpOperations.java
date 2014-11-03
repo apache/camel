@@ -849,7 +849,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             if (ObjectHelper.isNotEmpty(mode)) {
                 // parse to int using 8bit mode
                 int permissions = Integer.parseInt(mode, 8);
-                LOG.trace("Setting chmod: {} on file: ", mode, targetName);
+                LOG.trace("Setting chmod: {} on file: {}", mode, targetName);
                 channel.chmod(permissions, targetName);
             }
 
