@@ -20,23 +20,28 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 public class CamelHttpClient extends HttpClient {
-    
-    private SSLContext context;
 
-    @Override
-    protected SSLContext getSSLContext() {
-        if (context == null) {
-            this.context = super.getSSLContext();
-        }
-        
-        return this.context;
+    private boolean supportRedirect;
+
+    public CamelHttpClient() {
+        super();
     }
 
+    public CamelHttpClient(SslContextFactory sslContextFactory) {
+        super(sslContextFactory);
+    }
+
+    @Deprecated
+    /**
+     * It does nothing here, please setup SslContextFactory directly, it will be removed in Camel 2.16.0
+     * @param context
+     */
     public void setSSLContext(SSLContext context) {
-        this.context = context;
+        // do nothing here, please setup SslContextFactory directly.
     }
 
     @Override
