@@ -865,7 +865,6 @@ public final class ObjectHelper {
         } else if ("char".equals(name)) {
             return char.class;
         }
-
         return null;
     }
 
