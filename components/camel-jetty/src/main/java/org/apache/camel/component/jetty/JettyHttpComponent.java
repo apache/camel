@@ -17,14 +17,17 @@
 package org.apache.camel.component.jetty;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 
@@ -510,24 +513,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();
         
         if (endpointSslContextParameters != null) {
-            SslContextFactory contextFact = new SslContextFactory() {
-
-                // This method is for Jetty 7.0.x ~ 7.4.x
-                @SuppressWarnings("unused")
-                public boolean checkConfig() {
-                    if (getSslContext() == null) {
-                        return checkSSLContextFactoryConfig(this);
-                    } else {
-                        return true;
-                    }
-                }
-                // This method is for Jetty 7.5.x
-                public void checkKeyStore() {
-                    // here we don't check the SslContext as it is already created
-                }
-                
-            };
-            contextFact.setSslContext(endpointSslContextParameters.createSSLContext());
+            SslContextFactory contextFact = createSslContextFactory(endpointSslContextParameters);
             for (Constructor<?> c : SslSelectChannelConnector.class.getConstructors()) {
                 if (c.getParameterTypes().length == 1
                     && c.getParameterTypes()[0].isInstance(contextFact)) {
@@ -592,6 +578,28 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         if (answer != null && responseHeaderSize != null) {
             answer.setResponseBufferSize(responseHeaderSize);
         }
+        return answer;
+    }
+    
+    private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
+        SslContextFactory answer = new SslContextFactory() {
+
+            // This method is for Jetty 7.0.x ~ 7.4.x
+            @SuppressWarnings("unused")
+            public boolean checkConfig() {
+                if (getSslContext() == null) {
+                    return checkSSLContextFactoryConfig(this);
+                } else {
+                    return true;
+                }
+            }
+            // This method is for Jetty 7.5.x
+            public void checkKeyStore() {
+                // here we don't check the SslContext as it is already created
+            }
+            
+        };
+        answer.setSslContext(ssl.createSSLContext());
         return answer;
     }
     
@@ -698,8 +706,13 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
      * @param maxThreads optional maximum number of threads in client thread pool
      * @param ssl        option SSL parameters
      */
-    public static CamelHttpClient createHttpClient(JettyHttpEndpoint endpoint, Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
-        CamelHttpClient httpClient = new CamelHttpClient();
+    public CamelHttpClient createHttpClient(JettyHttpEndpoint endpoint, Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
+        CamelHttpClient httpClient = null;
+        if (ssl != null) {
+            httpClient = new CamelHttpClient(createSslContextFactory(ssl));
+        } else {
+            httpClient = new CamelHttpClient();
+        }
         httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
         
         CamelContext context = endpoint.getCamelContext();
@@ -738,11 +751,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             httpClient.setThreadPool(qtp);
         }
-
-        if (ssl != null) {
-            httpClient.setSSLContext(ssl.createSSLContext());
-        }
-
+        
         if (LOG.isDebugEnabled()) {
             if (minThreads != null) {
                 LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
