@@ -16,14 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -31,6 +23,12 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Date;
 import java.util.Set;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 public class FileProducerChmodOptionTest extends ContextTestSupport {
     public static final String TEST_DIRECTORY = "target/fileProducerChmodOptionTest/";
@@ -52,7 +50,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
     }
 
 
-    private void runChmodCheck(String routeSuffix, String expectedPermissions) throws Exception{
+    private void runChmodCheck(String routeSuffix, String expectedPermissions) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:chmod" + routeSuffix);
         mock.expectedMessageCount(1);
         String testFileName = "chmod" + routeSuffix + ".txt";
