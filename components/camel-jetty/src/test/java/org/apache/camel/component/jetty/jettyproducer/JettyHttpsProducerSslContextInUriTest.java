@@ -42,12 +42,12 @@ public class JettyHttpsProducerSslContextInUriTest extends JettyProducerHttpsRou
         kmp.setKeyPassword(pwd);
         kmp.setKeyStore(ksp);
 
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
+        //TrustManagersParameters tmp = new TrustManagersParameters();
+        //tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
-        sslContextParameters.setTrustManagers(tmp);
+        //sslContextParameters.setTrustManagers(tmp);
 
         JndiRegistry registry = super.createRegistry();
         registry.bind("sslContextParameters", sslContextParameters);
