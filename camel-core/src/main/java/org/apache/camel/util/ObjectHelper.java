@@ -860,6 +860,10 @@ public final class ObjectHelper {
             return Double.class;
         } else if ("double".equals(name)) {
             return double.class;
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name)) {
+            return Character.class;
+        } else if ("char".equals(name)) {
+            return char.class;
         }
 
         return null;
@@ -1165,6 +1169,8 @@ public final class ObjectHelper {
                 rc = Byte.class;
             } else if (type == boolean.class) {
                 rc = Boolean.class;
+            } else if (type == char.class) {
+                rc = Character.class;
             }
         }
         return rc;
