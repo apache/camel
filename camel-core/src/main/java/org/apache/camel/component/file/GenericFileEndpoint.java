@@ -57,6 +57,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
+    
+    private static final Integer CHMOD_WRITE_MASK = 02;
+    private static final Integer CHMOD_READ_MASK = 04;
+    private static final Integer CHMOD_EXECUTE_MASK = 01;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -291,7 +295,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
             this.chmod = chmod.trim();
         } else {
-            throw new Exception("chmod option [" + chmod + "] is not valid");
+            throw new IllegalArgumentException("chmod option [" + chmod + "] is not valid");
         }
     }
 
@@ -306,7 +310,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             return false;
         }
         String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
-        for (int i=0; i < permissionsString.length(); i++) {
+        for (int i = 0; i < permissionsString.length(); i++) {
             Character c = permissionsString.charAt(i);
             if (!Character.isDigit(c) || Integer.parseInt(c.toString()) > 7) {
                 return false;
@@ -314,10 +318,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
         return true;
     }
-
-    private static final Integer CHMOD_WRITE_MASK = 02;
-    private static final Integer CHMOD_READ_MASK = 04;
-    private static final Integer CHMOD_EXECUTE_MASK = 01;
 
     public Set<PosixFilePermission> getPermissions() {
         Set<PosixFilePermission> permissions = new HashSet<>();
@@ -331,17 +331,35 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
         Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
 
-        if ((ownerValue & CHMOD_WRITE_MASK) > 0) { permissions.add(PosixFilePermission.OWNER_WRITE);}
-        if ((ownerValue & CHMOD_READ_MASK) > 0) { permissions.add(PosixFilePermission.OWNER_READ);}
-        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) { permissions.add(PosixFilePermission.OWNER_EXECUTE);}
+        if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_WRITE);
+        }
+        if ((ownerValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_READ);
+        }
+        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_EXECUTE);
+        }
 
-        if ((groupValue & CHMOD_WRITE_MASK) > 0) { permissions.add(PosixFilePermission.GROUP_WRITE);}
-        if ((groupValue & CHMOD_READ_MASK) > 0) { permissions.add(PosixFilePermission.GROUP_READ);}
-        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) { permissions.add(PosixFilePermission.GROUP_EXECUTE);}
+        if ((groupValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_WRITE);
+        }
+        if ((groupValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_READ);
+        }
+        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_EXECUTE);
+        }
 
-        if ((othersValue & CHMOD_WRITE_MASK) > 0) { permissions.add(PosixFilePermission.OTHERS_WRITE);}
-        if ((othersValue & CHMOD_READ_MASK) > 0) { permissions.add(PosixFilePermission.OTHERS_READ);}
-        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) { permissions.add(PosixFilePermission.OTHERS_EXECUTE);}
+        if ((othersValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_WRITE);
+        }
+        if ((othersValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_READ);
+        }
+        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+        }
 
         return permissions;
     }
