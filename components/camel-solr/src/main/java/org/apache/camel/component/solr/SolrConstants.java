@@ -27,6 +27,7 @@ public final class SolrConstants {
     public static final String OPERATION_INSERT = "INSERT";
     public static final String OPERATION_INSERT_STREAMING = "INSERT_STREAMING";
     public static final String OPERATION_ADD_BEAN = "ADD_BEAN";
+    public static final String OPERATION_ADD_BEANS = "ADD_BEANS";
     public static final String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
     public static final String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
 

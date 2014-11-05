@@ -17,6 +17,7 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -80,6 +81,8 @@ public class SolrProducer extends DefaultProducer {
         	serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
         	serverToUse.addBean(exchange.getIn().getBody());
+        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEANS)) {
+        	serverToUse.addBeans(exchange.getIn().getBody(Collection.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
         	serverToUse.commit();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
