@@ -113,11 +113,11 @@ public class CamelExtension implements Extension {
         ContextName annotation = annotatedType.getAnnotation(ContextName.class);
         Class<T> javaClass = annotatedType.getJavaClass();
         if (annotation != null && isRoutesBean(javaClass)) {
-            addRouteBuilderBean(process, annotation);
+            addRouteBuilderBean(annotatedType, annotation);
         }
     }
 
-    private void addRouteBuilderBean(final ProcessAnnotatedType<?> process, ContextName annotation) {
+    private void addRouteBuilderBean(final AnnotatedType<?> process, ContextName annotation) {
         final CamelContextConfig config = getCamelConfig(annotation.value());
         config.addRouteBuilderBean(process);
     }
