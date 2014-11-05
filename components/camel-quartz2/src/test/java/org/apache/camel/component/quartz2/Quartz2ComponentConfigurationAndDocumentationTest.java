@@ -41,7 +41,7 @@ public class Quartz2ComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"cron\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"cron\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"fireNow\": { \"type\": \"boolean\" }"));
     }
 
@@ -49,7 +49,7 @@ public class Quartz2ComponentConfigurationAndDocumentationTest extends CamelTest
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("quartz2");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

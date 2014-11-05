@@ -17,11 +17,14 @@
 package org.apache.camel.karaf.commands;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.RestRegistry;
 
 /**
  * CamelController interface defines the expected behaviors to manipulate Camel resources (context, route, etc).
@@ -85,5 +88,21 @@ public interface CamelController {
      * @return the endpoints
      */
     List<Endpoint> getEndpoints(String camelContextName);
+
+    /**
+     * Return the definition of the REST services for the given Camel context.
+     *
+     * @param camelContextName the Camel context.
+     * @return the <code>RouteDefinition</code>.
+     */
+    List<RestDefinition> getRestDefinitions(String camelContextName);
+
+    /**
+     * Return the REST services
+     *
+     * @param camelContextName the Camel context.
+     * @return the REST services
+     */
+    Map<String, List<RestRegistry.RestService>> getRestServices(String camelContextName);
 
 }

@@ -39,14 +39,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.validation.Schema;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -55,6 +48,10 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.util.IOHelper;
@@ -65,7 +62,7 @@ import org.apache.camel.util.IOHelper;
  */
 public final class XmlSignatureHelper {
     private XmlSignatureHelper() {
-        //Helper class
+        // Helper class
     }
 
     /**
@@ -160,6 +157,10 @@ public final class XmlSignatureHelper {
         XPathFilterParameterSpec params = namespaceMap == null ? new XPathFilterParameterSpec(xpath) : new XPathFilterParameterSpec(xpath,
                 namespaceMap);
         return params;
+    }
+
+    public static XPathFilterParameterSpec getXpathFilter(String xpath) {
+        return getXpathFilter(xpath, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -327,7 +328,7 @@ public final class XmlSignatureHelper {
      * @throws Exception
      *             if an error during the reading of the XSL file occurs
      */
-    public static AlgorithmMethod getXslTransform(String path) throws Exception {
+    public static AlgorithmMethod getXslTransform(String path) throws Exception { //NOPMD
         InputStream is = readXslTransform(path);
         if (is == null) {
             throw new IllegalStateException(String.format("XSL file %s not found", path));
@@ -363,7 +364,7 @@ public final class XmlSignatureHelper {
         return transformXslt;
     }
 
-    protected static InputStream readXslTransform(String path) throws Exception {
+    protected static InputStream readXslTransform(String path) throws Exception { //NOPMD
         if (path == null) {
             throw new IllegalArgumentException("path is null");
         }
@@ -394,6 +395,10 @@ public final class XmlSignatureHelper {
     }
 
     public static DocumentBuilder newDocumentBuilder(Boolean disallowDoctypeDecl) throws ParserConfigurationException {
+        return newDocumentBuilder(disallowDoctypeDecl, null);
+    }
+
+    public static DocumentBuilder newDocumentBuilder(Boolean disallowDoctypeDecl, Schema schema) throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
@@ -404,13 +409,30 @@ public final class XmlSignatureHelper {
         dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", isDissalowDoctypeDecl);
         // avoid overflow attacks
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        if (schema != null) {
+            dbf.setSchema(schema);
+        }
 
         return dbf.newDocumentBuilder();
     }
 
-    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
-        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
-        
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding) throws Exception { //NOPMD
+
+        if (node.getNodeType() == Node.TEXT_NODE) {
+            byte[] bytes = tranformTextNodeToByteArray(node, encoding);
+            os.write(bytes);
+        } else {
+            transformNonTextNodeToOutputStream(node, os, omitXmlDeclaration, encoding);
+        }
+    }
+
+    /**
+     * Use {@link #transformToOutputStream(Node, OutputStream, boolean, String)}
+     * instead.
+     */
+    @Deprecated
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception { //NOPMD
+
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node);
             os.write(bytes);
@@ -419,24 +441,74 @@ public final class XmlSignatureHelper {
         }
     }
 
-    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
-        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-        
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer trans = tf.newTransformer();
-        if (omitXmlDeclaration) {
-            trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        }
-        trans.transform(new DOMSource(node), new StreamResult(os));
+    /**
+     * Use
+     * {@link #transformNonTextNodeToOutputStream(Node, OutputStream, boolean, String)}
+     * instead.
+     */
+    @Deprecated
+    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception { //NOPMD
+        transformNonTextNodeToOutputStream(node, os, omitXmlDeclaration, null);
     }
 
+    /**
+     * Serializes a node using a certain character encoding.
+     * 
+     * @param node
+     *            DOM node to serialize
+     * @param os
+     *            output stream, to which the node is serialized
+     * @param omitXmlDeclaration
+     *            indicator whether to omit the XML declaration or not
+     * @param encoding
+     *            character encoding, can be <code>null</code>, if
+     *            <code>null</code> then "UTF-8" is used
+     * @throws Exception
+     */
+    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding)
+        throws Exception { //NOPMD
+        // previously we used javax.xml.transform.Transformer, however the JDK xalan implementation did not work correctly with a specified encoding
+        // therefore we switched to DOMImplementationLS
+        if (encoding == null) {
+            encoding = "UTF-8";
+        }
+        DOMImplementationRegistry domImplementationRegistry = DOMImplementationRegistry.newInstance();
+        DOMImplementationLS domImplementationLS = (DOMImplementationLS) domImplementationRegistry.getDOMImplementation("LS");
+        LSOutput lsOutput = domImplementationLS.createLSOutput();
+        lsOutput.setEncoding(encoding);
+        lsOutput.setByteStream(os);
+        LSSerializer lss = domImplementationLS.createLSSerializer();
+        lss.getDomConfig().setParameter("xml-declaration", !omitXmlDeclaration);
+        lss.write(node, lsOutput);
+    }
+
+    /** use {@link #tranformTextNodeToByteArray(Node, String)} instead. */
+    @Deprecated
     public static byte[] tranformTextNodeToByteArray(Node node) {
+        return tranformTextNodeToByteArray(node, null);
+    }
+
+    /**
+     * Trannsforms a text node to byte array using a certain character encoding.
+     * 
+     * @param node
+     *            text node
+     * @param encoding
+     *            character encoding, can be <code>null</code>, if
+     *            <code>null</code> then UTF-8 is used
+     * @return byte array, <code>null</code> if the node has not text content
+     * @throws IllegalStateException
+     *             if the encoding is not supported
+     */
+    public static byte[] tranformTextNodeToByteArray(Node node, String encoding) {
+        if (encoding == null) {
+            encoding = "UTF-8";
+        }
         String text = node.getTextContent();
         if (text != null) {
             try {
-                return text.getBytes("UTF-8");
+                return text.getBytes(encoding);
             } catch (UnsupportedEncodingException e) {
-                // should not happen
                 throw new IllegalStateException(e);
             }
         } else {

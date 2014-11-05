@@ -22,9 +22,7 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 
 import org.w3c.dom.Document;
-
 import org.apache.camel.Message;
-
 
 /**
  * Used in the signature verifier to map the references and objects of the XML
@@ -46,14 +44,16 @@ public interface XmlSignature2Message {
     public interface Input {
 
         /**
-         * Returns the references.
+         * Returns the references. If there were several signatures then all
+         * references of all signatures are returned.
          * 
          * @return list of references, cannot be <code>null</code>
          */
         List<Reference> getReferences();
 
         /**
-         * Returns the objects.
+         * Returns the objects. If there were several signatures in the XML
+         * document then all objects of all signatures are returned.
          * 
          * @return objects, cannot be <code>null</code>
          */
@@ -88,6 +88,15 @@ public interface XmlSignature2Message {
          * the document set to the output message.
          */
         Boolean getRemoveSignatureElements();
+
+        /**
+         * The character encoding of the resulting XML document. Can be
+         * <code>null</code>. If <code>null</code> then the encoding of the
+         * original XML document is used.
+         * 
+         */
+        String getOutputXmlEncoding();
+
     }
 
 }

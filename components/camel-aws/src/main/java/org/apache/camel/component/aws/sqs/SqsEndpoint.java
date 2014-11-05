@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sqs;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -27,9 +28,9 @@ import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,6 +39,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
  *
  */
-public class SqsEndpoint extends ScheduledPollEndpoint {
+public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
     
@@ -55,12 +58,21 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     private String queueUrl;
     private SqsConfiguration configuration;
     private int maxMessagesPerPoll;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public SqsEndpoint(String uri, SqsComponent component, SqsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
+    
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
 
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
+    }
+   
     public Producer createProducer() throws Exception {
         return new SqsProducer(this);
     }
@@ -84,6 +96,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         // Override the endpoint location
         if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonSQSEndpoint())) {
             client.setEndpoint(getConfiguration().getAmazonSQSEndpoint());
+        }
+        
+        // check the setting the headerFilterStrategy
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new SqsHeaderFilterStrategy();
         }
 
         // If both region and Account ID is provided the queue URL can be built manually.
@@ -187,7 +204,19 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         message.setHeader(SqsConstants.MD5_OF_BODY, msg.getMD5OfBody());
         message.setHeader(SqsConstants.RECEIPT_HANDLE, msg.getReceiptHandle());
         message.setHeader(SqsConstants.ATTRIBUTES, msg.getAttributes());
+        message.setHeader(SqsConstants.MESSAGE_ATTRIBUTES, msg.getMessageAttributes());
         
+        //Need to apply the SqsHeaderFilterStrategy this time
+        HeaderFilterStrategy headerFilterStrategy = getHeaderFilterStrategy();
+        //add all sqs message attributes as camel message headers so that knowledge of 
+        //the Sqs class MessageAttributeValue will not leak to the client
+        for (Entry<String, MessageAttributeValue> entry : msg.getMessageAttributes().entrySet()) {
+            String header = entry.getKey();
+            Object value = translateValue(entry.getValue());
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(header, value, exchange)) {
+                message.setHeader(header, value);
+            }
+        }
         return exchange;
     }
 
@@ -230,5 +259,15 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+    
+    private Object translateValue(MessageAttributeValue mav) {
+        Object result = null;
+        if (mav.getStringValue() != null) {
+            result = mav.getStringValue();
+        } else if (mav.getBinaryValue() != null) {
+            result = mav.getBinaryValue();
+        }
+        return result;
     }
 }

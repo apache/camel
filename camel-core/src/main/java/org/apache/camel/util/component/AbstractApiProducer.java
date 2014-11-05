@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -40,7 +39,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     protected final AbstractApiEndpoint<E, T> endpoint;
 
     // properties helper
-    protected final ApiMethodPropertiesHelper propertiesHelper;
+    protected final ApiMethodPropertiesHelper<T> propertiesHelper;
 
     // method helper
     protected final ApiMethodHelper<?> methodHelper;
@@ -48,10 +47,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     // logger
     private final transient Logger log = LoggerFactory.getLogger(getClass());
 
-    // cached Endpoint executor service
-    private ExecutorService executorService;
-
-    public AbstractApiProducer(AbstractApiEndpoint<E, T> endpoint, ApiMethodPropertiesHelper propertiesHelper) {
+    public AbstractApiProducer(AbstractApiEndpoint<E, T> endpoint, ApiMethodPropertiesHelper<T> propertiesHelper) {
         super(endpoint);
         this.propertiesHelper = propertiesHelper;
         this.endpoint = endpoint;
@@ -109,7 +105,6 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
@@ -132,12 +127,11 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptResult(Object methodResult, Exchange resultExchange) {
         // do nothing by default
     }
 
-    private ApiMethod findMethod(Exchange exchange, Map<String, Object> properties) {
+    protected ApiMethod findMethod(Exchange exchange, Map<String, Object> properties) {
 
         ApiMethod method = null;
         final List<ApiMethod> candidates = endpoint.getCandidates();

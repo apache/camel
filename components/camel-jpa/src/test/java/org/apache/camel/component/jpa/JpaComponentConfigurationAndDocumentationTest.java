@@ -43,7 +43,7 @@ public class JpaComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"persistenceUnit\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"persistenceUnit\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"usePassedInEntityManager\": { \"type\": \"boolean\" }"));
     }
 
@@ -51,7 +51,7 @@ public class JpaComponentConfigurationAndDocumentationTest extends CamelTestSupp
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("jpa");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

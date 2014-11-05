@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -285,30 +286,43 @@ public final class MessageHelper {
             }
         }
 
-        // is the body a stream cache
-        StreamCache cache;
+        // is the body a stream cache or input stream
+        StreamCache cache = null;
+        InputStream is = null;
         if (obj instanceof StreamCache) {
             cache = (StreamCache)obj;
-        } else {
+            is = null;
+        } else if (obj instanceof InputStream) {
             cache = null;
+            is = (InputStream) obj;
         }
 
         // grab the message body as a string
         String body = null;
         if (message.getExchange() != null) {
             try {
-                body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, message.getExchange(), obj);
-            } catch (Exception e) {
+                body = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class, message.getExchange(), obj);
+            } catch (Throwable e) {
                 // ignore as the body is for logging purpose
             }
         }
         if (body == null) {
-            body = obj.toString();
+            try {
+                body = obj.toString();
+            } catch (Throwable e) {
+                // ignore as the body is for logging purpose
+            }
         }
 
         // reset stream cache after use
         if (cache != null) {
             cache.reset();
+        } else if (is != null && is.markSupported()) {
+            try {
+                is.reset();
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         if (body == null) {
@@ -399,13 +413,13 @@ public final class MessageHelper {
                 // to String
                 if (value != null) {
                     try {
-                        String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, 
+                        String xml = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
                                 message.getExchange(), value);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
                         }
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         // ignore as the body is for logging purpose
                     }
                 }
@@ -473,7 +487,8 @@ public final class MessageHelper {
         // must not cause new exceptions so run this in a try catch block
         try {
             return doDumpMessageHistoryStacktrace(exchange, exchangeFormatter, logStackTrace);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            // ignore as the body is for logging purpose
             return "";
         }
     }
@@ -512,7 +527,7 @@ public final class MessageHelper {
         for (MessageHistory history : list) {
             routeId = history.getRouteId() != null ? history.getRouteId() : "";
             id = history.getNode().getId();
-            // we need to avoid leak the sensibale information here
+            // we need to avoid leak the sensible information here
             label =  URISupport.sanitizeUri(history.getNode().getLabel());
             elapsed = history.getElapsed();
 

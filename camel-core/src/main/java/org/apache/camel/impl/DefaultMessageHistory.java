@@ -22,6 +22,9 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.util.StopWatch;
 
+/**
+ * Default {@link org.apache.camel.MessageHistory}.
+ */
 public class DefaultMessageHistory implements MessageHistory {
 
     private final String routeId;

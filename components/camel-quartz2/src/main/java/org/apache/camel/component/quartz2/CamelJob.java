@@ -18,6 +18,8 @@ package org.apache.camel.component.quartz2;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.DelegateEndpoint;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.quartz.Job;
@@ -69,7 +71,7 @@ public class CamelJob implements Job {
         }
     }
 
-    private CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
+    protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
         SchedulerContext schedulerContext = getSchedulerContext(context);
         String camelContextName = context.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
         CamelContext result = (CamelContext)schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
@@ -79,7 +81,7 @@ public class CamelJob implements Job {
         return result;
     }
 
-    private SchedulerContext getSchedulerContext(JobExecutionContext context) throws JobExecutionException {
+    protected SchedulerContext getSchedulerContext(JobExecutionContext context) throws JobExecutionException {
         try {
             return context.getScheduler().getContext();
         } catch (SchedulerException e) {
@@ -87,7 +89,7 @@ public class CamelJob implements Job {
         }
     }
 
-    private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
+    protected QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
@@ -96,8 +98,12 @@ public class CamelJob implements Job {
         // check all active routes for the quartz endpoint this task matches
         // as we prefer to use the existing endpoint from the routes
         for (Route route : camelContext.getRoutes()) {
-            if (route.getEndpoint() instanceof QuartzEndpoint) {
-                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
+            Endpoint endpoint = route.getEndpoint();
+            if (endpoint instanceof DelegateEndpoint) {
+                endpoint = ((DelegateEndpoint)endpoint).getEndpoint();   
+            }
+            if (endpoint instanceof QuartzEndpoint) {
+                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) endpoint;
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);

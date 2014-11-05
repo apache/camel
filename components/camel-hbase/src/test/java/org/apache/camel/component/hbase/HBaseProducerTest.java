@@ -100,7 +100,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                 }
             });
 
-            assertEquals(body[0][0][0], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader()));
+            assertEquals(body[0][0][1], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader()));
             assertEquals(body[0][1][2], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2)));
         }
     }

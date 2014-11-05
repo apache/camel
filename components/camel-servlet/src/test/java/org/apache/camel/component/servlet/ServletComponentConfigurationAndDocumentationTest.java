@@ -19,7 +19,6 @@ package org.apache.camel.component.servlet;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class ServletComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"servletName\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"servletName\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"matchOnUriPrefix\": { \"type\": \"boolean\" }"));
     }
 
@@ -52,7 +51,7 @@ public class ServletComponentConfigurationAndDocumentationTest extends CamelTest
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("servlet");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

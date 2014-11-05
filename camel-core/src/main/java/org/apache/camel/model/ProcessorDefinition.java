@@ -52,6 +52,7 @@ import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -406,10 +407,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             output.preCreateProcessor();
 
             // resolve properties before we create the processor
-            resolvePropertyPlaceholders(routeContext, output);
+            ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, output);
 
             // resolve constant fields (eg Exchange.FILE_NAME)
-            resolveKnownConstantFields(output);
+            ProcessorDefinitionHelper.resolveKnownConstantFields(output);
 
             // also resolve properties and constant fields on embedded expressions
             ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;
@@ -418,10 +419,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 ExpressionDefinition expressionDefinition = exp.getExpression();
                 if (expressionDefinition != null) {
                     // resolve properties before we create the processor
-                    resolvePropertyPlaceholders(routeContext, expressionDefinition);
+                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, expressionDefinition);
 
                     // resolve constant fields (eg Exchange.FILE_NAME)
-                    resolveKnownConstantFields(expressionDefinition);
+                    ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
                 }
             }
 
@@ -471,10 +472,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         preCreateProcessor();
 
         // resolve properties before we create the processor
-        resolvePropertyPlaceholders(routeContext, this);
+        ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, this);
 
         // resolve constant fields (eg Exchange.FILE_NAME)
-        resolveKnownConstantFields(this);
+        ProcessorDefinitionHelper.resolveKnownConstantFields(this);
 
         // also resolve properties and constant fields on embedded expressions
         ProcessorDefinition<?> me = (ProcessorDefinition<?>) this;
@@ -483,10 +484,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             ExpressionDefinition expressionDefinition = exp.getExpression();
             if (expressionDefinition != null) {
                 // resolve properties before we create the processor
-                resolvePropertyPlaceholders(routeContext, expressionDefinition);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, expressionDefinition);
 
                 // resolve constant fields (eg Exchange.FILE_NAME)
-                resolveKnownConstantFields(expressionDefinition);
+                ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
             }
         }
 
@@ -507,129 +508,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Inspects the given definition and resolves any property placeholders from its properties.
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
-     *
-     * @param routeContext the route context
-     * @param definition   the definition
-     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
-     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
-     * @see org.apache.camel.component.properties.PropertiesComponent
-     */
-    protected void resolvePropertyPlaceholders(RouteContext routeContext, Object definition) throws Exception {
-        log.trace("Resolving property placeholders for: {}", definition);
-
-        // find all getter/setter which we can use for property placeholders
-        Map<String, Object> properties = new HashMap<String, Object>();
-        IntrospectionSupport.getProperties(definition, properties, null);
-
-        ProcessorDefinition<?> processorDefinition = null;
-        if (definition instanceof ProcessorDefinition) {
-            processorDefinition = (ProcessorDefinition<?>) definition;
-        }
-        // include additional properties which have the Camel placeholder QName
-        // and when the definition parameter is this (otherAttributes belong to this)
-        if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
-            for (QName key : processorDefinition.getOtherAttributes().keySet()) {
-                if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {
-                    String local = key.getLocalPart();
-                    Object value = processorDefinition.getOtherAttributes().get(key);
-                    if (value != null && value instanceof String) {
-                        // value must be enclosed with placeholder tokens
-                        String s = (String) value;
-                        String prefixToken = routeContext.getCamelContext().getPropertyPrefixToken();
-                        String suffixToken = routeContext.getCamelContext().getPropertySuffixToken();
-                        if (prefixToken == null) {
-                            throw new IllegalArgumentException("Property with name [" + local + "] uses property placeholders; however, no properties component is configured.");
-                        }
-                        
-                        if (!s.startsWith(prefixToken)) {
-                            s = prefixToken + s;
-                        }
-                        if (!s.endsWith(suffixToken)) {
-                            s = s + suffixToken;
-                        }
-                        value = s;
-                    }
-                    properties.put(local, value);
-                }
-            }
-        }
-
-        if (!properties.isEmpty()) {
-            log.trace("There are {} properties on: {}", properties.size(), definition);
-            // lookup and resolve properties for String based properties
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                // the name is always a String
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    // value must be a String, as a String is the key for a property placeholder
-                    String text = (String) value;
-                    text = routeContext.getCamelContext().resolvePropertyPlaceholders(text);
-                    if (text != value) {
-                        // invoke setter as the text has changed
-                        boolean changed = IntrospectionSupport.setProperty(routeContext.getCamelContext().getTypeConverter(), definition, name, text);
-                        if (!changed) {
-                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
-                        }
-                        if (log.isDebugEnabled()) {
-                            log.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Inspects the given definition and resolves known fields
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will check if it refers to a known field (such as on Exchange).
-     *
-     * @param definition   the definition
-     */
-    protected void resolveKnownConstantFields(Object definition) throws Exception {
-        log.trace("Resolving known fields for: {}", definition);
-
-        // find all String getter/setter
-        Map<String, Object> properties = new HashMap<String, Object>();
-        IntrospectionSupport.getProperties(definition, properties, null);
-
-        if (!properties.isEmpty()) {
-            log.trace("There are {} properties on: {}", properties.size(), definition);
-
-            // lookup and resolve known constant fields for String based properties
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    // we can only resolve String typed values
-                    String text = (String) value;
-
-                    // is the value a known field (currently we only support constants from Exchange.class)
-                    if (text.startsWith("Exchange.")) {
-                        String field = ObjectHelper.after(text, "Exchange.");
-                        String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
-                        if (constant != null) {
-                            // invoke setter as the text has changed
-                            IntrospectionSupport.setProperty(definition, name, constant);
-                            if (log.isDebugEnabled()) {
-                                log.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
-                            }
-                        } else {
-                            throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Strategy to execute any custom logic before the {@link Processor} is created.
      */
     protected void preCreateProcessor() {
@@ -641,7 +519,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param output the child to be added as output to this
      */
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         // noop
     }
 
@@ -1317,12 +1195,37 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link org.apache.camel.model.rest.RestDefinition rest()} DSL.
+     *
+     * @return the builder
+     */
+    public RestDefinition endRest() {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            return route.getRestDefinition();
+        }
+
+        throw new IllegalArgumentException("Cannot find RouteDefinition to allow endRest");
+    }
+
+    /**
      * Ends the current block and returns back to the {@link TryDefinition doTry()} DSL.
      *
      * @return the builder
      */
     public TryDefinition endDoTry() {
-        return (TryDefinition) end();
+        ProcessorDefinition<?> def = this;
+
+        // are we already a try?
+        if (def instanceof TryDefinition) {
+            return (TryDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (TryDefinition) def;
     }
 
     /**
@@ -2394,6 +2297,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
+    public Type startupOrder(int startupOrder) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.startupOrder(startupOrder);
+        }
+
+        return (Type) this;
+    }
+
     /**
      * Stops continue routing the current {@link org.apache.camel.Exchange} and marks it as completed.
      *
@@ -2552,6 +2466,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
+     *  the multi parameter 
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Object bean, String method, boolean multiParameterArray) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBean(bean);
+        answer.setMethod(method);
+        answer.setMultiParameterArray(multiParameterArray);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
@@ -2584,6 +2518,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param beanType  the bean class, Camel will instantiate an object at runtime
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
+     *  the multi parameter 
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Class<?> beanType, String method, boolean multiParameterArray) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBeanType(beanType);
+        answer.setMethod(method);
+        answer.setMultiParameterArray(multiParameterArray);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param beanType  the bean class, Camel will instantiate an object at runtime
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
+     *  the multi parameter
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     * @return the builder
+     */
+    public Type bean(Class<?> beanType, String method, boolean multiParameterArray, boolean cache) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBeanType(beanType);
+        answer.setMethod(method);
+        answer.setMultiParameterArray(multiParameterArray);
+        answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
@@ -2598,7 +2574,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
-
+    
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
@@ -2630,7 +2606,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
-
+    
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
@@ -2645,6 +2621,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type beanRef(String ref, String method, boolean cache) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param ref  reference to a bean to lookup in the registry
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
+     *               the multi parameter 
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type beanRef(String ref, String method, boolean cache, boolean multiParameterArray) {
+        BeanDefinition answer = new BeanDefinition(ref, method);
+        answer.setCache(cache);
+        answer.setMultiParameterArray(multiParameterArray);
         addOutput(answer);
         return (Type) this;
     }
@@ -2954,6 +2951,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
      * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+        EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
+        enrich.setAggregateOnException(aggregateOnException);
+        addOutput(enrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
      * <p/>
      * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
      * to obatin the additional data, where as pollEnrich uses a polling consumer.
@@ -2985,6 +2999,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         EnrichDefinition enrich = new EnrichDefinition();
         enrich.setResourceRef(resourceRef);
         enrich.setAggregationStrategyRef(aggregationStrategyRef);
+        addOutput(enrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
+        EnrichDefinition enrich = new EnrichDefinition();
+        enrich.setResourceRef(resourceRef);
+        enrich.setAggregationStrategyRef(aggregationStrategyRef);
+        enrich.setAggregateOnException(aggregateOnException);
         addOutput(enrich);
         return (Type) this;
     }
@@ -3070,6 +3108,34 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param timeout               timeout in millis to wait at most for data to be available.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout);
+        pollEnrich.setAggregateOnException(aggregateOnException);
+        addOutput(pollEnrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param timeout               timeout in millis to wait at most for data to be available.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
@@ -3103,6 +3169,37 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         pollEnrich.setResourceRef(resourceRef);
         pollEnrich.setTimeout(timeout);
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
+        addOutput(pollEnrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
+     * @param timeout                timeout in millis to wait at most for data to be available.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
+        pollEnrich.setResourceRef(resourceRef);
+        pollEnrich.setTimeout(timeout);
+        pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
+        pollEnrich.setAggregateOnException(aggregateOnException);
         addOutput(pollEnrich);
         return (Type) this;
     }

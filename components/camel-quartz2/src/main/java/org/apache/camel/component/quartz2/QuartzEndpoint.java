@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz2;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -240,7 +241,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail = createJobDetail();
             trigger = createTrigger(jobDetail);
 
-            updateJobDataMap(jobDetail);
+            QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
 
             // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
             Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
@@ -274,16 +275,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    private void updateJobDataMap(JobDetail jobDetail) {
-        // Store this camelContext name into the job data
-        JobDataMap jobDataMap = jobDetail.getJobDataMap();
-        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        String endpointUri = getEndpointUri();
-        LOG.debug("Adding camelContextName={}, endpointUri={} into job data map.", camelContextName, endpointUri);
-        jobDataMap.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, camelContextName);
-        jobDataMap.put(QuartzConstants.QUARTZ_ENDPOINT_URI, endpointUri);
-    }
-
     private Trigger createTrigger(JobDetail jobDetail) throws Exception {
         Trigger result;
         Date startTime = new Date();
@@ -292,22 +283,34 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
-            result = TriggerBuilder.newTrigger()
-                    .withIdentity(triggerKey)
-                    .startAt(startTime)
-                    .withSchedule(cronSchedule(cron).withMisfireHandlingInstructionFireAndProceed())
-                    .build();
+            String timeZone = (String)triggerParameters.get("timeZone");
+            if (timeZone != null) {
+                result = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(cronSchedule(cron)
+                                .withMisfireHandlingInstructionFireAndProceed()
+                                .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                        .build();
+                jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
+            } else {
+                result = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(cronSchedule(cron)
+                                .withMisfireHandlingInstructionFireAndProceed())
+                        .build();
+            }
 
             // enrich job map with details
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
-
         } else {
             LOG.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
             String repeatString = (String) triggerParameters.get("repeatCount");
             if (repeatString != null) {
-                repeat = EndpointHelper.resloveStringParameter(getCamelContext(), repeatString, Integer.class);
+                repeat = EndpointHelper.resolveParameter(getCamelContext(), repeatString, Integer.class);
                 // need to update the parameters
                 triggerParameters.put("repeatCount", repeat);
             }
@@ -316,7 +319,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             long interval = 1000;
             String intervalString = (String) triggerParameters.get("repeatInterval");
             if (intervalString != null) {
-                interval = EndpointHelper.resloveStringParameter(getCamelContext(), intervalString, Long.class);
+                interval = EndpointHelper.resolveParameter(getCamelContext(), intervalString, Long.class);
                 // need to update the parameters
                 triggerParameters.put("repeatInterval", interval);
             }

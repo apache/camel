@@ -158,6 +158,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         ServiceHelper.stopServices(output, errorHandler);
     }
 
+    @SuppressWarnings("deprecation")
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;

@@ -30,8 +30,9 @@ public abstract class BaseSparkTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24500);
+        port = AvailablePortFinder.getNextAvailable(25500);
         super.setUp();
+        Thread.sleep(200);
     }
 
     @Override

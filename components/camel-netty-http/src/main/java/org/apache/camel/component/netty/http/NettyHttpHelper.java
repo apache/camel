@@ -127,7 +127,7 @@ public final class NettyHttpHelper {
         String statusText = response.getStatus().getReasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {
-            String redirectLocation = response.getHeader("location");
+            String redirectLocation = response.headers().get("location");
             if (redirectLocation != null) {
                 return new NettyHttpOperationFailedException(uri, responseCode, statusText, redirectLocation, response);
             } else {
@@ -137,7 +137,7 @@ public final class NettyHttpHelper {
         }
 
         if (transferException) {
-            String contentType = response.getHeader(Exchange.CONTENT_TYPE);
+            String contentType = response.headers().get(Exchange.CONTENT_TYPE);
             if (NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                 // if the response was a serialized exception then use that
                 InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, response);

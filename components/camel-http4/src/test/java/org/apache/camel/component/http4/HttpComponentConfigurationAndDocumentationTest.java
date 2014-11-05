@@ -43,7 +43,7 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"throwExceptionOnFailure\": { \"type\": \"boolean\" }"));
     }
 
@@ -51,7 +51,7 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("http4");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

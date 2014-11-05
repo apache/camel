@@ -27,7 +27,6 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for $proxyType.Name
  */
-@SuppressWarnings("unused")
 @UriParams
 public final class $configName extends ${componentName}Configuration {
 #foreach( $parameter in $parameters.entrySet() )

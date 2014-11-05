@@ -42,15 +42,15 @@ public class FtpComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"integer\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("ftp");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

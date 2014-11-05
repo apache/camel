@@ -183,13 +183,13 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     private void maybeStart() throws Exception {
         LOG.trace("maybeStart: {}", this);
 
-        // allow to regsiter the BluerintCamelContext eager in the OSGi Service Registry, which ex is needed
+        // allow to register the BluerintCamelContext eager in the OSGi Service Registry, which ex is needed
         // for unit testing with camel-test-blueprint
         boolean eager = "true".equalsIgnoreCase(System.getProperty("registerBlueprintCamelContextEager"));
         if (eager) {
-            for (EventNotifier notifer : getManagementStrategy().getEventNotifiers()) {
-                if (notifer instanceof OsgiCamelContextPublisher) {
-                    OsgiCamelContextPublisher publisher = (OsgiCamelContextPublisher) notifer;
+            for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
+                if (notifier instanceof OsgiCamelContextPublisher) {
+                    OsgiCamelContextPublisher publisher = (OsgiCamelContextPublisher) notifier;
                     publisher.registerCamelContext(this);
                     break;
                 }

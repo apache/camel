@@ -44,6 +44,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     private CallbackConnection connection;
     private final MQTTConfiguration configuration;
+    private volatile boolean connected;
     private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
 
     public MQTTEndpoint(String uri, MQTTComponent component, MQTTConfiguration properties) {
@@ -85,7 +86,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
                 if (!consumers.isEmpty()) {
                     Exchange exchange = createExchange();
                     exchange.getIn().setBody(body.toByteArray());
-                    exchange.setProperty(configuration.getMqttTopicPropertyName(), topic.toString());
+                    exchange.getIn().setHeader(MQTTConfiguration.MQTT_SUBSCRIBE_TOPIC, topic.toString());
                     for (MQTTConsumer consumer : consumers) {
                         consumer.processExchange(exchange);
                     }
@@ -107,36 +108,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
             }
         });
 
-        final Promise<Object> promise = new Promise<Object>();
-        connection.connect(new Callback<Void>() {
-            public void onSuccess(Void value) {
-                String subscribeTopicName = configuration.getSubscribeTopicName();
-                subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
-
-                if (subscribeTopicName != null && !subscribeTopicName.isEmpty()) {
-                    Topic[] topics = {new Topic(subscribeTopicName, configuration.getQoS())};
-                    connection.subscribe(topics, new Callback<byte[]>() {
-                        public void onSuccess(byte[] value) {
-                            promise.onSuccess(value);
-                        }
-
-                        public void onFailure(Throwable value) {
-                            promise.onFailure(value);
-                            connection.disconnect(null);
-                        }
-                    });
-                } else {
-                    promise.onSuccess(value);
-                }
-
-            }
-
-            public void onFailure(Throwable value) {
-                promise.onFailure(value);
-                connection.disconnect(null);
-            }
-        });
-        promise.await(configuration.getConnectWaitInSeconds(), TimeUnit.SECONDS);
+        
     }
 
     protected void doStop() throws Exception {
@@ -155,7 +127,48 @@ public class MQTTEndpoint extends DefaultEndpoint {
         }
         super.doStop();
     }
+    
+    void connect() throws Exception {
+        final Promise<Object> promise = new Promise<Object>();
+        connection.connect(new Callback<Void>() {
+            public void onSuccess(Void value) {
+                String subscribeTopicName = configuration.getSubscribeTopicName();
+                subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
 
+                if (subscribeTopicName != null && !subscribeTopicName.isEmpty()) {
+                    Topic[] topics = {new Topic(subscribeTopicName, configuration.getQoS())};
+                    connection.subscribe(topics, new Callback<byte[]>() {
+                        public void onSuccess(byte[] value) {
+                            promise.onSuccess(value);
+                            connected = true;
+                        }
+
+                        public void onFailure(Throwable value) {
+                            promise.onFailure(value);
+                            connection.disconnect(null);
+                            connected = false;
+                        }
+                    });
+                } else {
+                    promise.onSuccess(value);
+                    connected = true;
+                }
+
+            }
+
+            public void onFailure(Throwable value) {
+                promise.onFailure(value);
+                connection.disconnect(null);
+                connected = false;
+            }
+        });
+        promise.await(configuration.getConnectWaitInSeconds(), TimeUnit.SECONDS);
+    }
+    
+    boolean isConnected() {
+        return connected;
+    }
+ 
     void publish(String topic, byte[] payload, QoS qoS, boolean retain, Callback<Void> callback) throws Exception {
         connection.publish(topic, payload, qoS, retain, callback);
     }

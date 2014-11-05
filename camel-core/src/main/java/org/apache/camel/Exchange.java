@@ -104,6 +104,8 @@ public interface Exchange {
     String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
     String DUPLICATE_MESSAGE         = "CamelDuplicateMessage";
+    
+    String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
 
     String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
     String EXCEPTION_HANDLED          = "CamelExceptionHandled";
@@ -165,7 +167,7 @@ public interface Exchange {
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
-
+    
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
     String REDELIVERED             = "CamelRedelivered";
@@ -176,6 +178,8 @@ public interface Exchange {
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";
+    
+    String SAXPARSER_FACTORY   = "CamelSAXParserFactory";
 
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
@@ -199,13 +203,17 @@ public interface Exchange {
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
+    
     /**
      * @deprecated UNIT_OF_WORK_PROCESS_SYNC is not in use and will be removed in future Camel release
      */
     @Deprecated
     String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
 
-    String XSLT_FILE_NAME = "CamelXsltFileName";
+    String XSLT_FILE_NAME   = "CamelXsltFileName";
+    String XSLT_ERROR       = "CamelXsltError";
+    String XSLT_FATAL_ERROR = "CamelXsltFatalError";
+    String XSLT_WARNING     = "CamelXsltWarning";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

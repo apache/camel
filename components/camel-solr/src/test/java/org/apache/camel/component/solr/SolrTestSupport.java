@@ -23,8 +23,8 @@ import org.junit.BeforeClass;
 
 public abstract class SolrTestSupport extends CamelTestSupport {
 
-	private static int port;
-	private static int httpsPort;
+    private static int port;
+    private static int httpsPort;
 
     @BeforeClass
     public static void initPort() throws Exception {

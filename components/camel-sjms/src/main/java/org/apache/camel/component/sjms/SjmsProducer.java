@@ -17,17 +17,16 @@
 package org.apache.camel.component.sjms;
 
 import java.util.concurrent.ExecutorService;
-
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import java.util.concurrent.Future;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * Base SjmsProducer class.
@@ -38,19 +37,15 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * The {@link MessageProducerResources} pool for all {@link SjmsProducer}
      * classes.
      */
-    protected class MessageProducerPool extends ObjectPool<MessageProducerResources> {
-
-        public MessageProducerPool() {
-            super(getProducerCount());
-        }
+    protected class MessageProducerResourcesFactory extends BasePoolableObjectFactory<MessageProducerResources> {
 
         @Override
-        protected MessageProducerResources createObject() throws Exception {
+        public MessageProducerResources makeObject() throws Exception {
             return doCreateProducerModel();
         }
 
         @Override
-        protected void destroyObject(MessageProducerResources model) throws Exception {
+        public void destroyObject(MessageProducerResources model) throws Exception {
             if (model.getMessageProducer() != null) {
                 model.getMessageProducer().close();
             }
@@ -72,85 +67,95 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
     }
 
-    /**
-     * The {@link MessageProducer} resources for all {@link SjmsProducer}
-     * classes.
-     */
-    protected class MessageProducerResources {
-        private final Session session;
-        private final MessageProducer messageProducer;
-        private final TransactionCommitStrategy commitStrategy;
-
-        public MessageProducerResources(Session session, MessageProducer messageProducer) {
-            this(session, messageProducer, null);
-        }
-
-        public MessageProducerResources(Session session, MessageProducer messageProducer, TransactionCommitStrategy commitStrategy) {
-            this.session = session;
-            this.messageProducer = messageProducer;
-            this.commitStrategy = commitStrategy;
-        }
-
-        /**
-         * Gets the Session value of session for this instance of
-         * MessageProducerResources.
-         * 
-         * @return the session
-         */
-        public Session getSession() {
-            return session;
-        }
-
-        /**
-         * Gets the QueueSender value of queueSender for this instance of
-         * MessageProducerResources.
-         * 
-         * @return the queueSender
-         */
-        public MessageProducer getMessageProducer() {
-            return messageProducer;
-        }
-
-        /**
-         * Gets the TransactionCommitStrategy value of commitStrategy for this
-         * instance of SjmsProducer.MessageProducerResources.
-         * 
-         * @return the commitStrategy
-         */
-        public TransactionCommitStrategy getCommitStrategy() {
-            return commitStrategy;
-        }
-    }
-
-    private MessageProducerPool producers;
-    private final ExecutorService executor;
+    private GenericObjectPool<MessageProducerResources> producers;
+    private ExecutorService executor;
+    private Future<?> asyncStart;
 
     public SjmsProducer(Endpoint endpoint) {
         super(endpoint);
-        this.executor = endpoint.getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
-            setProducers(new MessageProducerPool());
-            getProducers().fillPool();
+            setProducers(new GenericObjectPool<MessageProducerResources>(new MessageProducerResourcesFactory()));
+            getProducers().setMaxActive(getProducerCount());
+            getProducers().setMaxIdle(getProducerCount());
+            getProducers().setLifo(false);
+            if (getEndpoint().isPrefillPool()) {
+                if (getEndpoint().isAsyncStartListener()) {
+                    asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                fillProducersPool();
+                            } catch (Throwable e) {
+                                log.warn("Error filling producer pool for destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            }
+                        }
+
+                        @Override
+                        public String toString() {
+                            return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                        }
+                    });
+                } else {
+                    fillProducersPool();
+                }
+            }
+        }
+    }
+
+    private void fillProducersPool() throws Exception {
+        while (producers.getNumIdle() < producers.getMaxIdle()) {
+            producers.addObject();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (getProducers() != null) {
-            getProducers().drainPool();
-            setProducers(null);
+        if (asyncStart != null && !asyncStart.isDone()) {
+            asyncStart.cancel(true);
         }
+        if (getProducers() != null) {
+            if (getEndpoint().isAsyncStopListener()) {
+                getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            getProducers().close();
+                            setProducers(null);
+                        } catch (Throwable e) {
+                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        }
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                    }
+                });
+            } else {
+                getProducers().close();
+                setProducers(null);
+            }
+        }
+        if (this.executor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
+        }
+    }
+
+    @Override
+    public SjmsEndpoint getEndpoint() {
+        return (SjmsEndpoint) super.getEndpoint();
     }
 
     public abstract MessageProducerResources doCreateProducerModel() throws Exception;
 
-    public abstract void sendMessage(Exchange exchange, final AsyncCallback callback) throws Exception;
+    public abstract void sendMessage(Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception;
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -159,25 +164,30 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
 
         try {
-            if (!isSynchronous()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
-                }
-                getExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            sendMessage(exchange, callback);
-                        } catch (Exception e) {
-                            ObjectHelper.wrapRuntimeCamelException(e);
-                        }
-                    }
-                });
+            final MessageProducerResources producer = getProducers().borrowObject();
+            if (producer == null) {
+                exchange.setException(new Exception("Unable to send message: connection not available"));
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
+                if (!isSynchronous()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
+                    }
+                    getExecutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                sendMessage(exchange, callback, producer);
+                            } catch (Exception e) {
+                                ObjectHelper.wrapRuntimeCamelException(e);
+                            }
+                        }
+                    });
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
+                    }
+                    sendMessage(exchange, callback, producer);
                 }
-                sendMessage(exchange, callback);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -194,7 +204,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     protected SjmsEndpoint getSjmsEndpoint() {
-        return (SjmsEndpoint)this.getEndpoint();
+        return (SjmsEndpoint) this.getEndpoint();
     }
 
     protected ConnectionResource getConnectionResource() {
@@ -203,7 +213,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the acknowledgment mode for this instance of DestinationProducer.
-     * 
+     *
      * @return int
      */
     public int getAcknowledgeMode() {
@@ -212,7 +222,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the synchronous value for this instance of DestinationProducer.
-     * 
+     *
      * @return true if synchronous, otherwise false
      */
     public boolean isSynchronous() {
@@ -221,7 +231,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the replyTo for this instance of DestinationProducer.
-     * 
+     *
      * @return String
      */
     public String getReplyTo() {
@@ -230,7 +240,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the destinationName for this instance of DestinationProducer.
-     * 
+     *
      * @return String
      */
     public String getDestinationName() {
@@ -239,26 +249,26 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Sets the producer pool for this instance of SjmsProducer.
-     * 
+     *
      * @param producers A MessageProducerPool
      */
-    public void setProducers(MessageProducerPool producers) {
+    public void setProducers(GenericObjectPool<MessageProducerResources> producers) {
         this.producers = producers;
     }
 
     /**
      * Gets the MessageProducerPool value of producers for this instance of
      * SjmsProducer.
-     * 
+     *
      * @return the producers
      */
-    public MessageProducerPool getProducers() {
+    public GenericObjectPool<MessageProducerResources> getProducers() {
         return producers;
     }
 
     /**
      * Test to verify if this endpoint is a JMS Topic or Queue.
-     * 
+     *
      * @return true if it is a Topic, otherwise it is a Queue
      */
     public boolean isTopic() {
@@ -267,7 +277,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Test to determine if this endpoint should use a JMS Transaction.
-     * 
+     *
      * @return true if transacted, otherwise false
      */
     public boolean isEndpointTransacted() {
@@ -276,7 +286,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Returns the named reply to value for this producer
-     * 
+     *
      * @return true if it is a Topic, otherwise it is a Queue
      */
     public String getNamedReplyTo() {
@@ -285,7 +295,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the producerCount for this instance of SjmsProducer.
-     * 
+     *
      * @return int
      */
     public int getProducerCount() {
@@ -294,7 +304,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets consumerCount for this instance of SjmsProducer.
-     * 
+     *
      * @return int
      */
     public int getConsumerCount() {
@@ -303,7 +313,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the executor for this instance of SjmsProducer.
-     * 
+     *
      * @return ExecutorService
      */
     public ExecutorService getExecutor() {
@@ -312,7 +322,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the ttl for this instance of SjmsProducer.
-     * 
+     *
      * @return long
      */
     public long getTtl() {
@@ -321,7 +331,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the boolean value of persistent for this instance of SjmsProducer.
-     * 
+     *
      * @return true if persistent, otherwise false
      */
     public boolean isPersistent() {
@@ -330,7 +340,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets responseTimeOut for this instance of SjmsProducer.
-     * 
+     *
      * @return long
      */
     public long getResponseTimeOut() {
@@ -339,7 +349,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets commitStrategy for this instance of SjmsProducer.
-     * 
+     *
      * @return TransactionCommitStrategy
      */
     public TransactionCommitStrategy getCommitStrategy() {

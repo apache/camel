@@ -19,7 +19,6 @@ package org.apache.camel.component.gae.http;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.gae.auth.GAuthComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -34,8 +33,8 @@ public class GHttpComponentConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     public void testComponentConfiguration() throws Exception {
         GHttpComponent comp = context.getComponent("ghttp", GHttpComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("ghttp://somewhere.com:9090/path?" +
-                "bridgeEndpoint=false&throwExceptionOnFailure=false");
+        EndpointConfiguration conf = comp.createConfiguration("ghttp://somewhere.com:9090/path?"
+                + "bridgeEndpoint=false&throwExceptionOnFailure=false");
 
         assertEquals("false", conf.getParameter("bridgeEndpoint"));
         assertEquals("false", conf.getParameter("throwExceptionOnFailure"));
@@ -44,15 +43,15 @@ public class GHttpComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"GHTTP_SCHEME\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"HTTPS_SCHEME\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"GHTTP_SCHEME\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"HTTPS_SCHEME\": { \"type\": \"string\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("ghttp");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

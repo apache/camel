@@ -37,12 +37,14 @@ public class AggregationStrategyBeanInfo {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregationStrategyBeanInfo.class);
 
-    private final CamelContext camelContext;
     private final Class<?> type;
     private final Method method;
 
+    @Deprecated
     public AggregationStrategyBeanInfo(CamelContext camelContext, Class<?> type, Method method) {
-        this.camelContext = camelContext;
+        this(type, method);
+    }        
+    public AggregationStrategyBeanInfo(Class<?> type, Method method) {
         this.type = type;
         this.method = method;
     }
@@ -114,7 +116,7 @@ public class AggregationStrategyBeanInfo {
             }
         }
 
-        return new AggregationStrategyMethodInfo(camelContext, type, method, oldParameters, newParameters);
+        return new AggregationStrategyMethodInfo(method, oldParameters, newParameters);
     }
 
 }

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
 import org.apache.camel.Exchange;
@@ -56,15 +58,31 @@ public final class HL7 {
     }
 
     /**
-     * @deprecated Use {@link #ack(AckCode, String, ErrorCode)}
+     * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode, String, ErrorCode)}
      */
     @Deprecated
     public static Expression ack(AckCode code, String errorMessage, int errorCode) {
-        return ack(code, errorMessage, ErrorCode.errorCodeFor(errorCode));
+        return ack(code.toAcknowledgmentCode(), errorMessage, ErrorCode.errorCodeFor(errorCode));
     }
 
+    /**
+     * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode, String, ErrorCode)}
+     */
+    @Deprecated
     public static Expression ack(AckCode code, String errorMessage, ErrorCode errorCode) {
+        return ack(code.toAcknowledgmentCode(), errorMessage, errorCode);
+    }
+
+    public static Expression ack(AcknowledgmentCode code, String errorMessage, ErrorCode errorCode) {
         return new AckExpression(code, errorMessage, errorCode);
+    }
+
+    public static Predicate messageConforms() {
+        return new ValidationContextPredicate();
+    }
+
+    public static Predicate messageConformsTo(HapiContext hapiContext) {
+        return new ValidationContextPredicate(hapiContext);
     }
 
     public static Predicate messageConformsTo(ValidationContext validationContext) {

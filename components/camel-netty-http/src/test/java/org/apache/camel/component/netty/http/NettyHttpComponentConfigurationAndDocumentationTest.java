@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class NettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"traceEnabled\": { \"type\": \"boolean\" }"));
     }
 
@@ -52,7 +51,7 @@ public class NettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("netty-http");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

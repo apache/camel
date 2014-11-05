@@ -26,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
@@ -51,13 +48,13 @@ public class SolrProducer extends DefaultProducer {
     }
     
     private SolrServer getBestSolrServer(String operation) {
-    	if (this.cloudSolrServer != null) {
-    		return this.cloudSolrServer;
-    	} else if (operation == SolrConstants.OPERATION_INSERT_STREAMING) {
-    		return this.concSolrServer;
-    	} else {
-    		return this.httpServer;
-    	}
+        if (this.cloudSolrServer != null) {
+            return this.cloudSolrServer;
+        } else if (operation == SolrConstants.OPERATION_INSERT_STREAMING) {
+            return this.concSolrServer;
+        } else {
+            return this.httpServer;
+        }
     }
 
     @Override
@@ -76,19 +73,19 @@ public class SolrProducer extends DefaultProducer {
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT_STREAMING)) {
             insert(exchange, serverToUse);
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_ID)) {
-        	serverToUse.deleteById(exchange.getIn().getBody(String.class));
+            serverToUse.deleteById(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
-        	serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
+            serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
-        	serverToUse.addBean(exchange.getIn().getBody());
+        	  serverToUse.addBean(exchange.getIn().getBody());
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEANS)) {
-        	serverToUse.addBeans(exchange.getIn().getBody(Collection.class));
+        	  serverToUse.addBeans(exchange.getIn().getBody(Collection.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
-        	serverToUse.commit();
+            serverToUse.commit();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
-        	serverToUse.rollback();
+            serverToUse.rollback();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_OPTIMIZE)) {
-        	serverToUse.optimize();
+            serverToUse.optimize();
         } else {
             throw new IllegalArgumentException(SolrConstants.OPERATION + " header value '" + operation + "' is not supported");
         }

@@ -33,6 +33,9 @@ public class MQTTConsumer extends DefaultConsumer {
 
     protected void doStart() throws Exception {
         getEndpoint().addConsumer(this);
+        if (!getEndpoint().isConnected()) {
+            getEndpoint().connect();
+        }
         super.doStart();
     }
 

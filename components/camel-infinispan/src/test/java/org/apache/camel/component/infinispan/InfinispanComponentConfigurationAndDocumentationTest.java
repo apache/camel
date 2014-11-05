@@ -43,7 +43,7 @@ public class InfinispanComponentConfigurationAndDocumentationTest extends CamelT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"command\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"command\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"sync\": { \"type\": \"boolean\" }"));
     }
 
@@ -51,7 +51,7 @@ public class InfinispanComponentConfigurationAndDocumentationTest extends CamelT
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("infinispan");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

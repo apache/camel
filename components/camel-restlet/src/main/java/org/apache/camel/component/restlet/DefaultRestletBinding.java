@@ -82,6 +82,15 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
+        // we need to dig a bit to grab the content-type
+        Series<Header> series = (Series<Header>) request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+        if (series != null) {
+            String type = series.getFirstValue(Exchange.CONTENT_TYPE, true);
+            if (type != null) {
+                inMessage.setHeader(Exchange.CONTENT_TYPE, type);
+            }
+        }
+
         // copy query string to header
         String query = request.getResourceRef().getQuery();
         if (query != null) {
@@ -115,7 +124,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 }
             }
         } else {
-            inMessage.setBody(request.getEntity().getStream());
+            InputStream is = request.getEntity().getStream();
+            Object body = RestletHelper.readResponseBodyFromInputStream(is, exchange);
+            inMessage.setBody(body);
         }
 
     }
@@ -171,7 +182,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
             request.setEntity(form.getWebRepresentation());
         } else {
-            request.setEntity(body, mediaType);
+            if (body == null) {
+                request.setEntity(null);
+            } else {
+                request.setEntity(body, mediaType);
+            }
         }
 
         MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
@@ -299,13 +314,17 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             // get content type
             MediaType mediaType = response.getEntity().getMediaType();
             if (mediaType != null) {
+                LOG.debug("Setting the Content-Type to be {}",  mediaType.toString());
                 exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
             }
-
-            // get content text
-            String text = response.getEntity().getText();
-            LOG.debug("Populate exchange from Restlet response: {}", text);
-            exchange.getOut().setBody(text);
+            if (mediaType != null && mediaType.equals(MediaType.APPLICATION_OCTET_STREAM)) {
+                exchange.getOut().setBody(response.getEntity().getStream());
+            } else {
+                // get content text
+                String text = response.getEntity().getText();
+                LOG.debug("Populate exchange from Restlet response: {}", text);
+                exchange.getOut().setBody(text);
+            }
         }
 
         // preserve headers from in by copying any non existing headers

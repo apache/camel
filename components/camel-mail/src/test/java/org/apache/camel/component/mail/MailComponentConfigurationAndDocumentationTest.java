@@ -42,7 +42,7 @@ public class MailComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"contentType\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"contentType\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"debugMode\": { \"type\": \"boolean\" }"));
     }
 
@@ -50,7 +50,7 @@ public class MailComponentConfigurationAndDocumentationTest extends CamelTestSup
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("mail");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -32,6 +32,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *
  * @version 
  */
+@Deprecated
 public class RouteDotGenerator extends GraphGeneratorSupport {
 
     public RouteDotGenerator(String dir) {

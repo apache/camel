@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jgroups;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.jgroups.Address;
@@ -30,14 +29,18 @@ public class JGroupsProducer extends DefaultProducer {
 
     // Producer settings
 
+    private final JGroupsEndpoint endpoint;
+
     private final Channel channel;
 
     private final String clusterName;
 
     // Constructor
 
-    public JGroupsProducer(Endpoint endpoint, Channel channel, String clusterName) {
+    public JGroupsProducer(JGroupsEndpoint endpoint, Channel channel, String clusterName) {
         super(endpoint);
+
+        this.endpoint = endpoint;
         this.channel = channel;
         this.clusterName = clusterName;
     }
@@ -47,12 +50,12 @@ public class JGroupsProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        channel.connect(clusterName);
+        endpoint.connect();
     }
 
     @Override
     protected void doStop() throws Exception {
-        channel.disconnect();
+        endpoint.disconnect();
         super.doStop();
     }
 

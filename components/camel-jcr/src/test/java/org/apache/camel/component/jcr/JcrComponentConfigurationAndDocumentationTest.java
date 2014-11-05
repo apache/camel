@@ -45,7 +45,7 @@ public class JcrComponentConfigurationAndDocumentationTest extends CamelTestSupp
 
         assertNotNull(json);
         assertTrue(json.contains("\"deep\": { \"type\": \"boolean\" }"));
-        assertTrue(json.contains("\"eventTypes\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"eventTypes\": { \"type\": \"integer\" }"));
         assertTrue(json.contains("\"noLocal\": { \"type\": \"boolean\" }"));
     }
 
@@ -53,7 +53,7 @@ public class JcrComponentConfigurationAndDocumentationTest extends CamelTestSupp
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("jcr");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

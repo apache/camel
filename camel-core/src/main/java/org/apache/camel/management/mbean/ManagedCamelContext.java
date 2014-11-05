@@ -36,6 +36,7 @@ import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TimerListener;
@@ -47,6 +48,8 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 
 /**
  * @version 
@@ -123,10 +126,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public void setTracing(Boolean tracing) {
         context.setTracing(tracing);
-    }
-
-    public Boolean getMessageHistory() {
-        return context.isMessageHistory();
     }
 
     public Integer getInflightExchanges() {
@@ -210,7 +209,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public boolean isMessageHistory() {
-        return context.isMessageHistory();
+        return context.isMessageHistory() != null ? context.isMessageHistory() : false;
     }
 
     public boolean isUseMDCLogging() {
@@ -248,6 +247,24 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         } else {
             throw new IllegalStateException("CamelContext is not suspended");
         }
+    }
+
+    public void startAllRoutes() throws Exception {
+        context.startAllRoutes();
+    }
+
+    public boolean canSendToEndpoint(String endpointUri) {
+        try {
+            Endpoint endpoint = context.getEndpoint(endpointUri);
+            if (endpoint != null) {
+                Producer producer = endpoint.createProducer();
+                return producer != null;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return false;
     }
 
     public void sendBody(String endpointUri, Object body) throws Exception {
@@ -296,6 +313,18 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             template.stop();
         }
         return answer;
+    }
+
+    public String dumpRestsAsXml() throws Exception {
+        List<RestDefinition> rests = context.getRestDefinitions();
+        if (rests.isEmpty()) {
+            return null;
+        }
+
+        // use a routes definition to dump the rests
+        RestsDefinition def = new RestsDefinition();
+        def.setRests(rests);
+        return ModelHelper.dumpModelAsXml(def);
     }
 
     public String dumpRoutesAsXml() throws Exception {

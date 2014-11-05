@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -52,6 +53,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -60,8 +62,10 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
+import org.apache.camel.model.rest.RestContainer;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -81,6 +85,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -102,7 +107,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer {
+public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer, RestContainer {
     
     /**
      * JVM system property to control lazy loading of type converters.
@@ -187,7 +192,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom HandleFault: {}", handleFault);
             getContext().addInterceptStrategy(handleFault);
         }
-        Delayer delayer = getBeanForType(Delayer.class);
+        @SuppressWarnings("deprecation")
+        org.apache.camel.processor.interceptor.Delayer delayer 
+            = getBeanForType(org.apache.camel.processor.interceptor.Delayer.class);
         if (delayer != null) {
             LOG.info("Using custom Delayer: {}", delayer);
             getContext().addInterceptStrategy(delayer);
@@ -273,6 +280,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 }
             }
         }
+        // add route policy factories
+        Map<String, RoutePolicyFactory> routePolicyFactories = getContext().getRegistry().findByTypeWithName(RoutePolicyFactory.class);
+        if (routePolicyFactories != null && !routePolicyFactories.isEmpty()) {
+            for (Entry<String, RoutePolicyFactory> entry : routePolicyFactories.entrySet()) {
+                RoutePolicyFactory factory = entry.getValue();
+                LOG.info("Using custom RoutePolicyFactory with id: {} and implementation: {}", entry.getKey(), factory);
+                getContext().addRoutePolicyFactory(factory);
+            }
+        }
 
         // set the default thread pool profile if defined
         initThreadPoolProfiles(getContext());
@@ -294,6 +310,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (routesSetupDone.compareAndSet(false, true)) {
             LOG.debug("Setting up routes");
 
+            // mark that we are setting up routes
+            getContext().setupRoutes(false);
+
             // must init route refs before we prepare the routes below
             initRouteRefs();
 
@@ -309,6 +328,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
+
+            // must init rest refs before we add the rests
+            initRestRefs();
+
+            // and add the rests
+            getContext().addRestDefinitions(getRests());
+
+            // and we are now finished setting up the routes
+            getContext().setupRoutes(true);
         }
     }
 
@@ -448,7 +476,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getAnySpoolRules());
         if (spoolRules != null) {
-            Iterator it = ObjectHelper.createIterator(spoolRules);
+            Iterator<Object> it = ObjectHelper.createIterator(spoolRules);
             while (it.hasNext()) {
                 String name = it.next().toString();
                 StreamCachingStrategy.SpoolRule rule = getContext().getRegistry().lookupByNameAndType(name, StreamCachingStrategy.SpoolRule.class);
@@ -518,6 +546,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
+    protected void initRestRefs() throws Exception {
+        // add rest refs to existing rests
+        if (getRestRefs() != null) {
+            for (RestContextRefDefinition ref : getRestRefs()) {
+                List<RestDefinition> defs = ref.lookupRests(getContext());
+                for (RestDefinition def : defs) {
+                    LOG.debug("Adding rest from {} -> {}", ref, def);
+                    // add in top as they are most likely to be common/shared
+                    // which you may want to start first
+                    getRests().add(0, def);
+                }
+            }
+        }
+    }
+
     protected abstract <S> S getBeanForType(Class<S> clazz);
 
     public void destroy() throws Exception {
@@ -534,6 +577,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract T getContext(boolean create);
 
     public abstract List<RouteDefinition> getRoutes();
+
+    public abstract List<RestDefinition> getRests();
+
+    public abstract RestConfigurationDefinition getRestConfiguration();
 
     public abstract List<? extends AbstractCamelEndpointFactoryBean> getEndpoints();
 
@@ -598,6 +645,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
 
     public abstract List<RouteContextRefDefinition> getRouteRefs();
+
+    public abstract List<RestContextRefDefinition> getRestRefs();
 
     public abstract String getErrorHandlerRef();
 
@@ -675,6 +724,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+        }
+        if (getRestConfiguration() != null) {
+            ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
         }
     }
 

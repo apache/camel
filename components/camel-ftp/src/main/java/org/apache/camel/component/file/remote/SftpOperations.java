@@ -266,8 +266,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         // compression
         if (sftpConfig.getCompression() > 0) {
             LOG.debug("Using compression: {}", sftpConfig.getCompression());
-            session.setConfig("compression.s2c", "zlib@openssh.com, zlib, none");
-            session.setConfig("compression.c2s", "zlib@openssh.com, zlib, none");
+            session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
+            session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
             session.setConfig("compression_level", Integer.toString(sftpConfig.getCompression()));
         }
         
@@ -849,7 +849,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             if (ObjectHelper.isNotEmpty(mode)) {
                 // parse to int using 8bit mode
                 int permissions = Integer.parseInt(mode, 8);
-                LOG.trace("Setting chmod: {} on file: ", mode, targetName);
+                LOG.trace("Setting chmod: {} on file: {}", mode, targetName);
                 channel.chmod(permissions, targetName);
             }
 

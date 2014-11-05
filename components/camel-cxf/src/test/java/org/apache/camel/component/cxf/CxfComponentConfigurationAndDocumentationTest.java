@@ -42,7 +42,7 @@ public class CxfComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"serviceNameString\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"serviceNameString\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"isWrapped\": { \"type\": \"boolean\" }"));
     }
 
@@ -50,7 +50,7 @@ public class CxfComponentConfigurationAndDocumentationTest extends CamelTestSupp
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("cxf");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -22,12 +22,12 @@
   <parent>
     <groupId>org.apache.camel.component.linkedin</groupId>
     <artifactId>camel-linkedin-parent</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-linkedin-api</artifactId>
-  <name>Camel LinkedIn Component API</name>
-  <description>API for Camel LinkedIn Component</description>
+  <name>Camel :: LinkedIn Component API</name>
+  <description>Camel API for LinkedIn</description>
   <packaging>bundle</packaging>
 
   <properties>
@@ -54,11 +54,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-tools-wadlto-jaxrs</artifactId>
       <version>${cxf-version}</version>
     </dependency>
     <dependency>
@@ -99,18 +94,17 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+<!-- For debugging wadltojava
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-tools-wadlto-jaxrs</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test<scope>
+    </dependency>
+-->
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>${project.basedir}/../camel-linkedin-component/src/test/resources</directory>
-      </testResource>
-    </testResources>
-
     <plugins>
 
       <!-- uncomment to validate XSD since wadl2java doesn't report line numbers in errors -->
@@ -198,10 +192,10 @@
             </goals>
             <configuration>
               <attach>true</attach>
-              <source>1.6</source>
+              <source>${jdk.version}</source>
               <quiet>true</quiet>
               <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>1.6</javadocVersion>
+              <javadocVersion>${jdk.version}</javadocVersion>
               <encoding>UTF-8</encoding>
             </configuration>
           </execution>
@@ -210,5 +204,26 @@
 
     </plugins>
   </build>
+
+  <!-- Disable Java 8 doclint checks to avoid Javadoc plugin failures -->
+  <profiles>
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8,</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

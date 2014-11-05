@@ -41,8 +41,6 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -55,7 +53,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
-    private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private final Expression expression;
 

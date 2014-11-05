@@ -58,7 +58,7 @@ public class IBoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for search
                 from("direct://SEARCH")
-                  .to("box://" + PATH_PREFIX + "/search");
+                        .to("box://" + PATH_PREFIX + "/search");
 
             }
         };

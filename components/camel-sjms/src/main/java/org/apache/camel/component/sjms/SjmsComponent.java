@@ -17,6 +17,8 @@
 package org.apache.camel.component.sjms;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
@@ -24,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -42,10 +45,11 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;
     private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
-    private KeyFormatStrategy keyFormatStrategy;
+    private KeyFormatStrategy keyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;
+    private ExecutorService asyncStartStopExecutorService;
 
     public SjmsComponent() {
         super(SjmsEndpoint.class);
@@ -69,7 +73,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     /**
      * Helper method used to detect the type of endpoint and add the "queue"
      * protocol if it is a default endpoint URI.
-     * 
+     *
      * @param uri The value passed into our call to create an endpoint
      * @return String
      * @throws Exception
@@ -103,18 +107,18 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
      * are using the InOut MEP. If namedReplyTo is defined and the MEP is InOnly
      * the endpoint won't be expecting a reply so throw an error to alert the
      * user.
-     * 
+     *
      * @param parameters {@link Endpoint} parameters
      * @throws Exception throws a {@link CamelException} when MEP equals InOnly
-     *             and namedReplyTo is defined.
+     *                   and namedReplyTo is defined.
      */
     private static void validateMepAndReplyTo(Map<String, Object> parameters) throws Exception {
         boolean namedReplyToSet = parameters.containsKey("namedReplyTo");
         boolean mepSet = parameters.containsKey("exchangePattern");
         if (namedReplyToSet && mepSet) {
             if (!parameters.get("exchangePattern").equals(ExchangePattern.InOut.toString())) {
-                String namedReplyTo = (String)parameters.get("namedReplyTo");
-                ExchangePattern mep = ExchangePattern.valueOf((String)parameters.get("exchangePattern"));
+                String namedReplyTo = (String) parameters.get("namedReplyTo");
+                ExchangePattern mep = ExchangePattern.valueOf((String) parameters.get("exchangePattern"));
                 throw new CamelException("Setting parameter namedReplyTo=" + namedReplyTo + " requires a MEP of type InOut. Parameter exchangePattern is set to " + mep);
             }
         }
@@ -134,7 +138,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
             connections.fillPool();
             setConnectionResource(connections);
         } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource)getConnectionResource()).fillPool();
+            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
         }
     }
 
@@ -146,10 +150,28 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
 
         if (getConnectionResource() != null) {
             if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                ((ConnectionFactoryResource)getConnectionResource()).drainPool();
+                ((ConnectionFactoryResource) getConnectionResource()).drainPool();
             }
         }
         super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (asyncStartStopExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartStopExecutorService);
+            asyncStartStopExecutorService = null;
+        }
+        super.doShutdown();
+    }
+
+    protected synchronized ExecutorService getAsyncStartStopExecutorService() {
+        if (asyncStartStopExecutorService == null) {
+            // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
+            // for each task, and the thread pool will shrink when no more tasks running
+            asyncStartStopExecutorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+        }
+        return asyncStartStopExecutorService;
     }
 
     /**
@@ -163,7 +185,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     /**
      * Gets the ConnectionFactory value of connectionFactory for this instance
      * of SjmsComponent.
-     * 
+     *
      * @return the connectionFactory
      */
     public ConnectionFactory getConnectionFactory() {
@@ -207,7 +229,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     /**
      * Gets the TransactionCommitStrategy value of transactionCommitStrategy for this
      * instance of SjmsComponent.
-     * 
+     *
      * @return the transactionCommitStrategy
      */
     public TransactionCommitStrategy getTransactionCommitStrategy() {

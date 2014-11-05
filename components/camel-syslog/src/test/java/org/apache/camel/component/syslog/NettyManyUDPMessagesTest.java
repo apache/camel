@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
 import java.net.DatagramPacket;
@@ -74,7 +73,7 @@ public class NettyManyUDPMessagesTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 //context.setTracing(true);
-                DataFormat syslogDataFormat = new Rfc3164SyslogDataFormat();
+                DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
                 from("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false").unmarshal(syslogDataFormat)

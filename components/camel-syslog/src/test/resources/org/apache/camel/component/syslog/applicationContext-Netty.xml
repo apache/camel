@@ -22,20 +22,22 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
-		<propertyPlaceholder id="properties" location="org/apache/camel/component/syslog/camel.properties"/>
-        <dataFormats>
-            <syslog id="mySyslog"/>
-        </dataFormats>
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
 
-        <route>
-            <from uri="netty:udp://localhost:{{server-port}}?sync=false&amp;allowDefaultCodec=false"/>
-            <unmarshal ref="mySyslog"/>
-            <to uri="mock:stop1"/>
-            <marshal ref="mySyslog"/>
-            <to uri="mock:stop2"/>
-        </route>
+    <propertyPlaceholder id="properties" location="org/apache/camel/component/syslog/camel.properties"/>
 
-    </camelContext>
+    <dataFormats>
+      <syslog id="mySyslog"/>
+    </dataFormats>
+
+    <route>
+      <from uri="netty:udp://localhost:{{server-port}}?sync=false&amp;allowDefaultCodec=false"/>
+      <unmarshal ref="mySyslog"/>
+      <to uri="mock:stop1"/>
+      <marshal ref="mySyslog"/>
+      <to uri="mock:stop2"/>
+    </route>
+
+  </camelContext>
 
 </beans>

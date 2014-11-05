@@ -830,6 +830,29 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for invoking a method (support OGNL syntax) on the given expression
+     *
+     * @param exp   the expression to evaluate and invoke the method on its result
+     * @param ognl  methods to invoke on the evaluated expression in a simple OGNL syntax
+     */
+    public static Expression ognlExpression(final Expression exp, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object value = exp.evaluate(exchange, Object.class);
+                if (value == null) {
+                    return null;
+                }
+                return new MethodCallExpression(value, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "ognl(" + exp + ", " + ognl + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges camelContext invoking methods defined
      * in a simple OGNL notation
      *
@@ -1236,6 +1259,12 @@ public final class ExpressionBuilder {
 
         return new XMLTokenExpressionIterator(path, mode);
     }
+    
+    public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
+        ObjectHelper.notEmpty(path, "path");
+
+        return new XMLTokenExpressionIterator(path, mode, group);
+    }
 
     /**
      * Returns a tokenize expression which will tokenize the string with the
@@ -1265,7 +1294,7 @@ public final class ExpressionBuilder {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange.getContext(), it, token, group);
+                return new GroupIterator(exchange, it, token, group);
             }
 
             @Override

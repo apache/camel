@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.apns.util;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.Provider.Service;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -38,6 +38,10 @@ import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 
 public final class ApnsUtils {
 
@@ -90,27 +94,39 @@ public final class ApnsUtils {
         return keys.get(0);
     }
     
-    public static SSLContext clientContext() throws Exception {
-        InputStream stream = ClassLoader.getSystemResourceAsStream(FixedCertificates.CLIENT_STORE);
-        SSLContext context = Utilities.newSSLContext(stream, 
-                                                     FixedCertificates.CLIENT_PASSWD,
-                                                     "PKCS12",
-                                                     getAlgorithm());
-        context.init(null, new TrustManager[] {new X509TrustManager() {
-            public void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
-            }
+    public static SSLContextParameters clientContext() throws Exception {
+        final KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setResource(ClassLoader.getSystemResource(FixedCertificates.CLIENT_STORE).toString());
+        ksp.setType("PKCS12");
 
-            public void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
-            }
+        final KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyStore(ksp);
+        kmp.setKeyPassword(FixedCertificates.CLIENT_PASSWD);
+        kmp.setAlgorithm(getAlgorithm());
 
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
+        final SSLContextParameters contextParameters = new SSLContextParameters();
+        contextParameters.setKeyManagers(kmp);
+        contextParameters.setTrustManagers(new TrustManagersParameters() {
+            @Override
+            public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
+                return new TrustManager[] {new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] chain, String authType)
+                        throws CertificateException {
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] chain, String authType)
+                        throws CertificateException {
+                    }
+
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+
+                }};
             }
-            
-        }}, new SecureRandom());
-        return context;
+        });
+
+        return contextParameters;
     }
     
     public static ApnsServiceFactory createDefaultTestConfiguration(CamelContext camelContext) 
@@ -124,7 +140,7 @@ public final class ApnsUtils {
         // apnsServiceFactory.setCertificatePath("classpath:/" +
         // FixedCertificates.CLIENT_STORE);
         // apnsServiceFactory.setCertificatePassword(FixedCertificates.CLIENT_PASSWD);
-        apnsServiceFactory.setSslContext(clientContext());
+        apnsServiceFactory.setSslContextParameters(clientContext());
         return apnsServiceFactory;
     }
 

@@ -50,6 +50,28 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Test
+    public void testMarshalAndUnmarshalMapWithPrettyPrint() throws Exception {
+        Map<String, Object> in = new HashMap<String, Object>();
+        in.put("name", "Camel");
+
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:pretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = "{\n"
+                        + "  \"name\" : \"Camel\""
+                        + "\n}";
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:back", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
         TestPojo in = new TestPojo();
         in.setName("Camel");
@@ -79,7 +101,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
         Object marshalled = template.requestBody("direct:inAgeView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        assertEquals("{\"height\":190,\"age\":30}", marshalledAsString);
+        assertEquals("{\"age\":30,\"height\":190}", marshalledAsString);
 
         template.sendBody("direct:backAgeView", marshalled);
 

@@ -112,6 +112,11 @@ public class ObjectConverterTest extends TestCase {
         assertEquals("", ObjectConverter.toString(new StringBuilder("")));
     }
 
+    public void testToChar() {
+        assertEquals('A', ObjectConverter.toChar("A"));
+        assertEquals(Character.valueOf('A'), ObjectConverter.toCharacter("A"));
+    }
+
     public void testNaN() throws Exception {
         assertEquals(Double.NaN, ObjectConverter.toDouble(Double.NaN));
         assertEquals(Double.NaN, ObjectConverter.toDouble(Float.NaN));

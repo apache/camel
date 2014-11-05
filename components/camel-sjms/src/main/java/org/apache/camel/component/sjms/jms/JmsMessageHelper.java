@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -98,12 +97,12 @@ public final class JmsMessageHelper {
             switch (messageType) {
             case Bytes:
                 BytesMessage bytesMessage = session.createBytesMessage();
-                bytesMessage.writeBytes((byte[])payload);
+                bytesMessage.writeBytes((byte[]) payload);
                 answer = bytesMessage;
                 break;
             case Map:
                 MapMessage mapMessage = session.createMapMessage();
-                Map<String, Object> objMap = (Map<String, Object>)payload;
+                Map<String, Object> objMap = (Map<String, Object>) payload;
                 Set<String> keys = objMap.keySet();
                 for (String key : keys) {
                     Object value = objMap.get(key);
@@ -113,18 +112,18 @@ public final class JmsMessageHelper {
                 break;
             case Object:
                 ObjectMessage objectMessage = session.createObjectMessage();
-                objectMessage.setObject((Serializable)payload);
+                objectMessage.setObject((Serializable) payload);
                 answer = objectMessage;
                 break;
             case Text:
                 TextMessage textMessage = session.createTextMessage();
-                textMessage.setText((String)payload);
+                textMessage.setText((String) payload);
                 answer = textMessage;
                 break;
             case Stream:
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                InputStream is = (InputStream)payload;
-                int reads = is.read(); 
+                InputStream is = (InputStream) payload;
+                int reads = is.read();
                 while (reads != -1) {
                     baos.write(reads);
                     reads = is.read();
@@ -140,7 +139,7 @@ public final class JmsMessageHelper {
                 break;
             }
         } catch (Exception e) {
-            LOGGER.error("Error creating a message of type: " + messageType.toString());
+            LOGGER.error("Error creating a message of type: {}", messageType, e);
             throw e;
         }
         if (messageHeaders != null && !messageHeaders.isEmpty()) {
@@ -152,12 +151,12 @@ public final class JmsMessageHelper {
     /**
      * Adds or updates the {@link Message} headers. Header names and values are
      * checked for JMS 1.1 compliance.
-     * 
-     * @param jmsMessage the {@link Message} to add or update the headers on
-     * @param messageHeaders a {@link Map} of String/Object pairs
+     *
+     * @param jmsMessage        the {@link Message} to add or update the headers on
+     * @param messageHeaders    a {@link Map} of String/Object pairs
      * @param keyFormatStrategy the a {@link KeyFormatStrategy} to used to
-     *            format keys in a JMS 1.1 compliant manner. If null the
-     *            {@link DefaultJmsKeyFormatStrategy} will be used.
+     *                          format keys in a JMS 1.1 compliant manner. If null the
+     *                          {@link DefaultJmsKeyFormatStrategy} will be used.
      * @return {@link Message}
      * @throws Exception a
      */
@@ -181,7 +180,7 @@ public final class JmsMessageHelper {
                     // so pass null to the setter
                     setCorrelationId(jmsMessage, null);
                 } else if (headerValue instanceof String) {
-                    setCorrelationId(jmsMessage, (String)headerValue);
+                    setCorrelationId(jmsMessage, (String) headerValue);
                 } else {
                     throw new IllegalHeaderException("The " + JMS_CORRELATION_ID + " must either be a String or null.  Found: " + headerValue.getClass().getName());
                 }
@@ -205,14 +204,14 @@ public final class JmsMessageHelper {
                     setMessageType(jmsMessage, null);
                 } else if (headerValue instanceof String) {
                     // Not null but is a String
-                    setMessageType(jmsMessage, (String)headerValue);
+                    setMessageType(jmsMessage, (String) headerValue);
                 } else {
                     throw new IllegalHeaderException("The " + JMS_TYPE + " must either be a String or null.  Found: " + headerValue.getClass().getName());
                 }
             } else if (headerName.equalsIgnoreCase(JMS_PRIORITY)) {
                 if (headerValue instanceof Integer) {
                     try {
-                        jmsMessage.setJMSPriority((Integer)headerValue);
+                        jmsMessage.setJMSPriority((Integer) headerValue);
                     } catch (JMSException e) {
                         throw new IllegalHeaderException("Failed to set the " + JMS_PRIORITY + " header. Cause: " + e.getLocalizedMessage(), e);
                     }
@@ -228,7 +227,7 @@ public final class JmsMessageHelper {
             } else if (headerName.equalsIgnoreCase(JMS_EXPIRATION)) {
                 if (headerValue instanceof Long) {
                     try {
-                        jmsMessage.setJMSExpiration((Long)headerValue);
+                        jmsMessage.setJMSExpiration((Long) headerValue);
                     } catch (JMSException e) {
                         throw new IllegalHeaderException("Failed to set the " + JMS_EXPIRATION + " header. Cause: " + e.getLocalizedMessage(), e);
                     }
@@ -238,7 +237,7 @@ public final class JmsMessageHelper {
             } else {
                 LOGGER.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
                 if (headerName.equalsIgnoreCase(JMS_DESTINATION) || headerName.equalsIgnoreCase(JMS_MESSAGE_ID) || headerName.equalsIgnoreCase("JMSTimestamp")
-                    || headerName.equalsIgnoreCase("JMSRedelivered")) {
+                        || headerName.equalsIgnoreCase("JMSRedelivered")) {
                     // The following properties are set by the
                     // MessageProducer:
                     // JMSDestination
@@ -264,18 +263,18 @@ public final class JmsMessageHelper {
 
     /**
      * Sets the JMSDeliveryMode on the message.
-     * 
-     * @param exchange the exchange
-     * @param message the message
+     *
+     * @param exchange     the exchange
+     * @param message      the message
      * @param deliveryMode the delivery mode, either as a String or integer
      * @throws javax.jms.JMSException is thrown if error setting the delivery
-     *             mode
+     *                                mode
      */
     public static void setJMSDeliveryMode(Message message, Object deliveryMode) throws JMSException {
         Integer mode = null;
 
         if (deliveryMode instanceof String) {
-            String s = (String)deliveryMode;
+            String s = (String) deliveryMode;
             if ("PERSISTENT".equalsIgnoreCase(s)) {
                 mode = DeliveryMode.PERSISTENT;
             } else if ("NON_PERSISTENT".equalsIgnoreCase(s)) {
@@ -296,7 +295,7 @@ public final class JmsMessageHelper {
             }
         } else if (deliveryMode instanceof Integer) {
             // fallback and try to convert to a number
-            mode = (Integer)deliveryMode;
+            mode = (Integer) deliveryMode;
         } else {
             throw new IllegalArgumentException("Unable to convert the given delivery mode of type " + deliveryMode.getClass().getName() + " with value: " + deliveryMode);
         }
@@ -310,17 +309,15 @@ public final class JmsMessageHelper {
      * Sets the correlation id on the JMS message.
      * <p/>
      * Will ignore exception thrown
-     * 
+     *
      * @param message the JMS message
-     * @param type the correlation id
+     * @param type    the correlation id
      */
     public static void setMessageType(Message message, String type) {
         try {
             message.setJMSType(type);
         } catch (JMSException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Error setting the message type: {}", type);
-            }
+            LOGGER.debug("Error setting the message type: {}", type, e);
         }
     }
 
@@ -328,26 +325,24 @@ public final class JmsMessageHelper {
      * Sets the correlation id on the JMS message.
      * <p/>
      * Will ignore exception thrown
-     * 
-     * @param message the JMS message
+     *
+     * @param message       the JMS message
      * @param correlationId the correlation id
      */
     public static void setCorrelationId(Message message, String correlationId) {
         try {
             message.setJMSCorrelationID(correlationId);
         } catch (JMSException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Error setting the correlationId: {}", correlationId);
-            }
+            LOGGER.debug("Error setting the correlationId: {}", correlationId, e);
         }
     }
 
     /**
      * Sets the property on the given JMS message.
-     * 
+     *
      * @param jmsMessage the JMS message
-     * @param name name of the property to set
-     * @param value the value
+     * @param name       name of the property to set
+     * @param value      the value
      * @throws JMSException can be thrown
      */
     public static void setProperty(Message jmsMessage, String name, Object value) throws JMSException {
@@ -355,21 +350,21 @@ public final class JmsMessageHelper {
             return;
         }
         if (value instanceof Byte) {
-            jmsMessage.setByteProperty(name, (Byte)value);
+            jmsMessage.setByteProperty(name, (Byte) value);
         } else if (value instanceof Boolean) {
-            jmsMessage.setBooleanProperty(name, (Boolean)value);
+            jmsMessage.setBooleanProperty(name, (Boolean) value);
         } else if (value instanceof Double) {
-            jmsMessage.setDoubleProperty(name, (Double)value);
+            jmsMessage.setDoubleProperty(name, (Double) value);
         } else if (value instanceof Float) {
-            jmsMessage.setFloatProperty(name, (Float)value);
+            jmsMessage.setFloatProperty(name, (Float) value);
         } else if (value instanceof Integer) {
-            jmsMessage.setIntProperty(name, (Integer)value);
+            jmsMessage.setIntProperty(name, (Integer) value);
         } else if (value instanceof Long) {
-            jmsMessage.setLongProperty(name, (Long)value);
+            jmsMessage.setLongProperty(name, (Long) value);
         } else if (value instanceof Short) {
-            jmsMessage.setShortProperty(name, (Short)value);
+            jmsMessage.setShortProperty(name, (Short) value);
         } else if (value instanceof String) {
-            jmsMessage.setStringProperty(name, (String)value);
+            jmsMessage.setStringProperty(name, (String) value);
         } else {
             // fallback to Object
             jmsMessage.setObjectProperty(name, value);

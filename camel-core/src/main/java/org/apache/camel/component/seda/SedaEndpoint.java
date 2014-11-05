@@ -223,7 +223,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
             // create multicast processor
             multicastStarted = false;
-            consumerMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, false, 0, null, false);
+            consumerMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null,
+                                                                true, multicastExecutor, false, false, false, 
+                                                                0, null, false, false);
         }
     }
 

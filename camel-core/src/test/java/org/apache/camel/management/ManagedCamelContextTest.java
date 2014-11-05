@@ -106,6 +106,12 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("Hello World", reply);
         assertMockEndpointsSatisfied();
 
+        // test can send
+        Boolean can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[]{"direct:start"}, new String[]{"java.lang.String"});
+        assertEquals(true, can.booleanValue());
+        can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[]{"timer:foo"}, new String[]{"java.lang.String"});
+        assertEquals(false, can.booleanValue());
+
         // stop Camel
         mbeanServer.invoke(on, "stop", null, null);
     }
@@ -195,7 +201,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findComponents", null, null);
         assertNotNull(info);
 
-        assertEquals(22, info.size());
+        assertEquals(23, info.size());
         Properties prop = info.get("seda");
         assertNotNull(prop);
         assertEquals("seda", prop.get("name"));

@@ -49,6 +49,29 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testAdviceToStringCBR() throws Exception {
+        RouteDefinition route = context.getRouteDefinitions().get(0);
+        route.adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveByToString("To[mock:foo]").after().to("mock:foo2");
+                weaveByToString("To[mock:bar]").after().to("mock:bar2");
+            }
+        });
+
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:foo2").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:bar2").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:baz").expectedBodiesReceived("Hi World");
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+        template.sendBodyAndHeader("direct:start", "Bye World", "bar", "123");
+        template.sendBody("direct:start", "Hi World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

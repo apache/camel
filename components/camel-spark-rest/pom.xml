@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spark-rest</artifactId>
@@ -89,6 +89,19 @@
       <artifactId>camel-http</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- for testing rest-dsl -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jaxb</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -106,31 +119,19 @@
     <profile>
       <id>jdk8-test</id>
       <activation>
-        <jdk>1.8</jdk>
+        <jdk>!1.8</jdk>
       </activation>
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <skipTests>false</skipTests>
-              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+              <skipTests>true</skipTests>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skipTests>true</skipTests>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

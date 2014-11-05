@@ -26,17 +26,15 @@ import javax.jms.Topic;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * TODO Add Class documentation for JmsObjectFactory
  *
  */
 public final class JmsObjectFactory {
-    
+
     private JmsObjectFactory() {
         //Helper class
     }
 
-    public static Destination createDestination(Session session, String destinationName, boolean topic)
-        throws Exception {
+    public static Destination createDestination(Session session, String destinationName, boolean topic) throws Exception {
         if (topic) {
             return createTopic(session, destinationName);
         } else {
@@ -71,60 +69,60 @@ public final class JmsObjectFactory {
     public static MessageConsumer createTopicConsumer(Session session, String destinationName, String messageSelector) throws Exception {
         return createMessageConsumer(session, destinationName, messageSelector, true, null);
     }
-    
+
     public static MessageConsumer createTemporaryMessageConsumer(
-            Session session, 
-            String messageSelector, 
-            boolean topic, 
+            Session session,
+            String messageSelector,
+            boolean topic,
             String durableSubscriptionId,
             boolean noLocal) throws Exception {
         Destination destination = createTemporaryDestination(session, topic);
         return createMessageConsumer(session, destination, messageSelector, topic, durableSubscriptionId, noLocal);
     }
-    
+
     public static MessageConsumer createMessageConsumer(
-            Session session, 
-            String destinationName, 
-            String messageSelector, 
-            boolean topic, 
+            Session session,
+            String destinationName,
+            String messageSelector,
+            boolean topic,
             String durableSubscriptionId) throws Exception {
         // noLocal is default false accordingly to JMS spec
         return createMessageConsumer(session, destinationName, messageSelector, topic, durableSubscriptionId, false);
     }
-    
+
     public static MessageConsumer createMessageConsumer(
-            Session session, 
-            String destinationName, 
-            String messageSelector, 
-            boolean topic, 
+            Session session,
+            String destinationName,
+            String messageSelector,
+            boolean topic,
             String durableSubscriptionId,
             boolean noLocal) throws Exception {
         Destination destination = null;
         if (topic) {
             destination = session.createTopic(destinationName);
-            
+
         } else {
             destination = session.createQueue(destinationName);
         }
         return createMessageConsumer(session, destination, messageSelector, topic, durableSubscriptionId, noLocal);
     }
-    
+
     public static MessageConsumer createMessageConsumer(
-            Session session, 
-            Destination destination, 
-            String messageSelector, 
-            boolean topic, 
+            Session session,
+            Destination destination,
+            String messageSelector,
+            boolean topic,
             String durableSubscriptionId,
             boolean noLocal) throws Exception {
         MessageConsumer messageConsumer = null;
-        
+
         if (topic) {
             if (ObjectHelper.isNotEmpty(durableSubscriptionId)) {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createDurableSubscriber((Topic)destination, durableSubscriptionId,
-                                                                 messageSelector, noLocal);
+                    messageConsumer = session.createDurableSubscriber((Topic) destination, durableSubscriptionId,
+                            messageSelector, noLocal);
                 } else {
-                    messageConsumer = session.createDurableSubscriber((Topic)destination, durableSubscriptionId);
+                    messageConsumer = session.createDurableSubscriber((Topic) destination, durableSubscriptionId);
                 }
             } else {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
@@ -135,29 +133,29 @@ public final class JmsObjectFactory {
             }
         } else {
             if (ObjectHelper.isNotEmpty(messageSelector)) {
-                messageConsumer = session.createConsumer(destination, messageSelector); 
+                messageConsumer = session.createConsumer(destination, messageSelector);
             } else {
                 messageConsumer = session.createConsumer(destination);
             }
         }
         return messageConsumer;
     }
-    
+
     public static MessageProducer createQueueProducer(
-            Session session, 
+            Session session,
             String destinationName) throws Exception {
         return createMessageProducer(session, destinationName, false, true, -1);
     }
-    
+
     public static MessageProducer createTopicProducer(
-            Session session, 
+            Session session,
             String destinationName) throws Exception {
         return createMessageProducer(session, destinationName, true, false, -1);
     }
-    
+
     public static MessageProducer createMessageProducer(
-            Session session, 
-            String destinationName, 
+            Session session,
+            String destinationName,
             boolean topic,
             boolean persitent,
             long ttl) throws Exception {

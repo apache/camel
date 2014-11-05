@@ -76,10 +76,13 @@ public class PropertiesComponent extends DefaultComponent {
     private boolean ignoreMissingLocation;
     private boolean cache = true;
     private String propertyPrefix;
+    private String propertyPrefixResolved;
     private String propertySuffix;
+    private String propertySuffixResolved;
     private boolean fallbackToUnaugmentedProperty = true;
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
+    private Properties initialProperties;
     private Properties overrideProperties;
     
     public PropertiesComponent() {
@@ -118,7 +121,14 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     public String parseUri(String uri, String... paths) throws Exception {
-        Properties prop = null;
+        Properties prop = new Properties();
+
+        // use initial properties
+        if (null != initialProperties) {
+            prop.putAll(initialProperties);
+        }
+
+        // use locations
         if (paths != null) {
             // location may contain JVM system property or OS environment variables
             // so we need to parse those
@@ -126,17 +136,18 @@ public class PropertiesComponent extends DefaultComponent {
 
             // check cache first
             CacheKey key = new CacheKey(locations);
-            prop = cache ? cacheMap.get(key) : null;
-            if (prop == null) {
-                prop = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
+            Properties locationsProp = cache ? cacheMap.get(key) : null;
+            if (locationsProp == null) {
+                locationsProp = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
                 if (cache) {
-                    cacheMap.put(key, prop);
+                    cacheMap.put(key, locationsProp);
                 }
             }
+            prop.putAll(locationsProp);
         }
 
         // use override properties
-        if (prop != null && overrideProperties != null) {
+        if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
             Properties override = new Properties();
             override.putAll(prop);
@@ -156,7 +167,7 @@ public class PropertiesComponent extends DefaultComponent {
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
-                                                                                            propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+                                                                                            propertyPrefixResolved, propertySuffixResolved, fallbackToUnaugmentedProperty);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
@@ -204,6 +215,10 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setPropertyPrefix(String propertyPrefix) {
         this.propertyPrefix = propertyPrefix;
+        this.propertyPrefixResolved = propertyPrefix;
+        if (ObjectHelper.isNotEmpty(this.propertyPrefix)) {
+            this.propertyPrefixResolved = FilePathResolver.resolvePath(this.propertyPrefix);
+        }
     }
 
     public String getPropertySuffix() {
@@ -212,6 +227,10 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setPropertySuffix(String propertySuffix) {
         this.propertySuffix = propertySuffix;
+        this.propertySuffixResolved = propertySuffix;
+        if (ObjectHelper.isNotEmpty(this.propertySuffix)) {
+            this.propertySuffixResolved = FilePathResolver.resolvePath(this.propertySuffix);
+        }
     }
 
     public boolean isFallbackToUnaugmentedProperty() {
@@ -260,6 +279,19 @@ public class PropertiesComponent extends DefaultComponent {
         } else {
             this.suffixToken = suffixToken;
         }
+    }
+
+    public Properties getInitialProperties() {
+        return initialProperties;
+    }
+
+    /**
+     * Sets initial properties which will be used before any locations are resolved.
+     *
+     * @param initialProperties properties that are added first
+     */
+    public void setInitialProperties(Properties initialProperties) {
+        this.initialProperties = initialProperties;
     }
 
     public Properties getOverrideProperties() {

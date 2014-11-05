@@ -23,6 +23,9 @@ import org.apache.camel.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Converter from String syntax to milli seconds.
+ */
 @Converter
 public final class TimePatternConverter {   
     private static final Logger LOG = LoggerFactory.getLogger(TimePatternConverter.class);

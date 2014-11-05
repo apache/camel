@@ -31,6 +31,15 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
         super(mqttEndpoint);
         this.mqttEndpoint = mqttEndpoint;
     }
+    
+    protected void doStart() throws Exception {
+        // check the mqttEndpoint connection when it is started
+        if (!mqttEndpoint.isConnected()) {
+            mqttEndpoint.connect();
+        }
+        super.doStart();
+    }
+
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -47,7 +56,8 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
 
             // where should we publish to
             String topicName = configuration.getPublishTopicName();
-            Object topicValue = exchange.getProperty(configuration.getMqttTopicPropertyName());
+            // get the topic name by using the header of MQTT_PUBLISH_TOPIC
+            Object topicValue = exchange.getIn().getHeader(MQTTConfiguration.MQTT_PUBLISH_TOPIC);
             if (topicValue != null) {
                 topicName = topicValue.toString();
             }

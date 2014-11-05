@@ -51,7 +51,7 @@ public class NettyUseRawHttpResponseTest extends BaseNettyTest {
                         public void process(Exchange exchange) throws Exception {
                             HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
                             response.setContent(ChannelBuffers.copiedBuffer("Bye World".getBytes()));
-                            response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, 9);
+                            response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, 9);
 
                             exchange.getOut().setBody(response);
                         }

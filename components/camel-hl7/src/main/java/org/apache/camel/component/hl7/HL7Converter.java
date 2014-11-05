@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
-
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Converter;
 
 /**
@@ -30,24 +30,30 @@ import org.apache.camel.Converter;
 @Converter
 public final class HL7Converter {
 
+    private static final HapiContext DEFAULT_CONTEXT = new DefaultHapiContext(ValidationContextFactory.noValidation());
+
     private HL7Converter() {
         // Helper class
     }
 
-    private static Parser getParser() {
-        PipeParser pipeParser = new PipeParser();
-        pipeParser.setValidationContext(new NoValidation());
-        return pipeParser;
+    @Converter
+    public static String toString(Message message) throws HL7Exception {
+        return message.encode();
     }
 
     @Converter
-    public static String toString(Message message) throws HL7Exception {
-        return encode(message, getParser());
+    public static byte[] toByteArray(Message message) throws HL7Exception {
+        return message.encode().getBytes();
     }
 
     @Converter
     public static Message toMessage(String body) throws HL7Exception {
-        return parse(body, getParser());
+        return parse(body, DEFAULT_CONTEXT.getGenericParser());
+    }
+
+    @Converter
+    public static Message toMessage(byte[] body) throws HL7Exception {
+        return parse(new String(body), DEFAULT_CONTEXT.getGenericParser());
     }
 
     static Message parse(String body, Parser parser) throws HL7Exception {

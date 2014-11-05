@@ -88,15 +88,17 @@
   </persistence-unit>
   <!-- END SNIPPET: e2 -->
 
-  <persistence-unit name="hibernate" transaction-type="RESOURCE_LOCAL">
-  	<provider>org.hibernate.ejb.HibernatePersistence</provider>
+  <persistence-unit name="skipLockedEntiy" transaction-type="RESOURCE_LOCAL">
+  	<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
     <class>org.apache.camel.examples.VersionedItem</class>
 	
   <properties>
-     <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver" />
-     <property name="hibernate.connection.url" value="jdbc:derby:target/hibernate;create=true" />
-     <property name="hibernate.hbm2ddl.auto" value="create"/>
-   </properties>
+      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>
+      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
+      <property name="openjpa.Multithreaded" value="false"/>
+    </properties>
   </persistence-unit>
   
 </persistence>

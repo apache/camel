@@ -44,15 +44,15 @@ public class HdfsComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"initialDelay\": { \"type\": \"long\" }"));
-        assertTrue(json.contains("\"checkIdleInterval\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"initialDelay\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"checkIdleInterval\": { \"type\": \"integer\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("hdfs2");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

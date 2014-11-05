@@ -21,6 +21,9 @@ import java.util.Set;
 
 import org.apache.camel.util.ServiceHelper;
 
+/**
+ * Base class to control lifecycle for a set of child {@link org.apache.camel.Service}s.
+ */
 public abstract class ChildServiceSupport extends ServiceSupport {
     private Set<Object> childServices;
     

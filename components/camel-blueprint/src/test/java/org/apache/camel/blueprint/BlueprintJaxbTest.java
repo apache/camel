@@ -59,7 +59,8 @@ public class BlueprintJaxbTest extends TestSupport {
                                                         + "org.apache.camel.model.config:"
                                                         + "org.apache.camel.model.dataformat:"
                                                         + "org.apache.camel.model.language:"
-                                                        + "org.apache.camel.model.loadbalancer");
+                                                        + "org.apache.camel.model.loadbalancer:"
+                                                        + "org.apache.camel.model.rest");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Object object = unmarshaller.unmarshal(elem);
         assertNotNull(object);

@@ -52,10 +52,10 @@
             </goals>
             <configuration>
               <attach>true</attach>
-              <source>1.6</source>
+              <source>1.7</source>
               <quiet>true</quiet>
               <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>1.6</javadocVersion>
+              <javadocVersion>1.7</javadocVersion>
               <encoding>UTF-8</encoding>
             </configuration>
           </execution>
@@ -64,5 +64,26 @@
 
     </plugins>
   </build>
+
+  <!-- Disable Java 8 doclint checks to avoid Javadoc plugin failures -->
+  <profiles>
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8,</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

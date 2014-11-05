@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -34,8 +33,8 @@ public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
     @Test
     public void testComponentConfiguration() throws Exception {
         JettyHttpComponent comp = context.getComponent("jetty", JettyHttpComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("jetty://http://localhost:8080/myapp?" +
-                "httpClientMinThreads=4&httpClientMaxThreads=8");
+        EndpointConfiguration conf = comp.createConfiguration("jetty://http://localhost:8080/myapp?"
+                + "httpClientMinThreads=4&httpClientMaxThreads=8");
 
         assertEquals("4", conf.getParameter("httpClientMinThreads"));
         assertEquals("8", conf.getParameter("httpClientMaxThreads"));
@@ -44,7 +43,7 @@ public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpClientMaxThreads\": { \"type\": \"java.lang.Integer\" }"));
+        assertTrue(json.contains("\"httpClientMaxThreads\": { \"type\": \"integer\" }"));
         assertTrue(json.contains("\"sessionSupport\": { \"type\": \"boolean\" }"));
     }
 
@@ -52,7 +51,7 @@ public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("jetty");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

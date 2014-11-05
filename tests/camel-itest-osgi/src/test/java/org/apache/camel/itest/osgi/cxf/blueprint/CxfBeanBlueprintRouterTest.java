@@ -19,21 +19,23 @@ package org.apache.camel.itest.osgi.cxf.blueprint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
     protected void doPostSetup() throws Exception {
@@ -45,7 +47,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -53,7 +55,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}",
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
 
@@ -62,7 +64,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
     public void testGetCustomerWithQuery() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers?id=123");
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -70,7 +72,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}",
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
 
@@ -83,7 +85,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
             loadCamelFeatures(
                          "camel-blueprint", "camel-jetty", "camel-http4", "camel-cxf"),
 
-            bundle(newBundle()
+            bundle(TinyBundles.bundle()
                 .add("OSGI-INF/blueprint/test.xml", CxfRsBlueprintRouterTest.class.getResource("CxfBeanBlueprintRouter.xml"))
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Customer.class)
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService.class)

@@ -65,7 +65,7 @@ import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- *
+ * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.
  */
 public class DefaultManagementObjectStrategy implements ManagementObjectStrategy {
 

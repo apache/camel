@@ -30,9 +30,12 @@ public class JGroupsConsumer extends DefaultConsumer {
     private final String clusterName;
 
     private final CamelJGroupsReceiver receiver;
+    private final JGroupsEndpoint endpoint;
 
     public JGroupsConsumer(JGroupsEndpoint endpoint, Processor processor, Channel channel, String clusterName) {
         super(endpoint, processor);
+
+        this.endpoint = endpoint;
         this.channel = channel;
         this.clusterName = clusterName;
 
@@ -44,13 +47,14 @@ public class JGroupsConsumer extends DefaultConsumer {
         super.doStart();
         log.debug("Connecting receiver: {} to the cluster: {}.", receiver, clusterName);
         channel.setReceiver(receiver);
-        channel.connect(clusterName);
+        endpoint.connect();
     }
 
     @Override
     protected void doStop() throws Exception {
         log.debug("Closing connection to cluster: {} from receiver: {}.", clusterName, receiver);
-        channel.disconnect();
+        channel.setReceiver(null);
+        endpoint.disconnect();
         super.doStop();
     }
 }

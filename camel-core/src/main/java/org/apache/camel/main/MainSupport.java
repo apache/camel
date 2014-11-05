@@ -45,6 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Base class for main implementations to allow starting up a JVM with Camel embedded.
+ *
  * @version 
  */
 public abstract class MainSupport extends ServiceSupport {

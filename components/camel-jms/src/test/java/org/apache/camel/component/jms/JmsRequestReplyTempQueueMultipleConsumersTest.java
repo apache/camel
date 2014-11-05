@@ -86,7 +86,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         
-        connectionFactory = (PooledConnectionFactory) CamelJmsTestHelper.createConnectionFactory();
+        connectionFactory = CamelJmsTestHelper.createPooledConnectionFactory();
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

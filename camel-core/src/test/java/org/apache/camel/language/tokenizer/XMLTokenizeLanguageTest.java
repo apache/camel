@@ -19,6 +19,7 @@ package org.apache.camel.language.tokenizer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.component.mock.MockEndpoint;
 
 public class XMLTokenizeLanguageTest extends ContextTestSupport {
 
@@ -106,9 +107,16 @@ public class XMLTokenizeLanguageTest extends ContextTestSupport {
     }
 
     public void testSendMoreParentsMessageToTokenize() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-            "<c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>",
-            "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/>");
+        MockEndpoint result = getMockEndpoint("mock:result");
+        if (isJavaVersion("1.8"))  {
+            result.expectedBodiesReceived(
+                "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>");
+        } else {
+            result.expectedBodiesReceived(
+                "<c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>",
+                "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/>");
+        }
 
         template.sendBody("direct:start",
             "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"

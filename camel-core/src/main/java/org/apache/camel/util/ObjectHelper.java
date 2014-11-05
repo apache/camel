@@ -58,7 +58,6 @@ import org.apache.camel.WrappedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A number of useful helper methods for working with Objects
  *
@@ -67,9 +66,6 @@ import org.slf4j.LoggerFactory;
 public final class ObjectHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
-    @SuppressWarnings("unchecked")
-    private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
-                                                                       float[].class, double[].class, char[].class, boolean[].class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -864,8 +860,11 @@ public final class ObjectHelper {
             return Double.class;
         } else if ("double".equals(name)) {
             return double.class;
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name)) {
+            return Character.class;
+        } else if ("char".equals(name)) {
+            return char.class;
         }
-
         return null;
     }
 
@@ -1138,7 +1137,10 @@ public final class ObjectHelper {
      * @return {@code true} if the given type is a Java primitive array type
      */
     public static boolean isPrimitiveArrayType(Class<?> clazz) {
-        return PRIMITIVE_ARRAY_TYPES.contains(clazz);
+        if (clazz != null && clazz.isArray()) {
+            return clazz.getComponentType().isPrimitive();
+        }
+        return false;
     }
 
     public static int arrayLength(Object[] pojo) {
@@ -1166,6 +1168,8 @@ public final class ObjectHelper {
                 rc = Byte.class;
             } else if (type == boolean.class) {
                 rc = Boolean.class;
+            } else if (type == char.class) {
+                rc = Character.class;
             }
         }
         return rc;

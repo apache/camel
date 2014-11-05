@@ -284,6 +284,35 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
+     * Advice to invoke callbacks for before and after routing.
+     */
+    public static class RouteLifecycleAdvice implements CamelInternalProcessorAdvice<Object> {
+
+        private Route route;
+
+        public void setRoute(Route route) {
+            this.route = route;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                uow.beforeRoute(exchange, route);
+            }
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object object) throws Exception {
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                uow.afterRoute(exchange, route);
+            }
+        }
+    }
+
+    /**
      * Advice for JMX instrumentation of the process being invoked.
      * <p/>
      * This advice keeps track of JMX metrics for performance statistics.

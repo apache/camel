@@ -17,7 +17,6 @@
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,20 +24,19 @@ import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.Manifest;
 import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
+import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,6 +129,7 @@ import org.slf4j.LoggerFactory;
  *     </Signature>
  *     }
  * </pre>
+ * 
  * </ul>
  */
 public class DefaultXmlSignature2Message implements XmlSignature2Message {
@@ -163,12 +162,12 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         boolean removeSignatureElements = false;
         if (OUTPUT_NODE_SEARCH_TYPE_DEFAULT.equals(input.getOutputNodeSearchType())) {
             LOG.debug("Searching for output node via default search");
-            if (isEnveloped(input)) {
-                // enveloped XML signature --> remove signature element
+            if (isEnveloping(input)) {
+                node = getNodeForMessageBodyInEnvelopingCase(input);
+            } else {
+                // enveloped or detached XML signature  --> remove signature element
                 node = input.getMessageBodyDocument().getDocumentElement();
                 removeSignatureElements = true;
-            } else {
-                node = getNodeForMessageBodyInNonEnvelopedCase(input);
             }
         } else if (OUTPUT_NODE_SEARCH_TYPE_ELEMENT_NAME.equals(input.getOutputNodeSearchType())) {
             node = getOutputElementViaLocalNameAndNamespace(input);
@@ -193,12 +192,16 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     protected void transformNodeToByteArrayAndSetToOutputMessage(Input input, Message output, Node node)
-        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
-        
+        throws Exception {
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input));
+        XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
         output.setBody(os.toByteArray());
+        if (input.getOutputXmlEncoding() != null) {
+            output.setHeader(Exchange.CHARSET_NAME, input.getOutputXmlEncoding());
+        }
     }
+
 
     protected Node getOutputNodeViaXPath(Input input) throws Exception { //NOPMD
         checkSearchValueNotNull(input);
@@ -224,11 +227,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 || Node.DOCUMENT_NODE == result.getNodeType()) {
             return result;
         }
-        throw new XmlSignatureException(
-                String.format(
-                        "Cannot extract root node for the output document from the XML signature document. "
-                        + "XPATH %s as specified in the output node search results into a node which has the wrong type.",
-                        xpathFilter.getXPath()));
+        throw new XmlSignatureException(String.format("Cannot extract root node for the output document from the XML signature document. "
+                + "XPATH %s as specified in the output node search results into a node which has the wrong type.", xpathFilter.getXPath()));
     }
 
     protected Node getOutputElementViaLocalNameAndNamespace(Input input) throws Exception { //NOPMD
@@ -242,7 +242,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 throw new XmlSignatureException(
                         String.format(
                                 "Wrong configuration: Value %s for the output node search %s has wrong format. "
-                                + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                                        + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
                                 search, input.getOutputNodeSearchType()));
             }
             namespace = search.substring(1, index);
@@ -250,7 +250,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 throw new XmlSignatureException(
                         String.format(
                                 "Wrong configuration: Value %s for the output node search %s has wrong format. "
-                                + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                                        + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
                                 search, input.getOutputNodeSearchType()));
             }
             localName = search.substring(index + 1);
@@ -307,7 +307,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         }
     }
 
-    protected Node getNodeForMessageBodyInNonEnvelopedCase(Input input) throws Exception { //NOPMD
+    protected Node getNodeForMessageBodyInEnvelopingCase(Input input) throws Exception { //NOPMD
         Node node;
         List<Reference> relevantReferences = getReferencesForMessageMapping(input);
 
@@ -326,9 +326,13 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      */
     protected void removeSignatureElements(Node node) {
         Document doc = XmlSignatureHelper.getDocument(node);
-        NodeList nl = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
+        NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+        List<Node> nodesToBeRemoved = new ArrayList<Node>(nl.getLength());
         for (int i = 0; i < nl.getLength(); i++) {
-            Node n = nl.item(i);
+            // you cannot remove the nodes within this loop, because nl list would change
+            nodesToBeRemoved.add(nl.item(i));
+        }
+        for (Node n : nodesToBeRemoved) {
             Node parent = n.getParentNode();
             if (parent != null) {
                 parent.removeChild(n);
@@ -337,25 +341,19 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     /**
-     * Returns the enveloped data in case of an enveloped XML signature.
+     * Checks whether the XML document has as root element the signature
+     * element.
      * 
      * @param input
-     *            references of signed info and objects
-     * @return <code>true</code> if there exists a reference with URI = "" and
-     *         with {@link Transform#ENVELOPED} transform; otherwise
-     *         <code>false</code>
+     *            XML signature input
+     * @return <code>true</code> if the root element of the xml signature
+     *         document is the signature element; otherwise <code>false</code>
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
-    protected boolean isEnveloped(Input input) throws Exception { //NOPMD
-        for (Reference ref : input.getReferences()) {
-            if ("".equals(ref.getURI())) {
-                for (Transform t : (List<Transform>)ref.getTransforms()) {
-                    if (Transform.ENVELOPED.equals(t.getAlgorithm())) {
-                        return true;
-                    }
-                }
-            }
+    protected boolean isEnveloping(Input input) throws Exception { //NOPMD
+        Element el = input.getMessageBodyDocument().getDocumentElement();
+        if ("Signature".equals(el.getLocalName()) && XMLSignature.XMLNS.equals(el.getNamespaceURI())) {
+            return true;
         }
         return false;
     }
@@ -417,12 +415,12 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      */
     protected DOMStructure getDomStructureForMessageBody(List<Reference> relevantReferences, List<XMLObject> relevantObjects)
         throws Exception { //NOPMD
-        
+
         List<XMLObject> referencedObjects = getReferencedSameDocumentObjects(relevantReferences, relevantObjects);
 
         if (referencedObjects.isEmpty()) {
             throw new XmlSignatureException(
-                    String.format("Unsupported XML signature document: Content object not found in the XML signature. Detached or enveloped signatures are not supported."));
+                    String.format("Unsupported XML signature document: Content object not found in the enveloping XML signature."));
         }
 
         if (referencedObjects.size() > 1) {

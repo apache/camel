@@ -21,6 +21,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 
+/**
+ * Builder to build {@link org.apache.camel.spi.ThreadPoolProfile}.
+ * <p/>
+ * Use the {@link #build()} method when done setting up the profile.
+ */
 public class ThreadPoolProfileBuilder {
     private final ThreadPoolProfile profile;
 

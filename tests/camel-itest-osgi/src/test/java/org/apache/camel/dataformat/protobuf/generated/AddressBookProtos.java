@@ -361,7 +361,6 @@ public final class AddressBookProtos {
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         initFields();
-        int mutable_bitField0_ = 0;
         com.google.protobuf.UnknownFieldSet.Builder unknownFields =
             com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
@@ -2150,7 +2149,6 @@ public final class AddressBookProtos {
 
       public org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook buildPartial() {
         org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook result = new org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook(this);
-        int from_bitField0_ = bitField0_;
         if (personBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             person_ = java.util.Collections.unmodifiableList(person_);

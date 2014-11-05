@@ -26,6 +26,9 @@ import static org.hamcrest.core.Is.is;
 
 public class InfinispanProducerTest extends InfinispanTestSupport {
 
+    private static final String COMMAND_VALUE = "commandValue";
+    private static final String COMMAND_KEY = "commandKey1";
+
     @Test
     public void keyAndValueArePublishedWithDefaultOperation() throws Exception {
         template.send("direct:start", new Processor() {
@@ -119,6 +122,51 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         assertThat(currentCache().isEmpty(), is(true));
     }
 
+    @Test
+    public void testUriCommandOption() throws Exception {
+        template.send("direct:put", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, COMMAND_VALUE);
+            }
+        });
+        String result = (String) currentCache().get(COMMAND_KEY);
+        assertEquals(COMMAND_VALUE, result);
+
+        Exchange exchange;
+        exchange = template.send("direct:get", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
+            }
+        });
+        String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        assertEquals(COMMAND_VALUE, resultGet);
+
+        exchange = template.send("direct:remove", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
+            }
+        });
+        String resultRemove = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        assertEquals(COMMAND_VALUE, resultRemove);
+        assertNull(currentCache().get(COMMAND_KEY));
+        assertTrue(currentCache().isEmpty());
+
+        currentCache().put(COMMAND_KEY, COMMAND_VALUE);
+        currentCache().put("keyTest", "valueTest");
+
+        template.send("direct:clear", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+
+            }
+        });
+        assertTrue(currentCache().isEmpty());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -126,6 +174,15 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer");
+
+                from("direct:put")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUT");
+                from("direct:get")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=GET");
+                from("direct:remove")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REMOVE");
+                from("direct:clear")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CLEAR");
             }
         };
     }

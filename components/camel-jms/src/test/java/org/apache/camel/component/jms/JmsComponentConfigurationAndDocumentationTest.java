@@ -41,7 +41,7 @@ public class JmsComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\" }"));
     }
 
@@ -49,7 +49,7 @@ public class JmsComponentConfigurationAndDocumentationTest extends CamelTestSupp
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("jms");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

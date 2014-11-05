@@ -114,7 +114,7 @@ public interface TypeConverterRegistry extends StaticService {
      *
      * @return a list containing fromType/toType class names
      */
-    List<Class[]> listAllTypeConvertersFromTo();
+    List<Class<?>[]> listAllTypeConvertersFromTo();
 
     /**
      * Sets the injector to be used for creating new instances during type conversions.

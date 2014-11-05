@@ -27,9 +27,9 @@ import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
@@ -37,7 +37,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 /**
  * @version 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 @Ignore("Loading OSGi driver in OSGi is ***** hard")
 public class MyBatisTest extends OSGiIntegrationTestSupport {
 

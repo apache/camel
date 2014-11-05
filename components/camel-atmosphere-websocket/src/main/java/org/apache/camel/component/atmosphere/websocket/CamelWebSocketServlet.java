@@ -42,7 +42,7 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
         log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.
-        HttpConsumer consumer = resolve(request);
+        HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
             log.debug("No consumer to service request {}", request);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

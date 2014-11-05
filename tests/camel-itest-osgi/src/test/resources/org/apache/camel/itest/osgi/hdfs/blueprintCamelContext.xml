@@ -45,7 +45,7 @@
         <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
         <propertyPlaceholder id="properties" location="blueprint:external"
                              prefixToken="[[" suffixToken="]]"
-                             propertyPrefix="prefix."/>
+                             />
         <route>
             <from uri="direct:start"/>
 <!--             <to uri="hdfs2://localhost:9000/hdfs/test-camel?fileSystemType=HDFS&amp;splitStrategy=BYTES:5,IDLE:1000"/> -->

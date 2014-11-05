@@ -33,7 +33,7 @@ public class OptaPlannerComponentConfigurationAndDocumentationTest extends Camel
     @Test
     public void testComponentConfiguration() throws Exception {
         OptaPlannerComponent component = context.getComponent("optaplanner", OptaPlannerComponent.class);
-        EndpointConfiguration configuration = component.createConfiguration("optaplanner:/org/apache/camel/component/optaplanner/solverConfig.xml?"
+        EndpointConfiguration configuration = component.createConfiguration("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml?"
                 + "synchronous=false&contentCache=true");
 
         assertEquals("true", configuration.getParameter("contentCache"));
@@ -42,7 +42,7 @@ public class OptaPlannerComponentConfigurationAndDocumentationTest extends Camel
         String json = componentConfiguration.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"resourceUri\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"resourceUri\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
     }
 
@@ -50,7 +50,7 @@ public class OptaPlannerComponentConfigurationAndDocumentationTest extends Camel
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("optaplanner");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -43,7 +43,7 @@ public class IBoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private BoxComment addComment() throws InterruptedException {
         final BoxCommentRequestObject requestObject =
-            BoxCommentRequestObject.addCommentRequestObject(BoxResourceType.FILE, testFileId, "Camel was here!");
+                BoxCommentRequestObject.addCommentRequestObject(BoxResourceType.FILE, testFileId, "Camel was here!");
 
         BoxComment result = requestBody("direct://ADDCOMMENT", requestObject);
         assertNotNull("addComment result", result);
@@ -52,7 +52,7 @@ public class IBoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
     }
 
     @Test
-    public void testAddComment_1() throws Exception {
+    public void testAddComment1() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
         headers.put("CamelBox.commentedItemId", testFileId);
@@ -103,7 +103,7 @@ public class IBoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.commentId", comment.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxCommentRequestObject
             final BoxCommentRequestObject requestObject =
-                BoxCommentRequestObject.updateCommentRequestObject("Camel was here, again!");
+                    BoxCommentRequestObject.updateCommentRequestObject("Camel was here, again!");
             headers.put("CamelBox.commentRequest", requestObject);
             BoxComment result = requestBodyAndHeaders("direct://UPDATECOMMENT", null, headers);
 
@@ -119,23 +119,23 @@ public class IBoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for addComment
                 from("direct://ADDCOMMENT")
-                  .to("box://" + PATH_PREFIX + "/addComment?inBody=commentRequest");
+                        .to("box://" + PATH_PREFIX + "/addComment?inBody=commentRequest");
 
                 // test route for addComment
                 from("direct://ADDCOMMENT_1")
-                  .to("box://" + PATH_PREFIX + "/addComment");
+                        .to("box://" + PATH_PREFIX + "/addComment");
 
                 // test route for deleteComment
                 from("direct://DELETECOMMENT")
-                  .to("box://" + PATH_PREFIX + "/deleteComment");
+                        .to("box://" + PATH_PREFIX + "/deleteComment");
 
                 // test route for getComment
                 from("direct://GETCOMMENT")
-                  .to("box://" + PATH_PREFIX + "/getComment");
+                        .to("box://" + PATH_PREFIX + "/getComment");
 
                 // test route for updateComment
                 from("direct://UPDATECOMMENT")
-                  .to("box://" + PATH_PREFIX + "/updateComment");
+                        .to("box://" + PATH_PREFIX + "/updateComment");
 
             }
         };

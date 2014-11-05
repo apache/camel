@@ -15,3 +15,4 @@
 # limitations under the License.
 #
 org.apache.camel.groovy.converter.TypeConverter
+org.apache.camel.groovy.converter.GPathResultConverter

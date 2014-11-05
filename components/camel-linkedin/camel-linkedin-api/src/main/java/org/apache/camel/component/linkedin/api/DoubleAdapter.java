@@ -18,8 +18,7 @@ package org.apache.camel.component.linkedin.api;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class DoubleAdapter extends XmlAdapter<String, Double>
-{
+public class DoubleAdapter extends XmlAdapter<String, Double> {
 
     public Double unmarshal(String value) {
         return javax.xml.bind.DatatypeConverter.parseDouble(value);

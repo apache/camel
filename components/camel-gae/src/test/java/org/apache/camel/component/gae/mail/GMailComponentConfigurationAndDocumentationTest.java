@@ -19,7 +19,6 @@ package org.apache.camel.component.gae.mail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.gae.login.GLoginComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -43,15 +42,15 @@ public class GMailComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"sender\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"bcc\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"sender\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"bcc\": { \"type\": \"string\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("gmail");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -19,20 +19,22 @@ package org.apache.camel.itest.osgi.blueprint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
  *
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class BlueprintPropertiesJasyptRouteTest extends OSGiBlueprintTestSupport {
 
     private String name = BlueprintPropertiesJasyptRouteTest.class.getName();
@@ -68,7 +70,7 @@ public class BlueprintPropertiesJasyptRouteTest extends OSGiBlueprintTestSupport
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", BlueprintPropertiesJasyptRouteTest.class.getResource("blueprint-26.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintPropertiesJasyptRouteTest.class.getName())
                         .set(Constants.BUNDLE_VERSION, "1.0.0")

@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.http.ContextPathMatcher;
-import org.apache.camel.component.netty.http.DefaultContextPathMatcher;
 import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.component.netty.http.RestContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandler;
@@ -66,14 +69,18 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
     }
 
     public void addConsumer(NettyHttpConsumer consumer) {
+        String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
-        ContextPathMatcher matcher = new DefaultContextPathMatcher(path, consumer.getConfiguration().isMatchOnUriPrefix());
+        // use rest path matcher in case Rest DSL is in use
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.put(matcher, new HttpServerChannelHandler(consumer));
     }
 
     public void removeConsumer(NettyHttpConsumer consumer) {
+        String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
-        ContextPathMatcher matcher = new DefaultContextPathMatcher(path, consumer.getConfiguration().isMatchOnUriPrefix());
+        // use rest path matcher in case Rest DSL is in use
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getEndpoint().getHttpMethodRestrict(), consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.remove(matcher);
     }
 
@@ -104,8 +111,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         } else {
             // this resource is not found, so send empty response back
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
         }
@@ -117,28 +124,84 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         if (handler != null) {
             handler.exceptionCaught(ctx, e);
         } else {
-            throw new IllegalStateException("HttpServerChannelHandler not found as attachment. Cannot handle caught exception.", e.getCause());
+            // we cannot throw the exception here
+            LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", e.getCause());
+            // Now we just send 404 back to the client
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
+            // Here we don't want to expose the exception detail to the client
+            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
+            ctx.getChannel().write(response);
         }
     }
 
     private HttpServerChannelHandler getHandler(HttpRequest request) {
+        HttpServerChannelHandler answer = null;
+
         // need to strip out host and port etc, as we only need the context-path for matching
+        String method = request.getMethod().getName();
+        if (method == null) {
+            return null;
+        }
+
         String path = request.getUri();
         int idx = path.indexOf(token);
         if (idx > -1) {
             path = path.substring(idx + len);
         }
-
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        // find the one that matches
+
+        List<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> candidates = new ArrayList<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>>();
+
+        // first match by http method
         for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
-            if (entry.getKey().matches(path)) {
-                return entry.getValue();
+            NettyHttpConsumer consumer = entry.getValue().getConsumer();
+            String restrict = consumer.getEndpoint().getHttpMethodRestrict();
+            if (entry.getKey().matchMethod(method, restrict)) {
+                candidates.add(entry);
             }
         }
-        return null;
+
+        // then see if we got a direct match
+        Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
+        while (it.hasNext()) {
+            Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+            if (entry.getKey().matchesRest(path, false)) {
+                answer = entry.getValue();
+                break;
+            }
+        }
+
+        // then match by non wildcard path
+        if (answer == null) {
+            it = candidates.iterator();
+            while (it.hasNext()) {
+                Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+                if (!entry.getKey().matchesRest(path, true)) {
+                    it.remove();
+                }
+            }
+
+            // there should only be one
+            if (candidates.size() == 1) {
+                answer = candidates.get(0).getValue();
+            }
+        }
+
+        // fallback to regular matching
+        if (answer == null) {
+            for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
+                if (entry.getKey().matches(path)) {
+                    answer = entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        return answer;
     }
 
     private static String pathAsKey(String path) {

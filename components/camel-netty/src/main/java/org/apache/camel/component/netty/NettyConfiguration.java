@@ -74,6 +74,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     @UriParam
     private boolean allowDefaultCodec = true;
+    @UriParam
     private ClientPipelineFactory clientPipelineFactory;
     @UriParam
     private int maximumPoolSize = 16;
@@ -186,7 +187,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
         // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
-            if (allowDefaultCodec) {
+            if (isAllowDefaultCodec()) {
                 // are we textline or object?
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;

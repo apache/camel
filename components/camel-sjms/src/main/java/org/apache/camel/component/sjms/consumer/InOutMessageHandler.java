@@ -21,7 +21,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -40,8 +39,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * TODO Add Class documentation for AbstractMessageHandler 
- * TODO Create a producer
  * cache manager to store and purge unused cashed producers or we will have a
  * memory leak
  */
@@ -50,29 +47,14 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     private Map<String, MessageProducer> producerCache = new TreeMap<String, MessageProducer>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    
-    /**
-     * 
-     * @param endpoint
-     * @param executor
-     */
     public InOutMessageHandler(Endpoint endpoint, ExecutorService executor) {
         super(endpoint, executor);
     }
-    
-    /**
-     *
-     * @param endpoint
-     * @param executor
-     * @param synchronization
-     */
+
     public InOutMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
     }
 
-    /**
-     * @param message
-     */
     @Override
     public void handleMessage(final Exchange exchange) {
         try {
@@ -81,9 +63,9 @@ public class InOutMessageHandler extends AbstractMessageHandler {
             if (obj != null) {
                 Destination replyTo = null;
                 if (isDestination(obj)) {
-                    replyTo = (Destination)obj;
+                    replyTo = (Destination) obj;
                 } else if (obj instanceof String) {
-                    replyTo = JmsObjectFactory.createDestination(getSession(), (String)obj, isTopic());
+                    replyTo = JmsObjectFactory.createDestination(getSession(), (String) obj, isTopic());
                 } else {
                     throw new Exception("The value of JMSReplyTo must be a valid Destination or String.  Value provided: " + obj);
                 }
@@ -158,9 +140,9 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     private String getDestinationName(Destination destination) throws Exception {
         String answer = null;
         if (destination instanceof Queue) {
-            answer = ((Queue)destination).getQueueName();
+            answer = ((Queue) destination).getQueueName();
         } else if (destination instanceof Topic) {
-            answer = ((Topic)destination).getTopicName();
+            answer = ((Topic) destination).getTopicName();
         }
 
         return answer;
@@ -178,9 +160,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
 
         @Override
         public void done(boolean sync) {
-
             try {
-                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint)getEndpoint()).getJmsKeyFormatStrategy());
+                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint) getEndpoint()).getJmsKeyFormatStrategy());
                 response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
                 localProducer.send(response);
             } catch (Exception e) {

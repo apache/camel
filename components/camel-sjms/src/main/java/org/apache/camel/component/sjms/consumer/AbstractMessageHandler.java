@@ -17,7 +17,6 @@
 package org.apache.camel.component.sjms.consumer;
 
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
- * Abstract MessageListener 
+ * Abstract MessageListener
  */
 public abstract class AbstractMessageHandler implements MessageListener {
 
@@ -73,10 +72,10 @@ public abstract class AbstractMessageHandler implements MessageListener {
     public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
-            final DefaultExchange exchange = (DefaultExchange)SjmsExchangeMessageHelper.createExchange(message, getEndpoint());
-            
+            final DefaultExchange exchange = (DefaultExchange) SjmsExchangeMessageHelper.createExchange(message, getEndpoint());
+
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
-            
+
             if (isTransacted() && synchronization != null) {
                 exchange.addOnCompletion(synchronization);
             }
@@ -123,7 +122,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
     public abstract void handleMessage(final Exchange exchange);
 
     /**
-     * Method will be called to 
+     * Method will be called to
      */
     public abstract void close();
 

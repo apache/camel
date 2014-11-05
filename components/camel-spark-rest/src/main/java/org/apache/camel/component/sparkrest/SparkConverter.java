@@ -26,6 +26,9 @@ import spark.Response;
 @Converter
 public final class SparkConverter {
 
+    private SparkConverter() {
+    }
+
     /**
      * A fallback converter that allows us to easily call Java beans and use the raw Spark {@link Request} as parameter types.
      */

@@ -34,6 +34,8 @@ public final class RabbitMQConstants {
     public static final String EXPIRATION = "rabbitmq.EXPIRATION";
     public static final String TIMESTAMP = "rabbitmq.TIMESTAMP";
     public static final String APP_ID = "rabbitmq.APP_ID";
+    public static final String RABBITMQ_DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
+    public static final String RABBITMQ_DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
     
     private RabbitMQConstants() {
         //Constants class

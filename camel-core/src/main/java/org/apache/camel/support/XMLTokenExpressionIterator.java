@@ -53,12 +53,18 @@ import org.slf4j.LoggerFactory;
 public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware {
     protected final String path;
     protected char mode;
+    protected int group;
     protected Map<String, String> nsmap;
 
     public XMLTokenExpressionIterator(String path, char mode) {
+        this(path, mode, 1);
+    }
+
+    public XMLTokenExpressionIterator(String path, char mode, int group) {
         ObjectHelper.notEmpty(path, "path");
         this.path = path;
         this.mode = mode;
+        this.group = group > 1 ? group : 1;
     }
 
     @Override
@@ -74,6 +80,14 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.mode = mode != null ? mode.charAt(0) : 0;
     }
     
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
     protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
         Reader reader;
         if (charset == null) {
@@ -81,12 +95,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         } else {
             reader = new InputStreamReader(in, charset);
         }
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, reader);
+        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, group, reader);
         return iterator;
     }
 
     protected Iterator<?> createIterator(Reader in) throws XMLStreamException {
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, in);
+        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, group, in);
         return iterator;
     }
 
@@ -147,12 +161,14 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private AttributedQName[] splitpath;
         private int index;
         private char mode;
+        private int group;
         private RecordableReader in;
         private XMLStreamReader reader;
         private List<QName> path;
         private List<Map<String, String>> namespaces;
         private List<String> segments;
         private List<QName> segmentlog;
+        private List<String> tokens;
         private int code;
         private int consumed;
         private boolean backtrack;
@@ -164,10 +180,20 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
             throws XMLStreamException, UnsupportedEncodingException {
             // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
+            this(path, nsmap, mode, 1, new InputStreamReader(in, charset));
+        }
+
+        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, InputStream in, String charset) 
+            throws XMLStreamException, UnsupportedEncodingException {
+            // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
             this(path, nsmap, mode, new InputStreamReader(in, charset));
         }
 
         public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, Reader in) throws XMLStreamException {
+            this(path, nsmap, mode, 1, in);
+        }
+
+        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
@@ -182,6 +208,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
             
             this.mode = mode != 0 ? mode : 'i';
+            this.group = group > 0 ? group : 1;
             this.in = new RecordableReader(in);
             this.reader = new StaxConverter().createXMLStreamReader(this.in);
 
@@ -201,7 +228,10 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             } else if (this.mode == 'i') {
                 this.namespaces = new ArrayList<Map<String, String>>();
             }
-                        
+            // when grouping the tokens, allocate the storage to temporarily store tokens. 
+            if (this.group > 1) {
+                this.tokens = new ArrayList<String>();
+            }       
             this.nextToken = getNextToken();
 
         }
@@ -336,7 +366,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private String createContextualToken(String token) {
             StringBuilder sb = new StringBuilder();
-            if (mode == 'w') {
+            if (mode == 'w' && group == 1) {
                 for (int i = 0; i < segments.size(); i++) {
                     sb.append(segments.get(i));
                 }
@@ -389,17 +419,45 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     }
                     sb.append(token.substring(ep + 1, bp));
                 }
+            } else {
+                return token;
             }
 
             return sb.toString();
         }
 
+        private String getGroupedToken() {
+            StringBuilder sb = new StringBuilder();
+            if (mode == 'w') {
+                 // for wrapped
+                for (int i = 0; i < segments.size(); i++) {
+                    sb.append(segments.get(i));
+                }
+                for (String s : tokens) {
+                    sb.append(s);
+                }
+                for (int i = path.size() - 1; i >= 0; i--) {
+                    QName q = path.get(i);
+                    sb.append("</").append(makeName(q)).append(">");
+                }
+            } else {
+                // for injected, unwrapped, text
+                sb.append("<group>");
+                for (String s : tokens) {
+                    sb.append(s);
+                }
+                sb.append("</group>");
+            }
+            tokens.clear();
+            return sb.toString();
+        }
+        
         private String getNextToken() throws XMLStreamException {
-            int code = 0;
-            while (code != XMLStreamConstants.END_DOCUMENT) {
-                code = readNext();
+            int xcode = 0;
+            while (xcode != XMLStreamConstants.END_DOCUMENT) {
+                xcode = readNext();
 
-                switch (code) {
+                switch (xcode) {
                 case XMLStreamConstants.START_ELEMENT:
                     depth++;
                     QName name = reader.getName();
@@ -424,7 +482,14 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                             token = getCurrentToken();
                             backtrack = true;
                             trackdepth = depth;
-                            return token;
+                            if (group > 1) {
+                                tokens.add(token);
+                                if (group == tokens.size()) {
+                                    return getGroupedToken();
+                                }
+                            } else {
+                                return token;    
+                            }
                         } else {
                             // intermediary match
                             down();
@@ -437,6 +502,13 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     }
                     break;
                 case XMLStreamConstants.END_ELEMENT:
+                    if ((backtrack || (trackdepth > 0 && depth == trackdepth))
+                        && (mode == 'w' && group > 1 && tokens.size() > 0)) {
+                        // flush the left over using the current context
+                        code = XMLStreamConstants.END_ELEMENT;
+                        return getGroupedToken();
+                    }
+
                     depth--;
                     QName endname = reader.getName();
                     LOG.trace("ee={}", endname);
@@ -474,6 +546,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
                     LOG.trace("depth={}", depth);
+                    if (group > 1 && tokens.size() > 0) {
+                        // flush the left over before really going EoD
+                        code = XMLStreamConstants.END_DOCUMENT;
+                        return getGroupedToken();
+                    }
                     break;
                 default:
                     break;

@@ -41,7 +41,7 @@ public class JGroupsComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"channelProperties\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"channelProperties\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"resolvedEnableViewMessages\": { \"type\": \"boolean\" }"));
     }
 
@@ -49,7 +49,7 @@ public class JGroupsComponentConfigurationAndDocumentationTest extends CamelTest
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("jgroups");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

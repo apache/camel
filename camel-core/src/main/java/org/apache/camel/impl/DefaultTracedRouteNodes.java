@@ -29,6 +29,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TracedRouteNodes;
 
 /**
+ * Default {@link org.apache.camel.spi.TracedRouteNodes}
+ *
  * @version 
  */
 public class DefaultTracedRouteNodes implements TracedRouteNodes {

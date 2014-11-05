@@ -163,8 +163,7 @@ public class JdbcProducer extends DefaultProducer {
             boolean stmtExecutionResult = ps.execute();
             if (stmtExecutionResult) {
                 rs = ps.getResultSet();
-                setResultSet(exchange, rs);
-                shouldCloseResources = false;
+                shouldCloseResources = setResultSet(exchange, rs);
             } else {
                 int updateCount = ps.getUpdateCount();
                 // preserve headers
@@ -220,10 +219,12 @@ public class JdbcProducer extends DefaultProducer {
 
             if (stmtExecutionResult) {
                 rs = stmt.getResultSet();
-                setResultSet(exchange, rs);
-                shouldCloseResources = false;
+                shouldCloseResources = setResultSet(exchange, rs);
             } else {
                 int updateCount = stmt.getUpdateCount();
+                // preserve headers
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                // and then set the new header
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
 
@@ -299,8 +300,12 @@ public class JdbcProducer extends DefaultProducer {
 
     /**
      * Sets the result from the ResultSet to the Exchange as its OUT body.
+     *
+     * @return whether to close resources
      */
-    protected void setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
+    protected boolean setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
+        boolean answer = true;
+
         ResultSetIterator iterator = new ResultSetIterator(rs, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics());
 
         // preserve headers
@@ -311,46 +316,50 @@ public class JdbcProducer extends DefaultProducer {
         if (outputType == JdbcOutputType.StreamList) {
             exchange.getOut().setBody(iterator);
             exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+            // do not close resources as we are in streaming mode
+            answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {
-            List<Map<String, Object>> list = extractRows(iterator);
+            List<?> list = extractRows(iterator);
             exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, list.size());
             exchange.getOut().setBody(list);
         } else if (outputType == JdbcOutputType.SelectOne) {
             exchange.getOut().setBody(extractSingleRow(iterator));
         }
+
+        return answer;
     }
 
-    private List<Map<String, Object>> extractRows(ResultSetIterator iterator) {
-        try {
-            List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-            int maxRowCount = readSize == 0 ? Integer.MAX_VALUE : readSize;
-            for (int i = 0; iterator.hasNext() && i < maxRowCount; i++) {
-                result.add(iterator.next());
+    @SuppressWarnings("unchecked")
+    private List extractRows(ResultSetIterator iterator) throws SQLException {
+        List result = new ArrayList();
+        int maxRowCount = readSize == 0 ? Integer.MAX_VALUE : readSize;
+        for (int i = 0; iterator.hasNext() && i < maxRowCount; i++) {
+            Map<String, Object> row = iterator.next();
+            Object value;
+            if (getEndpoint().getOutputClass() != null) {
+                value = newBeanInstance(row);
+            } else {
+                value = row;
             }
-            return result;
-        } finally {
-            iterator.close();
+            result.add(value);
         }
+        return result;
     }
 
     private Object extractSingleRow(ResultSetIterator iterator) throws SQLException {
-        try {
-            if (!iterator.hasNext()) {
-                return null;
-            }
+        if (!iterator.hasNext()) {
+            return null;
+        }
 
-            Map<String, Object> row = iterator.next();
-            if (iterator.hasNext()) {
-                throw new SQLDataException("Query result not unique for outputType=SelectOne.");
-            } else if (getEndpoint().getOutputClass() != null) {
-                return newBeanInstance(row);
-            } else if (row.size() == 1) {
-                return row.values().iterator().next();
-            } else {
-                return row;
-            }
-        } finally {
-            iterator.close();
+        Map<String, Object> row = iterator.next();
+        if (iterator.hasNext()) {
+            throw new SQLDataException("Query result not unique for outputType=SelectOne.");
+        } else if (getEndpoint().getOutputClass() != null) {
+            return newBeanInstance(row);
+        } else if (row.size() == 1) {
+            return row.values().iterator().next();
+        } else {
+            return row;
         }
     }
 
@@ -390,11 +399,13 @@ public class JdbcProducer extends DefaultProducer {
         @Override
         public void onComplete(Exchange exchange) {
             iterator.close();
+            iterator.closeConnection();
         }
 
         @Override
         public void onFailure(Exchange exchange) {
             iterator.close();
+            iterator.closeConnection();
         }
     }
 }

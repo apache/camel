@@ -55,7 +55,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     private final ConcurrentMap<K, TimeoutMapEntry<K, V>> map = new ConcurrentHashMap<K, TimeoutMapEntry<K, V>>();
     private final ScheduledExecutorService executor;
-    private volatile ScheduledFuture future;
+    private volatile ScheduledFuture<?> future;
     private final long purgePollTime;
     private final Lock lock = new ReentrantLock();
     private boolean useLock = true;

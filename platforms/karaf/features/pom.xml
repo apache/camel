@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
-    <version>2.14-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.karaf</groupId>
@@ -140,7 +140,7 @@
         </repository>
       </repositories>
     </profile>
-    
+
     <profile>
       <id>validate</id>
       <!-- Added the repository for the google script -->

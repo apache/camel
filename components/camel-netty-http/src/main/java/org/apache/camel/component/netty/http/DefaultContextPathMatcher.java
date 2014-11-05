@@ -23,23 +23,39 @@ import java.util.Locale;
  */
 public class DefaultContextPathMatcher implements ContextPathMatcher {
 
-    private final String path;
-    private final boolean matchOnUriPrefix;
+    protected final String path;
+    protected final boolean matchOnUriPrefix;
 
     public DefaultContextPathMatcher(String path, boolean matchOnUriPrefix) {
         this.path = path.toLowerCase(Locale.US);
         this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
-    public boolean matches(String target) {
-        target = target.toLowerCase(Locale.US);
+    @Override
+    public boolean matches(String path) {
+        path = path.toLowerCase(Locale.US);
         if (!matchOnUriPrefix) {
             // exact match
-            return target.equals(path);
+            return path.equals(this.path);
         } else {
             // match on prefix, then we just need to match the start of the context-path
-            return target.startsWith(path);
+            return path.startsWith(this.path);
         }
+    }
+
+    @Override
+    public boolean matchesRest(String path, boolean wildcard) {
+        return false;
+    }
+
+    @Override
+    public boolean matchMethod(String method, String restrict) {
+        // always match as HttpServerChannelHandler will deal with HTTP method restrictions
+        return true;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     @Override

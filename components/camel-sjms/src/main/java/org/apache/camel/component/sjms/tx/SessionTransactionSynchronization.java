@@ -42,9 +42,8 @@ public class SessionTransactionSynchronization implements Synchronization {
     }
 
     /**
-     * @see
-     * org.apache.camel.spi.Synchronization#onFailure(org.apache.camel.Exchange)
      * @param exchange
+     * @see org.apache.camel.spi.Synchronization#onFailure(org.apache.camel.Exchange)
      */
     @Override
     public void onFailure(Exchange exchange) {
@@ -61,10 +60,9 @@ public class SessionTransactionSynchronization implements Synchronization {
     }
 
     /**
-     * @see
-     * org.apache.camel.spi.Synchronization#onComplete(org.apache.camel.Exchange
-     * )
      * @param exchange
+     * @see org.apache.camel.spi.Synchronization#onComplete(org.apache.camel.Exchange
+     *)
      */
     @Override
     public void onComplete(Exchange exchange) {

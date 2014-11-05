@@ -24,7 +24,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -46,50 +45,34 @@ public class SolrEndpoint extends DefaultEndpoint {
     private Boolean followRedirects;
     private Boolean allowCompression;
     private String scheme = "http://";
-	private String zkHost = null;
-	private String collection = null;
+    private String zkHost;
+    private String collection;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
         if (endpointUri.startsWith("solrs")) {
-        	scheme = "https://";
+            scheme = "https://";
         }
         URL url = new URL(scheme + address);
         this.url = url.toString();
     }
-    
-    
-    private SolrServer createSolrServer() {
-		SolrServer server = null;
-		String zkHost = this.getZkHost();
-		if (zkHost == null) {
-			server = new HttpSolrServer(this.url);
-		} else {
-			CloudSolrServer cServer = new CloudSolrServer(zkHost);
-			cServer.setDefaultCollection(this.getCollection());
-			server = cServer;
-		}
-		return server;
-	}
+   
+    public void setZkHost(String zkHost) throws UnsupportedEncodingException {
+        String decoded = URLDecoder.decode(zkHost, "UTF-8");
+        this.zkHost = decoded;
+    }
 
-    
-	public void setZkHost(String zkHost) throws UnsupportedEncodingException {
-		String decoded = URLDecoder.decode(zkHost, "UTF-8");
-		this.zkHost = decoded;
-	}
+    public String getZkHost() {
+        return this.zkHost;
+    }
 
-	public String getZkHost() {
-		return this.zkHost;
-	}
-	
-	
-	public void setCollection(String collection) {
-		this.collection = collection;
-	}
-	
-	public String getCollection() {
-		return this.collection;
-	}
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getCollection() {
+        return this.collection;
+    }
 
     @Override
     public SolrComponent getComponent() {
@@ -97,12 +80,12 @@ public class SolrEndpoint extends DefaultEndpoint {
     }
     
     private CloudSolrServer getCloudServer() {
-    	CloudSolrServer rVal = null;
-    	if (this.getZkHost() != null && this.getCollection() != null) {
-			rVal = new CloudSolrServer(zkHost);
-			rVal.setDefaultCollection(this.getCollection());
-    	}
-    	return rVal;
+        CloudSolrServer rVal = null;
+        if (this.getZkHost() != null && this.getCollection() != null) {
+            rVal = new CloudSolrServer(zkHost);
+            rVal.setDefaultCollection(this.getCollection());
+        }
+        return rVal;
     }
     
     @Override
@@ -112,36 +95,36 @@ public class SolrEndpoint extends DefaultEndpoint {
         if (ref == null) {
             // no then create new servers
             ref = new SolrComponent.SolrServerReference();
-        	CloudSolrServer cloudServer = getCloudServer();
-        	if (cloudServer == null) {
-	            HttpSolrServer solrServer = new HttpSolrServer(url);
-	            ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
-	
-	            // set the properties on the solr server
-	            if (maxRetries != null) {
-	                solrServer.setMaxRetries(maxRetries);
-	            }
-	            if (soTimeout != null) {
-	                solrServer.setSoTimeout(soTimeout);
-	            }
-	            if (connectionTimeout != null) {
-	                solrServer.setConnectionTimeout(connectionTimeout);
-	            }
-	            if (defaultMaxConnectionsPerHost != null) {
-	                solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-	            }
-	            if (maxTotalConnections != null) {
-	                solrServer.setMaxTotalConnections(maxTotalConnections);
-	            }
-	            if (followRedirects != null) {
-	                solrServer.setFollowRedirects(followRedirects);
-	            }
-	            if (allowCompression != null) {
-	                solrServer.setAllowCompression(allowCompression);
-	            }
-	            ref.setSolrServer(solrServer);
-	            ref.setUpdateSolrServer(solrStreamingServer);
-        	}
+            CloudSolrServer cloudServer = getCloudServer();
+            if (cloudServer == null) {
+                HttpSolrServer solrServer = new HttpSolrServer(url);
+                ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
+
+                // set the properties on the solr server
+                if (maxRetries != null) {
+                    solrServer.setMaxRetries(maxRetries);
+                }
+                if (soTimeout != null) {
+                    solrServer.setSoTimeout(soTimeout);
+                }
+                if (connectionTimeout != null) {
+                    solrServer.setConnectionTimeout(connectionTimeout);
+                }
+                if (defaultMaxConnectionsPerHost != null) {
+                    solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
+                }
+                if (maxTotalConnections != null) {
+                    solrServer.setMaxTotalConnections(maxTotalConnections);
+                }
+                if (followRedirects != null) {
+                    solrServer.setFollowRedirects(followRedirects);
+                }
+                if (allowCompression != null) {
+                    solrServer.setAllowCompression(allowCompression);
+                }
+                ref.setSolrServer(solrServer);
+                ref.setUpdateSolrServer(solrStreamingServer);
+            }
             ref.setCloudSolrServer(cloudServer);
 
             getComponent().addSolrServers(this, ref);

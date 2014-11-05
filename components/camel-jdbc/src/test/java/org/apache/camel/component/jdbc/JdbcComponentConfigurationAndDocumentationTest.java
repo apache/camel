@@ -42,15 +42,17 @@ public class JdbcComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"outputClass\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"outputClass\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"allowNamedParameters\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"beanRowMapper\": { \"type\": \"object\","));
+        assertTrue(json.contains("\"javaType\": { \"description\": \"org.apache.camel.component.jdbc.BeanRowMapper\", \"type\": \"string\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("jdbc");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

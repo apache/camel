@@ -18,25 +18,35 @@ package org.apache.camel.component.jackson;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat implements DataFormat {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat {
 
     private final ObjectMapper objectMapper;
+    private Class<? extends Collection> collectionType;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
+    private String include;
+    private boolean prettyPrint;
+    private boolean allowJmsType;
+    private boolean useList;
+    private boolean enableJaxbAnnotationModule;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -60,17 +70,27 @@ public class JacksonDataFormat implements DataFormat {
      * unmarshal type and JSON view
      *
      * @param unmarshalType the custom unmarshal type
-     * @param jsonView marker class to specifiy properties to be included during marshalling.
+     * @param jsonView marker class to specify properties to be included during marshalling.
      *                 See also http://wiki.fasterxml.com/JacksonJsonViews
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+        this(unmarshalType, jsonView, true);
+    }
+    
+    /**
+     * Use the default Jackson {@link ObjectMapper} and with a custom
+     * unmarshal type and JSON view
+     *
+     * @param unmarshalType the custom unmarshal type
+     * @param jsonView marker class to specify properties to be included during marshalling.
+     *                 See also http://wiki.fasterxml.com/JacksonJsonViews
+     * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
+     */
+    public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
         this.objectMapper = new ObjectMapper();
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
-
-        // Enables JAXB processing
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        this.objectMapper.registerModule(module);
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
     /**
@@ -88,7 +108,7 @@ public class JacksonDataFormat implements DataFormat {
      *
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
-     * @param jsonView marker class to specifiy properties to be included during marshalling.
+     * @param jsonView marker class to specify properties to be included during marshalling.
      *                 See also http://wiki.fasterxml.com/JacksonJsonViews
      */
     public JacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
@@ -102,7 +122,22 @@ public class JacksonDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return this.objectMapper.readValue(stream, this.unmarshalType);
+
+        // is there a header with the unmarshal type?
+        Class<?> clazz = unmarshalType;
+        String type = exchange.getIn().getHeader(JacksonConstants.UNMARSHAL_TYPE, String.class);
+        if (type == null && isAllowJmsType()) {
+            type = exchange.getIn().getHeader("JMSType", String.class);
+        }
+        if (type != null) {
+            clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
+        }
+        if (collectionType != null) {
+            CollectionType collType = objectMapper.getTypeFactory().constructCollectionType(collectionType, clazz);
+            return this.objectMapper.readValue(stream, collType);
+        } else {
+            return this.objectMapper.readValue(stream, clazz);
+        }
     }
 
     // Properties
@@ -116,6 +151,14 @@ public class JacksonDataFormat implements DataFormat {
         this.unmarshalType = unmarshalType;
     }
 
+    public Class<? extends Collection> getCollectionType() {
+        return collectionType;
+    }
+
+    public void setCollectionType(Class<? extends Collection> collectionType) {
+        this.collectionType = collectionType;
+    }
+
     public Class<?> getJsonView() {
         return jsonView;
     }
@@ -126,6 +169,92 @@ public class JacksonDataFormat implements DataFormat {
 
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
+    }
+
+    public String getInclude() {
+        return include;
+    }
+
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
+    public boolean isAllowJmsType() {
+        return allowJmsType;
+    }
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
+    public boolean isUseList() {
+        return useList;
+    }
+
+    public void setUseList(boolean useList) {
+        this.useList = useList;
+    }
+
+    public boolean isEnableJaxbAnnotationModule() {
+        return enableJaxbAnnotationModule;
+    }
+
+    public void setEnableJaxbAnnotationModule(boolean enableJaxbAnnotationModule) {
+        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+    }
+
+    /**
+     * Uses {@link java.util.ArrayList} when unmarshalling.
+     */
+    public void useList() {
+        setCollectionType(ArrayList.class);
+    }
+
+    /**
+     * Uses {@link java.util.HashMap} when unmarshalling.
+     */
+    public void useMap() {
+        setCollectionType(null);
+        setUnmarshalType(HashMap.class);
+    }
+
+    /**
+     * Allows jackson to use the <tt>JMSType</tt> header as an indicator what the classname is for unmarshaling json content to POJO
+     * <p/>
+     * By default this option is <tt>false</tt>.
+     */
+    public void setAllowJmsType(boolean allowJmsType) {
+        this.allowJmsType = allowJmsType;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        
+        if (enableJaxbAnnotationModule) {
+            // Enables JAXB processing
+            JaxbAnnotationModule module = new JaxbAnnotationModule();
+            objectMapper.registerModule(module);
+        }
+        
+        if (useList) {
+            setCollectionType(ArrayList.class);
+        }
+        if (include != null) {
+            JsonInclude.Include inc = JsonInclude.Include.valueOf(include);
+            objectMapper.setSerializationInclusion(inc);
+        }
+        if (prettyPrint) {
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
 }

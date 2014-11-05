@@ -18,12 +18,14 @@ package org.apache.camel.itest.osgi.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFileExtendOption;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
@@ -32,7 +34,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 /**
  * @version 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class DisruptorVmTest extends OSGiIntegrationTestSupport {
     
     @Override

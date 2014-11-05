@@ -26,6 +26,8 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -105,12 +107,16 @@ public class CxfEndpointTest extends Assert {
         
         configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
         EasyMock.expectLastCall();
+        configurer.configureServer(EasyMock.isA(Server.class));
+        EasyMock.expectLastCall();
         EasyMock.replay(configurer);
         endpoint.createConsumer(processor);
         EasyMock.verify(configurer);
         
         EasyMock.reset(configurer);
         configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
+        EasyMock.expectLastCall();
+        configurer.configureClient(EasyMock.isA(Client.class));
         EasyMock.expectLastCall();
         EasyMock.replay(configurer);
         Producer producer = endpoint.createProducer();

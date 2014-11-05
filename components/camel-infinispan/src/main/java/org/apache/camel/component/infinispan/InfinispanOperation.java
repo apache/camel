@@ -24,9 +24,11 @@ import org.slf4j.LoggerFactory;
 public class InfinispanOperation {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanOperation.class);
     private final BasicCache<Object, Object> cache;
+    private final InfinispanConfiguration configuration;
 
-    public InfinispanOperation(BasicCache<Object, Object> cache) {
+    public InfinispanOperation(BasicCache<Object, Object> cache, InfinispanConfiguration configuration) {
         this.cache = cache;
+        this.configuration = configuration;
     }
 
     public void process(Exchange exchange) {
@@ -37,7 +39,11 @@ public class InfinispanOperation {
     private Operation getOperation(Exchange exchange) {
         String operation = exchange.getIn().getHeader(InfinispanConstants.OPERATION, String.class);
         if (operation == null) {
-            operation = InfinispanConstants.PUT;
+            if (configuration.getCommand() != null) {
+                operation = InfinispanConstants.OPERATION + configuration.getCommand();
+            } else {
+                operation = InfinispanConstants.PUT;
+            }
         }
         LOGGER.trace("Operation: [{}]", operation);
         return Operation.valueOf(operation.substring(InfinispanConstants.OPERATION.length()).toUpperCase());

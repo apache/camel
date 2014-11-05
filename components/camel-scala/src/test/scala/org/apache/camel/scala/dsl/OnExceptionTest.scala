@@ -34,7 +34,7 @@ class SOnExceptionHandledTest extends OnExceptionHandledTest with RouteBuilderSu
         to("mock:handled")
       }.handled
 
-      "direct:start" throwException(new IllegalArgumentException("Forced"))
+      "direct:start" throwException new IllegalArgumentException("Forced")
     }
 }
 
@@ -51,12 +51,18 @@ class SOnExceptionComplexRouteTest extends OnExceptionComplexRouteTest with Rout
     }.maximumRedeliveries(2).handled
 
     "direct:start" ==> {
-      handle[MyFunctionalException]().maximumRedeliveries(0) 
+      routeId("start")
+
+      handle[MyFunctionalException]{
+      }.maximumRedeliveries(0)
+
       to("bean:myServiceBean")
       to("mock:result")
     }
 
     "direct:start2" ==> {
+      routeId("start2")
+
       handle[MyFunctionalException] {
         to("mock:handled")
       }.maximumRedeliveries(0).handled
@@ -97,7 +103,7 @@ class SOnExceptionRetryUntilWithDefaultErrorHandlerTest extends ScalaTestSupport
       transform("Sorry")
     }.retryWhile(threeTimes).handled
 
-    "direct:start" throwException(new MyFunctionalException("Sorry, you cannot do this"))
+    "direct:start" throwException new MyFunctionalException("Sorry, you cannot do this")
   }
 }
 

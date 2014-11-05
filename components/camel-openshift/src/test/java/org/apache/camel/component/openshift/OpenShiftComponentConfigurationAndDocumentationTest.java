@@ -42,16 +42,16 @@ public class OpenShiftComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"application\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"clientId\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"operation\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"application\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"clientId\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"operation\": { \"type\": \"string\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("openshift");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -18,8 +18,6 @@ package org.apache.camel.component.sjms.jms;
 
 /**
  * Enum for different {@link javax.jms.Message} types.
- *
- * @version 
  */
 public enum JmsMessageType {
 
@@ -31,12 +29,12 @@ public enum JmsMessageType {
     Object,
     Stream,
     Text,
-    
+
     /**
      * BlobMessage which is not supported by all JMS implementations
      */
     Blob,
-    
+
     /**
      * The default type that can be used for empty messages.
      */

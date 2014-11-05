@@ -16,14 +16,20 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +50,7 @@ public class SqsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
+        request.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
         addDelay(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
@@ -97,5 +104,31 @@ public class SqsProducer extends DefaultProducer {
     @Override
     public String toString() {
         return "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+    }
+    
+    private Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
+        Map<String, MessageAttributeValue> result = new HashMap<String, MessageAttributeValue>();
+        HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
+        for (Entry<String, Object> entry : headers.entrySet()) {
+            // only put the message header which is not filtered into the message attribute
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String");
+                    mav.withStringValue((String)value);
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof ByteBuffer) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("Binary");
+                    mav.withBinaryValue((ByteBuffer)value);
+                    result.put(entry.getKey(), mav);
+                } else {
+                    // cannot translate the message header to message attribute value
+                    LOG.warn("Cannot put the message header key={0}, value={1} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return result;
     }
 }

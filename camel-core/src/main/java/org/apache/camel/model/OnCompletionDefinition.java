@@ -46,11 +46,15 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
     @XmlAttribute
+    private OnCompletionMode mode;
+    @XmlAttribute
     private Boolean onCompleteOnly;
     @XmlAttribute
     private Boolean onFailureOnly;
     @XmlElement(name = "onWhen")
     private WhenDefinition onWhen;
+    @XmlAttribute
+    private Boolean parallelProcessing;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
@@ -137,14 +141,16 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        // executor service is mandatory for on completion
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, true);
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, isParallelProcessing());
+
+        // should be after consumer by default
+        boolean afterConsumer = mode == null || mode == OnCompletionMode.AfterConsumer;
 
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;
         OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), internal,
-                threadPool, shutdownThreadPool, isOnCompleteOnly(), isOnFailureOnly(), when, original);
+                threadPool, shutdownThreadPool, isOnCompleteOnly(), isOnFailureOnly(), when, original, afterConsumer);
         return answer;
     }
 
@@ -170,6 +176,32 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         // pop parent block, as we added our self as block to parent when synchronized was defined in the route
         getParent().popBlock();
         return super.end();
+    }
+
+    /**
+     * Sets the mode to be after route is done (default due backwards compatible).
+     * <p/>
+     * This executes the on completion work <i>after</i> the route consumer have written response
+     * back to the callee (if its InOut mode).
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition modeAfterConsumer() {
+        setMode(OnCompletionMode.AfterConsumer);
+        return this;
+    }
+
+    /**
+     * Sets the mode to be before consumer is done.
+     * <p/>
+     * This allows the on completion work to execute <i>before</i> the route consumer, writes any response
+     * back to the callee (if its InOut mode).
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition modeBeforeConsumer() {
+        setMode(OnCompletionMode.BeforeConsumer);
+        return this;
     }
 
     /**
@@ -239,6 +271,16 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return this;
     }
 
+    /**
+     * Doing the on completion work in parallel
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition parallelProcessing() {
+        setParallelProcessing(true);
+        return this;
+    }
+
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
@@ -249,6 +291,14 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
     public boolean isOutputSupported() {
         return true;
+    }
+
+    public OnCompletionMode getMode() {
+        return mode;
+    }
+
+    public void setMode(OnCompletionMode mode) {
+        this.mode = mode;
     }
 
     public Boolean getOnCompleteOnly() {
@@ -306,5 +356,18 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
+
+    public Boolean getParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(Boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing != null && parallelProcessing;
+    }
+
 
 }

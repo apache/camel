@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -37,6 +38,15 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of the <a
  * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
+ * <p/>
+ * This implementation supports idempotent repositories implemented as
+ * <ul>
+ *     <li>IdempotentRepository</li>
+ *     <li>ExchangeIdempotentRepository</li>
+ * </ul>
+ *
+ * @see org.apache.camel.spi.IdempotentRepository
+ * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
 public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
@@ -70,16 +80,26 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     public boolean process(Exchange exchange, AsyncCallback callback) {
         final String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {
-            throw new NoMessageIdException(exchange, messageIdExpression);
+            exchange.setException(new NoMessageIdException(exchange, messageIdExpression));
+            callback.done(true);
+            return true;
         }
 
         boolean newKey;
         if (eager) {
             // add the key to the repository
-            newKey = idempotentRepository.add(messageId);
+            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+                newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).add(exchange, messageId);
+            } else {
+                newKey = idempotentRepository.add(messageId);
+            }
         } else {
             // check if we already have the key
-            newKey = !idempotentRepository.contains(messageId);
+            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+                newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
+            } else {
+                newKey = !idempotentRepository.contains(messageId);
+            }
         }
 
 

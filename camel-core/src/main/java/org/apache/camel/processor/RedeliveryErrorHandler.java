@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
+import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -53,7 +56,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version
  */
-public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared {
+public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
@@ -196,17 +199,41 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
 
-        // setup exchange formatter to be used for message history dump
-        DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
-        formatter.setShowExchangeId(true);
-        formatter.setMultiline(true);
-        formatter.setShowHeaders(true);
-        formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
-        this.exchangeFormatter = formatter;
+        if (ObjectHelper.isNotEmpty(redeliveryPolicy.getExchangeFormatterRef())) {
+            ExchangeFormatter formatter = camelContext.getRegistry().lookupByNameAndType(redeliveryPolicy.getExchangeFormatterRef(), ExchangeFormatter.class);
+            if (formatter != null) {
+                this.exchangeFormatter = formatter;
+            } else {
+                throw new IllegalArgumentException("Cannot find the exchangeFormatter by using reference id " + redeliveryPolicy.getExchangeFormatterRef());
+            }
+        } else {
+            // setup exchange formatter to be used for message history dump
+            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
+            formatter.setShowExchangeId(true);
+            formatter.setMultiline(true);
+            formatter.setShowHeaders(true);
+            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+            this.exchangeFormatter = formatter;
+        }
     }
 
     public boolean supportTransacted() {
         return false;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return output != null;
+    }
+
+    @Override
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(output);
+        return answer;
     }
 
     protected boolean isRunAllowed(RedeliveryData data) {

@@ -42,14 +42,14 @@ public class CxfRsComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"address\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"maxClientCacheSize\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"address\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"maxClientCacheSize\": { \"type\": \"integer\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("cxfrs");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 }

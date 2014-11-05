@@ -21,6 +21,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 
+/**
+ * Base class for components to support configuring a {@link org.apache.camel.spi.HeaderFilterStrategy}.
+ */
 public abstract class HeaderFilterStrategyComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
     
     private HeaderFilterStrategy headerFilterStrategy;

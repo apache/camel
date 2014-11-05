@@ -30,7 +30,7 @@ class SInterceptFromSimpleRouteTest extends InterceptFromSimpleRouteTest with Ro
   def livingIn(city: String)(exchange: Exchange) = exchange.in("city") == city
 
   override def createRouteBuilder = new RouteBuilder {
-    interceptFrom().when(livingIn("London")) {
+    interceptFrom.when(livingIn("London")) {
       to ("mock:intercepted")
     }.stop
 
@@ -62,7 +62,7 @@ class SInterceptFromWhenWithChoiceTest extends InterceptFromWhenWithChoiceTest w
   override def createRouteBuilder = new RouteBuilder {
     context.addInterceptStrategy(new Tracer())
 
-    interceptFrom().when(simple("${body} contains 'Goofy'")) {
+    interceptFrom.when(simple("${body} contains 'Goofy'")) {
       choice {
         when (_.in[String].contains("Hello")) {
           to ("mock:hello")

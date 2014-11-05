@@ -47,6 +47,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -82,7 +83,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     @SuppressWarnings("deprecation")
     public LinkedInOAuthRequestFilter(OAuthParams oAuthParams, Map<String, Object> httpParams,
-                                      boolean lazyAuth) {
+                                      boolean lazyAuth, String[] enabledProtocols) {
 
         this.oAuthParams = oAuthParams;
         this.oAuthToken = null;
@@ -95,6 +96,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
         options.setThrowExceptionOnFailingStatusCode(true);
         options.setThrowExceptionOnScriptError(true);
         options.setPrintContentOnFailingStatusCode(LOG.isDebugEnabled());
+        options.setSSLClientProtocols(enabledProtocols);
 
         // add HTTP proxy if set
         if (httpParams != null && httpParams.get(ConnRoutePNames.DEFAULT_PROXY) != null) {

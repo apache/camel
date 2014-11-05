@@ -39,7 +39,6 @@ public class UriConfigurationTest extends Assert {
         assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
-        assertTrue(twitterEndpoint.getProperties().getUseSSL());
     }
     
     @Test
@@ -65,15 +64,6 @@ public class UriConfigurationTest extends Assert {
     }
     
     @Test
-    public void testUseSSLSetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?useSSL=false");
-        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
-        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
-        
-        assertFalse(twitterEndpoint.getProperties().getUseSSL());
-    }
-
-    @Test
     public void testComponentConfiguration() throws Exception {
         TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);
         EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
@@ -84,15 +74,15 @@ public class UriConfigurationTest extends Assert {
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"accessToken\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"consumerKey\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"accessToken\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"consumerKey\": { \"type\": \"string\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("twitter");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

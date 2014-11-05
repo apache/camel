@@ -24,7 +24,7 @@ package $packageName;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import $proxyType.Name;
+import $proxyType.CanonicalName;
 
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodImpl;
@@ -32,7 +32,6 @@ import org.apache.camel.util.component.ApiMethodImpl;
 /**
  * Camel {@link ApiMethod} Enumeration for $proxyType.Name
  */
-@SuppressWarnings("unused")
 public enum $enumName implements ApiMethod {
 
 #foreach ( $model in $models )

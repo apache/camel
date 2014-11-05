@@ -390,6 +390,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         log.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
+        // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
@@ -514,10 +515,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return null;
     }
 
-    public List<Class[]> listAllTypeConvertersFromTo() {
-        List<Class[]> answer = new ArrayList<Class[]>(typeMappings.size());
+    public List<Class<?>[]> listAllTypeConvertersFromTo() {
+        List<Class<?>[]> answer = new ArrayList<Class<?>[]>(typeMappings.size());
         for (TypeMapping mapping : typeMappings.keySet()) {
-            answer.add(new Class[]{mapping.getFromType(), mapping.getToType()});
+            answer.add(new Class<?>[]{mapping.getFromType(), mapping.getToType()});
         }
         return answer;
     }

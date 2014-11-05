@@ -47,7 +47,7 @@ public class IBoxSharedItemsManagerIntegrationTest extends AbstractBoxTestSuppor
             public void configure() {
                 // test route for getSharedItem
                 from("direct://GETSHAREDITEM")
-                  .to("box://" + PATH_PREFIX + "/getSharedItem?inBody=defaultRequest");
+                        .to("box://" + PATH_PREFIX + "/getSharedItem?inBody=defaultRequest");
 
             }
         };

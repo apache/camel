@@ -42,7 +42,7 @@ public class SftpComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"integer\" }"));
         assertTrue(json.contains("\"download\": { \"type\": \"boolean\" }"));
     }
 
@@ -50,7 +50,7 @@ public class SftpComponentConfigurationAndDocumentationTest extends CamelTestSup
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("sftp");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

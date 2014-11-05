@@ -183,10 +183,4 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return EndpointType.POLLING;
     }
 
-    @Override
-    public void shutdown() throws Exception {
-        super.shutdown();
-        properties.getTwitter().shutdown();
-    }
-    
 }

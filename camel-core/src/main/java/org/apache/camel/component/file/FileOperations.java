@@ -27,8 +27,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -172,7 +176,7 @@ public class FileOperations implements GenericFileOperations<File> {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         File file = new File(fileName);
-        
+
         // if an existing file already exists what should we do?
         if (file.exists()) {
             if (endpoint.getFileExist() == GenericFileExist.Ignore) {
@@ -271,6 +275,16 @@ public class FileOperations implements GenericFileOperations<File> {
             }
             // try to keep last modified timestamp if configured to do so
             keepLastModified(exchange, file);
+
+            // set permissions if the chmod option was set
+            if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                if (!permissions.isEmpty()) {
+                    Files.setPosixFilePermissions(file.toPath(), permissions);
+                    LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                }
+            }
+
             return true;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);

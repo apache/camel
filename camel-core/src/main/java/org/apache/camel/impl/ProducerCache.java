@@ -228,16 +228,7 @@ public class ProducerCache extends ServiceSupport {
             }
         }
 
-        StopWatch watch = null;
-        if (eventNotifierEnabled && exchange != null) {
-            // record timing for sending the exchange using the producer
-            watch = new StopWatch();
-        }
-
         try {
-            if (eventNotifierEnabled && exchange != null) {
-                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
-            }
             // invoke the callback
             answer = callback.doInProducer(producer, exchange, pattern);
         } catch (Throwable e) {
@@ -245,11 +236,6 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setException(e);
             }
         } finally {
-            if (eventNotifierEnabled && exchange != null) {
-                long timeTaken = watch.stop();
-                // emit event that the exchange was sent to the endpoint
-                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-            }
             if (producer instanceof ServicePoolAware) {
                 // release back to the pool
                 pool.release(endpoint, producer);
@@ -281,19 +267,30 @@ public class ProducerCache extends ServiceSupport {
      */
     public boolean doInAsyncProducer(final Endpoint endpoint, final Exchange exchange, final ExchangePattern pattern,
                                      final AsyncCallback callback, final AsyncProducerCallback producerCallback) {
-        boolean sync = true;
 
-        // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-        final Producer producer = doGetProducer(endpoint, true);
+        Producer target;
+        try {
+            // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
+            target = doGetProducer(endpoint, true);
 
-        if (producer == null) {
-            if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-                return false;
-            } else {
-                throw new IllegalStateException("No producer, this processor has not been started: " + this);
+            if (target == null) {
+                if (isStopped()) {
+                    LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+                    callback.done(true);
+                    return true;
+                } else {
+                    exchange.setException(new IllegalStateException("No producer, this processor has not been started: " + this));
+                    callback.done(true);
+                    return true;
+                }
             }
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
+
+        final Producer producer = target;
 
         // record timing for sending the exchange using the producer
         final StopWatch watch = eventNotifierEnabled && exchange != null ? new StopWatch() : null;
@@ -304,7 +301,7 @@ public class ProducerCache extends ServiceSupport {
             }
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
-            sync = producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
+            return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
                     try {
@@ -336,9 +333,9 @@ public class ProducerCache extends ServiceSupport {
             if (exchange != null) {
                 exchange.setException(e);
             }
+            callback.done(true);
+            return true;
         }
-
-        return sync;
     }
 
     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
@@ -403,8 +400,9 @@ public class ProducerCache extends ServiceSupport {
             // create a new producer
             try {
                 answer = endpoint.createProducer();
-                // must then start service so producer is ready to be used
-                ServiceHelper.startService(answer);
+                // add as service which will also start the service
+                // (false => we and handling the lifecycle of the producer in this cache)
+                getCamelContext().addService(answer, false);
             } catch (Exception e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }
@@ -430,7 +428,14 @@ public class ProducerCache extends ServiceSupport {
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
         ServiceHelper.stopAndShutdownService(pool);
-        ServiceHelper.stopAndShutdownServices(producers.values());
+        try {
+            ServiceHelper.stopAndShutdownServices(producers.values());
+        } finally {
+            // ensure producers are removed, and also from JMX
+            for (Producer producer : producers.values()) {
+                getCamelContext().removeService(producer);
+            }
+        }
         producers.clear();
     }
 

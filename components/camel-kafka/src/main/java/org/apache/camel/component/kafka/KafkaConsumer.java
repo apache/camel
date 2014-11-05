@@ -46,11 +46,8 @@ public class KafkaConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        if (endpoint.getZookeeperHost() == null) {
-            throw new IllegalArgumentException("zookeeper host must be specified");
-        }
-        if (endpoint.getZookeeperPort() == 0) {
-            throw new IllegalArgumentException("zookeeper port must be specified");
+        if (endpoint.getZookeeperConnect() == null) { 
+            throw new IllegalArgumentException("zookeeper host or zookeeper connect must be specified");
         }
         if (endpoint.getGroupId() == null) {
             throw new IllegalArgumentException("groupId must not be null");
@@ -59,7 +56,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
-        props.put("zookeeper.connect", endpoint.getZookeeperHost() + ":" + endpoint.getZookeeperPort());
+        props.put("zookeeper.connect", endpoint.getZookeeperConnect());
         props.put("group.id", endpoint.getGroupId());
         return props;
     }

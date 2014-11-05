@@ -42,15 +42,16 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"parametersCount\": { \"type\": \"int\" }"));
+
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("sql");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -143,7 +143,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -192,7 +192,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -240,7 +240,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -289,7 +289,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        List<ProcessorDefinition<?>> outputs = getParentOutputs(output.getParent());
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -312,23 +312,19 @@ public final class AdviceWithTasks {
     /**
      * Gets the outputs from the given parent.
      * <p/>
-     * This implementation deals with that outputs can be abstract and retrieves the correct non-nested output.
+     * This implementation deals with that outputs can be abstract and retrieves the <i>correct</i> parent output.
      *
      * @param parent the parent
      * @return <tt>null</tt> if no parent
      */
-    @SuppressWarnings("unchecked")
-    private static List<ProcessorDefinition> getParentOutputs(ProcessorDefinition parent) {
+    private static List<ProcessorDefinition<?>> getParentOutputs(ProcessorDefinition<?> parent) {
         if (parent == null) {
             return null;
         }
-        List<ProcessorDefinition> outputs = parent.getOutputs();
-        if (outputs.size() >= 1) {
-            // if the 1st output is abstract, then its onException,transacted,intercept etc so we should
-            // get the 'actual' outputs from that
-            if (outputs.get(0).isAbstract()) {
-                outputs = outputs.get(0).getOutputs();
-            }
+        List<ProcessorDefinition<?>> outputs = parent.getOutputs();
+        if (outputs.size() == 1 && outputs.get(0).isAbstract()) {
+            // if the output is abstract then get its output, as
+            outputs = outputs.get(0).getOutputs();
         }
         return outputs;
     }

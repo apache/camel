@@ -71,16 +71,9 @@ public class XMLTokenizeLanguage extends LanguageSupport {
      * Creates a tokenize expression.
      */
     public Expression createExpression() {
-        ObjectHelper.notNull(path, "token");
+        ObjectHelper.notNull(path, "path");
 
         Expression answer = ExpressionBuilder.tokenizeXMLAwareExpression(path, mode);
-
-        // if group then wrap answer in group expression
-        if (group > 0) {
-            //REVISIT wrap the xml tokens with a group element to turn the result into xml?
-            answer = ExpressionBuilder.groupIteratorExpression(answer, null, group);
-        }
-
         return answer;
     }
 
@@ -114,6 +107,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     public void setMode(char mode) {
         this.mode = mode;
     }
+
     public int getGroup() {
         return group;
     }

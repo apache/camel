@@ -198,6 +198,9 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = producer.requestBodyAndHeaders("Hello", headers);
         assertEquals("Bye Bye World", out);
 
+        out = producer.requestBodyAndHeaders("Hello", null);
+        assertEquals("Bye Bye World", out);
+
         producer.stop();
     }
 

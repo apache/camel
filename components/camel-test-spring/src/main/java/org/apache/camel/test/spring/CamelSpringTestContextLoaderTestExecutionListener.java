@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
+import org.springframework.core.Ordered;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
@@ -28,6 +29,18 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  * that the same thread will be used to initialize the Spring context.
  */
 public class CamelSpringTestContextLoaderTestExecutionListener extends AbstractTestExecutionListener {
+
+    /**
+     * The default implementation returns {@link org.springframework.core.Ordered#LOWEST_PRECEDENCE},
+     * thereby ensuring that custom listeners are ordered after default
+     * listeners supplied by the framework. Can be overridden by subclasses
+     * as necessary.
+     */
+    @Override
+    public int getOrder() {
+        //set Camel first
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {

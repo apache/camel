@@ -106,8 +106,11 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         if (closed.compareAndSet(false, true)) {
             safeCloseResultSet();
             safeCloseStatement();
-            safeCloseConnection();
         }
+    }
+
+    public void closeConnection() {
+        safeCloseConnection();
     }
 
     private void loadNext() throws SQLException {

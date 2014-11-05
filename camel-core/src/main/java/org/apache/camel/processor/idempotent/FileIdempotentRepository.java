@@ -212,7 +212,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Reset and clears the store to force it to reload from file
      */
     @ManagedOperation(description = "Reset and reloads the file store")
-    public synchronized void reset() {
+    public synchronized void reset() throws IOException {
         synchronized (cache) {
             // trunk and clear, before we reload the store
             trunkStore();
@@ -260,10 +260,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * to the file store.
      */
     protected void trunkStore() {
-        if (fileStore == null || !fileStore.exists()) {
-            return;
-        }
-
         LOG.info("Trunking idempotent filestore: {}", fileStore);
         FileOutputStream fos = null;
         try {
@@ -282,9 +278,16 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     /**
      * Loads the given file store into the 1st level cache
      */
-    protected void loadStore() {
-        if (fileStore == null || !fileStore.exists()) {
-            return;
+    protected void loadStore() throws IOException {
+        // auto create starting directory if needed
+        if (!fileStore.exists()) {
+            LOG.debug("Creating filestore: {}", fileStore);
+            File parent = fileStore.getParentFile();
+            parent.mkdirs();
+            boolean created = FileUtil.createNewFile(fileStore);
+            if (!created) {
+                throw new IOException("Cannot create filestore: " + fileStore);
+            }
         }
 
         LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
@@ -311,6 +314,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(fileStore, "fileStore", this);
+
         // init store if not loaded before
         if (init.compareAndSet(false, true)) {
             loadStore();

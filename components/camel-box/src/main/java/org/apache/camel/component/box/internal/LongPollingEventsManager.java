@@ -90,7 +90,6 @@ public class LongPollingEventsManager {
         }
     }
 
-    @SuppressWarnings("unused")
     public void poll(long streamPosition, final String streamType, final int limit, final EventCallback callback)
         throws BoxServerException, AuthFatalFailureException, BoxRestException {
 

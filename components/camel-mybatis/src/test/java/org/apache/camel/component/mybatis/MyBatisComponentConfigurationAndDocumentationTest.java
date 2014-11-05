@@ -43,15 +43,15 @@ public class MyBatisComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maxMessagesPerPoll\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"statement\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"maxMessagesPerPoll\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"statement\": { \"type\": \"string\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation(COMPONENT_NAME);
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

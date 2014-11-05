@@ -34,12 +34,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CREATE_MODE;
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 
 @Ignore("Causes processes to not cleanly shutdown. "
 + "And There is an issue with the zookeeper bundle, so the server cannot be started in pax-exam karaf container")

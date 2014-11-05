@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.converter.jaxp;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -36,6 +35,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
+/**
+ * A streaming {@link javax.xml.transform.sax.SAXSource}
+ */
 public class StaxSource extends SAXSource implements XMLReader {
 
     private XMLStreamReader streamReader;

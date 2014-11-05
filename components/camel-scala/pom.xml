@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.14-SNAPSHOT</version>
+        <version>2.15-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-scala</artifactId>
@@ -31,7 +31,8 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            scala.*;version="[2.10,2.11)"
+            scala.xml.*;version="[1.0,2)",
+            scala.*;version="[2.11,2.12)"
         </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.scala.*</camel.osgi.export.pkg>
     </properties>
@@ -45,6 +46,13 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- scala-libray doesn't include xml module since 2.11.x -->
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-xml_2.11</artifactId>
+            <version>${scalaxml-version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -71,6 +79,10 @@
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-reflect</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.scala-lang.modules</groupId>
+                    <artifactId>scala-xml_2.11</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

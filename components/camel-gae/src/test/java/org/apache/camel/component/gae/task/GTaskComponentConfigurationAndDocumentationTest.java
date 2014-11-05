@@ -19,7 +19,6 @@ package org.apache.camel.component.gae.task;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.gae.mail.GMailComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class GTaskComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"workerRoot\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"workerRoot\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"disableStreamCache\": { \"type\": \"boolean\" }"));
     }
 
@@ -50,7 +49,7 @@ public class GTaskComponentConfigurationAndDocumentationTest extends CamelTestSu
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("gtask");
-        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

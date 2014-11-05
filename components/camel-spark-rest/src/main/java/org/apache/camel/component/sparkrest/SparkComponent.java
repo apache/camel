@@ -16,17 +16,30 @@
  */
 package org.apache.camel.component.sparkrest;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import spark.Spark;
 import spark.SparkBase;
 
-public class SparkComponent extends UriEndpointComponent {
+public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
+
+    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
     private int port = SparkBase.SPARK_DEFAULT_PORT;
+    private String ipAddress;
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
@@ -40,6 +53,14 @@ public class SparkComponent extends UriEndpointComponent {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public SparkConfiguration getSparkConfiguration() {
@@ -84,6 +105,27 @@ public class SparkComponent extends UriEndpointComponent {
 
         if (getPort() != SparkBase.SPARK_DEFAULT_PORT) {
             Spark.setPort(getPort());
+        } else {
+            // if no explicit port configured, then use port from rest configuration
+            RestConfiguration config = getCamelContext().getRestConfiguration();
+            if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
+                int port = config.getPort();
+                if (port > 0) {
+                    Spark.setPort(port);
+                }
+            }
+        }
+        if (getIpAddress() != null) {
+            Spark.setIpAddress(getIpAddress());
+        }
+
+        // configure component options
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
+            // configure additional options on spark configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(sparkConfiguration, config.getComponentProperties());
+            }
         }
     }
 
@@ -91,5 +133,62 @@ public class SparkComponent extends UriEndpointComponent {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         Spark.stop();
+    }
+
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
+        path = FileUtil.stripLeadingSeparator(path);
+
+        if (ObjectHelper.isNotEmpty(path)) {
+            // spark-rest uses :name syntax instead of {name} so we need to replace those
+            Matcher matcher = pattern.matcher(path);
+            path = matcher.replaceAll(":$1");
+        }
+
+        String uri = String.format("spark-rest:%s:%s", verb, path);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (consumes != null) {
+            map.put("accept", consumes);
+        }
+
+        // build query string, and append any endpoint configuration properties
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        String query = URISupport.createQueryString(map);
+
+        String url = uri;
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
+        // get the endpoint
+        SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
+        setProperties(endpoint, parameters);
+
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
+        return consumer;
     }
 }

@@ -16,26 +16,28 @@
  */
 package org.apache.camel.itest.osgi.core.log;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.osgi.CamelContextFactory;
-import org.apache.karaf.tooling.exam.options.DoNotModifyLogOption;
-import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFileReplacementOption;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.DoNotModifyLogOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
+import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class LogRouteWithLoggersPresentInRegistryTest extends OSGiIntegrationTestSupport {
 
     @Test

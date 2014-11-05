@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -28,6 +29,7 @@ import static org.apache.camel.component.weather.WeatherUnits.METRIC;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
+@UriParams
 public class WeatherConfiguration {
 
     private final WeatherComponent component;

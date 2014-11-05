@@ -19,6 +19,8 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
+import com.sun.mail.imap.SortTerm;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -33,8 +35,6 @@ import org.apache.camel.spi.UriParam;
 
 /**
  * Endpoint for Camel Mail.
- *
- * @version 
  */
 @UriEndpoint(scheme = "mail", consumerClass = MailConsumer.class)
 public class MailEndpoint extends ScheduledPollEndpoint {
@@ -45,7 +45,12 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private ContentTypeResolver contentTypeResolver;
     @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
     private SearchTerm searchTerm;
+    @UriParam
+    private SortTerm[] sortTerm;
+    @UriParam
+    private MailBoxPostProcessAction postProcessAction;
 
     public MailEndpoint() {
     }
@@ -84,7 +89,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
             throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
-                + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
+                    + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
@@ -111,7 +116,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public boolean isSingleton() {
         return false;
     }
-    
+
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return createExchange(pattern, null);
@@ -185,4 +190,34 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.searchTerm = searchTerm;
     }
 
+    /**
+     * @return Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
+     * or when IMAP server does not have the SORT capability.
+     * @see com.sun.mail.imap.SortTerm
+     */
+    public SortTerm[] getSortTerm() {
+        return sortTerm == null ? null : sortTerm.clone();
+    }
+
+    /**
+     * @param sortTerm {@link #getSortTerm()}
+     */
+    public void setSortTerm(SortTerm[] sortTerm) {
+        this.sortTerm = sortTerm == null ? null : sortTerm.clone();
+    }
+
+    /**
+     * @return Post processor that can e.g. delete old email. Gets called once the messages have been polled and
+     * processed.
+     */
+    public MailBoxPostProcessAction getPostProcessAction() {
+        return postProcessAction;
+    }
+
+    /**
+     * @param postProcessAction {@link #getPostProcessAction()}
+     */
+    public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
+        this.postProcessAction = postProcessAction;
+    }
 }

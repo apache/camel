@@ -29,7 +29,7 @@
     <jdbc:script location="classpath:tables_derby.sql"/>
   </jdbc:embedded-database>
 
-  <bean id="quartz" class="org.apache.camel.component.quartz2.QuartzComponent">
+  <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
     <property name="scheduler" ref="scheduler"/>
   </bean>
 
@@ -41,7 +41,7 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-        <entry key="CamelQuartzCamelContext" value-ref="camelContext"/>
+        <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext"/>
       </map>
     </property>
     <property name="quartzProperties">

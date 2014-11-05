@@ -22,11 +22,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class EventRouteTest extends OSGiIntegrationSpringTestSupport {
 
     protected Object expectedBody = "Hello there!";

@@ -25,7 +25,6 @@ import org.apache.camel.spi.Synchronization;
 
 /**
  * An InOnly {@link AbstractMessageHandler}
- * 
  */
 public class InOnlyMessageHandler extends AbstractMessageHandler {
 

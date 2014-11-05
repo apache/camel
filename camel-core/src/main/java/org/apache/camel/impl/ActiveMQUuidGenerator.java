@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.UuidGenerator} which is a fast implementation based on
- * how <a href="http://activemq.apache.org/>Apache ActiveMQ</a> generates its UUID.
+ * how <a href="http://activemq.apache.org/">Apache ActiveMQ</a> generates its UUID.
  * <p/>
  * This implementation is not synchronized but it leverages API which may not be accessible
  * in the cloud (such as Google App Engine).

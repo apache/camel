@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 /**
@@ -69,6 +70,22 @@ public interface UnitOfWork extends Service {
      * @param exchange the current exchange
      */
     void done(Exchange exchange);
+
+    /**
+     * Invoked when this unit of work is about to be routed by the given route.
+     *
+     * @param exchange the current exchange
+     * @param route    the route
+     */
+    void beforeRoute(Exchange exchange, Route route);
+
+    /**
+     * Invoked when this unit of work is done being routed by the given route.
+     *
+     * @param exchange the current exchange
+     * @param route    the route
+     */
+    void afterRoute(Exchange exchange, Route route);
 
     /**
      * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one

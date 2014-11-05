@@ -41,7 +41,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return context;

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tests</artifactId>
-        <version>2.14-SNAPSHOT</version>
+        <version>2.15-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-itest-karaf</artifactId>
@@ -37,18 +37,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.runner</groupId>
-            <artifactId>pax-runner-no-jcl</artifactId>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-tinybundles</artifactId>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-karaf</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.karaf.tooling.exam</groupId>
-            <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-link-mvn</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -66,12 +66,25 @@
                     <groupId>org.eclipse</groupId>
                     <artifactId>osgi</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>org.apache.karaf.client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.apache.felix.framework</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.configadmin</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.junit</artifactId>
+            <version>${junit-bundle-version}</version>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -163,8 +176,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <argLine>-Xmx256m</argLine>
                     <systemPropertyVariables>
                         <karafVersion>${karaf-version}</karafVersion>
                     </systemPropertyVariables>
@@ -201,6 +212,12 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+        <id>karaf3</id>
+            <properties>
+                <karaf-version>${karaf3-version}</karaf-version>
+            </properties>
         </profile>
     </profiles>
 
