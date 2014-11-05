@@ -36,6 +36,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -253,9 +254,17 @@ public class MongoDbProducer extends DefaultProducer {
         WriteResult result;
         WriteConcern wc = extractWriteConcern(exchange);
         if (singleInsert) {
-            result = wc == null ? dbCol.insert((DBObject)insert) : dbCol.insert((DBObject)insert, wc);
+            DBObject insertObject = (DBObject) insert;
+            result = wc == null ? dbCol.insert(insertObject) : dbCol.insert(insertObject, wc);
+            exchange.getIn().setHeader(MongoDbConstants.OID, insertObject.get("_id"));
         } else {
-            result = wc == null ? dbCol.insert((List<DBObject>)insert) : dbCol.insert((List<DBObject>)insert, wc);
+            List<DBObject> insertObjects = (List<DBObject>) insert;
+            result = wc == null ? dbCol.insert(insertObjects) : dbCol.insert(insertObjects, wc);
+            List<ObjectId> oids = new ArrayList<ObjectId>(insertObjects.size());
+            for (DBObject insertObject : insertObjects) {
+                oids.add((ObjectId) insertObject.get("_id"));
+            }
+            exchange.getIn().setHeader(MongoDbConstants.OID, oids);
         }
 
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.insert);

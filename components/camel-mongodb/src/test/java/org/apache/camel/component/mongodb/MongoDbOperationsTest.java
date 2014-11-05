@@ -19,12 +19,15 @@ package org.apache.camel.component.mongodb;
 import java.util.Formatter;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
@@ -51,7 +54,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals("Dynamic collection should contain 1 record", 1L, result);
         
     }
-    
+
     @Test
     public void testInsertString() throws Exception {
         assertEquals(0, testCollection.count());
@@ -60,19 +63,23 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         DBObject b = testCollection.findOne("testInsertString");
         assertNotNull("No record with 'testInsertString' _id", b);
     }
-    
+
     @Test
-    public void testInsertArrayStrings() throws Exception {
-        assertEquals(0, testCollection.count());
-        Object[] req = new Object[] {"{\"_id\":\"testInsertArrayStrings\", \"scientist\":\"Einstein\"}", "{\"_id\":\"testInsertArrayStrings2\", \"scientist\":\"Copernicus\"}"};
-        Object result = template.requestBody("direct:insert", req);
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertArrayStrings");
-        assertNotNull("No record with 'testInsertArrayStrings' _id", b);
-        b = testCollection.findOne("testInsertArrayStrings2");
-        assertNotNull("No record with 'testInsertArrayStrings2' _id", b);
+    public void testStoreOid() throws Exception {
+        DBObject dbObject = new BasicDBObject();
+        ObjectId oid = template.requestBody("direct:testStoreOid", dbObject, ObjectId.class);
+        assertEquals(dbObject.get("_id"), oid);
     }
-    
+
+    @Test
+    public void testStoreOids() throws Exception {
+        DBObject firstDbObject = new BasicDBObject();
+        DBObject secondDbObject = new BasicDBObject();
+        List<ObjectId> oids = template.requestBody("direct:testStoreOid", asList(firstDbObject, secondDbObject), List.class);
+        assertTrue(oids.contains(firstDbObject.get("_id")));
+        assertTrue(oids.contains(secondDbObject.get("_id")));
+    }
+
     @Test
     public void testSave() throws Exception {
         // Prepare test
@@ -225,6 +232,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                 
                 from("direct:count").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
                 from("direct:insert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
+                from("direct:testStoreOid").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
+                    setBody().header(MongoDbConstants.OID);
                 from("direct:save").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE");
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");
                 from("direct:remove").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove&writeConcern=SAFE");
