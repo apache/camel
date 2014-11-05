@@ -24,6 +24,9 @@ import org.jsmpp.session.SMPPSession;
 
 public abstract class SmppSmCommand extends AbstractSmppCommand {
 
+    protected Charset ascii = Charset.forName("US-ASCII");
+    protected Charset latin1 = Charset.forName("ISO-8859-1");
+
     protected Charset charset;
 
     public SmppSmCommand(SMPPSession session, SmppConfiguration config) {
@@ -99,11 +102,12 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
         Alphabet alphabetObj;
         if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
-            byte[] messageBytes = body.getBytes(charset);
-            if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
-                alphabetObj = Alphabet.ALPHA_DEFAULT;
-            } else {
-                alphabetObj = Alphabet.ALPHA_UCS2;
+            alphabetObj = Alphabet.ALPHA_UCS2;
+            if(charset.equals(ascii) || charset.equals(latin1)) {
+                byte[] messageBytes = body.getBytes(charset);
+                if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
+                    alphabetObj = Alphabet.ALPHA_DEFAULT;
+                }
             }
         } else {
             alphabetObj = Alphabet.valueOf(alphabet);
