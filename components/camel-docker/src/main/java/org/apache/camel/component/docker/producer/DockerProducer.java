@@ -97,8 +97,8 @@ public class DockerProducer extends DefaultProducer {
         
         DockerOperation operation = configuration.getOperation();
         
-        switch (operation) {
-
+        switch(operation) {
+        
         case AUTH:
             dockerCmd = executeAuthRequest(client, message);
             break;
@@ -155,19 +155,19 @@ public class DockerProducer extends DefaultProducer {
             break;
         case DIFF_CONTAINER:
             dockerCmd = executeDiffContainerRequest(client, message);
-            break;
+            break; 
         case STOP_CONTAINER:
             dockerCmd = executeStopContainerRequest(client, message);
-            break;
+            break; 
         case KILL_CONTAINER:
             dockerCmd = executeKillContainerRequest(client, message);
-            break;
+            break; 
         case RESTART_CONTAINER:
             dockerCmd = executeRestartContainerRequest(client, message);
-            break;
+            break; 
         case TOP_CONTAINER:
             dockerCmd = executeTopContainerRequest(client, message);
-            break;
+            break; 
         case TAG_IMAGE:
             dockerCmd = executeTagImageRequest(client, message);
             break;

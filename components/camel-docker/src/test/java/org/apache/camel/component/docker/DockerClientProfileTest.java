@@ -33,6 +33,7 @@ public class DockerClientProfileTest {
         Integer port = 2241;
         Integer requestTimeout = 40;
         boolean secure = true;
+        String certPath = "/docker/cert/path";
         
         
         DockerClientProfile clientProfile1 = new DockerClientProfile();
@@ -43,6 +44,7 @@ public class DockerClientProfileTest {
         clientProfile1.setPort(port);
         clientProfile1.setRequestTimeout(requestTimeout);
         clientProfile1.setSecure(secure);
+        clientProfile1.setCertPath(certPath);
         
         DockerClientProfile clientProfile2 = new DockerClientProfile();
         clientProfile2.setHost(host);
@@ -52,6 +54,7 @@ public class DockerClientProfileTest {
         clientProfile2.setPort(port);
         clientProfile2.setRequestTimeout(requestTimeout);
         clientProfile2.setSecure(secure);
+        clientProfile2.setCertPath(certPath);
         
         assertEquals(clientProfile1, clientProfile2);
     }
