@@ -20,9 +20,11 @@ package org.apache.camel.tools.apt.util;
  * Some String helper methods
  */
 public final class Strings {
+
     private Strings() {
         //Helper class
     }
+
     /**
      * Returns true if the given text is null or empty string
      */
@@ -49,4 +51,31 @@ public final class Strings {
             return className;
         }
     }
+
+    /**
+     * Returns the text wrapped double quotes
+     */
+    public static String doubleQuote(String text) {
+        return quote(text, "\"");
+    }
+
+    /**
+     * Returns the text wrapped single quotes
+     */
+    public static String singleQuote(String text) {
+        return quote(text, "'");
+    }
+
+    /**
+     * Wraps the text in the given quote text
+     *
+     * @param text the text to wrap in quotes
+     * @param quote the quote text added to the prefix and postfix of the text
+     *
+     * @return the text wrapped in the given quotes
+     */
+    public static String quote(String text, String quote) {
+        return quote + text + quote;
+    }
+
 }

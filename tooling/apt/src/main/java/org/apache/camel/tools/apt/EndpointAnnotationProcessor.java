@@ -23,13 +23,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
@@ -57,7 +53,7 @@ import org.apache.camel.tools.apt.util.Strings;
 import static org.apache.camel.tools.apt.util.Strings.canonicalClassName;
 
 /**
- * Processes all Camel endpoints
+ * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
@@ -87,12 +83,17 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     @Override
                     public Void call(PrintWriter writer) {
                         writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint);
+                        writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint);
                         return null;
                     }
                 };
                 processFile(packageName, scheme, fileName, handler);
             }
         }
+    }
+
+    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
+        // todo
     }
 
     protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
@@ -138,36 +139,33 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     protected void showDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, String prefix) {
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
         if (!Strings.isNullOrEmpty(classDoc)) {
-            writer.println("<p>" + classDoc.trim() + "</p>");
+            // remove dodgy @version that we may have in class javadoc
+            classDoc = classDoc.replaceFirst("\\@version", "");
+            classDoc = classDoc.trim();
+            writer.println("<p>" + classDoc + "</p>");
         }
 
-        SortedMap<String, List<String>> sortedMap = new TreeMap<String, List<String>>();
-        findClassProperties(roundEnv, sortedMap, classElement, prefix);
-        if (!sortedMap.isEmpty()) {
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        findClassProperties(roundEnv, endpointOptions, classElement, prefix);
+        if (!endpointOptions.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
             writer.println("    <th>Name</th>");
             writer.println("    <th>Type</th>");
             writer.println("    <th>Description</th>");
-            // see defaultValue above
-            // writer.println("    <th>Default Value</th>");
             writer.println("  </tr>");
-            Set<Map.Entry<String, List<String>>> entries = sortedMap.entrySet();
-            for (Map.Entry<String, List<String>> entry : entries) {
-                String name = entry.getKey();
-                List<String> values = entry.getValue();
+            for (EndpointOption option : endpointOptions) {
                 writer.println("  <tr>");
-                writer.println("    <td>" + name + "</td>");
-                for (String value : values) {
-                    writer.println(value);
-                }
+                writer.println("    <td>" + option.getName() + "</td>");
+                writer.println("    <td>" + option.getType() + "</td>");
+                writer.println("    <td>" + option.getDocumentation() + "</td>");
                 writer.println("  </tr>");
             }
             writer.println("</table>");
         }
     }
 
-    protected void findClassProperties(RoundEnvironment roundEnv, SortedMap<String, List<String>> sortedMap, TypeElement classElement, String prefix) {
+    protected void findClassProperties(RoundEnvironment roundEnv, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -197,7 +195,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         if (!Strings.isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(roundEnv, sortedMap, fieldTypeElement, nestedPrefix);
+                        findClassProperties(roundEnv, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
                         String docComment = elementUtils.getDocComment(fieldElement);
                         if (Strings.isNullOrEmpty(docComment)) {
@@ -221,21 +219,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         if (docComment == null) {
                             docComment = "";
                         }
-                        List<String> values = new ArrayList<String>();
-                        values.add("    <td>" + fieldTypeName + "</td>");
-                        values.add("    <td>" + docComment.trim() + "</td>");
 
-                        // TODO would be nice here to create a default endpoint/consumer object
-                        // and return the default value of the field so we can put it into the docs
-                        Object defaultValue = null;
-                        if (defaultValue != null) {
-                            values.add("    <td>" + defaultValue + "</td>");
-                        }
-                        if (sortedMap.containsKey(name)) {
-                            error("Duplicate parameter annotation named '" + name + "' on class " + classElement.getQualifiedName());
-                        } else {
-                            sortedMap.put(name, values);
-                        }
+                        EndpointOption option = new EndpointOption(name, fieldTypeName, docComment.trim());
+                        endpointOptions.add(option);
                     }
                 }
             }
@@ -253,7 +239,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
         if (!Strings.isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
             Set<? extends Element> rootElements = roundEnv.getRootElements();
@@ -270,20 +255,19 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         return null;
     }
 
-
     /**
      * Helper method to produce class output text file using the given handler
      */
     protected void processFile(String packageName, String scheme, String fileName, Func1<PrintWriter, Void> handler) {
         PrintWriter writer = null;
         try {
-            Writer out = null;
+            Writer out;
             Filer filer = processingEnv.getFiler();
             FileObject resource;
             try {
                 resource = filer.getResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
             } catch (Throwable e) {
-                resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName, new Element[0]);
+                resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
             }
             URI uri = resource.toUri();
             File file = null;
@@ -330,6 +314,53 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         e.printStackTrace(writer);
         writer.close();
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, buffer.toString());
+    }
 
+    private static final class EndpointOption {
+
+        private String name;
+        private String type;
+        private String documentation;
+
+        private EndpointOption(String name, String type, String documentation) {
+            this.name = name;
+            this.type = type;
+            this.documentation = documentation;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getDocumentation() {
+            return documentation;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            EndpointOption that = (EndpointOption) o;
+
+            if (!name.equals(that.name)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
     }
 }
