@@ -33,7 +33,7 @@ public final class JsonSchemaHelper {
 
         StringBuilder sb = new StringBuilder();
         sb.append(doubleQuote(name));
-        sb.append(": { \"type\":");
+        sb.append(": { \"type\": ");
 
         if ("enum".equals(typeName)) {
             sb.append(doubleQuote("string"));
@@ -178,7 +178,10 @@ public final class JsonSchemaHelper {
             first = false;
         }
 
-        return sb.toString();
+        // remove double whitespaces, and trim
+        String s = sb.toString();
+        s = s.replaceAll("\\s+", " ");
+        return s.trim();
     }
 
 }
