@@ -77,9 +77,9 @@ public class SolrProducer extends DefaultProducer {
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
             serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
-        	  serverToUse.addBean(exchange.getIn().getBody());
+            serverToUse.addBean(exchange.getIn().getBody());
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEANS)) {
-        	  serverToUse.addBeans(exchange.getIn().getBody(Collection.class));
+            serverToUse.addBeans(exchange.getIn().getBody(Collection.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
             serverToUse.commit();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
