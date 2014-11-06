@@ -90,6 +90,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     @UriParam
     private boolean producerPoolEnabled = true;
+    @UriParam
+    private boolean udpConnectionlessSend = false;
 
     /**
      * Returns a copy of this configuration
@@ -470,6 +472,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
+    }
+
+    public boolean isUdpConnectionlessSend() {
+        return udpConnectionlessSend;
+    }
+
+    public void setUdpConnectionlessSend(boolean udpConnectionlessSend) {
+        this.udpConnectionlessSend = udpConnectionlessSend;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
