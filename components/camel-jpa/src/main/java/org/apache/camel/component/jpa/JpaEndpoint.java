@@ -312,12 +312,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
                 } catch (InvalidPayloadException e) {
                     throw new InvalidPayloadRuntimeException(exchange, getEntityType(), e.getCause());
                 }
-
-                if (answer == null) {
-                    throw new InvalidPayloadRuntimeException(exchange, getEntityType());
-                } else {
-                    return answer;
-                }
+                // is never null
+                return answer;
             }
         };
     }
