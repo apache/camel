@@ -19,7 +19,6 @@ package org.apache.camel.spring.boot;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -112,9 +111,6 @@ public class CamelAutoConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired(required = false)
-    private RoutesBuilder[] routesBuilders;
-
-    @Autowired(required = false)
     private CamelContextConfiguration camelContextConfiguration;
 
     /**
@@ -129,17 +125,16 @@ public class CamelAutoConfiguration {
             camelContext.disableJMX();
         }
 
-        if (routesBuilders != null) {
-            for (RoutesBuilder routesBuilder : routesBuilders) {
-                camelContext.addRoutes(routesBuilder);
-            }
-        }
-
         if (camelContextConfiguration != null) {
             camelContextConfiguration.beforeStart(camelContext);
         }
 
         return camelContext;
+    }
+
+    @Bean
+    RoutesCollector camelRoutesInjector() {
+        return new RoutesCollector();
     }
 
     /**
