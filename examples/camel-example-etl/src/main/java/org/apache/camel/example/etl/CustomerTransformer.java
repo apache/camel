@@ -51,7 +51,7 @@ public final class CustomerTransformer {
      */
     @Converter
     public static CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) throws Exception {
-        EntityManager entityManager = exchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+        EntityManager entityManager = exchange.getProperty(JpaConstants.ENTITY_MANAGER, EntityManager.class);
         TransactionTemplate transactionTemplate = exchange.getContext().getRegistry().lookupByNameAndType("transactionTemplate", TransactionTemplate.class);
 
         String user = doc.getUser();
