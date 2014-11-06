@@ -25,7 +25,9 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
@@ -48,6 +50,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.tools.apt.util.Func1;
+import org.apache.camel.tools.apt.util.JsonSchemaHelper;
 import org.apache.camel.tools.apt.util.Strings;
 
 import static org.apache.camel.tools.apt.util.Strings.canonicalClassName;
@@ -76,6 +79,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
             if (!Strings.isNullOrEmpty(scheme)) {
+                // write html documentation
                 String name = canonicalClassName(classElement.getQualifiedName().toString());
                 String packageName = name.substring(0, name.lastIndexOf("."));
                 String fileName = scheme + ".html";
@@ -83,17 +87,24 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     @Override
                     public Void call(PrintWriter writer) {
                         writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint);
-                        writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint);
                         return null;
                     }
                 };
                 processFile(packageName, scheme, fileName, handler);
+
+                // write json schema
+                fileName = scheme + ".json";
+                handler = new Func1<PrintWriter, Void>() {
+                    @Override
+                    public Void call(PrintWriter writer) {
+                        writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint);
+                        return null;
+                    }
+                };
+//                packageName = "META-INF.services.org.apache.camel.schema";
+                processFile(packageName, scheme, fileName, handler);
             }
         }
-    }
-
-    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
-        // todo
     }
 
     protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
@@ -135,6 +146,42 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("</html>");
     }
 
+    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
+        String scheme = uriEndpoint.scheme();
+
+        String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
+        if (!Strings.isNullOrEmpty(classDoc)) {
+            // remove dodgy @version that we may have in class javadoc
+            classDoc = classDoc.replaceFirst("\\@version", "");
+            classDoc = classDoc.trim();
+        }
+
+        // TODO: add some top details about component scheme name, and documentation
+
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        findClassProperties(roundEnv, endpointOptions, classElement, "");
+        if (!endpointOptions.isEmpty()) {
+            String json = createParameterJsonSchema(endpointOptions);
+            writer.println(json);
+        }
+    }
+
+
+    public String createParameterJsonSchema(Set<EndpointOption> options) {
+        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+        boolean first = true;
+        for (EndpointOption entry :  options) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDocumentation()));
+        }
+        buffer.append("\n  }\n}\n");
+        return buffer.toString();
+    }
 
     protected void showDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, String prefix) {
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);

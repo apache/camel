@@ -27,6 +27,27 @@ public final class JsonSchemaHelper {
     }
 
     public static String toJson(String name, String type, String description) {
+        String typeName = JsonSchemaHelper.getType(type);
+
+        // TODO: add support for enum and array
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(doubleQuote(name));
+        sb.append(": { \"type\":");
+        sb.append(doubleQuote(typeName));
+        if (!Strings.isNullOrEmpty(description)) {
+            sb.append(", \"description\":");
+            String text = sanitizeDescription(description);
+            sb.append(doubleQuote(text));
+        }
+
+        if ("object".equals(typeName)) {
+            // for object then include the javaType as a description so we know that
+            sb.append(", \"properties\": { \"javaType\": { \"description\": \"" + type + "\", \"type\": \"string\" } }");
+        }
+        sb.append(" }");
+        return sb.toString();
+
 //        if (type.isEnum()) {
 //            String typeName = "string";
 //            CollectionStringBuffer sb = new CollectionStringBuffer();
@@ -38,14 +59,13 @@ public final class JsonSchemaHelper {
 //            String typeName = "array";
 //            return doubleQuote(name) + ": { \"type\": " + doubleQuote(type) + " }";
 //        } else {
-        String typeName = JsonSchemaHelper.getType(type);
-        if ("object".equals(typeName)) {
-            // for object then include the javaType as a description so we know that
-            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
-                    + ", \"properties\": { \"javaType\": { \"description\": \"" + type + "\", \"type\": \"string\" } } }";
-        } else {
-            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName) + " }";
-        }
+//        if ("object".equals(typeName)) {
+//            for object then include the javaType as a description so we know that
+//            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
+//                    + ", \"properties\": { \"javaType\": { \"description\": \"" + type + "\", \"type\": \"string\" } } }";
+//        } else {
+//            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName) + " }";
+//        }
 //        }
 
     }
@@ -123,6 +143,54 @@ public final class JsonSchemaHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Sanitizes the javadoc to removed invalid characters so it can be used as json description
+     *
+     * @param javadoc  the javadoc
+     * @return the text that is valid as json
+     */
+    public static String sanitizeDescription(String javadoc) {
+        // lets just use what java accepts as identifiers
+        StringBuilder sb = new StringBuilder();
+
+        // split into lines
+        String[] lines = javadoc.split("\n");
+
+        boolean first = true;
+        for (String line : lines) {
+            line = line.trim();
+
+            // skip lines that are javadoc references
+            if (line.startsWith("@")) {
+                continue;
+            }
+
+            // replace some known html tags
+            javadoc = javadoc.replaceAll("\\<tt\\>", "");
+            javadoc = javadoc.replaceAll("\\</tt\\>", "");
+            javadoc = javadoc.replaceAll("\\<code\\>", "");
+            javadoc = javadoc.replaceAll("\\</code\\>", "");
+
+            // we are starting from a new line, so add a whitespace
+            if (!first) {
+                sb.append(' ');
+            }
+
+            for (char c : line.toCharArray()) {
+                if (Character.isJavaIdentifierPart(c) || '.' == c) {
+                    sb.append(c);
+                } else if (Character.isWhitespace(c)) {
+                    // always use space as whitespace, also for line feeds etc
+                    sb.append(' ');
+                }
+            }
+
+            first = false;
+        }
+
+        return sb.toString();
     }
 
 }
