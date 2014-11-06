@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.UnmappableCharacterException;
 
 import org.apache.camel.Message;
 import org.jsmpp.bean.Alphabet;
@@ -103,12 +109,34 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         Alphabet alphabetObj;
         if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
             alphabetObj = Alphabet.ALPHA_UCS2;
-            if(charset.equals(ascii) || charset.equals(latin1)) {
-                byte[] messageBytes = body.getBytes(charset);
-                if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
-                    alphabetObj = Alphabet.ALPHA_DEFAULT;
+            if (config.getSmscDefaultEncoding().equals("GSM-7BIT")) {
+                if (charset.equals(ascii) || charset.equals(latin1)) {
+                    byte[] messageBytes = body.getBytes(charset);
+                    if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
+                        alphabetObj = Alphabet.ALPHA_DEFAULT;
+                    }
+                }
+            } else if (config.getSmscDefaultEncoding().equals("Latin1")) {
+                CharBuffer _body = CharBuffer.wrap(body);
+                CharsetEncoder enc = latin1.newEncoder();
+                enc.onUnmappableCharacter(CodingErrorAction.REPORT);
+                try {
+                    ByteBuffer result = enc.encode(_body);
+                    alphabetObj = Alphabet.ALPHA_LATIN1;  // FIXME - needs patch to jSMPP (pull req #39)
+                } catch(UnmappableCharacterException ex) {
+                    // This exception occurs if the message contains a
+                    // character that can't be represented in Latin-1.
+                    // Will fall through to default UCS2.
+                } catch(CharacterCodingException ex) {
+                    // This indicates some more serious but unexpected failure.
+                    // Will fall through to default UCS2.
                 }
             }
+
+            // if the alphabet was not explicitly specified and was detected automatically,
+            // record it in a header for use elsewhere
+            message.setHeader(SmppConstants.ALPHABET_DETECTED, alphabetObj.value());
+
         } else {
             alphabetObj = Alphabet.valueOf(alphabet);
         }

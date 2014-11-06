@@ -23,6 +23,7 @@ package org.apache.camel.component.smpp;
 public interface SmppConstants {
 
     String ALPHABET = "CamelSmppAlphabet";
+    String ALPHABET_DETECTED = "CamelSmppAlphabetDetected";
     String COMMAND = "CamelSmppCommand";
     String COMMAND_ID = "CamelSmppCommandId";
     String COMMAND_STATUS = "CamelSmppCommandStatus";
@@ -62,4 +63,5 @@ public interface SmppConstants {
 
     String UCS2_ENCODING = "UTF-16BE";
     byte UNKNOWN_ALPHABET = -1;
+    byte AUTO_CODING = -1;
 }

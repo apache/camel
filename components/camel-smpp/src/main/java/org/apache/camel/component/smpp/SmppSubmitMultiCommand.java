@@ -152,6 +152,13 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
 
         if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
             submitMulti.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else if (config.getDataCoding() == SmppConstants.AUTO_CODING) {
+            if(in.getHeaders().containsKey(SmppConstants.ALPHABET_DETECTED)) {
+                submitMulti.setDataCoding(in.getHeader(SmppConstants.ALPHABET_DETECTED, Byte.class));
+            } else {
+                submitMulti.setDataCoding((byte)0);
+            }
+
         } else {
             submitMulti.setDataCoding(config.getDataCoding());
         }
