@@ -221,7 +221,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Find all Camel components names available in the classpath")
     List<String> findComponentNames() throws Exception;
 
-
     /**
      * Returns the JSON schema representation of the endpoint parameters for the given component name
      *
@@ -239,7 +238,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
-
 
     /**
      * Helper method for tooling which returns the completion list of the endpoint path

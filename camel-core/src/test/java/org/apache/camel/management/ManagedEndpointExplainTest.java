@@ -18,16 +18,16 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
-public class ManagedEndpointTest extends ManagementTestSupport {
+public class ManagedEndpointExplainTest extends ManagementTestSupport {
 
-    public void testManageEndpoint() throws Exception {
+    public void testManageEndpointExplain() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -40,6 +40,13 @@ public class ManagedEndpointTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         assertTrue(mbeanServer.isRegistered(on));
+
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?maxChars=50&showExchangeId=true\"");
+        assertTrue(mbeanServer.isRegistered(on));
+
+        // there should be 2 options
+        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", null, null);
+        assertEquals(2, data.size());
     }
 
     @Override
@@ -47,10 +54,9 @@ public class ManagedEndpointTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Endpoint result = endpoint("mock:result");
-
                 from("seda:test")
-                    .to(result);
+                    .to("log:foo?showExchangeId=true&maxChars=50")
+                    .to("mock:result");
             }
         };
     }
