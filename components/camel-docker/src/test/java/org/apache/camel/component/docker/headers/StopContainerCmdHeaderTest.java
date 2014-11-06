@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker.headers;
 
-
 import java.util.Map;
 
 import com.github.dockerjava.api.command.StopContainerCmd;

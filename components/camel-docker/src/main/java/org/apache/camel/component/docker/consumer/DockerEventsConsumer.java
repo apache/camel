@@ -131,7 +131,6 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
     @Override
     public void onException(Throwable throwable) {
         LOGGER.error("Error Consuming from Docker Events: {}", throwable.getMessage());
-        
     }
 
     @Override

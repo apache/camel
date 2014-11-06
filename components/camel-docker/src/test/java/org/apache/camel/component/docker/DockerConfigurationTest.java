@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +23,8 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 
 import static org.junit.Assert.assertEquals;
 

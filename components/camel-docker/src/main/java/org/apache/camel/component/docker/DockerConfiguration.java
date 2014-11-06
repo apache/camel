@@ -31,7 +31,7 @@ public class DockerConfiguration {
     private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
     
     private DockerOperation operation;
-
+    
     public void setClient(DockerClientProfile clientProfile, DockerClient client) {
         clients.put(clientProfile, client);
     }
