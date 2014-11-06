@@ -158,6 +158,15 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/endpoint-explain">
+      <action class="org.apache.camel.karaf.commands.EndpointExplain">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel/backlog-tracer-info">
       <action class="org.apache.camel.karaf.commands.BacklogTracerInfo">
         <property name="camelController" ref="camelController"/>
