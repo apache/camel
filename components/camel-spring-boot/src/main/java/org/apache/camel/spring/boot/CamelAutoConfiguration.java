@@ -110,9 +110,6 @@ public class CamelAutoConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired(required = false)
-    private CamelContextConfiguration camelContextConfiguration;
-
     /**
      * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring
      * context.
@@ -123,10 +120,6 @@ public class CamelAutoConfiguration {
 
         if (!configurationProperties.isJmxEnabled()) {
             camelContext.disableJMX();
-        }
-
-        if (camelContextConfiguration != null) {
-            camelContextConfiguration.beforeStart(camelContext);
         }
 
         return camelContext;

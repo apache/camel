@@ -21,6 +21,7 @@ import org.apache.camel.RoutesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,6 +31,9 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     private ApplicationContext applicationContext;
+
+    @Autowired(required = false)
+    private CamelContextConfiguration camelContextConfiguration;
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -48,6 +52,10 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+            }
+            if (camelContextConfiguration != null) {
+                LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
+                camelContextConfiguration.beforeApplicationStart(camelContext);
             }
         }
         return bean;
