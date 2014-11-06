@@ -25,9 +25,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
@@ -35,6 +33,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -101,7 +100,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         return null;
                     }
                 };
-//                packageName = "META-INF.services.org.apache.camel.schema";
                 processFile(packageName, scheme, fileName, handler);
             }
         }
@@ -151,9 +149,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
         if (!Strings.isNullOrEmpty(classDoc)) {
-            // remove dodgy @version that we may have in class javadoc
-            classDoc = classDoc.replaceFirst("\\@version", "");
-            classDoc = classDoc.trim();
+            classDoc = JsonSchemaHelper.sanitizeDescription(classDoc);
         }
 
         // TODO: add some top details about component scheme name, and documentation
@@ -170,14 +166,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     public String createParameterJsonSchema(Set<EndpointOption> options) {
         StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
         boolean first = true;
-        for (EndpointOption entry :  options) {
+        for (EndpointOption entry : options) {
             if (first) {
                 first = false;
             } else {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDocumentation()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDocumentation(), entry.isEnumType(), entry.getEnums()));
         }
         buffer.append("\n  }\n}\n");
         return buffer.toString();
@@ -267,7 +263,24 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                             docComment = "";
                         }
 
-                        EndpointOption option = new EndpointOption(name, fieldTypeName, docComment.trim());
+                        // gather enums
+                        Set<String> enums = new LinkedHashSet<>();
+                        boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                        if (isEnum) {
+                            TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                            // find all the enum constants which has the possible enum value that can be used
+                            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                            for (VariableElement var : fields) {
+                                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                    String val = var.toString();
+                                    enums.add(val);
+                                }
+                            }
+                        }
+
+                        // we could likely detect if the type is collection based?
+
+                        EndpointOption option = new EndpointOption(name, fieldTypeName, docComment.trim(), isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
@@ -368,11 +381,15 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         private String name;
         private String type;
         private String documentation;
+        private boolean enumType;
+        private Set<String> enums;
 
-        private EndpointOption(String name, String type, String documentation) {
+        private EndpointOption(String name, String type, String documentation, boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
             this.documentation = documentation;
+            this.enumType = enumType;
+            this.enums = enums;
         }
 
         public String getName() {
@@ -385,6 +402,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         public String getDocumentation() {
             return documentation;
+        }
+
+        public boolean isEnumType() {
+            return enumType;
+        }
+
+        public Set<String> getEnums() {
+            return enums;
         }
 
         @Override

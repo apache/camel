@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tools.apt.util;
 
+import java.util.Set;
+
 import static org.apache.camel.tools.apt.util.Strings.doubleQuote;
 
 /**
@@ -26,17 +28,30 @@ public final class JsonSchemaHelper {
     private JsonSchemaHelper() {
     }
 
-    public static String toJson(String name, String type, String description) {
-        String typeName = JsonSchemaHelper.getType(type);
-
-        // TODO: add support for enum and array
+    public static String toJson(String name, String type, String description, boolean enumType, Set<String> enums) {
+        String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
         sb.append(doubleQuote(name));
         sb.append(": { \"type\":");
-        sb.append(doubleQuote(typeName));
+
+        if ("enum".equals(typeName)) {
+            sb.append(doubleQuote("string"));
+            CollectionStringBuffer enumValues = new CollectionStringBuffer();
+            for (Object value : enums) {
+                enumValues.append(doubleQuote(value.toString()));
+            }
+            sb.append(", \"enum\": [ ");
+            sb.append(enumValues.toString());
+            sb.append(" ]");
+        } else if ("array".equals(typeName)) {
+            sb.append(doubleQuote("array"));
+        } else {
+            sb.append(doubleQuote(typeName));
+        }
+
         if (!Strings.isNullOrEmpty(description)) {
-            sb.append(", \"description\":");
+            sb.append(", \"description\": ");
             String text = sanitizeDescription(description);
             sb.append(doubleQuote(text));
         }
@@ -47,27 +62,6 @@ public final class JsonSchemaHelper {
         }
         sb.append(" }");
         return sb.toString();
-
-//        if (type.isEnum()) {
-//            String typeName = "string";
-//            CollectionStringBuffer sb = new CollectionStringBuffer();
-//            for (Object value : parameterType.getEnumConstants()) {
-//                sb.append(doubleQuote(value.toString()));
-//            }
-//            return doubleQuote(name) + ": { \"type\": " + doubleQuote(type) + ", \"enum\": [ " + sb.toString() + " ] }";
-//        } else if (parameterType.isArray()) {
-//            String typeName = "array";
-//            return doubleQuote(name) + ": { \"type\": " + doubleQuote(type) + " }";
-//        } else {
-//        if ("object".equals(typeName)) {
-//            for object then include the javaType as a description so we know that
-//            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName)
-//                    + ", \"properties\": { \"javaType\": { \"description\": \"" + type + "\", \"type\": \"string\" } } }";
-//        } else {
-//            return doubleQuote(name) + ": { \"type\": " + doubleQuote(typeName) + " }";
-//        }
-//        }
-
     }
 
     /**
@@ -76,13 +70,10 @@ public final class JsonSchemaHelper {
      * @param   type the java type
      * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
      */
-    public static String getType(String type) {
-        // TODO:
-//        if (type.isEnum()) {
-//            return "enum";
-//        } else if (type.isArray()) {
-//            return "array";
-//        }
+    public static String getType(String type, boolean enumType) {
+        if (enumType) {
+            return "enum";
+        }
 
         String primitive = getPrimitiveType(type);
         if (primitive != null) {
