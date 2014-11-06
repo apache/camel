@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -32,5 +34,8 @@ public interface ManagedEndpointRegistryMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Purges the cache")
     void purge();
+
+    @ManagedOperation(description = "Lists all the endpoints in the registry (url)")
+    TabularData listEndpoints();
 
 }

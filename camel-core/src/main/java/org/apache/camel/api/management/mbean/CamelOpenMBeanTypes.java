@@ -53,4 +53,15 @@ public final class CamelOpenMBeanTypes {
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
+    public static TabularType listEndpointsTabularType() throws OpenDataException {
+        CompositeType ct = listEndpointsCompositeType();
+        return new TabularType("listEndpoints", "Lists all the endpoints in the registry", ct, new String[]{"url"});
+    }
+
+    public static CompositeType listEndpointsCompositeType() throws OpenDataException {
+        return new CompositeType("url", "Endpoints", new String[]{"url"},
+                new String[]{"Url"},
+                new OpenType[]{SimpleType.STRING});
+    }
+
 }
