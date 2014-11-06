@@ -1346,9 +1346,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
     /**
-     * Returns the HTML documentation for the given camel component
+     * Returns the HTML documentation for the given Camel component
      */
     String getComponentDocumentation(String componentName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the endpoint parameters for the given component name
+     */
+    String getComponentParameterJsonSchema(String componentName) throws IOException;
 
     /**
      * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).

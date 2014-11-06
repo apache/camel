@@ -1087,6 +1087,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
+    public String getComponentParameterJsonSchema(String componentName) throws IOException {
+        String packageName = sanitizeComponentName(componentName);
+        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".json";
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
+    }
+
     /**
      * Sanitizes the component name by removing dash (-) in the name, when using the component name to load
      * resources from the classpath.

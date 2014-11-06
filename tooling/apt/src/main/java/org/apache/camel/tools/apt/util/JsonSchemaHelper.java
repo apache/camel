@@ -158,11 +158,8 @@ public final class JsonSchemaHelper {
                 continue;
             }
 
-            // replace some known html tags
-            javadoc = javadoc.replaceAll("\\<tt\\>", "");
-            javadoc = javadoc.replaceAll("\\</tt\\>", "");
-            javadoc = javadoc.replaceAll("\\<code\\>", "");
-            javadoc = javadoc.replaceAll("\\</code\\>", "");
+            // remove all HTML tags
+            line = line.replaceAll("\\</?\\w+\\/?>", "");
 
             // we are starting from a new line, so add a whitespace
             if (!first) {
