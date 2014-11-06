@@ -18,12 +18,16 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 public class RoutesCollector implements BeanPostProcessor, ApplicationContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     private ApplicationContext applicationContext;
 
@@ -36,8 +40,10 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof CamelContext && beanName.equals("camelContext")) {
             CamelContext camelContext = (CamelContext) bean;
+            LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
                 try {
+                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
                     camelContext.addRoutes(routesBuilder);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
