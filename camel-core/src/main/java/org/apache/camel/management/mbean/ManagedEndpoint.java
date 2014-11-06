@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.net.URI;
 import java.util.Map;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -31,6 +32,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -83,31 +85,39 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     }
 
     @Override
-    public TabularData explain() {
+    public TabularData explain(boolean allOptions) {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEndpointTabularType());
 
-            Map<String, Object> options = URISupport.parseParameters(endpoint.getEndpointConfiguration().getURI());
+            // explain all the explicit configured options on the endpoint
+            URI uri = endpoint.getEndpointConfiguration().getURI();
+            Map<String, Object> options = URISupport.parseParameters(uri);
             for (Map.Entry<String, Object> entry : options.entrySet()) {
-
                 CompositeType ct = CamelOpenMBeanTypes.explainEndpointsCompositeType();
 
                 String option = entry.getKey();
-
                 String value = "";
                 if (entry.getValue() != null) {
                     value = entry.getValue().toString();
                 }
                 value = URISupport.sanitizePath(value);
 
-                // TODO: get from json schema
-                String description = "";
+                // if we have the json schema then use that to get the descriptions
+                String description = null;
+                String json = endpoint.getCamelContext().getComponentParameterJsonSchema(uri.getScheme());
+                if (json != null) {
+                    description = JsonSchemaHelper.getDescription(json, option);
+                }
+                description = ObjectHelper.isEmpty(description) ? "" : description;
 
                 CompositeData data = new CompositeDataSupport(ct, new String[]
                         {"option", "value", "description"},
                         new Object[]{option, value, description});
                 answer.put(data);
             }
+
+            // TODO: add support for all options, which requires to parse the json blob
+
             return answer;
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);

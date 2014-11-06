@@ -41,11 +41,11 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?maxChars=50&showExchangeId=true\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5\"");
         assertTrue(mbeanServer.isRegistered(on));
 
         // there should be 2 options
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", null, null);
+        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertEquals(2, data.size());
     }
 
@@ -55,7 +55,7 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .to("log:foo?showExchangeId=true&maxChars=50")
+                    .to("log:foo?groupDelay=2000&groupSize=5")
                     .to("mock:result");
             }
         };

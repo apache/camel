@@ -99,4 +99,30 @@ public final class JsonSchemaHelper {
         return null;
     }
 
+    /**
+     * Extracts the description value from the blob of json with the given property name
+     *
+     * @param json the blob of json
+     * @param name the name of the property to extract the description
+     * @return the value of the description, or <tt>null</tt> if no description exists
+     */
+    public static String getDescription(String json, String name) {
+        // we dont have a json parser, but we know the structure, so just do this simple way
+        String[] lines = json.split("\n");
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"" + name + "\":")) {
+                // grab text after description
+                String value = ObjectHelper.after(line, "\"description\": \"");
+                if (value != null) {
+                    int lastQuote = value.lastIndexOf('"');
+                    value = value.substring(0, lastQuote);
+                    value = StringHelper.removeLeadingAndEndingQuotes(value);
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
 }
