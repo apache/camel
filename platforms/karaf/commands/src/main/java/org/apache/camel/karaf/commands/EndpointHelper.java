@@ -29,9 +29,12 @@ public final class EndpointHelper {
     }
 
     public static List<String[]> parseEndpointExplainJson(String json) {
-        // parse line by line
         List<String[]> answer = new ArrayList<>();
+        if (json == null) {
+            return answer;
+        }
 
+        // parse line by line
         // skip first 2 lines as they are leading
         String[] lines = json.split("\n");
         for (int i = 2; i < lines.length; i++) {

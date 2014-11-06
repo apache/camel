@@ -55,11 +55,15 @@ public class EndpointList extends CamelCommandSupport {
 
     @Option(name = "--decode", aliases = "-d", description = "Whether to decode the endpoint uri so its human readable",
             required = false, multiValued = false, valueToShowInHelp = "true")
-    Boolean decode;
+    boolean decode = true;
 
-    @Option(name = "--verbose", aliases = "-v", description = "Verbose output which does not limit the length of the uri shown",
+    @Option(name = "--verbose", aliases = "-v", description = "Verbose output which does not limit the length of the uri shown, or to explain all options (if explain selected)",
             required = false, multiValued = false, valueToShowInHelp = "false")
-    Boolean verbose;
+    boolean verbose;
+
+    @Option(name = "--explain", aliases = "-e", description = "Whether to explain the endpoint options",
+            required = false, multiValued = false, valueToShowInHelp = "false")
+    boolean explain;
 
     protected Object doExecute() throws Exception {
         List<Endpoint> endpoints = camelController.getEndpoints(name);
@@ -75,7 +79,7 @@ public class EndpointList extends CamelCommandSupport {
             for (final Endpoint endpoint : endpoints) {
                 String contextId = endpoint.getCamelContext().getName();
                 String uri = endpoint.getEndpointUri();
-                if (decode == null || decode) {
+                if (decode) {
                     // decode uri so its more human readable
                     uri = URLDecoder.decode(uri, "UTF-8");
                 }
@@ -83,6 +87,30 @@ public class EndpointList extends CamelCommandSupport {
                 uri = URISupport.sanitizeUri(uri);
                 String state = getEndpointState(endpoint);
                 out.println(String.format(rowFormat, contextId, uri, state));
+
+                if (explain) {
+                    boolean first = true;
+                    String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
+                    // use a basic json parser
+                    List<String[]> options = EndpointHelper.parseEndpointExplainJson(json);
+                    for (String[] option : options) {
+                        String key = option[0];
+                        String value = option[1];
+                        String desc = option[2];
+                        if (key != null && value != null) {
+                            if (first) {
+                                out.println();
+                                first = false;
+                            }
+                            String line = "\t" + key + "=" + value;
+                            out.println(String.format(rowFormat, "", line, ""));
+                            if (desc != null) {
+                                out.println(String.format(rowFormat, "", "\t" + desc, ""));
+                            }
+                            out.println();
+                        }
+                    }
+                }
             }
         }
 
@@ -102,7 +130,7 @@ public class EndpointList extends CamelCommandSupport {
                 maxContextLen = java.lang.Math.max(maxContextLen, name == null ? 0 : name.length());
 
                 String uri = endpoint.getEndpointUri();
-                if (decode == null || decode) {
+                if (decode) {
                     // decode uri so its more human readable
                     uri = URLDecoder.decode(uri, "UTF-8");
                 }
@@ -154,7 +182,7 @@ public class EndpointList extends CamelCommandSupport {
     }
 
     private int getMaxColumnWidth() {
-        if (verbose != null && verbose) {
+        if (verbose) {
             return Integer.MAX_VALUE;
         } else {
             return MAX_COLUMN_WIDTH;
