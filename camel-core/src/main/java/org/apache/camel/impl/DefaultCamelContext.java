@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
@@ -1138,18 +1137,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return null;
         }
 
-        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
-        boolean first = true;
+        Map<String, String[]> selected = new LinkedHashMap<>();
+
+        // insert values from uri
         Map<String, Object> options = URISupport.parseParameters(u);
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
 
             String option = entry.getKey();
+
             String value = "";
             if (entry.getValue() != null) {
                 value = entry.getValue().toString();
@@ -1157,9 +1152,44 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             value = URISupport.sanitizePath(value);
 
             // if we have the json schema then use that to get the descriptions
-            String description = null;
+            String description;
             description = JsonSchemaHelper.getDescription(json, option);
             description = ObjectHelper.isEmpty(description) ? null : description;
+
+            // add as selected row
+            selected.put(option, new String[]{option, value, description});
+        }
+
+        if (includeAllOptions) {
+            // include other rows
+            List<String[]> rows = JsonSchemaHelper.parseEndpointExplainJson(json);
+            for (String[] row : rows) {
+                String option = row[0];
+                String value = row[1];
+                value = URISupport.sanitizePath(value);
+                String description = row[2];
+
+                // add as selected row
+                if (!selected.containsKey(option)) {
+                    selected.put(option, new String[]{option, value, description});
+                }
+            }
+        }
+
+        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+
+        boolean first = true;
+        for (String[] row : selected.values()) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+
+            String option = row[0];
+            String value = row[1];
+            String description = row[2];
 
             // add json of the option
             buffer.append(doubleQuote(option) + ": { ");
@@ -1169,6 +1199,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             buffer.append(" }");
         }
+
         buffer.append("\n  }\n}\n");
         return buffer.toString();
     }

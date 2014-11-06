@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -84,7 +85,7 @@ public class EndpointExplain extends CamelCommandSupport {
             out.println();
 
             // use a basic json parser
-            List<String[]> options = EndpointHelper.parseEndpointExplainJson(json);
+            List<String[]> options = JsonSchemaHelper.parseEndpointExplainJson(json);
             for (String[] option : options) {
                 out.print("Option:\t\t");
                 out.println(option[0]);

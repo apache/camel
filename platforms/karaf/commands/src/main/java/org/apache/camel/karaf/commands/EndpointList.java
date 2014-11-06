@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -92,7 +93,7 @@ public class EndpointList extends CamelCommandSupport {
                     boolean first = true;
                     String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
                     // use a basic json parser
-                    List<String[]> options = EndpointHelper.parseEndpointExplainJson(json);
+                    List<String[]> options = JsonSchemaHelper.parseEndpointExplainJson(json);
                     for (String[] option : options) {
                         String key = option[0];
                         String value = option[1];

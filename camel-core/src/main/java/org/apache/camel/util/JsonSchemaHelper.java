@@ -16,10 +16,17 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
  */
 public final class JsonSchemaHelper {
+
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"");
 
     private JsonSchemaHelper() {
     }
@@ -123,6 +130,49 @@ public final class JsonSchemaHelper {
             }
         }
         return null;
+    }
+
+    /**
+     * Parses the endpoint explain json
+     *
+     * @param json the json
+     * @return a list of all the options, where each row contains: <tt>key, value, description</tt>
+     */
+    public static List<String[]> parseEndpointExplainJson(String json) {
+        List<String[]> answer = new ArrayList<>();
+        if (json == null) {
+            return answer;
+        }
+
+        // parse line by line
+        // skip first 2 lines as they are leading
+        String[] lines = json.split("\n");
+        for (int i = 2; i < lines.length; i++) {
+            String line = lines[i];
+
+            Matcher matcher = PATTERN.matcher(line);
+            String option = null;
+            String value = null;
+            String description = null;
+            int count = 0;
+            while (matcher.find()) {
+                count++;
+                if (count == 1) {
+                    option = matcher.group(1);
+                } else if (count == 3) {
+                    value = matcher.group(1);
+                } else if (count == 5) {
+                    description = matcher.group(1);
+                }
+            }
+
+            if (option != null) {
+                String[] row = new String[]{option, value, description};
+                answer.add(row);
+            }
+        }
+
+        return answer;
     }
 
 }
