@@ -381,11 +381,17 @@ public class NettyProducer extends DefaultAsyncProducer {
             // set the pipeline factory, which creates the pipeline for each newly created channels
             connectionlessClientBootstrap.handler(pipelineFactory);
             // bind and store channel so we can close it when stopping
-            ChannelFuture channelFuture = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-            channelFuture.awaitUninterruptibly();
-            Channel channel = channelFuture.channel();
+            answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+            answer.awaitUninterruptibly();
+            Channel channel = answer.channel();
             allChannels.add(channel);
-            answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            // if connectionless send is true we don't do a connect.
+            // we just send on the channel created with bind which means
+            // really fire and forget. You wont get an PortUnreachableException
+            // if no one is listen on the port
+            if (!configuration.isUdpConnectionlessSend()) {
+                answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            }
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
