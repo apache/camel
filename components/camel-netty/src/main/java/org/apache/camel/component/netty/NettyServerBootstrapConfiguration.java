@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -25,7 +26,7 @@ import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.jboss.netty.handler.ssl.SslHandler;
 
 public class NettyServerBootstrapConfiguration implements Cloneable {
-
+    private static String defaultEnabledProtocols;
     protected String protocol;
     protected String host;
     protected int port;
@@ -55,11 +56,22 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String trustStoreResource;
     protected String keyStoreFormat = "JKS";
     protected String securityProvider = "SunX509";
-    protected String enabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
+    protected String enabledProtocols = defaultEnabledProtocols;
     protected String passphrase;
     protected BossPool bossPool;
     protected WorkerPool workerPool;
     protected String networkInterface;
+    
+    // setup the default value of TLS
+    static {
+        // JDK6 doesn't support TLSv1.1,TLSv1.2
+        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
+        if (javaVersion.startsWith("1.6")) {
+            defaultEnabledProtocols = "TLSv1";
+        } else {
+            defaultEnabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
+        }
+    }
 
     public String getAddress() {
         return host + ":" + port;
