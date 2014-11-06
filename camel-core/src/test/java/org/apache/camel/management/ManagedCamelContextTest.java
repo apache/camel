@@ -227,6 +227,27 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
     }
 
+    public void testManagedCamelContextExplainEndpointUri() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainEndpointJson", new Object[]{"log:foo?groupDelay=2000&groupSize=5", false},
+                new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+        System.out.println(json);
+
+        assertEquals(4, StringHelper.countChar(json, '{'));
+        assertEquals(4, StringHelper.countChar(json, '}'));
+        assertTrue(json.contains("\"groupDelay\": { \"value\": \"2000\", \"description\": \"Set the initial delay for stats in millis\" },"));
+        assertTrue(json.contains("\"groupSize\": { \"value\": \"5\", \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

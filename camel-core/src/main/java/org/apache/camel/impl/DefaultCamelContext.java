@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,12 +32,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -135,6 +136,7 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -144,6 +146,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -1124,6 +1128,49 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "netty4/http";
         }
         return componentName.replaceAll("-", "");
+    }
+
+    public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
+        URI u = new URI(uri);
+
+        String json = getComponentParameterJsonSchema(u.getScheme());
+        if (json == null) {
+            return null;
+        }
+
+        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+        boolean first = true;
+        Map<String, Object> options = URISupport.parseParameters(u);
+        for (Map.Entry<String, Object> entry : options.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+
+            String option = entry.getKey();
+            String value = "";
+            if (entry.getValue() != null) {
+                value = entry.getValue().toString();
+            }
+            value = URISupport.sanitizePath(value);
+
+            // if we have the json schema then use that to get the descriptions
+            String description = null;
+            description = JsonSchemaHelper.getDescription(json, option);
+            description = ObjectHelper.isEmpty(description) ? null : description;
+
+            // add json of the option
+            buffer.append(doubleQuote(option) + ": { ");
+            buffer.append("\"value\": \"" + value + "\"");
+            if (description != null) {
+                buffer.append(", \"description\": \"" + description + "\"");
+            }
+            buffer.append(" }");
+        }
+        buffer.append("\n  }\n}\n");
+        return buffer.toString();
     }
 
     public String createRouteStaticEndpointJson(String routeId) {

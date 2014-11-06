@@ -231,6 +231,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
+     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri
+     *
+     * @param uri the endpoint uri
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     */
+    @ManagedOperation(description = " Returns a JSON schema representation of the endpoint parameters for the given endpoint uri")
+    String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception;
+
+    /**
      * Resets all the performance counters.
      *
      * @param includeRoutes  whether to reset all routes as well.

@@ -503,6 +503,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return json;
     }
 
+    public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
+        return context.explainEndpointJson(uri, includeAllOptions);
+    }
+
     public void reset(boolean includeRoutes) throws Exception {
         reset();
 
