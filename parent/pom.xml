@@ -187,7 +187,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.21</hawtdispatch-version>
-    <hazelcast-version>3.2.4</hazelcast-version>
+    <hazelcast-version>3.3.2</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
@@ -320,6 +320,7 @@
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.9</mina2-version>
+    <minimal-json-version>0.9.1</minimal-json-version>
     <mock-javamail-version>1.7</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.12.0</mongo-java-driver-version>
