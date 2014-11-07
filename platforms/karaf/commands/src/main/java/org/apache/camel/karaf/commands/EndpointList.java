@@ -18,6 +18,8 @@ package org.apache.camel.karaf.commands;
 
 import java.io.PrintStream;
 import java.net.URLDecoder;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -94,9 +96,19 @@ public class EndpointList extends CamelCommandSupport {
                     String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
                     // use a basic json parser
                     List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema(json);
+
+                    // lets sort the options by name
+                    Collections.sort(options, new Comparator<Map<String, String>>() {
+                        @Override
+                        public int compare(Map<String, String> o1, Map<String, String> o2) {
+                            return o1.get("name").compareTo(o2.get("name"));
+                        }
+                    });
+
                     for (Map<String, String> option : options) {
                         String key = option.get("name");
                         String type = option.get("type");
+                        String javaType = option.get("javaType");
                         String value = option.get("value");
                         String desc = option.get("description");
                         if (key != null && value != null) {
@@ -106,8 +118,13 @@ public class EndpointList extends CamelCommandSupport {
                             }
                             String line = "\t" + key + "=" + value;
                             out.println(String.format(rowFormat, "", line, ""));
+
                             if (type != null) {
-                                out.println(String.format(rowFormat, "", "\t" + type, ""));
+                                String displayType = type;
+                                if (javaType != null && !displayType.equals(javaType)) {
+                                    displayType = type + " (" + javaType + ")";
+                                }
+                                out.println(String.format(rowFormat, "", "\t" + displayType, ""));
                             }
                             if (desc != null) {
                                 out.println(String.format(rowFormat, "", "\t" + desc, ""));

@@ -17,6 +17,8 @@
 package org.apache.camel.karaf.commands;
 
 import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +33,15 @@ import org.apache.felix.gogo.commands.Option;
 /**
  * Explain the Camel endpoints available in the Karaf instance.
  */
-@Command(scope = "camel", name = "endpoint-explain", description = "Explain all Camel endpoints available in a CamelContext.")
+@Command(scope = "camel", name = "endpoint-explain", description = "Explain all Camel endpoints available in CamelContexts.")
 public class EndpointExplain extends CamelCommandSupport {
 
-    @Argument(index = 0, name = "name", description = "The Camel context name where to look for the endpoints", required = true, multiValued = false)
+    @Argument(index = 0, name = "name", description = "The Camel context name where to look for the endpoints", required = false, multiValued = false)
     String name;
 
-    @Option(name = "--allOptions", aliases = "-all", description = "Whether to include all options",
+    @Option(name = "--verbose", aliases = "-v", description = "Verbose output to explain all options",
             required = false, multiValued = false, valueToShowInHelp = "false")
-    boolean allOptions = false;
+    boolean verbose;
 
     @Option(name = "--scheme", aliases = "-s", description = "To filter endpoints by scheme",
             required = false, multiValued = true)
@@ -71,7 +73,9 @@ public class EndpointExplain extends CamelCommandSupport {
         final PrintStream out = System.out;
 
         for (Endpoint endpoint : endpoints) {
-            String json = camelController.explainEndpoint(name, endpoint.getEndpointUri(), allOptions);
+            String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
+
+            out.println("Context:\t" + endpoint.getCamelContext().getName());
 
             // sanitize and mask uri so we dont see passwords
             String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
@@ -84,6 +88,15 @@ public class EndpointExplain extends CamelCommandSupport {
 
             // use a basic json parser
             List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema(json);
+
+            // lets sort the options by name
+            Collections.sort(options, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> o1, Map<String, String> o2) {
+                    return o1.get("name").compareTo(o2.get("name"));
+                }
+            });
+
             for (Map<String, String> option : options) {
                 out.print("Option:\t\t");
                 out.println(option.get("name"));
@@ -91,6 +104,11 @@ public class EndpointExplain extends CamelCommandSupport {
                 if (type != null) {
                     out.print("Type:\t\t");
                     out.println(type);
+                }
+                String javaType = option.get("javaType");
+                if (javaType != null) {
+                    out.print("Java Type:\t");
+                    out.println(javaType);
                 }
                 String value = option.get("value");
                 if (value != null) {
@@ -102,8 +120,12 @@ public class EndpointExplain extends CamelCommandSupport {
                     out.print("Description:\t");
                     out.println(description);
                 }
+                out.println();
             }
-            out.println();
+
+            if (options.isEmpty()) {
+                out.println();
+            }
         }
 
         return null;
