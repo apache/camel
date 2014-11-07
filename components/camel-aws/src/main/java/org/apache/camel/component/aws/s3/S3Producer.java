@@ -167,11 +167,15 @@ public class S3Producer extends DefaultProducer {
 
         File filePayload = null;
         Object obj = exchange.getIn().getMandatoryBody();
+        PutObjectRequest putObjectRequest = null;
         if (obj instanceof File) {
             filePayload = (File) obj;
-        }
-        PutObjectRequest putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
+            // submit the request without loading it into memory
+            putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), filePayload);
+        } else {
+            putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
                 determineKey(exchange), exchange.getIn().getMandatoryBody(InputStream.class), objectMetadata);
+        }
 
         String storageClass = determineStorageClass(exchange);
         if (storageClass != null) {
