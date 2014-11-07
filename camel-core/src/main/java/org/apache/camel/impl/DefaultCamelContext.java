@@ -653,12 +653,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return routeStartupOrder;
     }
 
-    public synchronized List<Route> getRoutes() {
+    public List<Route> getRoutes() {
         // lets return a copy of the collection as objects are removed later when services are stopped
         if (routes.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return new ArrayList<Route>(routes);
+            synchronized (routes) {
+                return new ArrayList<Route>(routes);
+            }
         }
     }
 
@@ -676,12 +678,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRouteCollection instead");
     }
 
-    synchronized void removeRouteCollection(Collection<Route> routes) {
-        this.routes.removeAll(routes);
+    void removeRouteCollection(Collection<Route> routes) {
+        synchronized (routes) {
+            this.routes.removeAll(routes);
+        }
     }
 
-    synchronized void addRouteCollection(Collection<Route> routes) throws Exception {
-        this.routes.addAll(routes);
+    void addRouteCollection(Collection<Route> routes) throws Exception {
+        synchronized (routes) {
+            this.routes.addAll(routes);
+        }
     }
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
