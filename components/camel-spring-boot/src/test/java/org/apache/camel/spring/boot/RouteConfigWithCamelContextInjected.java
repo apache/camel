@@ -14,23 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jira.mocks;
+package org.apache.camel.spring.boot;
 
-import java.net.URI;
+import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
+@Configuration
+public class RouteConfigWithCamelContextInjected {
 
+    @Autowired
+    private CamelContext camelContext;
 
-public class MockJerseyJiraRestClientFactory extends JerseyJiraRestClientFactory {
-    MockJiraRestClient client = new MockJiraRestClient();
-
-    @Override
-    public JiraRestClient createWithBasicHttpAuthentication(URI serverUri, String username, String password) {
-        return client;
+    @Bean
+    public RoutesBuilder routeCreatedWithInjectedCamelContext() {
+        Assert.notNull(camelContext);
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:test").to("seda:test");
+            }
+        };
     }
 
-    public MockJiraRestClient getClient() {
-        return client;
-    }
 }

@@ -27,7 +27,6 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
     @Test
     public void testInOutQueueProducer() throws Exception {
         String queueName = "in.out.queue.producer.test.request";
-        MessageConsumer mc = JmsObjectFactory.createQueueConsumer(getSession(), queueName);
+        MessageConsumer mc = createQueueConsumer(queueName);
         assertNotNull(mc);
         final String requestText = "Hello World!";
         final String responseText = "How are you";
@@ -58,7 +57,7 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
     @Test
     public void testInOutQueueProducerWithCorrelationId() throws Exception {
         String queueName = "in.out.queue.producer.test.request";
-        MessageConsumer mc = JmsObjectFactory.createQueueConsumer(getSession(), queueName);
+        MessageConsumer mc = createQueueConsumer(queueName);
         assertNotNull(mc);
         final String requestText = "Hello World!";
         final String responseText = "How are you";

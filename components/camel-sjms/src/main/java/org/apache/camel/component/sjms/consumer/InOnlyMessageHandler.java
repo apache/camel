@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.spi.Synchronization;
 
 /**
@@ -32,7 +33,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
      * @param endpoint
      * @param executor
      */
-    public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor) {
+    public InOnlyMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
         super(endpoint, executor);
     }
 
@@ -41,7 +42,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
      * @param executor
      * @param synchronization
      */
-    public InOnlyMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
+    public InOnlyMessageHandler(SjmsEndpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
     }
 

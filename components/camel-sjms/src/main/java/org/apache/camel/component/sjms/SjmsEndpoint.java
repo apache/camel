@@ -23,6 +23,8 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 import org.apache.camel.component.sjms.producer.InOnlyProducer;
@@ -77,6 +79,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     @UriParam
     private boolean prefillPool = true;
     private TransactionCommitStrategy transactionCommitStrategy;
+//    @UriParam
+    private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
     public SjmsEndpoint() {
     }
@@ -479,4 +483,11 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         this.prefillPool = prefillPool;
     }
 
+    public DestinationCreationStrategy getDestinationCreationStrategy() {
+        return destinationCreationStrategy;
+    }
+
+    public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
+        this.destinationCreationStrategy = destinationCreationStrategy;
+    }
 }

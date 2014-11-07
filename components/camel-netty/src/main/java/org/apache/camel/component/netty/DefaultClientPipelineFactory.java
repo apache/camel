@@ -155,7 +155,10 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
             return producer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
-            engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+            if (producer.getConfiguration().getSslContextParameters() == null) {
+                // just set the enabledProtocols if the SslContextParameter doesn't set
+                engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+            }
             engine.setUseClientMode(true);
             return new SslHandler(engine);
         }

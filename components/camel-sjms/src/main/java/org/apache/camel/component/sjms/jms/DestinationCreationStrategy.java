@@ -14,23 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jira.mocks;
+package org.apache.camel.component.sjms.jms;
 
-import java.net.URI;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Session;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
-
-
-public class MockJerseyJiraRestClientFactory extends JerseyJiraRestClientFactory {
-    MockJiraRestClient client = new MockJiraRestClient();
-
-    @Override
-    public JiraRestClient createWithBasicHttpAuthentication(URI serverUri, String username, String password) {
-        return client;
-    }
-
-    public MockJiraRestClient getClient() {
-        return client;
-    }
+/**
+ * Strategy for creating Destination's
+ */
+public interface DestinationCreationStrategy {
+    Destination createDestination(Session session, String name, boolean topic) throws JMSException;
+    Destination createTemporaryDestination(Session session, boolean topic) throws JMSException;
 }

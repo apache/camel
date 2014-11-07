@@ -71,10 +71,10 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword("changeit");
+        ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword("changeit");
+        kmp.setKeyPassword(pwd);
         kmp.setKeyStore(ksp);
 
         TrustManagersParameters tmp = new TrustManagersParameters();
@@ -113,27 +113,6 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         c = new AsyncHttpClient(config);
 
         return c;
-    }
-
-    protected SSLContextParameters defineSSLContextParameters() {
-
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        // ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
-        ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword(pwd);
-
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword(pwd);
-        kmp.setKeyStore(ksp);
-
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
-
-        SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setKeyManagers(kmp);
-        sslContextParameters.setTrustManagers(tmp);
-
-        return sslContextParameters;
     }
 
     @Test

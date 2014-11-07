@@ -37,10 +37,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
@@ -75,7 +75,11 @@ public class S3Producer extends DefaultProducer {
 
     public void processMultiPart(final Exchange exchange) throws Exception {
         File filePayload = null;
-        final Object obj = exchange.getIn().getMandatoryBody();
+        Object obj = exchange.getIn().getMandatoryBody();
+        // Need to check if the message body is WrappedFile
+        if (obj instanceof WrappedFile) {
+            obj = ((WrappedFile<?>)obj).getFile();
+        }
         if (obj instanceof File) {
             filePayload = (File) obj;
         } else {
@@ -167,11 +171,18 @@ public class S3Producer extends DefaultProducer {
 
         File filePayload = null;
         Object obj = exchange.getIn().getMandatoryBody();
+        PutObjectRequest putObjectRequest = null;
+        // Need to check if the message body is WrappedFile
+        if (obj instanceof WrappedFile) {
+            obj = ((WrappedFile<?>)obj).getFile();
+        }
         if (obj instanceof File) {
             filePayload = (File) obj;
-        }
-        PutObjectRequest putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
+            putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), filePayload);
+        } else {
+            putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
                 determineKey(exchange), exchange.getIn().getMandatoryBody(InputStream.class), objectMetadata);
+        }
 
         String storageClass = determineStorageClass(exchange);
         if (storageClass != null) {

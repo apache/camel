@@ -27,6 +27,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -49,6 +50,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;
+    private DestinationCreationStrategy destinationCreationStrategy;
     private ExecutorService asyncStartStopExecutorService;
 
     public SjmsComponent() {
@@ -66,6 +68,9 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         }
         if (transactionCommitStrategy != null) {
             endpoint.setTransactionCommitStrategy(transactionCommitStrategy);
+        }
+        if (destinationCreationStrategy != null) {
+            endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
         }
         return endpoint;
     }
@@ -242,6 +247,14 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
      */
     public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
         this.transactionCommitStrategy = commitStrategy;
+    }
+
+    public DestinationCreationStrategy getDestinationCreationStrategy() {
+        return destinationCreationStrategy;
+    }
+
+    public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
+        this.destinationCreationStrategy = destinationCreationStrategy;
     }
 
     public TimedTaskManager getTimedTaskManager() {
