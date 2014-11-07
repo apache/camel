@@ -48,11 +48,8 @@ import javax.tools.StandardLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.tools.apt.util.Func1;
-import org.apache.camel.tools.apt.util.JsonSchemaHelper;
-import org.apache.camel.tools.apt.util.Strings;
 
-import static org.apache.camel.tools.apt.util.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.

@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.util;
+package org.apache.camel.tools.apt;
 
 import java.util.Set;
-
-import static org.apache.camel.tools.apt.util.Strings.doubleQuote;
 
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
  */
-public final class JsonSchemaHelper {
+final class JsonSchemaHelper {
 
     private JsonSchemaHelper() {
     }
@@ -32,31 +30,31 @@ public final class JsonSchemaHelper {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(doubleQuote(name));
+        sb.append(Strings.doubleQuote(name));
         sb.append(": { \"type\": ");
 
         if ("enum".equals(typeName)) {
-            sb.append(doubleQuote("string"));
+            sb.append(Strings.doubleQuote("string"));
             sb.append(", \"javaType\": \"" + type + "\"");
             CollectionStringBuffer enumValues = new CollectionStringBuffer();
             for (Object value : enums) {
-                enumValues.append(doubleQuote(value.toString()));
+                enumValues.append(Strings.doubleQuote(value.toString()));
             }
             sb.append(", \"enum\": [ ");
             sb.append(enumValues.toString());
             sb.append(" ]");
         } else if ("array".equals(typeName)) {
-            sb.append(doubleQuote("array"));
+            sb.append(Strings.doubleQuote("array"));
             sb.append(", \"javaType\": \"" + type + "\"");
         } else {
-            sb.append(doubleQuote(typeName));
+            sb.append(Strings.doubleQuote(typeName));
             sb.append(", \"javaType\": \"" + type + "\"");
         }
 
         if (!Strings.isNullOrEmpty(description)) {
             sb.append(", \"description\": ");
             String text = sanitizeDescription(description);
-            sb.append(doubleQuote(text));
+            sb.append(Strings.doubleQuote(text));
         }
 
         sb.append(" }");

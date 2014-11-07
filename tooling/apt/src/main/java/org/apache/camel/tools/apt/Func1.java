@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.util;
+package org.apache.camel.tools.apt;
 
 /**
  * Represents a function with 1 argument
  */
-public interface Func1<T1, R> {
+interface Func1<T1, R> {
     R call(T1 t1);
 }
