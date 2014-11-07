@@ -1154,7 +1154,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
 
             // selected rows to use for answer
-            Map<String, String[]> selected = new LinkedHashMap<>();
+            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
 
             // insert values from uri
             Map<String, Object> options = URISupport.parseParameters(u);

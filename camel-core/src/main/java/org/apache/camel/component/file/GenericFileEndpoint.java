@@ -320,7 +320,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<>();
+        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
         if (ObjectHelper.isEmpty(chmod)) {
             return permissions;
         }
@@ -363,8 +363,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
         return permissions;
     }
-
-
 
     public boolean isNoop() {
         return noop;

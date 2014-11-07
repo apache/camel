@@ -126,7 +126,7 @@ public final class JsonSchemaHelper {
         for (int i = 2; i < lines.length; i++) {
             String line = lines[i];
 
-            Map<String, String> row = new LinkedHashMap<>();
+            Map<String, String> row = new LinkedHashMap<String, String>();
             Matcher matcher = PATTERN.matcher(line);
             // the first key is the name of the option
             String key = "name";
