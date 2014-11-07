@@ -109,13 +109,39 @@ public final class JsonSchemaHelper {
     }
 
     /**
+     * Extracts the type value from the blob of json with the given property name
+     *
+     * @param json the blob of json
+     * @param name the name of the property to extract the type
+     * @return the value of the type, or <tt>null</tt> if no type exists
+     */
+    public static String extractTypeFromJson(String json, String name) {
+        // we dont have a json parser, but we know the structure, so just do this simple way
+        String[] lines = json.split("\n");
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"" + name + "\":")) {
+                // grab text after type
+                String value = ObjectHelper.after(line, "\"type\": \"");
+                if (value != null) {
+                    int lastQuote = value.lastIndexOf('"');
+                    value = value.substring(0, lastQuote);
+                    value = StringHelper.removeLeadingAndEndingQuotes(value);
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Extracts the description value from the blob of json with the given property name
      *
      * @param json the blob of json
      * @param name the name of the property to extract the description
      * @return the value of the description, or <tt>null</tt> if no description exists
      */
-    public static String getDescription(String json, String name) {
+    public static String extractDescriptionFromJson(String json, String name) {
         // we dont have a json parser, but we know the structure, so just do this simple way
         String[] lines = json.split("\n");
         for (String line : lines) {
@@ -135,12 +161,12 @@ public final class JsonSchemaHelper {
     }
 
     /**
-     * Parses the endpoint explain json
+     * Parses the json schema to split it into a list or rows, where each row contains key value pairs with the metadata
      *
      * @param json the json
-     * @return a list of all the options, where each row is a set of key value pairs with metadata
+     * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
-    public static List<Map<String, String>> parseEndpointExplainJson(String json) {
+    public static List<Map<String, String>> parseJsonSchema(String json) {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
         if (json == null) {
             return answer;

@@ -93,9 +93,10 @@ public class EndpointList extends CamelCommandSupport {
                     boolean first = true;
                     String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
                     // use a basic json parser
-                    List<Map<String, String>> options = JsonSchemaHelper.parseEndpointExplainJson(json);
+                    List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema(json);
                     for (Map<String, String> option : options) {
                         String key = option.get("name");
+                        String type = option.get("type");
                         String value = option.get("value");
                         String desc = option.get("description");
                         if (key != null && value != null) {
@@ -105,6 +106,9 @@ public class EndpointList extends CamelCommandSupport {
                             }
                             String line = "\t" + key + "=" + value;
                             out.println(String.format(rowFormat, "", line, ""));
+                            if (type != null) {
+                                out.println(String.format(rowFormat, "", "\t" + type, ""));
+                            }
                             if (desc != null) {
                                 out.println(String.format(rowFormat, "", "\t" + desc, ""));
                             }

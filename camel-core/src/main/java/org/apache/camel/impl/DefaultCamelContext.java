@@ -131,6 +131,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.IOHelper;
@@ -1136,42 +1137,47 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (json == null) {
             return null;
         }
+        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
 
         Map<String, String[]> selected = new LinkedHashMap<>();
 
         // insert values from uri
         Map<String, Object> options = URISupport.parseParameters(u);
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-
-            String option = entry.getKey();
-
+            String name = entry.getKey();
             String value = "";
             if (entry.getValue() != null) {
                 value = entry.getValue().toString();
             }
             value = URISupport.sanitizePath(value);
 
-            // if we have the json schema then use that to get the descriptions
-            String description;
-            description = JsonSchemaHelper.getDescription(json, option);
-            description = ObjectHelper.isEmpty(description) ? null : description;
+            // find type and description from the json schema
+            String type = null;
+            String description = null;
+            for (Map<String, String> row : rows) {
+                if (name.equals(row.get("name"))) {
+                    type = row.get("type");
+                    description = row.get("description");
+                    break;
+                }
+            }
 
             // add as selected row
-            selected.put(option, new String[]{option, value, description});
+            selected.put(name, new String[]{name, type, value, description});
         }
 
         if (includeAllOptions) {
             // include other rows
-            List<Map<String, String>> rows = JsonSchemaHelper.parseEndpointExplainJson(json);
             for (Map<String, String> row : rows) {
-                String option = row.get("name");
+                String name = row.get("name");
                 String value = row.get("value");
+                String type = row.get("type");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
                 // add as selected row
-                if (!selected.containsKey(option)) {
-                    selected.put(option, new String[]{option, value, description});
+                if (!selected.containsKey(name)) {
+                    selected.put(name, new String[]{name, type, value, description});
                 }
             }
         }
@@ -1187,15 +1193,25 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             buffer.append("\n    ");
 
-            String option = row[0];
-            String value = row[1];
-            String description = row[2];
+            String name = row[0];
+            String type = row[1];
+            String value = row[2];
+            String description = row[3];
 
             // add json of the option
-            buffer.append(doubleQuote(option) + ": { ");
-            buffer.append("\"value\": \"" + value + "\"");
+            buffer.append(doubleQuote(name) + ": { ");
+            CollectionStringBuffer csb = new CollectionStringBuffer();
+            if (type != null) {
+                csb.append("\"type\": \"" + type + "\"");
+            }
+            if (value != null) {
+                csb.append("\"value\": \"" + value + "\"");
+            }
             if (description != null) {
-                buffer.append(", \"description\": \"" + description + "\"");
+                csb.append("\"description\": \"" + description + "\"");
+            }
+            if (!csb.isEmpty()) {
+                buffer.append(csb.toString());
             }
             buffer.append(" }");
         }

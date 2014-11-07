@@ -83,10 +83,15 @@ public class EndpointExplain extends CamelCommandSupport {
             out.println();
 
             // use a basic json parser
-            List<Map<String, String>> options = JsonSchemaHelper.parseEndpointExplainJson(json);
+            List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema(json);
             for (Map<String, String> option : options) {
                 out.print("Option:\t\t");
                 out.println(option.get("name"));
+                String type = option.get("type");
+                if (type != null) {
+                    out.print("Type:\t\t");
+                    out.println(type);
+                }
                 String value = option.get("value");
                 if (value != null) {
                     out.print("Value:\t\t");

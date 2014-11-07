@@ -55,4 +55,8 @@ public class CollectionStringBuffer {
     public void setSeparator(String separator) {
         this.separator = separator;
     }
+
+    public boolean isEmpty() {
+        return first;
+    }
 }
