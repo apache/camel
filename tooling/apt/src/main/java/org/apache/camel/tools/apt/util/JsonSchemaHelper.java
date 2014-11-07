@@ -37,6 +37,7 @@ public final class JsonSchemaHelper {
 
         if ("enum".equals(typeName)) {
             sb.append(doubleQuote("string"));
+            sb.append(", \"javaType\": \"" + type + "\"");
             CollectionStringBuffer enumValues = new CollectionStringBuffer();
             for (Object value : enums) {
                 enumValues.append(doubleQuote(value.toString()));
@@ -46,8 +47,10 @@ public final class JsonSchemaHelper {
             sb.append(" ]");
         } else if ("array".equals(typeName)) {
             sb.append(doubleQuote("array"));
+            sb.append(", \"javaType\": \"" + type + "\"");
         } else {
             sb.append(doubleQuote(typeName));
+            sb.append(", \"javaType\": \"" + type + "\"");
         }
 
         if (!Strings.isNullOrEmpty(description)) {
@@ -56,10 +59,6 @@ public final class JsonSchemaHelper {
             sb.append(doubleQuote(text));
         }
 
-        if ("object".equals(typeName)) {
-            // for object then include the javaType as a description so we know that
-            sb.append(", \"properties\": { \"javaType\": { \"description\": \"" + type + "\", \"type\": \"string\" } }");
-        }
         sb.append(" }");
         return sb.toString();
     }

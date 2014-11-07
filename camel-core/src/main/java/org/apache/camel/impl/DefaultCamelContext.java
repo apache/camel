@@ -1153,17 +1153,19 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             // find type and description from the json schema
             String type = null;
+            String javaType = null;
             String description = null;
             for (Map<String, String> row : rows) {
                 if (name.equals(row.get("name"))) {
                     type = row.get("type");
+                    javaType = row.get("javaType");
                     description = row.get("description");
                     break;
                 }
             }
 
             // add as selected row
-            selected.put(name, new String[]{name, type, value, description});
+            selected.put(name, new String[]{name, type, javaType, value, description});
         }
 
         if (includeAllOptions) {
@@ -1172,12 +1174,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String name = row.get("name");
                 String value = row.get("value");
                 String type = row.get("type");
+                String javaType = row.get("javaType");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
                 // add as selected row
                 if (!selected.containsKey(name)) {
-                    selected.put(name, new String[]{name, type, value, description});
+                    selected.put(name, new String[]{name, type, javaType, value, description});
                 }
             }
         }
@@ -1195,14 +1198,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             String name = row[0];
             String type = row[1];
-            String value = row[2];
-            String description = row[3];
+            String javaType = row[2];
+            String value = row[3];
+            String description = row[4];
 
             // add json of the option
             buffer.append(doubleQuote(name) + ": { ");
             CollectionStringBuffer csb = new CollectionStringBuffer();
             if (type != null) {
                 csb.append("\"type\": \"" + type + "\"");
+            }
+            if (javaType != null) {
+                csb.append("\"javaType\": \"" + javaType + "\"");
             }
             if (value != null) {
                 csb.append("\"value\": \"" + value + "\"");
