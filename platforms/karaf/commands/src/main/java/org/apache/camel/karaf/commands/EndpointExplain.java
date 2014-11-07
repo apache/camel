@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
@@ -43,9 +44,9 @@ public class EndpointExplain extends CamelCommandSupport {
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
-    @Option(name = "--scheme", aliases = "-s", description = "To filter endpoints by scheme",
-            required = false, multiValued = true)
-    String[] schemes;
+    @Option(name = "--filter", aliases = "-f", description = "To filter endpoints by pattern",
+            required = false, multiValued = false)
+    String filter;
 
     protected Object doExecute() throws Exception {
         List<Endpoint> endpoints = camelController.getEndpoints(name);
@@ -53,18 +54,13 @@ public class EndpointExplain extends CamelCommandSupport {
             return null;
         }
 
-        // filter endpoints by scheme
-        if (schemes != null && schemes.length > 0) {
+        // filter endpoints
+        if (filter != null) {
             Iterator<Endpoint> it = endpoints.iterator();
             while (it.hasNext()) {
                 Endpoint endpoint = it.next();
-                boolean match = false;
-                for (String scheme : schemes) {
-                    if (endpoint.getEndpointUri().startsWith(scheme)) {
-                        match = true;
-                    }
-                }
-                if (!match) {
+                if (!EndpointHelper.matchPattern(endpoint.getEndpointUri(), filter)) {
+                    // did not match
                     it.remove();
                 }
             }
