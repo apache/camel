@@ -260,9 +260,9 @@ public class MongoDbProducer extends DefaultProducer {
         } else {
             List<DBObject> insertObjects = (List<DBObject>) insert;
             result = wc == null ? dbCol.insert(insertObjects) : dbCol.insert(insertObjects, wc);
-            List<ObjectId> oids = new ArrayList<ObjectId>(insertObjects.size());
+            List<Object> oids = new ArrayList<Object>(insertObjects.size());
             for (DBObject insertObject : insertObjects) {
-                oids.add((ObjectId) insertObject.get("_id"));
+                oids.add(insertObject.get("_id"));
             }
             exchange.getIn().setHeader(MongoDbConstants.OID, oids);
         }

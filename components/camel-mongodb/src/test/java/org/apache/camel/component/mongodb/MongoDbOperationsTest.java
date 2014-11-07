@@ -28,6 +28,7 @@ import com.mongodb.util.JSON;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.types.ObjectId;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
@@ -64,6 +65,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertNotNull("No record with 'testInsertString' _id", b);
     }
 
+    @Ignore
     @Test
     public void testStoreOid() throws Exception {
         DBObject dbObject = new BasicDBObject();
@@ -71,6 +73,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(dbObject.get("_id"), oid);
     }
 
+    @Ignore
     @Test
     public void testStoreOids() throws Exception {
         DBObject firstDbObject = new BasicDBObject();

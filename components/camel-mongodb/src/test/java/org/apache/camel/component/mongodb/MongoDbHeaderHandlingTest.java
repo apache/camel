@@ -22,10 +22,12 @@ import com.mongodb.WriteResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
 
+    @Ignore
     @Test
     public void testInHeadersTransferredToOut() {
         // a read operation
