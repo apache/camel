@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.jms.Connection;
+import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -52,33 +53,24 @@ public class InOnlyProducer extends SjmsProducer {
      */
     @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
-        MessageProducerResources answer = null;
-        Connection conn = null;
+        MessageProducerResources answer;
+        Connection conn = getConnectionResource().borrowConnection();
         try {
-            conn = getConnectionResource().borrowConnection();
             TransactionCommitStrategy commitStrategy = null;
-            Session session;
-
             if (isEndpointTransacted()) {
-                if (getCommitStrategy() != null) {
-                    commitStrategy = getCommitStrategy();
-                } else {
-                    commitStrategy = new DefaultTransactionCommitStrategy();
-                }
-                session = conn.createSession(true, getAcknowledgeMode());
-            } else {
-                session = conn.createSession(false, getAcknowledgeMode());
+                commitStrategy = getCommitStrategy() == null ? new DefaultTransactionCommitStrategy() : getCommitStrategy();
             }
-
-            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
+            Session session = conn.createSession(isEndpointTransacted(), getAcknowledgeMode());
+            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
+            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, destination, isPersistent(), getTtl());
 
             answer = new MessageProducerResources(session, messageProducer, commitStrategy);
+
         } catch (Exception e) {
             log.error("Unable to create the MessageProducer", e);
+            throw e;
         } finally {
-            if (conn != null) {
-                getConnectionResource().returnConnection(conn);
-            }
+            getConnectionResource().returnConnection(conn);
         }
         return answer;
     }

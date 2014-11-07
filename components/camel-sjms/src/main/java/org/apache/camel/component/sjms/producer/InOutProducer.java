@@ -46,8 +46,6 @@ import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Camel Producer that provides the InOut Exchange pattern.
@@ -62,29 +60,28 @@ public class InOutProducer extends SjmsProducer {
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
-     * A pool of {@link MessageConsumerResource} objects that are the reply
+     * A pool of {@link MessageConsumerResources} objects that are the reply
      * consumers.
      */
     protected class MessageConsumerResourcesFactory extends BasePoolableObjectFactory<MessageConsumerResources> {
 
         @Override
         public MessageConsumerResources makeObject() throws Exception {
-            MessageConsumerResources answer = null;
-            Connection conn = null;
-            Session session = null;
+            MessageConsumerResources answer;
+            Connection conn = getConnectionResource().borrowConnection();
             try {
-                conn = getConnectionResource().borrowConnection();
+                Session session;
                 if (isEndpointTransacted()) {
                     session = conn.createSession(true, Session.SESSION_TRANSACTED);
                 } else {
                     session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 }
 
-                Destination replyToDestination = null;
+                Destination replyToDestination;
                 if (ObjectHelper.isEmpty(getNamedReplyTo())) {
-                    replyToDestination = JmsObjectFactory.createTemporaryDestination(session, isTopic());
+                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session, isTopic());
                 } else {
-                    replyToDestination = JmsObjectFactory.createDestination(session, getNamedReplyTo(), isTopic());
+                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getNamedReplyTo(), isTopic());
                 }
                 MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, replyToDestination, null, isTopic(), null, true);
                 messageConsumer.setMessageListener(new MessageListener() {
@@ -133,29 +130,6 @@ public class InOutProducer extends SjmsProducer {
         }
     }
 
-    protected class InternalTempDestinationListener implements MessageListener {
-        private final Logger tempLogger = LoggerFactory.getLogger(InternalTempDestinationListener.class);
-        private Exchanger<Object> exchanger;
-
-        public InternalTempDestinationListener(Exchanger<Object> exchanger) {
-            this.exchanger = exchanger;
-        }
-
-        @Override
-        public void onMessage(Message message) {
-            if (tempLogger.isDebugEnabled()) {
-                tempLogger.debug("Message Received in the Consumer Pool");
-                tempLogger.debug("  Message : {}", message);
-            }
-            try {
-                exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
-            } catch (Exception e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
-            }
-
-        }
-    }
-
     private GenericObjectPool<MessageConsumerResources> consumers;
 
     public InOutProducer(SjmsEndpoint endpoint) {
@@ -192,36 +166,20 @@ public class InOutProducer extends SjmsProducer {
 
     @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
-        MessageProducerResources answer = null;
-        Connection conn = null;
+        MessageProducerResources answer;
+        Connection conn = getConnectionResource().borrowConnection();
         try {
-            MessageProducer messageProducer = null;
-            Session session = null;
-
-            conn = getConnectionResource().borrowConnection();
-            if (isEndpointTransacted()) {
-                session = conn.createSession(true, getAcknowledgeMode());
-            } else {
-                session = conn.createSession(false, getAcknowledgeMode());
-            }
-
-            messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
-
-            if (session == null) {
-                throw new CamelException("Message Consumer Creation Exception: Session is NULL");
-            }
-            if (messageProducer == null) {
-                throw new CamelException("Message Consumer Creation Exception: MessageProducer is NULL");
-            }
+            Session session = conn.createSession(isEndpointTransacted(), getAcknowledgeMode());
+            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
+            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, destination, isPersistent(), getTtl());
 
             answer = new MessageProducerResources(session, messageProducer);
 
         } catch (Exception e) {
-            log.error("Unable to create the MessageProducer: " + e.getLocalizedMessage());
+            log.error("Unable to create the MessageProducer", e);
+            throw e;
         } finally {
-            if (conn != null) {
-                getConnectionResource().returnConnection(conn);
-            }
+            getConnectionResource().returnConnection(conn);
         }
 
         return answer;
@@ -250,8 +208,8 @@ public class InOutProducer extends SjmsProducer {
         Object responseObject = null;
         Exchanger<Object> messageExchanger = new Exchanger<Object>();
         SjmsExchangeMessageHelper.setCorrelationId(request, correlationId);
+        lock.writeLock().lock();
         try {
-            lock.writeLock().lock();
             exchangerMap.put(correlationId, messageExchanger);
         } finally {
             lock.writeLock().unlock();
@@ -274,8 +232,8 @@ public class InOutProducer extends SjmsProducer {
         try {
             responseObject = messageExchanger.exchange(null, getResponseTimeOut(), TimeUnit.MILLISECONDS);
 
+            lock.writeLock().lock();
             try {
-                lock.writeLock().lock();
                 exchangerMap.remove(correlationId);
             } finally {
                 lock.writeLock().unlock();

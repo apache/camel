@@ -50,6 +50,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.component.sjms.SjmsConstants.JMS_MESSAGE_TYPE;
 import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
 import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;

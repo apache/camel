@@ -129,7 +129,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             getProducers().close();
                             setProducers(null);
                         } catch (Throwable e) {
-                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            log.warn("Error closing producers on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                         }
                     }
 
