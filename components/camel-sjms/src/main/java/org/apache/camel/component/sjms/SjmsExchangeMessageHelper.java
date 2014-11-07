@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
@@ -380,58 +379,6 @@ public final class SjmsExchangeMessageHelper {
             message.setJMSDeliveryMode(mode);
             message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
         }
-    }
-
-    public static Message setJmsMessageHeaders(final Exchange exchange, final Message jmsMessage) throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>(exchange.getIn().getHeaders());
-        Set<String> keys = headers.keySet();
-        for (String headerName : keys) {
-            Object headerValue = headers.get(headerName);
-            if (headerName.equalsIgnoreCase("JMSCorrelationID")) {
-                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equalsIgnoreCase("JMSReplyTo") && headerValue != null) {
-                if (headerValue instanceof String) {
-                    // if the value is a String we must normalize it first
-                    headerValue = headerValue;
-                } else {
-                    // TODO write destination converter
-                    // Destination replyTo =
-                    // ExchangeHelper.convertToType(exchange, Destination.class,
-                    // headerValue);
-                    // jmsMessage.setJMSReplyTo(replyTo);
-                }
-            } else if (headerName.equalsIgnoreCase("JMSType")) {
-                jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equalsIgnoreCase("JMSPriority")) {
-                jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
-            } else if (headerName.equalsIgnoreCase("JMSDeliveryMode")) {
-                SjmsExchangeMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
-            } else if (headerName.equalsIgnoreCase("JMSExpiration")) {
-                jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
-            } else {
-                // The following properties are set by the MessageProducer:
-                // JMSDestination
-                // The following are set on the underlying JMS provider:
-                // JMSMessageID, JMSTimestamp, JMSRedelivered
-                // log at trace level to not spam log
-                LOGGER.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
-                if (headerName.equalsIgnoreCase("JMSDestination") || headerName.equalsIgnoreCase("JMSMessageID") || headerName.equalsIgnoreCase("JMSTimestamp")
-                        || headerName.equalsIgnoreCase("JMSRedelivered")) {
-                    // The following properties are set by the MessageProducer:
-                    // JMSDestination
-                    // The following are set on the underlying JMS provider:
-                    // JMSMessageID, JMSTimestamp, JMSRedelivered
-                    // log at trace level to not spam log
-                    LOGGER.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
-                } else {
-                    if (!(headerValue instanceof JmsMessageType)) {
-                        String encodedName = new DefaultJmsKeyFormatStrategy().encodeKey(headerName);
-                        SjmsExchangeMessageHelper.setProperty(jmsMessage, encodedName, headerValue);
-                    }
-                }
-            }
-        }
-        return jmsMessage;
     }
     
     @Deprecated

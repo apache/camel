@@ -29,7 +29,6 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
