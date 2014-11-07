@@ -1137,12 +1137,20 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (json == null) {
             return null;
         }
+
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
 
+        // selected rows to use for answer
         Map<String, String[]> selected = new LinkedHashMap<>();
 
         // insert values from uri
         Map<String, Object> options = URISupport.parseParameters(u);
+
+        // extract consumer. prefix options
+        Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
+        // and add back again without the consumer. prefix as that json schema omits that
+        options.putAll(consumerOptions);
+
         for (Map.Entry<String, Object> entry : options.entrySet()) {
             String name = entry.getKey();
             String value = "";

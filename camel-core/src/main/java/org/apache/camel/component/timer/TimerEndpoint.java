@@ -108,6 +108,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return timerName;
     }
 
+    /**
+     * The name of the timer
+     */
     @ManagedAttribute(description = "Timer Name")
     public void setTimerName(String timerName) {
         this.timerName = timerName;
@@ -118,6 +121,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return daemon;
     }
 
+    /**
+     * Specifies whether or not the thread associated with the timer endpoint runs as a daemon.
+     * <p/>
+     * The default value is true.
+     */
     @ManagedAttribute(description = "Timer Daemon")
     public void setDaemon(boolean daemon) {
         this.daemon = daemon;
@@ -128,6 +136,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return delay;
     }
 
+    /**
+     * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option.
+     * <p/>
+     * The default value is 1000.
+     */
     @ManagedAttribute(description = "Timer Delay")
     public void setDelay(long delay) {
         this.delay = delay;
@@ -138,6 +151,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return fixedRate;
     }
 
+    /**
+     * Events take place at approximately regular intervals, separated by the specified period.
+     */
     @ManagedAttribute(description = "Timer FixedRate")
     public void setFixedRate(boolean fixedRate) {
         this.fixedRate = fixedRate;
@@ -148,6 +164,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return period;
     }
 
+    /**
+     * If greater than 0, generate periodic events every period milliseconds.
+     * <p/>
+     * The default value is 1000.
+     */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
         this.period = period;
@@ -167,6 +188,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return time;
     }
 
+    /**
+     * A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
+     */
     public void setTime(Date time) {
         this.time = time;
     }

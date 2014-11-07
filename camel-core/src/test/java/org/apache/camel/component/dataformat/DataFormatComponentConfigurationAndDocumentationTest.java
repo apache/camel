@@ -41,8 +41,8 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"operation\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"operation\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\""));
     }
 
     @Test

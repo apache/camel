@@ -41,7 +41,7 @@ public class BrowseComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\""));
     }
 
     @Test

@@ -41,8 +41,8 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"preloadSize\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"minRate\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"preloadSize\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"minRate\": { \"type\": \"integer\""));
         assertTrue(json.contains("\"exchangePattern\": { \"type\": \"string\", \"enum\":"));
         assertTrue(json.contains("\"InOut\""));
     }

@@ -41,8 +41,8 @@ public class TestComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"retainFirst\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\""));
     }
 
     @Test

@@ -41,8 +41,8 @@ public class SedaComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"blockWhenFull\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"blockWhenFull\": { \"type\": \"boolean\""));
     }
 
     @Test
