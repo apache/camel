@@ -31,93 +31,95 @@ import org.slf4j.LoggerFactory;
 public final class DefaultCamelContextRegistry implements CamelContextRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextRegistry.class);
-    
-	private final Set<CamelContext> contexts = new LinkedHashSet<CamelContext>();
+
+    private final Set<CamelContext> contexts = new LinkedHashSet<CamelContext>();
     private final Set<Listener> listeners = new LinkedHashSet<Listener>();
-	
+
     synchronized void afterCreate(CamelContext camelContext) {
-		registerContext(camelContext);
-    } 
-    
+        registerContext(camelContext);
+    }
+
     synchronized void beforeStart(CamelContext camelContext) {
-    	if (!contexts.contains(camelContext)) {
-    		registerContext(camelContext);
-    	}
+        if (!contexts.contains(camelContext)) {
+            registerContext(camelContext);
+        }
     }
 
     synchronized void afterStop(CamelContext camelContext) {
-		unregisterContext(camelContext);
+        unregisterContext(camelContext);
     }
 
-	private void registerContext(CamelContext camelContext) {
-		contexts.add(camelContext);
-		for (Listener listener : listeners) {
-			try {
-				listener.contextAdded(camelContext);
-			} catch (Throwable th) {
-				LOG.error("Error calling registry listener", th);
-			}
-		}
-	}
-
-	private void unregisterContext(CamelContext camelContext) {
-		contexts.remove(camelContext);
-    	for (Listener listener : listeners) {
-    		try {
-				listener.contextRemoved(camelContext);
-			} catch (Throwable th) {
-				LOG.error("Error calling registry listener", th);
-			}
-    	}
-	}
-
-    @Override
-	public synchronized void addListener(Listener listener, boolean withCallback) {
-    	if (withCallback) {
-        	for (CamelContext ctx : contexts) {
-        		listener.contextAdded(ctx);
-        	}
-    	}
-    	listeners.add(listener);
-    } 
-    
-    @Override
-	public synchronized void removeListener(Listener listener, boolean withCallback) {
-    	listeners.add(listener);
-    	if (withCallback) {
-        	for (CamelContext ctx : contexts) {
-        		listener.contextAdded(ctx);
-        	}
-    	}
-    } 
-    
-    @Override
-	public synchronized Set<CamelContext> getContexts() {
-    	return new LinkedHashSet<CamelContext>(contexts);	
-    } 
-    
-    @Override
-	public synchronized Set<CamelContext> getContexts(String name) {
-    	Set<CamelContext> result = new LinkedHashSet<CamelContext>();
-    	for (CamelContext ctx : contexts) {
-    		if (ctx.getName().equals(name)) {
-    			result.add(ctx);
-    		}
-    	}
-    	return result;	
-    } 
-    
-    @Override
-	public synchronized CamelContext getRequiredContext(String name) {
-    	Iterator<CamelContext> itctx = getContexts(name).iterator();
-    	if (!itctx.hasNext())
-    		throw new IllegalStateException("Cannot obtain context for name: " + name);
-    	return itctx.next();
+    private void registerContext(CamelContext camelContext) {
+        contexts.add(camelContext);
+        for (Listener listener : listeners) {
+            try {
+                listener.contextAdded(camelContext);
+            } catch (Throwable e) {
+                LOG.warn("Error calling registry listener. This exception is ignored.", e);
+            }
+        }
     }
-    
+
+    private void unregisterContext(CamelContext camelContext) {
+        contexts.remove(camelContext);
+        for (Listener listener : listeners) {
+            try {
+                listener.contextRemoved(camelContext);
+            } catch (Throwable e) {
+                LOG.warn("Error calling registry listener. This exception is ignored.", e);
+            }
+        }
+    }
+
     @Override
-	public synchronized CamelContext getContext(String name) {
-    	Iterator<CamelContext> itctx = getContexts(name).iterator();
-    	return itctx.hasNext() ? itctx.next() : null;
-    } 
+    public synchronized void addListener(Listener listener, boolean withCallback) {
+        if (withCallback) {
+            for (CamelContext ctx : contexts) {
+                listener.contextAdded(ctx);
+            }
+        }
+        listeners.add(listener);
+    }
+
+    @Override
+    public synchronized void removeListener(Listener listener, boolean withCallback) {
+        listeners.add(listener);
+        if (withCallback) {
+            for (CamelContext ctx : contexts) {
+                listener.contextAdded(ctx);
+            }
+        }
+    }
+
+    @Override
+    public synchronized Set<CamelContext> getContexts() {
+        return new LinkedHashSet<CamelContext>(contexts);
+    }
+
+    @Override
+    public synchronized Set<CamelContext> getContexts(String name) {
+        Set<CamelContext> result = new LinkedHashSet<CamelContext>();
+        for (CamelContext ctx : contexts) {
+            if (ctx.getName().equals(name)) {
+                result.add(ctx);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public synchronized CamelContext getRequiredContext(String name) {
+        Iterator<CamelContext> it = getContexts(name).iterator();
+        if (!it.hasNext()) {
+            throw new IllegalStateException("Cannot find CamelContext with name: " + name);
+        }
+        return it.next();
+    }
+
+    @Override
+    public synchronized CamelContext getContext(String name) {
+        Iterator<CamelContext> it = getContexts(name).iterator();
+        return it.hasNext() ? it.next() : null;
+    }
+
 }

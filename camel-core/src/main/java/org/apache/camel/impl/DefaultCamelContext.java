@@ -270,8 +270,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // Register this context with the registry
         // Note, this may register a partially constructed object
-    	((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).afterCreate(this);
-    	
+        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).afterCreate(this);
+
         // [TODO] Remove in 3.0
         Container.Instance.manage(this);
     }
@@ -1942,8 +1942,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // We register the context again just before start. This ensures that is is registered on restart
         // Listeners should only see one call to Listener.contextAdded(CamelContext)
-		((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).beforeStart(this);
-		
+        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).beforeStart(this);
+
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
                     new Object[]{getClassResolver(), getPackageScanClassResolver(), getApplicationContextClassLoader()});

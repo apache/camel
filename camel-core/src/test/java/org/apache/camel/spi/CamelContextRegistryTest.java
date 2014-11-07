@@ -30,26 +30,26 @@ public class CamelContextRegistryTest extends TestCase {
         private List<String> names = new ArrayList<String>();
 
         @Override
-		public void contextAdded(CamelContext camelContext) {
+        public void contextAdded(CamelContext camelContext) {
             names.add(camelContext.getName());
-		}
+        }
 
-		@Override
-		public void contextRemoved(CamelContext camelContext) {
+        @Override
+        public void contextRemoved(CamelContext camelContext) {
             names.remove(camelContext.getName());
-		}
+        }
     }
 
     public void testContainerSet() throws Exception {
         MyListener listener = new MyListener();
-        
+
         CamelContext camel1 = new DefaultCamelContext();
         CamelContext camel2 = new DefaultCamelContext();
 
         assertEquals(0, listener.names.size());
-        
+
         CamelContextRegistry.INSTANCE.addListener(listener, true);
-        
+
         // after we set, then we should manage the 2 pending contexts
         assertEquals(2, listener.names.size());
 
@@ -62,7 +62,7 @@ public class CamelContextRegistryTest extends TestCase {
         camel1.stop();
         camel2.stop();
         camel3.stop();
-        
+
         assertEquals(0, listener.names.size());
     }
 }
