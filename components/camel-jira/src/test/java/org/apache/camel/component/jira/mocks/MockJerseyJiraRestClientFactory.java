@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.jira.mocks;
 
+import java.net.URI;
+
 import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
 
-import java.net.URI;
 
 public class MockJerseyJiraRestClientFactory extends JerseyJiraRestClientFactory {
     MockJiraRestClient client = new MockJiraRestClient();

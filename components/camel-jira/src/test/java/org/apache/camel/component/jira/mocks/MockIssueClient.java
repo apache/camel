@@ -16,24 +16,49 @@
  */
 package org.apache.camel.component.jira.mocks;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Set;
+
 import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptions;
 import com.atlassian.jira.rest.client.IssueRestClient;
 import com.atlassian.jira.rest.client.ProgressMonitor;
-import com.atlassian.jira.rest.client.domain.*;
+import com.atlassian.jira.rest.client.domain.Attachment;
+import com.atlassian.jira.rest.client.domain.BasicComponent;
+import com.atlassian.jira.rest.client.domain.BasicIssue;
+import com.atlassian.jira.rest.client.domain.BasicIssueType;
+import com.atlassian.jira.rest.client.domain.BasicPriority;
+import com.atlassian.jira.rest.client.domain.BasicProject;
+import com.atlassian.jira.rest.client.domain.BasicResolution;
+import com.atlassian.jira.rest.client.domain.BasicStatus;
+import com.atlassian.jira.rest.client.domain.BasicUser;
+import com.atlassian.jira.rest.client.domain.BasicVotes;
+import com.atlassian.jira.rest.client.domain.BasicWatchers;
+import com.atlassian.jira.rest.client.domain.ChangelogGroup;
+import com.atlassian.jira.rest.client.domain.CimProject;
+import com.atlassian.jira.rest.client.domain.Comment;
+import com.atlassian.jira.rest.client.domain.Field;
+import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.domain.IssueLink;
+import com.atlassian.jira.rest.client.domain.Subtask;
+import com.atlassian.jira.rest.client.domain.TimeTracking;
+import com.atlassian.jira.rest.client.domain.Transition;
+import com.atlassian.jira.rest.client.domain.Version;
+import com.atlassian.jira.rest.client.domain.Votes;
+import com.atlassian.jira.rest.client.domain.Watchers;
+import com.atlassian.jira.rest.client.domain.Worklog;
 import com.atlassian.jira.rest.client.domain.input.AttachmentInput;
 import com.atlassian.jira.rest.client.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.domain.input.LinkIssuesInput;
 import com.atlassian.jira.rest.client.domain.input.TransitionInput;
 import com.atlassian.jira.rest.client.domain.input.WorklogInput;
+
+
 import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.DateTime;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Collection;
-import java.util.Set;
 
 public class MockIssueClient implements IssueRestClient {
     private MockSearchRestClient mockSearchRestClient;

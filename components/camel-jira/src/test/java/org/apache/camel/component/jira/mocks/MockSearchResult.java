@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jira.mocks;
 
-import com.atlassian.jira.rest.client.domain.BasicIssue;
-import com.atlassian.jira.rest.client.domain.SearchResult;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import com.atlassian.jira.rest.client.domain.BasicIssue;
+import com.atlassian.jira.rest.client.domain.SearchResult;
 
 public class MockSearchResult extends SearchResult {
     private ArrayList<? extends BasicIssue> issues;
