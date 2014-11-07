@@ -1130,109 +1130,115 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return componentName.replaceAll("-", "");
     }
 
-    public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
-        URI u = new URI(uri);
+    public String explainEndpointJson(String uri, boolean includeAllOptions) {
+        try {
+            URI u = new URI(uri);
 
-        String json = getComponentParameterJsonSchema(u.getScheme());
-        if (json == null) {
-            return null;
-        }
-
-        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
-
-        // selected rows to use for answer
-        Map<String, String[]> selected = new LinkedHashMap<>();
-
-        // insert values from uri
-        Map<String, Object> options = URISupport.parseParameters(u);
-
-        // extract consumer. prefix options
-        Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
-        // and add back again without the consumer. prefix as that json schema omits that
-        options.putAll(consumerOptions);
-
-        for (Map.Entry<String, Object> entry : options.entrySet()) {
-            String name = entry.getKey();
-            String value = "";
-            if (entry.getValue() != null) {
-                value = entry.getValue().toString();
+            String json = getComponentParameterJsonSchema(u.getScheme());
+            if (json == null) {
+                return null;
             }
-            value = URISupport.sanitizePath(value);
 
-            // find type and description from the json schema
-            String type = null;
-            String javaType = null;
-            String description = null;
-            for (Map<String, String> row : rows) {
-                if (name.equals(row.get("name"))) {
-                    type = row.get("type");
-                    javaType = row.get("javaType");
-                    description = row.get("description");
-                    break;
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
+
+            // selected rows to use for answer
+            Map<String, String[]> selected = new LinkedHashMap<>();
+
+            // insert values from uri
+            Map<String, Object> options = URISupport.parseParameters(u);
+
+            // extract consumer. prefix options
+            Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
+            // and add back again without the consumer. prefix as that json schema omits that
+            options.putAll(consumerOptions);
+
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String name = entry.getKey();
+                String value = "";
+                if (entry.getValue() != null) {
+                    value = entry.getValue().toString();
                 }
-            }
-
-            // add as selected row
-            selected.put(name, new String[]{name, type, javaType, value, description});
-        }
-
-        if (includeAllOptions) {
-            // include other rows
-            for (Map<String, String> row : rows) {
-                String name = row.get("name");
-                String value = row.get("value");
-                String type = row.get("type");
-                String javaType = row.get("javaType");
                 value = URISupport.sanitizePath(value);
-                String description = row.get("description");
+
+                // find type and description from the json schema
+                String type = null;
+                String javaType = null;
+                String description = null;
+                for (Map<String, String> row : rows) {
+                    if (name.equals(row.get("name"))) {
+                        type = row.get("type");
+                        javaType = row.get("javaType");
+                        description = row.get("description");
+                        break;
+                    }
+                }
 
                 // add as selected row
-                if (!selected.containsKey(name)) {
-                    selected.put(name, new String[]{name, type, javaType, value, description});
+                selected.put(name, new String[]{name, type, javaType, value, description});
+            }
+
+            if (includeAllOptions) {
+                // include other rows
+                for (Map<String, String> row : rows) {
+                    String name = row.get("name");
+                    String value = row.get("value");
+                    String type = row.get("type");
+                    String javaType = row.get("javaType");
+                    value = URISupport.sanitizePath(value);
+                    String description = row.get("description");
+
+                    // add as selected row
+                    if (!selected.containsKey(name)) {
+                        selected.put(name, new String[]{name, type, javaType, value, description});
+                    }
                 }
             }
+
+            StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+
+            boolean first = true;
+            for (String[] row : selected.values()) {
+                if (first) {
+                    first = false;
+                } else {
+                    buffer.append(",");
+                }
+                buffer.append("\n    ");
+
+                String name = row[0];
+                String type = row[1];
+                String javaType = row[2];
+                String value = row[3];
+                String description = row[4];
+
+                // add json of the option
+                buffer.append(doubleQuote(name) + ": { ");
+                CollectionStringBuffer csb = new CollectionStringBuffer();
+                if (type != null) {
+                    csb.append("\"type\": \"" + type + "\"");
+                }
+                if (javaType != null) {
+                    csb.append("\"javaType\": \"" + javaType + "\"");
+                }
+                if (value != null) {
+                    csb.append("\"value\": \"" + value + "\"");
+                }
+                if (description != null) {
+                    csb.append("\"description\": \"" + description + "\"");
+                }
+                if (!csb.isEmpty()) {
+                    buffer.append(csb.toString());
+                }
+                buffer.append(" }");
+            }
+
+            buffer.append("\n  }\n}\n");
+            return buffer.toString();
+
+        } catch (Exception e) {
+            // ignore and return empty response
+            return null;
         }
-
-        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
-
-        boolean first = true;
-        for (String[] row : selected.values()) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-
-            String name = row[0];
-            String type = row[1];
-            String javaType = row[2];
-            String value = row[3];
-            String description = row[4];
-
-            // add json of the option
-            buffer.append(doubleQuote(name) + ": { ");
-            CollectionStringBuffer csb = new CollectionStringBuffer();
-            if (type != null) {
-                csb.append("\"type\": \"" + type + "\"");
-            }
-            if (javaType != null) {
-                csb.append("\"javaType\": \"" + javaType + "\"");
-            }
-            if (value != null) {
-                csb.append("\"value\": \"" + value + "\"");
-            }
-            if (description != null) {
-                csb.append("\"description\": \"" + description + "\"");
-            }
-            if (!csb.isEmpty()) {
-                buffer.append(csb.toString());
-            }
-            buffer.append(" }");
-        }
-
-        buffer.append("\n  }\n}\n");
-        return buffer.toString();
     }
 
     public String createRouteStaticEndpointJson(String routeId) {

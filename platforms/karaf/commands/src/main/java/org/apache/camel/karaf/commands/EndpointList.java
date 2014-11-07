@@ -127,6 +127,7 @@ public class EndpointList extends CamelCommandSupport {
                                 out.println(String.format(rowFormat, "", "\t" + displayType, ""));
                             }
                             if (desc != null) {
+                                // TODO: split desc in multi lines so it does not overflow
                                 out.println(String.format(rowFormat, "", "\t" + desc, ""));
                             }
                             out.println();

@@ -240,12 +240,13 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String json = (String) mbeanServer.invoke(on, "explainEndpointJson", new Object[]{"log:foo?groupDelay=2000&groupSize=5", false},
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
-        System.out.println(json);
 
         assertEquals(4, StringHelper.countChar(json, '{'));
         assertEquals(4, StringHelper.countChar(json, '}'));
-        assertTrue(json.contains("\"groupDelay\": { \"value\": \"2000\", \"description\": \"Set the initial delay for stats in millis\" },"));
-        assertTrue(json.contains("\"groupSize\": { \"value\": \"5\", \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
+        assertTrue(json.contains("\"groupDelay\": { \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"value\": \"2000\","
+                + " \"description\": \"Set the initial delay for stats in millis\" },"));
+        assertTrue(json.contains("\"groupSize\": { \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"value\": \"5\","
+                + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
     }
 
     @Override

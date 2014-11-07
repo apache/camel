@@ -43,7 +43,8 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
 
         assertTrue(json.contains("\"preloadSize\": { \"type\": \"integer\""));
         assertTrue(json.contains("\"minRate\": { \"type\": \"integer\""));
-        assertTrue(json.contains("\"exchangePattern\": { \"type\": \"string\", \"enum\":"));
+        assertTrue(json.contains("\"exchangePattern\": { \"type\": \"string\", \"javaType\": \"org.apache.camel.ExchangePattern\""
+                + ", \"enum\": [ \"InOnly\", \"RobustInOnly\", \"InOut\", \"InOptionalOut\", \"OutOnly\", \"RobustOutOnly\", \"OutIn\", \"OutOptionalIn\" ]"));
         assertTrue(json.contains("\"InOut\""));
     }
 
