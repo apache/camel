@@ -25,10 +25,10 @@ import org.junit.Test;
 public class SolrAddBeansTest extends SolrComponentTestSupport {
 
     public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {
-		super(serverToTest);
-	}
+        super(serverToTest);
+    }
 
-	@Test
+    @Test
     public void testAddBeans() throws Exception {
 
         List<Item> beans = new ArrayList<Item>();
