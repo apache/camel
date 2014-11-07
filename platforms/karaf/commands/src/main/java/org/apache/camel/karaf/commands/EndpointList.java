@@ -93,11 +93,11 @@ public class EndpointList extends CamelCommandSupport {
                     boolean first = true;
                     String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
                     // use a basic json parser
-                    List<String[]> options = JsonSchemaHelper.parseEndpointExplainJson(json);
-                    for (String[] option : options) {
-                        String key = option[0];
-                        String value = option[1];
-                        String desc = option[2];
+                    List<Map<String, String>> options = JsonSchemaHelper.parseEndpointExplainJson(json);
+                    for (Map<String, String> option : options) {
+                        String key = option.get("name");
+                        String value = option.get("value");
+                        String desc = option.get("description");
                         if (key != null && value != null) {
                             if (first) {
                                 out.println();

@@ -17,7 +17,9 @@
 package org.apache.camel.util;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -136,10 +138,10 @@ public final class JsonSchemaHelper {
      * Parses the endpoint explain json
      *
      * @param json the json
-     * @return a list of all the options, where each row contains: <tt>key, value, description</tt>
+     * @return a list of all the options, where each row is a set of key value pairs with metadata
      */
-    public static List<String[]> parseEndpointExplainJson(String json) {
-        List<String[]> answer = new ArrayList<>();
+    public static List<Map<String, String>> parseEndpointExplainJson(String json) {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
         if (json == null) {
             return answer;
         }
@@ -150,24 +152,21 @@ public final class JsonSchemaHelper {
         for (int i = 2; i < lines.length; i++) {
             String line = lines[i];
 
+            Map<String, String> row = new LinkedHashMap<>();
             Matcher matcher = PATTERN.matcher(line);
-            String option = null;
-            String value = null;
-            String description = null;
-            int count = 0;
+            // the first key is the name of the option
+            String key = "name";
             while (matcher.find()) {
-                count++;
-                if (count == 1) {
-                    option = matcher.group(1);
-                } else if (count == 3) {
-                    value = matcher.group(1);
-                } else if (count == 5) {
-                    description = matcher.group(1);
+                if (key == null) {
+                    key = matcher.group(1);
+                } else {
+                    String value = matcher.group(1);
+                    row.put(key, value);
+                    // reset
+                    key = null;
                 }
             }
-
-            if (option != null) {
-                String[] row = new String[]{option, value, description};
+            if (!row.isEmpty()) {
                 answer.add(row);
             }
         }

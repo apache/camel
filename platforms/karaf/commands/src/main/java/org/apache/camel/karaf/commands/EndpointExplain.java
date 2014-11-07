@@ -19,7 +19,7 @@ package org.apache.camel.karaf.commands;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.util.JsonSchemaHelper;
@@ -33,8 +33,6 @@ import org.apache.felix.gogo.commands.Option;
  */
 @Command(scope = "camel", name = "endpoint-explain", description = "Explain all Camel endpoints available in a CamelContext.")
 public class EndpointExplain extends CamelCommandSupport {
-
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"");
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the endpoints", required = true, multiValued = false)
     String name;
@@ -85,16 +83,16 @@ public class EndpointExplain extends CamelCommandSupport {
             out.println();
 
             // use a basic json parser
-            List<String[]> options = JsonSchemaHelper.parseEndpointExplainJson(json);
-            for (String[] option : options) {
+            List<Map<String, String>> options = JsonSchemaHelper.parseEndpointExplainJson(json);
+            for (Map<String, String> option : options) {
                 out.print("Option:\t\t");
-                out.println(option[0]);
-                String value = option[1];
+                out.println(option.get("name"));
+                String value = option.get("value");
                 if (value != null) {
                     out.print("Value:\t\t");
                     out.println(value);
                 }
-                String description = option[2];
+                String description = option.get("description");
                 if (description != null) {
                     out.print("Description:\t");
                     out.println(description);

@@ -1162,12 +1162,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         if (includeAllOptions) {
             // include other rows
-            List<String[]> rows = JsonSchemaHelper.parseEndpointExplainJson(json);
-            for (String[] row : rows) {
-                String option = row[0];
-                String value = row[1];
+            List<Map<String, String>> rows = JsonSchemaHelper.parseEndpointExplainJson(json);
+            for (Map<String, String> row : rows) {
+                String option = row.get("name");
+                String value = row.get("value");
                 value = URISupport.sanitizePath(value);
-                String description = row[2];
+                String description = row.get("description");
 
                 // add as selected row
                 if (!selected.containsKey(option)) {
