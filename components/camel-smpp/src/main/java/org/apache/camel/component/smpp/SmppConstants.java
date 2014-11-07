@@ -32,6 +32,7 @@ public interface SmppConstants {
     String DEST_ADDR_NPI = "CamelSmppDestAddrNpi";
     String DEST_ADDR_TON = "CamelSmppDestAddrTon";
     String DONE_DATE = "CamelSmppDoneDate";
+    String ENCODING = "CamelSmppEncoding";
     String ERROR = "CamelSmppError";
     String ESME_ADDR = "CamelSmppEsmeAddr";
     String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";

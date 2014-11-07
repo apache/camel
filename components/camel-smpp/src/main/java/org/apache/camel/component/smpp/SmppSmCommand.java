@@ -21,8 +21,11 @@ import java.nio.charset.Charset;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.session.SMPPSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SmppSmCommand extends AbstractSmppCommand {
+    private static final Logger LOG = LoggerFactory.getLogger(SmppSmCommand.class);
 
     protected Charset charset;
 
@@ -59,7 +62,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         } else {
             byte providedAlphabet = getProvidedAlphabet(message);
             Alphabet determinedAlphabet = determineAlphabet(message);
-            Charset charset = determineCharset(providedAlphabet, determinedAlphabet.value());
+            Charset charset = determineCharset(message, providedAlphabet, determinedAlphabet.value());
             String body = message.getBody(String.class);
             return body.getBytes(charset);
         }
@@ -84,7 +87,24 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         return alphabet;
     }
 
-    private Charset determineCharset(byte providedAlphabet, byte determinedAlphabet) {
+    private Charset getCharsetForMessage(Message message) {
+        if (message.getHeaders().containsKey(SmppConstants.ENCODING)) {
+            String encoding = message.getHeader(SmppConstants.ENCODING, String.class);
+            if (Charset.isSupported(encoding)) {
+                return Charset.forName(encoding);
+            } else {
+                LOG.warn("Unsupported encoding \"{}\" requested in header.", encoding);
+            }
+        }
+        return null;
+    }
+
+    private Charset determineCharset(Message message, byte providedAlphabet, byte determinedAlphabet) {
+        Charset result = getCharsetForMessage(message);
+        if (result != null) {
+            return result;
+        }
+
         if (providedAlphabet == Alphabet.ALPHA_UCS2.value() 
             || (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value())) {
             // change charset to use multilang messages
@@ -97,10 +117,14 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     private Alphabet determineAlphabet(Message message) {
         String body = message.getBody(String.class);
         byte alphabet = getProvidedAlphabet(message);
+        Charset _charset = getCharsetForMessage(message);
+        if (_charset == null) {
+            _charset = charset;
+        }
 
         Alphabet alphabetObj;
         if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
-            byte[] messageBytes = body.getBytes(charset);
+            byte[] messageBytes = body.getBytes(_charset);
             if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
                 alphabetObj = Alphabet.ALPHA_DEFAULT;
             } else {
