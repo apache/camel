@@ -157,6 +157,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         xmlsecTestHelper.testEncryption(context);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
@@ -177,6 +178,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     }
  
     @Test
+    @SuppressWarnings("deprecation")
     public void testPartialPayloadAsymmetricKeyEncryptionWithExchangeRecipientAlias() throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);

@@ -58,15 +58,12 @@ public class CxfRsProducer extends DefaultProducer {
 
     private boolean throwException;
     
-    private CxfRsEndpoint cxfRsEndpoint;
-    
     // using a cache of factory beans instead of setting the address of a single cfb
     // to avoid concurrent issues
     private ClientFactoryBeanCache clientFactoryBeanCache;
     
     public CxfRsProducer(CxfRsEndpoint endpoint) {
         super(endpoint);
-        cxfRsEndpoint = endpoint;
         this.throwException = endpoint.isThrowExceptionOnFailure();
         clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
     }
