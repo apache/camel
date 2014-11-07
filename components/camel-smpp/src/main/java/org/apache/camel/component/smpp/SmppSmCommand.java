@@ -85,8 +85,10 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     }
 
     private Charset determineCharset(byte providedAlphabet, byte determinedAlphabet) {
-        if (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value()) {
-            return Charset.forName(SmppConstants.UCS2_ENCODING); // change charset to use multilang messages
+        if (providedAlphabet == Alphabet.ALPHA_UCS2.value() 
+            || (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value())) {
+            // change charset to use multilang messages
+            return Charset.forName(SmppConstants.UCS2_ENCODING); 
         }
         
         return charset;
