@@ -34,7 +34,10 @@ import org.slf4j.LoggerFactory;
  * This implementation is <b>not</b> thread-safe. The {@link #manage(org.apache.camel.CamelContext)} method
  * may be invoked concurrently if multiple Camel applications is being started concurrently, such as from
  * application servers that may start deployments concurrently.
+ * 
+ * @deprecated use {@link CamelContextRegistry}
  */
+// [TODO] Remove in 3.0
 public interface Container {
 
     /**
