@@ -42,8 +42,8 @@ public class SftpComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"download\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"download\": { \"type\": \"boolean\""));
     }
 
     @Test

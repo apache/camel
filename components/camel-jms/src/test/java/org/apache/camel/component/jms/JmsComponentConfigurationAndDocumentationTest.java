@@ -41,8 +41,8 @@ public class JmsComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\""));
     }
 
     @Test

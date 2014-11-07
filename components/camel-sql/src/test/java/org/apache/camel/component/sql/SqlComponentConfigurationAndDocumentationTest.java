@@ -43,8 +43,8 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         assertNotNull(json);
 
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\""));
     }
 
     @Test
