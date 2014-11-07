@@ -35,6 +35,14 @@ public final class DefaultCamelContextRegistry implements CamelContextRegistry {
     private final Set<CamelContext> contexts = new LinkedHashSet<CamelContext>();
     private final Set<Listener> listeners = new LinkedHashSet<Listener>();
 
+    /**
+     * Clear all contexts and listeners, such as for testing purpose.
+     */
+    public synchronized void clear() {
+        contexts.clear();
+        listeners.clear();
+    }
+
     synchronized void afterCreate(CamelContext camelContext) {
         registerContext(camelContext);
     }

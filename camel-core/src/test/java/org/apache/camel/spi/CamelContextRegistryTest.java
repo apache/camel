@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultCamelContextRegistry;
 
 public class CamelContextRegistryTest extends TestCase {
 
@@ -41,6 +42,9 @@ public class CamelContextRegistryTest extends TestCase {
     }
 
     public void testContainerSet() throws Exception {
+        // need to clear the listener for testing
+        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).clear();
+
         MyListener listener = new MyListener();
 
         CamelContext camel1 = new DefaultCamelContext();
