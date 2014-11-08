@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.sjms;
 
+import static org.apache.camel.component.sjms.SjmsConstants.JMS_MESSAGE_TYPE;
+import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
+import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -37,6 +42,7 @@ import javax.jms.TextMessage;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.IllegalHeaderException;
 import org.apache.camel.component.sjms.jms.JmsConstants;
@@ -49,11 +55,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.sjms.SjmsConstants.JMS_MESSAGE_TYPE;
-import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
-import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 public final class SjmsExchangeMessageHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SjmsExchangeMessageHelper.class);
@@ -430,7 +431,7 @@ public final class SjmsExchangeMessageHelper {
         return exchange;
     }
 
-    public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy) throws Exception {
+    public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
         Message answer = null;
         Object body = null;
         Map<String, Object> bodyHeaders = null;
@@ -444,7 +445,7 @@ public final class SjmsExchangeMessageHelper {
             bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
         }
 
-        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy);
+        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy, typeConverter);
 
         return answer;
     }
