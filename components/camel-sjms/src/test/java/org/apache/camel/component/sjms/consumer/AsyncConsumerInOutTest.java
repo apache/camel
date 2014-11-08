@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 /**
@@ -43,7 +47,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
+    
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
