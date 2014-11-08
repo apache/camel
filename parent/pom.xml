@@ -359,7 +359,7 @@
     <plexus-utils-version>1.5.6</plexus-utils-version>
     <pojosr-version>0.2.1</pojosr-version>
     <powermock-version>1.5.1</powermock-version>
-    <protobuf-version>2.5.0</protobuf-version>
+    <protobuf-version>2.6.1</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-version>0.28</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
