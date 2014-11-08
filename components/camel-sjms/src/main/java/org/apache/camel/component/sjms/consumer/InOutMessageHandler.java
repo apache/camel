@@ -159,7 +159,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         @Override
         public void done(boolean sync) {
             try {
-                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint) getEndpoint()).getJmsKeyFormatStrategy());
+                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint) getEndpoint()).getJmsKeyFormatStrategy(), ((SjmsEndpoint) getEndpoint()).getCamelContext().getTypeConverter());
                 response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
                 localProducer.send(response);
             } catch (Exception e) {

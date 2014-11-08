@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -34,6 +35,7 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
+import org.apache.camel.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,16 +90,16 @@ public final class JmsMessageHelper {
     private JmsMessageHelper() {
     }
 
-    @SuppressWarnings("unchecked")
-    public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws Exception {
+    //@SuppressWarnings("unchecked")
+    public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
         Message answer = null;
-        JmsMessageType messageType = JmsMessageHelper.discoverMessgeTypeFromPayload(payload);
+        JmsMessageType messageType = JmsMessageHelper.discoverMessageTypeFromPayload(payload);
         try {
 
             switch (messageType) {
             case Bytes:
-                BytesMessage bytesMessage = session.createBytesMessage();
-                bytesMessage.writeBytes((byte[]) payload);
+            	BytesMessage bytesMessage = session.createBytesMessage();
+                bytesMessage = typeConverter.convertTo(BytesMessage.class, payload);
                 answer = bytesMessage;
                 break;
             case Map:
@@ -122,7 +124,7 @@ public final class JmsMessageHelper {
                 break;
             case Stream:
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                InputStream is = (InputStream) payload;
+                InputStream is = typeConverter.convertTo(InputStream.class, payload);
                 int reads = is.read();
                 while (reads != -1) {
                     baos.write(reads);
@@ -371,7 +373,7 @@ public final class JmsMessageHelper {
         }
     }
 
-    public static JmsMessageType discoverMessgeTypeFromPayload(final Object payload) {
+    public static JmsMessageType discoverMessageTypeFromPayload(final Object payload) {
         JmsMessageType answer = null;
         // Default is a JMS Message since a body is not required
         if (payload == null) {
@@ -393,7 +395,6 @@ public final class JmsMessageHelper {
                 answer = JmsMessageType.Message;
             }
         }
-
         return answer;
     }
 
