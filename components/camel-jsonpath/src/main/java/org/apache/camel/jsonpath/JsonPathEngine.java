@@ -45,9 +45,7 @@ public class JsonPathEngine {
         }
 
         // the message body type should use the suitable read method
-        if (configuration.getProvider().isContainer(json)) {
-            return path.read(json);
-        } else if (json instanceof String) {
+        if (json instanceof String) {
             String str = (String) json;
             return path.read(str);
         } else if (json instanceof InputStream) {
