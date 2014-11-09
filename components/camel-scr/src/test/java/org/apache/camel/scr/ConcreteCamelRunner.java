@@ -16,23 +16,35 @@
  */
 package org.apache.camel.scr;
 
-import org.apache.camel.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Service;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.osgi.framework.BundleContext;
 
-import java.util.*;
-import java.util.concurrent.ThreadPoolExecutor;
-
 public class ConcreteCamelRunner extends AbstractCamelRunner implements LifecycleStrategy {
 
-    protected int camelContextStarted = 0;
-    protected int camelContextStopped = 0;
-    protected int routeAdded = 0;
+    protected int camelContextStarted;
+    protected int camelContextStopped;
+    protected int routeAdded;
 
     public Map<String, String> getDefaultProperties() {
         // Set default properties
-        Map<String,String> defaultProps = new HashMap<>();
+        Map<String, String> defaultProps = new HashMap<String, String>();
         defaultProps.put("camelContextId", "camel-runner-test");
         defaultProps.put("camelRouteId", "test/direct-mock");
         defaultProps.put("active", "true");
@@ -55,7 +67,7 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
 
     @Override
     public List<RoutesBuilder> getRouteBuilders() {
-        List<RoutesBuilder> routesBuilders = new ArrayList<>();
+        List<RoutesBuilder> routesBuilders = new ArrayList<RoutesBuilder>();
         routesBuilders.add(new TestRouteBuilder());
         routesBuilders.add(new TestRouteBuilder2());
         return routesBuilders;
@@ -72,22 +84,28 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
     }
 
     @Override
-    public void onComponentAdd(String s, Component component) {}
+    public void onComponentAdd(String s, Component component) {
+    }
 
     @Override
-    public void onComponentRemove(String s, Component component) {}
+    public void onComponentRemove(String s, Component component) {
+    }
 
     @Override
-    public void onEndpointAdd(Endpoint endpoint) {}
+    public void onEndpointAdd(Endpoint endpoint) {
+    }
 
     @Override
-    public void onEndpointRemove(Endpoint endpoint) {}
+    public void onEndpointRemove(Endpoint endpoint) {
+    }
 
     @Override
-    public void onServiceAdd(CamelContext camelContext, Service service, Route route) {}
+    public void onServiceAdd(CamelContext camelContext, Service service, Route route) {
+    }
 
     @Override
-    public void onServiceRemove(CamelContext camelContext, Service service, Route route) {}
+    public void onServiceRemove(CamelContext camelContext, Service service, Route route) {
+    }
 
     @Override
     public void onRoutesAdd(Collection<Route> routes) {
@@ -95,20 +113,26 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
     }
 
     @Override
-    public void onRoutesRemove(Collection<Route> routes) {}
+    public void onRoutesRemove(Collection<Route> routes) {
+    }
 
     @Override
-    public void onRouteContextCreate(RouteContext routeContext) {}
+    public void onRouteContextCreate(RouteContext routeContext) {
+    }
 
     @Override
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerFactory) {}
+    public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerFactory) {
+    }
 
     @Override
-    public void onErrorHandlerRemove(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerFactory) {}
+    public void onErrorHandlerRemove(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerFactory) {
+    }
 
     @Override
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor, String s, String s2, String s3, String s4) {}
+    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor, String s, String s2, String s3, String s4) {
+    }
 
     @Override
-    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor) {}
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPoolExecutor) {
+    }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.scr;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,18 +27,16 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
 public class AbstractCamelRunnerTest {
 
-    Logger log = LoggerFactory.getLogger(getClass());
-
     @Rule
     public TestName testName = new TestName();
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Before
     public void setUp() throws Exception {
