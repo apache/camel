@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
 
     private static final String SJMS_QUEUE_URI = "sjms:queue:start";
     private static final String MOCK_RESULT_URI = "mock:result";
+    private Object result;
 
     @Test
     public void testJMSMessageHelperString() throws Exception {
@@ -45,6 +47,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
 
         template.sendBody("sjms:queue:start", "Hello Camel");
         assertMockEndpointsSatisfied();
+        assertTrue(String.class.isInstance(result));
     }
     
     @Test
@@ -54,6 +57,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
         InputStream is = new ByteArrayInputStream( p.getBytes() );
         template.sendBody("sjms:queue:start", is);
         assertMockEndpointsSatisfied();
+        assertTrue(byte[].class.isInstance(result));
     }
     
     @Test
@@ -63,6 +67,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
         ByteBuffer bb = ByteBuffer.wrap(p.getBytes()); 
         template.sendBody("sjms:queue:start", bb);
         assertMockEndpointsSatisfied();
+        assertTrue(byte[].class.isInstance(result));
     }
     
     @Test
@@ -106,6 +111,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
         StringReader test = new StringReader(p);
         template.sendBody("sjms:queue:start", test);
         assertMockEndpointsSatisfied();
+        assertTrue(byte[].class.isInstance(result));
     }
     
     @Test
@@ -127,7 +133,11 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(SJMS_QUEUE_URI).to(MOCK_RESULT_URI);
+                from(SJMS_QUEUE_URI).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        result = exchange.getIn().getBody();
+                    }
+                }).to(MOCK_RESULT_URI);
             }
         };
     }
