@@ -140,18 +140,6 @@ public final class JmsMessageHelper {
                 is.close();
                 answer = bytesStreamMessage;
                 break;
-            case Reader:
-                BytesMessage bytesReader = session.createBytesMessage();
-                Reader reader = typeConverter.convertTo(Reader.class, payload);
-                int numChars;
-                char[] arr = new char[8*1024]; // 8K at a time
-                StringBuffer buf = new StringBuffer();
-                while ((numChars = reader.read(arr, 0, arr.length)) > 0) {
-                    buf.append(arr, 0, numChars);
-                }
-                bytesReader.writeBytes(buf.toString().getBytes());
-                answer = bytesReader;
-                break;
             default:
                 break;
             }
@@ -398,11 +386,11 @@ public final class JmsMessageHelper {
             } else if (InputStream.class.isInstance(payload)) {
                 answer = JmsMessageType.Stream;
             } else if (ByteBuffer.class.isInstance(payload)) {
-                answer = JmsMessageType.Stream;
+                answer = JmsMessageType.Bytes;
             } else if (File.class.isInstance(payload)) {
-                answer = JmsMessageType.Stream;
+                answer = JmsMessageType.Bytes;
             } else if (Reader.class.isInstance(payload)) {
-                answer = JmsMessageType.Reader;
+                answer = JmsMessageType.Bytes;
             } else if (String.class.isInstance(payload)) {
                 answer = JmsMessageType.Text;
             } else if (Serializable.class.isInstance(payload)) {

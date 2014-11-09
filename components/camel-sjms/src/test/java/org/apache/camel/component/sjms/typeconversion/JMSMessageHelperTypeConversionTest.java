@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
