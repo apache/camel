@@ -16,18 +16,12 @@
  */
 package org.apache.camel.component.sjms;
 
-import static org.apache.camel.component.sjms.SjmsConstants.JMS_MESSAGE_TYPE;
-import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
-import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -55,6 +49,11 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.sjms.SjmsConstants.JMS_MESSAGE_TYPE;
+import static org.apache.camel.component.sjms.SjmsConstants.QUEUE_PREFIX;
+import static org.apache.camel.component.sjms.SjmsConstants.TOPIC_PREFIX;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 public final class SjmsExchangeMessageHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SjmsExchangeMessageHelper.class);

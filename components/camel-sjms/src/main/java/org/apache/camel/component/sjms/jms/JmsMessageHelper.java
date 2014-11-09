@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -98,8 +97,7 @@ public final class JmsMessageHelper {
 
             switch (messageType) {
             case Bytes:
-            	BytesMessage bytesMessage = session.createBytesMessage();
-                bytesMessage = typeConverter.convertTo(BytesMessage.class, payload);
+                BytesMessage bytesMessage = typeConverter.convertTo(BytesMessage.class, payload);
                 answer = bytesMessage;
                 break;
             case Map:
@@ -130,7 +128,6 @@ public final class JmsMessageHelper {
                     baos.write(reads);
                     reads = is.read();
                 }
-
                 BytesMessage bytesStreamMessage = session.createBytesMessage();
                 bytesStreamMessage.writeBytes(baos.toByteArray());
                 baos.close();
@@ -160,7 +157,6 @@ public final class JmsMessageHelper {
      *                          format keys in a JMS 1.1 compliant manner. If null the
      *                          {@link DefaultJmsKeyFormatStrategy} will be used.
      * @return {@link Message}
-     * @throws Exception a
      */
     public static Message setJmsMessageHeaders(final Message jmsMessage, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws IllegalHeaderException {
         // Support for the null keyFormatStrategy
@@ -266,14 +262,12 @@ public final class JmsMessageHelper {
     /**
      * Sets the JMSDeliveryMode on the message.
      *
-     * @param exchange     the exchange
      * @param message      the message
      * @param deliveryMode the delivery mode, either as a String or integer
-     * @throws javax.jms.JMSException is thrown if error setting the delivery
-     *                                mode
+     * @throws javax.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Message message, Object deliveryMode) throws JMSException {
-        Integer mode = null;
+        Integer mode;
 
         if (deliveryMode instanceof String) {
             String s = (String) deliveryMode;
@@ -302,9 +296,7 @@ public final class JmsMessageHelper {
             throw new IllegalArgumentException("Unable to convert the given delivery mode of type " + deliveryMode.getClass().getName() + " with value: " + deliveryMode);
         }
 
-        if (mode != null) {
-            message.setJMSDeliveryMode(mode);
-        }
+        message.setJMSDeliveryMode(mode);
     }
 
     /**
