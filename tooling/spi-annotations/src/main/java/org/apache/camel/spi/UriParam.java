@@ -42,13 +42,13 @@ public @interface UriParam {
      * <p/>
      * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
      */
-    String defaultValue();
+    String defaultValue() default "";
 
     /**
      * A special note about the default value.
      * <p/>
      * This can be used to document special cases about the default value.
      */
-    String defaultValueNote();
+    String defaultValueNote() default "";
 
 }

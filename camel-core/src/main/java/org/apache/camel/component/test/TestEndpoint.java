@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class TestEndpoint extends MockEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;
-    @UriParam
+    @UriParam(defaultValue = "2000")
     private long timeout = 2000L;
 
     public TestEndpoint(String endpointUri, Component component, Endpoint expectedMessageEndpoint) {

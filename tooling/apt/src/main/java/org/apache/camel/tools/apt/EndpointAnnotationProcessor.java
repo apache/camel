@@ -50,6 +50,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
@@ -74,7 +75,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
-            if (!Strings.isNullOrEmpty(scheme)) {
+            if (!isNullOrEmpty(scheme)) {
                 // write html documentation
                 String name = canonicalClassName(classElement.getQualifiedName().toString());
                 String packageName = name.substring(0, name.lastIndexOf("."));
@@ -145,7 +146,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         String scheme = uriEndpoint.scheme();
 
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
-        if (!Strings.isNullOrEmpty(classDoc)) {
+        if (!isNullOrEmpty(classDoc)) {
             classDoc = JsonSchemaHelper.sanitizeDescription(classDoc);
         }
 
@@ -170,7 +171,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDocumentation(), entry.isEnumType(), entry.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDefaultValue(), entry.getDocumentationWithNotes(), entry.isEnumType(), entry.getEnums()));
         }
         buffer.append("\n  }\n}\n");
         return buffer.toString();
@@ -178,7 +179,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
     protected void showDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, String prefix) {
         String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
-        if (!Strings.isNullOrEmpty(classDoc)) {
+        if (!isNullOrEmpty(classDoc)) {
             // remove dodgy @version that we may have in class javadoc
             classDoc = classDoc.replaceFirst("\\@version", "");
             classDoc = classDoc.trim();
@@ -219,7 +220,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 String fieldName = fieldElement.getSimpleName().toString();
                 if (param != null) {
                     String name = param.name();
-                    if (Strings.isNullOrEmpty(name)) {
+                    if (isNullOrEmpty(name)) {
                         name = fieldName;
                     }
                     name = prefix + name;
@@ -238,13 +239,13 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     if (fieldParams != null) {
                         String nestedPrefix = prefix;
                         String extraPrefix = fieldParams.prefix();
-                        if (!Strings.isNullOrEmpty(extraPrefix)) {
+                        if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
                         findClassProperties(roundEnv, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
                         String docComment = elementUtils.getDocComment(fieldElement);
-                        if (Strings.isNullOrEmpty(docComment)) {
+                        if (isNullOrEmpty(docComment)) {
                             String setter = "set" + fieldName.substring(0, 1).toUpperCase();
                             if (fieldName.length() > 1) {
                                 setter += fieldName.substring(1);
@@ -255,7 +256,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                                 String methodName = method.getSimpleName().toString();
                                 if (setter.equals(methodName) && method.getParameters().size() == 1) {
                                     String doc = elementUtils.getDocComment(method);
-                                    if (!Strings.isNullOrEmpty(doc)) {
+                                    if (!isNullOrEmpty(doc)) {
                                         docComment = doc;
                                         break;
                                     }
@@ -301,7 +302,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
-        if (!Strings.isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
+        if (!isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
             Set<? extends Element> rootElements = roundEnv.getRootElements();
             for (Element rootElement : rootElements) {
                 if (rootElement instanceof TypeElement) {
@@ -415,7 +416,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
 
         public String getDocumentationWithNotes() {
-            if (defaultValueNote != null) {
+            if (!isNullOrEmpty(defaultValueNote)) {
                 return documentation + ". Default value notice: " + defaultValueNote;
             }
             return documentation;

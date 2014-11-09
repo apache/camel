@@ -26,7 +26,7 @@ final class JsonSchemaHelper {
     private JsonSchemaHelper() {
     }
 
-    public static String toJson(String name, String type, String description, boolean enumType, Set<String> enums) {
+    public static String toJson(String name, String type, String defaultValue, String description, boolean enumType, Set<String> enums) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
@@ -49,6 +49,11 @@ final class JsonSchemaHelper {
         } else {
             sb.append(Strings.doubleQuote(typeName));
             sb.append(", \"javaType\": \"" + type + "\"");
+        }
+
+        if (!Strings.isNullOrEmpty(defaultValue)) {
+            sb.append(", \"defaultValue\": ");
+            sb.append(Strings.doubleQuote(defaultValue));
         }
 
         if (!Strings.isNullOrEmpty(description)) {

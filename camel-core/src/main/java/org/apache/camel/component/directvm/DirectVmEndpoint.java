@@ -30,9 +30,9 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "direct-vm", consumerClass = DirectConsumer.class)
 public class DirectVmEndpoint extends DefaultEndpoint {
 
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean block;
-    @UriParam
+    @UriParam(defaultValue = "30000")
     private long timeout = 30000L;
 
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {

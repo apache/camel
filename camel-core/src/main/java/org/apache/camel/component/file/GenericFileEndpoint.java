@@ -72,29 +72,29 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
     @UriParam
     protected String localWorkDirectory;
-    @UriParam
+    @UriParam(defaultValue = "true")
     protected boolean autoCreate = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean startingDirectoryMustExist;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean directoryMustExist;
-    @UriParam
+    @UriParam(defaultValue = "" + FileUtil.BUFFER_SIZE)
     protected int bufferSize = FileUtil.BUFFER_SIZE;
-    @UriParam
+    @UriParam(defaultValue = "Override")
     protected GenericFileExist fileExist = GenericFileExist.Override;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean noop;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean recursive;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean delete;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean flatten;
     @UriParam
     protected int maxMessagesPerPoll;
-    @UriParam
+    @UriParam(defaultValue = "true")
     protected boolean eagerMaxMessagesPerPoll = true;
-    @UriParam
+    @UriParam(defaultValue = "" + Integer.MAX_VALUE)
     protected int maxDepth = Integer.MAX_VALUE;
     @UriParam
     protected int minDepth;
@@ -102,7 +102,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String tempPrefix;
     @UriParam
     protected Expression tempFileName;
-    @UriParam
+    @UriParam(defaultValue = "true")
     protected boolean eagerDeleteTargetFile = true;
     @UriParam
     protected String include;
@@ -136,23 +136,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Comparator<Exchange> sortBy;
     @UriParam
     protected String readLock = "none";
-    @UriParam
+    @UriParam(defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
-    @UriParam
+    @UriParam(defaultValue = "10000")
     protected long readLockTimeout = 10000;
-    @UriParam
+    @UriParam(defaultValue = "true")
     protected boolean readLockMarkerFile = true;
-    @UriParam
+    @UriParam(defaultValue = "WARN")
     protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
-    @UriParam
+    @UriParam(defaultValue = "1")
     protected long readLockMinLength = 1;
     @UriParam
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean keepLastModified;
     @UriParam
     protected String doneFileName;
-    @UriParam
+    @UriParam(defaultValue = "false")
     protected boolean allowNullBody;
     @UriParam
     protected String chmod;

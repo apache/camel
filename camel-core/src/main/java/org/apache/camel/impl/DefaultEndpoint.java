@@ -59,11 +59,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
-    @UriParam
+    @UriParam(defaultValue = "InOnly")
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
     private Map<String, Object> consumerProperties;

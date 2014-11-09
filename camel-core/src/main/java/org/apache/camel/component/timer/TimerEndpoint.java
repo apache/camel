@@ -43,17 +43,17 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private String timerName;
     @UriParam
     private Date time;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long period = 1000;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long delay = 1000;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean fixedRate;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean daemon = true;
     @UriParam
     private Timer timer;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private long repeatCount;
 
     public TimerEndpoint() {
