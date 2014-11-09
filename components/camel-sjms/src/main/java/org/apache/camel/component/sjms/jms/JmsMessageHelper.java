@@ -17,8 +17,12 @@
 package org.apache.camel.component.sjms.jms;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +101,9 @@ public final class JmsMessageHelper {
 
             switch (messageType) {
             case Bytes:
-                BytesMessage bytesMessage = typeConverter.convertTo(BytesMessage.class, payload);
+                BytesMessage bytesMessage = session.createBytesMessage();
+                byte[] bytesToWrite = typeConverter.convertTo(byte[].class, payload);
+                bytesMessage.writeBytes(bytesToWrite);
                 answer = bytesMessage;
                 break;
             case Map:
@@ -133,6 +139,18 @@ public final class JmsMessageHelper {
                 baos.close();
                 is.close();
                 answer = bytesStreamMessage;
+                break;
+            case Reader:
+                BytesMessage bytesReader = session.createBytesMessage();
+                Reader reader = typeConverter.convertTo(Reader.class, payload);
+                int numChars;
+                char[] arr = new char[8*1024]; // 8K at a time
+                StringBuffer buf = new StringBuffer();
+                while ((numChars = reader.read(arr, 0, arr.length)) > 0) {
+                    buf.append(arr, 0, numChars);
+                }
+                bytesReader.writeBytes(buf.toString().getBytes());
+                answer = bytesReader;
                 break;
             default:
                 break;
@@ -379,6 +397,12 @@ public final class JmsMessageHelper {
                 answer = JmsMessageType.Map;
             } else if (InputStream.class.isInstance(payload)) {
                 answer = JmsMessageType.Stream;
+            } else if (ByteBuffer.class.isInstance(payload)) {
+                answer = JmsMessageType.Stream;
+            } else if (File.class.isInstance(payload)) {
+                answer = JmsMessageType.Stream;
+            } else if (Reader.class.isInstance(payload)) {
+                answer = JmsMessageType.Reader;
             } else if (String.class.isInstance(payload)) {
                 answer = JmsMessageType.Text;
             } else if (Serializable.class.isInstance(payload)) {

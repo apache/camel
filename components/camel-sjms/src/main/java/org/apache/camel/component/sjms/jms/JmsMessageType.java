@@ -28,6 +28,7 @@ public enum JmsMessageType {
     Map,
     Object,
     Stream,
+    Reader,
     Text,
 
     /**
