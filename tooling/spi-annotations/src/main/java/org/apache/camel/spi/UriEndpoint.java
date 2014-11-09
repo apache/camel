@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE})
 public @interface UriEndpoint {
+
     /**
      * Represents the URI scheme name of this endpoint
      */

@@ -192,13 +192,15 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("  <tr>");
             writer.println("    <th>Name</th>");
             writer.println("    <th>Type</th>");
+            writer.println("    <th>Default Value</th>");
             writer.println("    <th>Description</th>");
             writer.println("  </tr>");
             for (EndpointOption option : endpointOptions) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + option.getType() + "</td>");
-                writer.println("    <td>" + option.getDocumentation() + "</td>");
+                writer.println("    <td>" + option.getDefaultValue() + "</td>");
+                writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
                 writer.println("  </tr>");
             }
             writer.println("</table>");
@@ -221,6 +223,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         name = fieldName;
                     }
                     name = prefix + name;
+
+                    String defaultValue = param.defaultValue();
+                    String defaultValueNote = param.defaultValueNote();
+
                     // if the field type is a nested parameter then iterate through its fields
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
@@ -275,9 +281,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                             }
                         }
 
-                        // we could likely detect if the type is collection based?
-
-                        EndpointOption option = new EndpointOption(name, fieldTypeName, docComment.trim(), isEnum, enums);
+                        EndpointOption option = new EndpointOption(name, fieldTypeName, defaultValue, defaultValueNote,  docComment.trim(), isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
@@ -377,13 +381,18 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         private String name;
         private String type;
+        private String defaultValue;
+        private String defaultValueNote;
         private String documentation;
         private boolean enumType;
         private Set<String> enums;
 
-        private EndpointOption(String name, String type, String documentation, boolean enumType, Set<String> enums) {
+        private EndpointOption(String name, String type, String defaultValue, String defaultValueNote,
+                               String documentation, boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
+            this.defaultValue = defaultValue;
+            this.defaultValueNote = defaultValueNote;
             this.documentation = documentation;
             this.enumType = enumType;
             this.enums = enums;
@@ -397,7 +406,18 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             return type;
         }
 
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
         public String getDocumentation() {
+            return documentation;
+        }
+
+        public String getDocumentationWithNotes() {
+            if (defaultValueNote != null) {
+                return documentation + ". Default value notice: " + defaultValueNote;
+            }
             return documentation;
         }
 

@@ -29,11 +29,26 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD })
 public @interface UriParam {
+
     /**
      * Returns the name of the parameter.
-     *
+     * <p/>
      * If this is not specified then the name of the field or property which has this annotation is used.
      */
     String name() default "";
+
+    /**
+     * The default value of the parameter.
+     * <p/>
+     * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
+     */
+    String defaultValue();
+
+    /**
+     * A special note about the default value.
+     * <p/>
+     * This can be used to document special cases about the default value.
+     */
+    String defaultValueNote();
 
 }
