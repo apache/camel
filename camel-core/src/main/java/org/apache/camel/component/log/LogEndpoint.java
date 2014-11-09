@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
-    @UriParam
+    @UriParam(defaultValue = "INFO")
     private String level;
     @UriParam
     private String marker;
@@ -45,7 +45,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Integer groupSize;
     @UriParam
     private Long groupInterval;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private Boolean groupActiveOnly;
     @UriParam
     private Long groupDelay;

@@ -41,12 +41,12 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
         assertTrue(mbeanServer.isRegistered(on));
 
-        // there should be 2 options
+        // there should be 3 options
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertEquals(2, data.size());
+        assertEquals(3, data.size());
 
         // there should be 6 options
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
@@ -59,7 +59,7 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .to("log:foo?groupDelay=2000&groupSize=5")
+                    .to("log:foo?groupDelay=2000&groupSize=5&level=WARN")
                     .to("mock:result");
             }
         };

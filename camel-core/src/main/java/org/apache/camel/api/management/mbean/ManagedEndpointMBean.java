@@ -38,7 +38,7 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Endpoint State")
     String getState();
 
-    @ManagedOperation(description = "Explain how this endpoint is configured (option, value, description)")
+    @ManagedOperation(description = "Explain how this endpoint is configured")
     TabularData explain(boolean allOptions);
 
 }

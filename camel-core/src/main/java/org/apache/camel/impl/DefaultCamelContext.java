@@ -1175,18 +1175,20 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String javaType = null;
+                String defaultValue = null;
                 String description = null;
                 for (Map<String, String> row : rows) {
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         javaType = row.get("javaType");
+                        defaultValue = row.get("defaultValue");
                         description = row.get("description");
                         break;
                     }
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, type, javaType, value, description});
+                selected.put(name, new String[]{name, type, javaType, value, defaultValue, description});
             }
 
             if (includeAllOptions) {
@@ -1194,6 +1196,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 for (Map<String, String> row : rows) {
                     String name = row.get("name");
                     String value = row.get("value");
+                    String defaultValue = row.get("defaultValue");
                     String type = row.get("type");
                     String javaType = row.get("javaType");
                     value = URISupport.sanitizePath(value);
@@ -1201,7 +1204,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, type, javaType, value, description});
+                        selected.put(name, new String[]{name, type, javaType, value, defaultValue, description});
                     }
                 }
             }
@@ -1221,7 +1224,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = row[1];
                 String javaType = row[2];
                 String value = row[3];
-                String description = row[4];
+                String defaultValue = row[4];
+                String description = row[5];
 
                 // add json of the option
                 buffer.append(doubleQuote(name) + ": { ");
@@ -1234,6 +1238,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 if (value != null) {
                     csb.append("\"value\": \"" + value + "\"");
+                }
+                if (defaultValue != null) {
+                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
                 }
                 if (description != null) {
                     csb.append("\"description\": \"" + description + "\"");
