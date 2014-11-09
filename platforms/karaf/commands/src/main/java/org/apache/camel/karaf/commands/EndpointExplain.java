@@ -111,6 +111,11 @@ public class EndpointExplain extends CamelCommandSupport {
                     out.print("Value:\t\t");
                     out.println(value);
                 }
+                String defaultValue = option.get("defaultValue");
+                if (defaultValue != null) {
+                    out.print("Default Value:\t");
+                    out.println(defaultValue);
+                }
                 String description = option.get("description");
                 if (description != null) {
                     out.print("Description:\t");

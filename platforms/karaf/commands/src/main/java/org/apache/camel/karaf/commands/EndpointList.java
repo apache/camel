@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -110,6 +111,9 @@ public class EndpointList extends CamelCommandSupport {
                         String type = option.get("type");
                         String javaType = option.get("javaType");
                         String value = option.get("value");
+                        if (ObjectHelper.isEmpty(value)) {
+                            value = option.get("defaultValue");
+                        }
                         String desc = option.get("description");
                         if (key != null && value != null) {
                             if (first) {
