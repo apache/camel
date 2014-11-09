@@ -1151,7 +1151,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 return null;
             }
 
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json);
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
