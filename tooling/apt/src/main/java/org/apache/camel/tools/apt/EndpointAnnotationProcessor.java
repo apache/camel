@@ -58,6 +58,7 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class EndpointAnnotationProcessor extends AbstractProcessor {
+
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
             return true;
@@ -150,7 +151,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             classDoc = JsonSchemaHelper.sanitizeDescription(classDoc);
         }
 
-        // TODO: add some top details about component scheme name, and documentation
+        // TODO: include component meta-data such as scheme name, java class, mvn coordinate etc.
+        // also component summary, eg grab <description> from mvn pom.xml
 
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
         findClassProperties(roundEnv, endpointOptions, classElement, "");
@@ -194,6 +196,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("    <th>Name</th>");
             writer.println("    <th>Type</th>");
             writer.println("    <th>Default Value</th>");
+            writer.println("    <th>Enum Values</th>");
             writer.println("    <th>Description</th>");
             writer.println("  </tr>");
             for (EndpointOption option : endpointOptions) {
@@ -201,6 +204,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + option.getType() + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
+                writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
                 writer.println("  </tr>");
             }
@@ -415,11 +419,25 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             return documentation;
         }
 
-        public String getDocumentationWithNotes() {
-            if (!isNullOrEmpty(defaultValueNote)) {
-                return documentation + ". Default value notice: " + defaultValueNote;
+        public String getEnumValuesAsHtml() {
+            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
+            if (enums != null && enums.size() > 0) {
+                for (String e : enums) {
+                    csb.append(e);
+                }
             }
-            return documentation;
+            return csb.toString();
+        }
+
+        public String getDocumentationWithNotes() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(documentation);
+
+            if (!isNullOrEmpty(defaultValueNote)) {
+                sb.append(". Default value notice: ").append(defaultValueNote);
+            }
+
+            return sb.toString();
         }
 
         public boolean isEnumType() {
