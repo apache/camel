@@ -157,6 +157,7 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scala</include>
         <include>org.apache.camel:camel-schematron</include>
+        <include>org.apache.camel:camel-scr</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-servletlistener</include>
