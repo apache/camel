@@ -23,8 +23,6 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,7 +37,6 @@ public class DockerConfigurationTest {
     
     @Test
     public void testPropertyFromHeader() {
-        
         String host = "camelhost";
         
         Message message = new DefaultMessage();
@@ -60,7 +57,6 @@ public class DockerConfigurationTest {
         Message message = new DefaultMessage();
         String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);
-
     }
 
 }
