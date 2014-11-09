@@ -53,6 +53,11 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static final int START_DELAY = 5000;
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
 
+    // Configured fields
+    // TODO: can we make these private and have getter/setter
+    public String camelContextId = "camel-runner-default";
+    public volatile boolean active;
+
     protected Logger log = LoggerFactory.getLogger(getClass());
     protected ModelCamelContext context;
     protected SimpleRegistry registry = new SimpleRegistry();
@@ -62,9 +67,6 @@ public abstract class AbstractCamelRunner implements Runnable {
     private volatile boolean activated;
     private volatile boolean started;
 
-    // Configured fields
-    private String camelContextId = "camel-runner-default";
-    private volatile boolean active;
 
     public synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         if (activated) {
@@ -199,7 +201,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             }
             started = true;
         } catch (Exception e) {
-            log.error("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
+            log.warn("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
         }
     }
 
@@ -235,7 +237,7 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     public static <T> T configure(final CamelContext context, final T target, final Logger log) {
         Class clazz = target.getClass();
-        log.debug("Configuring " + clazz.getName());
+        log.debug("Configuring {}", clazz.getName());
         Collection<Field> fields = new ArrayList<Field>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         fields.addAll(Arrays.asList(clazz.getFields()));
@@ -246,10 +248,10 @@ public abstract class AbstractCamelRunner implements Runnable {
                     // Try to convert the value and set the field
                     Object convertedValue = convertValue(propertyValue, field.getGenericType());
                     ReflectionHelper.setField(field, target, convertedValue);
-                    log.debug("Set field " + field.getName() + " with value " + propertyValue);
+                    log.debug("Set field {} with value {}", field.getName(), propertyValue);
                 }
             } catch (Exception e) {
-                log.debug("Field " + field.getName() + " skipped: " + e.getMessage());
+                log.debug("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         return target;
