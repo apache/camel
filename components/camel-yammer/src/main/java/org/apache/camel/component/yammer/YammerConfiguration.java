@@ -28,32 +28,24 @@ public class YammerConfiguration {
     private String consumerSecret;
     @UriParam
     private String accessToken;
-    
-    private String function;
-    
     @UriParam
     private boolean useJson;
-    
-    @UriParam
-    private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety 
-    
-    @UriParam
+    @UriParam(defaultValue = "5000")
+    private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety
+    @UriParam(defaultValue = "-1")
     private int limit = -1; // default is unlimited
-    
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int olderThan = -1;
-
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int newerThan = -1;
-
     @UriParam
     private String threaded;
-    
     @UriParam
     private String userId;
-    
+
+    private String function;
     private ApiRequestor requestor;
-    
+
     public String getConsumerKey() {
         return consumerKey;
     }
@@ -93,7 +85,6 @@ public class YammerConfiguration {
     public void setFunction(String function) {
         this.function = function;
     }
-
 
     public boolean isUseJson() {
         return useJson;
