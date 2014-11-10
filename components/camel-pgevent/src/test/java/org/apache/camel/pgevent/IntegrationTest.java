@@ -51,7 +51,7 @@ public class IntegrationTest {
         main.enableHangupSupport();
         main.bind("test", ds);
         main.addRouteBuilder(buildConsumer());
-//        main.addRouteBuilder(buildProducer());
+        main.addRouteBuilder(buildProducer());
     }
 
     RouteBuilder buildConsumer() {

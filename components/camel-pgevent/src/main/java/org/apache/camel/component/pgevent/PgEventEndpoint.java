@@ -27,16 +27,16 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
     private static final String FORMAT1 = 
-        "^pgevent://([^:]*):(\\d+?)/(\\w+?)/(\\w+?).*$";
+        "^pgevent://([^:]*):(\\d+)/(\\w+)/(\\w+).*$";
     
     private static final String FORMAT2 =
-        "^pgevent://([^:]+?)/(\\w+?)/(\\w+?).*$";
+        "^pgevent://([^:]+)/(\\w+)/(\\w+).*$";
     
     private static final String FORMAT3 =
-        "^pgevent:///(\\w+?)/(\\w+?).*$";
+        "^pgevent:///(\\w+)/(\\w+).*$";
     
     private static final String FORMAT4 =
-        "^pgevent:(\\w+?)/(\\w+?)/(\\w+?).*$";
+        "^pgevent:(\\w+)/(\\w+)/(\\w+).*$";
 
     @UriParam
     private String host = "localhost";
@@ -180,10 +180,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         validateInputs();
-        dbConnection = initJdbc();
         PgEventConsumer consumer = new PgEventConsumer(this, processor);
-        dbConnection.createStatement().execute("LISTEN "+this.getChannel());
-        dbConnection.addNotificationListener(channel, channel, consumer);
         return consumer;
     }
 
