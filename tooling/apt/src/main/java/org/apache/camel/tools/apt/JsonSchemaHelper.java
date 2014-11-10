@@ -23,7 +23,7 @@ import java.util.Set;
  */
 final class JsonSchemaHelper {
 
-    private static final String VALID_CHARS = ".-='/\\!&()";
+    private static final String VALID_CHARS = ".-='/\\!&():;";
 
     private JsonSchemaHelper() {
     }

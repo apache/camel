@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.PipelineHelper;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.spi.HasBinding;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -34,6 +35,7 @@ import org.apache.camel.util.ServiceHelper;
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.
  */
+@UriEndpoint(scheme = "binding", consumerClass = BindingConsumerProcessor.class)
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
     private final Binding binding;
     private final Endpoint delegate;

@@ -20,19 +20,26 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.util.CamelContextHelper;
 
 import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
+ * To compose a Camel component with a Camel data-format as a single binding unit.
+ * <p/>
  * A Binding component using the URI form <code>binding:nameOfBinding:endpointURI</code>
  * to extract the binding name which is then resolved from the registry and used to create a
  * {@link BindingEndpoint} from the underlying {@link Endpoint}
  */
-public class BindingNameComponent extends DefaultComponent {
+public class BindingNameComponent extends UriEndpointComponent {
+
     protected static final String BAD_FORMAT_MESSAGE = "URI should be of the format binding:nameOfBinding:endpointURI";
+
+    public BindingNameComponent() {
+        super(BindingEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -50,4 +57,5 @@ public class BindingNameComponent extends DefaultComponent {
         Endpoint delegate = getMandatoryEndpoint(camelContext, delegateURI);
         return new BindingEndpoint(uri, this, binding,  delegate);
     }
+
 }
