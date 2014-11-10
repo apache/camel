@@ -41,22 +41,6 @@ public class PgEventProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-
-        /*
-        listener = new PGNotificationListener() {
-
-            @Override
-            public void notification(int processId, String channel, String payload) {
-                Message out = exchange.getOut();
-                out.setBody(payload);
-                out.setHeader("channel", channel);
-                exchange.setOut(out);
-                callback.done(true);
-            }
-        };
-        
-        dbConnection.addNotificationListener(listener);
-        */
         
         try {
             if (dbConnection.isClosed()) {
@@ -81,4 +65,11 @@ public class PgEventProducer extends DefaultAsyncProducer {
         return retVal;
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        dbConnection.close();
+    }
+
+    
 }
