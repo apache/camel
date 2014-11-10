@@ -198,6 +198,12 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         getRedeliveryPolicy().setLogExhaustedMessageHistory(logExhaustedMessageHistory);
         return this;
     }
+    
+    public DefaultErrorHandlerBuilder exchangeFormatterRef(String exchangeFormatterRef) {
+        getRedeliveryPolicy().setExchangeFormatterRef(exchangeFormatterRef);
+        return this;
+    }
+
 
     /**
      * Will allow asynchronous delayed redeliveries.
@@ -334,7 +340,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         setUseOriginalMessage(true);
         return this;
     }
-
+    
+    
     // Properties
     // -------------------------------------------------------------------------
 

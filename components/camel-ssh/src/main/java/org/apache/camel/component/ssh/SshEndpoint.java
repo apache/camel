@@ -85,7 +85,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
             throw new IllegalStateException("Configuration must be set");
         }
 
-        ConnectFuture connectFuture = client.connect(getHost(), getPort());
+        ConnectFuture connectFuture = client.connect(null, getHost(), getPort());
 
         // Wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(getTimeout());

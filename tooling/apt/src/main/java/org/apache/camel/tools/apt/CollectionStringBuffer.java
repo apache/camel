@@ -14,39 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.util;
+package org.apache.camel.tools.apt;
 
 /**
- * Some String helper methods
+ /**
+ * A little helper class for converting a collection of values to a (usually comma separated) string.
  */
-public final class Strings {
-    private Strings() {
-        //Helper class
-    }
-    /**
-     * Returns true if the given text is null or empty string
-     */
-    public static boolean isNullOrEmpty(String text) {
-        return text == null || text.length() == 0;
+class CollectionStringBuffer {
+
+    private final StringBuilder buffer = new StringBuilder();
+    private String separator;
+    private boolean first = true;
+
+    public CollectionStringBuffer() {
+        this(", ");
     }
 
-    /**
-     * Returns the value or the defaultValue if it is null
-     */
-    public static String getOrElse(String text, String defaultValue) {
-        return (text != null) ? text : defaultValue;
+    public CollectionStringBuffer(String separator) {
+        this.separator = separator;
     }
 
-    /**
-     * Returns the canonical class name by removing any generic type information.
-     */
-    public static String canonicalClassName(String className) {
-        // remove generics
-        int pos = className.indexOf('<');
-        if (pos != -1) {
-            return className.substring(0, pos);
+    @Override
+    public String toString() {
+        return buffer.toString();
+    }
+
+    public void append(Object value) {
+        if (first) {
+            first = false;
         } else {
-            return className;
+            buffer.append(separator);
         }
+        buffer.append(value);
     }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
+
 }

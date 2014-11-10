@@ -41,8 +41,8 @@ public class XsltComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"resourceUri\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"resourceUri\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\""));
     }
 
     @Test

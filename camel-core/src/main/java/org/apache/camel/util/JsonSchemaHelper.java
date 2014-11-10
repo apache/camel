@@ -16,10 +16,19 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
  */
 public final class JsonSchemaHelper {
+
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"");
 
     private JsonSchemaHelper() {
     }
@@ -97,6 +106,57 @@ public final class JsonSchemaHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Parses the json schema to split it into a list or rows, where each row contains key value pairs with the metadata
+     *
+     * @param group the group to parse from such as <tt>component</tt>, <tt>componentProperties</tt>, or <tt>properties</tt>.
+     * @param json the json
+     * @return a list of all the rows, where each row is a set of key value pairs with metadata
+     */
+    public static List<Map<String, String>> parseJsonSchema(String group, String json) {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        if (json == null) {
+            return answer;
+        }
+
+        boolean found = false;
+
+        // parse line by line
+        String[] lines = json.split("\n");
+        for (String line : lines) {
+            // we need to find the group first
+            if (!found) {
+                found = line.startsWith("  \"" + group + "\":");
+                continue;
+            }
+
+            // we should stop when we end the group
+            if (line.equals("  },") || line.equals("  }")) {
+                break;
+            }
+
+            Map<String, String> row = new LinkedHashMap<String, String>();
+            Matcher matcher = PATTERN.matcher(line);
+            // the first key is the name of the option
+            String key = "name";
+            while (matcher.find()) {
+                if (key == null) {
+                    key = matcher.group(1);
+                } else {
+                    String value = matcher.group(1);
+                    row.put(key, value);
+                    // reset
+                    key = null;
+                }
+            }
+            if (!row.isEmpty()) {
+                answer.add(row);
+            }
+        }
+
+        return answer;
     }
 
 }

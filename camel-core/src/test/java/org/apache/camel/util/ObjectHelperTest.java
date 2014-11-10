@@ -707,6 +707,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("java.lang.Short", ObjectHelper.convertPrimitiveTypeToWrapperType(short.class).getName());
         assertEquals("java.lang.Byte", ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class).getName());
         assertEquals("java.lang.Boolean", ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class).getName());
+        assertEquals("java.lang.Character", ObjectHelper.convertPrimitiveTypeToWrapperType(char.class).getName());
         // non primitive just fall through
         assertEquals("java.lang.Object", ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
     }

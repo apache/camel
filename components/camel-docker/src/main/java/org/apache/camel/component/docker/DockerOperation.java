@@ -198,10 +198,8 @@ public enum DockerOperation {
             for (int i = 0; i < nParameters; i++) {
                 parameters.put((String) params[i * 2], (Class<?>) params[i * 2 + 1]);
             }
-            
-   
         }
-        
+
     }
     
     @Override

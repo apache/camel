@@ -39,9 +39,9 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     private String routeId;
     @UriParam
     private String action;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean async;
-    @UriParam
+    @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
 
     public ControlBusEndpoint(String endpointUri, Component component) {

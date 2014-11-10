@@ -25,13 +25,13 @@ import org.apache.camel.component.docker.exception.DockerException;
 
 public class DockerConfiguration {
     private static final String DEFAULT_DOCKER_HOST = "localhost";
-    private static final int DEFAULT_DOCKER_PORT = 5000;
+    private static final int DEFAULT_DOCKER_PORT = 2375;
 
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
     
     private DockerOperation operation;
-
+    
     public void setClient(DockerClientProfile clientProfile, DockerClient client) {
         clients.put(clientProfile, client);
     }

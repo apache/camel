@@ -48,13 +48,13 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private String languageName;
     @UriParam
     private String script;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean transform = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean binary;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean contentResolvedFromResource;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean cacheScript;
 
     public LanguageEndpoint() {

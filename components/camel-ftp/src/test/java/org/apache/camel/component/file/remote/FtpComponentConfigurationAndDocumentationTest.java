@@ -42,8 +42,8 @@ public class FtpComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"integer\""));
     }
 
     @Test

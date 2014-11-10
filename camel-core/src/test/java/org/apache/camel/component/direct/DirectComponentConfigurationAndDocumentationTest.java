@@ -41,8 +41,8 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"block\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"block\": { \"type\": \"boolean\""));
     }
 
     @Test
@@ -50,6 +50,18 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("direct");
         assertNotNull("Should have found some auto-generated HTML", html);
+    }
+
+    @Test
+    public void testComponentJsonSchema() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String json = context.getComponentParameterJsonSchema("direct");
+        assertNotNull("Should have found some auto-generated JSON", json);
+        log.info(json);
+
+        // should include javadoc
+        assertTrue("Should include javadoc", json.contains("\"timeout\": { \"type\": \"integer\", \"javaType\": \"long\","
+                + " \"description\": \"The timeout value to use if block is enabled. Is by default 30000.\" },"));
     }
 
 }

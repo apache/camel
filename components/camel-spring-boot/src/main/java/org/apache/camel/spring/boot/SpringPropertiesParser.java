@@ -24,8 +24,12 @@ import org.springframework.core.env.PropertyResolver;
 
 class SpringPropertiesParser extends DefaultPropertiesParser {
 
+    // Members
+
     @Autowired
     private PropertyResolver propertyResolver;
+
+    // Overridden
 
     @Override
     public String parseProperty(String key, String value, Properties properties) {

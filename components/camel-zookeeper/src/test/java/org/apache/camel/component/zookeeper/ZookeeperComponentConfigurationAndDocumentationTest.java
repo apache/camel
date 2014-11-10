@@ -42,8 +42,8 @@ public class ZookeeperComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"createMode\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"backoff\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"createMode\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"backoff\": { \"type\": \"integer\""));
     }
 
     @Test

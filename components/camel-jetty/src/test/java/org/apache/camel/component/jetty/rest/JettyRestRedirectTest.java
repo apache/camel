@@ -25,7 +25,7 @@ import org.junit.Test;
 public class JettyRestRedirectTest extends BaseJettyTest {
    
     @Test
-    public void testClasspath() throws Exception {
+    public void testRedirectInvocation() throws Exception {
         String response = template.requestBody("jetty:http://localhost:" + getPort2() + "/metadata/profile/tag?httpClient.supportRedirect=true", "<hello>Camel</hello>", String.class);
         assertEquals("It should support the redirect out of box.", "Mock profile", response);
     }
@@ -36,7 +36,7 @@ public class JettyRestRedirectTest extends BaseJettyTest {
 
         return new RouteBuilder() {
             public void configure() {
-                restConfiguration().component("jetty").scheme("http").port(getPort2());
+                restConfiguration().component("jetty").host("localhost").scheme("http").port(getPort2());
                 rest("/metadata/profile")
                     .get("/{id}").to("direct:profileLookup")
                     .post("/tag").to("direct:tag");

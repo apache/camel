@@ -42,8 +42,8 @@ public class ElasticsearchComponentConfigurationAndDocumentationTest extends Cam
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"indexName\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"local\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"indexName\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"local\": { \"type\": \"boolean\""));
     }
 
     @Test

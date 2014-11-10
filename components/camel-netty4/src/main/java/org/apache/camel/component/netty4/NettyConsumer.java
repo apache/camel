@@ -51,7 +51,7 @@ public class NettyConsumer extends DefaultConsumer {
         if (nettyServerBootstrapFactory == null) {
             // setup pipeline factory
             ServerInitializerFactory pipelineFactory;
-            ServerInitializerFactory factory = configuration.getServerPipelineFactory();
+            ServerInitializerFactory factory = configuration.getServerInitializerFactory();
             if (factory != null) {
                 pipelineFactory = factory.createPipelineFactory(this);
             } else {

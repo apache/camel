@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -37,6 +36,7 @@ import javax.jms.TextMessage;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.IllegalHeaderException;
 import org.apache.camel.component.sjms.jms.JmsConstants;
@@ -63,13 +63,21 @@ public final class SjmsExchangeMessageHelper {
 
     public static Exchange createExchange(Message message, Endpoint endpoint) {
         Exchange exchange = endpoint.createExchange();
-        return populateExchange(message, exchange, false);
+        return populateExchange(message, exchange, false, ((SjmsEndpoint)endpoint).getJmsKeyFormatStrategy());
+    }
+    
+    @Deprecated 
+    /**
+     * Please use the one which has the parameter of keyFormatStrategy 
+     */
+    public static Exchange populateExchange(Message message, Exchange exchange, boolean out) {
+        return populateExchange(message, exchange, out, new DefaultJmsKeyFormatStrategy()); 
     }
 
     @SuppressWarnings("unchecked")
-    public static Exchange populateExchange(Message message, Exchange exchange, boolean out) {
+    public static Exchange populateExchange(Message message, Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) {
         try {
-            SjmsExchangeMessageHelper.setJmsMessageHeaders(message, exchange, out);
+            SjmsExchangeMessageHelper.setJmsMessageHeaders(message, exchange, out, keyFormatStrategy);
             if (message != null) {
                 // convert to JMS Message of the given type
 
@@ -372,61 +380,17 @@ public final class SjmsExchangeMessageHelper {
             message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
         }
     }
-
-    public static Message setJmsMessageHeaders(final Exchange exchange, final Message jmsMessage) throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>(exchange.getIn().getHeaders());
-        Set<String> keys = headers.keySet();
-        for (String headerName : keys) {
-            Object headerValue = headers.get(headerName);
-            if (headerName.equalsIgnoreCase("JMSCorrelationID")) {
-                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equalsIgnoreCase("JMSReplyTo") && headerValue != null) {
-                if (headerValue instanceof String) {
-                    // if the value is a String we must normalize it first
-                    headerValue = headerValue;
-                } else {
-                    // TODO write destination converter
-                    // Destination replyTo =
-                    // ExchangeHelper.convertToType(exchange, Destination.class,
-                    // headerValue);
-                    // jmsMessage.setJMSReplyTo(replyTo);
-                }
-            } else if (headerName.equalsIgnoreCase("JMSType")) {
-                jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equalsIgnoreCase("JMSPriority")) {
-                jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
-            } else if (headerName.equalsIgnoreCase("JMSDeliveryMode")) {
-                SjmsExchangeMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
-            } else if (headerName.equalsIgnoreCase("JMSExpiration")) {
-                jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
-            } else {
-                // The following properties are set by the MessageProducer:
-                // JMSDestination
-                // The following are set on the underlying JMS provider:
-                // JMSMessageID, JMSTimestamp, JMSRedelivered
-                // log at trace level to not spam log
-                LOGGER.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
-                if (headerName.equalsIgnoreCase("JMSDestination") || headerName.equalsIgnoreCase("JMSMessageID") || headerName.equalsIgnoreCase("JMSTimestamp")
-                        || headerName.equalsIgnoreCase("JMSRedelivered")) {
-                    // The following properties are set by the MessageProducer:
-                    // JMSDestination
-                    // The following are set on the underlying JMS provider:
-                    // JMSMessageID, JMSTimestamp, JMSRedelivered
-                    // log at trace level to not spam log
-                    LOGGER.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
-                } else {
-                    if (!(headerValue instanceof JmsMessageType)) {
-                        String encodedName = new DefaultJmsKeyFormatStrategy().encodeKey(headerName);
-                        SjmsExchangeMessageHelper.setProperty(jmsMessage, encodedName, headerValue);
-                    }
-                }
-            }
-        }
-        return jmsMessage;
+    
+    @Deprecated
+    /**
+     * Please use the one which has the parameter of keyFormatStrategy
+     */
+    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out) throws JMSException {
+        return setJmsMessageHeaders(jmsMessage, exchange, out, new DefaultJmsKeyFormatStrategy());
     }
 
     @SuppressWarnings("unchecked")
-    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out) throws JMSException {
+    public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) throws JMSException {
         Map<String, Object> headers = new HashMap<String, Object>();
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
@@ -454,7 +418,7 @@ public final class SjmsExchangeMessageHelper {
                     throw new IllegalHeaderException("Header " + key + " is not a legal JMS header name value");
                 }
                 Object value = jmsMessage.getObjectProperty(key);
-                String decodedName = new DefaultJmsKeyFormatStrategy().decodeKey(key);
+                String decodedName = keyFormatStrategy.decodeKey(key);
                 headers.put(decodedName, value);
             }
         }
@@ -466,7 +430,7 @@ public final class SjmsExchangeMessageHelper {
         return exchange;
     }
 
-    public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy) throws Exception {
+    public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
         Message answer = null;
         Object body = null;
         Map<String, Object> bodyHeaders = null;
@@ -480,7 +444,7 @@ public final class SjmsExchangeMessageHelper {
             bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
         }
 
-        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy);
+        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy, typeConverter);
 
         return answer;
     }

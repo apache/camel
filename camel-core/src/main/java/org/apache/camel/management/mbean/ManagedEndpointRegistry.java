@@ -16,10 +16,20 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Collection;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointRegistryMBean;
 import org.apache.camel.impl.EndpointRegistry;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -52,5 +62,24 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
     public void purge() {
         endpointRegistry.purge();
     }
+
+    @Override
+    public TabularData listEndpoints() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEndpointsTabularType());
+            Collection<Endpoint> endpoints = endpointRegistry.values();
+            for (Endpoint endpoint : endpoints) {
+                CompositeType ct = CamelOpenMBeanTypes.listEndpointsCompositeType();
+                String url = endpoint.getEndpointUri();
+
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url"}, new Object[]{url});
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 
 }

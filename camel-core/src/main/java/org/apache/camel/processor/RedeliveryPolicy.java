@@ -99,6 +99,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected String delayPattern;
     protected boolean asyncDelayedRedelivery;
     protected boolean allowRedeliveryWhileStopping = true;
+    protected String exchangeFormatterRef;
 
     public RedeliveryPolicy() {
     }
@@ -123,7 +124,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
             + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
-            + ", delayPattern=" + delayPattern + "]";
+            + ", delayPattern=" + delayPattern 
+            + ", exchangeFormatterRef=" + exchangeFormatterRef + "]";
     }
 
     public RedeliveryPolicy copy() {
@@ -425,6 +427,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         setAllowRedeliveryWhileStopping(redeliverWhileStopping);
         return this;
     }
+    
+    /**
+     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
+     *
+     * @param reference name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
+     * @return the builder
+     */
+    public RedeliveryPolicy exchangeFormatterRef(String exchangeFormatterRef) {
+        setExchangeFormatterRef(exchangeFormatterRef);
+        return this;
+    }
 
     // Properties
     // -------------------------------------------------------------------------
@@ -693,6 +706,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setAllowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
         this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
+    }
+
+    public String getExchangeFormatterRef() {
+        return exchangeFormatterRef;
+    }
+
+    /**
+     * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
+     */
+    public void setExchangeFormatterRef(String exchangeFormatterRef) {
+        this.exchangeFormatterRef = exchangeFormatterRef;
     }
 
 }

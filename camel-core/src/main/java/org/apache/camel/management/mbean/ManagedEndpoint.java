@@ -16,13 +16,24 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+import java.util.Map;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
@@ -70,6 +81,35 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
 
         // assume started if not a ServiceSupport instance
         return ServiceStatus.Started.name();
+    }
+
+    @Override
+    public TabularData explain(boolean allOptions) {
+        try {
+            String json = endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), allOptions);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json);
+
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEndpointTabularType());
+
+            for (Map<String, String> row : rows) {
+                String option = row.get("name");
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                String value = row.get("value") != null ? row.get("value") : "";
+                String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
+                String description = row.get("description") != null ? row.get("description") : "";
+
+                CompositeType ct = CamelOpenMBeanTypes.explainEndpointsCompositeType();
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"option", "type", "java type", "value", "default value", "description"},
+                        new Object[]{option, type, javaType, value, defaultValue, description});
+                answer.put(data);
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     @Override

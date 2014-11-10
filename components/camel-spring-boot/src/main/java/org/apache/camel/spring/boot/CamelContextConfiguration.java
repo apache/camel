@@ -20,6 +20,6 @@ import org.apache.camel.CamelContext;
 
 public interface CamelContextConfiguration {
 
-    void beforeStart(CamelContext camelContext);
+    void beforeApplicationStart(CamelContext camelContext);
 
 }

@@ -18,6 +18,8 @@ package org.apache.camel.karaf.commands;
 
 import java.io.PrintStream;
 import java.net.URLDecoder;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,8 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
+import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -55,11 +59,15 @@ public class EndpointList extends CamelCommandSupport {
 
     @Option(name = "--decode", aliases = "-d", description = "Whether to decode the endpoint uri so its human readable",
             required = false, multiValued = false, valueToShowInHelp = "true")
-    Boolean decode;
+    boolean decode = true;
 
-    @Option(name = "--verbose", aliases = "-v", description = "Verbose output which does not limit the length of the uri shown",
+    @Option(name = "--verbose", aliases = "-v", description = "Verbose output which does not limit the length of the uri shown, or to explain all options (if explain selected)",
             required = false, multiValued = false, valueToShowInHelp = "false")
-    Boolean verbose;
+    boolean verbose;
+
+    @Option(name = "--explain", aliases = "-e", description = "Whether to explain the endpoint options",
+            required = false, multiValued = false, valueToShowInHelp = "false")
+    boolean explain;
 
     protected Object doExecute() throws Exception {
         List<Endpoint> endpoints = camelController.getEndpoints(name);
@@ -75,7 +83,7 @@ public class EndpointList extends CamelCommandSupport {
             for (final Endpoint endpoint : endpoints) {
                 String contextId = endpoint.getCamelContext().getName();
                 String uri = endpoint.getEndpointUri();
-                if (decode == null || decode) {
+                if (decode) {
                     // decode uri so its more human readable
                     uri = URLDecoder.decode(uri, "UTF-8");
                 }
@@ -83,6 +91,53 @@ public class EndpointList extends CamelCommandSupport {
                 uri = URISupport.sanitizeUri(uri);
                 String state = getEndpointState(endpoint);
                 out.println(String.format(rowFormat, contextId, uri, state));
+
+                if (explain) {
+                    boolean first = true;
+                    String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
+                    // use a basic json parser
+                    List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema(json);
+
+                    // lets sort the options by name
+                    Collections.sort(options, new Comparator<Map<String, String>>() {
+                        @Override
+                        public int compare(Map<String, String> o1, Map<String, String> o2) {
+                            return o1.get("name").compareTo(o2.get("name"));
+                        }
+                    });
+
+                    for (Map<String, String> option : options) {
+                        String key = option.get("name");
+                        String type = option.get("type");
+                        String javaType = option.get("javaType");
+                        String value = option.get("value");
+                        if (ObjectHelper.isEmpty(value)) {
+                            value = option.get("defaultValue");
+                        }
+                        String desc = option.get("description");
+                        if (key != null && value != null) {
+                            if (first) {
+                                out.println();
+                                first = false;
+                            }
+                            String line = "\t" + key + "=" + value;
+                            out.println(String.format(rowFormat, "", line, ""));
+
+                            if (type != null) {
+                                String displayType = type;
+                                if (javaType != null && !displayType.equals(javaType)) {
+                                    displayType = type + " (" + javaType + ")";
+                                }
+                                out.println(String.format(rowFormat, "", "\t" + displayType, ""));
+                            }
+                            if (desc != null) {
+                                // TODO: split desc in multi lines so it does not overflow
+                                out.println(String.format(rowFormat, "", "\t" + desc, ""));
+                            }
+                            out.println();
+                        }
+                    }
+                }
             }
         }
 
@@ -102,7 +157,7 @@ public class EndpointList extends CamelCommandSupport {
                 maxContextLen = java.lang.Math.max(maxContextLen, name == null ? 0 : name.length());
 
                 String uri = endpoint.getEndpointUri();
-                if (decode == null || decode) {
+                if (decode) {
                     // decode uri so its more human readable
                     uri = URLDecoder.decode(uri, "UTF-8");
                 }
@@ -154,7 +209,7 @@ public class EndpointList extends CamelCommandSupport {
     }
 
     private int getMaxColumnWidth() {
-        if (verbose != null && verbose) {
+        if (verbose) {
             return Integer.MAX_VALUE;
         } else {
             return MAX_COLUMN_WIDTH;

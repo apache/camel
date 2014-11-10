@@ -43,8 +43,8 @@ public class NettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"traceEnabled\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"traceEnabled\": { \"type\": \"boolean\""));
     }
 
     @Test

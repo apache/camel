@@ -48,14 +48,11 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
                 
             }
         };
-        
-    } 
+    }
     
     @Test
     public void removeImageHeaderTest() {
-        
 
-        
         Map<String, Object> headers = getDefaultParameters();
         
         template.sendBodyAndHeaders("direct:in", "", headers);
@@ -63,8 +60,6 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
         Mockito.verify(dockerClient, Mockito.times(1)).removeImageCmd(imageId);
         Mockito.verify(mockObject, Mockito.times(0)).withNoPrune();
         Mockito.verify(mockObject, Mockito.times(1)).withForce();
-
-        
         
     }
 

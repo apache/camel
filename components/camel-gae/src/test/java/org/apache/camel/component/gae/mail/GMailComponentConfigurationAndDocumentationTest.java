@@ -42,8 +42,8 @@ public class GMailComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"sender\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"bcc\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"sender\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"bcc\": { \"type\": \"string\""));
     }
 
     @Test

@@ -38,7 +38,6 @@ import org.apache.deltaspike.core.api.literal.DefaultLiteral;
 /**
  * Description of camel context bean.
  */
-@SuppressWarnings("unchecked")
 public class CamelContextBean implements Bean<CdiCamelContext>, BeanAttributes<CdiCamelContext> {
 
     private final BeanManager beanManager;

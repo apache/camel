@@ -41,8 +41,8 @@ public class Quartz2ComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"cron\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"fireNow\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"cron\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"fireNow\": { \"type\": \"boolean\""));
     }
 
     @Test

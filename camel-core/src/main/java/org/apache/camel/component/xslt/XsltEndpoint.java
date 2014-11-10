@@ -43,7 +43,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private XsltBuilder xslt;
     @UriParam
     private String resourceUri;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean cacheStylesheet;
 
     public XsltEndpoint(String endpointUri, Component component, XsltBuilder xslt, String resourceUri,

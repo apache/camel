@@ -64,6 +64,8 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
         this.connections.setMaxWait(maxWait);
         this.connections.setMaxActive(poolSize);
         this.connections.setMaxIdle(poolSize);
+        this.connections.setMinIdle(poolSize);
+        this.connections.setLifo(false);
     }
 
     @Override

@@ -95,6 +95,11 @@ public final class ObjectConverter {
     }
 
     @Converter
+    public static Character toCharacter(String value) {
+        return toChar(value);
+    }
+
+    @Converter
     public static char toChar(String value) {
         // must be string with the length of 1
         if (value == null || value.length() != 1) {

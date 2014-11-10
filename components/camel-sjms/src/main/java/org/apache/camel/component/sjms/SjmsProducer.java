@@ -83,6 +83,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
             setProducers(new GenericObjectPool<MessageProducerResources>(new MessageProducerResourcesFactory()));
             getProducers().setMaxActive(getProducerCount());
             getProducers().setMaxIdle(getProducerCount());
+            getProducers().setLifo(false);
             if (getEndpoint().isPrefillPool()) {
                 if (getEndpoint().isAsyncStartListener()) {
                     asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
@@ -91,7 +92,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             try {
                                 fillProducersPool();
                             } catch (Throwable e) {
-                                log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                                log.warn("Error filling producer pool for destination: " + getDestinationName() + ". This exception will be ignored.", e);
                             }
                         }
 
@@ -128,7 +129,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             getProducers().close();
                             setProducers(null);
                         } catch (Throwable e) {
-                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            log.warn("Error closing producers on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                         }
                     }
 

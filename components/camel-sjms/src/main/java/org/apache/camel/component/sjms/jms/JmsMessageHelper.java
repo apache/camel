@@ -34,6 +34,7 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
+import org.apache.camel.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,16 +89,15 @@ public final class JmsMessageHelper {
     private JmsMessageHelper() {
     }
 
-    @SuppressWarnings("unchecked")
-    public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws Exception {
+    //@SuppressWarnings("unchecked")
+    public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
         Message answer = null;
-        JmsMessageType messageType = JmsMessageHelper.discoverMessgeTypeFromPayload(payload);
+        JmsMessageType messageType = JmsMessageHelper.discoverMessageTypeFromPayload(payload);
         try {
 
             switch (messageType) {
             case Bytes:
-                BytesMessage bytesMessage = session.createBytesMessage();
-                bytesMessage.writeBytes((byte[]) payload);
+                BytesMessage bytesMessage = typeConverter.convertTo(BytesMessage.class, payload);
                 answer = bytesMessage;
                 break;
             case Map:
@@ -122,13 +122,12 @@ public final class JmsMessageHelper {
                 break;
             case Stream:
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                InputStream is = (InputStream) payload;
+                InputStream is = typeConverter.convertTo(InputStream.class, payload);
                 int reads = is.read();
                 while (reads != -1) {
                     baos.write(reads);
                     reads = is.read();
                 }
-
                 BytesMessage bytesStreamMessage = session.createBytesMessage();
                 bytesStreamMessage.writeBytes(baos.toByteArray());
                 baos.close();
@@ -158,7 +157,6 @@ public final class JmsMessageHelper {
      *                          format keys in a JMS 1.1 compliant manner. If null the
      *                          {@link DefaultJmsKeyFormatStrategy} will be used.
      * @return {@link Message}
-     * @throws Exception a
      */
     public static Message setJmsMessageHeaders(final Message jmsMessage, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws IllegalHeaderException {
         // Support for the null keyFormatStrategy
@@ -264,14 +262,12 @@ public final class JmsMessageHelper {
     /**
      * Sets the JMSDeliveryMode on the message.
      *
-     * @param exchange     the exchange
      * @param message      the message
      * @param deliveryMode the delivery mode, either as a String or integer
-     * @throws javax.jms.JMSException is thrown if error setting the delivery
-     *                                mode
+     * @throws javax.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Message message, Object deliveryMode) throws JMSException {
-        Integer mode = null;
+        Integer mode;
 
         if (deliveryMode instanceof String) {
             String s = (String) deliveryMode;
@@ -300,9 +296,7 @@ public final class JmsMessageHelper {
             throw new IllegalArgumentException("Unable to convert the given delivery mode of type " + deliveryMode.getClass().getName() + " with value: " + deliveryMode);
         }
 
-        if (mode != null) {
-            message.setJMSDeliveryMode(mode);
-        }
+        message.setJMSDeliveryMode(mode);
     }
 
     /**
@@ -371,7 +365,7 @@ public final class JmsMessageHelper {
         }
     }
 
-    public static JmsMessageType discoverMessgeTypeFromPayload(final Object payload) {
+    public static JmsMessageType discoverMessageTypeFromPayload(final Object payload) {
         JmsMessageType answer = null;
         // Default is a JMS Message since a body is not required
         if (payload == null) {
@@ -393,7 +387,6 @@ public final class JmsMessageHelper {
                 answer = JmsMessageType.Message;
             }
         }
-
         return answer;
     }
 

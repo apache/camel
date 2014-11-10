@@ -819,6 +819,7 @@ public final class ObjectHelper {
      * @param name the name of the class to load
      * @return the class or <tt>null</tt> if it could not be loaded
      */
+    //CHECKSTYLE:OFF
     public static Class<?> loadSimpleType(String name) {
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
@@ -860,10 +861,14 @@ public final class ObjectHelper {
             return Double.class;
         } else if ("double".equals(name)) {
             return double.class;
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name)) {
+            return Character.class;
+        } else if ("char".equals(name)) {
+            return char.class;
         }
-
         return null;
     }
+    //CHECKSTYLE:ON
 
     /**
      * Loads the given class with the provided classloader (may be null).
@@ -1165,6 +1170,8 @@ public final class ObjectHelper {
                 rc = Byte.class;
             } else if (type == boolean.class) {
                 rc = Boolean.class;
+            } else if (type == char.class) {
+                rc = Character.class;
             }
         }
         return rc;

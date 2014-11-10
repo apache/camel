@@ -14,11 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.util;
+package org.apache.camel.component.sjms.jms;
+
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Session;
 
 /**
- * Represents a function with 1 argument
+ * Strategy for creating Destination's
  */
-public interface Func1<T1, R> {
-    R call(T1 t1);
+public interface DestinationCreationStrategy {
+    Destination createDestination(Session session, String name, boolean topic) throws JMSException;
+    Destination createTemporaryDestination(Session session, boolean topic) throws JMSException;
 }

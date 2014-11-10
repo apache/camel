@@ -96,7 +96,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         }
 
         String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Quering whether bucket [{}] already exists...", bucketName);
+        LOG.trace("Querying whether bucket [{}] already exists...", bucketName);
         
         try {
             s3Client.listObjects(new ListObjectsRequest(bucketName, null, null, null, 0));

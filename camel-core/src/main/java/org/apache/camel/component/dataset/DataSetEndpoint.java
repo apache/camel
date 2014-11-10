@@ -45,15 +45,15 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private volatile DataSet dataSet;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriParam
+    @UriParam(defaultValue = "0")
     private int minRate;
-    @UriParam
+    @UriParam(defaultValue = "3")
     private long produceDelay = 3;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private long consumeDelay;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private long preloadSize;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long initialDelay = 1000;
 
     @Deprecated

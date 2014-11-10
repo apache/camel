@@ -43,8 +43,8 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"throwExceptionOnFailure\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"throwExceptionOnFailure\": { \"type\": \"boolean\""));
     }
 
     @Test

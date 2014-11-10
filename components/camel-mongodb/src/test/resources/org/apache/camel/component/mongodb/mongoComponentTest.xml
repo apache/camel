@@ -20,10 +20,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="myDb" class="com.mongodb.Mongo">
-    <constructor-arg index="0" value="localhost"/>
-  </bean>
-
   <!-- <bean id="customWriteConcern" class="com.mongodb.WriteConcern">
       <constructor-arg index="0" value="true" />
     </bean> -->

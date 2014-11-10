@@ -1346,9 +1346,27 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
     /**
-     * Returns the HTML documentation for the given camel component
+     * Returns the HTML documentation for the given Camel component
+     *
+     * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
      */
     String getComponentDocumentation(String componentName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the endpoint parameters for the given component name.
+     *
+     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSon schema support
+     */
+    String getComponentParameterJsonSchema(String componentName) throws IOException;
+
+    /**
+     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.
+     *
+     * @param uri the endpoint uri
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if uri parameters is invalid, or the component is <b>not</b> built with JSon schema support
+     */
+    String explainEndpointJson(String uri, boolean includeAllOptions);
 
     /**
      * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).

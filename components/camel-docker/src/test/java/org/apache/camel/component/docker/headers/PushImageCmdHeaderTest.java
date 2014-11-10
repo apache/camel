@@ -77,9 +77,9 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         clientProfile.setPassword(password);
         clientProfile.setUsername(userName);
         clientProfile.setServerAddress(serverAddress);
-
+        
         return clientProfile;
-
+       
     }
 
 

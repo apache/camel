@@ -72,7 +72,6 @@ public final class DockerHelper {
                 } else if (Boolean.class == parameterClass) {
                     BooleanUtils.toBooleanObject((String)parameterValue, "true", "false", "null");
                 }
-                
             } catch (Exception e) {
                 throw new DockerClientException("Failed to validate parameter type for property " + key);                    
             }
@@ -173,16 +172,16 @@ public final class DockerHelper {
        
         if (message != null) {
             Object header = message.getHeader(name);
-
+            
             if (header != null) {
                 if (header.getClass().isAssignableFrom(clazz)) {
-
+                    
                     T[] headerArray = (T[])Array.newInstance(clazz, 1);
                     headerArray[0] = (T)header;
                     return headerArray;
 
                 }
-
+                
                 if (header.getClass().isArray()) {
                     if (header.getClass().getDeclaringClass().isAssignableFrom(clazz)) {
                         return (T[])header;
@@ -219,15 +218,15 @@ public final class DockerHelper {
     public static String[] parseDelimitedStringHeader(String headerName, Message message) {
 
         Object header = message.getHeader(headerName);
-
+        
         if (header != null) {
-
+            
             if (header instanceof String) {
-                return ((String)header).split(STRING_DELIMITER);
+                return ((String) header).split(STRING_DELIMITER);
             }
-
+            
             if (header instanceof String[]) {
-                return (String[])header;
+                return (String[]) header;
             }
         }
 

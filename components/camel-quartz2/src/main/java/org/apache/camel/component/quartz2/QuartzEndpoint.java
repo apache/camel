@@ -269,7 +269,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (triggerKey.equals(checkTriggerKey)) {
-                    throw new IllegalArgumentException("Trigger key " + triggerKey + " is already in used by " + quartzEndpoint);
+                    throw new IllegalArgumentException("Trigger key " + triggerKey + " is already in use by " + quartzEndpoint);
                 }
             }
         }
@@ -289,8 +289,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
                         .withIdentity(triggerKey)
                         .startAt(startTime)
                         .withSchedule(cronSchedule(cron)
-                                .withMisfireHandlingInstructionFireAndProceed()
-                                .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                        .withMisfireHandlingInstructionFireAndProceed()
+                        .inTimeZone(TimeZone.getTimeZone(timeZone)))
                         .build();
                 jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
             } else {
@@ -298,7 +298,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                         .withIdentity(triggerKey)
                         .startAt(startTime)
                         .withSchedule(cronSchedule(cron)
-                                .withMisfireHandlingInstructionFireAndProceed())
+                        .withMisfireHandlingInstructionFireAndProceed())
                         .build();
             }
 

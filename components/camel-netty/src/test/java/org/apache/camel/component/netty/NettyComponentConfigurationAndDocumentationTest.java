@@ -43,8 +43,8 @@ public class NettyComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"producerPoolMinEvictableIdle\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"allowDefaultCodec\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"producerPoolMinEvictableIdle\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"allowDefaultCodec\": { \"type\": \"boolean\""));
     }
 
     @Test

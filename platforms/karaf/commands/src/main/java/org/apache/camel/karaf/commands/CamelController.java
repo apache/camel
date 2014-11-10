@@ -53,12 +53,12 @@ public interface CamelController {
      * @return the list of the Camel routes.
      */
     List<Route> getRoutes(String camelContextName);
-    
+
     /**
      * Get all routes filtered by the regex.
      *
      * @param camelContextName the Camel context name. If null, all contexts are considered.
-     * @param filter the filter which supports * and ? as wildcards
+     * @param filter           the filter which supports * and ? as wildcards
      * @return the list of the Camel routes.
      */
     List<Route> getRoutes(String camelContextName, String filter);
@@ -66,7 +66,7 @@ public interface CamelController {
     /**
      * Return the route with the given route ID.
      *
-     * @param routeId the route ID.
+     * @param routeId          the route ID.
      * @param camelContextName the Camel context name.
      * @return the route.
      */
@@ -75,7 +75,7 @@ public interface CamelController {
     /**
      * Return the definition of a route identified by a ID and a Camel context.
      *
-     * @param routeId the route ID.
+     * @param routeId          the route ID.
      * @param camelContextName the Camel context.
      * @return the <code>RouteDefinition</code>.
      */
@@ -104,5 +104,15 @@ public interface CamelController {
      * @return the REST services
      */
     Map<String, List<RestRegistry.RestService>> getRestServices(String camelContextName);
+
+    /**
+     * Explains an endpoint uri
+     *
+     * @param camelContextName the Camel context.
+     * @param uri              the endpoint uri
+     * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
+     * @return a JSON schema with explanation of the options
+     */
+    String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception;
 
 }

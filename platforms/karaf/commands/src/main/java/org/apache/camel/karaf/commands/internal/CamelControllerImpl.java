@@ -224,4 +224,12 @@ public class CamelControllerImpl implements CamelController {
         }
         return answer;
     }
+
+    public String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception {
+        CamelContext context = this.getCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+        return context.explainEndpointJson(uri, allOptions);
+    }
 }

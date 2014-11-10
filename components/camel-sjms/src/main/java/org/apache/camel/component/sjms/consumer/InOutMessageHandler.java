@@ -29,12 +29,10 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;
 
@@ -47,11 +45,11 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     private Map<String, MessageProducer> producerCache = new TreeMap<String, MessageProducer>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public InOutMessageHandler(Endpoint endpoint, ExecutorService executor) {
+    public InOutMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
         super(endpoint, executor);
     }
 
-    public InOutMessageHandler(Endpoint endpoint, ExecutorService executor, Synchronization synchronization) {
+    public InOutMessageHandler(SjmsEndpoint endpoint, ExecutorService executor, Synchronization synchronization) {
         super(endpoint, executor, synchronization);
     }
 
@@ -61,11 +59,11 @@ public class InOutMessageHandler extends AbstractMessageHandler {
             MessageProducer messageProducer = null;
             Object obj = exchange.getIn().getHeader(JmsMessageHelper.JMS_REPLY_TO);
             if (obj != null) {
-                Destination replyTo = null;
+                Destination replyTo;
                 if (isDestination(obj)) {
                     replyTo = (Destination) obj;
                 } else if (obj instanceof String) {
-                    replyTo = JmsObjectFactory.createDestination(getSession(), (String) obj, isTopic());
+                    replyTo = getEndpoint().getDestinationCreationStrategy().createDestination(getSession(), (String)obj, isTopic());
                 } else {
                     throw new Exception("The value of JMSReplyTo must be a valid Destination or String.  Value provided: " + obj);
                 }
@@ -161,7 +159,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         @Override
         public void done(boolean sync) {
             try {
-                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(), ((SjmsEndpoint) getEndpoint()).getJmsKeyFormatStrategy());
+                Message response = SjmsExchangeMessageHelper.createMessage(exchange, getSession(),
+                        getEndpoint().getJmsKeyFormatStrategy(), getEndpoint().getCamelContext().getTypeConverter());
                 response.setJMSCorrelationID(exchange.getIn().getHeader("JMSCorrelationID", String.class));
                 localProducer.send(response);
             } catch (Exception e) {

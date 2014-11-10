@@ -35,6 +35,7 @@ public class DockerClientProfile {
     private String serverAddress;
     private Integer requestTimeout;
     private boolean secure;
+    private String certPath;
     
     public String getHost() {
         return host;
@@ -72,7 +73,7 @@ public class DockerClientProfile {
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
-    
+
     public Integer getRequestTimeout() {
         return requestTimeout;
     }
@@ -85,10 +86,16 @@ public class DockerClientProfile {
     public void setSecure(boolean secure) {
         this.secure = secure;
     }
+    public String getCertPath() {
+        return certPath;
+    }
+    public void setCertPath(String certPath) {
+        this.certPath = certPath;
+    }
     public String toUrl() throws DockerException {
         ObjectHelper.notNull(this.host, "host");
         ObjectHelper.notNull(this.port, "port");
-        
+
         URL uri;
         String secure = this.secure ? "https" : "http";
         try {
@@ -98,12 +105,14 @@ public class DockerClientProfile {
         }
 
         return uri.toString();
-        
+
     }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((certPath == null) ? 0 : certPath.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((host == null) ? 0 : host.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
@@ -114,6 +123,7 @@ public class DockerClientProfile {
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -126,6 +136,13 @@ public class DockerClientProfile {
             return false;
         }
         DockerClientProfile other = (DockerClientProfile)obj;
+        if (certPath == null) {
+            if (other.certPath != null) {
+                return false;
+            }
+        } else if (!certPath.equals(other.certPath)) {
+            return false;
+        }
         if (email == null) {
             if (other.email != null) {
                 return false;
@@ -180,5 +197,5 @@ public class DockerClientProfile {
         }
         return true;
     }
-  
+ 
 }

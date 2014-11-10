@@ -21,10 +21,6 @@
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-  <bean id="myDb" class="com.mongodb.Mongo">
-    <constructor-arg index="0" value="localhost"/>
-  </bean>
   
   <camelContext xmlns="http://camel.apache.org/schema/spring">
   
@@ -44,7 +40,15 @@
         <from uri="direct:save" />
         <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=save&amp;writeConcern=SAFE" />
     </route>
-    
+
+    <route>
+        <from uri="direct:testStoreOid" />
+        <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=save&amp;writeConcern=SAFE" />
+        <setBody>
+          <header>CamelMongoOid</header>
+        </setBody>
+    </route>
+
     <route>
         <from uri="direct:update" />
         <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=update&amp;writeConcern=SAFE" />

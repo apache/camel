@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +37,6 @@ public class DockerConfigurationTest {
     
     @Test
     public void testPropertyFromHeader() {
-        
         String host = "camelhost";
         
         Message message = new DefaultMessage();
@@ -59,9 +57,6 @@ public class DockerConfigurationTest {
         Message message = new DefaultMessage();
         String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);
-
-
-        
     }
 
 }

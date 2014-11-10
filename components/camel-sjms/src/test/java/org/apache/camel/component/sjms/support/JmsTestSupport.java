@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.support;
 
 import javax.jms.Connection;
+import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -28,6 +29,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -45,6 +49,7 @@ public class JmsTestSupport extends CamelTestSupport {
     private BrokerService broker;
     private Connection connection;
     private Session session;
+    private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
     /** 
      * Set up the Broker
@@ -57,10 +62,8 @@ public class JmsTestSupport extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         deleteDirectory("target/activemq-data");
         broker = new BrokerService();
-        final int port = AvailablePortFinder.getNextAvailable(33333);
+        int port = AvailablePortFinder.getNextAvailable(33333);
         brokerUri = "tcp://localhost:" + port;
-        //Disable the JMX by default
-        broker.setUseJmx(false);
         broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable(port + 1));
         configureBroker(broker);
         startBroker();
@@ -138,5 +141,13 @@ public class JmsTestSupport extends CamelTestSupport {
 
     public Session getSession() {
         return session;
+    }
+
+    public MessageConsumer createQueueConsumer(String destination) throws Exception {
+        return JmsObjectFactory.createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null);
+    }
+
+    public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
+        return JmsObjectFactory.createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null);
     }
 }

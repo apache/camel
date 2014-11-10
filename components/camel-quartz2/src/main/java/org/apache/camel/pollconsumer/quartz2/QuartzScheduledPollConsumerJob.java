@@ -29,9 +29,6 @@ public class QuartzScheduledPollConsumerJob extends CamelJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerJob.class);
 
-    public QuartzScheduledPollConsumerJob() {
-    }
-
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         LOG.trace("Execute job: {}", context);
