@@ -28,7 +28,6 @@ import com.mongodb.util.JSON;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.types.ObjectId;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
@@ -108,16 +107,6 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         DBObject dbObject = new BasicDBObject();
         ObjectId oid = template.requestBody("direct:testStoreOidOnSave", dbObject, ObjectId.class);
         assertEquals(dbObject.get("_id"), oid);
-    }
-
-    @Ignore
-    @Test
-    public void testStoreOidsOnSave() throws Exception {
-        DBObject firstDbObject = new BasicDBObject();
-        DBObject secondDbObject = new BasicDBObject();
-        List<?> oids = template.requestBody("direct:testStoreOidOnSave", asList(firstDbObject, secondDbObject), List.class);
-        assertTrue(oids.contains(firstDbObject.get("_id")));
-        assertTrue(oids.contains(secondDbObject.get("_id")));
     }
     
     @Test
