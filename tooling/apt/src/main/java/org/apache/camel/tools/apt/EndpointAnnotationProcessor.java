@@ -247,6 +247,18 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             model.setVersionId(map.get("version"));
         }
 
+        // favor to use class javadoc of component as description
+        if (model.getJavaType() != null) {
+            Elements elementUtils = processingEnv.getElementUtils();
+            TypeElement typeElement = findTypeElement(roundEnv, model.getJavaType());
+            if (typeElement != null) {
+                String doc = elementUtils.getDocComment(typeElement);
+                if (doc != null) {
+                    model.setDescription(doc);
+                }
+            }
+        }
+
         return model;
     }
 

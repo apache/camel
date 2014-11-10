@@ -161,7 +161,10 @@ final class JsonSchemaHelper {
             }
 
             // remove all HTML tags
-            line = line.replaceAll("\\</?\\w+\\/?>", "");
+            line = line.replaceAll("<.*?>", "");
+
+            // remove all inlined javadoc links
+            line = line.replaceAll("\\{\\@\\w+\\s(\\w+)\\}", "$1");
 
             // we are starting from a new line, so add a whitespace
             if (!first) {
