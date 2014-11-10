@@ -27,8 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/bean.html">Bean Component</a>
- * will look up the URI in the {@link org.apache.camel.spi.Registry} and use that to handle message dispatching.
+ * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
  *
  * @version 
  */
