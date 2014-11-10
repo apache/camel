@@ -96,7 +96,7 @@ public class EndpointList extends CamelCommandSupport {
                     boolean first = true;
                     String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
                     // use a basic json parser
-                    List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json);
+                    List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
                     // lets sort the options by name
                     Collections.sort(options, new Comparator<Map<String, String>>() {

@@ -48,6 +48,9 @@ public class ManagedUnregisterComponentTest extends ManagementTestSupport {
         String id = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", id);
 
+        String desc = (String) mbeanServer.getAttribute(on, "ComponentDescription");
+        assertNotNull(desc);
+
         context.stop();
 
         assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));

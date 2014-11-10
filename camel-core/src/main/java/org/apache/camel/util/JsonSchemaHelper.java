@@ -115,7 +115,7 @@ public final class JsonSchemaHelper {
      * @param json the json
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
-    public static List<Map<String, String>> parseJsonSchema(String group, String json) {
+    public static List<Map<String, String>> parseJsonSchema(String group, String json, boolean parseProperties) {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
         if (json == null) {
             return answer;
@@ -128,7 +128,8 @@ public final class JsonSchemaHelper {
         for (String line : lines) {
             // we need to find the group first
             if (!found) {
-                found = line.startsWith("  \"" + group + "\":");
+                String s = line.trim();
+                found = s.startsWith("\"" + group + "\":");
                 continue;
             }
 
@@ -139,8 +140,14 @@ public final class JsonSchemaHelper {
 
             Map<String, String> row = new LinkedHashMap<String, String>();
             Matcher matcher = PATTERN.matcher(line);
-            // the first key is the name of the option
-            String key = "name";
+
+            String key;
+            if (parseProperties) {
+                // when parsing properties the first key is given as name, so the first parsed token is the value of the name
+                key = "name";
+            } else {
+                key = null;
+            }
             while (matcher.find()) {
                 if (key == null) {
                     key = matcher.group(1);
