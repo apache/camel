@@ -242,7 +242,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             // need to sanitize the description first
             String doc = map.get("projectDescription");
             if (doc != null) {
-                model.setDescription(sanitizeDescription(doc));
+                model.setDescription(sanitizeDescription(doc, true));
             } else {
                 model.setDescription("");
             }
@@ -270,14 +270,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             if (typeElement != null) {
                 String doc = elementUtils.getDocComment(typeElement);
                 if (doc != null) {
-                    // need to sanitize the description first
-                    doc = sanitizeDescription(doc);
-                    // grab the first sentence only as this is for short description
-                    int idx = doc.indexOf('.');
-                    if (idx != -1) {
-                        // do not include the dot, so do not use idx + 1
-                        doc = doc.substring(0, idx);
-                    }
+                    // need to sanitize the description first (we only want a summary)
+                    doc = sanitizeDescription(doc, true);
                     // the javadoc may actually be empty, so only change the doc if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
                         model.setDescription(doc);

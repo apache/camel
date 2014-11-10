@@ -60,7 +60,7 @@ final class JsonSchemaHelper {
 
         if (!Strings.isNullOrEmpty(description)) {
             sb.append(", \"description\": ");
-            String text = sanitizeDescription(description);
+            String text = sanitizeDescription(description, false);
             sb.append(Strings.doubleQuote(text));
         }
 
@@ -146,7 +146,7 @@ final class JsonSchemaHelper {
      * @param javadoc  the javadoc
      * @return the text that is valid as json
      */
-    public static String sanitizeDescription(String javadoc) {
+    public static String sanitizeDescription(String javadoc, boolean summary) {
         // lets just use what java accepts as identifiers
         StringBuilder sb = new StringBuilder();
 
@@ -165,21 +165,36 @@ final class JsonSchemaHelper {
             // remove all HTML tags
             line = line.replaceAll("<.*?>", "");
 
-            // remove all inlined javadoc links
-            line = line.replaceAll("\\{\\@\\w+\\s(\\w+)\\}", "$1");
+            // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
+            line = line.replaceAll("\\{\\@\\w+\\s([\\w.]+)\\}", "$1");
 
             // we are starting from a new line, so add a whitespace
             if (!first) {
                 sb.append(' ');
             }
 
+            // create a new line
+            StringBuilder cb = new StringBuilder();
             for (char c : line.toCharArray()) {
                 if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
-                    sb.append(c);
+                    cb.append(c);
                 } else if (Character.isWhitespace(c)) {
                     // always use space as whitespace, also for line feeds etc
-                    sb.append(' ');
+                    cb.append(' ');
                 }
+            }
+
+            // append data
+            String s = cb.toString().trim();
+            sb.append(s);
+
+            boolean empty = Strings.isNullOrEmpty(s);
+            boolean endWithDot = s.endsWith(".");
+            boolean haveText = sb.length() > 0;
+
+            if (haveText && summary && (empty || endWithDot)) {
+                // if we only want a summary, then skip at first empty line we encounter, or if the sentence ends with a dot
+                break;
             }
 
             first = false;
