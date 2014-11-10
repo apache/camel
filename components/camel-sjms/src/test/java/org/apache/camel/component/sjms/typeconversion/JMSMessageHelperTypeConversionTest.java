@@ -17,11 +17,13 @@
 package org.apache.camel.component.sjms.typeconversion;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -29,6 +31,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 
+import javax.jms.BytesMessage;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.command.ActiveMQBytesMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,105 +46,115 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
 
     private static final String SJMS_QUEUE_URI = "sjms:queue:start";
     private static final String MOCK_RESULT_URI = "mock:result";
-    private Object result;
+    private Exchange message;
 
     @Test
     public void testJMSMessageHelperString() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
 
-        template.sendBody("sjms:queue:start", "Hello Camel");
+        template.sendBody(SJMS_QUEUE_URI, "Hello Camel");
         assertMockEndpointsSatisfied();
-        assertTrue(String.class.isInstance(result));
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
     }
     
     @Test
     public void testJMSMessageHelperInputStream() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         String p = "Hello Camel";
         InputStream is = new ByteArrayInputStream( p.getBytes() );
-        template.sendBody("sjms:queue:start", is);
+        template.sendBody(SJMS_QUEUE_URI, is);
         assertMockEndpointsSatisfied();
-        assertTrue(byte[].class.isInstance(result));
+        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
     }
     
     @Test
     public void testJMSMessageHelperByteBuffer() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         String p = "Hello Camel";
         ByteBuffer bb = ByteBuffer.wrap(p.getBytes()); 
-        template.sendBody("sjms:queue:start", bb);
+        template.sendBody(SJMS_QUEUE_URI, bb);
         assertMockEndpointsSatisfied();
-        assertTrue(byte[].class.isInstance(result));
+        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
     }
     
     @Test
-    public void testJMSMessageHelperFile() throws InterruptedException, FileNotFoundException {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+    public void testJMSMessageHelperFile() throws InterruptedException, IOException {
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         String p = "Hello Camel";
-        FileOutputStream prova = null;
-		prova = new FileOutputStream("test.txt");
-		assertNotNull(prova);
-        PrintStream scrivi = new PrintStream(prova);
-        scrivi.print(p);
-        scrivi.close();
-        File f = new File("test.txt");
-        template.sendBody("sjms:queue:start", f);
+        File f = File.createTempFile("tmp-test", ".txt");
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        bw.write(p);
+        bw.close();
+        template.sendBody(SJMS_QUEUE_URI, f);
         assertMockEndpointsSatisfied();
-        boolean result = f.delete();
-        assertTrue(result);
+        boolean resultDelete = f.delete();
+        assertTrue(resultDelete);
+        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
     }
     
     @Test
-    public void testJMSMessageHelperReader() throws InterruptedException, FileNotFoundException {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+    public void testJMSMessageHelperReader() throws InterruptedException, IOException {
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         String p = "Hello Camel";
-        FileOutputStream prova = null;
-		prova = new FileOutputStream("test.txt");
-		assertNotNull(prova);
-        PrintStream scrivi = new PrintStream(prova);
-        scrivi.print(p);
-        scrivi.close();
-        Reader test = new BufferedReader(new FileReader("test.txt"));
-        template.sendBody("sjms:queue:start", test);
+        File f = File.createTempFile("tmp-test", ".txt");
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        bw.write(p);
+        bw.close();
+        Reader test = new BufferedReader(new FileReader(f.getAbsolutePath()));
+        template.sendBody(SJMS_QUEUE_URI, test);
         assertMockEndpointsSatisfied();
-        boolean result = (new File("test.txt")).delete();
-        assertTrue(result);
+        boolean resultDelete = f.delete();
+        assertTrue(resultDelete);
+        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
     }
     
     @Test
     public void testJMSMessageHelperStringReader() throws InterruptedException, FileNotFoundException {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         String p = "Hello Camel";
         StringReader test = new StringReader(p);
-        template.sendBody("sjms:queue:start", test);
+        template.sendBody(SJMS_QUEUE_URI, test);
         assertMockEndpointsSatisfied();
-        assertTrue(byte[].class.isInstance(result));
+        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
     }
     
     @Test
     public void testJMSMessageHelperChar() throws InterruptedException, FileNotFoundException {
-        getMockEndpoint("mock:result").expectedBodiesReceived("H");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("H");
         char p = 'H';
-        template.sendBody("sjms:queue:start", p);
+        template.sendBody(SJMS_QUEUE_URI, p);
         assertMockEndpointsSatisfied();
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
+    }
+    
+    @Test
+    public void testJMSMessageHelperCharacter() throws InterruptedException, FileNotFoundException {
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("H");
+        Character p = 'H';
+        template.sendBody(SJMS_QUEUE_URI, p);
+        assertMockEndpointsSatisfied();
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
     }
     
     @Test
     public void testJMSMessageHelperCharArray() throws InterruptedException, FileNotFoundException {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         char[] p = {'H','e','l','l','o',' ','C','a','m','e','l'};
-        template.sendBody("sjms:queue:start", p);
+        template.sendBody(SJMS_QUEUE_URI, p);
         assertMockEndpointsSatisfied();
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(SJMS_QUEUE_URI).process(new Processor() {
+                interceptSendToEndpoint(MOCK_RESULT_URI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        result = exchange.getIn().getBody();
+                        message = (Exchange) exchange;
                     }
-                }).to(MOCK_RESULT_URI);
+                });
+                
+                from(SJMS_QUEUE_URI).to(MOCK_RESULT_URI);
             }
         };
     }

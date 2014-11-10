@@ -123,7 +123,8 @@ public final class JmsMessageHelper {
                 break;
             case Text:
                 TextMessage textMessage = session.createTextMessage();
-                textMessage.setText((String) payload);
+                String convertedText = typeConverter.convertTo(String.class, payload);
+                textMessage.setText(convertedText);
                 answer = textMessage;
                 break;
             case Stream:
@@ -384,7 +385,7 @@ public final class JmsMessageHelper {
             } else if (Collection.class.isInstance(payload)) {
                 answer = JmsMessageType.Map;
             } else if (InputStream.class.isInstance(payload)) {
-                answer = JmsMessageType.Stream;
+                answer = JmsMessageType.Bytes;
             } else if (ByteBuffer.class.isInstance(payload)) {
                 answer = JmsMessageType.Bytes;
             } else if (File.class.isInstance(payload)) {
@@ -392,6 +393,10 @@ public final class JmsMessageHelper {
             } else if (Reader.class.isInstance(payload)) {
                 answer = JmsMessageType.Bytes;
             } else if (String.class.isInstance(payload)) {
+                answer = JmsMessageType.Text;
+            } else if (char[].class.isInstance(payload)) {
+                answer = JmsMessageType.Text;
+            } else if (Character.class.isInstance(payload)) {
                 answer = JmsMessageType.Text;
             } else if (Serializable.class.isInstance(payload)) {
                 answer = JmsMessageType.Object;
