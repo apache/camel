@@ -67,7 +67,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     @Test
     public void testStoreOid() throws Exception {
         DBObject dbObject = new BasicDBObject();
-        ObjectId oid = template.requestBody("direct:testStoreOid", dbObject, ObjectId.class);
+        ObjectId oid = template.requestBody("direct:testStoreOidOnInsert", dbObject, ObjectId.class);
         assertEquals(dbObject.get("_id"), oid);
     }
 
@@ -75,7 +75,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     public void testStoreOids() throws Exception {
         DBObject firstDbObject = new BasicDBObject();
         DBObject secondDbObject = new BasicDBObject();
-        List<ObjectId> oids = template.requestBody("direct:testStoreOid", asList(firstDbObject, secondDbObject), List.class);
+        List<ObjectId> oids = template.requestBody("direct:testStoreOidOnInsert", asList(firstDbObject, secondDbObject), List.class);
         assertTrue(oids.contains(firstDbObject.get("_id")));
         assertTrue(oids.contains(secondDbObject.get("_id")));
     }
@@ -232,7 +232,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                 
                 from("direct:count").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
                 from("direct:insert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
-                from("direct:testStoreOid").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
+                from("direct:testStoreOidOnInsert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
                     setBody().header(MongoDbConstants.OID);
                 from("direct:save").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE");
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");

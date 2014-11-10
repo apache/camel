@@ -37,16 +37,16 @@
     </route>
     
     <route>
-        <from uri="direct:save" />
-        <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=save&amp;writeConcern=SAFE" />
-    </route>
-
-    <route>
-        <from uri="direct:testStoreOid" />
+        <from uri="direct:testStoreOidOnInsert" />
         <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=insert&amp;writeConcern=SAFE" />
         <setBody>
           <header>CamelMongoOid</header>
         </setBody>
+    </route>
+
+    <route>
+        <from uri="direct:save" />
+        <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=save&amp;writeConcern=SAFE" />
     </route>
 
     <route>
