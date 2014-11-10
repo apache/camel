@@ -210,6 +210,7 @@ public class MongoDbProducer extends DefaultProducer {
 
         WriteConcern wc = extractWriteConcern(exchange);
         WriteResult result = wc == null ? dbCol.save(saveObj) : dbCol.save(saveObj, wc);
+        exchange.getIn().setHeader(MongoDbConstants.OID, saveObj.get("_id"));
 
         prepareResponseMessage(exchange, MongoDbOperation.save);
         // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 

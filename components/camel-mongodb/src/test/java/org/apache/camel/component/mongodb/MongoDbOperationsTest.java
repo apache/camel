@@ -28,6 +28,7 @@ import com.mongodb.util.JSON;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.types.ObjectId;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
@@ -100,6 +101,23 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         record1 = testCollection.findOne("testSave1");
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record1.get("scientist"));
 
+    }
+
+    @Test
+    public void testStoreOidOnSave() throws Exception {
+        DBObject dbObject = new BasicDBObject();
+        ObjectId oid = template.requestBody("direct:testStoreOidOnSave", dbObject, ObjectId.class);
+        assertEquals(dbObject.get("_id"), oid);
+    }
+
+    @Ignore
+    @Test
+    public void testStoreOidsOnSave() throws Exception {
+        DBObject firstDbObject = new BasicDBObject();
+        DBObject secondDbObject = new BasicDBObject();
+        List<?> oids = template.requestBody("direct:testStoreOidOnSave", asList(firstDbObject, secondDbObject), List.class);
+        assertTrue(oids.contains(firstDbObject.get("_id")));
+        assertTrue(oids.contains(secondDbObject.get("_id")));
     }
     
     @Test
@@ -235,6 +253,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                 from("direct:testStoreOidOnInsert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
                     setBody().header(MongoDbConstants.OID);
                 from("direct:save").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE");
+                from("direct:testStoreOidOnSave").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE").
+                    setBody().header(MongoDbConstants.OID);
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");
                 from("direct:remove").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove&writeConcern=SAFE");
                 from("direct:aggregate").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&writeConcern=SAFE");

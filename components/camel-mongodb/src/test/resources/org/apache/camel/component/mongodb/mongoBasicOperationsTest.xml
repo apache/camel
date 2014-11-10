@@ -50,6 +50,14 @@
     </route>
 
     <route>
+        <from uri="direct:testStoreOidOnSave" />
+        <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=save&amp;writeConcern=SAFE" />
+        <setBody>
+          <header>CamelMongoOid</header>
+        </setBody>
+    </route>
+
+    <route>
         <from uri="direct:update" />
         <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=update&amp;writeConcern=SAFE" />
     </route>
