@@ -87,7 +87,7 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     public TabularData explain(boolean allOptions) {
         try {
             String json = endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), allOptions);
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(json);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEndpointTabularType());
 

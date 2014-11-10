@@ -111,20 +111,31 @@ public final class JsonSchemaHelper {
     /**
      * Parses the json schema to split it into a list or rows, where each row contains key value pairs with the metadata
      *
+     * @param group the group to parse from such as <tt>component</tt>, <tt>componentProperties</tt>, or <tt>properties</tt>.
      * @param json the json
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
-    public static List<Map<String, String>> parseJsonSchema(String json) {
+    public static List<Map<String, String>> parseJsonSchema(String group, String json) {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
         if (json == null) {
             return answer;
         }
 
+        boolean found = false;
+
         // parse line by line
-        // skip first 2 lines as they are leading
         String[] lines = json.split("\n");
-        for (int i = 2; i < lines.length; i++) {
-            String line = lines[i];
+        for (String line : lines) {
+            // we need to find the group first
+            if (!found) {
+                found = line.startsWith("  \"" + group + "\":");
+                continue;
+            }
+
+            // we should stop when we end the group
+            if (line.equals("  },") || line.equals("  }")) {
+                break;
+            }
 
             Map<String, String> row = new LinkedHashMap<String, String>();
             Matcher matcher = PATTERN.matcher(line);

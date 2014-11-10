@@ -19,12 +19,15 @@ package org.apache.camel.tools.apt;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -49,6 +52,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
+import static org.apache.camel.tools.apt.IOHelper.loadText;
+import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
@@ -58,6 +63,7 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class EndpointAnnotationProcessor extends AbstractProcessor {
+
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
             return true;
@@ -143,26 +149,36 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
+        // gather component information
         String scheme = uriEndpoint.scheme();
-
-        String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
-        if (!isNullOrEmpty(classDoc)) {
-            classDoc = JsonSchemaHelper.sanitizeDescription(classDoc);
-        }
-
-        // TODO: add some top details about component scheme name, and documentation
+        ComponentModel componentModel = findComponentProperties(roundEnv, scheme);
 
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
         findClassProperties(roundEnv, endpointOptions, classElement, "");
         if (!endpointOptions.isEmpty()) {
-            String json = createParameterJsonSchema(endpointOptions);
+            String json = createParameterJsonSchema(componentModel, endpointOptions);
             writer.println(json);
         }
     }
 
+    public String createParameterJsonSchema(ComponentModel componentModel, Set<EndpointOption> options) {
+        StringBuilder buffer = new StringBuilder("{");
+        // component model
+        buffer.append("\n \"component\": {");
+        buffer.append("\n    \"scheme\": \"" + componentModel.getScheme() + "\",");
+        buffer.append("\n    \"description\": \"" + sanitizeDescription(componentModel.getDescription()) + "\",");
+        buffer.append("\n    \"javaType\": \"" + componentModel.getJavaType() + "\",");
+        buffer.append("\n    \"groupId\": \"" + componentModel.getGroupId() + "\",");
+        buffer.append("\n    \"artifactId\": \"" + componentModel.getArtifactId() + "\",");
+        buffer.append("\n    \"version\": \"" + componentModel.getVersionId() + "\"");
+        buffer.append("\n  },");
 
-    public String createParameterJsonSchema(Set<EndpointOption> options) {
-        StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+        // and empty component properties as placeholder for future improvement
+        buffer.append("\n  \"componentProperties\": {");
+        buffer.append("\n  },");
+
+        // endpoint properties was named properties at first, and hence we stick with that naming to be compatible
+        buffer.append("\n  \"properties\": {");
         boolean first = true;
         for (EndpointOption entry : options) {
             if (first) {
@@ -173,7 +189,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             buffer.append("\n    ");
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDefaultValue(), entry.getDocumentationWithNotes(), entry.isEnumType(), entry.getEnums()));
         }
-        buffer.append("\n  }\n}\n");
+        buffer.append("\n  }");
+
+        buffer.append("\n}\n");
         return buffer.toString();
     }
 
@@ -194,6 +212,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("    <th>Name</th>");
             writer.println("    <th>Type</th>");
             writer.println("    <th>Default Value</th>");
+            writer.println("    <th>Enum Values</th>");
             writer.println("    <th>Description</th>");
             writer.println("  </tr>");
             for (EndpointOption option : endpointOptions) {
@@ -201,11 +220,52 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + option.getType() + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
+                writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
                 writer.println("  </tr>");
             }
             writer.println("</table>");
         }
+    }
+
+    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, String scheme) {
+        ComponentModel model = new ComponentModel(scheme);
+
+        String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
+        if (data != null) {
+            Map<String, String> map = parseAsMap(data);
+            model.setJavaType(map.get("class"));
+        }
+
+        data = loadResource("META-INF/services/org/apache/camel", "component.properties");
+        if (data != null) {
+            Map<String, String> map = parseAsMap(data);
+            // now we have a lot more data, so we need to load it as key/value
+            model.setDescription(map.get("projectDescription"));
+            model.setGroupId(map.get("groupId"));
+            model.setArtifactId(map.get("artifactId"));
+            model.setVersionId(map.get("version"));
+        }
+
+        // favor to use class javadoc of component as description
+        if (model.getJavaType() != null) {
+            Elements elementUtils = processingEnv.getElementUtils();
+            TypeElement typeElement = findTypeElement(roundEnv, model.getJavaType());
+            if (typeElement != null) {
+                String doc = elementUtils.getDocComment(typeElement);
+                if (doc != null) {
+                    // grab the first sentence only as this is for short description
+                    int idx = doc.indexOf('.');
+                    if (idx != -1) {
+                        // do not include the dot, so do not use idx + 1
+                        doc = doc.substring(0, idx);
+                    }
+                    model.setDescription(doc);
+                }
+            }
+        }
+
+        return model;
     }
 
     protected void findClassProperties(RoundEnvironment roundEnv, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
@@ -357,6 +417,44 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
     }
 
+    protected String loadResource(String packageName, String fileName) {
+        Filer filer = processingEnv.getFiler();
+
+        FileObject resource;
+        try {
+            resource = filer.getResource(StandardLocation.CLASS_OUTPUT, "", packageName + "/" + fileName);
+        } catch (Throwable e) {
+            return "Crap" + e.getMessage();
+        }
+
+        if (resource == null) {
+            return null;
+        }
+
+        try {
+            InputStream is = resource.openInputStream();
+            return loadText(is, true);
+        } catch (Exception e) {
+            warning("Could not load file");
+        }
+
+        return null;
+    }
+
+    protected Map<String, String> parseAsMap(String data) {
+        Map<String, String> answer = new HashMap<String, String>();
+        String[] lines = data.split("\n");
+        for (String line : lines) {
+            int idx = line.indexOf('=');
+            String key = line.substring(0, idx);
+            String value = line.substring(idx + 1);
+            // remove ending line break for the values
+            value = value.trim().replaceAll("\n", "");
+            answer.put(key.trim(), value);
+        }
+        return answer;
+    }
+
     protected void log(String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
     }
@@ -376,6 +474,64 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         e.printStackTrace(writer);
         writer.close();
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, buffer.toString());
+    }
+
+    private static final class ComponentModel {
+
+        private String scheme;
+        private String javaType;
+        private String description;
+        private String groupId;
+        private String artifactId;
+        private String versionId;
+
+        private ComponentModel(String scheme) {
+            this.scheme = scheme;
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public String getJavaType() {
+            return javaType;
+        }
+
+        public void setJavaType(String javaType) {
+            this.javaType = javaType;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public String getVersionId() {
+            return versionId;
+        }
+
+        public void setVersionId(String versionId) {
+            this.versionId = versionId;
+        }
     }
 
     private static final class EndpointOption {
@@ -415,11 +571,25 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             return documentation;
         }
 
-        public String getDocumentationWithNotes() {
-            if (!isNullOrEmpty(defaultValueNote)) {
-                return documentation + ". Default value notice: " + defaultValueNote;
+        public String getEnumValuesAsHtml() {
+            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
+            if (enums != null && enums.size() > 0) {
+                for (String e : enums) {
+                    csb.append(e);
+                }
             }
-            return documentation;
+            return csb.toString();
+        }
+
+        public String getDocumentationWithNotes() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(documentation);
+
+            if (!isNullOrEmpty(defaultValueNote)) {
+                sb.append(". Default value notice: ").append(defaultValueNote);
+            }
+
+            return sb.toString();
         }
 
         public boolean isEnumType() {
