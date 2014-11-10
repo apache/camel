@@ -251,7 +251,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
      * Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:
      * a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object.
      * b) If the query has more than one column, then it will return a Map of that result.
-     * c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names. It will assume your class has a default constructor to create instance with.
+     * c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names. 
+     * It will assume your class has a default constructor to create instance with.
      * d) If the query resulted in more than one rows, it throws an non-unique result exception.
      */
     public void setOutputType(SqlOutputType outputType) {
