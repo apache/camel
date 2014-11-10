@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -220,6 +222,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Find all Camel components names available in the classpath")
     List<String> findComponentNames() throws Exception;
+
+    /**
+     * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
+     *
+     * @return a list with the data
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "List all Camel components available in the classpath")
+    TabularData listComponents() throws Exception;
 
     /**
      * Returns the JSON schema representation of the endpoint parameters for the given component name

@@ -75,4 +75,16 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
+    public static TabularType listComponentsTabularType() throws OpenDataException {
+        CompositeType ct = listComponentsCompositeType();
+        return new TabularType("listComponents", "Lists all the components in the registry", ct, new String[]{"name", "description", "state", "type", "groupId", "artifactId", "version"});
+    }
+
+    public static CompositeType listComponentsCompositeType() throws OpenDataException {
+        return new CompositeType("name", "Components", new String[]{"name", "description", "status", "type", "groupId", "artifactId", "version"},
+                new String[]{"Name", "Description", "Status", "Type", "GroupId", "ArtifactId", "Version"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+
 }
