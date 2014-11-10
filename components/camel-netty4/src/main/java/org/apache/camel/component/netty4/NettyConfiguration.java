@@ -91,7 +91,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam
     private boolean producerPoolEnabled = true;
     @UriParam
-    private boolean udpConnectionlessSend = false;
+    private boolean udpConnectionlessSending;
 
     /**
      * Returns a copy of this configuration
@@ -474,12 +474,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.producerPoolEnabled = producerPoolEnabled;
     }
 
-    public boolean isUdpConnectionlessSend() {
-        return udpConnectionlessSend;
+    public boolean isUdpConnectionlessSending() {
+        return udpConnectionlessSending;
     }
 
-    public void setUdpConnectionlessSend(boolean udpConnectionlessSend) {
-        this.udpConnectionlessSend = udpConnectionlessSend;
+    public void setUdpConnectionlessSending(boolean udpConnectionlessSending) {
+        this.udpConnectionlessSending = udpConnectionlessSending;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

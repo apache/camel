@@ -385,11 +385,11 @@ public class NettyProducer extends DefaultAsyncProducer {
             answer.awaitUninterruptibly();
             Channel channel = answer.channel();
             allChannels.add(channel);
-            // if connectionless send is true we don't do a connect.
+            // if udp connectionless sending is true we don't do a connect.
             // we just send on the channel created with bind which means
             // really fire and forget. You wont get an PortUnreachableException
             // if no one is listen on the port
-            if (!configuration.isUdpConnectionlessSend()) {
+            if (!configuration.isUdpConnectionlessSending()) {
                 answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             }
 
