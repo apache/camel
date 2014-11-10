@@ -257,7 +257,7 @@ public abstract class AbstractCamelRunner implements Runnable {
                     log.debug("Set field {} with value {}", field.getName(), propertyValue);
                 }
             } catch (Exception e) {
-                log.debug("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
+                log.debug("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.");
             }
         }
         return target;
