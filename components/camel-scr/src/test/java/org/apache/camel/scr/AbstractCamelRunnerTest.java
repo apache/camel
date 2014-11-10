@@ -27,6 +27,7 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -43,6 +44,13 @@ public class AbstractCamelRunnerTest {
         log.info("*******************************************************************");
         log.info("Test: " + testName.getMethodName());
         log.info("*******************************************************************");
+    }
+
+    @Test
+    public void testDeepConfigure() throws Exception {
+        ConcreteCamelRunner integration = new ConcreteCamelRunner();
+        integration.activate(null, integration.getDefaultProperties());
+        assertEquals("Overriding camelContextId failed (deep configure)", integration.getDefaultProperties().get("camelContextId"), integration.getContext().getName());
     }
 
     @Test

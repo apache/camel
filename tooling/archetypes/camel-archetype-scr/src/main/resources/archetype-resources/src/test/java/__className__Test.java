@@ -20,13 +20,14 @@
 // This file was generated from ${archetypeGroupId}/${archetypeArtifactId}/${archetypeVersion}
 package ${groupId};
 
-import org.apache.camel.scr.ScrHelper;
+import java.util.List;
+
+import org.apache.camel.scr.internal.ScrHelper;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,12 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.List;
-
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.*;
-import static org.hamcrest.Matchers.*;
 
 @RunWith(JUnit4.class)
 public class ${className}Test {
@@ -88,7 +83,7 @@ public class ${className}Test {
                 // Replace "from" endpoint with direct:start
                 replaceFromWith("direct:start");
                 // Mock and skip result endpoint
-                mockEndpointsAndSkip("log:*");
+                mockEndpoints("log:*");
             }
         });
 
@@ -96,23 +91,11 @@ public class ${className}Test {
         // resultEndpoint.expectedMessageCount(1); // If you want to just check the number of messages
         resultEndpoint.expectedBodiesReceived("hello"); // If you want to check the contents
 
-        // You can also take the expected result from an external file
-        // String result = IOUtils.toString(context.getClassResolver().loadResourceAsStream("testdata/out/result.txt"));
-        // resultEndpoint.expectedBodiesReceived(result.replaceAll("\r?\n", "\n"));
-
         // Start the integration
         integration.run();
 
         // Send the test message
         context.createProducerTemplate().sendBody("direct:start", "hello");
-
-        // You can also send an external file
-        // context.createProducerTemplate.sendBody("direct:start", context.getClassResolver().loadResourceAsStream("testdata/in/input.xml"));
-
-        // REST/HTTP services can be easily tested with RestAssured:
-        // get(context.resolvePropertyPlaceholders("{{restUrl}}")).then().statusCode(204).body(isEmptyOrNullString());
-        // given().param("status").get(context.resolvePropertyPlaceholders("{{restUrl}}")).then().statusCode(200).body(equalTo("active"));
-        // given().auth().basic("testuser", "testpass").body("hello").when().post(context.resolvePropertyPlaceholders("{{restUrl}}")).then().statusCode(200).body(equalTo("response"));
 
         resultEndpoint.assertIsSatisfied();
 	}

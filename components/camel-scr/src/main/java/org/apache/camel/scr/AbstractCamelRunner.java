@@ -54,9 +54,8 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
 
     // Configured fields
-    // TODO: can we make these private and have getter/setter
-    public String camelContextId = "camel-runner-default";
-    public volatile boolean active;
+    private String camelContextId = "camel-runner-default";
+    private boolean active = false;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
     protected ModelCamelContext context;
@@ -85,7 +84,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         createCamelContext(bundleContext, props);
 
         // Configure fields from properties
-        configure(context, this, log);
+        configure(context, this, log, true);
 
         setupCamelContext(bundleContext, camelContextId);
     }
@@ -236,11 +235,18 @@ public abstract class AbstractCamelRunner implements Runnable {
     }
 
     public static <T> T configure(final CamelContext context, final T target, final Logger log) {
+        return configure(context, target, log, false);
+    }
+
+    public static <T> T configure(final CamelContext context, final T target, final Logger log, final boolean deep) {
         Class clazz = target.getClass();
         log.debug("Configuring {}", clazz.getName());
         Collection<Field> fields = new ArrayList<Field>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-        fields.addAll(Arrays.asList(clazz.getFields()));
+        if (deep) {
+            fields.addAll(Arrays.asList(clazz.getFields()));
+            fields.addAll(Arrays.asList(clazz.getSuperclass().getDeclaredFields()));
+        }
         for (Field field : fields) {
             try {
                 String propertyValue = context.resolvePropertyPlaceholders("{{" + field.getName() + "}}");

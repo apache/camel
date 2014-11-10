@@ -29,12 +29,11 @@
     <groupId>org.apache.camel.archetypes</groupId>
     <artifactId>camel-archetype-scr</artifactId>
     <name>Camel :: Archetypes :: OSGi Service Component Runtime bundle</name>
-    <description>Creates a new Camel SCR bundle project for Red Hat JBoss Fuse 6.1.</description>
+    <description>Creates a new Camel SCR bundle project for Karaf</description>
     <packaging>maven-archetype</packaging>
 
     <properties>
-        <jboss-fuse-version>6.1.0.redhat-379</jboss-fuse-version>
-        <target-camel-version>2.12.0.redhat-610379</target-camel-version>
+        <target-camel-version>${project.version}</target-camel-version>
     </properties>
 
     <build>

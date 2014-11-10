@@ -21,7 +21,6 @@
 package ${groupId}.internal;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.commons.lang.Validate;
@@ -62,27 +61,8 @@ public class ${className}Route extends RouteBuilder {
             .maximumRedeliveryDelay(maximumRedeliveryDelay));
 
         from("{{from}}")
-            .startupOrder(2)
             .routeId(camelRouteId)
-            .onCompletion()
-                .to("direct:processCompletion")
-            .end()
-            .removeHeaders("*", "breadcrumbId")
             .to("{{to}}");
-
-        from("direct:processCompletion")
-            .startupOrder(1)
-            .routeId(camelRouteId + ".completion")
-            .choice()
-                .when(PredicateBuilder.and(simple("${exception} == null"), PredicateBuilder.constant(summaryLogging)))
-                    .to("log:" + camelRouteId +".success?groupInterval=60000")
-                .when(PredicateBuilder.and(simple("${exception} == null"), PredicateBuilder.constant(!summaryLogging)))
-                    .log("{{messageOk}}")
-                .when(PredicateBuilder.constant(summaryLogging))
-                    .to("log:" + camelRouteId +".failure?groupInterval=60000")
-                .otherwise()
-                    .log(LoggingLevel.ERROR, "{{messageError}}")
-            .endChoice();
 	}
 
     public void checkProperties() {

@@ -32,9 +32,6 @@
         </requiredProperty>
         <requiredProperty key="groupId"/>
         <requiredProperty key="className"/>
-        <requiredProperty key="jboss-fuse-version">
-            <defaultValue>${jboss-fuse-version}</defaultValue>
-        </requiredProperty>
         <requiredProperty key="target-camel-version">
             <defaultValue>${target-camel-version}</defaultValue>
         </requiredProperty>
