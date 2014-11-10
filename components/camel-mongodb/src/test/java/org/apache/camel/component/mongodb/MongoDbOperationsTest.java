@@ -65,17 +65,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     }
 
     @Test
-    public void testStoreOid() throws Exception {
+    public void testStoreOidOnInsert() throws Exception {
         DBObject dbObject = new BasicDBObject();
         ObjectId oid = template.requestBody("direct:testStoreOidOnInsert", dbObject, ObjectId.class);
         assertEquals(dbObject.get("_id"), oid);
     }
 
     @Test
-    public void testStoreOids() throws Exception {
+    public void testStoreOidsOnInsert() throws Exception {
         DBObject firstDbObject = new BasicDBObject();
         DBObject secondDbObject = new BasicDBObject();
-        List<ObjectId> oids = template.requestBody("direct:testStoreOidOnInsert", asList(firstDbObject, secondDbObject), List.class);
+        List<?> oids = template.requestBody("direct:testStoreOidOnInsert", asList(firstDbObject, secondDbObject), List.class);
         assertTrue(oids.contains(firstDbObject.get("_id")));
         assertTrue(oids.contains(secondDbObject.get("_id")));
     }

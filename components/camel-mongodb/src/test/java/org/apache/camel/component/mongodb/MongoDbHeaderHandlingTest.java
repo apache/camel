@@ -22,14 +22,12 @@ import com.mongodb.WriteResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
 
-    @Ignore
     @Test
-    public void testInHeadersTransferredToOut() {
+    public void testInHeadersTransferredToOutOnCount() {
         // a read operation
         assertEquals(0, testCollection.count());
         Exchange result = template.request("direct:count", new Processor() {
@@ -42,21 +40,22 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         assertTrue("Result is not of type Long", result.getOut().getBody() instanceof Long);
         assertEquals("Test collection should not contain any records", 0L, result.getOut().getBody());
         assertEquals("An input header was not returned", "def", result.getOut().getHeader("abc"));
-        
-        // a write operation
-        result = template.request("direct:insert", new Processor() {
+    }
+
+    @Test
+    public void testInHeadersTransferredToOutOnInsert() {
+        Exchange result = template.request("direct:insert", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("{\"_id\":\"testInsertString\", \"scientist\":\"Einstein\"}");
                 exchange.getIn().setHeader("abc", "def");
             }
         });
-        
+
         assertTrue(result.getOut().getBody() instanceof WriteResult);
         assertEquals("An input header was not returned", "def", result.getOut().getHeader("abc"));
         DBObject b = testCollection.findOne("testInsertString");
         assertNotNull("No record with 'testInsertString' _id", b);
-        
     }
     
     @Test
