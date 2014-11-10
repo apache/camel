@@ -103,7 +103,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("netty4:udp://localhost:8601?sync=false&textline=true&udpConnectionlessSend=true");
+                from("direct:in").to("netty4:udp://localhost:8601?sync=false&textline=true&udpConnectionlessSending=true");
             }
         };
     }
