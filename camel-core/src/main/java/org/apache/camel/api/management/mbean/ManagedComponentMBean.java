@@ -24,9 +24,6 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Component Name")
     String getComponentName();
 
-    @ManagedAttribute(description = "Component Description")
-    String getComponentDescription();
-
     @ManagedAttribute(description = "Component State")
     String getState();
 

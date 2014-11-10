@@ -17,8 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.ServiceStatus;
@@ -27,7 +25,6 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -37,24 +34,10 @@ import org.apache.camel.util.ObjectHelper;
 public class ManagedComponent implements ManagedInstance, ManagedComponentMBean {
     private final Component component;
     private final String name;
-    private String description;
 
     public ManagedComponent(String name, Component component) {
         this.name = name;
         this.component = component;
-
-        try {
-            String json = component.getCamelContext().getComponentParameterJsonSchema(name);
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
-            for (Map<String, String> row : rows) {
-                if (row.containsKey("description")) {
-                    this.description = row.get("description");
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
     }
 
     public void init(ManagementStrategy strategy) {
@@ -67,10 +50,6 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
     public String getComponentName() {
         return name;
-    }
-
-    public String getComponentDescription() {
-        return description;
     }
 
     public String getState() {
@@ -99,7 +78,11 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     @Override
     public String informationJson() {
         try {
-            return component.getCamelContext().getComponentParameterJsonSchema(name);
+            // a component may have been given a different name, so resolve its default name by its java type
+            // as we can find the component json information from the default component name
+            String defaultName = component.getCamelContext().resolveComponentDefaultName(component.getClass().getName());
+            String target = defaultName != null ? defaultName : name;
+            return component.getCamelContext().getComponentParameterJsonSchema(target);
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }

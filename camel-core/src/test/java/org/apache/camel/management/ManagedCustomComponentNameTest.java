@@ -22,13 +22,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockComponent;
 
 /**
  * @version 
  */
-public class ManagedUnregisterComponentTest extends ManagementTestSupport {
+public class ManagedCustomComponentNameTest extends ManagementTestSupport {
 
-    public void testUnregisterComponent() throws Exception {
+    public void testCustomName() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -37,7 +38,7 @@ public class ManagedUnregisterComponentTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=components,*"), null);
-        assertEquals(2, set.size());
+        assertEquals(3, set.size());
 
         ObjectName on = set.iterator().next();
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
@@ -60,7 +61,11 @@ public class ManagedUnregisterComponentTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                context.addComponent("foo", new MockComponent());
+
+                from("direct:start")
+                    .to("foo:foo")
+                    .to("mock:result");
             }
         };
     }

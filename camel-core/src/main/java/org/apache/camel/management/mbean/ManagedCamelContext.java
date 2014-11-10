@@ -500,13 +500,18 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 // - release = available from the Apache Camel release
                 // TODO: gather list of components in the Camel release
                 String status = context.hasComponent(name) != null ? "in use" : "on classpath";
-                String type = null;
+                String type = (String) entry.getValue().get("class");
                 String groupId = null;
                 String artifactId = null;
                 String version = null;
 
+                // a component may have been given a different name, so resolve its default name by its java type
+                // as we can find the component json information from the default component name
+                String defaultName = context.resolveComponentDefaultName(type);
+                String target = defaultName != null ? defaultName : name;
+
                 // load component json data, and parse it to gather the component meta-data
-                String json = context.getComponentParameterJsonSchema(name);
+                String json = context.getComponentParameterJsonSchema(target);
                 List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("description")) {

@@ -1336,6 +1336,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
 
+
+    /**
+     * Resolves a component's default name from its java type.
+     * <p/>
+     * A component may be used with a non default name such as <tt>activemq</tt>, <tt>wmq</tt> for the JMS component.
+     * This method can resolve the default component name by its java type.
+     *
+     * @param javaType the FQN name of the java type
+     * @return the default component name.
+     */
+    String resolveComponentDefaultName(String javaType);
+
     /**
      * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
      *

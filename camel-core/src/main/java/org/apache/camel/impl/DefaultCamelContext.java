@@ -1083,6 +1083,38 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public String resolveComponentDefaultName(String javaType) {
+        // special for some components
+        if ("org.apache.activemq.camel.component.ActiveMQComponent".equals(javaType)) {
+            return "jms";
+        }
+
+        // try to find the component by its java type from the in-use components
+        if (javaType != null) {
+            // find all the components which will include the default component name
+            try {
+                Map<String, Properties> all = CamelContextHelper.findComponents(this);
+                for (Map.Entry<String, Properties> entry : all.entrySet()) {
+                    String fqn = (String) entry.getValue().get("class");
+                    if (javaType.equals(fqn)) {
+                        // is there component docs for that name?
+                        String name = entry.getKey();
+                        String json = getComponentParameterJsonSchema(name);
+                        if (json != null) {
+                            return name;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+                return null;
+            }
+        }
+
+        // could not find a component with that name
+        return null;
+    }
+
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
         return CamelContextHelper.findComponents(this);
     }
