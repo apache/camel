@@ -1172,6 +1172,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "netty4/http";
         } else if ("spring-event".equals(componentName)) {
             return "event";
+        } else if ("class".equals(componentName)) {
+            return "beanclass";
         }
         return componentName.replaceAll("-", "");
     }

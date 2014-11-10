@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.component.beanclass;
 
 import org.apache.camel.Component;
+import org.apache.camel.component.bean.BeanEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
