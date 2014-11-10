@@ -42,6 +42,10 @@ public class BeanComponent extends UriEndpointComponent {
         super(BeanEndpoint.class);
     }
     
+    public BeanComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
+
     /**
      * A helper method to create a new endpoint from a bean with a generated URI
      */

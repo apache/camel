@@ -22,15 +22,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 
 /**
- * The <a href="http://camel.apache.org/class.html">Class Component</a>
- * will create an instance of the class from the {@link org.apache.camel.spi.Registry} and use that to handle message dispatching.
+ * The <a href="http://camel.apache.org/class.html">Class Component</a> is for invoking Java classes from Camel.
+ * <p/>
+ * This component is an extension to the {@link org.apache.camel.component.bean.BeanComponent}.
  *
  * @version 
  */
 public class ClassComponent extends BeanComponent {
 
+    public ClassComponent() {
+        super(ClassEndpoint.class);
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BeanEndpoint endpoint = new BeanEndpoint(uri, this);
+        ClassEndpoint endpoint = new ClassEndpoint(uri, this);
         endpoint.setBeanName(remaining);
 
         // bean name is the FQN

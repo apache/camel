@@ -134,9 +134,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
         }
 
-        Consumer answer = new SedaConsumer(this, processor);
+        Consumer answer = createNewConsumer(processor);
         configureConsumer(answer);
         return answer;
+    }
+
+    protected SedaConsumer createNewConsumer(Processor processor) {
+        return new SedaConsumer(this, processor);
     }
 
     @Override
