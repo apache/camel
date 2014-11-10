@@ -254,6 +254,12 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             if (typeElement != null) {
                 String doc = elementUtils.getDocComment(typeElement);
                 if (doc != null) {
+                    // grab the first sentence only as this is for short description
+                    int idx = doc.indexOf('.');
+                    if (idx != -1) {
+                        // do not include the dot, so do not use idx + 1
+                        doc = doc.substring(0, idx);
+                    }
                     model.setDescription(doc);
                 }
             }
