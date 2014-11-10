@@ -42,6 +42,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
+import org.jboss.netty.channel.SucceededChannelFuture;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -234,8 +235,14 @@ public class NettyProducer extends DefaultAsyncProducer {
         // setup state as attachment on the channel, so we can access the state later when needed
         channel.setAttachment(new NettyCamelState(producerCallback, exchange));
 
+        InetSocketAddress remoteAddress = null;
+        if (!isTcp() && configuration.isUdpConnectionlessSending()) {
+            // Need to specify the remoteAddress here
+            remoteAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort()); 
+        }
+        
         // write body
-        NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
+        NettyHelper.writeBodyAsync(LOG, channel, remoteAddress, body, exchange, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
@@ -398,9 +405,18 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
             // bind and store channel so we can close it when stopping
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+            
             allChannels.add(channel);
-            answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-
+            // if udp connectionless sending is true we don't do a connect.
+            // we just send on the channel created with bind which means
+            // really fire and forget. You wont get an PortUnreachableException
+            // if no one is listen on the port
+            if (!configuration.isUdpConnectionlessSending()) {
+                answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            } else {
+                answer = new SucceededChannelFuture(channel);
+            }
+            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
                        new Object[]{configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap.getOptions()});
@@ -523,8 +539,14 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         @Override
         public boolean validateObject(Channel channel) {
-            // we need a connected channel to be valid
-            boolean answer = channel.isConnected();
+            boolean answer = false;    
+            if (configuration.isUdpConnectionlessSending()) {
+                // we don't need check if the channel is connected
+                answer = channel.isOpen();
+            } else {
+                // we need a connected channel to be valid
+                answer = channel.isConnected();
+            }
             LOG.trace("Validating channel: {} -> {}", channel, answer);
             return answer;
         }
