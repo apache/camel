@@ -29,4 +29,12 @@ public abstract class CamelCommandSupport extends OsgiCommandSupport {
         this.camelController = camelController;
     }
 
+    String safeNull(String s) {
+        if (s == null) {
+            return "";
+        } else {
+            return s;
+        }
+    }
+
 }

@@ -495,10 +495,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 String name = entry.getKey();
                 String description = null;
                 // the status can be:
-                // - loaded = in use
+                // - in use = used by Camel
                 // - classpath = on the classpath
                 // - release = available from the Apache Camel release
-                String status = context.hasComponent(name) != null ? "loaded" : "classpath";
+                // TODO: gather list of components in the Camel release
+                String status = context.hasComponent(name) != null ? "in use" : "on classpath";
                 String type = null;
                 String groupId = null;
                 String artifactId = null;

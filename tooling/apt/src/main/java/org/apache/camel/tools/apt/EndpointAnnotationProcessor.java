@@ -155,10 +155,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
         findClassProperties(roundEnv, endpointOptions, classElement, "");
-        if (!endpointOptions.isEmpty()) {
-            String json = createParameterJsonSchema(componentModel, endpointOptions);
-            writer.println(json);
-        }
+        String json = createParameterJsonSchema(componentModel, endpointOptions);
+        writer.println(json);
     }
 
     public String createParameterJsonSchema(ComponentModel componentModel, Set<EndpointOption> options) {
@@ -166,7 +164,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         // component model
         buffer.append("\n \"component\": {");
         buffer.append("\n    \"scheme\": \"" + componentModel.getScheme() + "\",");
-        buffer.append("\n    \"description\": \"" + sanitizeDescription(componentModel.getDescription()) + "\",");
+        buffer.append("\n    \"description\": \"" + componentModel.getDescription() + "\",");
         buffer.append("\n    \"javaType\": \"" + componentModel.getJavaType() + "\",");
         buffer.append("\n    \"groupId\": \"" + componentModel.getGroupId() + "\",");
         buffer.append("\n    \"artifactId\": \"" + componentModel.getArtifactId() + "\",");
@@ -241,10 +239,28 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         if (data != null) {
             Map<String, String> map = parseAsMap(data);
             // now we have a lot more data, so we need to load it as key/value
-            model.setDescription(map.get("projectDescription"));
-            model.setGroupId(map.get("groupId"));
-            model.setArtifactId(map.get("artifactId"));
-            model.setVersionId(map.get("version"));
+            // need to sanitize the description first
+            String doc = map.get("projectDescription");
+            if (doc != null) {
+                model.setDescription(sanitizeDescription(doc));
+            } else {
+                model.setDescription("");
+            }
+            if (map.containsKey("groupId")) {
+                model.setGroupId(map.get("groupId"));
+            } else {
+                model.setGroupId("");
+            }
+            if (map.containsKey("artifactId")) {
+                model.setArtifactId(map.get("artifactId"));
+            } else {
+                model.setArtifactId("");
+            }
+            if (map.containsKey("version")) {
+                model.setVersionId(map.get("version"));
+            } else {
+                model.setVersionId("");
+            }
         }
 
         // favor to use class javadoc of component as description
@@ -254,6 +270,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             if (typeElement != null) {
                 String doc = elementUtils.getDocComment(typeElement);
                 if (doc != null) {
+                    // need to sanitize the description first
+                    doc = sanitizeDescription(doc);
                     // grab the first sentence only as this is for short description
                     int idx = doc.indexOf('.');
                     if (idx != -1) {

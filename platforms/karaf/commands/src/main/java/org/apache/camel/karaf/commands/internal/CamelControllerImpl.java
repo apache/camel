@@ -19,9 +19,11 @@ package org.apache.camel.karaf.commands.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -30,6 +32,7 @@ import org.apache.camel.karaf.commands.CamelController;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -231,5 +234,72 @@ public class CamelControllerImpl implements CamelController {
             return null;
         }
         return context.explainEndpointJson(uri, allOptions);
+    }
+
+    public List<Map<String, String>> listComponents(String camelContextName) throws Exception {
+        CamelContext context = this.getCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        // find all components
+        Map<String, Properties> components = context.findComponents();
+
+        // gather component detail for each component
+        for (Map.Entry<String, Properties> entry : components.entrySet()) {
+            String name = entry.getKey();
+            String description = null;
+            // the status can be:
+            // - loaded = in use
+            // - classpath = on the classpath
+            // - release = available from the Apache Camel release
+            String status = context.hasComponent(name) != null ? "in use" : "on classpath";
+            String type = null;
+            String groupId = null;
+            String artifactId = null;
+            String version = null;
+
+            // load component json data, and parse it to gather the component meta-data
+            String json = context.getComponentParameterJsonSchema(name);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+            for (Map<String, String> row : rows) {
+                if (row.containsKey("description")) {
+                    description = row.get("description");
+                } else if (row.containsKey("javaType")) {
+                    type = row.get("javaType");
+                } else if (row.containsKey("groupId")) {
+                    groupId = row.get("groupId");
+                } else if (row.containsKey("artifactId")) {
+                    artifactId = row.get("artifactId");
+                } else if (row.containsKey("version")) {
+                    version = row.get("version");
+                }
+            }
+
+            Map<String, String> row = new HashMap<>();
+            row.put("name", name);
+            row.put("status", status);
+            if (description != null) {
+                row.put("description", description);
+            }
+            if (type != null) {
+                row.put("type", type);
+            }
+            if (groupId != null) {
+                row.put("groupId", groupId);
+            }
+            if (artifactId != null) {
+                row.put("artifactId", artifactId);
+            }
+            if (version != null) {
+                row.put("version", version);
+            }
+
+            answer.add(row);
+        }
+
+        return answer;
     }
 }

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -31,19 +32,21 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * An <a href="http://camel.apache.org/event.html">Event Component</a>
- * for working with Spring ApplicationEvents
+ * for working with Spring ApplicationEvents.
  * 
  * @version 
  */
-public class EventComponent extends DefaultComponent implements ApplicationContextAware {
+public class EventComponent extends UriEndpointComponent implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);
     private ApplicationContext applicationContext;
     private final Set<EventEndpoint> endpoints = new LinkedHashSet<EventEndpoint>();
 
     public EventComponent() {
+        super(EventEndpoint.class);
     }
 
     public EventComponent(ApplicationContext applicationContext) {
+        super(EventEndpoint.class);
         setApplicationContext(applicationContext);
     }
 

@@ -112,7 +112,17 @@ public interface CamelController {
      * @param uri              the endpoint uri
      * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
      * @return a JSON schema with explanation of the options
+     * @throws java.lang.Exception is thrown if error loading resources to explain the endpoint
      */
     String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception;
+
+    /**
+     * Lists all components and include information
+     *
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with component information
+     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     */
+    List<Map<String, String>> listComponents(String camelContextName) throws Exception;
 
 }

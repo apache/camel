@@ -23,6 +23,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -31,13 +32,13 @@ import org.springframework.context.ApplicationEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
-
 /**
  * An <a href="http://camel.apache.org/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents
  *
  * @version 
  */
+@UriEndpoint(scheme = "spring-event", consumerClass = EventConsumer.class)
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
@@ -50,7 +51,7 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     /**
      * <b>Note:</b> It is preferred to create endpoints using the associated
      * component.
-     * @param endpointUri
+     * @deprecated
      */
     @Deprecated
     public EventEndpoint(String endpointUri) {
