@@ -244,7 +244,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals(4, StringHelper.countChar(json, '{'));
         assertEquals(4, StringHelper.countChar(json, '}'));
         assertTrue(json.contains("\"groupDelay\": { \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"value\": \"2000\","
-                + " \"description\": \"Set the initial delay for stats in millis\" },"));
+                + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
         assertTrue(json.contains("\"groupSize\": { \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
     }
