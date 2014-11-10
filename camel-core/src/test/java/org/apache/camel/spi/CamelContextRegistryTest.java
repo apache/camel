@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultCamelContextRegistry;
 
 public class CamelContextRegistryTest extends TestCase {
 
@@ -42,8 +42,6 @@ public class CamelContextRegistryTest extends TestCase {
     }
 
     public void testContainerSet() throws Exception {
-        // need to clear the listener for testing
-        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).clear();
 
         MyListener listener = new MyListener();
 
@@ -52,21 +50,26 @@ public class CamelContextRegistryTest extends TestCase {
 
         assertEquals(0, listener.names.size());
 
-        CamelContextRegistry.INSTANCE.addListener(listener, true);
+        try {
+            CamelContextRegistry.INSTANCE.addListener(listener, true);
+        	
+            // after we set, then we should manage the 2 pending contexts
+            assertEquals(2, listener.names.size());
 
-        // after we set, then we should manage the 2 pending contexts
-        assertEquals(2, listener.names.size());
+            CamelContext camel3 = new DefaultCamelContext();
+            assertEquals(3, listener.names.size());
+            assertEquals(camel1.getName(), listener.names.get(0));
+            assertEquals(camel2.getName(), listener.names.get(1));
+            assertEquals(camel3.getName(), listener.names.get(2));
 
-        CamelContext camel3 = new DefaultCamelContext();
-        assertEquals(3, listener.names.size());
-        assertEquals(camel1.getName(), listener.names.get(0));
-        assertEquals(camel2.getName(), listener.names.get(1));
-        assertEquals(camel3.getName(), listener.names.get(2));
+            camel1.stop();
+            camel2.stop();
+            camel3.stop();
 
-        camel1.stop();
-        camel2.stop();
-        camel3.stop();
-
-        assertEquals(0, listener.names.size());
+            assertEquals(0, listener.names.size());
+            
+        } finally {
+            CamelContextRegistry.INSTANCE.removeListener(listener, true);
+        }
     }
 }

@@ -26,7 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The default {@link CamelContextRegistry}
+ * The default {@link CamelContextRegistry}.
+ * 
+ * This implementation gives package protected access to add/remove camel contexts
+ * to the camel runtime. Clients are not expected to manage the set of registered contexts.
+ * 
+ * Registered listeners are owned by the client which registered the listener.
+ * Neither the camel runtime nor non-owning clients can control the set of registered listeners. 
  */
 public final class DefaultCamelContextRegistry implements CamelContextRegistry {
 
@@ -34,14 +40,6 @@ public final class DefaultCamelContextRegistry implements CamelContextRegistry {
 
     private final Set<CamelContext> contexts = new LinkedHashSet<CamelContext>();
     private final Set<Listener> listeners = new LinkedHashSet<Listener>();
-
-    /**
-     * Clear all contexts and listeners, such as for testing purpose.
-     */
-    public synchronized void clear() {
-        contexts.clear();
-        listeners.clear();
-    }
 
     synchronized void afterCreate(CamelContext camelContext) {
         registerContext(camelContext);
