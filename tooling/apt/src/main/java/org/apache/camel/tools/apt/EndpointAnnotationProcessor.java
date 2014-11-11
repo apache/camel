@@ -287,9 +287,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
-            if (fieldElements.isEmpty()) {
-                break;
-            }
             for (VariableElement fieldElement : fieldElements) {
                 UriParam param = fieldElement.getAnnotation(UriParam.class);
                 String fieldName = fieldElement.getSimpleName().toString();
