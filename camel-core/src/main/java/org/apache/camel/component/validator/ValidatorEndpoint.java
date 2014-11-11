@@ -20,6 +20,8 @@ import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
+import org.w3c.dom.ls.LSResourceResolver;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,7 +37,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.ls.LSResourceResolver;
 
 @UriEndpoint(scheme = "validator")
 public class ValidatorEndpoint extends DefaultEndpoint {
