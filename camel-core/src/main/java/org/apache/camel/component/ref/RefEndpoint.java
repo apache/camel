@@ -18,6 +18,7 @@ package org.apache.camel.component.ref;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,7 +28,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelContextHelper;
 
 @UriEndpoint(scheme = "ref")
-public class RefEndpoint extends DefaultEndpoint {
+public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
 
@@ -62,6 +63,11 @@ public class RefEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    public Endpoint getEndpoint() {
+        return endpoint;
     }
 
     @Override
