@@ -43,7 +43,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     private volatile byte[] buffer;
     @UriParam
     private String resourceUri;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean contentCache;
 
     public ResourceEndpoint() {
