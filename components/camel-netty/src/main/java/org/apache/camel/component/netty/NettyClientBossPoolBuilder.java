@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioClientBossPool;
+import org.jboss.netty.util.ThreadNameDeterminer;
 import org.jboss.netty.util.Timer;
+import org.jboss.netty.util.internal.ExecutorUtil;
 
 /**
  * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boss pools
@@ -74,5 +77,20 @@ public final class NettyClientBossPoolBuilder {
      */
     BossPool build() {
         return new NioClientBossPool(Executors.newCachedThreadPool(), bossCount, timer, new CamelNettyThreadNameDeterminer(pattern, name));
+    }
+    
+    class CamelNioClientBossPool extends NioClientBossPool {
+        private Executor executor;
+        CamelNioClientBossPool(Executor bossExecutor, int bossCount, Timer timer, ThreadNameDeterminer determiner) {
+            super(bossExecutor, bossCount, timer, determiner);
+            executor = bossExecutor;
+        }
+        
+        // Just make sure we shutdown the executor;
+        public void shutdown() {
+            super.shutdown();
+            ExecutorUtil.shutdownNow(executor);
+        }
+         
     }
 }

@@ -171,6 +171,16 @@ public class NettyProducer extends DefaultAsyncProducer {
             pool.close();
             pool = null;
         }
+        
+        if (channelFactory != null) {
+            channelFactory.shutdown();
+            channelFactory = null;
+        }
+        
+        if (datagramChannelFactory != null) {
+            datagramChannelFactory.shutdown();
+            datagramChannelFactory = null;
+        }
 
         super.doStop();
     }
