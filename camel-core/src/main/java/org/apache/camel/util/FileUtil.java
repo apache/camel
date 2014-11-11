@@ -460,9 +460,11 @@ public final class FileUtil {
     }
 
     public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = new FileInputStream(from).getChannel();
-        FileChannel out = new FileOutputStream(to).getChannel();
+        FileChannel in = null;
+        FileChannel out = null;
         try {
+            in = new FileInputStream(from).getChannel();
+            out = new FileOutputStream(to).getChannel();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using FileChannel to copy from: " + in + " to: " + out);
             }
