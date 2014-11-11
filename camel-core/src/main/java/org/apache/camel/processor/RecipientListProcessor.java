@@ -24,8 +24,10 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -70,6 +72,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         private Processor prepared;
         private final Exchange exchange;
         private final ProducerCache producerCache;
+        private final ExchangePattern originalExchangePattern;
 
         private RecipientProcessorExchangePair(int index, ProducerCache producerCache, Endpoint endpoint, Producer producer,
                                                Processor prepared, Exchange exchange) {
@@ -79,6 +82,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             this.producer = producer;
             this.prepared = prepared;
             this.exchange = exchange;
+            this.originalExchangePattern = exchange.getPattern();
         }
 
         public int getIndex() {
@@ -103,12 +107,22 @@ public class RecipientListProcessor extends MulticastProcessor {
             exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
+            // if the MEP on the endpoint is different then
+            if (endpoint instanceof DefaultEndpoint) {
+                ExchangePattern pattern = ((DefaultEndpoint) endpoint).getExchangePattern();
+                if (pattern != null && !pattern.equals(exchange.getPattern())) {
+                    LOG.trace("Using exchangePattern: {} on exchange: {}", pattern, exchange);
+                    exchange.setPattern(pattern);
+                }
+            }
         }
 
         public void done() {
             LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
-            // when we are done we should release back in pool
             try {
+                // preserve original MEP
+                exchange.setPattern(originalExchangePattern);
+                // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
