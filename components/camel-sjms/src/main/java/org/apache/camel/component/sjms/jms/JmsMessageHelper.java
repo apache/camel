@@ -385,7 +385,7 @@ public final class JmsMessageHelper {
             } else if (Collection.class.isInstance(payload)) {
                 answer = JmsMessageType.Map;
             } else if (InputStream.class.isInstance(payload)) {
-                answer = JmsMessageType.Bytes;
+                answer = JmsMessageType.Stream;
             } else if (ByteBuffer.class.isInstance(payload)) {
                 answer = JmsMessageType.Bytes;
             } else if (File.class.isInstance(payload)) {

@@ -21,21 +21,14 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 
-import javax.jms.BytesMessage;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-
-import org.apache.activemq.command.ActiveMQBytesMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,7 +54,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
     public void testJMSMessageHelperInputStream() throws Exception {
         getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
         String p = "Hello Camel";
-        InputStream is = new ByteArrayInputStream( p.getBytes() );
+        InputStream is = new ByteArrayInputStream(p.getBytes());
         template.sendBody(SJMS_QUEUE_URI, is);
         assertMockEndpointsSatisfied();
         assertTrue(byte[].class.isInstance(message.getIn().getBody()));
@@ -139,7 +132,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
     @Test
     public void testJMSMessageHelperCharArray() throws InterruptedException, FileNotFoundException {
         getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
-        char[] p = {'H','e','l','l','o',' ','C','a','m','e','l'};
+        char[] p = {'H', 'e', 'l', 'l', 'o', ' ', 'C', 'a', 'm', 'e', 'l'};
         template.sendBody(SJMS_QUEUE_URI, p);
         assertMockEndpointsSatisfied();
         assertTrue(String.class.isInstance(message.getIn().getBody()));
