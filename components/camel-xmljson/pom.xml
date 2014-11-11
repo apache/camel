@@ -83,6 +83,20 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>test-with-xom</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>xom</groupId>
+          <artifactId>xom</artifactId>
+          <version>${xom-version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 
 </project>
