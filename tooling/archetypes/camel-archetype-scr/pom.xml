@@ -32,10 +32,6 @@
     <description>Creates a new Camel SCR bundle project for Karaf</description>
     <packaging>maven-archetype</packaging>
 
-    <properties>
-        <target-camel-version>${project.version}</target-camel-version>
-    </properties>
-
     <build>
         <extensions>
             <extension>

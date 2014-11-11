@@ -44,7 +44,7 @@ This file was generated from ${archetypeGroupId}/${archetypeArtifactId}/${archet
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <camel-version>${target-camel-version}</camel-version>
+        <camel-version>${archetypeVersion}</camel-version>
     </properties>
 
     <distributionManagement>
@@ -174,7 +174,6 @@ This file was generated from ${archetypeGroupId}/${archetypeArtifactId}/${archet
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Gravia-Enabled>true</Gravia-Enabled>
                         <Export-Package/>
                         <Private-Package>
                             ${groupId},

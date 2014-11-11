@@ -32,9 +32,6 @@
         </requiredProperty>
         <requiredProperty key="groupId"/>
         <requiredProperty key="className"/>
-        <requiredProperty key="target-camel-version">
-            <defaultValue>${target-camel-version}</defaultValue>
-        </requiredProperty>
     </requiredProperties>
     <fileSets>
         <fileSet filtered="true" packaged="true" encoding="UTF-8">
