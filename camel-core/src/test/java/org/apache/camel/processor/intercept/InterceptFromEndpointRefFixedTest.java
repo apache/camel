@@ -16,33 +16,12 @@
  */
 package org.apache.camel.processor.intercept;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 
 /**
  * Testing intercept from can intercept when endpoint is an instance
  */
-public class InterceptFromEndpointRefUriTest extends ContextTestSupport {
-
-    SimpleRegistry reg = new SimpleRegistry();
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(reg);
-    }
-
-    public void testIntercept() throws Exception {
-        getMockEndpoint("mock:intercepted").expectedMessageCount(1);
-        getMockEndpoint("mock:first").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
+public class InterceptFromEndpointRefFixedTest extends InterceptFromEndpointRefTest {
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -50,10 +29,10 @@ public class InterceptFromEndpointRefUriTest extends ContextTestSupport {
                 reg.put("start", context.getEndpoint("direct:start"));
                 reg.put("bar", context.getEndpoint("seda:bar"));
 
-                interceptFrom("direct*").to("mock:intercepted");
+                interceptFrom("ref:start").to("mock:intercepted");
 
                 from("ref:start").to("mock:first").to("ref:bar");
-                
+
                 from("ref:bar").to("mock:result");
             }
         };
