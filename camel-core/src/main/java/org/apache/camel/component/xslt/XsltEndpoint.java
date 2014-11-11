@@ -29,6 +29,7 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     private volatile boolean cacheCleared;
     private XsltBuilder xslt;
-    @UriParam
+    @UriPath
     private String resourceUri;
     @UriParam(defaultValue = "false")
     private boolean cacheStylesheet;

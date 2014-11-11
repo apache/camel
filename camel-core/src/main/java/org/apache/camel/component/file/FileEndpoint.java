@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private final FileOperations operations = new FileOperations(this);
-    @UriPath
+    @UriPath(name = "directoryName")
     private File file;
     @UriParam(defaultValue = "false")
     private boolean copyAndDeleteOnRenameFail = true;
@@ -141,6 +141,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return file;
     }
 
+    /**
+     * The starting directory
+     */
     public void setFile(File file) {
         this.file = file;
         // update configuration as well

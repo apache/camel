@@ -41,6 +41,7 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -63,6 +64,8 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile MulticastProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
+    @UriPath(description = "Name of queue")
+    private String name;
     @UriParam(defaultValue = "" + Integer.MAX_VALUE)
     private int size = Integer.MAX_VALUE;
     @UriParam(defaultValue = "1")

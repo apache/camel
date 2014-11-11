@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -37,6 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "direct", consumerClass = DirectConsumer.class)
 public class DirectEndpoint extends DefaultEndpoint {
 
+    @UriPath(description = "Name of direct endpoint")
+    private String name;
     private volatile Map<String, DirectConsumer> consumers;
     @UriParam(defaultValue = "false")
     private boolean block;

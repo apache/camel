@@ -25,7 +25,7 @@ import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * A factory of {@link MockEndpoint} instances
+ * Component for testing with mock endpoints.
  *
  * @version 
  */

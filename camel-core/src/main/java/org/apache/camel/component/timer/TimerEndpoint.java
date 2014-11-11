@@ -30,6 +30,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
@@ -39,7 +40,7 @@ import org.apache.camel.spi.UriParam;
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(scheme = "timer", consumerClass = TimerConsumer.class)
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    @UriParam
+    @UriPath
     private String timerName;
     @UriParam
     private Date time;

@@ -23,6 +23,7 @@ import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * The direct-vm endpoint.
@@ -30,6 +31,8 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "direct-vm", consumerClass = DirectConsumer.class)
 public class DirectVmEndpoint extends DefaultEndpoint {
 
+    @UriPath(description = "Name of direct-vm endpoint")
+    private String name;
     @UriParam(defaultValue = "false")
     private boolean block;
     @UriParam(defaultValue = "30000")

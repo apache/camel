@@ -26,6 +26,7 @@ import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ import org.slf4j.Logger;
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
+    @UriPath(description = "Name of the logging category to use")
+    private String loggerName;
     @UriParam(defaultValue = "INFO")
     private String level;
     @UriParam
@@ -49,10 +52,9 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Boolean groupActiveOnly;
     @UriParam
     private Long groupDelay;
-    
-    private ExchangeFormatter localFormatter;
+    @UriParam
     private Logger providedLogger;
-    private String loggerName;
+    private ExchangeFormatter localFormatter;
 
     public LogEndpoint() {
     }

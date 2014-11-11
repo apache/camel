@@ -51,6 +51,7 @@ import javax.tools.StandardLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 import static org.apache.camel.tools.apt.IOHelper.loadText;
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
@@ -153,31 +154,48 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         String scheme = uriEndpoint.scheme();
         ComponentModel componentModel = findComponentProperties(roundEnv, scheme);
 
+        // get endpoint information which is divided into paths and options (though there should really only be one path)
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
-        findClassProperties(roundEnv, endpointOptions, classElement, "");
-        String json = createParameterJsonSchema(componentModel, endpointOptions);
+        findClassProperties(roundEnv, endpointPaths, endpointOptions, classElement, "");
+
+        String json = createParameterJsonSchema(componentModel, endpointPaths, endpointOptions);
         writer.println(json);
     }
 
-    public String createParameterJsonSchema(ComponentModel componentModel, Set<EndpointOption> options) {
+    public String createParameterJsonSchema(ComponentModel componentModel, Set<EndpointPath> paths, Set<EndpointOption> options) {
         StringBuilder buffer = new StringBuilder("{");
         // component model
         buffer.append("\n \"component\": {");
-        buffer.append("\n    \"scheme\": \"" + componentModel.getScheme() + "\",");
-        buffer.append("\n    \"description\": \"" + componentModel.getDescription() + "\",");
-        buffer.append("\n    \"javaType\": \"" + componentModel.getJavaType() + "\",");
-        buffer.append("\n    \"groupId\": \"" + componentModel.getGroupId() + "\",");
-        buffer.append("\n    \"artifactId\": \"" + componentModel.getArtifactId() + "\",");
-        buffer.append("\n    \"version\": \"" + componentModel.getVersionId() + "\"");
+        buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
+        buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
+        buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
+        buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
+        buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
+        buffer.append("\n    \"version\": \"").append(componentModel.getVersionId()).append("\"");
         buffer.append("\n  },");
 
         // and empty component properties as placeholder for future improvement
         buffer.append("\n  \"componentProperties\": {");
         buffer.append("\n  },");
 
+        // endpoint paths
+        buffer.append("\n  \"endpointPaths\": {");
+        boolean first = true;
+        for (EndpointPath path : paths) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), path.getType(), "", path.getDocumentation(), false, null));
+        }
+        buffer.append("\n  }");
+
         // endpoint properties was named properties at first, and hence we stick with that naming to be compatible
         buffer.append("\n  \"properties\": {");
-        boolean first = true;
+        first = true;
         for (EndpointOption entry : options) {
             if (first) {
                 first = false;
@@ -202,9 +220,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("<p>" + classDoc + "</p>");
         }
 
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
-        findClassProperties(roundEnv, endpointOptions, classElement, prefix);
-        if (!endpointOptions.isEmpty()) {
+        findClassProperties(roundEnv, endpointPaths, endpointOptions, classElement, prefix);
+        if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
             writer.println("    <th>Name</th>");
@@ -213,6 +232,15 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("    <th>Enum Values</th>");
             writer.println("    <th>Description</th>");
             writer.println("  </tr>");
+            for (EndpointPath path : endpointPaths) {
+                writer.println("  <tr>");
+                writer.println("    <td>" + path.getName() + " (<i>endpoint path</i>) " + "</td>");
+                writer.println("    <td>" + path.getType() + "</td>");
+                writer.println("    <td>" + "</td>");
+                writer.println("    <td>" + "</td>");
+                writer.println("    <td>" + path.getDocumentation() + "</td>");
+                writer.println("  </tr>");
+            }
             for (EndpointOption option : endpointOptions) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
@@ -283,13 +311,52 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         return model;
     }
 
-    protected void findClassProperties(RoundEnvironment roundEnv, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
+    protected void findClassProperties(RoundEnvironment roundEnv, Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
-                UriParam param = fieldElement.getAnnotation(UriParam.class);
+
+                UriPath path = fieldElement.getAnnotation(UriPath.class);
                 String fieldName = fieldElement.getSimpleName().toString();
+                if (path != null) {
+                    String name = path.name();
+                    if (isNullOrEmpty(name)) {
+                        name = fieldName;
+                    }
+                    name = prefix + name;
+                    TypeMirror fieldType = fieldElement.asType();
+                    String fieldTypeName = fieldType.toString();
+
+                    String docComment = elementUtils.getDocComment(fieldElement);
+                    if (isNullOrEmpty(docComment)) {
+                        String setter = "set" + fieldName.substring(0, 1).toUpperCase();
+                        if (fieldName.length() > 1) {
+                            setter += fieldName.substring(1);
+                        }
+                        //  lets find the setter
+                        List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+                        for (ExecutableElement method : methods) {
+                            String methodName = method.getSimpleName().toString();
+                            if (setter.equals(methodName) && method.getParameters().size() == 1) {
+                                String doc = elementUtils.getDocComment(method);
+                                if (!isNullOrEmpty(doc)) {
+                                    docComment = doc;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (isNullOrEmpty(docComment)) {
+                        docComment = path.description();
+                    }
+
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment);
+                    endpointPaths.add(ep);
+                }
+
+                UriParam param = fieldElement.getAnnotation(UriParam.class);
+                fieldName = fieldElement.getSimpleName().toString();
                 if (param != null) {
                     String name = param.name();
                     if (isNullOrEmpty(name)) {
@@ -314,7 +381,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(roundEnv, endpointOptions, fieldTypeElement, nestedPrefix);
+                        findClassProperties(roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
                         String docComment = elementUtils.getDocComment(fieldElement);
                         if (isNullOrEmpty(docComment)) {
@@ -359,6 +426,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
                 }
             }
+
+            // check super classes which may also have @UriParam fields
             TypeElement baseTypeElement = null;
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
@@ -635,4 +704,30 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             return name.hashCode();
         }
     }
+
+    private static final class EndpointPath {
+
+        private String name;
+        private String type;
+        private String documentation;
+
+        private EndpointPath(String name, String type, String documentation) {
+            this.name = name;
+            this.type = type;
+            this.documentation = documentation;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getDocumentation() {
+            return documentation;
+        }
+    }
+
 }

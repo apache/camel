@@ -20,6 +20,7 @@ import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.camel.spi.UriPath;
 import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.Component;
@@ -43,7 +44,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpoint.class);
 
-    @UriParam
+    @UriPath
     private String resourceUri;
     @UriParam
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
@@ -126,6 +127,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return resourceUri;
     }
 
+    /**
+     * URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }

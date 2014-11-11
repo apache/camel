@@ -51,6 +51,7 @@ import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.ExchangeHelper;
@@ -92,16 +93,27 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
-    protected boolean copyOnExchange = true;
-    @UriParam
-    private volatile int expectedCount;
-    private volatile int counter;
+
     private volatile Processor defaultProcessor;
     private volatile Map<Integer, Processor> processors;
     private volatile List<Exchange> receivedExchanges;
     private volatile List<Throwable> failures;
     private volatile List<Runnable> tests;
     private volatile CountDownLatch latch;
+    private volatile int expectedMinimumCount;
+    private volatile List<?> expectedBodyValues;
+    private volatile List<Object> actualBodyValues;
+    private volatile Map<String, Object> expectedHeaderValues;
+    private volatile Map<String, Object> actualHeaderValues;
+    private volatile Map<String, Object> expectedPropertyValues;
+    private volatile Map<String, Object> actualPropertyValues;
+
+    @UriPath(description = "Name of mock endpoint")
+    private String name;
+    @UriParam(defaultValue = "true")
+    protected boolean copyOnExchange = true;
+    @UriParam
+    private volatile int expectedCount;
     @UriParam
     private volatile long sleepForEmptyTest;
     @UriParam
@@ -111,13 +123,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     @UriParam
     private volatile long assertPeriod;
     @UriParam
-    private volatile int expectedMinimumCount;
-    private volatile List<?> expectedBodyValues;
-    private volatile List<Object> actualBodyValues;
-    private volatile Map<String, Object> expectedHeaderValues;
-    private volatile Map<String, Object> actualHeaderValues;
-    private volatile Map<String, Object> expectedPropertyValues;
-    private volatile Map<String, Object> actualPropertyValues;
+    private volatile int counter;
     @UriParam
     private volatile int retainFirst;
     @UriParam
@@ -1145,6 +1151,19 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void setRetainLast(int retainLast) {
         this.retainLast = retainLast;
+    }
+
+    public boolean isCopyOnExchange() {
+        return copyOnExchange;
+    }
+
+    /**
+     * Sets whether to make a deep copy of the incoming {@link Exchange} when received at this mock endpoint.
+     * <p/>
+     * Is by default <tt>true</tt>.
+     */
+    public void setCopyOnExchange(boolean copyOnExchange) {
+        this.copyOnExchange = copyOnExchange;
     }
 
     // Implementation methods

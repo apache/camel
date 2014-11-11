@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
 
 @UriEndpoint(scheme = "ref")
@@ -32,7 +32,7 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
 
-    @UriParam
+    @UriPath
     private String name;
 
     public RefEndpoint(String endpointUri, Component component) {
@@ -44,7 +44,7 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     }
 
     /**
-     * Name of endpoint to lookup
+     * Name of endpoint to lookup in the registry.
      */
     public void setName(String name) {
         this.name = name;

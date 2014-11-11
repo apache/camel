@@ -40,11 +40,7 @@ public class ControlBusComponent extends UriEndpointComponent {
         // does the control bus use a language
         if (remaining != null && remaining.startsWith("language:")) {
             String lan = remaining.substring(9);
-            if (lan != null) {
-                answer.setLanguage(getCamelContext().resolveLanguage(lan));
-            } else {
-                throw new IllegalArgumentException("Language must be configured in endpoint uri: " + uri);
-            }
+            answer.setLanguage(getCamelContext().resolveLanguage(lan));
         }
 
         setProperties(answer, parameters);

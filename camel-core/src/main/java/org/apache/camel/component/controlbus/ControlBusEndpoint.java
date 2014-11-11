@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 
 /**
@@ -34,6 +35,8 @@ import org.apache.camel.util.CamelLogger;
 @UriEndpoint(scheme = "controlbus")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
+    @UriPath(description = "Command can be either route or language")
+    private String command;
     private Language language;
     @UriParam
     private String routeId;
