@@ -60,8 +60,16 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         super(JmsEndpoint.class);
     }
 
+    public JmsComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
+
     public JmsComponent(CamelContext context) {
         super(context, JmsEndpoint.class);
+    }
+
+    public JmsComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
+        super(context, endpointClass);
     }
 
     public JmsComponent(JmsConfiguration configuration) {
