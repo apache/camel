@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,6 +46,8 @@ public final class JsonSchemaHelper {
             return "enum";
         } else if (type.isArray()) {
             return "array";
+        } if (type.isAssignableFrom(URI.class) || type.isAssignableFrom(URL.class)) {
+            return "sting";
         }
 
         String primitive = getPrimitiveType(type);

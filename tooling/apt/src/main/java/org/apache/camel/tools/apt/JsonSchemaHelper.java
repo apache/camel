@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tools.apt;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Set;
 
 /**
@@ -77,6 +79,8 @@ final class JsonSchemaHelper {
     public static String getType(String type, boolean enumType) {
         if (enumType) {
             return "enum";
+        } if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
+            return "sting";
         }
 
         String primitive = getPrimitiveType(type);

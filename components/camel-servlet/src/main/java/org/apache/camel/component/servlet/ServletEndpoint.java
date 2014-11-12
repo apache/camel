@@ -43,6 +43,9 @@ public class ServletEndpoint extends HttpEndpoint {
         super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
 
+    /**
+     * Name of the servlet to use
+     */
     public void setServletName(String name) {
         servletName = name;
     }
