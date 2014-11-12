@@ -102,12 +102,18 @@ public class EndpointList extends CamelCommandSupport {
                     Collections.sort(options, new Comparator<Map<String, String>>() {
                         @Override
                         public int compare(Map<String, String> o1, Map<String, String> o2) {
-                            return o1.get("name").compareTo(o2.get("name"));
+                            // sort by kind first, then name
+                            int answer = o1.get("kind").compareTo(o2.get("kind"));
+                            if (answer == 0) {
+                                answer = o1.get("name").compareTo(o2.get("name"));
+                            }
+                            return answer;
                         }
                     });
 
                     for (Map<String, String> option : options) {
                         String key = option.get("name");
+                        String kind = option.get("kind");
                         String type = option.get("type");
                         String javaType = option.get("javaType");
                         String value = option.get("value");
@@ -120,7 +126,12 @@ public class EndpointList extends CamelCommandSupport {
                                 out.println();
                                 first = false;
                             }
-                            String line = "\t" + key + "=" + value;
+                            String line;
+                            if ("path".equals(kind)) {
+                                line = "\t" + key + " (endpoint path) = " + value;
+                            } else {
+                                line = "\t" + key + " = " + value;
+                            }
                             out.println(String.format(rowFormat, "", line, ""));
 
                             if (type != null) {

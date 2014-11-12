@@ -89,13 +89,20 @@ public class EndpointExplain extends CamelCommandSupport {
             Collections.sort(options, new Comparator<Map<String, String>>() {
                 @Override
                 public int compare(Map<String, String> o1, Map<String, String> o2) {
-                    return o1.get("name").compareTo(o2.get("name"));
+                    // sort by kind first, then name
+                    int answer = o1.get("kind").compareTo(o2.get("kind"));
+                    if (answer == 0) {
+                        answer = o1.get("name").compareTo(o2.get("name"));
+                    }
+                    return answer;
                 }
             });
 
             for (Map<String, String> option : options) {
                 out.print("Option:\t\t");
                 out.println(option.get("name"));
+                out.print("Kind:\t\t");
+                out.println(option.get("kind"));
                 String type = option.get("type");
                 if (type != null) {
                     out.print("Type:\t\t");

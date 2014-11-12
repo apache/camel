@@ -1085,6 +1085,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public String resolveComponentDefaultName(String javaType) {
         // special for some components
+        // TODO: ActiveMQ 5.11 will include this out of the box, so not needed when its released
         if ("org.apache.activemq.camel.component.ActiveMQComponent".equals(javaType)) {
             return "jms";
         }
@@ -1210,12 +1211,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 // find type and description from the json schema
                 String type = null;
+                String kind = null;
                 String javaType = null;
                 String defaultValue = null;
                 String description = null;
                 for (Map<String, String> row : rows) {
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
+                        kind = row.get("kind");
                         javaType = row.get("javaType");
                         defaultValue = row.get("defaultValue");
                         description = row.get("description");
@@ -1224,13 +1227,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, type, javaType, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
             }
 
             if (includeAllOptions) {
                 // include other rows
                 for (Map<String, String> row : rows) {
                     String name = row.get("name");
+                    String kind = row.get("kind");
                     String value = row.get("value");
                     String defaultValue = row.get("defaultValue");
                     String type = row.get("type");
@@ -1240,7 +1244,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, type, javaType, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
                     }
                 }
             }
@@ -1257,15 +1261,19 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 buffer.append("\n    ");
 
                 String name = row[0];
-                String type = row[1];
-                String javaType = row[2];
-                String value = row[3];
-                String defaultValue = row[4];
-                String description = row[5];
+                String kind = row[1];
+                String type = row[2];
+                String javaType = row[3];
+                String value = row[4];
+                String defaultValue = row[5];
+                String description = row[6];
 
                 // add json of the option
                 buffer.append(doubleQuote(name) + ": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
+                if (kind != null) {
+                    csb.append("\"kind\": \"" + kind + "\"");
+                }
                 if (type != null) {
                     csb.append("\"type\": \"" + type + "\"");
                 }

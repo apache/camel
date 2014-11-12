@@ -180,9 +180,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n  \"componentProperties\": {");
         buffer.append("\n  },");
 
-        // endpoint paths
-        buffer.append("\n  \"endpointPaths\": {");
+        buffer.append("\n  \"properties\": {");
         boolean first = true;
+        // include paths in the top
         for (EndpointPath path : paths) {
             if (first) {
                 first = false;
@@ -190,13 +190,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), path.getType(), "", path.getDocumentation(), false, null));
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", path.getType(), "", path.getDocumentation(), false, null));
         }
-        buffer.append("\n  },");
 
-        // endpoint properties was named properties at first, and hence we stick with that naming to be compatible
-        buffer.append("\n  \"properties\": {");
-        first = true;
+        // and then regular parameter options
         for (EndpointOption entry : options) {
             if (first) {
                 first = false;
@@ -207,7 +204,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
         }
         buffer.append("\n  }");
 
@@ -227,28 +224,33 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, prefix);
+
         if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
             writer.println("    <th>Name</th>");
+            writer.println("    <th>Kind</th>");
             writer.println("    <th>Type</th>");
             writer.println("    <th>Default Value</th>");
             writer.println("    <th>Enum Values</th>");
             writer.println("    <th>Description</th>");
             writer.println("  </tr>");
+            // include paths in the top
             for (EndpointPath path : endpointPaths) {
                 writer.println("  <tr>");
-                writer.println("    <td>" + path.getName() + " (<i>endpoint path</i>) " + "</td>");
+                writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + path.getType() + "</td>");
-                writer.println("    <td>" + "</td>");
+                writer.println("    <td>" + "path" + "</td>");
                 writer.println("    <td>" + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
             }
+            // and then regular parameter options
             for (EndpointOption option : endpointOptions) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + option.getType() + "</td>");
+                writer.println("    <td>" + "parameter" + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
                 writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
@@ -436,21 +438,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
                 String superClassName = canonicalClassName(superclass.toString());
-                // check the rounding env first
                 baseTypeElement = findTypeElement(roundEnv, superClassName);
-                if (baseTypeElement == null) {
-                    // okay not found in rounding env, that means this component extends another component from another JAR
-                    // so we need to find it using the package name instead of in the rounding environment
-                    int idx = superClassName.lastIndexOf('.');
-                    String name = superClassName.substring(0, idx);
-                    // skip java.lang package
-                    if (!"java.lang".equals(name)) {
-                        PackageElement pe = elementUtils.getPackageElement(name);
-                        if (pe != null) {
-                            baseTypeElement = findTypeElement(pe, superClassName);
-                        }
-                    }
-                }
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -461,34 +449,42 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
-        if (!isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
-            Set<? extends Element> rootElements = roundEnv.getRootElements();
-            for (Element rootElement : rootElements) {
-                if (rootElement instanceof TypeElement) {
-                    TypeElement typeElement = (TypeElement) rootElement;
-                    String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
-                    if (className.equals(aRootName)) {
-                        return typeElement;
-                    }
-                }
-            }
+        if (isNullOrEmpty(className) || "java.lang.Object".equals(className)) {
+            return null;
         }
-        return null;
-    }
 
-    protected TypeElement findTypeElement(PackageElement element, String className) {
-        if (!isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
-            List<? extends Element> rootElements = element.getEnclosedElements();
-            for (Element rootElement : rootElements) {
-                if (rootElement instanceof TypeElement) {
-                    TypeElement typeElement = (TypeElement) rootElement;
-                    String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
-                    if (className.equals(aRootName)) {
-                        return typeElement;
+        Set<? extends Element> rootElements = roundEnv.getRootElements();
+        for (Element rootElement : rootElements) {
+            if (rootElement instanceof TypeElement) {
+                TypeElement typeElement = (TypeElement) rootElement;
+                String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
+                if (className.equals(aRootName)) {
+                    return typeElement;
+                }
+            }
+        }
+
+        // fallback using package name
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        int idx = className.lastIndexOf('.');
+        if (idx > 0) {
+            String packageName = className.substring(0, idx);
+            PackageElement pe = elementUtils.getPackageElement(packageName);
+            if (pe != null) {
+                List<? extends Element> enclosedElements = pe.getEnclosedElements();
+                for (Element rootElement : enclosedElements) {
+                    if (rootElement instanceof TypeElement) {
+                        TypeElement typeElement = (TypeElement) rootElement;
+                        String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
+                        if (className.equals(aRootName)) {
+                            return typeElement;
+                        }
                     }
                 }
             }
         }
+
         return null;
     }
 

@@ -92,7 +92,8 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEndpointTabularType());
 
             for (Map<String, String> row : rows) {
-                String option = row.get("name");
+                String name = row.get("name");
+                String kind = row.get("kind");
                 String type = row.get("type");
                 String javaType = row.get("javaType");
                 String value = row.get("value") != null ? row.get("value") : "";
@@ -101,8 +102,8 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
 
                 CompositeType ct = CamelOpenMBeanTypes.explainEndpointsCompositeType();
                 CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"option", "type", "java type", "value", "default value", "description"},
-                        new Object[]{option, type, javaType, value, defaultValue, description});
+                        new String[]{"option", "kind", "type", "java type", "value", "default value", "description"},
+                        new Object[]{name, kind, type, javaType, value, defaultValue, description});
                 answer.put(data);
             }
 
