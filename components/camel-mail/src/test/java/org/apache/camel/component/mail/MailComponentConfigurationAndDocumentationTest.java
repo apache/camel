@@ -49,7 +49,14 @@ public class MailComponentConfigurationAndDocumentationTest extends CamelTestSup
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
+
         String html = context.getComponentDocumentation("smtp");
+        assertNotNull("Should have found some auto-generated HTML", html);
+
+        html = context.getComponentDocumentation("pop3");
+        assertNotNull("Should have found some auto-generated HTML", html);
+
+        html = context.getComponentDocumentation("imap");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 

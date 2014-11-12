@@ -84,37 +84,41 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
             if (!isNullOrEmpty(scheme)) {
-                // write html documentation
-                String name = canonicalClassName(classElement.getQualifiedName().toString());
-                String packageName = name.substring(0, name.lastIndexOf("."));
-                String fileName = scheme + ".html";
-                Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
-                    @Override
-                    public Void call(PrintWriter writer) {
-                        writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint);
-                        return null;
-                    }
-                };
-                processFile(packageName, scheme, fileName, handler);
+                // support multiple schemes separated by comma, which maps to the exact same component
+                // for example camel-mail has a bunch of component schema names that does that
+                String[] schemes = scheme.split(",");
+                for (final String alias : schemes) {
+                    // write html documentation
+                    String name = canonicalClassName(classElement.getQualifiedName().toString());
+                    String packageName = name.substring(0, name.lastIndexOf("."));
+                    String fileName = alias + ".html";
+                    Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
+                        @Override
+                        public Void call(PrintWriter writer) {
+                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, alias);
+                            return null;
+                        }
+                    };
+                    processFile(packageName, alias, fileName, handler);
 
-                // write json schema
-                fileName = scheme + ".json";
-                handler = new Func1<PrintWriter, Void>() {
-                    @Override
-                    public Void call(PrintWriter writer) {
-                        writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint);
-                        return null;
-                    }
-                };
-                processFile(packageName, scheme, fileName, handler);
+                    // write json schema
+                    fileName = alias + ".json";
+                    handler = new Func1<PrintWriter, Void>() {
+                        @Override
+                        public Void call(PrintWriter writer) {
+                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, alias);
+                            return null;
+                        }
+                    };
+                    processFile(packageName, alias, fileName, handler);
+                }
             }
         }
     }
 
-    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
+    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme) {
         writer.println("<html>");
         writer.println("<header>");
-        String scheme = uriEndpoint.scheme();
         String title = scheme + " endpoint";
         writer.println("<title>" + title  + "</title>");
         writer.println("</header>");
@@ -150,9 +154,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("</html>");
     }
 
-    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint) {
+    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme) {
         // gather component information
-        String scheme = uriEndpoint.scheme();
         ComponentModel componentModel = findComponentProperties(roundEnv, scheme);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
