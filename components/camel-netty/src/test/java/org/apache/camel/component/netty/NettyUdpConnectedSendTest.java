@@ -35,7 +35,7 @@ import org.junit.Test;
 public class NettyUdpConnectedSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 20;
-    private int receivedCount;
+    private volatile int receivedCount;
     private ConnectionlessBootstrap bootstrap;
 
     public void createNettyUdpReceiver() {
@@ -54,7 +54,7 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
 
 
     public void bind() {
-        bootstrap.bind(new InetSocketAddress(8601));
+        bootstrap.bind(new InetSocketAddress(getPort()));
     }
 
     public void stop() {
@@ -64,18 +64,10 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
     @Test
     public void sendConnectedUdp() throws Exception {
         createNettyUdpReceiver();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                bind();
-            }
-        });
-        t.start();
-        Thread.sleep(1000);
+        bind();
         for (int i = 0; i < SEND_COUNT; ++i) {
             template.sendBody("direct:in", SEND_STRING);
         }
-        Thread.sleep(1000);
         stop();
         assertTrue("We should have received some datagrams", receivedCount > 0);
     }
@@ -98,7 +90,7 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("netty:udp://localhost:8601?sync=false&textline=true");
+                from("direct:in").to("netty:udp://localhost:{{port}}?sync=false&textline=true");
             }
         };
     }

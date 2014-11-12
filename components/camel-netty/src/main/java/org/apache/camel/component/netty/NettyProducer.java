@@ -246,8 +246,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         channel.setAttachment(new NettyCamelState(producerCallback, exchange));
 
         InetSocketAddress remoteAddress = null;
-        if (!isTcp() && configuration.isUdpConnectionlessSending()) {
-            // Need to specify the remoteAddress here
+        if (!isTcp()) {
+            // Need to specify the remoteAddress for udp connection
             remoteAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort()); 
         }
         
