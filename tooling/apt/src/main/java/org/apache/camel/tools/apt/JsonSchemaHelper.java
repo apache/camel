@@ -79,7 +79,10 @@ final class JsonSchemaHelper {
     public static String getType(String type, boolean enumType) {
         if (enumType) {
             return "enum";
-        } if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
+        } else if (type == null) {
+            // return generic type for unknown type
+            return "object";
+        } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
             return "sting";
         }
 

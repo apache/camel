@@ -38,6 +38,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
@@ -157,7 +158,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
-        findClassProperties(roundEnv, endpointPaths, endpointOptions, classElement, "");
+        findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, "");
 
         String json = createParameterJsonSchema(componentModel, endpointPaths, endpointOptions);
         writer.println(json);
@@ -225,7 +226,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
-        findClassProperties(roundEnv, endpointPaths, endpointOptions, classElement, prefix);
+        findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, prefix);
         if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
             writer.println("<table class='table'>");
             writer.println("  <tr>");
@@ -314,7 +315,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         return model;
     }
 
-    protected void findClassProperties(RoundEnvironment roundEnv, Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
+    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -384,7 +385,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
+                        findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
                         String docComment = elementUtils.getDocComment(fieldElement);
                         if (isNullOrEmpty(docComment)) {
@@ -435,7 +436,21 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
                 String superClassName = canonicalClassName(superclass.toString());
+                // check the rounding env first
                 baseTypeElement = findTypeElement(roundEnv, superClassName);
+                if (baseTypeElement == null) {
+                    // okay not found in rounding env, that means this component extends another component from another JAR
+                    // so we need to find it using the package name instead of in the rounding environment
+                    int idx = superClassName.lastIndexOf('.');
+                    String name = superClassName.substring(0, idx);
+                    // skip java.lang package
+                    if (!"java.lang".equals(name)) {
+                        PackageElement pe = elementUtils.getPackageElement(name);
+                        if (pe != null) {
+                            baseTypeElement = findTypeElement(pe, superClassName);
+                        }
+                    }
+                }
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -448,6 +463,22 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
         if (!isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
             Set<? extends Element> rootElements = roundEnv.getRootElements();
+            for (Element rootElement : rootElements) {
+                if (rootElement instanceof TypeElement) {
+                    TypeElement typeElement = (TypeElement) rootElement;
+                    String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
+                    if (className.equals(aRootName)) {
+                        return typeElement;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    protected TypeElement findTypeElement(PackageElement element, String className) {
+        if (!isNullOrEmpty(className) && !"java.lang.Object".equals(className)) {
+            List<? extends Element> rootElements = element.getEnclosedElements();
             for (Element rootElement : rootElements) {
                 if (rootElement instanceof TypeElement) {
                     TypeElement typeElement = (TypeElement) rootElement;
