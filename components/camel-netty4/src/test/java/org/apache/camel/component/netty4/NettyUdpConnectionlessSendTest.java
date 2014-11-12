@@ -30,7 +30,6 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.CharsetUtil;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -38,7 +37,7 @@ import org.junit.Test;
 public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 20;
-    private int receivedCount;
+    private volatile int receivedCount;
     private EventLoopGroup group;
     private Bootstrap bootstrap;
 
@@ -53,33 +52,25 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
                         channel.pipeline().addLast(new UdpHandler());
                         channel.pipeline().addLast(new ContentHandler());
                     }
-                }).localAddress(new InetSocketAddress(8601));
+                }).localAddress(new InetSocketAddress(getPort()));
     }
 
 
     public void bind() {
-        bootstrap.bind().syncUninterruptibly().channel().closeFuture().syncUninterruptibly();
+        bootstrap.bind().syncUninterruptibly();
     }
 
     public void stop() {
-        group.shutdownGracefully();
+        group.shutdownGracefully().syncUninterruptibly();
     }
 
     @Test
     public void sendConnectionlessUdp() throws Exception {
         createNettyUdpReceiver();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                bind();
-            }
-        });
-        t.start();
-        Thread.sleep(1000);
+        bind();
         for (int i = 0; i < SEND_COUNT; ++i) {
             template.sendBody("direct:in", SEND_STRING);
         }
-        Thread.sleep(1000);
         stop();
         assertTrue("We should have received some datagrams", receivedCount > 0);
 
@@ -103,7 +94,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in").to("netty4:udp://localhost:8601?sync=false&textline=true&udpConnectionlessSending=true");
+                from("direct:in").to("netty4:udp://localhost:{{port}}?sync=false&textline=true&udpConnectionlessSending=true");
             }
         };
     }
