@@ -71,6 +71,9 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
     public void testHttpBasicAuth() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
+        
+        out = template.requestBody("http://localhost:{{port}}/anotherTest", "Hello World", String.class);
+        assertEquals("See you later", out);
     }
 
     @Override
@@ -97,6 +100,9 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
                         }
                     })
                     .transform(constant("Bye World"));
+                
+                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler")
+                    .transform(constant("See you later"));
             }
         };
     }
