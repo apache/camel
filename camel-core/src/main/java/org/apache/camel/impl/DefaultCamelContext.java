@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1230,18 +1231,25 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
             }
 
-            if (includeAllOptions) {
-                // include other rows
-                for (Map<String, String> row : rows) {
-                    String name = row.get("name");
-                    String kind = row.get("kind");
-                    String value = row.get("value");
-                    String defaultValue = row.get("defaultValue");
-                    String type = row.get("type");
-                    String javaType = row.get("javaType");
-                    value = URISupport.sanitizePath(value);
-                    String description = row.get("description");
+            // include other rows
+            for (Map<String, String> row : rows) {
+                String name = row.get("name");
+                String kind = row.get("kind");
+                String value = row.get("value");
+                String defaultValue = row.get("defaultValue");
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                value = URISupport.sanitizePath(value);
+                String description = row.get("description");
 
+                if ("path".equals(kind)) {
+                    // if its the path option then we need to grab the actual value from the uri, which is the remainder path
+                    value = URISupport.extractRemainderPath(u, false);
+                    value = URISupport.sanitizePath(value);
+                }
+
+                // always include path options
+                if (includeAllOptions || "path".equals(kind)) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
                         selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
@@ -1269,7 +1277,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String description = row[6];
 
                 // add json of the option
-                buffer.append(doubleQuote(name) + ": { ");
+                buffer.append(doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");

@@ -89,8 +89,8 @@ public class EndpointExplain extends CamelCommandSupport {
             Collections.sort(options, new Comparator<Map<String, String>>() {
                 @Override
                 public int compare(Map<String, String> o1, Map<String, String> o2) {
-                    // sort by kind first, then name
-                    int answer = o1.get("kind").compareTo(o2.get("kind"));
+                    // sort by kind first (need to -1 as we want path on top), then name
+                    int answer = -1 * o1.get("kind").compareTo(o2.get("kind"));
                     if (answer == 0) {
                         answer = o1.get("name").compareTo(o2.get("name"));
                     }
