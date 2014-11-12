@@ -44,13 +44,13 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
         assertTrue(mbeanServer.isRegistered(on));
 
-        // there should be 3 options
+        // there should be 3 parameters + 1 path = 4
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertEquals(3, data.size());
+        assertEquals(4, data.size());
 
-        // there should be 8 options
+        // there should be 10 in total
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertEquals(9, data.size());
+        assertEquals(10, data.size());
     }
 
     @Override

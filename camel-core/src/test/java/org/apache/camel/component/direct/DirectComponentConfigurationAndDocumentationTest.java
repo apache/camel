@@ -41,8 +41,8 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\""));
-        assertTrue(json.contains("\"block\": { \"type\": \"boolean\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"block\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         log.info(json);
 
         // should include javadoc
-        assertTrue("Should include javadoc", json.contains("\"timeout\": { \"type\": \"integer\", \"javaType\": \"long\","
+        assertTrue("Should include javadoc", json.contains("\"timeout\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"long\","
                 + " \"defaultValue\": \"30000\","
                 + " \"description\": \"The timeout value to use if block is enabled. Is by default 30000.\""));
     }

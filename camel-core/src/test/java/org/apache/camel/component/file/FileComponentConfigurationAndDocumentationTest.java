@@ -41,8 +41,8 @@ public class FileComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"exclude\": { \"type\": \"string\""));
-        assertTrue(json.contains("\"delete\": { \"type\": \"boolean\""));
+        assertTrue(json.contains("\"exclude\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"delete\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

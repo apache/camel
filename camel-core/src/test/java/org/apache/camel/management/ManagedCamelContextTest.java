@@ -241,12 +241,14 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertEquals(4, StringHelper.countChar(json, '{'));
-        assertEquals(4, StringHelper.countChar(json, '}'));
-        assertTrue(json.contains("\"groupDelay\": { \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"value\": \"2000\","
+        assertEquals(5, StringHelper.countChar(json, '{'));
+        assertEquals(5, StringHelper.countChar(json, '}'));
+        assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"value\": \"2000\","
                 + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
-        assertTrue(json.contains("\"groupSize\": { \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"value\": \"5\","
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
     }
 
     @Override
