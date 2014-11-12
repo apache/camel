@@ -1176,6 +1176,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "event";
         } else if ("class".equals(componentName)) {
             return "beanclass";
+        } else if ("smtp".equals(componentName) || "smtps".equals(componentName)
+                || "imap".equals(componentName) || "imaps".equals(componentName)
+                || "pop3".equals(componentName) || "pop3s".equals(componentName)) {
+            return "mail";
         }
         return componentName.replaceAll("-", "");
     }
