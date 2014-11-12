@@ -93,6 +93,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
+    
+    @UriParam(defaultValue = "true")
+    protected boolean copyOnExchange = true;
 
     private volatile Processor defaultProcessor;
     private volatile Map<Integer, Processor> processors;
@@ -110,8 +113,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "Name of mock endpoint")
     private String name;
-    @UriParam(defaultValue = "true")
-    protected boolean copyOnExchange = true;
     @UriParam
     private volatile int expectedCount;
     @UriParam
