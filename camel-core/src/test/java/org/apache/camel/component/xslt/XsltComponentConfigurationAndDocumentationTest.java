@@ -41,7 +41,7 @@ public class XsltComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"contentCache\": { \"type\": \"boolean\", \"javaType\": \"boolean\" }"));
+        assertTrue(json.contains("\"contentCache\": { \"type\": \"boolean\", \"javaType\": \"boolean\", \"defaultValue\": \"true\" }"));
         assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\""));
     }
 
