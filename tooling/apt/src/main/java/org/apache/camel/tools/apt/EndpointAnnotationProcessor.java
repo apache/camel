@@ -191,7 +191,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             buffer.append("\n    ");
             buffer.append(JsonSchemaHelper.toJson(path.getName(), path.getType(), "", path.getDocumentation(), false, null));
         }
-        buffer.append("\n  }");
+        buffer.append("\n  },");
 
         // endpoint properties was named properties at first, and hence we stick with that naming to be compatible
         buffer.append("\n  \"properties\": {");
