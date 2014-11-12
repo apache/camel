@@ -41,8 +41,8 @@ public class WebsocketComponentConfigurationAndDocumentationTest extends CamelTe
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
 
-        assertTrue(json.contains("\"useStreaming\": { \"type\": \"boolean\""));
-        assertTrue(json.contains("\"sendToAll\": { \"type\": \"boolean\""));
+        assertTrue(json.contains("\"useStreaming\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"sendToAll\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

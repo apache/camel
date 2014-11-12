@@ -43,8 +43,8 @@ public class QuartzComponentConfigurationAndDocumentationTest extends CamelTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"stateful\": { \"type\": \"boolean\""));
-        assertTrue(json.contains("\"deleteJob\": { \"type\": \"boolean\""));
+        assertTrue(json.contains("\"stateful\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"deleteJob\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

@@ -42,9 +42,9 @@ public class JdbcComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"outputClass\": { \"type\": \"string\""));
-        assertTrue(json.contains("\"allowNamedParameters\": { \"type\": \"boolean\""));
-        assertTrue(json.contains("\"beanRowMapper\": { \"type\": \"object\", \"javaType\": \"org.apache.camel.component.jdbc.BeanRowMapper\" }"));
+        assertTrue(json.contains("\"outputClass\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"allowNamedParameters\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"beanRowMapper\": { \"kind\": \"parameter\", \"type\": \"object\", \"javaType\": \"org.apache.camel.component.jdbc.BeanRowMapper\" }"));
     }
 
     @Test

@@ -42,8 +42,8 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpMethodRestrict\": { \"type\": \"string\""));
-        assertTrue(json.contains("\"matchOnUriPrefix\": { \"type\": \"boolean\""));
+        assertTrue(json.contains("\"httpMethodRestrict\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"matchOnUriPrefix\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

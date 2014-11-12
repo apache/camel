@@ -42,8 +42,8 @@ public class GAuthComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"consumerKey\": { \"type\": \"string\""));
-        assertTrue(json.contains("\"scope\": { \"type\": \"string\""));
+        assertTrue(json.contains("\"consumerKey\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"scope\": { \"kind\": \"parameter\", \"type\": \"string\""));
     }
 
     @Test

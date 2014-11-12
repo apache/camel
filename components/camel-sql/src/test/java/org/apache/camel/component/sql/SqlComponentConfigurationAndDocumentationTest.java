@@ -42,8 +42,8 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\""));
-        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\""));
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
     }
 
     @Test
@@ -51,9 +51,9 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = context.explainEndpointJson("sql:select?dataSourceRef=jdbc/myDataSource&allowNamedParameters=true&consumer.onConsume=foo", true);
         assertNotNull(json);
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\""));
-        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\""));
-        assertTrue(json.contains(" \"onConsume\": { \"type\": \"string\", \"javaType\": \"java.lang.String\", \"value\": \"foo\""));
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains(" \"onConsume\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"value\": \"foo\""));
     }
 
     @Test
