@@ -248,16 +248,22 @@ public abstract class AbstractCamelRunner implements Runnable {
             fields.addAll(Arrays.asList(clazz.getSuperclass().getDeclaredFields()));
         }
         for (Field field : fields) {
+            String propertyValue;
             try {
-                String propertyValue = context.resolvePropertyPlaceholders("{{" + field.getName() + "}}");
+                propertyValue = context.resolvePropertyPlaceholders("{{" + field.getName() + "}}");
+            } catch (Exception e) {
+                log.debug("Skipped field {}", field.getName());
+                continue;
+            }
+            try {
                 if (!propertyValue.isEmpty()) {
                     // Try to convert the value and set the field
                     Object convertedValue = convertValue(propertyValue, field.getGenericType());
                     ReflectionHelper.setField(field, target, convertedValue);
-                    log.debug("Set field {} with value {}", field.getName(), propertyValue);
+                    log.debug("Configured field {} with value {}", field.getName(), propertyValue);
                 }
             } catch (Exception e) {
-                log.debug("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.");
+                log.error("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         return target;
@@ -290,7 +296,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             } else if (clazz == URL.class) {
                 return new URL(value);
             } else {
-                throw new IllegalArgumentException("Unknown type: " + (clazz != null ? clazz.getName() : null));
+                throw new IllegalArgumentException("Unsupported type: " + (clazz != null ? clazz.getName() : null));
             }
         } else {
             return null;
