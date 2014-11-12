@@ -974,8 +974,11 @@ public class JettyHttpComponent extends HttpComponent {
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
                 if (handler instanceof HandlerWrapper) {
-                    ((HandlerWrapper) handler).setHandler(server.getHandler());
-                    server.setHandler(handler);
+                    // avoid setting the security handler more than once
+                    if (!handler.equals(server.getHandler())) {
+                        ((HandlerWrapper) handler).setHandler(server.getHandler());
+                        server.setHandler(handler);
+                    }
                 } else {
                     HandlerCollection handlerCollection = new HandlerCollection();
                     handlerCollection.addHandler(server.getHandler());
