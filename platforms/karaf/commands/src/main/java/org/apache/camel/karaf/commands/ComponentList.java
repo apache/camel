@@ -51,7 +51,7 @@ public class ComponentList extends CamelCommandSupport {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
-    boolean verbose = false;
+    boolean verbose;
 
     protected Object doExecute() throws Exception {
         List<Map<String, String>> components = camelController.listComponents(name);
