@@ -16,17 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.io.StringReader;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
-import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.util.MessageDump;
+import org.apache.camel.commands.BacklogTracerDumpCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
@@ -51,74 +41,8 @@ public class BacklogTracerDump extends CamelCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        CamelContext camel = camelController.getCamelContext(context);
-        if (camel == null) {
-            System.err.println("CamelContext " + context + " not found.");
-            return null;
-        }
-
-        BacklogTracer backlogTracer = BacklogTracer.getBacklogTracer(camel);
-        if (backlogTracer == null) {
-            backlogTracer = (BacklogTracer) camel.getDefaultBacklogTracer();
-        }
-
-        if (format == null || "text".equals(format)) {
-            JAXBContext context = JAXBContext.newInstance(MessageDump.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            SimpleDateFormat sdf = new SimpleDateFormat(BacklogTracerEventMessage.TIMESTAMP_FORMAT);
-
-            List<BacklogTracerEventMessage> events;
-            if (pattern != null) {
-                events = backlogTracer.dumpTracedMessages(pattern);
-            } else {
-                events = backlogTracer.dumpAllTracedMessages();
-            }
-            for (BacklogTracerEventMessage event : events) {
-                MessageDump msg = (MessageDump) unmarshaller.unmarshal(new StringReader(event.getMessageAsXml()));
-                String breadcrumb = getBreadcrumbId(msg.getHeaders());
-
-                System.out.println("#" + event.getUid() + "\tTimestamp:\t" + sdf.format(event.getTimestamp()));
-                if (breadcrumb != null) {
-                    System.out.println("Breadcrumb: " + breadcrumb);
-                }
-                System.out.println("ExchangeId: " + event.getExchangeId());
-
-                if (event.getToNode() != null) {
-                    System.out.println("Route: " + event.getRouteId() + "\t--> " + event.getToNode());
-                } else {
-                    System.out.println("Route: " + event.getRouteId());
-                }
-
-                String body = msg.getBody().getValue();
-                if (bodySize != null && bodySize > 0) {
-                    if (body.length() > bodySize) {
-                        body = body.substring(0, bodySize);
-                    }
-                }
-                System.out.println(body);
-                System.out.println("");
-            }
-        } else if ("xml".equals(format)) {
-            if (pattern != null) {
-                System.out.println("BacklogTracer messages:\n" + backlogTracer.dumpTracedMessages(pattern));
-            } else {
-                System.out.println("BacklogTracer messages:\n" + backlogTracer.dumpAllTracedMessagesAsXml());
-            }
-            return null;
-        }
-
-        return null;
+        BacklogTracerDumpCommand command = new BacklogTracerDumpCommand(context, pattern, format, bodySize);
+        return command.execute(camelController, System.out, System.err);
     }
 
-    private static String getBreadcrumbId(List<MessageDump.Header> headers) {
-        if (headers == null || headers.isEmpty()) {
-            return null;
-        }
-        for (MessageDump.Header header : headers) {
-            if (header.getKey().equals(Exchange.BREADCRUMB_ID)) {
-                return header.getValue();
-            }
-        }
-        return null;
-    }
 }

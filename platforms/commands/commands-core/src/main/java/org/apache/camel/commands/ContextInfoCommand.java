@@ -36,18 +36,17 @@ import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
 /**
  * Command to display detailed information about a given {@link org.apache.camel.CamelContext}.
  */
-public class ContextInfoCommand extends AbstractCamelCommand {
+public class ContextInfoCommand extends AbstractContextCommand {
 
     private StringEscape stringEscape;
-    private String name;
     private String mode;
 
     /**
-     * @param name The name of the Camel context
+     * @param context The name of the Camel context
      * @param mode Allows for different display modes (--verbose, etc)
      */
-    public ContextInfoCommand(String name, String mode) {
-        this.name = name;
+    public ContextInfoCommand(String context, String mode) {
+        super(context);
         this.mode = mode;
     }
 
@@ -59,15 +58,9 @@ public class ContextInfoCommand extends AbstractCamelCommand {
     }
 
     @Override
-    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(name);
+    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
 
-        if (camelContext == null) {
-            err.println("Camel context " + name + " not found.");
-            return null;
-        }
-
-        out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Context " + name + "\u001B[0m"));
+        out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Context " + context + "\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tName: " + camelContext.getName()));
         out.println(stringEscape.unescapeJava("\tManagementName: " + camelContext.getManagementName()));
         out.println(stringEscape.unescapeJava("\tVersion: " + camelContext.getVersion()));
@@ -143,7 +136,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
 
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=context,name=\"" + name + "\",*"), null);
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=context,name=\"" + context + "\",*"), null);
             Iterator<ObjectName> iterator = set.iterator();
             if (iterator.hasNext()) {
                 contextMBean = iterator.next();

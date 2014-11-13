@@ -16,8 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.commands.BacklogTracerInfoCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
@@ -32,28 +31,7 @@ public class BacklogTracerInfo extends CamelCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        CamelContext camel = camelController.getCamelContext(context);
-        if (camel == null) {
-            System.err.println("CamelContext " + context + " not found.");
-            return null;
-        }
-
-        BacklogTracer backlogTracer = BacklogTracer.getBacklogTracer(camel);
-        if (backlogTracer == null) {
-            backlogTracer = (BacklogTracer) camel.getDefaultBacklogTracer();
-        }
-
-        System.out.println("BacklogTracer context:\t\t" + camel.getName());
-        System.out.println("BacklogTracer enabled:\t\t" + backlogTracer.isEnabled());
-        System.out.println("BacklogTracer pattern:\t\t" + (backlogTracer.getTracePattern() != null ? backlogTracer.getTracePattern() : ""));
-        System.out.println("BacklogTracer filter:\t\t" + (backlogTracer.getTraceFilter() != null ? backlogTracer.getTraceFilter() : ""));
-        System.out.println("BacklogTracer removeOnDump:\t" + backlogTracer.isRemoveOnDump());
-        System.out.println("BacklogTracer backlogSize:\t" + backlogTracer.getBacklogSize());
-        System.out.println("BacklogTracer tracerCount:\t" + backlogTracer.getTraceCounter());
-        System.out.println("BacklogTracer body...");
-        System.out.println("\tmaxChars:\t\t" + backlogTracer.getBodyMaxChars());
-        System.out.println("\tincludeFiles:\t\t" + backlogTracer.isBodyIncludeFiles());
-        System.out.println("\tincludeStreams:\t\t" + backlogTracer.isBodyIncludeStreams());
-        return null;
+        BacklogTracerInfoCommand command = new BacklogTracerInfoCommand(context);
+        return command.execute(camelController, System.out, System.err);
     }
 }
