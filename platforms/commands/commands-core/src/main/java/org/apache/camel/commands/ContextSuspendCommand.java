@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands;
+package org.apache.camel.commands;
 
-import org.apache.camel.commands.ContextSuspendCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import java.io.PrintStream;
 
-/**
- * Command to suspend a Camel context.
- */
-@Command(scope = "camel", name = "context-suspend", description = "Suspends a Camel context.")
-public class ContextSuspend extends CamelCommandSupport {
+import org.apache.camel.CamelContext;
 
-    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
-    String context;
+public class ContextSuspendCommand extends AbstractContextCommand {
 
-    @Override
-    protected Object doExecute() throws Exception {
-        ContextSuspendCommand command = new ContextSuspendCommand(context);
-        return command.execute(camelController, System.out, System.err);
+    public ContextSuspendCommand(String context) {
+        super(context);
     }
 
+    @Override
+    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
+        camelContext.suspend();
+        return null;
+    }
 }

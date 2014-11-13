@@ -19,6 +19,7 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.CamelContext;
 import org.apache.felix.gogo.commands.Argument;
 
+@Deprecated
 public abstract class AbstractContextCommand extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
