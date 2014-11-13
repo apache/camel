@@ -63,6 +63,9 @@ public class ${className}Test {
         integration.prepare(null, ScrHelper.getScrProperties(integration.getClass().getName()));
         context = integration.getContext();
 
+        // Disable JMX for test
+        context.disableJMX();
+
         // Fake a component for test
         // context.addComponent("amq", new MockComponent());
     }
