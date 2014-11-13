@@ -18,6 +18,9 @@ package org.apache.camel.commands.catalog;
 
 import java.util.List;
 
+/**
+ * Catalog of all the Camel components from this Apache Camel release.
+ */
 public interface CamelComponentCatalog {
 
     /**

@@ -33,8 +33,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.commands.*</camel.osgi.export.pkg>
-    <camel.core.dir>../../../camel-core/</camel.core.dir>
-    <components.dir>../../../components/</components.dir>
   </properties>
 
   <dependencies>
@@ -81,35 +79,7 @@
   <build>
     <plugins>
 
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <configuration>
-              <target>
-                <echo>Copying component json descriptors</echo>
-                <copy todir="${project.basedir}/target/classes/org/apache/camel/commands/catalog/components/" flatten="true">
-                  <fileset dir="${camel.core.dir}">
-                    <include name="**/target/classes/org/apache/camel/**/*.json"/>
-                  </fileset>
-                </copy>
-                <copy todir="${project.basedir}/target/classes/org/apache/camel/commands/catalog/components/" flatten="true">
-                  <fileset dir="${components.dir}">
-                    <include name="**/target/classes/org/apache/camel/**/*.json"/>
-                  </fileset>
-                </copy>
-                <!-- create a single file that has a full list of all the component names, with a fixed name -->
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
+      <!-- generate and include all components in the catalog -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>

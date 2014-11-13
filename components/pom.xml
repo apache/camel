@@ -270,15 +270,6 @@
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
     <!-- enables the APT dependency so that it can be disabled in IDE builds -->

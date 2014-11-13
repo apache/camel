@@ -117,7 +117,7 @@ public interface CamelController {
     String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception;
 
     /**
-     * Lists all components and include information
+     * Lists Components which are in use or available on the classpath and include information
      *
      * @param camelContextName the Camel context.
      * @return a list of key/value pairs with component information
