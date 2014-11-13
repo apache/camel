@@ -21,9 +21,6 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-/**
- * List the Camel REST services from the Rest registry available in the Karaf instance.
- */
 @Command(scope = "camel", name = "rest-registry-list", description = "Lists all Camel REST services enlisted in the Rest Registry from all CamelContexts.")
 public class RestRegistryList extends CamelCommandSupport {
 

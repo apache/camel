@@ -25,6 +25,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.spi.ManagementAgent;
 
+/**
+ * Command to reset route stats.
+ */
 public class RouteResetStatsCommand extends AbstractRouteCommand {
 
     public RouteResetStatsCommand(String route, String context) {

@@ -24,6 +24,9 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 
+/**
+ * Command to show the REST marshaled in XML.
+ */
 public class RestShowCommand extends AbstractContextCommand {
 
     public RestShowCommand(String context) {

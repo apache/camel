@@ -19,9 +19,6 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteStopCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to stop a route.
- */
 @Command(scope = "camel", name = " route-stop", description = "Stop a Camel route or a group of routes.")
 public class RouteStop extends AbstractRouteCommand {
 

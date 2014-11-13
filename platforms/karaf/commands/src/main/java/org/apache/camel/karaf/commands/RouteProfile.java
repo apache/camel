@@ -20,9 +20,6 @@ import org.apache.camel.commands.RouteProfileCommand;
 import org.apache.camel.commands.StringEscape;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to display profile information about a Camel route.
- */
 @Command(scope = "camel", name = "route-profile", description = "Display profile information about Camel route(s).")
 public class RouteProfile extends AbstractRouteCommand {
 

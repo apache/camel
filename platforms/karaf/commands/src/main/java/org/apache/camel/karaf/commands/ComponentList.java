@@ -21,9 +21,6 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-/**
- * List the Camel components available in the Karaf instance.
- */
 @Command(scope = "camel", name = "component-list", description = "Lists all Camel components available in CamelContexts.")
 public class ComponentList extends CamelCommandSupport {
 

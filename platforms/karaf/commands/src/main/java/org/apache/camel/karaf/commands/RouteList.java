@@ -20,9 +20,6 @@ import org.apache.camel.commands.RouteListCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to list all Camel routes.
- */
 @Command(scope = "camel", name = "route-list", description = "List Camel routes.")
 public class RouteList extends CamelCommandSupport {
 

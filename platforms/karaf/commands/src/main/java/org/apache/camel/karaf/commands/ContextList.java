@@ -19,9 +19,6 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.ContextListCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * List the Camel contexts available in the Karaf instance.
- */
 @Command(scope = "camel", name = "context-list", description = "Lists all Camel contexts.")
 public class ContextList extends CamelCommandSupport {
 

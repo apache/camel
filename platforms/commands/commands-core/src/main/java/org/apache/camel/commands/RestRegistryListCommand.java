@@ -25,6 +25,9 @@ import java.util.Map;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.util.URISupport;
 
+/**
+ * List the Camel REST services from the Rest registry available in the JVM.
+ */
 public class RestRegistryListCommand extends AbstractCamelCommand {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";

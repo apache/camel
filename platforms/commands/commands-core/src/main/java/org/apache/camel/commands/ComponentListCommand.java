@@ -23,6 +23,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * List all the Camel components that are available in the JVM.
+ */
 public class ComponentListCommand extends AbstractContextCommand {
 
     private static final String NAME_COLUMN_LABEL = "Name";

@@ -19,9 +19,6 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteStartCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to start a route.
- */
 @Command(scope = "camel", name = "route-start", description = "Start a Camel route or a group of routes")
 public class RouteStart extends AbstractRouteCommand {
 

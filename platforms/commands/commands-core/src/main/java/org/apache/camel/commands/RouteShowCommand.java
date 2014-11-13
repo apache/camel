@@ -23,6 +23,9 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 
+/**
+ * Command to show the route marshaled in XML.
+ */
 public class RouteShowCommand extends AbstractRouteCommand {
 
     public RouteShowCommand(String route, String context) {

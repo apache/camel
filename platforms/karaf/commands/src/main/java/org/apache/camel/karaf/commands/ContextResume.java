@@ -20,9 +20,6 @@ import org.apache.camel.commands.ContextResumeCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to resume a Camel context.
- */
 @Command(scope = "camel", name = "context-resume", description = "Resumes a Camel context.")
 public class ContextResume extends CamelCommandSupport {
 

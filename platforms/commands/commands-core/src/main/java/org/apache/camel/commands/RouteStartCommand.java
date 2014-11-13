@@ -21,6 +21,9 @@ import java.io.PrintStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 
+/**
+ * Command to start a route.
+ */
 public class RouteStartCommand extends AbstractRouteCommand {
 
     public RouteStartCommand(String route, String context) {

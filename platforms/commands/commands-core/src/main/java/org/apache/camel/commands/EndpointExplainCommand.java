@@ -28,6 +28,9 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
 
+/**
+ * Explain the Camel endpoints available in the JVM.
+ */
 public class EndpointExplainCommand extends AbstractCamelCommand {
 
     private String name;

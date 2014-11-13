@@ -21,9 +21,6 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-/**
- * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
- */
 @Command(scope = "camel", name = "backlog-tracer-start", description = "Starts the Backlog tracer")
 public class BacklogTracerStart extends CamelCommandSupport {
 

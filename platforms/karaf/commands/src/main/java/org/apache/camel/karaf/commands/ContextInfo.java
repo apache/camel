@@ -21,9 +21,6 @@ import org.apache.camel.commands.StringEscape;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to display detailed information about a Camel context.
- */
 @Command(scope = "camel", name = "context-info", description = "Display detailed information about a Camel context.")
 public class ContextInfo extends CamelCommandSupport {
 

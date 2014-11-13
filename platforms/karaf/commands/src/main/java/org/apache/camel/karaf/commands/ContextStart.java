@@ -20,9 +20,6 @@ import org.apache.camel.commands.ContextStartCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to start a Camel context.
- */
 @Command(scope = "camel", name = "context-start", description = "Start a Camel context.")
 public class ContextStart extends CamelCommandSupport {
 

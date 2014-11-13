@@ -31,6 +31,9 @@ import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
+/**
+ * List the Camel endpoints available in the JVM.
+ */
 public class EndpointListCommand extends AbstractCamelCommand {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";

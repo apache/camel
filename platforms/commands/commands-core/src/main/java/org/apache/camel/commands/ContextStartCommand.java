@@ -20,6 +20,9 @@ import java.io.PrintStream;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Command to start a Camel context.
+ */
 public class ContextStartCommand extends AbstractContextCommand {
 
     public ContextStartCommand(String context) {

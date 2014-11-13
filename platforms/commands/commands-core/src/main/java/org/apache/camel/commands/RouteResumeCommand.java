@@ -21,6 +21,9 @@ import java.io.PrintStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 
+/**
+ * Command to resume a route.
+ */
 public class RouteResumeCommand extends AbstractRouteCommand {
 
     public RouteResumeCommand(String route, String context) {

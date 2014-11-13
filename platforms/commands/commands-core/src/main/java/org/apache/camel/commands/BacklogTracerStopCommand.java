@@ -21,6 +21,9 @@ import java.io.PrintStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 
+/**
+ * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
+ */
 public class BacklogTracerStopCommand extends AbstractContextCommand {
 
     public BacklogTracerStopCommand(String context) {

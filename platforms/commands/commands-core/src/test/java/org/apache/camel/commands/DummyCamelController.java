@@ -16,22 +16,23 @@
  */
 package org.apache.camel.commands;
 
-import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 
-/**
- * Command to suspend a route.
- */
-public class RouteSuspendCommand extends AbstractRouteCommand {
+public class DummyCamelController extends AbstractCamelController {
 
-    public RouteSuspendCommand(String route, String context) {
-        super(route, context);
+    private CamelContext camelContext;
+
+    public DummyCamelController(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, Route camelRoute, PrintStream out, PrintStream err) throws Exception {
-        camelContext.suspendRoute(camelRoute.getId());
+    public List<CamelContext> getCamelContexts() {
+        List<CamelContext> answer = new ArrayList<CamelContext>(1);
+        answer.add(camelContext);
+        return answer;
     }
 }

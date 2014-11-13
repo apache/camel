@@ -20,9 +20,6 @@ import org.apache.camel.commands.RouteShowCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to show the route marshaled in XML.
- */
 @Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML.")
 public class RouteShow extends CamelCommandSupport {
 

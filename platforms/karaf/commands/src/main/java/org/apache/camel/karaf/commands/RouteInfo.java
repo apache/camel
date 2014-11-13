@@ -21,9 +21,6 @@ import org.apache.camel.commands.StringEscape;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to display detailed information about a Camel route.
- */
 @Command(scope = "camel", name = "route-info", description = "Display information about a Camel route.")
 public class RouteInfo extends CamelCommandSupport {
 

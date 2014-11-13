@@ -31,6 +31,9 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ManagementAgent;
 
+/**
+ * Command to display detailed information about a Camel route.
+ */
 public class RouteInfoCommand extends AbstractRouteCommand {
 
     private StringEscape stringEscape;

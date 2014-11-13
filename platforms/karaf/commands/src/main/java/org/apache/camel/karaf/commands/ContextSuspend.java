@@ -20,9 +20,6 @@ import org.apache.camel.commands.ContextSuspendCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to suspend a Camel context.
- */
 @Command(scope = "camel", name = "context-suspend", description = "Suspends a Camel context.")
 public class ContextSuspend extends CamelCommandSupport {
 

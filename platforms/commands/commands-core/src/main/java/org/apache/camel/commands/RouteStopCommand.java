@@ -21,6 +21,9 @@ import java.io.PrintStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 
+/**
+ * Command to stop a route.
+ */
 public class RouteStopCommand extends AbstractRouteCommand {
 
     public RouteStopCommand(String route, String context) {

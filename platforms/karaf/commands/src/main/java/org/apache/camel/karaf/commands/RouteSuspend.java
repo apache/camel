@@ -19,9 +19,6 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteSuspendCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to suspend a route.
- */
 @Command(scope = "camel", name = " route-suspend", description = "Suspend a Camel route or a group of routes.")
 public class RouteSuspend extends AbstractRouteCommand {
 

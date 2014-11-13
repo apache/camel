@@ -20,6 +20,9 @@ import java.io.PrintStream;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Command to suspend a Camel context.
+ */
 public class ContextSuspendCommand extends AbstractContextCommand {
 
     public ContextSuspendCommand(String context) {

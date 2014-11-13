@@ -29,6 +29,9 @@ import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.util.MessageDump;
 
+/**
+ * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
+ */
 public class BacklogTracerDumpCommand extends AbstractContextCommand {
 
     private String pattern;

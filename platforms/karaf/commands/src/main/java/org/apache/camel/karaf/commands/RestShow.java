@@ -20,9 +20,6 @@ import org.apache.camel.commands.RestShowCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to show the REST marshaled in XML.
- */
 @Command(scope = "camel", name = "rest-show", description = "Display the Camel REST definition in XML.")
 public class RestShow extends CamelCommandSupport {
 

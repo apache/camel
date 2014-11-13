@@ -20,6 +20,9 @@ import java.io.PrintStream;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Command to resume a Camel context.
+ */
 public class ContextResumeCommand extends AbstractContextCommand {
 
     public ContextResumeCommand(String context) {

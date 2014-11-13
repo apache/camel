@@ -19,9 +19,6 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteResetStatsCommand;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to reset route stats.
- */
 @Command(scope = "camel", name = "route-reset-stats", description = "Reset performance stats on a route or group of routes")
 public class RouteResetStats extends AbstractRouteCommand {
 

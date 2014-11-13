@@ -30,6 +30,9 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.util.ProcessorStatDump;
 import org.apache.camel.util.RouteStatDump;
 
+/**
+ * Command to display profile information about a Camel route.
+ */
 public class RouteProfileCommand extends AbstractRouteCommand {
 
     protected static final String HEADER_FORMAT = "%-30s %10s %12s %12s %12s %12s %12s %12s %12s";

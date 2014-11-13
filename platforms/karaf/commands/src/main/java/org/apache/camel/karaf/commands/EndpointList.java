@@ -21,9 +21,6 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-/**
- * List the Camel endpoints available in the Karaf instance.
- */
 @Command(scope = "camel", name = "endpoint-list", description = "Lists all Camel endpoints available in CamelContexts.")
 public class EndpointList extends CamelCommandSupport {
 

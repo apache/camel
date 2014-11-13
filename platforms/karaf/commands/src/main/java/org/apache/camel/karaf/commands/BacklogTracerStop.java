@@ -20,9 +20,6 @@ import org.apache.camel.commands.BacklogTracerStopCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
- */
 @Command(scope = "camel", name = "backlog-tracer-stop", description = "Stops the Backlog tracer")
 public class BacklogTracerStop extends CamelCommandSupport {
 

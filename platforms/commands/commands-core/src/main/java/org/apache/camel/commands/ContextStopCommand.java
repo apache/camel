@@ -20,6 +20,9 @@ import java.io.PrintStream;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Command to stop a Camel context.
+ */
 public class ContextStopCommand extends AbstractContextCommand {
 
     public ContextStopCommand(String context) {

@@ -24,6 +24,9 @@ import java.util.Map;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 
+/**
+ * Command to list all Camel routes.
+ */
 public class RouteListCommand extends AbstractCamelCommand {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";
