@@ -91,10 +91,10 @@ public class ComponentListCommand extends AbstractContextCommand {
             return null;
         } else {
             // some of the options is optional so we need to start from 1
-            int maxNameLen = 1;
-            int maxStatusLen = 1;
-            int maxMavenLen = 1;
-            int maxDescriptionLen = 1;
+            int maxNameLen = 0;
+            int maxStatusLen = 0;
+            int maxMavenLen = 0;
+            int maxDescriptionLen = 0;
 
             for (final Map<String, String> component : components) {
 

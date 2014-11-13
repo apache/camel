@@ -34,7 +34,7 @@ public class RestShowCommand extends AbstractContextCommand {
     protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
         List<RestDefinition> rests = camelController.getRestDefinitions(context);
         if (rests == null || rests.isEmpty()) {
-            out.print("There are no REST services in CamelContext with name: " + context);
+            out.println("There are no REST services in CamelContext with name: " + context);
             return null;
         }
         // use a routes definition to dump the rests

@@ -209,7 +209,9 @@ public class CamelControllerImpl implements CamelController {
                         return o1.getUrl().compareTo(o2.getUrl());
                     }
                 });
-                answer.put(camelContextName, services);
+                if (!services.isEmpty()) {
+                    answer.put(camelContextName, services);
+                }
             }
         } else {
             // already sorted by camel context
@@ -222,7 +224,9 @@ public class CamelControllerImpl implements CamelController {
                         return o1.getUrl().compareTo(o2.getUrl());
                     }
                 });
-                answer.put(camelContext.getName(), services);
+                if (!services.isEmpty()) {
+                    answer.put(camelContext.getName(), services);
+                }
             }
         }
         return answer;
@@ -278,7 +282,7 @@ public class CamelControllerImpl implements CamelController {
                 }
             }
 
-            Map<String, String> row = new HashMap<>();
+            Map<String, String> row = new HashMap<String, String>();
             row.put("name", name);
             row.put("status", status);
             if (description != null) {
