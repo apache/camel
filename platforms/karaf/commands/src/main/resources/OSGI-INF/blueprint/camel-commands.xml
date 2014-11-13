@@ -81,6 +81,7 @@
     <command name="camel/route-info">
       <action class="org.apache.camel.karaf.commands.RouteInfo">
         <property name="camelController" ref="camelController"/>
+        <property name="stringEscape" ref="stringEscape"/>
       </action>
       <completers>
         <ref component-id="routeCompleter"/>
