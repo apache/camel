@@ -3053,6 +3053,53 @@
       </dependencies>
     </profile>
 
-  </profiles>
+    <!-- experimental profile to activate ekstazi http://www.ekstazi.org -->
+    <profile>
+      <id>ekstazi</id>
+      <activation>
+        <property>
+          <name>ekstazi</name>
+        </property>
+      </activation>
 
+      <dependencies>
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <version>${woodstox-version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ekstazi</groupId>
+            <artifactId>ekstazi-maven-plugin</artifactId>
+            <version>4.3.0</version>
+            <configuration>
+              <!-- always run tests that failed in prevoius run -->
+              <forcefailing>true</forcefailing>
+            </configuration>
+            <executions>
+              <execution>
+                <id>doit</id>
+                <goals>
+                  <goal>select</goal>
+                  <goal>restore</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludesFile>${java.io.tmpdir}/${user.name}EkstaziExcludes</excludesFile>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
