@@ -46,7 +46,8 @@ public final class JsonSchemaHelper {
             return "enum";
         } else if (type.isArray()) {
             return "array";
-        } if (type.isAssignableFrom(URI.class) || type.isAssignableFrom(URL.class)) {
+        } 
+        if (type.isAssignableFrom(URI.class) || type.isAssignableFrom(URL.class)) {
             return "sting";
         }
 
