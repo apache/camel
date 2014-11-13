@@ -39,11 +39,7 @@
     <!-- camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>commands-core</artifactId>
+      <artifactId>camel-commands-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -23,6 +23,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Command to list all {@link org.apache.camel.CamelContext} in the JVM.
+ */
 public class ContextListCommand extends AbstractCamelCommand {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";
@@ -44,8 +47,6 @@ public class ContextListCommand extends AbstractCamelCommand {
         final Map<String, Integer> columnWidths = computeColumnWidths(camelContexts);
         final String headerFormat = buildFormatString(columnWidths, true);
         final String rowFormat = buildFormatString(columnWidths, false);
-
-        out.println("Hello from commands-core");
 
         if (camelContexts.size() > 0) {
             out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, STATUS_COLUMN_LABEL, UPTIME_COLUMN_LABEL));

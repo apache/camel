@@ -1489,7 +1489,7 @@
       <!-- camel commands -->
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>commands-core</artifactId>
+        <artifactId>camel-commands-core</artifactId>
         <version>${project.version}</version>
       </dependency>      
       <dependency>

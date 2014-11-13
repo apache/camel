@@ -19,24 +19,26 @@ package org.apache.camel.commands;
 import java.io.PrintStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.Required;
 
 /**
  * Abstract command for working with a single {@link org.apache.camel.CamelContext}
  */
 public abstract class AbstractContextCommand extends AbstractCamelCommand {
 
+    private String context;
+
     /**
-     * The name of the Camel context.
+     * @param context The name of the Camel context.
      */
-    @Required
-    public abstract String getContext();
+    protected AbstractContextCommand(String route, String context) {
+        this.context = context;
+    }
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(getContext());
+        CamelContext camelContext = camelController.getCamelContext(context);
         if (camelContext == null) {
-            err.println("Camel context " + getContext() + " not found.");
+            err.println("Camel context " + context + " not found.");
             return null;
         }
 

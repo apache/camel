@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.commands.internal.RegexUtil;
-import org.apache.camel.spi.Required;
 
 import static org.apache.camel.util.CamelContextHelper.getRouteStartupOrder;
 
@@ -33,21 +32,22 @@ import static org.apache.camel.util.CamelContextHelper.getRouteStartupOrder;
  */
 public abstract class AbstractRouteCommand extends AbstractCamelCommand {
 
-    /**
-     * The Camel route ID or a wildcard expression
-     */
-    @Required
-    public abstract String getRoute();
+    private String route;
+    private String context;
 
     /**
-     * The name of the Camel context.
+     * @param route The Camel route ID or a wildcard expression
+     * @param context The name of the Camel context.
      */
-    public abstract String getContext();
+    protected AbstractRouteCommand(String route, String context) {
+        this.route = route;
+        this.context = context;
+    }
 
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        List<Route> camelRoutes = camelController.getRoutes(getContext(), RegexUtil.wildcardAsRegex(getRoute()));
+        List<Route> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
         if (camelRoutes == null || camelRoutes.isEmpty()) {
-            err.println("Camel routes using " + getRoute() + " not found.");
+            err.println("Camel routes using " + route + " not found.");
             return null;
         }
         // we want the routes sorted

@@ -26,7 +26,7 @@
     <version>2.15-SNAPSHOT</version>
   </parent>
 
-  <artifactId>commands-core</artifactId>
+  <artifactId>camel-commands-core</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Platforms :: Commands :: Core</name>
   <description>Core Camel Commands</description>
