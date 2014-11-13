@@ -24,10 +24,13 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Default {@link org.apache.camel.catalog.CamelComponentCatalog}.
+ */
 public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
 
-    private static String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
-    private static String COMPONENTS_JSON = "org/apache/camel/catalog/components";
+    private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
+    private static final String COMPONENTS_JSON = "org/apache/camel/catalog/components";
 
     @Override
     public List<String> findComponentNames() {

@@ -54,7 +54,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>include-components-list</goal>
+              <goal>prepare-catalog</goal>
             </goals>
             <phase>process-resources</phase>
           </execution>
@@ -67,6 +67,7 @@
         <extensions>true</extensions>
       </plugin>
     </plugins>
+
   </build>
 
 </project>

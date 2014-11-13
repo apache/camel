@@ -73,21 +73,6 @@
   <build>
     <plugins>
 
-      <!-- generate and include all components in the catalog -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>include-components-list</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>

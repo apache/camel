@@ -37,10 +37,10 @@ import org.apache.maven.project.MavenProjectHelper;
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
- * @goal include-components-list
+ * @goal prepare-catalog
  * @execute phase="process-resources"
  */
-public class CommandsPrepareMojo extends AbstractMojo {
+public class PrepareCatalogMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
 
