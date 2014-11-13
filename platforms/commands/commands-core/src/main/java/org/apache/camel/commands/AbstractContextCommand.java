@@ -43,12 +43,12 @@ public abstract class AbstractContextCommand extends AbstractCamelCommand {
         }
 
         // Setting thread context classloader to the bundle classloader to enable legacy code that relies on it
-//        ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
-//        Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
+        ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
         try {
             return performContextCommand(camelController, camelContext, out, err);
         } finally {
-//            Thread.currentThread().setContextClassLoader(oldClassloader);
+            Thread.currentThread().setContextClassLoader(oldClassloader);
         }
     }
 

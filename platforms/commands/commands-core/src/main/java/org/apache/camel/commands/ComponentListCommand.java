@@ -91,10 +91,10 @@ public class ComponentListCommand extends AbstractContextCommand {
             return null;
         } else {
             // some of the options is optional so we need to start from 1
-            int maxNameLen = 0;
-            int maxStatusLen = 0;
-            int maxMavenLen = 0;
-            int maxDescriptionLen = 0;
+            int maxNameLen = NAME_COLUMN_LABEL.length();
+            int maxStatusLen = STATUS_COLUMN_LABEL.length();
+            int maxMavenLen = MAVEN_COLUMN_LABEL.length();
+            int maxDescriptionLen = DESCRIPTION_COLUMN_LABEL.length();
 
             for (final Map<String, String> component : components) {
 
@@ -150,7 +150,7 @@ public class ComponentListCommand extends AbstractContextCommand {
             nameLen = Math.max(MIN_COLUMN_WIDTH, nameLen);
             statusLen = Math.max(MIN_COLUMN_WIDTH, statusLen);
             mavenLen = Math.max(MIN_COLUMN_WIDTH, mavenLen);
-            // last row does not have min width
+            descriptionLen = Math.max(MIN_COLUMN_WIDTH, descriptionLen);
 
             final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
             retval.append(fieldPreamble).append("%-").append(nameLen).append('.').append(nameLen).append('s').append(fieldPostamble).append(' ');
@@ -163,7 +163,7 @@ public class ComponentListCommand extends AbstractContextCommand {
             int descriptionLen = Math.min(columnWidths.get(DESCRIPTION_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
 
             nameLen = Math.max(MIN_COLUMN_WIDTH, nameLen);
-            // last row does not have min width
+            descriptionLen = Math.max(MIN_COLUMN_WIDTH, descriptionLen);
 
             final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
             retval.append(fieldPreamble).append("%-").append(nameLen).append('.').append(nameLen).append('s').append(fieldPostamble).append(' ');
