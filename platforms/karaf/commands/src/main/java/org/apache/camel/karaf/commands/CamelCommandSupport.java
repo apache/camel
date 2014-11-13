@@ -16,6 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
+import org.apache.camel.commands.CamelController;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**

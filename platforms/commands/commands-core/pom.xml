@@ -15,23 +15,24 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>karaf</artifactId>
+    <artifactId>commands</artifactId>
     <version>2.15-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel.karaf</groupId>
-  <artifactId>camel-karaf-commands</artifactId>
+  <artifactId>commands-core</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Platforms :: Apache Karaf :: Commands</name>
+  <name>Camel :: Platforms :: Commands :: Core</name>
+  <description>Core Camel Commands</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.karaf.commands.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.commands.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -42,32 +43,16 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>commands-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- karaf -->
-    <dependency>
-      <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.karaf</groupId>
-      <artifactId>org.apache.karaf.util</artifactId>
-      <version>${karaf-version}</version>
-    </dependency>
-    
     <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-     </dependency>
+    </dependency>
 
   </dependencies>
 
@@ -79,17 +64,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Import-Package>
-              org.apache.felix.service.command;version="[0.6,1)",
-              org.apache.felix.gogo.commands;version="[0.6,1)",
-              org.apache.karaf.shell.console;version="[2.2,4)",
-              org.slf4j.*;version="[1.6,2)",
-              jline.*;version="[2.1,3)",
-              *
-            </Import-Package>
             <Private-Package>
-              org.apache.camel.karaf.commands.internal,
-              org.apache.karaf.util
+              org.apache.camel.commands.internal
             </Private-Package>
           </instructions>
         </configuration>

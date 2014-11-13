@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands.completers;
+package org.apache.camel.commands;
 
-import org.apache.camel.commands.CamelController;
-import org.apache.karaf.shell.console.Completer;
+import java.io.PrintStream;
 
 /**
- * The abstract base class for completers.
+ * A Camel command.
  */
-public abstract class CamelCompleterSupport implements Completer {
+public interface CamelCommand {
 
-    protected CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
+    /**
+     * Executes the given command.
+     *
+     * @param camelController the Camel controller to access Camel information
+     * @param out             the output printer stream
+     * @param err             the error print stream
+     * @return response from command, or <tt>null</tt> if nothing to return
+     * @throws Exception is thrown if error executing command
+     */
+    Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception;
 
 }

@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands.completers;
+package org.apache.camel.commands;
 
-import org.apache.camel.commands.CamelController;
-import org.apache.karaf.shell.console.Completer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * The abstract base class for completers.
+ * Abstract base command for {@link org.apache.camel.commands.CamelCommand}
  */
-public abstract class CamelCompleterSupport implements Completer {
+public abstract class AbstractCamelCommand implements CamelCommand {
 
-    protected CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
+    public String safeNull(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return "";
+        } else {
+            return s;
+        }
     }
 
 }
