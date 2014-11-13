@@ -29,7 +29,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
-import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Map;
@@ -459,7 +458,9 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             throw new IllegalStateException("A trust store must be defined for asymmetric key encryption.");
         }
         
-        Key keyEncryptionKey = getPublicKey(this.trustStore, exchangeRecipientAlias, this.trustStorePassword);
+        String password = 
+            this.keyPassword != null ? this.keyPassword : this.trustStorePassword;
+        Key keyEncryptionKey = getPublicKey(this.trustStore, exchangeRecipientAlias, password);
         
         if (null == keyEncryptionKey) {
             throw new IllegalStateException("No key for the alias [ " + exchangeRecipientAlias 
@@ -514,15 +515,12 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
      */    
     // TODO Move this to a crypto utility class
     private Key getPublicKey(KeyStore keystore, String alias, String password) throws Exception {
-        Key key = keystore.getKey(alias, password.toCharArray());
-        if (key instanceof PublicKey) {
-            return key;
-        } else {
-            java.security.cert.Certificate cert = keystore.getCertificate(alias);
+        java.security.cert.Certificate cert = keystore.getCertificate(alias);
+        if (cert != null) {
             // Get public key
-            PublicKey publicKey = cert.getPublicKey();
-            return publicKey;
+            return cert.getPublicKey();
         }
+        return keystore.getKey(alias, password.toCharArray());
     }
  
     
@@ -575,6 +573,8 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
                 || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
             return decodeWithAsymmetricKey(exchange, encodedDocument);
         } else {
+            LOG.debug("No (known) asymmetric keyCipherAlgorithm specified. Attempting to "
+                      + "decrypt using a symmetric key"); 
             return decodeWithSymmetricKey(exchange, encodedDocument);
         }
     }
