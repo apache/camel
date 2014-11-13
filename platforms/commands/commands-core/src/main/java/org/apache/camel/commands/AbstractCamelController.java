@@ -28,8 +28,8 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.commands.catalog.CamelComponentCatalog;
-import org.apache.camel.commands.catalog.CamelComponentCatalogService;
+import org.apache.camel.catalog.CamelComponentCatalog;
+import org.apache.camel.catalog.DefaultCamelComponentCatalog;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.RestRegistry;
@@ -40,7 +40,7 @@ import org.apache.camel.util.JsonSchemaHelper;
  */
 public abstract class AbstractCamelController implements CamelController {
 
-    private CamelComponentCatalog catalog = new CamelComponentCatalogService();
+    private CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
 
     public CamelContext getCamelContext(String name) {
         for (CamelContext camelContext : this.getCamelContexts()) {
@@ -274,7 +274,6 @@ public abstract class AbstractCamelController implements CamelController {
     public List<Map<String, String>> listComponentsCatalog() throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
-        CamelComponentCatalogService catalog = new CamelComponentCatalogService();
         List<String> names = catalog.findComponentNames();
         for (String name : names) {
             // load component json data, and parse it to gather the component meta-data

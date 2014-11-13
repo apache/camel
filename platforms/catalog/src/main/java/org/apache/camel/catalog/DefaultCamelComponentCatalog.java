@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.commands.catalog;
+package org.apache.camel.catalog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,16 +24,16 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CamelComponentCatalogService implements CamelComponentCatalog {
+public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
 
-    private static String COMPONENTS_CATALOG = "org/apache/camel/commands/catalog/components-catalog";
-    private static String COMPONENTS_JSON = "org/apache/camel/commands/catalog/components";
+    private static String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
+    private static String COMPONENTS_JSON = "org/apache/camel/catalog/components";
 
     @Override
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<String>();
 
-        InputStream is = CamelComponentCatalogService.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
         if (is != null) {
             try {
                 loadLines(is, names);
@@ -48,7 +48,7 @@ public class CamelComponentCatalogService implements CamelComponentCatalog {
     public String componentJSonSchema(String name) {
         String file = COMPONENTS_JSON + "/" + name + ".json";
 
-        InputStream is = CamelComponentCatalogService.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -114,7 +114,5 @@ public class CamelComponentCatalogService implements CamelComponentCatalog {
             in.close();
         }
     }
-
-
 
 }

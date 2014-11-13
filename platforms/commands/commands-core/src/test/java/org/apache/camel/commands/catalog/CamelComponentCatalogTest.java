@@ -19,6 +19,8 @@ package org.apache.camel.commands.catalog;
 import java.util.List;
 
 import junit.framework.TestCase;
+import org.apache.camel.catalog.CamelComponentCatalog;
+import org.apache.camel.catalog.DefaultCamelComponentCatalog;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ public class CamelComponentCatalogTest extends TestCase {
 
     @Test
     public void testFindComponentNames() {
-        CamelComponentCatalog catalog = new CamelComponentCatalogService();
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
         List<String> names = catalog.findComponentNames();
 
         assertNotNull(names);
@@ -40,7 +42,7 @@ public class CamelComponentCatalogTest extends TestCase {
 
     @Test
     public void testCoreComponentJson() {
-        CamelComponentCatalog catalog = new CamelComponentCatalogService();
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
         String json = catalog.componentJSonSchema("bean");
 
         assertNotNull(json);
@@ -51,7 +53,7 @@ public class CamelComponentCatalogTest extends TestCase {
 
     @Test
     public void testFtpComponentJson() {
-        CamelComponentCatalog catalog = new CamelComponentCatalogService();
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
         String json = catalog.componentJSonSchema("ftp");
 
         assertNotNull(json);

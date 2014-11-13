@@ -54,23 +54,23 @@ public class CommandsPrepareMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * The output directory for generated components file
+     * The output directory for components catalog
      *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/commands/catalog/components"
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
      */
     protected File outDir;
 
     /**
      * The components directory where all the Apache Camel components are
      *
-     * @parameter default-value="${project.build.directory}/../../../../components"
+     * @parameter default-value="${project.build.directory}/../../..//components"
      */
     protected File componentsDir;
 
     /**
      * The camel-core directory where camel-core components are
      *
-     * @parameter default-value="${project.build.directory}/../../../../camel-core"
+     * @parameter default-value="${project.build.directory}/../../..//camel-core"
      */
     protected File coreDir;
 
@@ -125,7 +125,7 @@ public class CommandsPrepareMojo extends AbstractMojo {
             }
         }
 
-        File all = new File(outDir, "../components-catalog");
+        File all = new File(outDir, "../components.properties");
         try {
             FileOutputStream fos = new FileOutputStream(all, false);
 
