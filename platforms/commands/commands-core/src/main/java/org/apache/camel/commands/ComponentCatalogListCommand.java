@@ -21,12 +21,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-
 /**
- * List all the Camel components that are currently used/loaded in the JVM.
+ * List all the Camel components from the Camel catalog
  */
-public class ComponentListCommand extends AbstractContextCommand {
+public class ComponentCatalogListCommand extends AbstractCamelCommand {
 
     private static final String NAME_COLUMN_LABEL = "Name";
     private static final String STATUS_COLUMN_LABEL = "Status";
@@ -45,14 +43,13 @@ public class ComponentListCommand extends AbstractContextCommand {
 
     private boolean verbose;
 
-    public ComponentListCommand(String context, boolean verbose) {
-        super(context);
+    public ComponentCatalogListCommand(boolean verbose) {
         this.verbose = verbose;
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> components = camelController.listComponents(context);
+    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> components = camelController.listComponentsCatalog();
 
         if (components == null || components.isEmpty()) {
             return null;

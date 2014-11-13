@@ -16,23 +16,19 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.commands.ComponentListCommand;
-import org.apache.felix.gogo.commands.Argument;
+import org.apache.camel.commands.ComponentCatalogListCommand;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "component-list", description = "Lists all Camel components that are in use in Karaf.")
-public class ComponentList extends CamelCommandSupport {
-
-    @Argument(index = 0, name = "name", description = "The Camel context name where to look for the components", required = true, multiValued = false)
-    String name;
+@Command(scope = "camel", name = "component-catalog-list", description = "Lists all Camel components from the Camel catalog.")
+public class ComponentCatalogList extends CamelCommandSupport {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
     protected Object doExecute() throws Exception {
-        ComponentListCommand command = new ComponentListCommand(name, verbose);
+        ComponentCatalogListCommand command = new ComponentCatalogListCommand(verbose);
         return command.execute(camelController, System.out, System.err);
     }
 
