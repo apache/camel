@@ -284,13 +284,18 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         incrementJobCounter(getScheduler());
     }
 
-    private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
-        if (oldTrigger instanceof CronTrigger && oldTrigger.equals(newTrigger)) {
-            CronTrigger oldCron = (CronTrigger) oldTrigger;
+    private static boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
+        if (newTrigger instanceof CronTrigger && oldTrigger instanceof CronTrigger) {
             CronTrigger newCron = (CronTrigger) newTrigger;
-            return !oldCron.getCronExpression().equals(newCron.getCronExpression());
+            CronTrigger oldCron = (CronTrigger) oldTrigger;
+            return !newCron.getCronExpression().equals(oldCron.getCronExpression());
+        } else if (newTrigger instanceof SimpleTrigger && oldTrigger instanceof SimpleTrigger) {
+            SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
+            SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
+            return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
+                    || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
         } else {
-            return !newTrigger.equals(oldTrigger);
+            return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
         }
     }
 
