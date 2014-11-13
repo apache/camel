@@ -28,6 +28,8 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.commands.catalog.CamelComponentCatalog;
+import org.apache.camel.commands.catalog.CamelComponentCatalogService;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.RestRegistry;
@@ -37,6 +39,8 @@ import org.apache.camel.util.JsonSchemaHelper;
  * Abstract {@link org.apache.camel.commands.CamelController} that implementators should extend.
  */
 public abstract class AbstractCamelController implements CamelController {
+
+    private CamelComponentCatalog catalog = new CamelComponentCatalogService();
 
     public CamelContext getCamelContext(String name) {
         for (CamelContext camelContext : this.getCamelContexts()) {

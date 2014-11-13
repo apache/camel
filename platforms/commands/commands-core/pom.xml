@@ -86,16 +86,16 @@
         <version>1.7</version>
         <executions>
           <execution>
-            <phase>generate-sources</phase>
+            <phase>process-resources</phase>
             <configuration>
               <target>
                 <echo>Copying component json descriptors</echo>
-                <copy todir="${project.basedir}/target/classes/components/" flatten="true">
+                <copy todir="${project.basedir}/target/classes/org/apache/camel/commands/catalog/components/" flatten="true">
                   <fileset dir="${camel.core.dir}">
                     <include name="**/target/classes/org/apache/camel/**/*.json"/>
                   </fileset>
                 </copy>
-                <copy todir="${project.basedir}/target/classes/components/" flatten="true">
+                <copy todir="${project.basedir}/target/classes/org/apache/camel/commands/catalog/components/" flatten="true">
                   <fileset dir="${components.dir}">
                     <include name="**/target/classes/org/apache/camel/**/*.json"/>
                   </fileset>
@@ -111,13 +111,26 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>include-components-list</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
           <instructions>
             <Private-Package>
-              components,
               org.apache.camel.commands.internal
             </Private-Package>
           </instructions>
