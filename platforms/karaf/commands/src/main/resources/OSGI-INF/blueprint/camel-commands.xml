@@ -91,6 +91,7 @@
     <command name="camel/route-profile">
       <action class="org.apache.camel.karaf.commands.RouteProfile">
         <property name="camelController" ref="camelController"/>
+        <property name="stringEscape" ref="stringEscape"/>
       </action>
       <completers>
         <ref component-id="routeCompleter"/>

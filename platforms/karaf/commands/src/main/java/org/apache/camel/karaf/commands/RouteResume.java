@@ -16,8 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
+import org.apache.camel.commands.RouteResumeCommand;
 import org.apache.felix.gogo.commands.Command;
 
 /**
@@ -27,8 +26,9 @@ import org.apache.felix.gogo.commands.Command;
 public class RouteResume extends AbstractRouteCommand {
 
     @Override
-    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-        camelContext.resumeRoute(camelRoute.getId());
+    protected Object doExecute() throws Exception {
+        RouteResumeCommand command = new RouteResumeCommand(route, context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

@@ -16,9 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.Route;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.commands.RouteShowCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
@@ -35,18 +33,8 @@ public class RouteShow extends CamelCommandSupport {
     String context;
 
     public Object doExecute() throws Exception {
-        Route camelRoute = camelController.getRoute(route, context);
-        if (camelRoute == null) {
-            System.err.println("Camel route " + route + " not found.");
-            return null;
-        }
-        RouteDefinition routeDefinition = camelController.getRouteDefinition(route, camelRoute.getRouteContext().getCamelContext().getName());
-        if (routeDefinition == null) {
-            System.err.println("Definition of route " + route + " not found.");
-            return null;
-        }
-        System.out.println(ModelHelper.dumpModelAsXml(routeDefinition));
-        return null;
+        RouteShowCommand command = new RouteShowCommand(route, context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

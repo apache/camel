@@ -16,13 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.commands.RouteResetStatsCommand;
 import org.apache.felix.gogo.commands.Command;
 
 /**
@@ -32,21 +26,9 @@ import org.apache.felix.gogo.commands.Command;
 public class RouteResetStats extends AbstractRouteCommand {
 
     @Override
-    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-        ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
-        if (agent != null) {
-            MBeanServer mBeanServer = agent.getMBeanServer();
-
-            // reset route mbeans
-            ObjectName query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=routes,*");
-            Set<ObjectName> set = mBeanServer.queryNames(query, null);
-            for (ObjectName routeMBean : set) {
-                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
-                if (camelId != null && camelId.equals(camelContext.getName())) {
-                    mBeanServer.invoke(routeMBean, "reset", new Object[]{true}, new String[]{"boolean"});
-                }
-            }
-        }
+    protected Object doExecute() throws Exception {
+        RouteResetStatsCommand command = new RouteResetStatsCommand(route, context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

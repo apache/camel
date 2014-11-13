@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands;
+package org.apache.camel.commands;
 
-import org.apache.camel.commands.RouteSuspendCommand;
-import org.apache.felix.gogo.commands.Command;
+import java.io.PrintStream;
 
-/**
- * Command to suspend a route.
- */
-@Command(scope = "camel", name = " route-suspend", description = "Suspend a Camel route or a group of routes.")
-public class RouteSuspend extends AbstractRouteCommand {
+import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 
-    @Override
-    protected Object doExecute() throws Exception {
-        RouteSuspendCommand command = new RouteSuspendCommand(route, context);
-        return command.execute(camelController, System.out, System.err);
+public class RouteResumeCommand extends AbstractRouteCommand {
+
+    public RouteResumeCommand(String route, String context) {
+        super(route, context);
     }
 
+    @Override
+    public void executeOnRoute(CamelController camelController, CamelContext camelContext, Route camelRoute, PrintStream out, PrintStream err) throws Exception {
+        camelContext.resumeRoute(camelRoute.getId());
+    }
 }
