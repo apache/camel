@@ -23,7 +23,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Endpoint for the class component.
  */
-@UriEndpoint(scheme = "class")
+@UriEndpoint(scheme = "class", label = "core,java")
 public class ClassEndpoint extends BeanEndpoint {
 
     public ClassEndpoint(String endpointUri, Component component) {

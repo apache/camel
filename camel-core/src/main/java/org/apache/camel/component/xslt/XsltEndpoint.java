@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed XsltEndpoint")
-@UriEndpoint(scheme = "xslt")
+@UriEndpoint(scheme = "xslt", label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);

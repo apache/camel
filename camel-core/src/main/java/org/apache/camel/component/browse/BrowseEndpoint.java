@@ -39,7 +39,7 @@ import org.apache.camel.spi.UriPath;
  *
  * @version 
  */
-@UriEndpoint(scheme = "browse")
+@UriEndpoint(scheme = "browse", label = "core,monitoring")
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")

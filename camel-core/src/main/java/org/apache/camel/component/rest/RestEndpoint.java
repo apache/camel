@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest")
+@UriEndpoint(scheme = "rest", label="core,http,rest")
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriParam
