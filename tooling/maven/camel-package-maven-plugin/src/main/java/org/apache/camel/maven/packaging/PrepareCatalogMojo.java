@@ -102,6 +102,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> componentFiles = new LinkedHashSet<File>();
         Set<File> missingComponents = new LinkedHashSet<File>();
         Set<File> missingLabels = new LinkedHashSet<File>();
+        Set<File> missingUriPaths = new LinkedHashSet<File>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -165,6 +166,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 if (text.contains("\"label\": \"\"")) {
                     missingLabels.add(file);
                 }
+                if (!text.contains("\"kind\": \"path\"")) {
+                    missingUriPaths.add(file);
+                }
             } catch (IOException e) {
                 // ignore
             }
@@ -199,10 +203,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printReport(jsonFiles, duplicateJsonFiles, missingComponents, missingLabels);
+        printReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels);
     }
 
-    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingLabels) {
+    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths, Set<File> missingLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -222,6 +226,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!missingLabels.isEmpty()) {
             getLog().warn("\tMissing labels detected: " + missingLabels.size());
             for (File file : missingLabels) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        getLog().info("");
+        if (!missingUriPaths.isEmpty()) {
+            getLog().warn("\tMissing @UriPath detected: " + missingUriPaths.size());
+            for (File file : missingUriPaths) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
