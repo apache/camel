@@ -304,7 +304,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <childDelegation>false</childDelegation>
-          <forkMode>once</forkMode>
+          <forkCount>1</forkCount>
+	  <reuseForks>true</reuseForks>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>
