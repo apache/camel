@@ -205,7 +205,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", path.getType(), "", path.getDocumentation(), false, null));
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", path.getType(), "", path.getDocumentation(), path.isEnumType(), path.getEnums()));
         }
 
         // and then regular parameter options
@@ -256,7 +256,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + path.getType() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
-                writer.println("    <td>" + "</td>");
+                writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
             }
@@ -349,6 +349,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     name = prefix + name;
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
+                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
                     String docComment = elementUtils.getDocComment(fieldElement);
                     if (isNullOrEmpty(docComment)) {
@@ -373,7 +374,22 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         docComment = path.description();
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment);
+                    // gather enums
+                    Set<String> enums = new LinkedHashSet<>();
+                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                    if (isEnum) {
+                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                        // find all the enum constants which has the possible enum value that can be used
+                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                        for (VariableElement var : fields) {
+                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                String val = var.toString();
+                                enums.add(val);
+                            }
+                        }
+                    }
+
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -765,11 +781,16 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         private String name;
         private String type;
         private String documentation;
+        private boolean enumType;
+        private Set<String> enums;
 
-        private EndpointPath(String name, String type, String documentation) {
+        private EndpointPath(String name, String type, String documentation,
+                             boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
             this.documentation = documentation;
+            this.enumType = enumType;
+            this.enums = enums;
         }
 
         public String getName() {
@@ -782,6 +803,24 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         public String getDocumentation() {
             return documentation;
+        }
+
+        public String getEnumValuesAsHtml() {
+            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
+            if (enums != null && enums.size() > 0) {
+                for (String e : enums) {
+                    csb.append(e);
+                }
+            }
+            return csb.toString();
+        }
+
+        public boolean isEnumType() {
+            return enumType;
+        }
+
+        public Set<String> getEnums() {
+            return enums;
         }
     }
 
