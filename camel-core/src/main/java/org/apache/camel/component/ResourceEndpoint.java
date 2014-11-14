@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 public abstract class ResourceEndpoint extends ProcessorEndpoint implements ManagedResourceEndpointMBean {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private volatile byte[] buffer;
-    @UriPath(description = "path to the resource")
+    @UriPath(description = "Path to the resource")
     private String resourceUri;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
 
     public ResourceEndpoint() {
@@ -129,9 +129,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     }
 
     /**
-     * Sets whether to use resource content cache or not - default is <tt>false</tt>.
-     *
-     * @see #getResourceAsInputStream()
+     * Sets whether to use resource content cache or not.
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
@@ -141,6 +139,11 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return resourceUri;
     }
 
+    /**
+     * Path to the resource
+     *
+     * @param resourceUri  the resource path
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
