@@ -494,11 +494,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             for (Map.Entry<String, Properties> entry : components.entrySet()) {
                 String name = entry.getKey();
                 String description = null;
-                // the status can be:
-                // - in use = used by Camel
-                // - classpath = on the classpath
-                // - release = available from the Apache Camel release
-                // TODO: gather list of components in the Camel release
+                String label = null;
                 String status = context.hasComponent(name) != null ? "in use" : "on classpath";
                 String type = (String) entry.getValue().get("class");
                 String groupId = null;
@@ -516,6 +512,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("description")) {
                         description = row.get("description");
+                    } else if (row.containsKey("label")) {
+                        label = row.get("label");
                     } else if (row.containsKey("javaType")) {
                         type = row.get("javaType");
                     } else if (row.containsKey("groupId")) {
@@ -528,8 +526,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 }
 
                 CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "description", "status", "type", "groupId", "artifactId", "version"},
-                        new Object[]{name, description, status, type, groupId, artifactId, version});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+                        new Object[]{name, description, label, status, type, groupId, artifactId, version});
                 answer.put(data);
             }
             return answer;

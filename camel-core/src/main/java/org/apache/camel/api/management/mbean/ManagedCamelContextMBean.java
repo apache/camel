@@ -233,7 +233,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     TabularData listComponents() throws Exception;
 
     /**
-     * Returns the JSON schema representation of the endpoint parameters for the given component name
+     * Returns the JSON schema representation with information about the component and the endpoint parameters it supports
      *
      * @param componentName the name of the component to lookup
      * @throws Exception is thrown if error occurred
