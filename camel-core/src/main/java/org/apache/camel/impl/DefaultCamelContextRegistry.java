@@ -128,4 +128,9 @@ public final class DefaultCamelContextRegistry implements CamelContextRegistry {
         return it.hasNext() ? it.next() : null;
     }
 
+    @Override
+    public synchronized void clear() {
+        contexts.clear();
+        listeners.clear();
+    }
 }

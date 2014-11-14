@@ -96,4 +96,9 @@ public interface CamelContextRegistry {
      */
     CamelContext getContext(String name);
 
+    /**
+     * Needed for testing purposes.
+     */
+    void clear();
+
 }

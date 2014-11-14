@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.CamelContextRegistry;
 
 public class CamelContextRegistryTest extends TestCase {
 
@@ -42,6 +41,9 @@ public class CamelContextRegistryTest extends TestCase {
     }
 
     public void testContainerSet() throws Exception {
+
+        // must clear for testing purpose
+        CamelContextRegistry.INSTANCE.clear();
 
         MyListener listener = new MyListener();
 
