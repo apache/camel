@@ -184,7 +184,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n \"component\": {");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
-        buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\"");
+        buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
