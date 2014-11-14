@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -348,7 +349,24 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @Override
-    public Set<String> listLabelCatalog() throws Exception {
-        return catalog.findLabels();
+    public Map<String, Set<String>> listLabelCatalog() throws Exception {
+        Map<String, Set<String>> answer = new LinkedHashMap<String, Set<String>>();
+
+        Set<String> labels = catalog.findLabels();
+        for (String label : labels) {
+            List<Map<String, String>> components = listComponentsCatalog(label);
+            if (!components.isEmpty()) {
+                Set<String> names = new LinkedHashSet<>();
+                for (Map<String, String> info : components) {
+                    String name = info.get("name");
+                    if (name != null) {
+                        names.add(name);
+                    }
+                }
+                answer.put(label, names);
+            }
+        }
+
+        return answer;
     }
 }

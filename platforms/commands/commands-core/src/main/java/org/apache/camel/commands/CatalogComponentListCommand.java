@@ -58,8 +58,8 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         }
 
         final Map<String, Integer> columnWidths = computeColumnWidths(components);
-        final String headerFormat = buildFormatString(columnWidths, true, verbose);
-        final String rowFormat = buildFormatString(columnWidths, false, verbose);
+        final String headerFormat = buildFormatString(columnWidths, true);
+        final String rowFormat = buildFormatString(columnWidths, false);
 
         if (verbose) {
             out.println(String.format(headerFormat, NAME_COLUMN_LABEL, LABEL_COLUMN_LABEL, MAVEN_COLUMN_LABEL, DESCRIPTION_COLUMN_LABEL));
@@ -133,7 +133,7 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         }
     }
 
-    private String buildFormatString(Map<String, Integer> columnWidths, boolean isHeader, boolean isVerbose) {
+    private String buildFormatString(Map<String, Integer> columnWidths, boolean isHeader) {
         final String fieldPreamble;
         final String fieldPostamble;
         final int columnWidthIncrement;

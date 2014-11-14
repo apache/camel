@@ -138,9 +138,9 @@ public interface CamelController {
     /**
      * Lists all the labels from the Camel components catalog
      *
-     * @return a sorted set with all the label names
+     * @return a map which key is the label, and the set is the component names that has the given label
      * @throws java.lang.Exception is thrown if error loading resources to gather component information
      */
-    Set<String> listLabelCatalog() throws Exception;
+    Map<String, Set<String>> listLabelCatalog() throws Exception;
 
 }

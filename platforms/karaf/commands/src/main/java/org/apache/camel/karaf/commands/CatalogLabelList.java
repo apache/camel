@@ -18,12 +18,17 @@ package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.CatalogLabelListCommand;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.felix.gogo.commands.Option;
 
 @Command(scope = "camel", name = "catalog-label-list", description = "Lists all Camel component labels from the Camel catalog.")
 public class CatalogLabelList extends CamelCommandSupport {
 
+    @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
+            required = false, multiValued = false, valueToShowInHelp = "false")
+    boolean verbose;
+
     protected Object doExecute() throws Exception {
-        CatalogLabelListCommand command = new CatalogLabelListCommand();
+        CatalogLabelListCommand command = new CatalogLabelListCommand(verbose);
         return command.execute(camelController, System.out, System.err);
     }
 
