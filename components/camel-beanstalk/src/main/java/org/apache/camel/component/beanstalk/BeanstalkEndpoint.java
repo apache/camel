@@ -31,29 +31,37 @@ import org.apache.camel.component.beanstalk.processors.TouchCommand;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "beanstalk", consumerClass = BeanstalkConsumer.class)
+@UriEndpoint(scheme = "beanstalk", consumerClass = BeanstalkConsumer.class, label = "messaging")
 public class BeanstalkEndpoint extends ScheduledPollEndpoint {
     final ConnectionSettings conn;
 
+    @UriPath(description = "Connection settings host:port/tube")
+    private String connectionSettings;
     @UriParam
-    private String command = BeanstalkComponent.COMMAND_PUT;
-    @UriParam
+    private BeanstalkCommand command = BeanstalkCommand.put;
+    @UriParam(defaultValue = "" + BeanstalkComponent.DEFAULT_PRIORITY)
     private long jobPriority = BeanstalkComponent.DEFAULT_PRIORITY;
-    @UriParam
+    @UriParam(defaultValue = "" + BeanstalkComponent.DEFAULT_DELAY)
     private int jobDelay = BeanstalkComponent.DEFAULT_DELAY;
-    @UriParam
+    @UriParam(defaultValue = "" + BeanstalkComponent.DEFAULT_TIME_TO_RUN)
     private int jobTimeToRun = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
     @UriParam
-    private String onFailure = BeanstalkComponent.COMMAND_BURY;
-    @UriParam
+    private BeanstalkCommand onFailure = BeanstalkCommand.bury;
+    @UriParam(defaultValue = "true")
     private boolean useBlockIO = true;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean awaitJob = true;
 
-    public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn) {
+    public BeanstalkEndpoint(final String uri, final Component component, final ConnectionSettings conn, final String connectionSettings) {
         super(uri, component);
         this.conn = conn;
+        this.connectionSettings = connectionSettings;
+    }
+
+    public String getConnectionSettings() {
+        return connectionSettings;
     }
 
     public ConnectionSettings getConnection() {
@@ -64,11 +72,11 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return conn;
     }
 
-    public String getCommand() {
+    public BeanstalkCommand getCommand() {
         return command;
     }
 
-    public void setCommand(String command) {
+    public void setCommand(BeanstalkCommand command) {
         this.command = command;
     }
 
@@ -76,6 +84,9 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return jobPriority;
     }
 
+    /**
+     * Job priority. (0 is the highest, see Beanstalk protocol)
+     */
     public void setJobPriority(long jobPriority) {
         this.jobPriority = jobPriority;
     }
@@ -84,6 +95,9 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return jobDelay;
     }
 
+    /**
+     * Job delay in seconds.
+     */
     public void setJobDelay(int jobDelay) {
         this.jobDelay = jobDelay;
     }
@@ -92,15 +106,21 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return jobTimeToRun;
     }
 
+    /**
+     * Job time to run in seconds. (when 0, the beanstalkd daemon raises it to 1 automatically, see Beanstalk protocol)
+     */
     public void setJobTimeToRun(int jobTimeToRun) {
         this.jobTimeToRun = jobTimeToRun;
     }
 
-    public String getOnFailure() {
+    public BeanstalkCommand getOnFailure() {
         return onFailure;
     }
 
-    public void setOnFailure(String onFailure) {
+    /**
+     * Command to use when processing failed.
+     */
+    public void setOnFailure(BeanstalkCommand onFailure) {
         this.onFailure = onFailure;
     }
 
@@ -108,6 +128,9 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return useBlockIO;
     }
 
+    /**
+     * Whether to use blockIO.
+     */
     public void setUseBlockIO(boolean useBlockIO) {
         this.useBlockIO = useBlockIO;
     }
@@ -116,6 +139,9 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
         return awaitJob;
     }
 
+    /**
+     * Whether to wait for job to complete before ack the job from beanstalk
+     */
     public void setAwaitJob(boolean awaitJob) {
         this.awaitJob = awaitJob;
     }
@@ -133,17 +159,17 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         Command cmd;
-        if (BeanstalkComponent.COMMAND_PUT.equals(command)) {
+        if (BeanstalkComponent.COMMAND_PUT.equals(command.name())) {
             cmd = new PutCommand(this);
-        } else if (BeanstalkComponent.COMMAND_RELEASE.equals(command)) {
+        } else if (BeanstalkComponent.COMMAND_RELEASE.equals(command.name())) {
             cmd = new ReleaseCommand(this);
-        } else if (BeanstalkComponent.COMMAND_BURY.equals(command)) {
+        } else if (BeanstalkComponent.COMMAND_BURY.equals(command.name())) {
             cmd = new BuryCommand(this);
-        } else if (BeanstalkComponent.COMMAND_TOUCH.equals(command)) {
+        } else if (BeanstalkComponent.COMMAND_TOUCH.equals(command.name())) {
             cmd = new TouchCommand(this);
-        } else if (BeanstalkComponent.COMMAND_DELETE.equals(command)) {
+        } else if (BeanstalkComponent.COMMAND_DELETE.equals(command.name())) {
             cmd = new DeleteCommand(this);
-        } else if (BeanstalkComponent.COMMAND_KICK.equals(command)) {
+        } else if (BeanstalkComponent.COMMAND_KICK.equals(command.name())) {
             cmd = new KickCommand(this);
         } else {
             throw new IllegalArgumentException(String.format("Unknown command for Beanstalk endpoint: %s", command));

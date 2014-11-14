@@ -137,7 +137,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         final long priority = BeanstalkComponent.DEFAULT_PRIORITY;
         final long jobId = 111;
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_BURY);
+        endpoint.setCommand(BeanstalkCommand.bury);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -158,7 +158,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testBuryNoJobId() throws Exception {
-        endpoint.setCommand(BeanstalkComponent.COMMAND_BURY);
+        endpoint.setCommand(BeanstalkCommand.bury);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -179,7 +179,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         final long priority = 1000;
         final long jobId = 111;
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_BURY);
+        endpoint.setCommand(BeanstalkCommand.bury);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -203,7 +203,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
     public void testDelete() throws Exception {
         final long jobId = 111;
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_DELETE);
+        endpoint.setCommand(BeanstalkCommand.delete);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -224,7 +224,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testDeleteNoJobId() throws Exception {
-        endpoint.setCommand(BeanstalkComponent.COMMAND_DELETE);
+        endpoint.setCommand(BeanstalkCommand.delete);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -246,7 +246,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         final int delay = BeanstalkComponent.DEFAULT_DELAY;
         final long jobId = 111;
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_RELEASE);
+        endpoint.setCommand(BeanstalkCommand.release);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -267,7 +267,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testReleaseNoJobId() throws Exception {
-        endpoint.setCommand(BeanstalkComponent.COMMAND_RELEASE);
+        endpoint.setCommand(BeanstalkCommand.release);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -289,7 +289,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         final int delay = 124;
         final long jobId = 111;
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_RELEASE);
+        endpoint.setCommand(BeanstalkCommand.release);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -314,7 +314,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
     public void testTouch() throws Exception {
         final long jobId = 111;
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_TOUCH);
+        endpoint.setCommand(BeanstalkCommand.touch);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -335,7 +335,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testTouchNoJobId() throws Exception {
-        endpoint.setCommand(BeanstalkComponent.COMMAND_TOUCH);
+        endpoint.setCommand(BeanstalkCommand.touch);
         Producer producer = endpoint.createProducer();
         assertNotNull("Producer", producer);
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
@@ -407,7 +407,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         when(client.touch(jobId))
                 .thenThrow(new BeanstalkException("test"));
 
-        endpoint.setCommand(BeanstalkComponent.COMMAND_TOUCH);
+        endpoint.setCommand(BeanstalkCommand.touch);
         final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Headers.JOB_ID, jobId);

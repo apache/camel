@@ -46,7 +46,7 @@ public final class Helper {
     }
 
     public static BeanstalkEndpoint getEndpoint(String uri, CamelContext context, Client client) throws Exception {
-        BeanstalkEndpoint endpoint = new BeanstalkEndpoint(uri, context.getComponent("beanstalk"), mockConn(client));
+        BeanstalkEndpoint endpoint = new BeanstalkEndpoint(uri, context.getComponent("beanstalk"), mockConn(client), "");
         context.addEndpoint(uri, endpoint);
         return endpoint;
     }

@@ -57,7 +57,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
     private static final String[] STATS_KEY_STR = new String[]{"tube", "state"};
     private static final String[] STATS_KEY_INT = new String[]{"age", "time-left", "timeouts", "releases", "buries", "kicks"};
 
-    private String onFailure;
+    private BeanstalkCommand onFailure;
     private boolean useBlockIO;
     private boolean awaitJob;
     private Client client;
@@ -147,11 +147,11 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         return messagesPolled;
     }
 
-    public String getOnFailure() {
+    public BeanstalkCommand getOnFailure() {
         return onFailure;
     }
 
-    public void setOnFailure(String onFailure) {
+    public void setOnFailure(BeanstalkCommand onFailure) {
         this.onFailure = onFailure;
     }
 
@@ -206,11 +206,11 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
         public Sync() {
             successCommand = new DeleteCommand(getEndpoint());
 
-            if (BeanstalkComponent.COMMAND_BURY.equals(onFailure)) {
+            if (BeanstalkComponent.COMMAND_BURY.equals(onFailure.name())) {
                 failureCommand = new BuryCommand(getEndpoint());
-            } else if (BeanstalkComponent.COMMAND_RELEASE.equals(onFailure)) {
+            } else if (BeanstalkComponent.COMMAND_RELEASE.equals(onFailure.name())) {
                 failureCommand = new ReleaseCommand(getEndpoint());
-            } else if (BeanstalkComponent.COMMAND_DELETE.equals(onFailure)) {
+            } else if (BeanstalkComponent.COMMAND_DELETE.equals(onFailure.name())) {
                 failureCommand = new DeleteCommand(getEndpoint());
             } else {
                 throw new IllegalArgumentException(String.format("Unknown failure command: %s", onFailure));
