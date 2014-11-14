@@ -76,7 +76,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean allowDefaultCodec = true;
     @UriParam
     private ClientPipelineFactory clientPipelineFactory;
-    @UriParam
+    //CAMEL-8031 Moved this option to NettyComponent
     private int maximumPoolSize = 16;
     @UriParam
     private boolean orderedThreadPoolExecutor = true;
