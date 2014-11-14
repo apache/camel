@@ -1,1 +1,1 @@
-class=org.apache.camel.GoogleCalendarComponent
+class=org.apache.camel.component.google.calendar.GoogleCalendarComponent
