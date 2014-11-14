@@ -16,11 +16,15 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,6 +101,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> duplicateJsonFiles = new LinkedHashSet<File>();
         Set<File> componentFiles = new LinkedHashSet<File>();
         Set<File> missingComponents = new LinkedHashSet<File>();
+        Set<File> missingLabels = new LinkedHashSet<File>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -152,6 +157,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
             } catch (IOException e) {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
+
+            // check if we have a label as we want the components to include labels
+            try {
+                String text = loadText(new FileInputStream(file));
+                // just do a basic label check
+                if (text.contains("\"label\": \"\"")) {
+                    missingLabels.add(file);
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+
+
         }
 
         File all = new File(outDir, "../components.properties");
@@ -181,10 +199,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printReport(jsonFiles, duplicateJsonFiles, missingComponents);
+        printReport(jsonFiles, duplicateJsonFiles, missingComponents, missingLabels);
     }
 
-    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing) {
+    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -197,6 +215,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!duplicate.isEmpty()) {
             getLog().warn("\tDuplicate components detected: " + duplicate.size());
             for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        getLog().info("");
+        if (!missingLabels.isEmpty()) {
+            getLog().warn("\tMissing labels detected: " + missingLabels.size());
+            for (File file : missingLabels) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
@@ -267,5 +292,33 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Loads the entire stream into memory as a String and returns it.
+     * <p/>
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
+     * terminator at the of the text.
+     * <p/>
+     * Warning, don't use for crazy big streams :)
+     */
+    public static String loadText(InputStream in) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        InputStreamReader isr = new InputStreamReader(in);
+        try {
+            BufferedReader reader = new LineNumberReader(isr);
+            while (true) {
+                String line = reader.readLine();
+                if (line != null) {
+                    builder.append(line);
+                    builder.append("\n");
+                } else {
+                    break;
+                }
+            }
+            return builder.toString();
+        } finally {
+            isr.close();
+            in.close();
+        }
+    }
 
 }
