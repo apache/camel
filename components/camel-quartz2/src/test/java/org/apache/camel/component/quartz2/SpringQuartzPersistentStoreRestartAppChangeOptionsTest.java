@@ -20,7 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
@@ -34,15 +35,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends TestSupport {
 
-    private AbstractXmlApplicationContext db;
+    private static AbstractXmlApplicationContext db;
     private AbstractXmlApplicationContext app;
     private AbstractXmlApplicationContext app2;
 
-    @Before
-    public void prepareDB() {
+    @BeforeClass
+    public static void prepareDB() {
         // boot up the database the two invocations are going to share inside a clustered quartz setup
         db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz2/SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
+    }
+    
+    @AfterClass
+    public static void shutdownDB() {
+        db.close();
     }
 
     @After
@@ -50,7 +56,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends Test
         // we're done so let's properly close the application contexts, but close
         // the second app before the first one so that the quartz scheduler running
         // inside it can be properly shutdown
-        IOHelper.close(app2, app, db);
+        IOHelper.close(app2, app);
     }
 
 
