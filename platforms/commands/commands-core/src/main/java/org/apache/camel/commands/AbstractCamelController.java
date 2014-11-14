@@ -28,6 +28,8 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.catalog.CamelComponentCatalog;
+import org.apache.camel.catalog.DefaultCamelComponentCatalog;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.RestRegistry;
@@ -37,6 +39,8 @@ import org.apache.camel.util.JsonSchemaHelper;
  * Abstract {@link org.apache.camel.commands.CamelController} that implementators should extend.
  */
 public abstract class AbstractCamelController implements CamelController {
+
+    private CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
 
     public CamelContext getCamelContext(String name) {
         for (CamelContext camelContext : this.getCamelContexts()) {
@@ -266,4 +270,62 @@ public abstract class AbstractCamelController implements CamelController {
         return answer;
     }
 
+    @Override
+    public List<Map<String, String>> listComponentsCatalog() throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        List<String> names = catalog.findComponentNames();
+        for (String name : names) {
+            // load component json data, and parse it to gather the component meta-data
+            String json = catalog.componentJSonSchema(name);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+
+            String description = null;
+            // the status can be:
+            // - loaded = in use
+            // - classpath = on the classpath
+            // - release = available from the Apache Camel release
+            String status = "release";
+            String type = null;
+            String groupId = null;
+            String artifactId = null;
+            String version = null;
+            for (Map<String, String> row : rows) {
+                if (row.containsKey("description")) {
+                    description = row.get("description");
+                } else if (row.containsKey("javaType")) {
+                    type = row.get("javaType");
+                } else if (row.containsKey("groupId")) {
+                    groupId = row.get("groupId");
+                } else if (row.containsKey("artifactId")) {
+                    artifactId = row.get("artifactId");
+                } else if (row.containsKey("version")) {
+                    version = row.get("version");
+                }
+            }
+
+            Map<String, String> row = new HashMap<String, String>();
+            row.put("name", name);
+            row.put("status", status);
+            if (description != null) {
+                row.put("description", description);
+            }
+            if (type != null) {
+                row.put("type", type);
+            }
+            if (groupId != null) {
+                row.put("groupId", groupId);
+            }
+            if (artifactId != null) {
+                row.put("artifactId", artifactId);
+            }
+            if (version != null) {
+                row.put("version", version);
+            }
+
+            answer.add(row);
+        }
+
+        return answer;
+    }
 }

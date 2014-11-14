@@ -411,8 +411,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                                 }
                             }
                         }
-                        if (docComment == null) {
-                            docComment = "";
+                        if (isNullOrEmpty(docComment)) {
+                            docComment = param.description();
                         }
 
                         // gather enums

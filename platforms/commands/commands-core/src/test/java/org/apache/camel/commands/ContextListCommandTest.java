@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
@@ -28,7 +27,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContextListCommandTest extends TestCase {
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class ContextListCommandTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextListCommandTest.class);
 
