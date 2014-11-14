@@ -60,7 +60,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
         for (String name : names) {
             String json = componentJSonSchema(name);
             if (json != null) {
-                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("label")) {
                         String label = row.get("label");
@@ -106,7 +106,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
         for (String name : names) {
             String json = componentJSonSchema(name);
             if (json != null) {
-                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("label")) {
                         String label = row.get("label");
