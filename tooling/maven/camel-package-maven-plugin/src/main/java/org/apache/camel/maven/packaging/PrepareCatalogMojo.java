@@ -35,7 +35,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Prepares the camel catalog to include component descriptors, and generates a report with components which have not been migrated
+ * to include component json descriptors.
  *
  * @goal prepare-catalog
  * @execute phase="process-resources"
@@ -92,32 +93,60 @@ public class PrepareCatalogMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel component json descriptors");
 
-        Set<File> files = new LinkedHashSet<File>();
+        Set<File> jsonFiles = new LinkedHashSet<File>();
+        Set<File> duplicateJsonFiles = new LinkedHashSet<File>();
+        Set<File> componentFiles = new LinkedHashSet<File>();
+        Set<File> missingComponents = new LinkedHashSet<File>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
             File[] components = componentsDir.listFiles();
             if (components != null) {
                 for (File dir : components) {
-                    if (dir.isDirectory()) {
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findFilesRecursive(target, files, new JsonAndDirFileFilter());
+
+                        int before = componentFiles.size();
+                        int before2 = jsonFiles.size();
+
+                        findFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
+
+                        int after = componentFiles.size();
+                        int after2 = jsonFiles.size();
+                        if (before != after && before2 == after2) {
+                            missingComponents.add(dir);
+                        }
+
                     }
                 }
             }
         }
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes");
-            findFilesRecursive(target, files, new JsonAndDirFileFilter());
+
+            int before = componentFiles.size();
+            int before2 = jsonFiles.size();
+
+            findFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
+
+            int after = componentFiles.size();
+            int after2 = jsonFiles.size();
+            if (before != after && before2 == after2) {
+                missingComponents.add(coreDir);
+            }
         }
 
-        getLog().info("Found " + files.size() + " component json files");
+        getLog().info("Found " + jsonFiles.size() + " component json files");
 
         // make sure to create out dir
         outDir.mkdirs();
 
-        for (File file : files) {
+        for (File file : jsonFiles) {
             File to = new File(outDir, file.getName());
+            if (to.exists()) {
+                duplicateJsonFiles.add(to);
+                getLog().warn("Duplicate component name detected: " + to);
+            }
             try {
                 copyFile(file, to);
             } catch (IOException e) {
@@ -148,30 +177,71 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             fos.close();
 
-            getLog().info("Camel components catalog includes " + files.size() + " components");
         } catch (IOException e) {
             throw new MojoFailureException("Error writing to file " + all);
         }
+
+        printReport(jsonFiles, duplicateJsonFiles, missingComponents);
     }
 
-    private void findFilesRecursive(File dir, Set<File> found, FileFilter filter) {
+    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing) {
+        getLog().info("================================================================================");
+        getLog().info("");
+        getLog().info("Camel component catalog report");
+        getLog().info("");
+        getLog().info("\tComponents found: " + json.size());
+        for (File file : json) {
+            getLog().info("\t\t" + asComponentName(file));
+        }
+        getLog().info("");
+        if (!duplicate.isEmpty()) {
+            getLog().warn("\tDuplicate components detected: " + duplicate.size());
+            for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        getLog().info("");
+        if (!missing.isEmpty()) {
+            getLog().warn("\tMissing components detected: " + missing.size());
+            for (File name : missing) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
+    }
+
+    private static String asComponentName(File file) {
+        String name = file.getName();
+        if (name.endsWith(".json")) {
+            return name.substring(0, name.length() - 5);
+        }
+        return name;
+    }
+
+    private void findFilesRecursive(File dir, Set<File> found, Set<File> components, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                if (file.isFile()) {
+                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
+                boolean componentFile = file.isFile() && file.getName().equals("component.properties");
+                if (jsonFile) {
                     found.add(file);
+                } else if (componentFile) {
+                    components.add(file);
                 } else if (file.isDirectory()) {
-                    findFilesRecursive(file, found, filter);
+                    findFilesRecursive(file, found, components, filter);
                 }
             }
         }
     }
 
-    private class JsonAndDirFileFilter implements FileFilter {
+    private class CamelComponentsFileFilter implements FileFilter {
 
         @Override
         public boolean accept(File pathname) {
-            return pathname.isDirectory() || pathname.getName().endsWith(".json");
+            return pathname.isDirectory() || pathname.getName().endsWith(".json")
+                    || (pathname.isFile() && pathname.getName().equals("component.properties"));
         }
     }
 
