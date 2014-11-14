@@ -30,6 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.catalog.CamelComponentCatalog;
 import org.apache.camel.catalog.DefaultCamelComponentCatalog;
+import org.apache.camel.commands.internal.RegexUtil;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.RestRegistry;
@@ -218,6 +219,7 @@ public abstract class AbstractCamelController implements CamelController {
         for (Map.Entry<String, Properties> entry : components.entrySet()) {
             String name = entry.getKey();
             String description = null;
+            String label = null;
             // the status can be:
             // - loaded = in use
             // - classpath = on the classpath
@@ -234,6 +236,8 @@ public abstract class AbstractCamelController implements CamelController {
             for (Map<String, String> row : rows) {
                 if (row.containsKey("description")) {
                     description = row.get("description");
+                } else if (row.containsKey("label")) {
+                    label = row.get("label");
                 } else if (row.containsKey("javaType")) {
                     type = row.get("javaType");
                 } else if (row.containsKey("groupId")) {
@@ -250,6 +254,9 @@ public abstract class AbstractCamelController implements CamelController {
             row.put("status", status);
             if (description != null) {
                 row.put("description", description);
+            }
+            if (label != null) {
+                row.put("label", label);
             }
             if (type != null) {
                 row.put("type", type);
@@ -271,16 +278,21 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @Override
-    public List<Map<String, String>> listComponentsCatalog() throws Exception {
+    public List<Map<String, String>> listComponentsCatalog(String filter) throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
-        List<String> names = catalog.findComponentNames();
+        if (filter != null) {
+            filter = RegexUtil.wildcardAsRegex(filter);
+        }
+
+        List<String> names = filter != null ? catalog.findComponentNames(filter) : catalog.findComponentNames();
         for (String name : names) {
             // load component json data, and parse it to gather the component meta-data
             String json = catalog.componentJSonSchema(name);
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
 
             String description = null;
+            String label = null;
             // the status can be:
             // - loaded = in use
             // - classpath = on the classpath
@@ -293,6 +305,8 @@ public abstract class AbstractCamelController implements CamelController {
             for (Map<String, String> row : rows) {
                 if (row.containsKey("description")) {
                     description = row.get("description");
+                } else if (row.containsKey("label")) {
+                    label = row.get("label");
                 } else if (row.containsKey("javaType")) {
                     type = row.get("javaType");
                 } else if (row.containsKey("groupId")) {
@@ -309,6 +323,9 @@ public abstract class AbstractCamelController implements CamelController {
             row.put("status", status);
             if (description != null) {
                 row.put("description", description);
+            }
+            if (label != null) {
+                row.put("label", label);
             }
             if (type != null) {
                 row.put("type", type);

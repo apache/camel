@@ -29,6 +29,11 @@ public interface CamelComponentCatalog {
     List<String> findComponentNames();
 
     /**
+     * Find all the component names from the Camel catalog that matches the label
+     */
+    List<String> findComponentNames(String label);
+
+    /**
      * Returns the component information as JSon format.
      *
      * @param name the component name

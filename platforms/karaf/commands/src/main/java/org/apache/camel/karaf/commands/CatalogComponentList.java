@@ -27,8 +27,12 @@ public class CatalogComponentList extends CamelCommandSupport {
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
+    @Option(name = "--label", aliases = "-l", description = "To filter components by their label(s), such as database",
+            required = false, multiValued = false)
+    String label;
+
     protected Object doExecute() throws Exception {
-        CatalogComponentListCommand command = new CatalogComponentListCommand(verbose);
+        CatalogComponentListCommand command = new CatalogComponentListCommand(verbose, label);
         return command.execute(camelController, System.out, System.err);
     }
 

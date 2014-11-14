@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Default {@link org.apache.camel.catalog.CamelComponentCatalog}.
@@ -45,6 +47,36 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
             }
         }
         return names;
+    }
+
+    @Override
+    public List<String> findComponentNames(String filter) {
+        List<String> answer = new ArrayList<String>();
+
+        List<String> names = findComponentNames();
+        for (String name : names) {
+            String json = componentJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            try {
+                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                    answer.add(name);
+                                }
+                            } catch (PatternSyntaxException e) {
+                                // ignore as filter is maybe not a pattern
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
     }
 
     @Override
@@ -116,6 +148,14 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
             isr.close();
             in.close();
         }
+    }
+
+    private static boolean matchWildcard(String name, String pattern) {
+        // we have wildcard support in that hence you can match with: file* to match any file endpoints
+        if (pattern.endsWith("*") && name.startsWith(pattern.substring(0, pattern.length() - 1))) {
+            return true;
+        }
+        return false;
     }
 
 }

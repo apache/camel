@@ -128,9 +128,10 @@ public interface CamelController {
     /**
      * Lists all components from the Camel components catalog
      *
+     * @param filter optional filter to filter by labels
      * @return a list of key/value pairs with component information
      * @throws java.lang.Exception is thrown if error loading resources to gather component information
      */
-    List<Map<String, String>> listComponentsCatalog() throws Exception;
+    List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
 
 }

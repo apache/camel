@@ -43,6 +43,49 @@ public class CamelComponentCatalogTest {
     }
 
     @Test
+    public void testFindComponentNamesFilter() {
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        List<String> names = catalog.findComponentNames("testing");
+
+        assertNotNull(names);
+
+        LOG.info("Found {} names", names.size());
+        assertTrue("Should find some testing components", names.size() > 0);
+    }
+
+    @Test
+    public void testFindComponentNamesFilterWildcard() {
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        List<String> names = catalog.findComponentNames("t*");
+
+        assertNotNull(names);
+
+        LOG.info("Found {} names", names.size());
+        assertTrue("Should find some t* components", names.size() > 0);
+    }
+
+    @Test
+    public void testFindComponentNamesFilterTwo() {
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        List<String> names = catalog.findComponentNames("transformation");
+
+        assertNotNull(names);
+
+        LOG.info("Found {} names", names.size());
+        assertTrue("Should find some transformation components", names.size() > 0);
+    }
+
+    @Test
+    public void testFindComponentNamesFilterNoMatch() {
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        List<String> names = catalog.findComponentNames("cannotmatchme");
+
+        assertNotNull(names);
+
+        assertTrue("Should not match any components", names.size() == 0);
+    }
+
+    @Test
     public void testCoreComponentJson() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
         String json = catalog.componentJSonSchema("bean");
