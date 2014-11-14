@@ -233,8 +233,8 @@
         <null/>
       </completers>
     </command>
-    <command name="camel/component-catalog-list">
-      <action class="org.apache.camel.karaf.commands.ComponentCatalogList">
+    <command name="camel/catalog-component-list">
+      <action class="org.apache.camel.karaf.commands.CatalogComponentList">
         <property name="camelController" ref="camelController"/>
       </action>
       <completers>

@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * List all the Camel components from the Camel catalog
+ * From the Camel catalog lists all the components.
  */
-public class ComponentCatalogListCommand extends AbstractCamelCommand {
+public class CatalogComponentListCommand extends AbstractCamelCommand {
 
     private static final String NAME_COLUMN_LABEL = "Name";
     private static final String STATUS_COLUMN_LABEL = "Status";
@@ -43,7 +43,7 @@ public class ComponentCatalogListCommand extends AbstractCamelCommand {
 
     private boolean verbose;
 
-    public ComponentCatalogListCommand(boolean verbose) {
+    public CatalogComponentListCommand(boolean verbose) {
         this.verbose = verbose;
     }
 
