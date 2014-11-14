@@ -16,20 +16,8 @@
  */
 package org.apache.camel.component.metrics;
 
-import java.util.EnumSet;
+public enum MetricsTimerAction {
 
-import org.junit.Test;
+    start, stop
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-public class MetricsTypeTest {
-
-    @Test
-    public void testGetByName() throws Exception {
-        for (MetricsType type : EnumSet.allOf(MetricsType.class)) {
-            MetricsType t = MetricsType.getByName(type.toString());
-            assertThat(t, is(type));
-        }
-    }
 }

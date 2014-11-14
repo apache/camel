@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.counter;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
@@ -27,6 +27,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
 import static org.hamcrest.CoreMatchers.is;
@@ -42,7 +43,7 @@ public class CounterProducerTest {
     private static final Long DECREMENT = 91929199L;
 
     @Mock
-    private CounterEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     @Mock
     private Exchange exchange;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.meter;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Producer;
@@ -26,6 +26,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -33,21 +34,20 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MeterEndpointTest {
+public class TimerEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
-    private static final Long VALUE = System.currentTimeMillis();
 
     @Mock
     private MetricRegistry registry;
 
-    private MeterEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     private InOrder inOrder;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = new MeterEndpoint(registry, METRICS_NAME);
+        endpoint = new MetricsEndpoint(null, null, registry, MetricsType.TIMER, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
 
@@ -57,7 +57,7 @@ public class MeterEndpointTest {
     }
 
     @Test
-    public void testMeterEndpoint() throws Exception {
+    public void testTimerEndpoint() throws Exception {
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
@@ -67,23 +67,19 @@ public class MeterEndpointTest {
     public void testCreateProducer() throws Exception {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
-        assertThat(producer, is(instanceOf(MeterProducer.class)));
+        assertThat(producer, is(instanceOf(TimerProducer.class)));
     }
 
     @Test
-    public void testGetMark() throws Exception {
-        assertThat(endpoint.getMark(), is(nullValue()));
+    public void testGetAction() throws Exception {
+        assertThat(endpoint.getAction(), is(nullValue()));
     }
 
     @Test
-    public void testSetMark() throws Exception {
-        assertThat(endpoint.getMark(), is(nullValue()));
-        endpoint.setMark(VALUE);
-        assertThat(endpoint.getMark(), is(VALUE));
+    public void testSetAction() throws Exception {
+        assertThat(endpoint.getAction(), is(nullValue()));
+        endpoint.setAction(MetricsTimerAction.start);
+        assertThat(endpoint.getAction(), is(MetricsTimerAction.start));
     }
 
-    @Test
-    public void testCreateEndpointUri() throws Exception {
-        assertThat(endpoint.createEndpointUri(), is(MeterEndpoint.ENDPOINT_URI));
-    }
 }

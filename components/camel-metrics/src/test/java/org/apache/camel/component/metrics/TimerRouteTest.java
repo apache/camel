@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.meter;
+package org.apache.camel.component.metrics;
 
-import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -38,18 +38,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = { MeterRouteTest.TestConfig.class },
+        classes = { TimerRouteTest.TestConfig.class },
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
-public class MeterRouteTest {
+public class TimerRouteTest {
 
     @EndpointInject(uri = "mock:out")
     private MockEndpoint endpoint;
@@ -62,7 +62,7 @@ public class MeterRouteTest {
 
     private MetricRegistry mockRegistry;
 
-    private Meter mockMeter;
+    private Timer mockTimer;
 
     private InOrder inOrder;
 
@@ -77,11 +77,11 @@ public class MeterRouteTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:in-1")
-                            .to("metrics:meter:A?mark=3179")
+                            .to("metrics:timer:A?action=start")
                             .to("mock:out");
 
                     from("direct:in-2")
-                            .to("metrics:meter:A")
+                            .to("metrics:timer:A")
                             .to("mock:out");
                 }
             };
@@ -97,70 +97,48 @@ public class MeterRouteTest {
     public void setup() {
         // TODO - 12.05.2014, Lauri - is there any better way to set this up?
         mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRIC_REGISTRY_NAME, MetricRegistry.class);
-        mockMeter = Mockito.mock(Meter.class);
-        inOrder = Mockito.inOrder(mockRegistry, mockMeter);
-        when(mockRegistry.meter("A")).thenReturn(mockMeter);
+        mockTimer = Mockito.mock(Timer.class);
+        inOrder = Mockito.inOrder(mockRegistry, mockTimer);
     }
 
     @After
     public void tearDown() {
         endpoint.reset();
-        reset(mockRegistry, mockMeter);
-    }
-
-    @Test
-    public void testValueSetInUri() throws Exception {
-        Object body = new Object();
-        endpoint.expectedBodiesReceived(body);
-        producer1.sendBody(body);
-        endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).meter("A");
-        inOrder.verify(mockMeter, times(1)).mark(3179L);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testValueNoSetInUri() throws Exception {
-        Object body = new Object();
-        endpoint.expectedBodiesReceived(body);
-        producer2.sendBody(body);
-        endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).meter("A");
-        inOrder.verify(mockMeter, times(1)).mark();
-        inOrder.verifyNoMoreInteractions();
+        reset(mockRegistry, mockTimer);
     }
 
     @Test
     public void testOverrideMetricsName() throws Exception {
-        when(mockRegistry.meter("B")).thenReturn(mockMeter);
+        when(mockRegistry.timer("B")).thenReturn(mockTimer);
+
         Object body = new Object();
         endpoint.expectedBodiesReceived(body);
         producer1.sendBodyAndHeader(body, HEADER_METRIC_NAME, "B");
         endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).meter("B");
-        inOrder.verify(mockMeter, times(1)).mark(3179L);
+        inOrder.verify(mockRegistry, times(1)).timer("B");
+        inOrder.verify(mockTimer, times(1)).time();
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testOverrideValueWithHeader() throws Exception {
+    public void testOverrideExistingAction() throws Exception {
+        when(mockRegistry.timer("A")).thenReturn(mockTimer);
         Object body = new Object();
         endpoint.expectedBodiesReceived(body);
-        producer1.sendBodyAndHeader(body, HEADER_METER_MARK, 9926L);
+        producer1.sendBodyAndHeader(body, HEADER_TIMER_ACTION, MetricsTimerAction.stop);
         endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).meter("A");
-        inOrder.verify(mockMeter, times(1)).mark(9926L);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testValueNoSetInUriOverrideWithHeader() throws Exception {
+    public void testOverrideNoAction() throws Exception {
+        when(mockRegistry.timer("A")).thenReturn(mockTimer);
         Object body = new Object();
         endpoint.expectedBodiesReceived(body);
-        producer2.sendBodyAndHeader(body, HEADER_METER_MARK, 7707370L);
+        producer2.sendBodyAndHeader(body, HEADER_TIMER_ACTION, MetricsTimerAction.start);
         endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).meter("A");
-        inOrder.verify(mockMeter, times(1)).mark(7707370L);
+        inOrder.verify(mockRegistry, times(1)).timer("A");
+        inOrder.verify(mockTimer, times(1)).time();
         inOrder.verifyNoMoreInteractions();
     }
 }

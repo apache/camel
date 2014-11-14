@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.meter;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
@@ -27,6 +27,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,7 +42,7 @@ public class MeterProducerTest {
     private static final Long MARK = 9919120L;
 
     @Mock
-    private MeterEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     @Mock
     private MetricRegistry registry;

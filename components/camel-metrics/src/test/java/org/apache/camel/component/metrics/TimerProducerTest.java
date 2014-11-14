@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.timer;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.metrics.timer.TimerEndpoint.TimerAction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +27,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,10 +40,10 @@ import static org.mockito.Mockito.when;
 public class TimerProducerTest {
 
     private static final String METRICS_NAME = "metrics.name";
-    private static final String PROPERTY_NAME = TimerEndpoint.ENDPOINT_URI + ":" + METRICS_NAME;
+    private static final String PROPERTY_NAME = "timer" + ":" + METRICS_NAME;
 
     @Mock
-    private TimerEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     @Mock
     private Exchange exchange;
@@ -83,13 +83,13 @@ public class TimerProducerTest {
 
     @Test
     public void testProcessStart() throws Exception {
-        when(endpoint.getAction()).thenReturn(TimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, TimerAction.start, TimerAction.class)).thenReturn(TimerAction.start);
+        when(endpoint.getAction()).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, TimerAction.start, TimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(registry, times(1)).timer(METRICS_NAME);
         inOrder.verify(timer, times(1)).time();
@@ -99,13 +99,13 @@ public class TimerProducerTest {
 
     @Test
     public void testProcessStartWithOverride() throws Exception {
-        when(endpoint.getAction()).thenReturn(TimerAction.start);
-        when(in.getHeader(HEADER_TIMER_ACTION, TimerAction.start, TimerAction.class)).thenReturn(TimerAction.stop);
+        when(endpoint.getAction()).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, TimerAction.start, TimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.start, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(context, times(1)).stop();
         inOrder.verify(exchange, times(1)).removeProperty(PROPERTY_NAME);
@@ -114,13 +114,13 @@ public class TimerProducerTest {
 
     @Test
     public void testProcessStop() throws Exception {
-        when(endpoint.getAction()).thenReturn(TimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, TimerAction.stop, TimerAction.class)).thenReturn(TimerAction.stop);
+        when(endpoint.getAction()).thenReturn(MetricsTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, TimerAction.stop, TimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(context, times(1)).stop();
         inOrder.verify(exchange, times(1)).removeProperty(PROPERTY_NAME);
@@ -129,13 +129,13 @@ public class TimerProducerTest {
 
     @Test
     public void testProcessStopWithOverride() throws Exception {
-        when(endpoint.getAction()).thenReturn(TimerAction.stop);
-        when(in.getHeader(HEADER_TIMER_ACTION, TimerAction.stop, TimerAction.class)).thenReturn(TimerAction.start);
+        when(endpoint.getAction()).thenReturn(MetricsTimerAction.stop);
+        when(in.getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, TimerAction.stop, TimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, MetricsTimerAction.stop, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(registry, times(1)).timer(METRICS_NAME);
         inOrder.verify(timer, times(1)).time();
@@ -146,22 +146,22 @@ public class TimerProducerTest {
     @Test
     public void testProcessNoAction() throws Exception {
         when(endpoint.getAction()).thenReturn(null);
-        when(in.getHeader(HEADER_TIMER_ACTION, null, TimerAction.class)).thenReturn(null);
+        when(in.getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, TimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testProcessNoActionOverride() throws Exception {
         when(endpoint.getAction()).thenReturn(null);
-        when(in.getHeader(HEADER_TIMER_ACTION, null, TimerAction.class)).thenReturn(TimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, TimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(registry, times(1)).timer(METRICS_NAME);
         inOrder.verify(timer, times(1)).time();
@@ -208,7 +208,7 @@ public class TimerProducerTest {
 
     @Test
     public void testGetPropertyName() throws Exception {
-        assertThat(producer.getPropertyName(METRICS_NAME), is(TimerEndpoint.ENDPOINT_URI + ":" + METRICS_NAME));
+        assertThat(producer.getPropertyName(METRICS_NAME), is("timer" + ":" + METRICS_NAME));
     }
 
     @Test

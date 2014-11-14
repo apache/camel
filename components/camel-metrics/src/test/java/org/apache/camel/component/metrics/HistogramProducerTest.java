@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.histogram;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +29,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +43,7 @@ public class HistogramProducerTest {
     private static final Long VALUE = System.currentTimeMillis();
 
     @Mock
-    private HistogramEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     @Mock
     private MetricRegistry registry;

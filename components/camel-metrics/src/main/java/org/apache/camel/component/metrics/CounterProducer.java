@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.counter;
-
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.metrics.AbstractMetricsProducer;
+import org.apache.camel.component.metrics.MetricsEndpoint;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
 
+public class CounterProducer extends AbstractMetricsProducer {
 
-public class CounterProducer extends AbstractMetricsProducer<CounterEndpoint> {
-
-    public CounterProducer(CounterEndpoint endpoint) {
+    public CounterProducer(MetricsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected void doProcess(Exchange exchange, CounterEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
         Message in = exchange.getIn();
         Counter counter = registry.counter(metricsName);
         Long increment = endpoint.getIncrement();

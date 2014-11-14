@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.histogram;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Producer;
@@ -26,13 +26,15 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HistogramEndpointTest {
+public class MeterEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
     private static final Long VALUE = System.currentTimeMillis();
@@ -40,13 +42,13 @@ public class HistogramEndpointTest {
     @Mock
     private MetricRegistry registry;
 
-    private HistogramEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     private InOrder inOrder;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = new HistogramEndpoint(registry, METRICS_NAME);
+        endpoint = new MetricsEndpoint(null, null, registry, MetricsType.METER, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
 
@@ -56,7 +58,7 @@ public class HistogramEndpointTest {
     }
 
     @Test
-    public void testHistogramEndpoint() throws Exception {
+    public void testMeterEndpoint() throws Exception {
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
@@ -66,23 +68,19 @@ public class HistogramEndpointTest {
     public void testCreateProducer() throws Exception {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
-        assertThat(producer, is(HistogramProducer.class));
+        assertThat(producer, is(instanceOf(MeterProducer.class)));
     }
 
     @Test
-    public void testGetValue() throws Exception {
-        assertThat(endpoint.getValue(), is(nullValue()));
+    public void testGetMark() throws Exception {
+        assertThat(endpoint.getMark(), is(nullValue()));
     }
 
     @Test
-    public void testSetValue() throws Exception {
-        assertThat(endpoint.getValue(), is(nullValue()));
-        endpoint.setValue(VALUE);
-        assertThat(endpoint.getValue(), is(VALUE));
+    public void testSetMark() throws Exception {
+        assertThat(endpoint.getMark(), is(nullValue()));
+        endpoint.setMark(VALUE);
+        assertThat(endpoint.getMark(), is(VALUE));
     }
 
-    @Test
-    public void testCreateEndpointUri() throws Exception {
-        assertThat(endpoint.createEndpointUri(), is(HistogramEndpoint.ENDPOINT_URI));
-    }
 }

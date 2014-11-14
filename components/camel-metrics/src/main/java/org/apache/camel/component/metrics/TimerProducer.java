@@ -14,36 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.timer;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.metrics.AbstractMetricsProducer;
-import org.apache.camel.component.metrics.timer.TimerEndpoint.TimerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
-import static org.apache.camel.component.metrics.timer.TimerEndpoint.ENDPOINT_URI;
 
-public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
+public class TimerProducer extends AbstractMetricsProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerProducer.class);
 
-    public TimerProducer(TimerEndpoint endpoint) {
+    public TimerProducer(MetricsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected void doProcess(Exchange exchange, TimerEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+    protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
         Message in = exchange.getIn();
-        TimerAction action = endpoint.getAction();
-        TimerAction finalAction = in.getHeader(HEADER_TIMER_ACTION, action, TimerAction.class);
-        if (finalAction == TimerAction.start) {
+        MetricsTimerAction action = endpoint.getAction();
+        MetricsTimerAction finalAction = in.getHeader(HEADER_TIMER_ACTION, action, MetricsTimerAction.class);
+        if (finalAction == MetricsTimerAction.start) {
             handleStart(exchange, registry, metricsName);
-        } else if (finalAction == TimerAction.stop) {
+        } else if (finalAction == MetricsTimerAction.stop) {
             handleStop(exchange, registry, metricsName);
         } else {
             LOG.warn("No action provided for timer \"{}\"", metricsName);
@@ -74,7 +71,7 @@ public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
     }
 
     String getPropertyName(String metricsName) {
-        return new StringBuilder(ENDPOINT_URI)
+        return new StringBuilder("timer")
                 .append(":")
                 .append(metricsName)
                 .toString();

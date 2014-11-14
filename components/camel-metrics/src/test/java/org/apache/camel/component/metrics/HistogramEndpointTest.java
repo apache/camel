@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.counter;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Producer;
@@ -26,14 +26,14 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CounterEndpointTest {
+public class HistogramEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
     private static final Long VALUE = System.currentTimeMillis();
@@ -41,62 +41,45 @@ public class CounterEndpointTest {
     @Mock
     private MetricRegistry registry;
 
-    private CounterEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     private InOrder inOrder;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = new CounterEndpoint(registry, METRICS_NAME);
+        endpoint = new MetricsEndpoint(null, null, registry, MetricsType.HISTOGRAM, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testCounterEndpoint() throws Exception {
+    public void testHistogramEndpoint() throws Exception {
+        assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
-        assertThat(endpoint.getIncrement(), is(nullValue()));
-        assertThat(endpoint.getDecrement(), is(nullValue()));
     }
 
     @Test
     public void testCreateProducer() throws Exception {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
-        assertThat(producer, is(instanceOf(CounterProducer.class)));
+        assertThat(producer, is(HistogramProducer.class));
     }
 
     @Test
-    public void testGetIncrement() throws Exception {
-        assertThat(endpoint.getIncrement(), is(nullValue()));
+    public void testGetValue() throws Exception {
+        assertThat(endpoint.getValue(), is(nullValue()));
     }
 
     @Test
-    public void testSetIncrement() throws Exception {
-        assertThat(endpoint.getIncrement(), is(nullValue()));
-        endpoint.setIncrement(VALUE);
-        assertThat(endpoint.getIncrement(), is(VALUE));
+    public void testSetValue() throws Exception {
+        assertThat(endpoint.getValue(), is(nullValue()));
+        endpoint.setValue(VALUE);
+        assertThat(endpoint.getValue(), is(VALUE));
     }
 
-    @Test
-    public void testGetDecrement() throws Exception {
-        assertThat(endpoint.getDecrement(), is(nullValue()));
-    }
-
-    @Test
-    public void testSetDecrement() throws Exception {
-        assertThat(endpoint.getDecrement(), is(nullValue()));
-        endpoint.setDecrement(VALUE);
-        assertThat(endpoint.getDecrement(), is(VALUE));
-    }
-
-    @Test
-    public void testCreateEndpointUri() throws Exception {
-        assertThat(endpoint.createEndpointUri(), is(CounterEndpoint.ENDPOINT_URI));
-    }
 }

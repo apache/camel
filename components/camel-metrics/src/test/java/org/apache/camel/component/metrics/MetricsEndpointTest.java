@@ -14,11 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.timer;
+package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.metrics.timer.TimerEndpoint.TimerAction;
+import org.apache.camel.RuntimeCamelException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,28 +30,47 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TimerEndpointTest {
+public class MetricsEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
 
     @Mock
     private MetricRegistry registry;
 
-    private TimerEndpoint endpoint;
+    @Mock
+    private Processor processor;
+
+    @Mock
+    private Exchange exchange;
+
+    @Mock
+    private Message in;
+
+    private MetricsEndpoint endpoint;
 
     private InOrder inOrder;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = new TimerEndpoint(registry, METRICS_NAME);
-        inOrder = Mockito.inOrder(registry);
+        endpoint = new MetricsEndpoint(null, null, registry, MetricsType.METER, METRICS_NAME) {
+            @Override
+            public Producer createProducer() throws Exception {
+                return null;
+            }
+
+            @Override
+            protected String createEndpointUri() {
+                return "not real endpoint";
+            }
+        };
+        inOrder = Mockito.inOrder(registry, processor, exchange, in);
+        when(exchange.getIn()).thenReturn(in);
     }
 
     @After
@@ -57,33 +79,28 @@ public class TimerEndpointTest {
     }
 
     @Test
-    public void testTimerEndpoint() throws Exception {
-        assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint.getRegistry(), is(registry));
+    public void testAbstractMetricsEndpoint() throws Exception {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
+        assertThat(endpoint.getRegistry(), is(registry));
+    }
+
+    @Test(expected = RuntimeCamelException.class)
+    public void testCreateConsumer() throws Exception {
+        endpoint.createConsumer(processor);
     }
 
     @Test
-    public void testCreateProducer() throws Exception {
-        Producer producer = endpoint.createProducer();
-        assertThat(producer, is(notNullValue()));
-        assertThat(producer, is(instanceOf(TimerProducer.class)));
+    public void testIsSingleton() throws Exception {
+        assertThat(endpoint.isSingleton(), is(true));
     }
 
     @Test
-    public void testGetAction() throws Exception {
-        assertThat(endpoint.getAction(), is(nullValue()));
+    public void testGetRegistry() throws Exception {
+        assertThat(endpoint.getRegistry(), is(registry));
     }
 
     @Test
-    public void testSetAction() throws Exception {
-        assertThat(endpoint.getAction(), is(nullValue()));
-        endpoint.setAction(TimerAction.start);
-        assertThat(endpoint.getAction(), is(TimerAction.start));
-    }
-
-    @Test
-    public void testCreateEndpointUri() throws Exception {
-        assertThat(endpoint.createEndpointUri(), is(TimerEndpoint.ENDPOINT_URI));
+    public void testGetMetricsName() throws Exception {
+        assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
     }
 }

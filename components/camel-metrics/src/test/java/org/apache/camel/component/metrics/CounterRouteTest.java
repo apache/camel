@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.metrics.counter;
+package org.apache.camel.component.metrics;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -172,16 +172,6 @@ public class CounterRouteTest {
         endpoint.assertIsSatisfied();
         inOrder.verify(mockRegistry, times(1)).counter("A");
         inOrder.verify(mockCounter, times(1)).dec(7L);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testOverrideIncrementWithWrongType() throws Exception {
-        when(mockRegistry.counter("A")).thenReturn(mockCounter);
-        endpoint.expectedMessageCount(1);
-        producer1.sendBodyAndHeader(new Object(), HEADER_COUNTER_INCREMENT, "this is not a valid long value");
-        endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).counter("A");
         inOrder.verifyNoMoreInteractions();
     }
 
