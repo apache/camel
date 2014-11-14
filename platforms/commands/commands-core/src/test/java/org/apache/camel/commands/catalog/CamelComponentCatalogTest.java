@@ -17,6 +17,7 @@
 package org.apache.camel.commands.catalog;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.catalog.CamelComponentCatalog;
 import org.apache.camel.catalog.DefaultCamelComponentCatalog;
@@ -105,6 +106,19 @@ public class CamelComponentCatalogTest {
         LOG.info(json);
 
         assertTrue("Should find ftp component", json.contains("ftp"));
+    }
+
+    @Test
+    public void testLabels() {
+        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        Set<String> labels = catalog.findLabels();
+
+        assertNotNull(labels);
+
+        assertTrue("Should find labels", labels.size() > 0);
+        assertTrue("Should find core label", labels.contains("core"));
+        assertTrue("Should find testing label", labels.contains("testing"));
+        assertTrue("Should find rest label", labels.contains("rest"));
     }
 
 }

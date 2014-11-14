@@ -18,6 +18,7 @@ package org.apache.camel.commands;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -133,5 +134,13 @@ public interface CamelController {
      * @throws java.lang.Exception is thrown if error loading resources to gather component information
      */
     List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
+
+    /**
+     * Lists all the labels from the Camel components catalog
+     *
+     * @return a sorted set with all the label names
+     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     */
+    Set<String> listLabelCatalog() throws Exception;
 
 }

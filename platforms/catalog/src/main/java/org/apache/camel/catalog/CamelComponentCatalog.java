@@ -17,6 +17,7 @@
 package org.apache.camel.catalog;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Catalog of all the Camel components from this Apache Camel release.
@@ -40,4 +41,11 @@ public interface CamelComponentCatalog {
      * @return component details in JSon
      */
     String componentJSonSchema(String name);
+
+    /**
+     * Find all the unique label names all the components are using.
+     *
+     * @return a set of all the labels.
+     */
+    Set<String> findLabels();
 }

@@ -24,6 +24,9 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.PatternSyntaxException;
 
 /**
@@ -93,6 +96,30 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
         }
 
         return null;
+    }
+
+    @Override
+    public Set<String> findLabels() {
+        SortedSet<String> answer = new TreeSet<String>();
+
+        List<String> names = findComponentNames();
+        for (String name : names) {
+            String json = componentJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            answer.add(part);
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
     }
 
     /**

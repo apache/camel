@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -344,5 +345,10 @@ public abstract class AbstractCamelController implements CamelController {
         }
 
         return answer;
+    }
+
+    @Override
+    public Set<String> listLabelCatalog() throws Exception {
+        return catalog.findLabels();
     }
 }
