@@ -97,6 +97,7 @@
     <module>camel-gae</module>
     <module>camel-geocoder</module>
     <module>camel-github</module>
+    <module>camel-google-calendar</module>
     <module>camel-google-drive</module>
     <module>camel-gora</module>
     <module>camel-gson</module>
