@@ -49,7 +49,7 @@ trait Languages {
     def vtdxml(expression: String) =     Languages.this.vtdxml(expression)(exchange)
     def xpath(expression: String) =      Languages.this.xpath(expression)(exchange)
     def xquery(expression: String) =     Languages.this.xquery(expression)(exchange)
-    def jsonpath(expression: String) =   Labguages.this.jsonpath(expression)(exchange)
+    def jsonpath(expression: String) =   Languages.this.jsonpath(expression)(exchange)
     def language(language: String, expression: String) = Languages.this.language(language)(expression)(exchange)
 
     def tokenizeXML(tagName: String, inheritNamespaceTagName : String = null) = Languages.this.tokenizeXML(tagName, inheritNamespaceTagName)(exchange)
