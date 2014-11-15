@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -186,6 +187,30 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
         return getProperties().remove(name);
+    }
+	
+    public boolean removeProperties(String pattern) {
+        return removeProperties(pattern, (String[]) null);
+    }
+
+    public boolean removeProperties(String pattern, String... excludePatterns) {
+        if (!hasProperties()) {
+            return false;
+        }
+
+        boolean matches = false;
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
+                    continue;
+                }
+                matches = true;
+                properties.remove(entry.getKey());
+            }
+
+        }
+        return matches;
     }
 
     public Map<String, Object> getProperties() {
@@ -449,5 +474,14 @@ public final class DefaultExchange implements Exchange {
             answer = context.getUuidGenerator().generateUuid();
         }
         return answer;
+    }
+    
+    private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
+        for (String pattern : excludePatterns) {
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
