@@ -241,7 +241,8 @@
             <configuration>
               <childDelegation>false</childDelegation>
               <useFile>true</useFile>
-              <forkMode>once</forkMode>
+              <forkCount>1</forkCount>
+	      <reuseForks>true</reuseForks>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <excludes>
                 <exclude>**/*XXXTest.java</exclude>
