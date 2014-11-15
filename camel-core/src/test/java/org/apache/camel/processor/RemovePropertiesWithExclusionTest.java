@@ -58,7 +58,7 @@ public class RemovePropertiesWithExclusionTest extends ContextTestSupport {
         List<Exchange> endExchanges = end.getExchanges();
         Exchange endExchange = endExchanges.get(0);
         
-        // property should be removed
+        // properties should be removed but the last still have to be in the exchange
         assertNull(endExchange.getProperty(propertyName, String.class));
         assertNull(endExchange.getProperty(propertyName1, String.class));
         assertEquals(expectedPropertyValue2, endExchange.getProperty(propertyName2, String.class));

@@ -2877,7 +2877,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the properties in the exchange
      *
-     * @param pattern  a pattern to match properties names to be removed
+     * @param pattern a pattern to match properties names to be removed
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -2890,7 +2890,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Adds a processor which removes the properties in the exchange
      *
-     * @param pattern  a pattern to match properties names to be removed
+     * @param pattern a pattern to match properties names to be removed
      * @param excludePatterns one or more pattern of properties names that should be excluded (= preserved)
      * @return the builder
      */
