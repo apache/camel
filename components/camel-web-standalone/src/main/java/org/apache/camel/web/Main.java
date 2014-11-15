@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.mortbay.jetty.runner.Runner;
-
 /**
  * A bootstrap class for starting Jetty Runner using an embedded war
  *
@@ -66,7 +64,16 @@ public final class Main {
             argsList.addAll(Arrays.asList(args));
         }
         argsList.add(warFile.getCanonicalPath());
-        Runner.main(argsList.toArray(new String[argsList.size()]));
+        
+        Class<?> runnerCls = null;
+        try {
+            runnerCls = Class.forName("org.mortbay.jetty.runner.Runner");
+        } catch (Throwable t) {
+            runnerCls = Class.forName("org.eclipse.jetty.runner.Runner");
+        }
+
+        runnerCls.getMethod("main", String[].class)
+            .invoke(null, new Object[] {argsList.toArray(new String[argsList.size()])});
         System.exit(0);
     }
 
