@@ -80,8 +80,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>perTest</forkMode>
-                    <!--CAMEL-7662 disabling the assertion this time-->
-                    <enableAssertions>false</enableAssertions>
                 </configuration>
             </plugin>
              <plugin>
