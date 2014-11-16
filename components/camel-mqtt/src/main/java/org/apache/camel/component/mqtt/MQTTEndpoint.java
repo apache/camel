@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
+import org.fusesource.hawtdispatch.Task;
 import org.fusesource.mqtt.client.Callback;
 import org.fusesource.mqtt.client.CallbackConnection;
 import org.fusesource.mqtt.client.Listener;
@@ -114,15 +115,19 @@ public class MQTTEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         if (connection != null) {
             final Promise<Void> promise = new Promise<Void>();
-            connection.disconnect(new Callback<Void>() {
-                public void onSuccess(Void value) {
-                    promise.onSuccess(value);
-                }
+            connection.getDispatchQueue().execute(new Task() {
+                @Override
+                public void run() {
+                    connection.disconnect(new Callback<Void>() {
+                        public void onSuccess(Void value) {
+                            promise.onSuccess(value);
+                        }
 
-                public void onFailure(Throwable value) {
-                    promise.onFailure(value);
-                }
-            });
+                        public void onFailure(Throwable value) {
+                            promise.onFailure(value);
+                        }
+                    });
+            }});
             promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
         }
         super.doStop();
@@ -169,8 +174,13 @@ public class MQTTEndpoint extends DefaultEndpoint {
         return connected;
     }
  
-    void publish(String topic, byte[] payload, QoS qoS, boolean retain, Callback<Void> callback) throws Exception {
-        connection.publish(topic, payload, qoS, retain, callback);
+    void publish(final String topic, final byte[] payload, final QoS qoS, final boolean retain, final Callback<Void> callback) throws Exception {
+        connection.getDispatchQueue().execute(new Task() {
+            @Override
+            public void run() {
+                connection.publish(topic, payload, qoS, retain, callback);
+            }
+        });
     }
 
     void addConsumer(MQTTConsumer consumer) {

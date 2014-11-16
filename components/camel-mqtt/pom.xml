@@ -80,9 +80,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>perTest</forkMode>
-                    <excludes>
-                        <exclude>**/MQTTProducerTest.*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
              <plugin>
