@@ -30,7 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -48,6 +53,8 @@ import org.apache.maven.project.MavenProjectHelper;
 public class PrepareCatalogMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
+
+    private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
     /**
      * The maven project.
@@ -103,6 +110,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> missingComponents = new LinkedHashSet<File>();
         Set<File> missingLabels = new LinkedHashSet<File>();
         Set<File> missingUriPaths = new LinkedHashSet<File>();
+        Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -165,6 +173,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // just do a basic label check
                 if (text.contains("\"label\": \"\"")) {
                     missingLabels.add(file);
+                } else {
+                    String name = asComponentName(file);
+                    Matcher matcher = LABEL_PATTERN.matcher(text);
+                    // grab the label, and remember it in the used labels
+                    if (matcher.find()) {
+                        String label = matcher.group(1);
+                        String[] labels = label.split(",");
+                        for (String s : labels) {
+                            Set<String> components = usedLabels.get(s);
+                            if (components == null) {
+                                components = new TreeSet<String>();
+                                usedLabels.put(s, components);
+                            }
+                            components.add(name);
+                        }
+                    }
                 }
                 if (!text.contains("\"kind\": \"path\"")) {
                     missingUriPaths.add(file);
@@ -203,10 +227,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels);
+        printReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels, usedLabels);
     }
 
-    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths, Set<File> missingLabels) {
+    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths,
+                             Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -227,6 +252,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
             getLog().warn("\tMissing labels detected: " + missingLabels.size());
             for (File file : missingLabels) {
                 getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        getLog().info("");
+        if (!usedLabels.isEmpty()) {
+            getLog().warn("\tUsed labels: " + usedLabels.size());
+            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                getLog().info("\t\t" + entry.getKey() + ":");
+                for (String name : entry.getValue()) {
+                    getLog().info("\t\t\t" + name);
+                }
             }
         }
         getLog().info("");
