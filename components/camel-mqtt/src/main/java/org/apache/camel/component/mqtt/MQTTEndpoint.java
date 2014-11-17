@@ -127,7 +127,8 @@ public class MQTTEndpoint extends DefaultEndpoint {
                             promise.onFailure(value);
                         }
                     });
-            }});
+                }
+            });
             promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
         }
         super.doStop();
