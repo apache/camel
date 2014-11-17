@@ -2873,6 +2873,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * Adds a processor which removes the properties in the exchange
+     *
+     * @param pattern a pattern to match properties names to be removed
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeProperties(String pattern) {
+    	RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Adds a processor which removes the properties in the exchange
+     *
+     * @param pattern a pattern to match properties names to be removed
+     * @param excludePatterns one or more pattern of properties names that should be excluded (= preserved)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeProperties(String pattern, String... excludePatterns) {
+    	RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern, excludePatterns);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * Converts the IN message body to the specified type

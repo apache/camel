@@ -264,6 +264,38 @@ public final class ProcessorBuilder {
             }
         };
     }
+    
+    /**
+     * Removes the properties on the exchange
+     */
+    public static Processor removeProperties(final String pattern) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+            	exchange.removeProperties(pattern);
+            }
+
+            @Override
+            public String toString() {
+                return "removeProperties(" + pattern +  ")";
+            }
+        };
+    }
+    
+    /**
+     * Removes all properties on the exchange, except for the ones provided in the <tt>names</tt> parameter
+     */
+    public static Processor removeProperties(final String pattern, final String... exceptionPatterns) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+            	exchange.removeProperties(pattern, exceptionPatterns);
+            }
+
+            @Override
+            public String toString() {
+                return "removeProperties(" + pattern + ", " + Arrays.toString(exceptionPatterns) + ")";
+            }
+        };
+    }
 
     /**
      * Throws an exception
