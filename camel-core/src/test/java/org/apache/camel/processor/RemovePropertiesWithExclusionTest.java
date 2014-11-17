@@ -78,7 +78,7 @@ public class RemovePropertiesWithExclusionTest extends ContextTestSupport {
                     setProperty(propertyName).constant(expectedPropertyValue)
                     .setProperty(propertyName1).constant(expectedPropertyValue1)
                     .setProperty(propertyName2).constant(expectedPropertyValue2).to("mock:mid").
-                    removeProperties(pattern,exclusion).to("mock:end");
+                    removeProperties(pattern, exclusion).to("mock:end");
             }
         };
     }

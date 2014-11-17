@@ -2882,7 +2882,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type removeProperties(String pattern) {
-    	RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern);
+        RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern);
         addOutput(answer);
         return (Type) this;
     }
@@ -2896,7 +2896,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type removeProperties(String pattern, String... excludePatterns) {
-    	RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern, excludePatterns);
+        RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern, excludePatterns);
         addOutput(answer);
         return (Type) this;
     }

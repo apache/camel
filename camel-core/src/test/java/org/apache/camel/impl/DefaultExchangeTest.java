@@ -157,7 +157,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("peach", exchange.getProperty("fruit2"));
         assertEquals("Africa", exchange.getProperty("zone"));
 
-        exchange.removeProperties("fr*","fruit1","fruit2");
+        exchange.removeProperties("fr*", "fruit1", "fruit2");
         assertTrue(exchange.hasProperties());
         assertEquals(exchange.getProperties().size(), 3);
         assertEquals(null, exchange.getProperty("fruit", String.class));
@@ -181,7 +181,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("peach", exchange.getProperty("fruit2"));
         assertEquals("Africa", exchange.getProperty("zone"));
 
-        exchange.removeProperties("fr*","fruit","fruit1","fruit2","zone");
+        exchange.removeProperties("fr*", "fruit", "fruit1", "fruit2", "zone");
         assertTrue(exchange.hasProperties());
         assertEquals(exchange.getProperties().size(), 4);
         assertEquals("apple", exchange.getProperty("fruit", String.class));

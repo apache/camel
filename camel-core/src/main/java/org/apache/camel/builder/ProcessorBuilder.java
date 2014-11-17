@@ -271,7 +271,7 @@ public final class ProcessorBuilder {
     public static Processor removeProperties(final String pattern) {
         return new Processor() {
             public void process(Exchange exchange) {
-            	exchange.removeProperties(pattern);
+                exchange.removeProperties(pattern);
             }
 
             @Override
@@ -287,7 +287,7 @@ public final class ProcessorBuilder {
     public static Processor removeProperties(final String pattern, final String... exceptionPatterns) {
         return new Processor() {
             public void process(Exchange exchange) {
-            	exchange.removeProperties(pattern, exceptionPatterns);
+                exchange.removeProperties(pattern, exceptionPatterns);
             }
 
             @Override

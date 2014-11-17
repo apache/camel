@@ -188,7 +188,7 @@ public final class DefaultExchange implements Exchange {
         }
         return getProperties().remove(name);
     }
-	
+
     public boolean removeProperties(String pattern) {
         return removeProperties(pattern, (String[]) null);
     }
