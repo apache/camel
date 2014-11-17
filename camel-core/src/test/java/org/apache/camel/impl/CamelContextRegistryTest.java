@@ -54,7 +54,6 @@ public class CamelContextRegistryTest extends TestCase {
 
         try {
             CamelContextRegistry.INSTANCE.addListener(listener, true);
-        	
             // after we set, then we should manage the 2 pending contexts
             assertEquals(2, listener.names.size());
 
