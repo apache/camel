@@ -20,8 +20,6 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.metrics.AbstractMetricsProducer;
-import org.apache.camel.component.metrics.MetricsEndpoint;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
