@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A JMS Endpoint
  */
-@UriEndpoint(scheme = "sjms", consumerClass = SjmsConsumer.class, label="messaging")
+@UriEndpoint(scheme = "sjms", consumerClass = SjmsConsumer.class, label = "messaging")
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * @version
  */
-@UriEndpoint(scheme = "jdbc", label="database")
+@UriEndpoint(scheme = "jdbc", label = "database")
 public class JdbcEndpoint extends DefaultEndpoint {
     @UriParam
     private int readSize;

@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Secure FTP endpoint
  */
-@UriEndpoint(scheme = "sftp", consumerClass = SftpConsumer.class, label="file")
+@UriEndpoint(scheme = "sftp", consumerClass = SftpConsumer.class, label = "file")
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     Proxy proxy;
