@@ -20,57 +20,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.CamelContextRegistry;
+import org.apache.camel.spi.CamelContextTracker;
+import org.apache.camel.support.LifecycleStrategySupport;
 
-public class CamelContextRegistryTest extends TestCase {
+public class CamelContextTrackerTest extends TestCase {
 
-    private final class MyListener extends CamelContextRegistry.Listener {
+    private final class MyContextTracker extends CamelContextTracker {
 
         private List<String> names = new ArrayList<String>();
 
-        @Override
-        public void contextAdded(CamelContext camelContext) {
-            names.add(camelContext.getName());
-        }
-
-        @Override
-        public void contextRemoved(CamelContext camelContext) {
-            names.remove(camelContext.getName());
-        }
+		@Override
+		public void contextCreated(CamelContext camelContext) {
+			camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+				@Override
+				public void onContextStop(CamelContext context) {
+					names.remove(context.getName());
+				}
+			});
+			names.add(camelContext.getName());
+		}
     }
 
     public void testContainerSet() throws Exception {
 
-        // must clear for testing purpose
-        CamelContextRegistry.INSTANCE.clear();
-
-        MyListener listener = new MyListener();
+        MyContextTracker tracker = new MyContextTracker();
 
         CamelContext camel1 = new DefaultCamelContext();
         CamelContext camel2 = new DefaultCamelContext();
-
-        assertEquals(0, listener.names.size());
+        assertEquals(0, tracker.names.size());
 
         try {
-            CamelContextRegistry.INSTANCE.addListener(listener, true);
-            // after we set, then we should manage the 2 pending contexts
-            assertEquals(2, listener.names.size());
+            tracker.open();
+            assertEquals(0, tracker.names.size());
 
             CamelContext camel3 = new DefaultCamelContext();
-            assertEquals(3, listener.names.size());
-            assertEquals(camel1.getName(), listener.names.get(0));
-            assertEquals(camel2.getName(), listener.names.get(1));
-            assertEquals(camel3.getName(), listener.names.get(2));
+            assertEquals(1, tracker.names.size());
+            assertEquals(camel3.getName(), tracker.names.get(0));
 
             camel1.stop();
             camel2.stop();
             camel3.stop();
 
-            assertEquals(0, listener.names.size());
+            assertEquals(0, tracker.names.size());
             
         } finally {
-            CamelContextRegistry.INSTANCE.removeListener(listener, true);
+            tracker.close();
         }
     }
 }

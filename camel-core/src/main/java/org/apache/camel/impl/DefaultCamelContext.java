@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -23,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -94,7 +96,6 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.spi.CamelContextRegistry;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Container;
@@ -148,8 +149,6 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -269,9 +268,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.managementStrategy = createManagementStrategy();
         this.managementMBeanAssembler = createManagementMBeanAssembler();
 
-        // Register this context with the registry
-        // Note, this may register a partially constructed object
-        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).afterCreate(this);
+        // Call all registered trackers with this context
+        // Note, this may use a partially constructed object
+        CamelContextTrackerRegistry.INSTANCE.contextCreated(this);
 
         // [TODO] Remove in 3.0
         Container.Instance.manage(this);
@@ -2003,10 +2002,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             setApplicationContextClassLoader(cl);
         }
 
-        // We register the context again just before start. This ensures that is is registered on restart
-        // Listeners should only see one call to Listener.contextAdded(CamelContext)
-        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).beforeStart(this);
-
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
                     new Object[]{getClassResolver(), getPackageScanClassResolver(), getApplicationContextClassLoader()});
@@ -2259,9 +2254,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // [TODO] Remove in 3.0
         Container.Instance.unmanage(this);
-
-        // Unregister this context from the registry
-        ((DefaultCamelContextRegistry) CamelContextRegistry.INSTANCE).afterStop(this);
     }
 
     /**
