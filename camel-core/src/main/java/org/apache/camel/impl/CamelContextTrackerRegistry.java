@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -25,22 +25,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A registry for {@link CamelContextTracker}.
  */
 public final class CamelContextTrackerRegistry {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CamelContextTrackerRegistry.class);
 
     /**
      * The registry singleton
      */
     public static final CamelContextTrackerRegistry INSTANCE = new CamelContextTrackerRegistry();
-    
-    private final Set<CamelContextTracker> trackers = new HashSet<CamelContextTracker>();
 
-    // Hide ctor
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextTrackerRegistry.class);
+
+    private final Set<CamelContextTracker> trackers = new LinkedHashSet<CamelContextTracker>();
+
     private CamelContextTrackerRegistry() {
+        // hide constructor
     }
-    
+
     public synchronized void addTracker(CamelContextTracker tracker) {
         trackers.add(tracker);
     }
@@ -52,9 +53,9 @@ public final class CamelContextTrackerRegistry {
     synchronized void contextCreated(CamelContext camelContext) {
         for (CamelContextTracker tracker : trackers) {
             try {
-            	tracker.contextCreated(camelContext);
-            } catch (Exception ex) {
-                LOG.warn("Error calling context tracker. This exception is ignored.", ex);
+                tracker.contextCreated(camelContext);
+            } catch (Exception e) {
+                LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
             }
         }
     }

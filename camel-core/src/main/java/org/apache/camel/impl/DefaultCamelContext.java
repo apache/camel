@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -149,6 +147,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Represents the context used to configure routes and the policies to use.

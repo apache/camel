@@ -28,14 +28,14 @@ public class CamelContextTracker {
      * Called when a context is created.
      */
     public void contextCreated(CamelContext camelContext) {
-    	// do nothing
+        // do nothing
     }
 
     public final void open() {
-    	CamelContextTrackerRegistry.INSTANCE.addTracker(this);
+        CamelContextTrackerRegistry.INSTANCE.addTracker(this);
     }
-    
+
     public final void close() {
-    	CamelContextTrackerRegistry.INSTANCE.removeTracker(this);
+        CamelContextTrackerRegistry.INSTANCE.removeTracker(this);
     }
 }

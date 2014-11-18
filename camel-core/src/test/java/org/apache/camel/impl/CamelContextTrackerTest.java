@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -31,16 +30,16 @@ public class CamelContextTrackerTest extends TestCase {
 
         private List<String> names = new ArrayList<String>();
 
-		@Override
-		public void contextCreated(CamelContext camelContext) {
-			camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
-				@Override
-				public void onContextStop(CamelContext context) {
-					names.remove(context.getName());
-				}
-			});
-			names.add(camelContext.getName());
-		}
+        @Override
+        public void contextCreated(CamelContext camelContext) {
+            camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+                @Override
+                public void onContextStop(CamelContext context) {
+                    names.remove(context.getName());
+                }
+            });
+            names.add(camelContext.getName());
+        }
     }
 
     public void testContainerSet() throws Exception {
@@ -64,7 +63,7 @@ public class CamelContextTrackerTest extends TestCase {
             camel3.stop();
 
             assertEquals(0, tracker.names.size());
-            
+
         } finally {
             tracker.close();
         }
