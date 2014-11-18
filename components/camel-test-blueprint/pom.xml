@@ -128,7 +128,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.fileinstall</artifactId>
-            <version>${felix-fileinstall-version}</version>
+            <version>${felix-fileinstall-pojosr-version}</version>
                 <!-- exclude the following dependency which otherwise would pop up a lot of compilation
                      errors both by this and the camel-maven-plugin modules under eclipse. -->
                 <exclusions>
@@ -161,14 +161,17 @@
         </dependency>
 
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
+            		<forkCount>1</forkCount>
+   	    		    <reuseForks>false</reuseForks>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    
 </project>
