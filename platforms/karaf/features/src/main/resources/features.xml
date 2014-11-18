@@ -1354,6 +1354,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-twitter/${project.version}</bundle>
   </feature>
+  <feature name='camel-univocity-parsers' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.univocity/univocity-parsers/${univocity-parsers-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-univocity-parsers/${project.version}</bundle>
+  </feature>
   <feature name='camel-urlrewrite' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-http</feature>
     <feature version='${project.version}'>camel-http4</feature>
