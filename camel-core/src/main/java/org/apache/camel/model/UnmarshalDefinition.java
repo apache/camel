@@ -46,6 +46,9 @@ import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
+import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
@@ -95,6 +98,9 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
     @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
     @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
+    @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
+    @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
+    @XmlElement(required = false, name = "univocity-tsv", type = UniVocityTsvDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
     @XmlElement(required = false, name = "xmljson", type = XmlJsonDataFormat.class),
     @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
