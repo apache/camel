@@ -52,7 +52,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(3, body.size());
         assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
         assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
@@ -69,7 +69,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -85,7 +85,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -101,7 +101,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        Iterator body = assertIsInstanceOf(Iterator.class, result.getExchanges().get(0).getIn().getBody());
+        Iterator<?> body = assertIsInstanceOf(Iterator.class, result.getExchanges().get(0).getIn().getBody());
 
         // Read first line
         assertTrue(body.hasNext());
@@ -141,7 +141,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(Arrays.asList("A", "B"), body.get(0));
         assertEquals(Arrays.asList("N/A", "D  "), body.get(1));

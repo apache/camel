@@ -62,7 +62,7 @@ final class Marshaller<W extends AbstractWriter<?>> {
      */
     public void marshal(Exchange exchange, Object body, W writer) throws NoTypeConversionAvailableException {
         try {
-            List list = convertToType(exchange, List.class, body);
+            List<?> list = convertToType(exchange, List.class, body);
             if (list != null) {
                 for (Object row : list) {
                     writeRow(exchange, row, writer);
@@ -84,7 +84,7 @@ final class Marshaller<W extends AbstractWriter<?>> {
      * @throws NoTypeConversionAvailableException when it's not possible to convert the row as map.
      */
     private void writeRow(Exchange exchange, Object row, W writer) throws NoTypeConversionAvailableException {
-        Map map = convertToMandatoryType(exchange, Map.class, row);
+        Map<?, ?> map = convertToMandatoryType(exchange, Map.class, row);
         if (adaptHeaders) {
             for (Object key : map.keySet()) {
                 headers.add(convertToMandatoryType(exchange, String.class, key));
