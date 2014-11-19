@@ -47,14 +47,12 @@ public final class AtmosPropertyManager {
         try {
             inStream = url.openStream();
         } catch (IOException e) {
-            e.printStackTrace();
             throw new AtmosException("atmos.properties could not be found");
         }
         properties = new Properties();
         try {
             properties.load(inStream);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new AtmosException("atmos.properties can't be read");
         }
         return properties;
