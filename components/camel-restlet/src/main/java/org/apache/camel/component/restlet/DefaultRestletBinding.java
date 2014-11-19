@@ -24,10 +24,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
@@ -110,16 +112,23 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // only deal with the form if the content type is "application/x-www-form-urlencoded"
         if (request.getEntity().getMediaType() != null && request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
             Form form = new Form(request.getEntity());
-            for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
+            for (String paramName : form.getValuesMap().keySet()) {
+                String[] values = form.getValuesArray(paramName);
+                Object value = null;
+                if (values != null && values.length > 0) {
+                    if (values.length == 1) {
+                        value = values[0];
+                    } else {
+                        value = values;
+                    }
+                }
                 if (value == null) {
-                    inMessage.setBody(key);
-                    LOG.debug("Populate exchange from Restlet request body: {}", key);
+                    inMessage.setBody(paramName);
+                    LOG.debug("Populate exchange from Restlet request body: {}", paramName);
                 } else {
-                    if (!headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
-                        inMessage.setHeader(key, value);
-                        LOG.debug("Populate exchange from Restlet request user header: {} value: {}", key, value);
+                    if (!headerFilterStrategy.applyFilterToExternalHeaders(paramName, value, exchange)) {
+                        inMessage.setHeader(paramName, value);
+                        LOG.debug("Populate exchange from Restlet request user header: {} value: {}", paramName, value);
                     }
                 }
             }
@@ -166,7 +175,13 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         request.getAttributes().put(key, value);
                     } else {
                         // put the user stuff in the form
-                        form.add(key, value.toString());
+                        if (value instanceof Collection) {
+                            for (Object v: (Collection<?>) value) {
+                                form.add(key, v.toString());
+                            }
+                        } else {
+                            form.add(key, value.toString());
+                        }
                     }
                 } else {
                     // For non-form post put all the headers in attributes
