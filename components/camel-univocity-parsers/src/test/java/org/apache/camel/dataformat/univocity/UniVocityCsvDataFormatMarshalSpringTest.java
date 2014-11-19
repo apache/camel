@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.univocity;
+
+import java.util.Arrays;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,9 +26,9 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static java.util.Arrays.asList;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
+
 
 /**
  * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat} using the
@@ -41,7 +43,7 @@ public final class UniVocityCsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalWithDefaultConfiguration() throws Exception {
-        template.sendBody("direct:default", asList(
+        template.sendBody("direct:default", Arrays.asList(
                 asMap("A", "1", "B", "2", "C", "3"),
                 asMap("A", "one", "B", "two", "C", "three")
         ));
@@ -72,7 +74,7 @@ public final class UniVocityCsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalAndAddNewColumns() throws Exception {
-        template.sendBody("direct:default", asList(
+        template.sendBody("direct:default", Arrays.asList(
                 asMap("A", "1", "B", "2"),
                 asMap("C", "three", "A", "one", "B", "two")
         ));
@@ -89,7 +91,7 @@ public final class UniVocityCsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalWithSpecificHeaders() throws Exception {
-        template.sendBody("direct:header", asList(
+        template.sendBody("direct:header", Arrays.asList(
                 asMap("A", "1", "B", "2", "C", "3"),
                 asMap("A", "one", "B", "two", "C", "three")
         ));
@@ -106,7 +108,7 @@ public final class UniVocityCsvDataFormatMarshalSpringTest extends CamelSpringTe
      */
     @Test
     public void shouldMarshalUsingAdvancedConfiguration() throws Exception {
-        template.sendBody("direct:advanced", asList(
+        template.sendBody("direct:advanced", Arrays.asList(
                 asMap("A", null, "B", "", "C", "_"),
                 asMap("A", "one", "B", "two", "C", "three")
         ));

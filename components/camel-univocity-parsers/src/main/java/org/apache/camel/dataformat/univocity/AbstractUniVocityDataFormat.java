@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,9 +23,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.DataFormat;
-
 import com.univocity.parsers.common.AbstractParser;
 import com.univocity.parsers.common.AbstractWriter;
 import com.univocity.parsers.common.CommonParserSettings;
@@ -33,6 +30,8 @@ import com.univocity.parsers.common.CommonSettings;
 import com.univocity.parsers.common.CommonWriterSettings;
 import com.univocity.parsers.common.Format;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.DataFormat;
 import static org.apache.camel.util.IOHelper.getCharsetName;
 
 /**
@@ -48,7 +47,8 @@ import static org.apache.camel.util.IOHelper.getCharsetName;
  * @param <P>   uniVocity parser class
  * @param <DF>  the data format class (for providing a fluent API)
  */
-public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>, W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>> implements DataFormat {
+public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>,
+    W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>> implements DataFormat {
     protected String nullValue;
     protected Boolean skipEmptyLines;
     protected Boolean ignoreTrailingWhitespaces;

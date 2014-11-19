@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.univocity;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,8 +27,6 @@ import java.util.NoSuchElementException;
 
 import com.univocity.parsers.common.AbstractParser;
 
-import static java.lang.Math.min;
-import static java.util.Arrays.asList;
 
 /**
  * This class unmarshalls the exchange body using an uniVocity parser.
@@ -84,7 +83,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
      * @param <E> Row class
      * @param <P> Parser class
      */
-    private static abstract class RowIterator<E, P extends AbstractParser<?>> implements Iterator<E> {
+    private abstract  static class RowIterator<E, P extends AbstractParser<?>> implements Iterator<E> {
         private final P parser;
         private String[] row;
 
@@ -157,7 +156,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
          */
         @Override
         protected List<String> convertRow(String[] row) {
-            return asList(row);
+            return Arrays.asList(row);
         }
     }
 
@@ -187,7 +186,7 @@ final class Unmarshaller<P extends AbstractParser<?>> {
         protected Map<String, String> convertRow(String[] row) {
             String[] headers = headerRowProcessor.getHeaders();
 
-            int size = min(row.length, headers.length);
+            int size = Math.min(row.length, headers.length);
             Map<String, String> result = new LinkedHashMap<>(size);
             for (int i = 0; i < size; i++) {
                 result.put(headers[i], row[i]);

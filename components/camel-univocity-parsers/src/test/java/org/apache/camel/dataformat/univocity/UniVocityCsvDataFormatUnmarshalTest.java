@@ -1,5 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.dataformat.univocity;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +31,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
 
@@ -38,9 +54,9 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
         List body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(3, body.size());
-        assertEquals(asList("A", "B", "C"), body.get(0));
-        assertEquals(asList("1", "2", "3"), body.get(1));
-        assertEquals(asList("one", "two", "three"), body.get(2));
+        assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
+        assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
+        assertEquals(Arrays.asList("one", "two", "three"), body.get(2));
     }
 
     /**
@@ -89,7 +105,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
         // Read first line
         assertTrue(body.hasNext());
-        assertEquals(asList("A", "B", "C"), body.next());
+        assertEquals(Arrays.asList("A", "B", "C"), body.next());
 
         // Try to remove the element
         try {
@@ -101,9 +117,9 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
         // Read all the lines
         assertTrue(body.hasNext());
-        assertEquals(asList("1", "2", "3"), body.next());
+        assertEquals(Arrays.asList("1", "2", "3"), body.next());
         assertTrue(body.hasNext());
-        assertEquals(asList("one", "two", "three"), body.next());
+        assertEquals(Arrays.asList("one", "two", "three"), body.next());
         assertFalse(body.hasNext());
 
         // Try to read one more element
@@ -127,8 +143,8 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
         List body = assertIsInstanceOf(List.class, result.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
-        assertEquals(asList("A", "B"), body.get(0));
-        assertEquals(asList("N/A", "D  "), body.get(1));
+        assertEquals(Arrays.asList("A", "B"), body.get(0));
+        assertEquals(Arrays.asList("N/A", "D  "), body.get(1));
     }
 
     @Override
