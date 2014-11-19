@@ -705,18 +705,21 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                                                                              endpoint.isSendDateHeader());
             
             
-            
             if (result != null && requestBufferSize != null) {
-                result.setRequestBufferSize(requestBufferSize);
+                result.getClass().getMethod("setRequestBufferSize", Integer.TYPE)
+                    .invoke(result, requestBufferSize);
             }
             if (result != null && requestHeaderSize != null) {
-                result.setRequestHeaderSize(requestHeaderSize);
+                result.getClass().getMethod("setRequestHeaderSize", Integer.TYPE)
+                    .invoke(result, requestHeaderSize);
             }
             if (result != null && responseBufferSize != null) {
-                result.setResponseBufferSize(responseBufferSize);
+                result.getClass().getMethod("setResponseBufferSize", Integer.TYPE)
+                    .invoke(result, responseBufferSize);
             }
             if (result != null && responseHeaderSize != null) {
-                result.setResponseBufferSize(responseHeaderSize);
+                result.getClass().getMethod("setResponseBufferSize", Integer.TYPE)
+                    .invoke(result, responseHeaderSize);
             }
 
         } catch (RuntimeException rex) {
@@ -777,7 +780,6 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         } else {
             httpClient = new CamelHttpClient();
         }
-        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
         
         CamelContext context = endpoint.getCamelContext();
 
@@ -787,14 +789,14 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             String host = context.getProperty("http.proxyHost");
             int port = Integer.parseInt(context.getProperty("http.proxyPort"));
             LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
-            httpClient.setProxy(new org.eclipse.jetty.client.Address(host, port));
+            httpClient.setProxy(host, port);
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
             String host = endpoint.getProxyHost();
             int port = endpoint.getProxyPort();
             LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
-            httpClient.setProxy(new org.eclipse.jetty.client.Address(host, port));
+            httpClient.setProxy(host, port);
         }
         
         // must have both min and max
@@ -813,8 +815,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             qtp.setDaemon(true);
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
-            httpClient.setThreadPool(qtp);
-            //httpClient.setExecutor(qtp);
+            httpClient.setThreadPoolOrExecutor(qtp);
         }
         
         if (LOG.isDebugEnabled()) {
