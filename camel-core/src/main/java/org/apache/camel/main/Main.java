@@ -18,10 +18,12 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
@@ -133,7 +135,12 @@ public class Main extends MainSupport {
         if (registry.size() > 0) {
             // set the registry through which we've already bound some beans
             if (DefaultCamelContext.class.isAssignableFrom(camelContext.getClass())) {
-                ((DefaultCamelContext) camelContext).setRegistry(registry);
+                CompositeRegistry compositeRegistry = new CompositeRegistry();
+                // make sure camel look up the Object from the registry first
+                compositeRegistry.addRegistry(registry);
+                // use the camel old registry as a fallback
+                compositeRegistry.addRegistry(((DefaultCamelContext) camelContext).getRegistry());
+                ((DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
             }
         }
 
