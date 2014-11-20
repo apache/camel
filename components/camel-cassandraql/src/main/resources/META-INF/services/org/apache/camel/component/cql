@@ -1,1 +1,1 @@
-class=org.apache.camel.camel.cassandraql.CassandraQlComponent
+class=org.apache.camel.component.cassandraql.CassandraQlComponent

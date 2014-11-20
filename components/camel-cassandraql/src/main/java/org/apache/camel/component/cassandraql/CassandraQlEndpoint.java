@@ -1,4 +1,4 @@
-package org.apache.camel.camel.cassandraql;
+package org.apache.camel.component.cassandraql;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;

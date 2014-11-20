@@ -1,5 +1,7 @@
-package org.apache.camel.camel.cassandraql;
+package org.apache.camel.component.cassandraql;
 
+import org.apache.camel.component.cassandraql.CassandraQlEndpoint;
+import org.apache.camel.component.cassandraql.CassandraQlConstants;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;

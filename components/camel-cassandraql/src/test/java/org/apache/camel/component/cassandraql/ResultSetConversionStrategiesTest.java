@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.camel.camel.cassandraql;
+package org.apache.camel.component.cassandraql;
 
+import org.apache.camel.component.cassandraql.ResultSetConversionStrategy;
+import org.apache.camel.component.cassandraql.ResultSetConversionStrategies;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import java.util.Collections;

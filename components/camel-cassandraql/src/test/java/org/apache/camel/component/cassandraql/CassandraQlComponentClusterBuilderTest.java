@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.camel.camel.cassandraql;
+package org.apache.camel.component.cassandraql;
 
+import org.apache.camel.component.cassandraql.CassandraQlComponent;
 import com.datastax.driver.core.Cluster;
 import java.util.*;
 import org.apache.camel.impl.DefaultCamelContext;
