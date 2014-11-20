@@ -19,6 +19,7 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -225,7 +226,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     private StringBuilder getFileBuilder() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(outPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
         return fileName;
     }
 
