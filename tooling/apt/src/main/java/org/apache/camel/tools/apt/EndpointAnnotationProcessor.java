@@ -170,8 +170,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         ComponentModel componentModel = findComponentProperties(roundEnv, scheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, "");
 
         String json = createParameterJsonSchema(componentModel, endpointPaths, endpointOptions);
@@ -236,8 +236,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("<p>" + classDoc + "</p>");
         }
 
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, prefix);
 
         if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
@@ -375,7 +375,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
 
                     // gather enums
-                    Set<String> enums = new LinkedHashSet<>();
+                    Set<String> enums = new LinkedHashSet<String>();
                     boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                     if (isEnum) {
                         TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
@@ -445,7 +445,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         }
 
                         // gather enums
-                        Set<String> enums = new LinkedHashSet<>();
+                        Set<String> enums = new LinkedHashSet<String>();
                         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                         if (isEnum) {
                             TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
