@@ -52,14 +52,14 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     public static final int START_DELAY = 5000;
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
-
-    // Configured fields
-    private String camelContextId = "camel-runner-default";
-    private boolean active = false;
-
+    
     protected Logger log = LoggerFactory.getLogger(getClass());
     protected ModelCamelContext context;
     protected SimpleRegistry registry = new SimpleRegistry();
+
+    // Configured fields
+    private String camelContextId = "camel-runner-default";
+    private boolean active;   
 
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
@@ -101,8 +101,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
         setupPropertiesComponent(context, props, log);
     }
-
-    @SuppressWarnings("unused")
+    
     protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
         // Set up CamelContext
         context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
@@ -217,19 +216,16 @@ public abstract class AbstractCamelRunner implements Runnable {
             started = false;
         }
     }
-
-    @SuppressWarnings("unused")
+    
     public ModelCamelContext getContext() {
         return context;
     }
 
-    @SuppressWarnings("unused")
     protected void gotCamelComponent(final ComponentResolver componentResolver) {
         log.trace("Got a new Camel Component.");
         runWithDelay(this);
     }
 
-    @SuppressWarnings("unused")
     protected void lostCamelComponent(final ComponentResolver componentResolver) {
         log.trace("Lost a Camel Component.");
     }
@@ -239,7 +235,7 @@ public abstract class AbstractCamelRunner implements Runnable {
     }
 
     public static <T> T configure(final CamelContext context, final T target, final Logger log, final boolean deep) {
-        Class clazz = target.getClass();
+        Class<?> clazz = target.getClass();
         log.debug("Configuring {}", clazz.getName());
         Collection<Field> fields = new ArrayList<Field>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
@@ -274,7 +270,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         if (type instanceof ParameterizedType) {
             clazz = (Class<?>) ((ParameterizedType) type).getRawType();
         } else if (type instanceof Class) {
-            clazz = (Class) type;
+            clazz = (Class<?>) type;
         }
         if (null != value) {
             if (clazz.isInstance(value)) {
