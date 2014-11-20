@@ -70,6 +70,7 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -148,7 +149,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the context used to configure routes and the policies to use.
  *
- * @version 
+ * @version
  */
 @SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
@@ -565,7 +566,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType 
+            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType
                 + " but is: " + endpoint.getClass().getCanonicalName());
         }
     }
@@ -861,10 +862,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 startRouteService(routeService, false);
             }
             return completed;
-        } 
+        }
         return false;
     }
-    
+
     public synchronized void stopRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
@@ -914,10 +915,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
             // must stop route service as well (and remove the routes from management)
             stopRouteService(routeService, true);
-        } 
+        }
     }
 
     public synchronized boolean removeRoute(String routeId) throws Exception {
+        // remove the route from ErrorHandlerBuilder if possible
+        if (getErrorHandlerBuilder() instanceof ErrorHandlerBuilderSupport) {
+            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerBuilder();
+            builder.removeOnExceptionList(routeId);
+        }
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             if (getRouteStatus(routeId).isStopped()) {
@@ -1220,20 +1226,20 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         return answer;
     }
-    
+
     public String getPropertyPrefixToken() {
         PropertiesComponent pc = getPropertiesComponent();
-        
+
         if (pc != null) {
             return pc.getPrefixToken();
         } else {
             return null;
         }
     }
-    
+
     public String getPropertySuffixToken() {
         PropertiesComponent pc = getPropertiesComponent();
-        
+
         if (pc != null) {
             return pc.getSuffixToken();
         } else {
@@ -1272,20 +1278,20 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                             + " in CamelContext to support property placeholders.");
                 }
-                
+
             // Component available, use actual tokens
             } else if (pc != null && text.contains(pc.getPrefixToken())) {
                 // the parser will throw exception if property key was not found
                 String answer = pc.parseUri(text);
                 log.debug("Resolved text: {} -> {}", text, answer);
-                return answer; 
+                return answer;
             }
         }
 
         // return original text as is
         return text;
     }
-    
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -1833,7 +1839,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (getDelayer() != null && getDelayer() > 0) {
             log.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
         }
-        
+
         // register debugger
         if (getDebugger() != null) {
             log.info("Debugger: {} is enabled on CamelContext: {}", getDebugger(), getName());
@@ -2166,7 +2172,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         service.start();
     }
-    
+
     private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
@@ -2252,7 +2258,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         routeService.setRemovingRoutes(removingRoutes);
         stopRouteService(routeService);
     }
-    
+
     protected void logRouteState(Route route, String state) {
         if (log.isInfoEnabled()) {
             if (route.getConsumer() != null) {
@@ -2262,7 +2268,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
     }
-    
+
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         for (Route route : routeService.getRoutes()) {
@@ -2421,7 +2427,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     throw new FailedToStartRouteException(routeService.getId(),
                         "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                 }
-                
+
                 // check for multiple consumer violations with existing routes which
                 // have already been started, or is currently starting
                 List<Endpoint> existingEndpoints = new ArrayList<Endpoint>();
@@ -2629,7 +2635,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected boolean shouldStartRoutes() {
         return isStarted() && !isStarting();
     }
-    
+
     /**
      * Gets the properties component in use.
      * Returns {@code null} if no properties component is in use.
@@ -2939,7 +2945,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setDebugger(Debugger debugger) {
         this.debugger = debugger;
     }
-    
+
     public UuidGenerator getUuidGenerator() {
         return uuidGenerator;
     }

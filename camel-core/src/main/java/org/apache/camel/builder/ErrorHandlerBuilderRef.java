@@ -50,6 +50,18 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         }
         super.addErrorHandlers(routeContext, exception);
     }
+    
+    @Override
+    public boolean removeOnExceptionList(String id) {
+        for (RouteContext routeContext : handlers.keySet()) {
+            if (getRouteId(routeContext).equals(id)) {
+                handlers.remove(routeContext);
+                break;
+            }
+        }
+        return super.removeOnExceptionList(id);
+    }
+    
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         ErrorHandlerBuilder handler = handlers.get(routeContext);
