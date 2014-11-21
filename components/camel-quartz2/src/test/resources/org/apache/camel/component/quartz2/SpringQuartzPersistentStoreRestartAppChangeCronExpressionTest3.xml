@@ -43,7 +43,7 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-          <entry key="CamelQuartzCamelContext-camelContext1" value-ref="camelContext"/>
+          <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext3"/>
       </map>
     </property>
     <property name="quartzProperties">
@@ -59,9 +59,9 @@
     </property>
   </bean>
 
-  <camelContext id="camelContext" managementNamePattern="#name#1" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext3" xmlns="http://camel.apache.org/schema/spring">
     <route id="quartzRoute">
-      <from uri="quartzBean://app/test?cron=0+0/2+*+1/1+*+?+*"/>
+      <from uri="quartzBean://app/test?cron=0+0/2+*+1/1+*+?+*&amp;UsingFixedCamelContextName=true"/>
       <to uri="log:trigger"/>
       <to uri="mock:result"/>
     </route>
