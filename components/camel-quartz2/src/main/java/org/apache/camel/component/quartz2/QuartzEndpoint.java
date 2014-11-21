@@ -36,14 +36,15 @@ import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
@@ -77,6 +78,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
      * ensure endpoint is fully started before the job kicks in. */
     @UriParam
     private long triggerStartDelay = 500; // in millis second
+    /** If it is true, the CamelContext name is used,
+     *  if it is false, use the CamelContext management name which could be changed during the deploy time 
+     **/
+    @UriParam
+    private boolean usingFixedCamelContextName;
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
     private final AtomicBoolean jobAdded = new AtomicBoolean(false);
@@ -144,6 +150,14 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public void setRecoverableJob(boolean recoverableJob) {
         this.recoverableJob = recoverableJob;
+    }
+
+    public boolean isUsingFixedCamelContextName() {
+        return usingFixedCamelContextName;
+    }
+
+    public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
+        this.usingFixedCamelContextName = usingFixedCamelContextName;
     }
 
     public void setTriggerParameters(Map<String, Object> triggerParameters) {
@@ -246,7 +260,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         jobDetail = createJobDetail();
         Trigger trigger = createTrigger(jobDetail);
 
-        QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
+        QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri(), isUsingFixedCamelContextName());
 
         if (triggerExisted) {
             // Reschedule job if trigger settings were changed
@@ -254,8 +268,20 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 scheduler.rescheduleJob(triggerKey, trigger);
             }
         } else {
-            // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-            scheduler.scheduleJob(jobDetail, trigger);
+            try {
+                // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
+                scheduler.scheduleJob(jobDetail, trigger);
+            } catch (ObjectAlreadyExistsException ex) {
+                // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
+                if (!(getComponent().isClustered())) {  
+                    throw ex;
+                } else { 
+                    trigger = scheduler.getTrigger(triggerKey); 
+                    if (trigger == null) { 
+                        throw new SchedulerException("Trigger could not be found in quartz scheduler."); 
+                    }
+                } 
+            }
         }
 
         if (LOG.isInfoEnabled()) {
