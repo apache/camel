@@ -18,8 +18,12 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.AsyncCallback;
@@ -32,6 +36,7 @@ import org.apache.camel.util.StringHelper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.io.Buffer;
 import org.eclipse.jetty.io.ByteArrayBuffer;
@@ -230,6 +235,57 @@ public class JettyContentExchange extends ContentExchange {
             // now invoke callback to indicate we are done async
             callback.done(false);
         }
+    }
+
+    public void setRequestContentType(String contentType) {
+        super.setRequestContentType(contentType);
+    }
+
+    public int getResponseStatus() {
+        return super.getResponseStatus();
+    }
+
+    public void setMethod(String method) {
+        super.setMethod(method);
+    }
+    
+    public void setURL(String url) {
+        super.setURL(url);
+    }
+
+    public void setRequestContent(byte[] byteArray) {
+        super.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(byteArray));        
+    }
+    public void setRequestContent(String data, String charset) throws UnsupportedEncodingException {
+        if (charset == null) {
+            super.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data));
+        } else {
+            super.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data, charset));
+        }
+    }
+    public void setRequestContent(InputStream ins) {
+        super.setRequestContentSource(ins);        
+    }
+
+    public void addRequestHeader(String key, String s) {
+        super.addRequestHeader(key, s);
+    }
+
+    public void send(HttpClient client) throws IOException {
+        client.send(this);
+    }
+
+    public byte[] getResponseContentBytes() {
+        return super.getResponseContentBytes();
+    }
+    
+    public Map<String, Collection<String>> getResponseHeaders() {
+        final HttpFields f = super.getResponseFields();
+        Map<String, Collection<String>> ret = new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+        for (String n : f.getFieldNamesCollection()) {
+            ret.put(n,  f.getValuesCollection(n));
+        }
+        return ret;
     }
 
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -96,13 +97,11 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
         // must use response fields to get the http headers as
         // httpExchange.getHeaders() does not work well with multi valued headers
-        Enumeration<String> names = httpExchange.getResponseFields().getFieldNames();
-        while (names.hasMoreElements()) {
-            String name = names.nextElement();
-            Enumeration<String> values = httpExchange.getResponseFields().getValues(name);
-            while (values.hasMoreElements()) {
-                String value = values.nextElement();
-
+        Map<String, Collection<String>> headers = httpExchange.getResponseHeaders();
+        for (Map.Entry<String, Collection<String>> ent : headers.entrySet()) {
+            String name = ent.getKey();
+            Collection<String> values = ent.getValue();
+            for (String value : values) {
                 if (name.toLowerCase().equals("content-type")) {
                     name = Exchange.CONTENT_TYPE;
                     exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
@@ -141,8 +140,9 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         }
 
         if (responseCode >= 300 && responseCode < 400) {
-            String locationHeader = httpExchange.getResponseFields().getStringField("location");
-            if (locationHeader != null) {
+            Collection<String> loc = httpExchange.getResponseHeaders().get("location");
+            if (loc != null && !loc.isEmpty()) {
+                String locationHeader = loc.iterator().next();
                 answer = new HttpOperationFailedException(uri, responseCode, null, locationHeader, headers, copy);
             } else {
                 // no redirect location
