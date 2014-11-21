@@ -114,7 +114,9 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            // close the channel after send error message
+            messageEvent.getChannel().close();
         }
     }
 
@@ -132,7 +134,9 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             // Here we don't want to expose the exception detail to the client
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            ctx.getChannel().write(response);
+            ctx.getChannel().write(response).syncUninterruptibly();
+            // close the channel after send error message
+            ctx.getChannel().close();
         }
     }
 
