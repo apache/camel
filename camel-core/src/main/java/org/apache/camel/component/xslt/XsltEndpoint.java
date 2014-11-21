@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed XsltEndpoint")
-@UriEndpoint(scheme = "xslt")
+@UriEndpoint(scheme = "xslt", label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
@@ -332,7 +332,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         // any additional transformer parameters then make a copy to avoid side-effects
         if (parameters != null) {
-            Map<String, Object> copy = new HashMap<>(parameters);
+            Map<String, Object> copy = new HashMap<String, Object>(parameters);
             xslt.setParameters(copy);
         }
 

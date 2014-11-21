@@ -57,6 +57,7 @@ import org.apache.camel.spi.UriPath;
 import static org.apache.camel.tools.apt.IOHelper.loadText;
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
+import static org.apache.camel.tools.apt.Strings.getOrElse;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
 /**
@@ -83,6 +84,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
+            final String label = uriEndpoint.label();
             if (!isNullOrEmpty(scheme)) {
                 // support multiple schemes separated by comma, which maps to the exact same component
                 // for example camel-mail has a bunch of component schema names that does that
@@ -95,7 +97,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, alias);
+                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, alias, label);
                             return null;
                         }
                     };
@@ -106,7 +108,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, alias);
+                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, alias, label);
                             return null;
                         }
                     };
@@ -116,7 +118,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme) {
+    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String label) {
         writer.println("<html>");
         writer.println("<header>");
         String title = scheme + " endpoint";
@@ -124,6 +126,15 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
+
+        if (label != null) {
+            String[] labels = label.split(",");
+            writer.println("<ul>");
+            for (String text : labels) {
+                writer.println("<li>" + text + "</li>");
+            }
+            writer.println("</ul>");
+        }
 
         showDocumentationAndFieldInjections(writer, roundEnv, classElement, "");
 
@@ -137,7 +148,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         boolean found = false;
         String consumerClassName = null;
-        String consumerPrefix = Strings.getOrElse(uriEndpoint.consumerPrefix(), "");
+        String consumerPrefix = getOrElse(uriEndpoint.consumerPrefix(), "");
         if (consumerType != null) {
             consumerClassName = consumerType.toString();
             TypeElement consumerElement = findTypeElement(roundEnv, consumerClassName);
@@ -154,13 +165,13 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("</html>");
     }
 
-    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme) {
+    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, scheme);
+        ComponentModel componentModel = findComponentProperties(roundEnv, scheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, "");
 
         String json = createParameterJsonSchema(componentModel, endpointPaths, endpointOptions);
@@ -173,6 +184,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n \"component\": {");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
+        buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
@@ -193,7 +205,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", path.getType(), "", path.getDocumentation(), false, null));
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", path.getType(), "", path.getDocumentation(), path.isEnumType(), path.getEnums()));
         }
 
         // and then regular parameter options
@@ -224,8 +236,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             writer.println("<p>" + classDoc + "</p>");
         }
 
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
+        Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
+        Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, prefix);
 
         if (!endpointOptions.isEmpty() || !endpointPaths.isEmpty()) {
@@ -244,7 +256,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + path.getType() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
-                writer.println("    <td>" + "</td>");
+                writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
             }
@@ -263,8 +275,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, String scheme) {
+    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, String scheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
+        model.setLabel(label);
 
         String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {
@@ -336,6 +349,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     name = prefix + name;
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
+                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
                     String docComment = elementUtils.getDocComment(fieldElement);
                     if (isNullOrEmpty(docComment)) {
@@ -360,7 +374,22 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         docComment = path.description();
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment);
+                    // gather enums
+                    Set<String> enums = new LinkedHashSet<String>();
+                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                    if (isEnum) {
+                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                        // find all the enum constants which has the possible enum value that can be used
+                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                        for (VariableElement var : fields) {
+                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                String val = var.toString();
+                                enums.add(val);
+                            }
+                        }
+                    }
+
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -411,12 +440,12 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                                 }
                             }
                         }
-                        if (docComment == null) {
-                            docComment = "";
+                        if (isNullOrEmpty(docComment)) {
+                            docComment = param.description();
                         }
 
                         // gather enums
-                        Set<String> enums = new LinkedHashSet<>();
+                        Set<String> enums = new LinkedHashSet<String>();
                         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                         if (isEnum) {
                             TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
@@ -598,6 +627,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         private String groupId;
         private String artifactId;
         private String versionId;
+        private String label;
 
         private ComponentModel(String scheme) {
             this.scheme = scheme;
@@ -645,6 +675,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         public void setVersionId(String versionId) {
             this.versionId = versionId;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
         }
     }
 
@@ -743,11 +781,16 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         private String name;
         private String type;
         private String documentation;
+        private boolean enumType;
+        private Set<String> enums;
 
-        private EndpointPath(String name, String type, String documentation) {
+        private EndpointPath(String name, String type, String documentation,
+                             boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
             this.documentation = documentation;
+            this.enumType = enumType;
+            this.enums = enums;
         }
 
         public String getName() {
@@ -760,6 +803,24 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         public String getDocumentation() {
             return documentation;
+        }
+
+        public String getEnumValuesAsHtml() {
+            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
+            if (enums != null && enums.size() > 0) {
+                for (String e : enums) {
+                    csb.append(e);
+                }
+            }
+            return csb.toString();
+        }
+
+        public boolean isEnumType() {
+            return enumType;
+        }
+
+        public Set<String> getEnums() {
+            return enums;
         }
     }
 

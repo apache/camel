@@ -16,9 +16,7 @@
  */
 package org.apache.camel.web;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import org.slf4j.Logger;
@@ -35,8 +33,11 @@ public final class Main {
     public static int mainPort = 9998;
     public static final String WEBAPP_DIR = "src/main/webapp";
     public static final String WEBAPP_CTX = "/";
-    protected static final Server SERVER = new Server();
+
+    protected static Server server;
+
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+
 
     private Main() {
     }
@@ -56,18 +57,15 @@ public final class Main {
     public static void start() throws Exception {
         LOG.info("Starting Web Server on port: " + mainPort);
 
-        SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort(mainPort);
-        connector.setServer(SERVER);
         WebAppContext context = new WebAppContext();
 
         context.setResourceBase(WEBAPP_DIR);
         context.setContextPath(WEBAPP_CTX);
-        context.setServer(SERVER);
+        context.setServer(server);
 
-        SERVER.setHandler(context);
-        SERVER.setConnectors(new Connector[]{connector});
-        SERVER.start();
+        server = new Server(mainPort);
+        server.setHandler(context);
+        server.start();
 
         LOG.info("");
         LOG.info("==============================================================================");
@@ -77,7 +75,8 @@ public final class Main {
     }
 
     public static void stop() throws Exception {
-        SERVER.stop();
+        server.stop();
+        server = null;
     }
 
     /**

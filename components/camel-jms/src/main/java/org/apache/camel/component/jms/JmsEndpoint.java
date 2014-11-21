@@ -68,7 +68,7 @@ import org.springframework.util.ErrorHandler;
  * @version
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(scheme = "jms", consumerClass = JmsConsumer.class)
+@UriEndpoint(scheme = "jms", consumerClass = JmsConsumer.class, label = "messaging")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger runningMessageListeners = new AtomicInteger();

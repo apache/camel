@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.concurrent.Executor;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 public class CamelHttpClient extends HttpClient {
     
@@ -29,10 +32,12 @@ public class CamelHttpClient extends HttpClient {
     
     public CamelHttpClient() {
         super();
+        setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
     }
     
     public CamelHttpClient(SslContextFactory sslContextFactory) {
         super(sslContextFactory);
+        setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
     }
     
     @Deprecated
@@ -63,6 +68,22 @@ public class CamelHttpClient extends HttpClient {
         super.doStart();
     }
 
+    void setThreadPoolOrExecutor(Executor pool) {
+        try {
+            getClass().getMethod("setExecutor", Executor.class).invoke(this, pool);
+        } catch (Exception ex) {
+            try {
+                getClass().getMethod("setThreadPool", ThreadPool.class).invoke(this, pool);
+            } catch (Exception ex2) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+    
+    public void setProxy(String host, int port) {
+        setProxy(new org.eclipse.jetty.client.Address(host, port));        
+    }
+    
     public boolean isSupportRedirect() {
         return supportRedirect;
     }
@@ -70,4 +91,5 @@ public class CamelHttpClient extends HttpClient {
     public void setSupportRedirect(boolean supportRedirect) {
         this.supportRedirect = supportRedirect;
     }
+
 }

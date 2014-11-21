@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 
 /**
- * List all the Camel components that are available in the JVM.
+ * List all the Camel components that are currently used/loaded in the JVM.
  */
 public class ComponentListCommand extends AbstractContextCommand {
 

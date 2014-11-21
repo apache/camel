@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class)
+@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class, label = "core,testing")
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     @UriPath(name = "name", description = "name of DataSet to lookup in the registry")

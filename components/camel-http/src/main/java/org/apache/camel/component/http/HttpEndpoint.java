@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "http,https", consumerClass = HttpConsumer.class)
+@UriEndpoint(scheme = "http,https", consumerClass = HttpConsumer.class, label = "http")
 public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);

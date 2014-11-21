@@ -42,7 +42,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
-@UriEndpoint(scheme = "sql", consumerClass = SqlConsumer.class)
+@UriEndpoint(scheme = "sql", consumerClass = SqlConsumer.class, label = "database")
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 

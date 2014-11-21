@@ -19,14 +19,11 @@ package org.apache.camel.component.metrics;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.metrics.counter.CounterEndpoint;
-import org.apache.camel.component.metrics.histogram.HistogramEndpoint;
-import org.apache.camel.component.metrics.meter.MeterEndpoint;
-import org.apache.camel.component.metrics.timer.TimerEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +32,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
@@ -63,7 +61,6 @@ public class MetricsComponentTest {
     public void setUp() throws Exception {
         component = new MetricsComponent();
         inOrder = Mockito.inOrder(camelContext, camelRegistry, metricRegistry);
-
     }
 
     @Test
@@ -76,8 +73,8 @@ public class MetricsComponentTest {
         params.put("mark", value);
         Endpoint result = component.createEndpoint("metrics:meter:long.meter", "meter:long.meter", params);
         assertThat(result, is(notNullValue()));
-        assertThat(result, is(instanceOf(MeterEndpoint.class)));
-        MeterEndpoint me = (MeterEndpoint) result;
+        assertThat(result, is(instanceOf(MetricsEndpoint.class)));
+        MetricsEndpoint me = (MetricsEndpoint) result;
         assertThat(me.getMark(), is(value));
         assertThat(me.getMetricsName(), is("long.meter"));
         assertThat(me.getRegistry(), is(metricRegistry));
@@ -97,8 +94,8 @@ public class MetricsComponentTest {
         params.put("mark", value);
         Endpoint result = component.createEndpoint("metrics:meter:long.meter", "meter:long.meter", params);
         assertThat(result, is(notNullValue()));
-        assertThat(result, is(instanceOf(MeterEndpoint.class)));
-        MeterEndpoint me = (MeterEndpoint) result;
+        assertThat(result, is(instanceOf(MetricsEndpoint.class)));
+        MetricsEndpoint me = (MetricsEndpoint) result;
         assertThat(me.getMark(), is(value));
         assertThat(me.getMetricsName(), is("long.meter"));
         assertThat(me.getRegistry(), is(metricRegistry));
@@ -109,8 +106,8 @@ public class MetricsComponentTest {
 
         result = component.createEndpoint("metrics:counter:long.counter", "counter:long.counter", params);
         assertThat(result, is(notNullValue()));
-        assertThat(result, is(instanceOf(CounterEndpoint.class)));
-        CounterEndpoint ce = (CounterEndpoint) result;
+        assertThat(result, is(instanceOf(MetricsEndpoint.class)));
+        MetricsEndpoint ce = (MetricsEndpoint) result;
         assertThat(ce.getIncrement(), is(value + 1));
         assertThat(ce.getDecrement(), is(value - 1));
         assertThat(ce.getMetricsName(), is("long.counter"));
@@ -133,35 +130,36 @@ public class MetricsComponentTest {
 
     @Test
     public void testCreateNewEndpointForCounter() throws Exception {
-        Endpoint endpoint = component.createNewEndpoint(metricRegistry, MetricsType.COUNTER, "a name");
+        Endpoint endpoint = new MetricsEndpoint(null, null, metricRegistry, MetricsType.COUNTER, "a name");
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint, is(instanceOf(CounterEndpoint.class)));
+        assertThat(endpoint, is(instanceOf(MetricsEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForMeter() throws Exception {
-        Endpoint endpoint = component.createNewEndpoint(metricRegistry, MetricsType.METER, "a name");
+        Endpoint endpoint = new MetricsEndpoint(null, null, metricRegistry, MetricsType.METER, "a name");
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint, is(instanceOf(MeterEndpoint.class)));
+        assertThat(endpoint, is(instanceOf(MetricsEndpoint.class)));
     }
 
-    @Test(expected = RuntimeCamelException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testCreateNewEndpointForGauge() throws Exception {
-        component.createNewEndpoint(metricRegistry, MetricsType.GAUGE, "a name");
+        MetricsEndpoint endpoint = new MetricsEndpoint(null, null, metricRegistry, MetricsType.GAUGE, "a name");
+        endpoint.createProducer();
     }
 
     @Test
     public void testCreateNewEndpointForHistogram() throws Exception {
-        Endpoint endpoint = component.createNewEndpoint(metricRegistry, MetricsType.HISTOGRAM, "a name");
+        Endpoint endpoint = new MetricsEndpoint(null, null, metricRegistry, MetricsType.HISTOGRAM, "a name");
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint, is(instanceOf(HistogramEndpoint.class)));
+        assertThat(endpoint, is(instanceOf(MetricsEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForTimer() throws Exception {
-        Endpoint endpoint = component.createNewEndpoint(metricRegistry, MetricsType.TIMER, "a name");
+        Endpoint endpoint = new MetricsEndpoint(null, null, metricRegistry, MetricsType.TIMER, "a name");
         assertThat(endpoint, is(notNullValue()));
-        assertThat(endpoint, is(instanceOf(TimerEndpoint.class)));
+        assertThat(endpoint, is(instanceOf(MetricsEndpoint.class)));
     }
 
     @Test

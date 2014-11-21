@@ -40,7 +40,7 @@ import org.apache.commons.net.ftp.FTPSClient;
  * 
  * @version 
  */
-@UriEndpoint(scheme = "ftps", consumerClass = FtpConsumer.class)
+@UriEndpoint(scheme = "ftps", consumerClass = FtpConsumer.class, label = "file")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     
     protected Map<String, Object> ftpClientKeyStoreParameters;

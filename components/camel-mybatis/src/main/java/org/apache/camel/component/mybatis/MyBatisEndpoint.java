@@ -32,7 +32,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class)
+@UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class, label = "database")
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();

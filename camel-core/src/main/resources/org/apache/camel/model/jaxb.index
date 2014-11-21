@@ -58,6 +58,7 @@ RedeliveryPolicyDefinition
 RemoveHeaderDefinition
 RemoveHeadersDefinition
 RemovePropertyDefinition
+RemovePropertiesDefinition
 ResequenceDefinition
 RestContextRefDefinition
 RollbackDefinition

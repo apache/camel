@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The direct-vm endpoint.
  */
-@UriEndpoint(scheme = "direct-vm", consumerClass = DirectConsumer.class)
+@UriEndpoint(scheme = "direct-vm", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectVmEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Name of direct-vm endpoint")

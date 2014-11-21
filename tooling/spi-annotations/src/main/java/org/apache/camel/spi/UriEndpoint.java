@@ -33,7 +33,10 @@ import java.lang.annotation.Target;
 public @interface UriEndpoint {
 
     /**
-     * Represents the URI scheme name of this endpoint
+     * Represents the URI scheme name of this endpoint.
+     * <p/>
+     * Multiple scheme names can be defined as a comma separated value.
+     * For example to associate <tt>http</tt> and <tt>https</tt> to the same endpoint implementation.
      */
     String scheme();
 
@@ -47,4 +50,13 @@ public @interface UriEndpoint {
      * properties from the consumer properties
      */
     String consumerPrefix() default "";
+
+    /**
+     * To associate this endpoint with label(s).
+     * <p/>
+     * Multiple labels can be defined as a comma separated value.
+     * <p/>
+     * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>, <tt>database</tt>, etc.
+     */
+    String label() default "";
 }

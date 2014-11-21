@@ -237,6 +237,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-calendar</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-google-drive</artifactId>
     </dependency>
     <dependency>
@@ -732,6 +736,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-univocity-parsers</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-urlrewrite</artifactId>
     </dependency>
     <dependency>
@@ -787,7 +795,15 @@
       <artifactId>camel-zookeeper</artifactId>
     </dependency>
 
-    <!-- camel karaf -->
+    <!-- camel catalog and commands -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+    </dependency>  
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-commands-core</artifactId>
+    </dependency>      
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-karaf-commands</artifactId>

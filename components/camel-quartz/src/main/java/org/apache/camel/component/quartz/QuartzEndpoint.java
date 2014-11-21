@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "quartz", consumerClass = QuartzConsumer.class)
+@UriEndpoint(scheme = "quartz", consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
@@ -58,6 +58,11 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private boolean deleteJob = true;
     @UriParam
     private boolean pauseJob;
+    /** If it is true, the CamelContext name is used,
+     *  if it is false, use the CamelContext management name which could be changed during the deploy time 
+     **/
+    @UriParam
+    private boolean usingFixedCamelContextName;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
@@ -78,8 +83,12 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             trigger.setStartTime(new Date());
         }
         detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT_URI, getEndpointUri());
-        // must use management name as it should be unique in the same JVM
-        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, QuartzHelper.getQuartzContextName(getCamelContext()));
+        if (isUsingFixedCamelContextName()) {
+            detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, getCamelContext().getName());
+        } else {
+            // must use management name as it should be unique in the same JVM
+            detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, QuartzHelper.getQuartzContextName(getCamelContext()));
+        }
         if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
@@ -226,6 +235,14 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    public boolean isUsingFixedCamelContextName() {
+        return usingFixedCamelContextName;
+    }
+
+    public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
+        this.usingFixedCamelContextName = usingFixedCamelContextName;
+    }
 
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");

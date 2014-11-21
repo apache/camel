@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
  *
  * @version 
  */
-@UriEndpoint(scheme = "bean")
+@UriEndpoint(scheme = "bean", label = "core,java")
 public class BeanEndpoint extends ProcessorEndpoint {
     private BeanHolder beanHolder;
     @UriPath

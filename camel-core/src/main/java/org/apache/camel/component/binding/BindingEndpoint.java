@@ -35,7 +35,7 @@ import org.apache.camel.util.ServiceHelper;
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.
  */
-@UriEndpoint(scheme = "binding", consumerClass = BindingConsumerProcessor.class)
+@UriEndpoint(scheme = "binding", consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
     private final Binding binding;
     private final Endpoint delegate;

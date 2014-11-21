@@ -40,7 +40,7 @@ import org.eclipse.jetty.server.Handler;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "jetty")
+@UriEndpoint(scheme = "jetty", consumerClass = HttpConsumer.class, label = "http")
 public class JettyHttpEndpoint extends HttpEndpoint {
 
     @UriParam

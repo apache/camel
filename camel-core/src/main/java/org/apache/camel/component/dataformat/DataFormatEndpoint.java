@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
 
-@UriEndpoint(scheme = "dataformat")
+@UriEndpoint(scheme = "dataformat", label = "core,transformation")
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private MarshalProcessor marshal;

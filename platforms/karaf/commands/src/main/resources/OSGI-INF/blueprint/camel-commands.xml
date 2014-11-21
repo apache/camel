@@ -233,6 +233,16 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/catalog-component-list">
+      <action class="org.apache.camel.karaf.commands.CatalogComponentList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-label-list">
+      <action class="org.apache.camel.karaf.commands.CatalogLabelList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
   </command-bundle>
 
   <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">

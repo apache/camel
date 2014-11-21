@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
 
-@UriEndpoint(scheme = "ref")
+@UriEndpoint(scheme = "ref", label = "core,endpoint")
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;

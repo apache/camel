@@ -18,6 +18,7 @@ package org.apache.camel.commands;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -117,12 +118,29 @@ public interface CamelController {
     String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception;
 
     /**
-     * Lists all components and include information
+     * Lists Components which are in use or available on the classpath and include information
      *
      * @param camelContextName the Camel context.
      * @return a list of key/value pairs with component information
      * @throws java.lang.Exception is thrown if error loading resources to gather component information
      */
     List<Map<String, String>> listComponents(String camelContextName) throws Exception;
+
+    /**
+     * Lists all components from the Camel components catalog
+     *
+     * @param filter optional filter to filter by labels
+     * @return a list of key/value pairs with component information
+     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     */
+    List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
+
+    /**
+     * Lists all the labels from the Camel components catalog
+     *
+     * @return a map which key is the label, and the set is the component names that has the given label
+     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     */
+    Map<String, Set<String>> listLabelCatalog() throws Exception;
 
 }

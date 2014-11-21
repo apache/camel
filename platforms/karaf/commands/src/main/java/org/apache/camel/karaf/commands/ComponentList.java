@@ -21,7 +21,7 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "component-list", description = "Lists all Camel components available in CamelContexts.")
+@Command(scope = "camel", name = "component-list", description = "Lists all Camel components that are in use in Karaf.")
 public class ComponentList extends CamelCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the components", required = true, multiValued = false)
