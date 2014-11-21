@@ -15,65 +15,82 @@
     limitations under the License.
 -->
 <html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='css/pure-min.css' rel='stylesheet' type='text/css'/>
+</head>
 
 <body>
-<h2>Servlet REST and Apache Tomcat example</h2>
+<div class="pure-g">
+    <div class="pure-u-1-8"></div>
+    <div class="pure-u-1-2">
+        <h2>Servlet REST and Apache Tomcat example</h2>
 
-This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL
+        This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL
 
-<br/>
+        <br/>
 
-This example is implemented in both the Java and XML DSLs. By default the Java DSL is in use.
-You can change this in the src/main/webapps/WEB-INF/web.xml file
+        This example is implemented in both the Java and XML DSLs. By default the Java DSL is in use.
+        You can change this in the src/main/webapps/WEB-INF/web.xml file
 
-<br/>
-For Java DSL the routes are defined in Java code, in the <tt>org.apache.camel.example.rest.UserRouteBuilder</tt> class.
-And for XML DSL the routes are define in XML code, in the <tt>src/main/resources/camel-config-xml.xml</tt> file.
+        <br/>
+        For Java DSL the routes are defined in Java code, in the <tt>org.apache.camel.example.rest.UserRouteBuilder</tt>
+        class.
+        And for XML DSL the routes are define in XML code, in the <tt>src/main/resources/camel-config-xml.xml</tt> file.
 
-<p/>
-There is a <i>user</i> REST service that supports the following operations
- <ul>
-   <li>GET /user/{id} - to view a user with the given id </li>
-   <li>GET /user/final - to view all users</li>
-   <li>PUT /user - to update/create an user</li>
- </ul>
+        <p/>
+        There is a <i>user</i> REST service that supports the following operations
+        <ul>
+            <li>GET /user/{id} - to view a user with the given id</li>
+            <li>GET /user/final - to view all users</li>
+            <li>PUT /user - to update/create an user</li>
+        </ul>
 
-The view operations are HTTP GET, and update is using HTTP PUT.
+        The view operations are HTTP GET, and update is using HTTP PUT.
 
-From a web browser you can access the first two services using the following links
+        From a web browser you can access the first two services using the following links
 
-<ul>
-  <li><a href="rest/user/123">user/123</a> - to view the user with id 123</li>
-  <li><a href="rest/user/findAll">user/findAll</a> - to list all users</li>
-</ul>
+        <ul>
+            <li><a href="rest/user/123">user/123</a> - to view the user with id 123</li>
+            <li><a href="rest/user/findAll">user/findAll</a> - to list all users</li>
+        </ul>
 
-From the command shell you can use curl to access the service as shown below:
+        From the command shell you can use curl to access the service as shown below:
 <pre>
     curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user/123
     curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user/findAll
     curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user
 </pre>
 
-Notice when trying to get user with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some slowness in the service.
+        Notice when trying to get user with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some
+        slowness in the service.
 
-<p/>
-This example offers an API browser using Swagger which is accessible from the following link
-<ul>
-  <li><a href="api-docs">api-docs</a> - overview of the apis from the REST services</li>
-  <li><a href="api-docs/user">api-docs/user</a> - api of the user REST service</li>
-</ul>
+        <p/>
+        This example offers an API browser using Swagger which is accessible from the following link
+        <ul>
+            <li><a href="api-docs">api-docs</a> - overview of the apis from the REST services</li>
+            <li><a href="api-docs/user">api-docs/user</a> - api of the user REST service</li>
+        </ul>
 
+        <p/>
+        To use the swagger ui, follow this link
+        <ul>
+            <li><a href="swagger.html">swagger</a> - swagger ui page</li>
+        </ul>
 
-<p/>
-If you hit any problems please let us know on the
-<a href="http://camel.apache.org/discussion-forums.html">Camel Forums</a>
-<br/>
-<br/>
-Please help us make Apache Camel better - we appreciate any feedback you may
-have. Enjoy!
-<br/>
-<br/>
-The Camel riders!
+        <p/>
+        If you hit any problems please let us know on the
+        <a href="http://camel.apache.org/discussion-forums.html">Camel Forums</a>
+        <br/>
+        <br/>
+        Please help us make Apache Camel better - we appreciate any feedback you may
+        have. Enjoy!
+        <br/>
+        <br/>
+        The Camel riders!
+    </div>
+    <div class="pure-u-1-8"></div>
+</div>
 </body>
 
 </html>
