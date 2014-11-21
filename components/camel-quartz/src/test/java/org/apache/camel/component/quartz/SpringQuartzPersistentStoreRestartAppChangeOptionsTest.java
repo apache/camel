@@ -36,6 +36,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends Test
     private static AbstractXmlApplicationContext db;
     private AbstractXmlApplicationContext app;
     private AbstractXmlApplicationContext app2;
+    private AbstractXmlApplicationContext app3;
 
     @BeforeClass
     public static void prepareDB() {
@@ -54,7 +55,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends Test
         // we're done so let's properly close the application contexts, but close
         // the second app before the first one so that the quartz scheduler running
         // inside it can be properly shutdown
-        IOHelper.close(app2, app);
+        IOHelper.close(app3, app2, app);
         
     }
 
@@ -87,6 +88,15 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends Test
         app2.stop();
         
         assertNotEquals(cronExpression, cronExpression2);
+        
+        app3 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartAppChangeCronExpressionTest3.xml");
+        app3.start();
+        CamelContext camel3 = app3.getBean("camelContext3", CamelContext.class);
+        assertNotNull(camel3);
+        String cronExpression3 = ((CronTrigger) getTrigger(camel3, "quartzRoute")).getCronExpression();
+        app3.stop();
+        
+        assertEquals(cronExpression2, cronExpression3);
         
         
     }

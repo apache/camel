@@ -88,6 +88,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends Test
         app2.stop();
 
         assertNotEquals(cronExpression, cronExpression2);
+        
     }
 
     @Test
