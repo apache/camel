@@ -27,6 +27,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
@@ -52,31 +53,32 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpBinding binding;
     private HttpContext httpContext;
     private HttpComponent component;
+    @UriPath
     private URI httpUri;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpClientConnectionManager clientConnectionManager;
     private HttpClientBuilder clientBuilder;
     private HttpClient httpClient;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean matchOnUriPrefix;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disableStreamCache;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transferException;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean traceEnabled;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean authenticationPreemptive;
     @UriParam
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean clearExpiredCookies = true;
     private CookieStore cookieStore = new BasicCookieStore();
     

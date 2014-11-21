@@ -64,8 +64,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    @UriParam
     protected GenericFileConfiguration configuration;
-
     @UriParam
     protected GenericFileProcessStrategy<T> processStrategy;
     @UriParam
