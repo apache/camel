@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4.http.handlers;
 
-import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
@@ -26,16 +25,15 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
@@ -47,14 +45,13 @@ import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
+
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 /**
  * Netty HTTP {@link ServerChannelHandler} that handles the incoming HTTP requests and routes
  * the received message in Camel.
@@ -89,6 +86,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
+            ctx.channel().close();
             return;
         }
 
@@ -114,6 +112,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
+            ctx.channel().close();
             return;
         }
         if ("TRACE".equals(request.getMethod().name()) && !consumer.getEndpoint().isTraceEnabled()) {
@@ -121,6 +120,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
+            ctx.channel().close();
             return;
         }
         // must include HOST header as required by HTTP 1.1
@@ -130,6 +130,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
+            ctx.channel().close();
             return;
         }
 
