@@ -51,8 +51,10 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
         assertMockEndpointsSatisfied();
 
         assertEquals("OK", out.getOut().getBody(String.class));
-        // camel-jetty will remove quotes from charset
-        assertEquals("text/plain;charset=UTF-8", out.getOut().getHeader("Content-Type"));
+        // camel-jetty may remove quotes from charset
+        String res = out.getOut().getHeader("Content-Type").toString();
+        res = res.replace("\"UTF-8\"", "UTF-8");
+        assertEquals("text/plain;charset=UTF-8", res);
     }
 
     @Test
@@ -78,8 +80,10 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
         assertMockEndpointsSatisfied();
 
         assertEquals("OK", out.getOut().getBody(String.class));
-        // camel-jetty will remove quotes from charset
-        assertEquals("text/plain;charset=utf-8;action=\"http://somewhere.com/foo\"", out.getOut().getHeader("Content-Type"));
+        // camel-jetty may remove quotes from charset
+        String res = out.getOut().getHeader("Content-Type").toString();
+        res = res.replace("\"utf-8\"", "utf-8");
+        assertEquals("text/plain;charset=utf-8;action=\"http://somewhere.com/foo\"", res);
     }
 
     @Override

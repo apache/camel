@@ -85,6 +85,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
             // use shared client, and ensure its started so we can use it
             client.start();
             answer.setSharedClient(client);
+            answer.setBinding(getJettyBinding(client));
         } else {
             // create a new client
             // thread pool min/max from endpoint take precedence over from component
@@ -106,9 +107,9 @@ public class JettyHttpEndpoint extends HttpEndpoint {
                 }
             }
             answer.setClient(httpClient);
+            answer.setBinding(getJettyBinding(httpClient));
         }
 
-        answer.setBinding(getJettyBinding());
         if (isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
         } else {
@@ -159,12 +160,15 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.client = client;
     }
 
-    public synchronized JettyHttpBinding getJettyBinding() {
+    public synchronized JettyHttpBinding getJettyBinding(HttpClient httpClient) {
         if (jettyBinding == null) {
             jettyBinding = new DefaultJettyHttpBinding();
             jettyBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             jettyBinding.setThrowExceptionOnFailure(isThrowExceptionOnFailure());
             jettyBinding.setTransferException(isTransferException());
+            if (httpClient instanceof CamelHttpClient) {
+                jettyBinding.setSupportRedirect(((CamelHttpClient)httpClient).isSupportRedirect());
+            }
         }
         return jettyBinding;
     }

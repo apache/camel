@@ -1087,7 +1087,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         // disable this filter as we want to use ours
         endpoint.setEnableMultipartFilter(false);
         // use the rest binding
-        endpoint.setBinding(new JettyRestHttpBinding());
+        endpoint.setBinding(new JettyRestHttpBinding(endpoint));
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

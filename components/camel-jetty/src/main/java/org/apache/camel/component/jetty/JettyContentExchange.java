@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpEventListener;
+import org.eclipse.jetty.client.HttpEventListenerWrapper;
 import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeaders;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class JettyContentExchange extends ContentExchange {
+public class JettyContentExchange {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyContentExchange.class);
 
@@ -58,19 +59,67 @@ public class JettyContentExchange extends ContentExchange {
     private volatile JettyHttpBinding jettyBinding;
     private volatile HttpClient client;
     private final CountDownLatch done = new CountDownLatch(1);
+    private final ContentExchange ce;
 
-    public JettyContentExchange(Exchange exchange, JettyHttpBinding jettyBinding, HttpClient client) {
-        super(true); // keep headers by default
+    public JettyContentExchange(Exchange exchange, JettyHttpBinding jettyBinding, 
+                                final HttpClient client) {
+        super(); // keep headers by default
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
+        this.ce = new ContentExchange(true);
+        HttpEventListener old = ce.getEventListener();
+        ce.setEventListener(new HttpEventListenerWrapper(old, true) {
+            public void onRequestComplete() throws IOException {
+                JettyContentExchange.this.onRequestComplete();
+                super.onRequestComplete();
+            }
+
+            public void onResponseHeader(Buffer name, Buffer value) throws IOException {
+                JettyContentExchange.this.onResponseHeader(name, value);
+                super.onResponseHeader(name, value);
+            }
+
+            @Override
+            public void onResponseComplete() throws IOException {
+                super.onResponseComplete();
+                JettyContentExchange.this.onResponseComplete();
+            }
+
+            @Override
+            public void onConnectionFailed(Throwable ex) {
+                try {
+                    super.onConnectionFailed(ex);
+                } finally {
+                    JettyContentExchange.this.onConnectionFailed(ex);
+                }
+            }
+
+            @Override
+            public void onException(Throwable ex) {
+                try {
+                    super.onException(ex);
+                } finally {
+                    JettyContentExchange.this.onException(ex);
+                }
+            }
+
+            @Override
+            public void onExpire() {
+                try {
+                    super.onExpire();
+                } finally {
+                    JettyContentExchange.this.onExpire();
+                }
+            }
+            
+        });
     }
 
     public void setCallback(AsyncCallback callback) {
         this.callback = callback;
     }
 
-    @Override
     protected void onResponseHeader(Buffer name, Buffer value) throws IOException {
         String k = name.toString();
         String v = value.toString();
@@ -100,66 +149,42 @@ public class JettyContentExchange extends ContentExchange {
                 }
             }
         }
-
-        super.onResponseHeader(name, value);
         headers.put(k, v);
     }
 
-    @Override
     protected void onRequestComplete() throws IOException {
         LOG.trace("onRequestComplete");
         
         closeRequestContentSource();
     }
 
-    @Override
     protected void onResponseComplete() throws IOException {
         LOG.trace("onResponseComplete");
-
-        try {
-            super.onResponseComplete();
-        } finally {
-            doTaskCompleted();
-        }
+        doTaskCompleted();
     }
 
-    @Override
     protected void onExpire() {
         LOG.trace("onExpire");
 
-        try {
-            super.onExpire();
-        } finally {
-            // need to close the request input stream
-            closeRequestContentSource();
-            doTaskCompleted();
-        }
+        // need to close the request input stream
+        closeRequestContentSource();
+        doTaskCompleted();
     }
 
-    @Override
     protected void onException(Throwable ex) {
         LOG.trace("onException {}", ex);
 
-        try {
-            super.onException(ex);
-        } finally {
-            // need to close the request input stream
-            closeRequestContentSource();
-            doTaskCompleted(ex);
-        }
+        // need to close the request input stream
+        closeRequestContentSource();
+        doTaskCompleted(ex);
     }
 
-    @Override
     protected void onConnectionFailed(Throwable ex) {
         LOG.trace("onConnectionFailed {}", ex);
 
-        try {
-            super.onConnectionFailed(ex);
-        } finally {
-            // need to close the request input stream
-            closeRequestContentSource();
-            doTaskCompleted(ex);
-        }
+        // need to close the request input stream
+        closeRequestContentSource();
+        doTaskCompleted(ex);
     }
 
     public Map<String, String> getHeaders() {
@@ -168,17 +193,19 @@ public class JettyContentExchange extends ContentExchange {
 
     public byte[] getBody() {
         // must return the content as raw bytes
-        return super.getResponseContentBytes();
+        return ce.getResponseContentBytes();
     }
 
     public String getUrl() {
-        String params = getRequestFields().getStringField(HttpHeaders.CONTENT_ENCODING);
-        return getScheme() + "://" + getAddress().toString() + getRequestURI() + (params != null ? "?" + params : "");
+        String params = ce.getRequestFields().getStringField(HttpHeaders.CONTENT_ENCODING);
+        return ce.getScheme() + "://" 
+            + ce.getAddress().toString() 
+            + ce.getRequestURI() + (params != null ? "?" + params : "");
     }
     
     protected void closeRequestContentSource() {
         // close the input stream when its not needed anymore
-        InputStream is = getRequestContentSource();
+        InputStream is = ce.getRequestContentSource();
         if (is != null) {
             IOHelper.close(is, "RequestContentSource", LOG);
         }
@@ -193,7 +220,7 @@ public class JettyContentExchange extends ContentExchange {
             return;
         }
 
-        int exchangeState = getStatus();
+        int exchangeState = ce.getStatus();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("TaskComplete with state {} for url: {}", exchangeState, getUrl());
@@ -238,49 +265,49 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     public void setRequestContentType(String contentType) {
-        super.setRequestContentType(contentType);
+        ce.setRequestContentType(contentType);
     }
 
     public int getResponseStatus() {
-        return super.getResponseStatus();
+        return ce.getResponseStatus();
     }
 
     public void setMethod(String method) {
-        super.setMethod(method);
+        ce.setMethod(method);
     }
     
     public void setURL(String url) {
-        super.setURL(url);
+        ce.setURL(url);
     }
 
     public void setRequestContent(byte[] byteArray) {
-        super.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(byteArray));        
+        ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(byteArray));        
     }
     public void setRequestContent(String data, String charset) throws UnsupportedEncodingException {
         if (charset == null) {
-            super.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data));
+            ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data));
         } else {
-            super.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data, charset));
+            ce.setRequestContent(new org.eclipse.jetty.io.ByteArrayBuffer(data, charset));
         }
     }
     public void setRequestContent(InputStream ins) {
-        super.setRequestContentSource(ins);        
+        ce.setRequestContentSource(ins);        
     }
 
     public void addRequestHeader(String key, String s) {
-        super.addRequestHeader(key, s);
+        ce.addRequestHeader(key, s);
     }
 
     public void send(HttpClient client) throws IOException {
-        client.send(this);
+        client.send(ce);
     }
 
     public byte[] getResponseContentBytes() {
-        return super.getResponseContentBytes();
+        return ce.getResponseContentBytes();
     }
     
     public Map<String, Collection<String>> getResponseHeaders() {
-        final HttpFields f = super.getResponseFields();
+        final HttpFields f = ce.getResponseFields();
         Map<String, Collection<String>> ret = new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
         for (String n : f.getFieldNamesCollection()) {
             ret.put(n,  f.getValuesCollection(n));

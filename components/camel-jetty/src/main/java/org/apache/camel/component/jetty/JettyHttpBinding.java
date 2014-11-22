@@ -83,4 +83,6 @@ public interface JettyHttpBinding {
      */
     boolean isTransferException();
 
+    void setSupportRedirect(boolean supportRedirect);
+
 }

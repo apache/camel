@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -44,7 +43,11 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
-
+    private boolean supportRedirect;
+    public DefaultJettyHttpBinding() {
+        
+    }
+    
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
 
@@ -60,7 +63,12 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                 populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
             } else {
                 // operation failed so populate exception to throw
-                throw populateHttpOperationFailedException(exchange, httpExchange, responseCode);
+                Exception ex = populateHttpOperationFailedException(exchange, httpExchange, responseCode);
+                if (ex != null) {
+                    throw ex;
+                } else {
+                    populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
+                }
             }
         }
     }
@@ -140,6 +148,9 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         }
 
         if (responseCode >= 300 && responseCode < 400) {
+            if (this.supportRedirect) {
+                return null;
+            }
             Collection<String> loc = httpExchange.getResponseHeaders().get("location");
             if (loc != null && !loc.isEmpty()) {
                 String locationHeader = loc.iterator().next();
@@ -171,6 +182,11 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
             // just grab the raw content body
             return httpExchange.getBody();
         }
+    }
+
+    @Override
+    public void setSupportRedirect(boolean supportRedirect) {
+        this.supportRedirect = supportRedirect;
     }
 
 }
