@@ -22,18 +22,19 @@ import java.util.Set;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.infinispan.commons.api.BasicCacheContainer;
 
 @UriParams
 public class InfinispanConfiguration {
     private BasicCacheContainer cacheContainer;
+    @UriPath
+    private String host;
     @UriParam
     private String cacheName;
     @UriParam
-    private String host;
-    @UriParam
     private String command;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean sync = true;
     private Set<String> eventTypes;
 

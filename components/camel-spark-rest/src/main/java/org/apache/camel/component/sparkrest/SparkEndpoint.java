@@ -23,20 +23,21 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import spark.route.HttpMethod;
 
-@UriEndpoint(scheme = "spark", consumerClass =  SparkConsumer.class)
+@UriEndpoint(scheme = "spark-rest", consumerClass =  SparkConsumer.class, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
 
+    @UriPath
+    private String verb;
+    @UriPath
+    private String path;
     @UriParam
     SparkConfiguration sparkConfiguration;
     @UriParam
     private SparkBinding sparkBinding;
-    @UriParam
-    private String verb;
-    @UriParam
-    private String path;
     @UriParam
     private String accept;
 

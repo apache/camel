@@ -159,6 +159,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         }
 
         QuartzEndpoint answer = new QuartzEndpoint(uri, this);
+        answer.setGroupName(group);
+        answer.setTimerName(name);
+
         setProperties(answer.getJobDetail(), jobParameters);
 
         // enrich job data map with trigger information

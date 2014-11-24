@@ -31,6 +31,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -57,31 +58,35 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
+    @UriPath
+    private String groupName;
+    @UriPath
+    private String triggerName;
     @UriParam
     private String cron;
     private LoadBalancer consumerLoadBalancer;
     private Map<String, Object> triggerParameters;
     private Map<String, Object> jobParameters;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean stateful;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean fireNow;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean pauseJob;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean durableJob;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean recoverableJob;
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
-    @UriParam
+    @UriParam(defaultValue = "500")
     private long triggerStartDelay = 500; // in millis second
     /** If it is true, the CamelContext name is used,
      *  if it is false, use the CamelContext management name which could be changed during the deploy time 
      **/
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean usingFixedCamelContextName;
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
@@ -90,6 +95,18 @@ public class QuartzEndpoint extends DefaultEndpoint {
     
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
+    }
+
+    public String getGroupName() {
+        return triggerKey.getName();
+    }
+
+    public String getTriggerName() {
+        return triggerKey.getName();
+    }
+
+    public void setTriggerName(String triggerName) {
+        this.triggerName = triggerName;
     }
 
     public String getCron() {

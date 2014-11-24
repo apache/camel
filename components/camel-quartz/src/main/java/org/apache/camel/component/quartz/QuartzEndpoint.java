@@ -28,6 +28,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -52,11 +53,15 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private Trigger trigger;
     private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
-    @UriParam
-    private volatile boolean stateful;
-    @UriParam
+    @UriPath
+    private String groupName;
+    @UriPath
+    private String timerName;
+    @UriParam(defaultValue = "false")
+    private boolean stateful;
+    @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean pauseJob;
     /** If it is true, the CamelContext name is used,
      *  if it is false, use the CamelContext management name which could be changed during the deploy time 
@@ -187,6 +192,22 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             loadBalancer = createLoadBalancer();
         }
         return loadBalancer;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getTimerName() {
+        return timerName;
+    }
+
+    public void setTimerName(String timerName) {
+        this.timerName = timerName;
     }
 
     public void setLoadBalancer(final LoadBalancer loadBalancer) {
