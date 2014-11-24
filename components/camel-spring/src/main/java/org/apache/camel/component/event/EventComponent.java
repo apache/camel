@@ -68,7 +68,7 @@ public class EventComponent extends UriEndpointComponent implements ApplicationC
     }
 
     protected EventEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EventEndpoint answer = new EventEndpoint(uri, this);
+        EventEndpoint answer = new EventEndpoint(uri, this, remaining);
         setProperties(answer, parameters);
         return answer;
     }

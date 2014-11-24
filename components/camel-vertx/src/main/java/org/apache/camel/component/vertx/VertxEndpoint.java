@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.vertx.java.core.Vertx;
 import org.vertx.java.core.eventbus.EventBus;
 
@@ -31,9 +32,9 @@ import org.vertx.java.core.eventbus.EventBus;
 @UriEndpoint(scheme = "vertx", consumerClass = VertxConsumer.class)
 public class VertxEndpoint extends DefaultEndpoint {
 
-    @UriParam
+    @UriPath
     private String address;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean pubSub;
 
     public VertxEndpoint(String uri, VertxComponent component, String address) {

@@ -33,6 +33,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,43 +44,46 @@ import org.slf4j.LoggerFactory;
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-
-    @UriParam
+    @UriPath
+    private String destinationName;
+    @UriParam(defaultValue = "true")
     private boolean synchronous = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transacted;
     @UriParam
     private String namedReplyTo;
+    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
     private boolean topic;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int sessionCount = 1;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int producerCount = 1;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int consumerCount = 1;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private long ttl = -1;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean persistent = true;
     @UriParam
     private String durableSubscriptionId;
-    @UriParam
+    @UriParam(defaultValue = "5000")
     private long responseTimeOut = 5000;
     @UriParam
     private String messageSelector;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int transactionBatchCount = -1;
-    @UriParam
+    @UriParam(defaultValue = "5000")
     private long transactionBatchTimeout = 5000;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean asyncStartListener;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean asyncStopListener;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean prefillPool = true;
+    @UriParam
     private TransactionCommitStrategy transactionCommitStrategy;
-//    @UriParam
+    @UriParam
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
     public SjmsEndpoint() {
@@ -87,12 +91,16 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     public SjmsEndpoint(String uri, Component component) {
         super(uri, component);
-        if (getEndpointUri().indexOf("://queue:") > -1) {
+        if (getEndpointUri().contains("://queue:")) {
             topic = false;
-        } else if (getEndpointUri().indexOf("://topic:") > -1) {
+        } else if (getEndpointUri().contains("://topic:")) {
             topic = true;
         } else {
             throw new IllegalArgumentException("Endpoint URI unsupported: " + uri);
+        }
+        destinationName = getEndpointUri().substring(getEndpointUri().lastIndexOf(":") + 1);
+        if (destinationName.contains("?")) {
+            destinationName = destinationName.substring(0, destinationName.lastIndexOf("?"));
         }
     }
 
@@ -139,12 +147,15 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return true;
     }
 
+    /**
+     * DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.
+     */
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
     public String getDestinationName() {
-        String answer = getEndpointUri().substring(getEndpointUri().lastIndexOf(":") + 1);
-        if (answer.indexOf("?") > -1) {
-            answer = answer.substring(0, answer.lastIndexOf("?"));
-        }
-        return answer;
+        return destinationName;
     }
 
     public ConnectionResource getConnectionResource() {
@@ -452,7 +463,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     /**
      * Sets the reply to destination name used for InOut producer endpoints.
      *
-     * @param the namedReplyTo the JMS reply to destination name
+     * @param namedReplyTo the JMS reply to destination name
      */
     public void setNamedReplyTo(String namedReplyTo) {
         this.namedReplyTo = namedReplyTo;
