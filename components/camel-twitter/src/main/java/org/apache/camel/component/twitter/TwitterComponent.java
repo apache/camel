@@ -50,7 +50,8 @@ public class TwitterComponent extends UriEndpointComponent {
         setProperties(properties, parameters);
 
         TwitterEndpoint endpoint;
-        switch (EndpointType.fromUri(properties.getType())) {
+
+        switch (properties.getType()) {
         case POLLING:
             endpoint = new TwitterEndpointPolling(uri, this, properties);
             break;
