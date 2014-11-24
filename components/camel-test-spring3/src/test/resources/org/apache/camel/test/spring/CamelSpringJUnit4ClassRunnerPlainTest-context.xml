@@ -34,6 +34,10 @@
       <to uri="mock:b"/>
     </route>
   </camelContext>
+  
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+     <property name="location" value="classpath:org/apache/camel/test/spring/test.properties"/>
+  </bean>
 
   <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring" trace="true" autoStartup="true">
     <route>
