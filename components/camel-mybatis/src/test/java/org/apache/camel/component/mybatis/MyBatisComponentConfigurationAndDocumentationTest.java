@@ -44,7 +44,7 @@ public class MyBatisComponentConfigurationAndDocumentationTest extends CamelTest
         assertNotNull(json);
 
         assertTrue(json.contains("\"maxMessagesPerPoll\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"statement\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"statement\": { \"kind\": \"path\", \"type\": \"string\""));
     }
 
     @Test
