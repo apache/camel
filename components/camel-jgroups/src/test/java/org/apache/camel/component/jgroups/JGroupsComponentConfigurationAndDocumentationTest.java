@@ -41,6 +41,7 @@ public class JGroupsComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
+        assertTrue(json.contains("\"clusterName\": { \"kind\": \"path\", \"type\": \"string\""));
         assertTrue(json.contains("\"channelProperties\": { \"kind\": \"parameter\", \"type\": \"string\""));
         assertTrue(json.contains("\"resolvedEnableViewMessages\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }

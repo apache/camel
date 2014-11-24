@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.jgroups.Channel;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
@@ -33,7 +34,7 @@ import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "jgroups", consumerClass = JGroupsConsumer.class)
+@UriEndpoint(scheme = "jgroups", consumerClass = JGroupsConsumer.class, label = "messaging")
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
@@ -51,7 +52,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     private Channel resolvedChannel;
 
-    @UriParam
+    @UriPath
     private String clusterName;
 
     @UriParam
