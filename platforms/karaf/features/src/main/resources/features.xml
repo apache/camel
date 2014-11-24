@@ -264,7 +264,7 @@
     <bundle>mvn:org.apache.camel/camel-crypto/${project.version}</bundle>
   </feature>
   <feature name='camel-csv' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-csv/${commons-csv-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-csv/${commons-csv-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-csv/${project.version}</bundle>
   </feature>
