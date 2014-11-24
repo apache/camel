@@ -85,7 +85,9 @@ final class JsonSchemaHelper {
             // return generic type for unknown type
             return "object";
         } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
-            return "sting";
+            return "string";
+        } else if (type.startsWith("java.lang.Class")) {
+            return "string";
         }
 
         String primitive = getPrimitiveType(type);
