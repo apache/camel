@@ -239,7 +239,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         JobDetail jobDetail;
         Trigger oldTrigger = scheduler.getTrigger(triggerKey);
         boolean triggerExisted = oldTrigger != null;
-        if (triggerExisted) {
+        if (triggerExisted && !isRecoverableJob()) {
             ensureNoDupTriggerKey();
         }
 
