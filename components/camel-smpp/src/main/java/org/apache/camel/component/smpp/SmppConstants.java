@@ -59,6 +59,7 @@ public interface SmppConstants {
     String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
     String OPTIONAL_PARAMETERS = "CamelSmppOptionalParameters";
     String OPTIONAL_PARAMETER = "CamelSmppOptionalParameter";
+    String SPLITTING_POLICY = "CamelSmppSplittingPolicy";
 
     String UCS2_ENCODING = "UTF-16BE";
     byte UNKNOWN_ALPHABET = -1;
