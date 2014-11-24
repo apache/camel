@@ -33,7 +33,7 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
     private ApplicationContext applicationContext;
 
     @Autowired(required = false)
-    private CamelContextConfiguration camelContextConfiguration;
+    private CamelContextConfiguration[] camelContextConfigurations;
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -53,9 +53,11 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
                     throw new RuntimeException(e);
                 }
             }
-            if (camelContextConfiguration != null) {
-                LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
-                camelContextConfiguration.beforeApplicationStart(camelContext);
+            if (camelContextConfigurations != null) {
+                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                    LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
+                    camelContextConfiguration.beforeApplicationStart(camelContext);
+                }
             }
         }
         return bean;
@@ -63,6 +65,7 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        LOG.debug("Injecting Spring application context into RoutesCollector: {}");
         this.applicationContext = applicationContext;
     }
 
