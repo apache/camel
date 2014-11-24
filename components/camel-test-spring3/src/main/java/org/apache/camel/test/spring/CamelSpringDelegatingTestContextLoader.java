@@ -268,8 +268,10 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
                 
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    logger.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
+                    // resovle the property place holders of the mockEndpoints 
+                    String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
+                    logger.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpointsValue, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
                 }
             });
         }
