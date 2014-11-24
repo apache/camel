@@ -42,6 +42,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
     @UriParam
+    protected FtpConfiguration configuration;
+    @UriParam
     protected int soTimeout;
     @UriParam
     protected int dataTimeout;
@@ -141,7 +143,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (configuration == null) {
             configuration = new FtpConfiguration();
         }
-        return (FtpConfiguration)configuration;
+        return configuration;
     }
 
     @Override
@@ -149,7 +151,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (configuration == null) {
             throw new IllegalArgumentException("FtpConfiguration expected");
         }
-        this.configuration = configuration;
+        this.configuration = (FtpConfiguration) configuration;
     }
 
     public FTPClient getFtpClient() {
