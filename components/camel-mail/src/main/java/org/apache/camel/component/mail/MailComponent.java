@@ -56,9 +56,6 @@ public class MailComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         URI url = new URI(uri);
-        if ("nntp".equalsIgnoreCase(url.getScheme())) {
-            throw new UnsupportedOperationException("nntp protocol is not supported");
-        }
 
         // must use copy as each endpoint can have different options
         ObjectHelper.notNull(configuration, "configuration");
