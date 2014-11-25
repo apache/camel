@@ -51,6 +51,8 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Status;
+import org.restlet.engine.application.DecodeRepresentation;
+import org.restlet.engine.application.EncodeRepresentation;
 import org.restlet.engine.header.Header;
 import org.restlet.engine.header.HeaderConstants;
 import org.restlet.representation.FileRepresentation;
@@ -334,8 +336,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
             if (mediaType != null && mediaType.equals(MediaType.APPLICATION_OCTET_STREAM)) {
                 exchange.getOut().setBody(response.getEntity().getStream());
+            } else if (response.getEntity() instanceof Representation) {
+                Representation representationDecoded = new DecodeRepresentation(response.getEntity()); 
+                exchange.getOut().setBody(representationDecoded.getText());    
             } else {
-                // get content text
+                // get content text by default
                 String text = response.getEntity().getText();
                 LOG.debug("Populate exchange from Restlet response: {}", text);
                 exchange.getOut().setBody(text);
