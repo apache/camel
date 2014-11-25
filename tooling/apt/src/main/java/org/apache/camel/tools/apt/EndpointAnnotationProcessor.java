@@ -822,6 +822,29 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         public Set<String> getEnums() {
             return enums;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            EndpointPath that = (EndpointPath) o;
+
+            if (!name.equals(that.name)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
     }
 
 }

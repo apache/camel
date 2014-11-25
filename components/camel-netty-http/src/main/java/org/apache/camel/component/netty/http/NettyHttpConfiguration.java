@@ -21,24 +21,39 @@ import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.jboss.netty.channel.ChannelHandler;
 
 /**
  * Extended configuration for using HTTP with Netty.
  */
+@UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    @UriParam(defaultValue = "false")
     private boolean urlDecodeHeaders;
+    @UriParam(defaultValue = "true")
     private boolean mapHeaders = true;
+    @UriParam(defaultValue = "false")
     private boolean compression;
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+    @UriParam(defaultValue = "false")
     private boolean transferException;
+    @UriParam(defaultValue = "false")
     private boolean matchOnUriPrefix;
+    @UriParam(defaultValue = "false")
     private boolean bridgeEndpoint;
+    @UriParam
     private String path;
+    @UriParam(defaultValue = "false")
     private boolean disableStreamCache;
+    @UriParam(defaultValue = "true")
     private boolean send503whenSuspended = true;
+    @UriParam(defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
+    @UriParam(defaultValue = "true")
     private boolean chunked = true;
 
     public NettyHttpConfiguration() {
