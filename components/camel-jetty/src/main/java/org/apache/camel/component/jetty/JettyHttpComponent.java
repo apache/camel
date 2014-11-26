@@ -76,6 +76,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -171,6 +172,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                                                               Boolean.class, true);
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
+        Boolean enableCors = getAndRemoveParameter(parameters, "enableCORS", Boolean.class, false);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
@@ -262,6 +264,12 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         if (multipartFilter != null) {
             endpoint.setMultipartFilter(multipartFilter);
             endpoint.setEnableMultipartFilter(true);
+        }
+        if (enableCors) {
+            if (filters == null){
+                filters = new ArrayList<Filter>(1);
+            }
+            filters.add(new CrossOriginFilter());
         }
         if (filters != null) {
             endpoint.setFilters(filters);
