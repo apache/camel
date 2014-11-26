@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.jira;
 
-import java.util.regex.Pattern;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.jira.consumer.ConsumerType;
 import org.apache.camel.component.jira.consumer.NewCommentConsumer;
 import org.apache.camel.component.jira.consumer.NewIssueConsumer;
 import org.apache.camel.component.jira.producer.NewIssueProducer;
-import org.apache.camel.component.jira.producer.ProducerType;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 /**
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK.
@@ -46,9 +42,11 @@ import org.apache.camel.spi.UriParams;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriParams
-@UriEndpoint(scheme = "jira")
+@UriEndpoint(scheme = "jira", label = "api,reporting")
 public class JIRAEndpoint extends DefaultEndpoint {
+
+    @UriPath
+    private JIRAType type;
     @UriParam
     private String serverUrl;
     @UriParam
@@ -57,7 +55,7 @@ public class JIRAEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private String jql;
-    @UriParam
+    @UriParam(defaultValue = "6000")
     private int delay = 6000;
 
     public JIRAEndpoint(String uri, JIRAComponent component) {
@@ -65,53 +63,31 @@ public class JIRAEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        String uri = getEndpointUri();
-        String[] uriSplit = splitUri(getEndpointUri());
-        
-        if (uriSplit.length > 0) {
-            switch (ProducerType.fromUri(uriSplit[0])) {
-            case NEWISSUE:
-                return new NewIssueProducer(this);
-            default:
-                break;
-            }
+        if (type == JIRAType.NEWISSUE) {
+            return new NewIssueProducer(this);
         }
-
-        throw new IllegalArgumentException("Cannot create any producer with uri " + uri
-                + ". A producer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException("Producer does not support type: " + type);
     }
     
     public Consumer createConsumer(Processor processor) throws Exception {
-        String uri = getEndpointUri();
-        String[] uriSplit = splitUri(getEndpointUri());
-        
-        if (uriSplit.length > 0) {
-            switch (ConsumerType.fromUri(uriSplit[0])) {
-            case NEWCOMMENT:
-                return new NewCommentConsumer(this, processor);
-            case NEWISSUE:
-                return new NewIssueConsumer(this, processor);
-            default:
-                break;
-            }
+        if (type == JIRAType.NEWCOMMENT) {
+            return new NewCommentConsumer(this, processor);
+        } else if (type == JIRAType.NEWISSUE) {
+            return new NewIssueConsumer(this, processor);
         }
-
-        throw new IllegalArgumentException("Cannot create any consumer with uri " + uri
-                + ". A consumer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException("Consumer does not support type: " + type);
     }
 
     public boolean isSingleton() {
         return true;
     }
 
-    private static String[] splitUri(String uri) {
-        Pattern p1 = Pattern.compile("jira:(//)*");
-        Pattern p2 = Pattern.compile("\\?.*");
+    public JIRAType getType() {
+        return type;
+    }
 
-        uri = p1.matcher(uri).replaceAll("");
-        uri = p2.matcher(uri).replaceAll("");
-
-        return uri.split("/");
+    public void setType(JIRAType type) {
+        this.type = type;
     }
 
     public String getServerUrl() {

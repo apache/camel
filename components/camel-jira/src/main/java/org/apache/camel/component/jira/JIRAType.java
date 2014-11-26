@@ -14,18 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github.producer;
+package org.apache.camel.component.jira;
 
-public enum ProducerType {
+public enum JIRAType {
 
-    CLOSEPULLREQUEST, PULLREQUESTCOMMENT, UNKNOWN;
-
-    public static ProducerType fromUri(String uri) {
-        for (ProducerType producerType : ProducerType.values()) {
-            if (producerType.name().equalsIgnoreCase(uri)) {
-                return producerType;
-            }
-        }
-        return ProducerType.UNKNOWN;
-    }
+    NEWISSUE, NEWCOMMENT
 }

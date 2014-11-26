@@ -36,7 +36,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     
     private List<String> commitHashes = new ArrayList<String>();
     
-    public CommitConsumer(String branchName, GitHubEndpoint endpoint, Processor processor) throws Exception {
+    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName) throws Exception {
         super(endpoint, processor);
 
         Registry registry = endpoint.getCamelContext().getRegistry();
