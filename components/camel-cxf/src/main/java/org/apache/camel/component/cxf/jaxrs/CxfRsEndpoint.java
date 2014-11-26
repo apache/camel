@@ -36,6 +36,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -52,8 +53,9 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "cxfrs", consumerClass = CxfRsConsumer.class)
+@UriEndpoint(scheme = "cxfrs", consumerClass = CxfRsConsumer.class, label = "http,rest")
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
+
     public enum BindingStyle {
         /**
          * <i>Only available for consumers.</i>
@@ -73,7 +75,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
          * A custom binding set by the user.
          */
         Custom
-
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
@@ -84,32 +85,35 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     protected List<String> schemaLocations;
 
+    @UriPath(description = "To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.")
+    private String beanId;
+    @UriPath
+    private String address;
+
     private Map<String, String> parameters;
     private List<Class<?>> resourceClasses;
     private HeaderFilterStrategy headerFilterStrategy;
     private CxfRsBinding binding;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean httpClientAPI = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean ignoreDeleteMethodMessageBody;
-    @UriParam
-    private String address;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(defaultValue = "10")
     private int maxClientCacheSize = 10;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean loggingFeatureEnabled;
     @UriParam
     private int loggingSizeLimit;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean skipFaultLogging;
-    @UriParam
+    @UriParam(defaultValue = "Default")
     private BindingStyle bindingStyle = BindingStyle.Default;
     // The continuation timeout value for CXF continuation to use
-    @UriParam
+    @UriParam(defaultValue = "30000")
     private long continuationTimeout = 30000;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean isSetDefaultBus;
     
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
@@ -332,6 +336,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setResourceClasses(List<Class<?>> resourceClasses) {
         this.resourceClasses = resourceClasses;
     }
+
     public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
     }
@@ -496,7 +501,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setBindingStyle(BindingStyle bindingStyle) {
         this.bindingStyle = bindingStyle;
     }
-    
+
+    public String getBeanId() {
+        return beanId;
+    }
+
+    public void setBeanId(String beanId) {
+        this.beanId = beanId;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {
