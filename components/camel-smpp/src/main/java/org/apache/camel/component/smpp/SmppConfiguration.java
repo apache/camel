@@ -45,6 +45,7 @@ public class SmppConfiguration implements Cloneable {
     private byte dataCoding = (byte) 0;
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
     private String encoding = "ISO-8859-1";
+    private String smscDefaultEncoding = "GSM-7BIT";
     private Integer enquireLinkTimer = 5000;
     private Integer transactionTimer = 10000;
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
@@ -147,6 +148,14 @@ public class SmppConfiguration implements Cloneable {
             LOG.warn("Unsupported encoding \"{}\" is being set.", encoding);
         }
         this.encoding = encoding;
+    }
+
+    public String getSmscDefaultEncoding() {
+        return smscDefaultEncoding;
+    }
+
+    public void setSmscDefaultEncoding(String smscDefaultEncoding) {
+        this.smscDefaultEncoding = smscDefaultEncoding;
     }
 
     public void setPassword(String password) {
