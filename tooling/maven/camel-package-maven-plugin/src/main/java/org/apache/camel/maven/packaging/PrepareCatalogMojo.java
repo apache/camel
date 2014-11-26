@@ -256,7 +256,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         getLog().info("");
         if (!usedLabels.isEmpty()) {
-            getLog().warn("\tUsed labels: " + usedLabels.size());
+            getLog().info("\tUsed labels: " + usedLabels.size());
             for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
                 getLog().info("\t\t" + entry.getKey() + ":");
                 for (String name : entry.getValue()) {
