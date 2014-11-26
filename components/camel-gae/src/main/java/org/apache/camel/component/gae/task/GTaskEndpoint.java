@@ -36,6 +36,7 @@ import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
@@ -47,10 +48,12 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;
     private InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
+    @UriPath
+    private String queueName;
+    private Queue queue;
     @UriParam
     private String workerRoot;
-    private Queue queue;
-    
+
     public GTaskEndpoint(String endpointUri, ServletComponent component,
             URI httpUri, HttpClientParams params,
             HttpConnectionManager httpConnectionManager,
@@ -115,7 +118,15 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
     public void setQueue(Queue queue) {
         this.queue = queue;
     }
-    
+
+    public String getQueueName() {
+        return queueName;
+    }
+
+    public void setQueueName(String queueName) {
+        this.queueName = queueName;
+    }
+
     public Producer createProducer() throws Exception {
         return new GTaskProducer(this);
     }
