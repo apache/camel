@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -29,6 +31,8 @@ import javax.xml.crypto.KeySelectorException;
 import javax.xml.crypto.KeySelectorResult;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+
+import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
  * Default implementation for the key selector. The key is read from a key-store
@@ -59,6 +63,13 @@ public class DefaultKeySelector extends KeySelector {
 
     public void setPassword(char[] password) {
         keyStoreAndAlias.setPassword(password);
+    }
+    
+    public void setKeyStoreParameters(KeyStoreParameters parameters) 
+        throws GeneralSecurityException, IOException {
+        if (parameters != null) {
+            keyStoreAndAlias.setKeyStore(parameters.createKeyStore());
+        }
     }
 
     public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
