@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.URISupport;
 import org.apache.hadoop.io.SequenceFile;
 
@@ -31,52 +32,52 @@ import org.apache.hadoop.io.SequenceFile;
 public class HdfsConfiguration {
 
     private URI uri;
-    @UriParam
+    @UriPath
     private String hostName;
-    @UriParam
+    @UriPath
     private int port = HdfsConstants.DEFAULT_PORT;
-    @UriParam
+    @UriPath
     private String path;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean overwrite = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean append;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean wantAppend;
-    @UriParam
+    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int bufferSize = HdfsConstants.DEFAULT_BUFFERSIZE;
-    @UriParam
+    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_REPLICATION)
     private short replication = HdfsConstants.DEFAULT_REPLICATION;
-    @UriParam
+    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BLOCKSIZE)
     private long blockSize = HdfsConstants.DEFAULT_BLOCKSIZE;
-    @UriParam
+    @UriParam(defaultValue = "NONE")
     private SequenceFile.CompressionType compressionType = HdfsConstants.DEFAULT_COMPRESSIONTYPE;
-    @UriParam
+    @UriParam(defaultValue = "DEFAULT")
     private HdfsCompressionCodec compressionCodec = HdfsConstants.DEFAULT_CODEC;
-    @UriParam
+    @UriParam(defaultValue = "NORMAL_FILE")
     private HdfsFileType fileType = HdfsFileType.NORMAL_FILE;
-    @UriParam
+    @UriParam(defaultValue = "HDFS")
     private HdfsFileSystemType fileSystemType = HdfsFileSystemType.HDFS;
-    @UriParam
+    @UriParam(defaultValue = "NULL")
     private HdfsWritableFactories.WritableType keyType = HdfsWritableFactories.WritableType.NULL;
-    @UriParam
+    @UriParam(defaultValue = "BYTES")
     private HdfsWritableFactories.WritableType valueType = HdfsWritableFactories.WritableType.BYTES;
-    @UriParam
+    @UriParam(defaultValue = HdfsConstants.DEFAULT_OPENED_SUFFIX)
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
-    @UriParam
+    @UriParam(defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
     private String readSuffix = HdfsConstants.DEFAULT_READ_SUFFIX;
     @UriParam
     private long initialDelay;
-    @UriParam
+    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_DELAY)
     private long delay = HdfsConstants.DEFAULT_DELAY;
-    @UriParam
+    @UriParam(defaultValue = HdfsConstants.DEFAULT_PATTERN)
     private String pattern = HdfsConstants.DEFAULT_PATTERN;
-    @UriParam
+    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int chunkSize = HdfsConstants.DEFAULT_BUFFERSIZE;
-    @UriParam
+    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL)
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     private List<HdfsProducer.SplitStrategy> splitStrategies;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean connectOnStartup = true;
     @UriParam
     private String owner;
