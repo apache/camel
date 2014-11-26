@@ -19,7 +19,6 @@ package org.apache.camel.component.google.drive;
 import java.util.Map;
 
 import com.google.api.services.drive.Drive;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,6 +27,7 @@ import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
 import org.apache.camel.component.google.drive.internal.GoogleDrivePropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -35,13 +35,17 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleDrive endpoint.
  */
-@UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "google-drive", consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
-    
+
+    @UriParam
+    private GoogleDriveConfiguration configuration;
+
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
                          GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleDriveApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+        this.configuration = endpointConfiguration;
     }
 
     public Producer createProducer() throws Exception {

@@ -20,9 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
-
+import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Component configuration for GoogleCalendar component.
@@ -30,7 +31,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class GoogleCalendarConfiguration {
     private static final List<String> DEFAULT_SCOPES = Arrays.asList(CalendarScopes.CALENDAR); 
-    
+
+    @UriPath
+    private GoogleCalendarApiName apiName;
+
+    @UriPath
+    private String methodName;
+
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
     
@@ -48,7 +55,23 @@ public class GoogleCalendarConfiguration {
 
     @UriParam
     private String applicationName;
-    
+
+    public GoogleCalendarApiName getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(GoogleCalendarApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
     public String getClientId() {
         return clientId;
     }

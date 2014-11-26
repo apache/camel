@@ -19,7 +19,6 @@ package org.apache.camel.component.google.calendar;
 import java.util.Map;
 
 import com.google.api.services.calendar.Calendar;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,6 +27,7 @@ import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarConstants;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -35,15 +35,18 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleCalendar endpoint.
  */
-@UriEndpoint(scheme = "google-calendar", consumerClass = GoogleCalendarConsumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "google-calendar", consumerClass = GoogleCalendarConsumer.class, consumerPrefix = "consumer", label = "api,cloud")
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
+
+    @UriParam
+    private GoogleCalendarConfiguration configuration;
 
     private Object apiProxy;
 
     public GoogleCalendarEndpoint(String uri, GoogleCalendarComponent component,
                          GoogleCalendarApiName apiName, String methodName, GoogleCalendarConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleCalendarApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
+        this.configuration = endpointConfiguration;
     }
 
     @Override

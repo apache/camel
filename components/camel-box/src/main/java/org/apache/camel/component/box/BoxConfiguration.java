@@ -22,8 +22,10 @@ import com.box.boxjavalibv2.BoxConnectionManagerBuilder;
 import com.box.boxjavalibv2.IBoxConfig;
 import com.box.boxjavalibv2.authorization.IAuthSecureStorage;
 import com.box.boxjavalibv2.authorization.OAuthRefreshListener;
+import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -31,6 +33,12 @@ import org.apache.camel.util.jsse.SSLContextParameters;
  */
 @UriParams
 public class BoxConfiguration {
+
+    @UriPath
+    private BoxApiName apiName;
+
+    @UriPath
+    private String methodName;
 
     @UriParam
     private String clientId;
@@ -50,7 +58,7 @@ public class BoxConfiguration {
     @UriParam
     private OAuthRefreshListener refreshListener;
 
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean revokeOnShutdown;
 
     @UriParam
@@ -74,8 +82,24 @@ public class BoxConfiguration {
     /**
      * Box.com login timeout in seconds, defaults to 30.
      */
-    @UriParam
+    @UriParam(defaultValue = "30")
     private int loginTimeout = 30;
+
+    public BoxApiName getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(BoxApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
     public String getClientId() {
         return clientId;
