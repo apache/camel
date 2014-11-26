@@ -243,6 +243,11 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
             final Node node = getMessageBodyNode(out);
 
+            if (getConfiguration().getKeyAccessor() == null) {
+                throw new XmlSignatureNoKeyException(
+                    "Key selector is missing for XML signature generation. Specify a key selector in the configuration.");
+            }
+            
             final KeySelector keySelector = getConfiguration().getKeyAccessor().getKeySelector(out);
             if (keySelector == null) {
                 throw new XmlSignatureNoKeyException(
