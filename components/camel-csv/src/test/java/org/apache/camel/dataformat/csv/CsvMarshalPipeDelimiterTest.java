@@ -45,8 +45,8 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
                 String.class);
         String[] lines = body.split(System.lineSeparator());
         assertEquals(2, lines.length);
-        assertEquals("123|Camel in Action|1", lines[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines[1]);
+        assertEquals("123|Camel in Action|1", lines[0].trim());
+        assertEquals("124|ActiveMQ in Action|2", lines[1].trim());
     }
 
     private List<Map<String, Object>> createBody() {

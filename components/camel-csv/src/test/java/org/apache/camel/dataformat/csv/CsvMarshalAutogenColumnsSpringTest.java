@@ -51,8 +51,8 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
         String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
         String[] lines = body.split(System.lineSeparator());
         assertEquals(2, lines.length);
-        assertEquals("Camel in Action", lines[0]);
-        assertEquals("ActiveMQ in Action", lines[1]);
+        assertEquals("Camel in Action", lines[0].trim());
+        assertEquals("ActiveMQ in Action", lines[1].trim());
     }
 
     @Test
@@ -66,8 +66,8 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
         String body = result2.getReceivedExchanges().get(0).getIn().getBody(String.class);
         String[] lines = body.split(System.lineSeparator());
         assertEquals(2, lines.length);
-        assertEquals("123|1", lines[0]);
-        assertEquals("124|2", lines[1]);
+        assertEquals("123|1", lines[0].trim());
+        assertEquals("124|2", lines[1].trim());
     }
 
     private static List<Map<String, Object>> createBody() {
