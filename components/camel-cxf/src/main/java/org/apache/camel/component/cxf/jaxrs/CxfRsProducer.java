@@ -214,6 +214,11 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+        } else {
+            // just close the input stream of the response object
+            if (response instanceof Response) {
+                ((Response)response).close();
+            }
         }
     }
 
@@ -269,6 +274,11 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+        } else {
+            // just close the input stream of the response object
+            if (response instanceof Response) {
+                ((Response)response).close();
+            }
         }
     }
     
