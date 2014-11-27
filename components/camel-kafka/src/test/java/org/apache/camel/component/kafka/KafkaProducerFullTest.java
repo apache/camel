@@ -36,26 +36,23 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-/**
- * The Producer IT tests require a Kafka broker running on 9092 and a zookeeper instance running on 2181.
- * The broker must have a topic called test created.
- */
-public class KafkaProducerIT extends CamelTestSupport {
+
+public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     
     public static final String TOPIC = "test";
     public static final String TOPIC_IN_HEADER = "testHeader";
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerFullTest.class);
 
     @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC 
-        + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner&serializerClass=kafka.serializer.StringEncoder&requestRequiredAcks=1")
+        + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner&serializerClass=kafka.serializer.StringEncoder" +
+            "&requestRequiredAcks=-1")
     private Endpoint to;
 
     @Produce(uri = "direct:start")
@@ -71,6 +68,7 @@ public class KafkaProducerIT extends CamelTestSupport {
         props.put("zookeeper.session.timeout.ms", "400");
         props.put("zookeeper.sync.time.ms", "200");
         props.put("auto.commit.interval.ms", "1000");
+        props.put("auto.offset.reset", "smallest");
 
         kafkaConsumer = kafka.consumer.Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
     }
@@ -83,7 +81,6 @@ public class KafkaProducerIT extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
                 from("direct:start").to(to);
@@ -108,7 +105,7 @@ public class KafkaProducerIT extends CamelTestSupport {
 
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
-        assertTrue("Not all messages were published to the kafka topics", allMessagesReceived);
+        assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
     }
 
     private void createKafkaMessageConsumer(CountDownLatch messagesLatch, Map<String, Integer> topicCountMap) {
