@@ -442,10 +442,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     }
                 }
 
-                if (future == null && timedOut) {
-                    // we are timed out and no more tasks complete so break out
-                    break;
-                } else if (future == null) {
+                if (future == null) {
                     // timeout occurred
                     AggregationStrategy strategy = getAggregationStrategy(null);
                     if (strategy instanceof TimeoutAwareAggregationStrategy) {
