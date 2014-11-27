@@ -23,6 +23,11 @@ import java.util.Map;
  * This class provides utility methods
  */
 final class TestUtils {
+
+    private TestUtils() {
+        // Prevent instantiation
+    }
+    
     /**
      * Create a map with the given key/value pairs
      *
@@ -41,7 +46,4 @@ final class TestUtils {
         return map;
     }
 
-    private TestUtils() {
-        // Prevent instantiation
-    }
 }

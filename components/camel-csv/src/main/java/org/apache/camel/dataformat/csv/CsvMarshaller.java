@@ -36,6 +36,12 @@ import org.apache.commons.csv.CSVPrinter;
  * This class marshal data into a CSV format.
  */
 abstract class CsvMarshaller {
+    private final CSVFormat format;
+
+    private CsvMarshaller(CSVFormat format) {
+        this.format = format;
+    }
+    
     /**
      * Creates a new instance.
      *
@@ -54,13 +60,7 @@ abstract class CsvMarshaller {
             return new FixedColumnsMarshaller(format, fixedColumns);
         }
         return new DynamicColumnsMarshaller(format);
-    }
-
-    private final CSVFormat format;
-
-    private CsvMarshaller(CSVFormat format) {
-        this.format = format;
-    }
+    }    
 
     /**
      * Marshals the given object into the given stream.
@@ -73,7 +73,7 @@ abstract class CsvMarshaller {
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
         try (CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format)) {
-            List list = ExchangeHelper.convertToType(exchange, List.class, object);
+            List<?> list = ExchangeHelper.convertToType(exchange, List.class, object);
             if (list != null) {
                 for (Object child : list) {
                     printer.printRecord(getRecordValues(exchange, child));
@@ -85,7 +85,7 @@ abstract class CsvMarshaller {
     }
 
     private Iterable<?> getRecordValues(Exchange exchange, Object data) throws NoTypeConversionAvailableException {
-        Map map = ExchangeHelper.convertToType(exchange, Map.class, data);
+        Map<?, ?> map = ExchangeHelper.convertToType(exchange, Map.class, data);
         if (map != null) {
             return getMapRecordValues(map);
         }
@@ -98,14 +98,14 @@ abstract class CsvMarshaller {
      * @param map Input map
      * @return CSV record values of the given map
      */
-    protected abstract Iterable<?> getMapRecordValues(Map map);
+    protected abstract Iterable<?> getMapRecordValues(Map<?, ?> map);
 
     //region Implementations
 
     /**
      * This marshaller has fixed columns
      */
-    private static class FixedColumnsMarshaller extends CsvMarshaller {
+    private static final class FixedColumnsMarshaller extends CsvMarshaller {
         private final String[] fixedColumns;
 
         private FixedColumnsMarshaller(CSVFormat format, String[] fixedColumns) {
@@ -114,7 +114,7 @@ abstract class CsvMarshaller {
         }
 
         @Override
-        protected Iterable<?> getMapRecordValues(Map map) {
+        protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
             List<Object> result = new ArrayList<>(fixedColumns.length);
             for (String key : fixedColumns) {
                 result.add(map.get(key));
@@ -126,7 +126,7 @@ abstract class CsvMarshaller {
     /**
      * This marshaller adapts the columns but always keep them in the same order
      */
-    private static class DynamicColumnsMarshaller extends CsvMarshaller {
+    private static final class DynamicColumnsMarshaller extends CsvMarshaller {
         private final LinkedHashSet<Object> columns = new LinkedHashSet<>();
 
         private DynamicColumnsMarshaller(CSVFormat format) {
@@ -134,7 +134,7 @@ abstract class CsvMarshaller {
         }
 
         @Override
-        protected Iterable<?> getMapRecordValues(Map map) {
+        protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
             columns.addAll(map.keySet());
             List<Object> result = new ArrayList<>(columns.size());
             for (Object key : columns) {

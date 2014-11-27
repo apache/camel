@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +27,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.apache.camel.dataformat.csv.TestUtils.asMap;
 
 /**
@@ -45,11 +45,11 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:default", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(3, body.size());
-        assertEquals(asList("A", "B", "C"), body.get(0));
-        assertEquals(asList("1", "2", "3"), body.get(1));
-        assertEquals(asList("one", "two", "three"), body.get(2));
+        assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
+        assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
+        assertEquals(Arrays.asList("one", "two", "three"), body.get(2));
     }
 
     @Test
@@ -59,10 +59,10 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:delimiter", CSV_SAMPLE.replace(',', '_'));
         output.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
-        assertEquals(asList("A", "B", "C"), body.get(0));
-        assertEquals(asList("1", "2", "3"), body.get(1));
-        assertEquals(asList("one", "two", "three"), body.get(2));
+        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
+        assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
+        assertEquals(Arrays.asList("one", "two", "three"), body.get(2));
     }
 
     @Test
@@ -72,10 +72,10 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:lazy", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        Iterator body = assertIsInstanceOf(Iterator.class, output.getExchanges().get(0).getIn().getBody());
-        assertEquals(asList("A", "B", "C"), body.next());
-        assertEquals(asList("1", "2", "3"), body.next());
-        assertEquals(asList("one", "two", "three"), body.next());
+        Iterator<?> body = assertIsInstanceOf(Iterator.class, output.getExchanges().get(0).getIn().getBody());
+        assertEquals(Arrays.asList("A", "B", "C"), body.next());
+        assertEquals(Arrays.asList("1", "2", "3"), body.next());
+        assertEquals(Arrays.asList("one", "two", "three"), body.next());
         assertFalse(body.hasNext());
     }
 
@@ -86,7 +86,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:map", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -99,7 +99,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:lazy_map", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        Iterator body = assertIsInstanceOf(Iterator.class, output.getExchanges().get(0).getIn().getBody());
+        Iterator<?> body = assertIsInstanceOf(Iterator.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.next());
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.next());
         assertFalse(body.hasNext());
@@ -112,7 +112,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:map_headers", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("AA", "1", "BB", "2", "CC", "3"), body.get(0));
         assertEquals(asMap("AA", "one", "BB", "two", "CC", "three"), body.get(1));

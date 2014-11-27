@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -35,6 +34,14 @@ import org.apache.commons.csv.CSVRecord;
  * This class unmarshal CSV into lists or maps depending on the configuration.
  */
 abstract class CsvUnmarshaller {
+    protected final CSVFormat format;
+    protected final CsvRecordConverter<?> converter;
+
+    private CsvUnmarshaller(CSVFormat format, CsvDataFormat dataFormat) {
+        this.format = format;
+        this.converter = extractConverter(dataFormat);
+    }
+    
     public static CsvUnmarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
         // If we want to use maps, thus the header must be either fixed or automatic
         if (dataFormat.isUseMaps() && format.getHeader() == null) {
@@ -49,14 +56,6 @@ abstract class CsvUnmarshaller {
             return new StreamCsvUnmarshaller(format, dataFormat);
         }
         return new BulkCsvUnmarshaller(format, dataFormat);
-    }
-
-    protected final CSVFormat format;
-    protected final CsvRecordConverter<?> converter;
-
-    private CsvUnmarshaller(CSVFormat format, CsvDataFormat dataFormat) {
-        this.format = format;
-        this.converter = extractConverter(dataFormat);
     }
 
     /**
