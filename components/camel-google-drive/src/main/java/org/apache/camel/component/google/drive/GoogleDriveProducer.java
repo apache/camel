@@ -25,6 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
 import org.apache.camel.component.google.drive.internal.GoogleDrivePropertiesHelper;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiProducer;
 import org.apache.camel.util.component.ApiMethod;
 
@@ -41,13 +42,22 @@ public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName,
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
+            setProperty(properties, request, "q");
+            setProperty(properties, request, "maxResults");
+            setProperty(properties, request, "pageToken");
             return request.execute();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
     
     protected String getThreadProfileName() {
         return GoogleDriveConstants.THREAD_PROFILE_NAME;
+    }
+    
+    private void setProperty(Map<String, Object> properties, AbstractGoogleClientRequest request, String key) throws Exception {
+        if (properties.containsKey(key)) {
+            IntrospectionSupport.setProperty(getEndpoint().getCamelContext().getTypeConverter(), request, key, properties.get(key));
+        }
     }
 }
