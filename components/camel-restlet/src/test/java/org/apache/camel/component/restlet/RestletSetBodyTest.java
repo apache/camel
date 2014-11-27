@@ -99,7 +99,7 @@ public class RestletSetBodyTest extends RestletTestSupport {
                     .setBody().constant(new InputRepresentation(inputStream, MediaType.IMAGE_PNG, 10));
                 
                 from("restlet:http://0.0.0.0:" + portNum + "/gzip/data?restletMethods=get")
-                    .setBody().constant(new EncodeRepresentation(Encoding.GZIP, new StringRepresentation("Hello World!",MediaType.TEXT_XML)));
+                    .setBody().constant(new EncodeRepresentation(Encoding.GZIP, new StringRepresentation("Hello World!", MediaType.TEXT_XML)));
             }
         };
     }
