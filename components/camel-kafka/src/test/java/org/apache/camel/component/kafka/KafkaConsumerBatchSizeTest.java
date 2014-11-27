@@ -16,31 +16,26 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * The Producer IT tests require a Kafka broker running on 9092 and a zookeeper instance running on 2181.
- * The broker must have a topic called test created.
- */
-public class KafkaConsumerIT extends CamelTestSupport {
+import java.util.Properties;
+
+public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181&groupId=group1")
+    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181&" +
+            "groupId=group1&autoOffsetReset=smallest&" +
+            "autoCommitEnable=false&batchSize=3&consumerStreams=1")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -68,24 +63,50 @@ public class KafkaConsumerIT extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
-                from(from).to(to);
+                from(from).autoStartup(true).to(to).setId("First");
             }
         };
     }
 
     @Test
-    public void kaftMessageIsConsumedByCamel() throws InterruptedException, IOException {
-        to.expectedMessageCount(5);
-        to.expectedBodiesReceived("message-0", "message-1", "message-2", "message-3", "message-4");
-        for (int k = 0; k < 5; k++) {
-            String msg = "message-" + k;
+    public void kafkaMessagesIsConsumedByCamel() throws Exception {
+        //First 5 must not be committed since batch size is 3
+        to.expectedMessageCount(2);
+        to.expectedBodiesReceivedInAnyOrder("m1", "m2");
+        for (int k = 1; k <= 2; k++) {
+            String msg = "m" + k;
             KeyedMessage<String, String> data = new KeyedMessage<String, String>(TOPIC, "1", msg);
             producer.send(data);
         }
         to.assertIsSatisfied(3000);
+
+        //Restart endpoint,
+        from.getCamelContext().stop();
+        from.getCamelContext().start();
+
+        to.reset();
+        to.expectedMessageCount(10);
+        to.expectedBodiesReceivedInAnyOrder("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
+
+        //Second route must wake up and consume all from scratch and commit 9 consumed
+        for (int k = 3; k <=10; k++) {
+            String msg = "m" + k;
+            KeyedMessage<String, String> data = new KeyedMessage<String, String>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        //Restart endpoint,
+        from.getCamelContext().stop();
+        from.getCamelContext().start();
+
+        to.reset();
+
+        //Only one message should left to consume by this consumer group
+        to.expectedMessageCount(1);
     }
 }
 
