@@ -266,7 +266,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             endpoint.setEnableMultipartFilter(true);
         }
         if (enableCors) {
-            if (filters == null){
+            if (filters == null) {
                 filters = new ArrayList<Filter>(1);
             }
             filters.add(new CrossOriginFilter());
