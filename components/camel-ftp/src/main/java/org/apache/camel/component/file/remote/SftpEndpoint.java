@@ -38,8 +38,9 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
     public SftpEndpoint() {
     }
 
-    public SftpEndpoint(String uri, SftpComponent component, RemoteFileConfiguration configuration) {
+    public SftpEndpoint(String uri, SftpComponent component, SftpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override

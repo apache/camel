@@ -51,8 +51,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     public FtpEndpoint() {
     }
 
-    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, RemoteFileConfiguration configuration) {
+    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, FtpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override
