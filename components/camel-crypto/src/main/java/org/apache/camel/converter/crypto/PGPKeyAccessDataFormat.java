@@ -36,7 +36,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
@@ -166,6 +165,13 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     private String signatureVerificationOption = "optional";
 
+    /*
+     * The default value "_CONSOLE" marks the file as For Your Eyes Only... may
+     * cause problems for the receiver if they use an automated process to
+     * decrypt as the filename is appended with _CONSOLE
+     */
+    private String fileName = PGPLiteralData.CONSOLE;
+
     public PGPKeyAccessDataFormat() {
     }
 
@@ -199,6 +205,10 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return exchange.getIn().getHeader(SIGNATURE_HASH_ALGORITHM, getHashAlgorithm(), Integer.class);
     }
 
+    protected String findFileName(Exchange exchange) {
+        return exchange.getIn().getHeader(Exchange.FILE_NAME, getFileName(), String.class);
+    }
+
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
@@ -228,12 +238,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         List<PGPSignatureGenerator> sigGens = createSignatureGenerator(exchange, comOut);
 
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
-        String fileName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-        if (ObjectHelper.isEmpty(fileName)) {
-            // This marks the file as For Your Eyes Only... may cause problems for the receiver if they use
-            // an automated process to decrypt as the filename is appended with _CONSOLE
-            fileName = PGPLiteralData.CONSOLE;
-        }
+        String fileName = findFileName(exchange);
         OutputStream litOut = litData.open(comOut, PGPLiteralData.BINARY, fileName, new Date(), new byte[BUFFER_SIZE]);
 
         try {
@@ -723,6 +728,36 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         } else {
             throw new IllegalArgumentException(signatureVerificationOption + " is not a valid signature verification option");
         }
+    }
+
+    /**
+     * Returns the file name for the literal packet. Cannot be <code>null</code>
+     * .
+     * 
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * Sets the file name for the literal data packet. Can be overwritten by the
+     * header {@link Exchange#FILE_NAME}. The default value is "_CONSOLE".
+     * "_CONSOLE" indicates that the message is considered to be
+     * "for your eyes only". This advises that the message data is unusually
+     * sensitive, and the receiving program should process it more carefully,
+     * perhaps avoiding storing the received data to disk, for example.
+     * <p>
+     * Only used for marshaling.
+     * 
+     * @param fileName
+     * @throws IllegalArgumentException
+     *             if <tt>fileName</tt> is <code>null</code>
+     */
+    public void setFileName(String fileName) {
+        if (fileName == null) {
+            throw new IllegalArgumentException("Parameter 'fileName' is null");
+        }
+        this.fileName = fileName;
     }
 
     @Override
