@@ -68,7 +68,7 @@
             <artifactId>camel-restlet</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.restlet.jse</groupId>
+            <groupId>org.restlet.jee</groupId>
             <artifactId>org.restlet.ext.spring</artifactId>
             <version>${restlet-version}</version>
         </dependency>
