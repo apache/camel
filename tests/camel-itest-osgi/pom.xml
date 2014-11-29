@@ -29,14 +29,6 @@
   <name>Camel :: Integration Tests :: OSGi</name>
   <description>Performs OSGi compliance integration tests</description>
 
-  <repositories>
-    <!--repository>
-      <id>hapi</id>
-      <name>HAPI Maven Repository</name>
-      <url>http://hl7api.sourceforge.net/m2/</url>
-    </repository-->
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -195,6 +187,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mvel</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-netty</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
