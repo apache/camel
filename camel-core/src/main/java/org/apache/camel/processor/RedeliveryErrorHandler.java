@@ -542,7 +542,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             AsyncRedeliveryTask task = new AsyncRedeliveryTask(exchange, callback, data);
 
             // calculate the redelivery delay
-            data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
+            data.redeliveryDelay = determineRedeliveryDelay(exchange, data.currentRedeliveryPolicy, data.redeliveryDelay, data.redeliveryCounter);
+
             if (data.redeliveryDelay > 0) {
                 // schedule the redelivery task
                 if (log.isTraceEnabled()) {
