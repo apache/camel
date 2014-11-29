@@ -28,7 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
-
 /**
  * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
@@ -249,7 +248,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         if (headers == null) {
             return null;
         }
-        List<String> names = new ArrayList<>(headers.size());
+        List<String> names = new ArrayList<String>(headers.size());
         for (UniVocityHeader header : headers) {
             if (header.getName() != null && !header.getName().isEmpty()) {
                 names.add(header.getName());
