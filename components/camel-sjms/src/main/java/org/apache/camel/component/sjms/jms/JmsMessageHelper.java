@@ -79,54 +79,54 @@ public final class JmsMessageHelper implements JmsConstants {
                     bodyMessage = (DefaultMessage) exchange.getIn();
                 }
                 switch (JmsMessageHelper.discoverJmsMessageType(message)) {
-                    case Bytes:
-                        BytesMessage bytesMessage = (BytesMessage) message;
-                        if (bytesMessage.getBodyLength() > Integer.MAX_VALUE) {
-                            LOGGER.warn("Length of BytesMessage is too long: {}", bytesMessage.getBodyLength());
-                            return null;
-                        }
-                        byte[] result = new byte[(int) bytesMessage.getBodyLength()];
-                        bytesMessage.readBytes(result);
-                        bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Bytes);
-                        bodyMessage.setBody(result);
-                        break;
-                    case Map:
-                        Map<String, Object> body = new HashMap<>();
-                        MapMessage mapMessage = (MapMessage) message;
-                        Enumeration<String> names = mapMessage.getMapNames();
-                        while (names.hasMoreElements()) {
-                            String key = names.nextElement();
-                            Object value = mapMessage.getObject(key);
-                            body.put(key, value);
-                        }
-                        bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Map);
-                        bodyMessage.setBody(body);
-                        break;
-                    case Object:
-                        ObjectMessage objMsg = (ObjectMessage) message;
-                        bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Object);
-                        bodyMessage.setBody(objMsg.getObject());
-                        break;
-                    case Text:
-                        TextMessage textMsg = (TextMessage) message;
-                        bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Text);
-                        bodyMessage.setBody(textMsg.getText());
-                        break;
-                    case Stream:
-                        StreamMessage streamMessage = (StreamMessage) message;
-                        List list = new ArrayList<>();
-                        Object obj;
-                        while ((obj = streamMessage.readObject()) != null) {
-                            list.add(obj);
-                        }
-                        bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Stream);
-                        bodyMessage.setBody(list);
-                        break;
-                    case Message:
-                    default:
-                        // Do nothing. Only set the headers for an empty message
-                        bodyMessage.setBody(message);
-                        break;
+                case Bytes:
+                    BytesMessage bytesMessage = (BytesMessage) message;
+                    if (bytesMessage.getBodyLength() > Integer.MAX_VALUE) {
+                        LOGGER.warn("Length of BytesMessage is too long: {}", bytesMessage.getBodyLength());
+                        return null;
+                    }
+                    byte[] result = new byte[(int) bytesMessage.getBodyLength()];
+                    bytesMessage.readBytes(result);
+                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Bytes);
+                    bodyMessage.setBody(result);
+                    break;
+                case Map:
+                    Map<String, Object> body = new HashMap<String, Object>();
+                    MapMessage mapMessage = (MapMessage) message;
+                    Enumeration<String> names = mapMessage.getMapNames();
+                    while (names.hasMoreElements()) {
+                        String key = names.nextElement();
+                        Object value = mapMessage.getObject(key);
+                        body.put(key, value);
+                    }
+                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Map);
+                    bodyMessage.setBody(body);
+                    break;
+                case Object:
+                    ObjectMessage objMsg = (ObjectMessage) message;
+                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Object);
+                    bodyMessage.setBody(objMsg.getObject());
+                    break;
+                case Text:
+                    TextMessage textMsg = (TextMessage) message;
+                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Text);
+                    bodyMessage.setBody(textMsg.getText());
+                    break;
+                case Stream:
+                    StreamMessage streamMessage = (StreamMessage) message;
+                    List<Object> list = new ArrayList<Object>();
+                    Object obj;
+                    while ((obj = streamMessage.readObject()) != null) {
+                        list.add(obj);
+                    }
+                    bodyMessage.setHeader(SjmsConstants.JMS_MESSAGE_TYPE, JmsMessageType.Stream);
+                    bodyMessage.setBody(list);
+                    break;
+                case Message:
+                default:
+                    // Do nothing. Only set the headers for an empty message
+                    bodyMessage.setBody(message);
+                    break;
                 }
             }
         } catch (Exception e) {
@@ -142,10 +142,10 @@ public final class JmsMessageHelper implements JmsConstants {
 
         if (exchange.getOut().getBody() != null) {
             body = exchange.getOut().getBody();
-            bodyHeaders = new HashMap<>(exchange.getOut().getHeaders());
+            bodyHeaders = new HashMap<String, Object>(exchange.getOut().getHeaders());
         } else {
             body = exchange.getIn().getBody();
-            bodyHeaders = new HashMap<>(exchange.getIn().getHeaders());
+            bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
         }
 
         answer = createMessage(session, body, bodyHeaders, endpoint);
@@ -220,8 +220,8 @@ public final class JmsMessageHelper implements JmsConstants {
      * @return {@link Message}
      */
     private static Message setJmsMessageHeaders(final Message jmsMessage, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws IllegalHeaderException {
-        Map<String, Object> headers = new HashMap<>(messageHeaders);
-        for (final Map.Entry<String,Object> entry : headers.entrySet()) {
+        Map<String, Object> headers = new HashMap<String, Object>(messageHeaders);
+        for (final Map.Entry<String, Object> entry : headers.entrySet()) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
 
@@ -313,7 +313,7 @@ public final class JmsMessageHelper implements JmsConstants {
 
     @SuppressWarnings("unchecked")
     public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out, KeyFormatStrategy keyFormatStrategy) throws JMSException {
-        Map<String, Object> headers = new HashMap<>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
             try {

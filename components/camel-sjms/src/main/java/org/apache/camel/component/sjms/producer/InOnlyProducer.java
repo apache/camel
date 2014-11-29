@@ -85,7 +85,7 @@ public class InOnlyProducer extends SjmsProducer {
     @Override
     public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception {
         try {
-            Collection<Message> messages = new ArrayList<>(1);
+            Collection<Message> messages = new ArrayList<Message>(1);
             if (exchange.getIn().getBody() != null) {
                 if (exchange.getIn().getBody() instanceof List) {
                     Iterable<?> payload = (Iterable<?>) exchange.getIn().getBody();

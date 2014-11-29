@@ -24,54 +24,63 @@ public interface JmsConstants {
     /**
      * Set by the publishing Client
      */
-    public static final String JMS_CORRELATION_ID = "JMSCorrelationID";
+    String JMS_CORRELATION_ID = "JMSCorrelationID";
+
     /**
      * Set on the send or publish event
      */
-    public static final String JMS_DELIVERY_MODE = "JMSDeliveryMode";
+    String JMS_DELIVERY_MODE = "JMSDeliveryMode";
+
     /**
      * Set on the send or publish event
      */
-    public static final String JMS_DESTINATION = "JMSDestination";
+    String JMS_DESTINATION = "JMSDestination";
+
     /**
      * Set on the send or publish event
      */
-    public static final String JMS_EXPIRATION = "JMSExpiration";
+    String JMS_EXPIRATION = "JMSExpiration";
+
     /**
      * Set on the send or publish event
      */
-    public static final String JMS_MESSAGE_ID = "JMSMessageID";
+    String JMS_MESSAGE_ID = "JMSMessageID";
+
     /**
      * Set on the send or publish event
      */
-    public static final String JMS_PRIORITY = "JMSPriority";
+    String JMS_PRIORITY = "JMSPriority";
+
     /**
      * A redelivery flag set by the JMS provider
      */
-    public static final String JMS_REDELIVERED = "JMSRedelivered";
+    String JMS_REDELIVERED = "JMSRedelivered";
+
     /**
      * The JMS Reply To {@link javax.jms.Destination} set by the publishing Client
      */
-    public static final String JMS_REPLY_TO = "JMSReplyTo";
+    String JMS_REPLY_TO = "JMSReplyTo";
+
     /**
      * Set on the send or publish event
      */
-    public static final String JMS_TIMESTAMP = "JMSTimestamp";
+    String JMS_TIMESTAMP = "JMSTimestamp";
+
     /**
      * Set by the publishing Client
      */
-    public static final String JMS_TYPE = "JMSType";
+    String JMS_TYPE = "JMSType";
 
     /**
      * Custom headers
      */
-    public static final String JMSX_GROUP_ID = "JMSXGroupID";
-
+    String JMSX_GROUP_ID = "JMSXGroupID";
 
     /**
      * String representation of JMS delivery modes.
      */
-    public static final String JMS_DELIVERY_MODE_PERSISTENT = "PERSISTENT";
-    public static final String JMS_DELIVERY_MODE_NON_PERSISTENT = "NON_PERSISTENT";
+    String JMS_DELIVERY_MODE_PERSISTENT = "PERSISTENT";
+
+    String JMS_DELIVERY_MODE_NON_PERSISTENT = "NON_PERSISTENT";
 
 }

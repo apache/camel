@@ -18,6 +18,6 @@ package org.apache.camel.component.sjms;
 
 public interface SjmsConstants {
 
-    public static final String JMS_MESSAGE_TYPE = "JmsMessageType";
+    String JMS_MESSAGE_TYPE = "JmsMessageType";
 
 }

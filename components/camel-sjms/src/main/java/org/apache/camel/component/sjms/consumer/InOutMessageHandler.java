@@ -119,7 +119,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
 
     @Override
     public void close() {
-        for (final Map.Entry<String,MessageProducer> entry : producerCache.entrySet()) {
+        for (final Map.Entry<String, MessageProducer> entry : producerCache.entrySet()) {
             try {
                 entry.getValue().close();
             } catch (JMSException e) {

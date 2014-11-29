@@ -52,7 +52,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public class InOutProducer extends SjmsProducer {
 
-    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<>();
+    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<String, Exchanger<Object>>();
 
     /**
      * A pool of {@link MessageConsumerResources} objects that are the reply
@@ -198,7 +198,7 @@ public class InOutProducer extends SjmsProducer {
             correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);
         }
         Object responseObject = null;
-        Exchanger<Object> messageExchanger = new Exchanger<>();
+        Exchanger<Object> messageExchanger = new Exchanger<Object>();
         JmsMessageHelper.setCorrelationId(request, correlationId);
         EXCHANGERS.put(correlationId, messageExchanger);
 

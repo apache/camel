@@ -58,7 +58,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
     public void testJMSMessageHelperMap() throws Exception {
         getMockEndpoint(MOCK_RESULT_URI).expectedMessageCount(1);
 
-        Map<Object,Object> map = new HashMap<>();
+        Map<Object, Object> map = new HashMap<Object, Object>();
         map.put("Hello", "Camel");
         map.put("Int", Integer.MAX_VALUE);
         map.put("Boolean", Boolean.TRUE);
