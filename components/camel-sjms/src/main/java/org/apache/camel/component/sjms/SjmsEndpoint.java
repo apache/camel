@@ -121,7 +121,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     @Override
     public Producer createProducer() throws Exception {
-        SjmsProducer producer = null;
+        SjmsProducer producer;
         if (getExchangePattern().equals(ExchangePattern.InOnly)) {
             producer = new InOnlyProducer(this);
         } else {

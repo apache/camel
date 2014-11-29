@@ -25,8 +25,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
-import org.apache.camel.component.sjms.TransactionCommitStrategy;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
@@ -50,7 +49,6 @@ public abstract class AbstractMessageHandler implements MessageListener {
     private boolean synchronous = true;
     private Synchronization synchronization;
     private boolean topic;
-    private TransactionCommitStrategy commitStrategy;
 
     public AbstractMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {
         this.endpoint = endpoint;
@@ -72,7 +70,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
     public void onMessage(Message message) {
         RuntimeCamelException rce = null;
         try {
-            final DefaultExchange exchange = (DefaultExchange) SjmsExchangeMessageHelper.createExchange(message, getEndpoint());
+            final DefaultExchange exchange = (DefaultExchange) JmsMessageHelper.createExchange(message, getEndpoint());
 
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
 
@@ -92,9 +90,7 @@ public abstract class AbstractMessageHandler implements MessageListener {
                                 handleMessage(exchange);
                             } catch (Exception e) {
                                 exchange.setException(e);
-//                                ObjectHelper.wrapRuntimeCamelException(e);
                             }
-
                         }
                     });
                 }
@@ -168,9 +164,5 @@ public abstract class AbstractMessageHandler implements MessageListener {
 
     public boolean isTopic() {
         return topic;
-    }
-
-    public TransactionCommitStrategy getCommitStrategy() {
-        return commitStrategy;
     }
 }
