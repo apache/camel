@@ -51,6 +51,7 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
+import org.jboss.netty.util.ExternalResourceReleasable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +161,12 @@ public class NettyProducer extends DefaultAsyncProducer {
             bossPool = null;
         }
         if (workerPool != null) {
-            workerPool.shutdown();
+            if (workerPool instanceof ExternalResourceReleasable) {
+                // this will first invoke workerPool#shutdown() internally (e.g. org.jboss.netty.channel.socket.nio.AbstractNioWorkerPool)
+                ((ExternalResourceReleasable) workerPool).releaseExternalResources();
+            } else {
+                workerPool.shutdown();
+            }
             workerPool = null;
         }
 
@@ -173,12 +179,14 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
         
         if (channelFactory != null) {
-            channelFactory.shutdown();
+            // this will first invoke channelFactory#shutdown() internally (see it's javadoc)
+            channelFactory.releaseExternalResources();
             channelFactory = null;
         }
         
         if (datagramChannelFactory != null) {
-            datagramChannelFactory.shutdown();
+            // this will first invoke datagramChannelFactory#shutdown() internally (see it's javadoc)
+            datagramChannelFactory.releaseExternalResources();
             datagramChannelFactory = null;
         }
 
