@@ -1659,7 +1659,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.getId() != null && route.getId().equals(id)) {
+            if (route.idOrCreate(nodeIdFactory).equals(id)) {
                 return route;
             }
         }
