@@ -316,6 +316,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // must init route refs before we prepare the routes below
             initRouteRefs();
 
+            // must init rest refs before we add the rests
+            initRestRefs();
+
+            // and add the rests
+            getContext().addRestDefinitions(getRests());
+
+            // convert rests into routes so we reuse routes for runtime
+            for (RestDefinition rest : getRests()) {
+                List<RouteDefinition> routes = rest.asRouteDefinition(getContext());
+                for (RouteDefinition route : routes) {
+                    getRoutes().add(route);
+                }
+            }
+
+
             // do special preparation for some concepts such as interceptors and policies
             // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
             // using route builders. So we have here a little custom code to fix the JAXB gaps
@@ -328,12 +343,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
-
-            // must init rest refs before we add the rests
-            initRestRefs();
-
-            // and add the rests
-            getContext().addRestDefinitions(getRests());
 
             // and we are now finished setting up the routes
             getContext().setupRoutes(true);
