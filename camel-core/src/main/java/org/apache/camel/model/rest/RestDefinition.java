@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.rest;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -346,7 +348,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * Camel routing engine can add and run. This allows us to define REST services using this
      * REST DSL and turn those into regular Camel routes.
      */
-    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) throws Exception {
+    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
 
         for (VerbDefinition verb : getVerbs()) {
@@ -408,7 +410,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 options.put("outType", outType);
             }
             if (!options.isEmpty()) {
-                String query = URISupport.createQueryString(options);
+                String query;
+                try {
+                    query = URISupport.createQueryString(options);
+                } catch (URISyntaxException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
                 from = from + "?" + query;
             }
 
