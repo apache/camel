@@ -721,7 +721,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // can either be routes or a single route
-        RoutesDefinition answer = null;
+        RoutesDefinition answer;
         if (result instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) result;
             answer = new RoutesDefinition();
