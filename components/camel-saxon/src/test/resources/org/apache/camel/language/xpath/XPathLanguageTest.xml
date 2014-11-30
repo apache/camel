@@ -31,7 +31,7 @@
     <!-- ************************* -->
 
     <route>
-      <from uri="seda:testSaxonWithFlag"/>
+      <from uri="direct:testSaxonWithFlag"/>
       <setBody>
         <xpath saxon="true" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
@@ -40,7 +40,7 @@
     </route>
 
     <route>
-      <from uri="seda:testSaxonWithFactory"/>
+      <from uri="direct:testSaxonWithFactory"/>
       <setBody>
         <xpath factoryRef="saxonFactory" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
@@ -49,7 +49,7 @@
     </route>
 
     <route>
-      <from uri="seda:testSaxonWithObjectModel"/>
+      <from uri="direct:testSaxonWithObjectModel"/>
       <setBody>
         <xpath objectModel="http://saxon.sf.net/jaxp/xpath/om" resultType="java.lang.String">tokenize(a, '\|')</xpath>
       </setBody>
@@ -62,7 +62,7 @@
     <!-- ************************ -->
 
     <route>
-      <from uri="seda:testSaxonWithFlagPredicate"/>
+      <from uri="direct:testSaxonWithFlagPredicate"/>
       <filter>
         <xpath saxon="true" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
         <log message="Test Saxon with flag: ${body}"/>
@@ -71,7 +71,7 @@
     </route>
 
     <route>
-      <from uri="seda:testSaxonWithFactoryPredicate"/>
+      <from uri="direct:testSaxonWithFactoryPredicate"/>
       <filter>
         <xpath factoryRef="saxonFactory" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
         <log message="Test Saxon with factory: ${body}"/>
@@ -80,7 +80,7 @@
     </route>
 
     <route>
-      <from uri="seda:testSaxonWithObjectModelPredicate"/>
+      <from uri="direct:testSaxonWithObjectModelPredicate"/>
       <filter>
         <xpath objectModel="http://saxon.sf.net/jaxp/xpath/om" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
         <log message="Test Saxon with object model: ${body}"/>
