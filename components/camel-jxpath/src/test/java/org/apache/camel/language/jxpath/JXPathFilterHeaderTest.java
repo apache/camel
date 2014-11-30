@@ -48,7 +48,7 @@ public class JXPathFilterHeaderTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start").
-                        filter().jxpath("headers/fooBarBaz='Carlsberg'").
+                        filter().jxpath("in/headers/fooBarBaz='Carlsberg'").
                         to("mock:result");
                 // END SNIPPET: example
             }
