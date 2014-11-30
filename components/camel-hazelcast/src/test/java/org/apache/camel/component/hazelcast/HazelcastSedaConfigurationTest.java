@@ -41,7 +41,7 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
 
         assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
         assertEquals("Default value of concurrent consumers is invalid", 1, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
-        assertEquals("Default value of pool interval is invalid", 1000, hzlqEndpoint.getConfiguration().getPollInterval());
+        assertEquals("Default value of pool timeout is invalid", 1000, hzlqEndpoint.getConfiguration().getPollTimeout());
     }
 
     @Test
@@ -50,16 +50,16 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
 
         assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
         assertEquals("Value of concurrent consumers is invalid", 4, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
-        assertEquals("Default value of pool interval is invalid", 1000, hzlqEndpoint.getConfiguration().getPollInterval());
+        assertEquals("Default value of pool timeout is invalid", 1000, hzlqEndpoint.getConfiguration().getPollTimeout());
     }
 
     @Test
     public void createEndpointWithPoolIntevalParam() throws Exception {
-        HazelcastSedaEndpoint hzlqEndpoint = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast:seda:foo?pollInterval=4000");
+        HazelcastSedaEndpoint hzlqEndpoint = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast:seda:foo?pollTimeout=4000");
 
         assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
         assertEquals("Default value of concurrent consumers is invalid", 1, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
-        assertEquals("Invalid pool interval", 4000, hzlqEndpoint.getConfiguration().getPollInterval());
+        assertEquals("Invalid pool timeout", 4000, hzlqEndpoint.getConfiguration().getPollTimeout());
     }
 
 }
