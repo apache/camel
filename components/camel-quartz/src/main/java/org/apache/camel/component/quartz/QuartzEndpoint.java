@@ -188,9 +188,6 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     }
 
     public LoadBalancer getLoadBalancer() {
-        if (loadBalancer == null) {
-            loadBalancer = createLoadBalancer();
-        }
         return loadBalancer;
     }
 
@@ -295,6 +292,11 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getComponent(), "QuartzComponent", this);
+
+        if (loadBalancer == null) {
+            loadBalancer = createLoadBalancer();
+        }
+
         ServiceHelper.startService(loadBalancer);
 
         if (isDeleteJob() && isPauseJob()) {
