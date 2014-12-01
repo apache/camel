@@ -213,7 +213,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertTrue("Result is not of type DBObject", result instanceof DBObject);
         assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
     }
-    
+
+    @Test
+    public void testCommand() throws Exception {
+        //Call hostInfo, command working with every configuration
+        Object result = template
+                .requestBody("direct:command",
+                        "{\"hostInfo\":\"1\"}");
+        assertTrue("Result is not of type DBObject", result instanceof DBObject);
+        assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
+    }
+
     @Test
     public void testOperationHeader() throws Exception {
         // Test that the collection has 0 documents in it
@@ -247,9 +257,9 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");
                 from("direct:remove").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove&writeConcern=SAFE");
                 from("direct:aggregate").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&writeConcern=SAFE");
-                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats");
+                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&operation=getDbStats");
                 from("direct:getColStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
-
+                from("direct:command").to("mongodb:myDb?database={{mongodb.testDb}}&operation=command");
 
             }
         };
