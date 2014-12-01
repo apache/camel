@@ -104,12 +104,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel component json descriptors");
 
-        Set<File> jsonFiles = new LinkedHashSet<File>();
-        Set<File> duplicateJsonFiles = new LinkedHashSet<File>();
-        Set<File> componentFiles = new LinkedHashSet<File>();
-        Set<File> missingComponents = new LinkedHashSet<File>();
-        Set<File> missingLabels = new LinkedHashSet<File>();
-        Set<File> missingUriPaths = new LinkedHashSet<File>();
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> duplicateJsonFiles = new TreeSet<File>();
+        Set<File> componentFiles = new TreeSet<File>();
+        Set<File> missingComponents = new TreeSet<File>();
+        Set<File> missingLabels = new TreeSet<File>();
+        Set<File> missingUriPaths = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
 
         // find all json files in components and camel-core
@@ -240,22 +241,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         for (File file : json) {
             getLog().info("\t\t" + asComponentName(file));
         }
-        getLog().info("");
         if (!duplicate.isEmpty()) {
+            getLog().info("");
             getLog().warn("\tDuplicate components detected: " + duplicate.size());
             for (File file : duplicate) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        getLog().info("");
         if (!missingLabels.isEmpty()) {
+            getLog().info("");
             getLog().warn("\tMissing labels detected: " + missingLabels.size());
             for (File file : missingLabels) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        getLog().info("");
         if (!usedLabels.isEmpty()) {
+            getLog().info("");
             getLog().info("\tUsed labels: " + usedLabels.size());
             for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
                 getLog().info("\t\t" + entry.getKey() + ":");
@@ -264,15 +265,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
         }
-        getLog().info("");
         if (!missingUriPaths.isEmpty()) {
+            getLog().info("");
             getLog().warn("\tMissing @UriPath detected: " + missingUriPaths.size());
             for (File file : missingUriPaths) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        getLog().info("");
         if (!missing.isEmpty()) {
+            getLog().info("");
             getLog().warn("\tMissing components detected: " + missing.size());
             for (File name : missing) {
                 getLog().warn("\t\t" + name.getName());

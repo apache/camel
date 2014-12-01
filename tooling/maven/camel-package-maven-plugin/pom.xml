@@ -27,7 +27,7 @@
 
   <artifactId>camel-package-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Camel :: Maven Plugins :: Camel Package</name>
+  <name>Camel :: Maven Plugins :: Camel Maven Package</name>
   <description>Maven plugin to help package Camel components and plugins</description>
 
   <dependencies>
