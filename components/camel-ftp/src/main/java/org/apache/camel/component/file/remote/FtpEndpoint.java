@@ -152,7 +152,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (configuration == null) {
             throw new IllegalArgumentException("FtpConfiguration expected");
         }
+        // need to set on both
         this.configuration = (FtpConfiguration) configuration;
+        super.setConfiguration(configuration);
     }
 
     public FTPClient getFtpClient() {

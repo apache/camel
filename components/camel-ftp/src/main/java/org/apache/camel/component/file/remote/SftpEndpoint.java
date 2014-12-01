@@ -53,7 +53,9 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
         if (configuration == null) {
             throw new IllegalArgumentException("SftpConfiguration expected");
         }
+        // need to set on both
         this.configuration = (SftpConfiguration) configuration;
+        super.setConfiguration(configuration);
     }
 
     @Override
