@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioServerBossPool;
-import org.jboss.netty.util.ThreadNameDeterminer;
+
 
 /**
  * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boss pools

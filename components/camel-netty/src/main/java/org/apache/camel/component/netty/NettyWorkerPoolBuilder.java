@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.NioWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.util.ThreadNameDeterminer;
 
 /**
  * A builder to create Netty {@link WorkerPool} which can be used for sharing worker pools
