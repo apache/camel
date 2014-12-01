@@ -1168,8 +1168,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
+     * <p/>
+     * <b>Important:</b> If you want to end the entire choice block, then use {@link #end()} instead.
+     * The purpose of {@link #endChoice()} is to return <i>control</i> back to the {@link ChoiceDefinition choice()} DSL,
+     * so you can add subsequent <tt>when</tt> and <tt>otherwise</tt> to the choice. There can be situations where
+     * you would need to use {@link #endChoice()} often when you add additional EIPs inside the <tt>when</tt>'s, and
+     * the DSL <t>looses</t> scope when using a regular {@link #end()}, and you would need to use this {@link #endChoice()}
+     * to return back the scope to the {@link ChoiceDefinition choice()} DSL.
+     * <p/>
+     * For more details and examples see also this FAQ:
+     * <a href="http://camel.apache.org/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html">Why can I not use when or otherwise in a Java Camel route </a>.
      *
-     * @return the builder
+     * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
         // are we nested choice?
