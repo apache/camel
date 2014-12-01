@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.concurrent.Executor;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioClientBossPool;
-import org.jboss.netty.util.ThreadNameDeterminer;
+import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
+import org.jboss.netty.util.TimerTask;
 
 /**
  * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boss pools
@@ -34,6 +37,7 @@ public final class NettyClientBossPoolBuilder {
     private String pattern;
     private int bossCount = 1;
     private Timer timer;
+    private boolean stopTimer;
 
     public void setName(String name) {
         this.name = name;
@@ -70,11 +74,43 @@ public final class NettyClientBossPoolBuilder {
         setTimer(timer);
         return this;
     }
-
+    
+    public NettyClientBossPoolBuilder stopTimer() {
+        stopTimer = true;
+        return this;
+    }
+ 
     /**
      * Creates a new boss pool.
      */
     BossPool build() {
-        return new NioClientBossPool(Executors.newCachedThreadPool(), bossCount, timer, new CamelNettyThreadNameDeterminer(pattern, name));
+        Timer internalTimer = timer;
+        if (!stopTimer) {
+            internalTimer = new UnstoppableTimer(timer); 
+        } 
+        return new NioClientBossPool(Executors.newCachedThreadPool(), bossCount, internalTimer, new CamelNettyThreadNameDeterminer(pattern, name));
     }
+    
+    // Here we don't close the timer, as the timer is passed from out side
+    class UnstoppableTimer implements Timer {
+        Timer delegateTimer;
+        UnstoppableTimer(Timer timer) {
+            delegateTimer = timer;
+        }
+       
+        public Timeout newTimeout(TimerTask task, long delay, TimeUnit unit) {
+            return delegateTimer.newTimeout(task, delay, unit);
+        }
+        
+        
+        @SuppressWarnings("unchecked")
+        public Set<Timeout> stop() {
+            // do nothing here;
+            return Collections.EMPTY_SET;
+        }
+        
+        
+        
+    }
+    
 }
