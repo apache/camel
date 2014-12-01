@@ -140,8 +140,10 @@ public class KafkaConsumer extends DefaultConsumer {
                         processed = 0;
                     } catch (InterruptedException e) {
                         LOG.error(e.getMessage(), e);
+                        break;
                     } catch (BrokenBarrierException e) {
                         LOG.error(e.getMessage(), e);
+                        break;
                     } catch (TimeoutException e) {
                         LOG.error(e.getMessage(), e);
                     }
