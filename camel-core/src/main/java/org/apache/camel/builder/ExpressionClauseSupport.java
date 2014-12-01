@@ -114,7 +114,8 @@ public class ExpressionClauseSupport<T> {
      * An expression of an inbound message body
      */
     public T body() {
-        return expression(ExpressionBuilder.bodyExpression());
+        // reuse simple as this allows the model to represent this as a known JAXB type
+        return expression(new SimpleExpression("body"));
     }
 
     /**
