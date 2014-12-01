@@ -60,6 +60,7 @@
           <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
           <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
           <xsd:attribute name="continuationTimeout" type="xsd:long" />
+          <xsd:attribute name="publishedEndpointUrl" type="xsd:string" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
