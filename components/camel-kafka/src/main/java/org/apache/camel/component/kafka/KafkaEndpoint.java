@@ -170,6 +170,14 @@ public class KafkaEndpoint extends DefaultEndpoint {
         this.configuration.setBatchSize(batchSize);
     }
 
+    public int getBarrierAwaitTimeoutMs() {
+        return configuration.getBarrierAwaitTimeoutMs();
+    }
+
+    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
+        this.configuration.setBarrierAwaitTimeoutMs(barrierAwaitTimeoutMs);
+    }
+
     public int getConsumersCount() {
         return this.configuration.getConsumersCount();
     }
