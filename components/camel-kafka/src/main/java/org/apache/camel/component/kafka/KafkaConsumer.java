@@ -17,7 +17,6 @@
 package org.apache.camel.component.kafka;
 
 import kafka.consumer.ConsumerConfig;
-import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
@@ -123,10 +122,8 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         public void run() {
-            ConsumerIterator<byte[], byte[]> it = stream.iterator();
             int processed = 0;
-            while (it.hasNext()) {
-                MessageAndMetadata<byte[], byte[]> mm = it.next();
+            for (MessageAndMetadata<byte[], byte[]> mm : stream) {
                 Exchange exchange = endpoint.createKafkaExchange(mm);
                 try {
                     processor.process(exchange);
@@ -136,7 +133,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 processed++;
                 if (processed >= endpoint.getBatchSize()) {
                     try {
-                        berrier.await(10, TimeUnit.SECONDS);
+                        berrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
                         processed = 0;
                     } catch (InterruptedException e) {
                         LOG.error(e.getMessage(), e);
@@ -175,9 +172,7 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         public void run() {
-            ConsumerIterator<byte[], byte[]> it = stream.iterator();
-            while (it.hasNext()) {
-                MessageAndMetadata<byte[], byte[]> mm = it.next();
+            for (MessageAndMetadata<byte[], byte[]> mm : stream) {
                 Exchange exchange = endpoint.createKafkaExchange(mm);
                 try {
                     processor.process(exchange);

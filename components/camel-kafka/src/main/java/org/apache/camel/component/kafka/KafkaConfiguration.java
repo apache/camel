@@ -30,6 +30,7 @@ public class KafkaConfiguration {
     private int consumerStreams = 10;
     private int consumersCount = 1;
     private int batchSize = 100;
+    private int barrierAwaitTimeoutMs = 10000;
 
     //Common configuration properties
     private String clientId;
@@ -205,6 +206,14 @@ public class KafkaConfiguration {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public int getBarrierAwaitTimeoutMs() {
+        return barrierAwaitTimeoutMs;
+    }
+
+    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
+        this.barrierAwaitTimeoutMs = barrierAwaitTimeoutMs;
     }
 
     public int getConsumersCount() {
