@@ -1134,8 +1134,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // must do this ugly cast to avoid compiler error on AIX/HP-UX
         ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
         
-        // when using doTry .. doCatch .. doFinally we should always
-        // end the try definition to avoid having to use 2 x end() in the route
+        // when using choice .. when .. otherwise - doTry .. doCatch .. doFinally we should always
+        // end the choice/try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
         // TODO (camel-3.0): this should be done inside of TryDefinition or even better
         //  in Block(s) in general, but the api needs to be revisited for that.
