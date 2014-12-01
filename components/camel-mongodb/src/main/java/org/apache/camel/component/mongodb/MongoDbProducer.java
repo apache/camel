@@ -129,13 +129,28 @@ public class MongoDbProducer extends DefaultProducer {
         case getColStats:
             doGetStats(exchange, MongoDbOperation.getColStats);
             break;
-
+        case command:
+            doCommand(exchange);
+            break;
         default:
             throw new CamelMongoDbException("Operation not supported. Value: " + operation);
         }
     }
 
     // ----------- MongoDB operations ----------------
+
+    protected void doCommand(Exchange exchange) throws Exception {
+        DBObject result = null;
+        DB db = calculateDb(exchange);
+        DBObject cmdObj = exchange.getIn().getMandatoryBody(DBObject.class);
+
+        //TODO Manage the read preference
+        result = db.command(cmdObj);
+
+
+        Message responseMessage = prepareResponseMessage(exchange, MongoDbOperation.command);
+        responseMessage.setBody(result);
+    }
 
     protected void doGetStats(Exchange exchange, MongoDbOperation operation) throws Exception {
         DBObject result = null;
@@ -144,7 +159,7 @@ public class MongoDbProducer extends DefaultProducer {
             result = calculateCollection(exchange).getStats();
         } else if (operation == MongoDbOperation.getDbStats) {
             // if it's a DB, also take into account the dynamicity option and the DB that is used
-            result = calculateCollection(exchange).getDB().getStats();
+            result = calculateDb(exchange).getStats();
         } else {
             throw new CamelMongoDbException("Internal error: wrong operation for getStats variant" + operation);
         }
@@ -389,7 +404,28 @@ public class MongoDbProducer extends DefaultProducer {
         resultMessage.setBody(dbIterator);
     }
     // --------- Convenience methods -----------------------
-    
+    private DB calculateDb(Exchange exchange) throws Exception {
+        // dynamic calculation is an option. In most cases it won't be used and we should not penalise all users with running this
+        // resolution logic on every Exchange if they won't be using this functionality at all
+        if (!endpoint.isDynamicity()) {
+            return endpoint.getDb();
+        }
+
+        String dynamicDB = exchange.getIn().getHeader(MongoDbConstants.DATABASE, String.class);
+        DB db = null;
+
+        if (dynamicDB == null) {
+            db = endpoint.getDb();
+        } else {
+            db = endpoint.getMongoConnection().getDB(dynamicDB);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Dynamic database selected: {}", db.getName());
+        }
+        return db;
+    }
+
     private DBCollection calculateCollection(Exchange exchange) throws Exception {
         // dynamic calculation is an option. In most cases it won't be used and we should not penalise all users with running this
         // resolution logic on every Exchange if they won't be using this functionality at all
@@ -408,13 +444,7 @@ public class MongoDbProducer extends DefaultProducer {
         if (dynamicDB == null && dynamicCollection == null) {
             dbCol = endpoint.getDbCollection();
         } else {
-            DB db = null;
-
-            if (dynamicDB == null) {
-                db = endpoint.getDb();
-            } else {
-                db = endpoint.getMongoConnection().getDB(dynamicDB);
-            }
+            DB db = calculateDb(exchange);
 
             if (dynamicCollection == null) {
                 dbCol = db.getCollection(endpoint.getCollection());
