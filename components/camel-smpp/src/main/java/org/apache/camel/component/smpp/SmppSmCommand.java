@@ -104,7 +104,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         Alphabet alphabetObj;
         if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
             alphabetObj = Alphabet.ALPHA_UCS2;
-            if(isLatin1Compatible(charset)) {
+            if (isLatin1Compatible(charset)) {
                 byte[] messageBytes = body.getBytes(charset);
                 if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
                     alphabetObj = Alphabet.ALPHA_DEFAULT;
@@ -118,7 +118,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     }
 
     private boolean isLatin1Compatible(Charset c) {
-        if(c.equals(ascii) || c.equals(latin1)) {
+        if (c.equals(ascii) || c.equals(latin1)) {
             return true;
         }
         return false;
