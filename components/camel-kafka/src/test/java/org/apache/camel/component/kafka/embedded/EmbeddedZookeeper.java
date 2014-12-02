@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.kafka.embedded;
 
-import org.apache.zookeeper.server.NIOServerCnxnFactory;
-import org.apache.zookeeper.server.ServerCnxnFactory;
-import org.apache.zookeeper.server.ZooKeeperServer;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+
+import org.apache.zookeeper.server.NIOServerCnxnFactory;
+import org.apache.zookeeper.server.ServerCnxnFactory;
+import org.apache.zookeeper.server.ZooKeeperServer;
 
 public class EmbeddedZookeeper {
     private int port = -1;
@@ -53,7 +53,7 @@ public class EmbeddedZookeeper {
         return port;
     }
 
-    public void startup() throws IOException{
+    public void startup() throws IOException {
         if (this.port == -1) {
             this.port = TestUtils.getAvailablePort();
         }

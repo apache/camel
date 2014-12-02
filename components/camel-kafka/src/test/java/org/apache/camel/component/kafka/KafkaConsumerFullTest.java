@@ -35,8 +35,8 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181" +
-            "&groupId=group1&autoOffsetReset=smallest")
+    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181"
+        + "&groupId=group1&autoOffsetReset=smallest")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")

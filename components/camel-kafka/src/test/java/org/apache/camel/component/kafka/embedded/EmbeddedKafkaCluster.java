@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.kafka.embedded;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+
 import kafka.admin.AdminUtils;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import org.I0Itec.zkclient.ZkClient;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
 
 public class EmbeddedKafkaCluster {
     private final List<Integer> ports;
@@ -53,15 +56,15 @@ public class EmbeddedKafkaCluster {
         this.brokerList = constructBrokerList(this.ports);
     }
 
-    public ZkClient getZkClient(){
-        for(KafkaServer server : brokers){
+    public ZkClient getZkClient() {
+        for (KafkaServer server : brokers) {
             return server.zkClient();
         }
         return null;
     }
 
-    public void createTopics(String...topics){
-        for(String topic : topics){
+    public void createTopics(String...topics) {
+        for (String topic : topics) {
             AdminUtils.createTopic(getZkClient(), topic, 2, 1, new Properties());
         }
     }

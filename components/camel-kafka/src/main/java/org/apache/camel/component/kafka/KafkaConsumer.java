@@ -16,6 +16,16 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
@@ -25,12 +35,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.*;
 
 /**
  *
@@ -82,7 +86,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     executor.submit(new BatchingConsumerTask(stream, barrier));
                 }
                 consumerBarriers.put(consumer, barrier);
-            } else{
+            } else {
                 for (final KafkaStream<byte[], byte[]> stream : streams) {
                     executor.submit(new AutoCommitConsumerTask(stream));
                 }

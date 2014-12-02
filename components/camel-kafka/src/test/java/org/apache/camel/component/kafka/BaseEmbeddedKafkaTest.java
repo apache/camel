@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.camel.component.kafka.embedded.EmbeddedKafkaCluster;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
@@ -33,7 +33,7 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
     static EmbeddedKafkaCluster embeddedKafkaCluster;
 
     @BeforeClass
-    public static void beforeClass(){
+    public static void beforeClass() {
         embeddedZookeeper = new EmbeddedZookeeper(2181);
         List<Integer> kafkaPorts = new ArrayList<Integer>();
         // -1 for any available port
@@ -50,7 +50,7 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
     }
 
     @AfterClass
-    public static void afterClass(){
+    public static void afterClass() {
         embeddedKafkaCluster.shutdown();
         embeddedZookeeper.shutdown();
     }

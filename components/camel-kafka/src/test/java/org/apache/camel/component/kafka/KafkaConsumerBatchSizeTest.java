@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Properties;
+
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
@@ -27,15 +29,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Properties;
-
 public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181&" +
-            "groupId=group1&autoOffsetReset=smallest&" +
-            "autoCommitEnable=false&batchSize=3&consumerStreams=1")
+    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181&"
+        + "groupId=group1&autoOffsetReset=smallest&"
+        + "autoCommitEnable=false&batchSize=3&consumerStreams=1")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -91,7 +91,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
 
         //Second route must wake up and consume all from scratch and commit 9 consumed
-        for (int k = 3; k <=10; k++) {
+        for (int k = 3; k <= 10; k++) {
             String msg = "m" + k;
             KeyedMessage<String, String> data = new KeyedMessage<String, String>(TOPIC, "1", msg);
             producer.send(data);
