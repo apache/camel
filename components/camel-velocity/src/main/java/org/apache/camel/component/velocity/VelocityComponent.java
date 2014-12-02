@@ -28,6 +28,10 @@ import org.apache.velocity.app.VelocityEngine;
  */
 public class VelocityComponent extends UriEndpointComponent {
     private VelocityEngine velocityEngine;
+    
+    public VelocityComponent() {
+        super(VelocityEndpoint.class);
+    }
 
     public VelocityEngine getVelocityEngine() {
         return velocityEngine;
@@ -35,10 +39,6 @@ public class VelocityComponent extends UriEndpointComponent {
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
-    }
-
-    public VelocityComponent() {
-        super(VelocityEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
