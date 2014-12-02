@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -38,6 +37,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -534,6 +534,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             
             pc.setPrefixToken(def.getPrefixToken());
             pc.setSuffixToken(def.getSuffixToken());
+
+            if (def.getFunctions() != null && !def.getFunctions().isEmpty()) {
+                for (CamelPropertyPlaceholderFunctionDefinition function : def.getFunctions()) {
+                    String ref = function.getRef();
+                    PropertiesFunction pf = CamelContextHelper.mandatoryLookup(getContext(), ref, PropertiesFunction.class);
+                    pc.addFunction(pf);
+                }
+            }
 
             // register the properties component
             getContext().addComponent("properties", pc);

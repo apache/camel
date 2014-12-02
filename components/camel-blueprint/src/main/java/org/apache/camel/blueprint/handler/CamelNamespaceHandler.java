@@ -33,6 +33,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1041,6 +1042,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         private void findUriComponent(String uri, Set<String> components) {
+            // if the uri is a placeholder then skip it
+            if (uri != null && uri.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+                return;
+            }
+
             if (uri != null) {
                 String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
                 if (splitURI[1] != null) {

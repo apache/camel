@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.properties;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class PropertiesComponentFunctionTest extends ContextTestSupport {
+public class SpringPropertiesComponentFunctionTest extends SpringTestSupport {
 
     public static final class MyFunction implements PropertiesFunction {
 
@@ -35,24 +37,12 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentFunctionTest.xml");
     }
 
+    @Test
     public void testFunction() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.addFunction(new MyFunction());
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to("{{beer:FOO}}")
-                        .to("{{beer:BAR}}");
-            }
-        });
-        context.start();
-
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 
