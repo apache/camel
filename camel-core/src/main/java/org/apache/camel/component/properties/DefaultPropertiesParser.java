@@ -22,6 +22,7 @@ import java.util.Set;
 
 import static java.lang.String.format;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    private static final String GET_OR_ELSE_TOKEN = ":";
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
@@ -189,6 +192,13 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Value of the property with the given key
          */
         private String getPropertyValue(String key, String input) {
+            // they key may have a get or else expression
+            String defaultValue = null;
+            if (key.contains(GET_OR_ELSE_TOKEN)) {
+                defaultValue = ObjectHelper.after(key, GET_OR_ELSE_TOKEN);
+                key = ObjectHelper.before(key, GET_OR_ELSE_TOKEN);
+            }
+
             String augmentedKey = getAugmentedKey(key);
             boolean shouldFallback = fallbackToUnaugmentedProperty && !key.equals(augmentedKey);
 
@@ -196,6 +206,11 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             if (value == null && shouldFallback) {
                 log.debug("Property with key [{}] not found, attempting with unaugmented key: {}", augmentedKey, key);
                 value = doGetPropertyValue(key);
+            }
+
+            if (value == null && defaultValue != null) {
+                log.debug("Property with key [{}] not found, using default value: {}", augmentedKey, defaultValue);
+                value = defaultValue;
             }
 
             if (value == null) {
