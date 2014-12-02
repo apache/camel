@@ -92,7 +92,7 @@ public final class NettyClientBossPoolBuilder {
     }
     
     // Here we don't close the timer, as the timer is passed from out side
-    class UnstoppableTimer implements Timer {
+    private static class UnstoppableTimer implements Timer {
         Timer delegateTimer;
         UnstoppableTimer(Timer timer) {
             delegateTimer = timer;
