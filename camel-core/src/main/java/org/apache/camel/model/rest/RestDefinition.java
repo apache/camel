@@ -103,9 +103,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
+   
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
 
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+    
     // Fluent API
     //-------------------------------------------------------------------------
+
 
     /**
      * To set the base path of this REST service
