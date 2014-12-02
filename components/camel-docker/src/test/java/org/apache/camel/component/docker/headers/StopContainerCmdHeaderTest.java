@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.StopContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -48,13 +49,13 @@ public class StopContainerCmdHeaderTest extends BaseDockerHeaderTest<StopContain
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).stopContainerCmd(containerId);
-        Mockito.verify(mockObject, Mockito.times(1)).withTimeout(Mockito.eq(timeout));
+        Mockito.verify(mockObject, Mockito.times(1)).withTimeout(Matchers.eq(timeout));
         
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.stopContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.stopContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

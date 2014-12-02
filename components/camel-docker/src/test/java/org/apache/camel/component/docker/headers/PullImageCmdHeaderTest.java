@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.PullImageCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -50,14 +51,14 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).pullImageCmd(repository);
-        Mockito.verify(mockObject, Mockito.times(1)).withTag(Mockito.eq(tag));
-        Mockito.verify(mockObject, Mockito.times(1)).withRegistry(Mockito.eq(registry));
+        Mockito.verify(mockObject, Mockito.times(1)).withTag(Matchers.eq(tag));
+        Mockito.verify(mockObject, Mockito.times(1)).withRegistry(Matchers.eq(registry));
         
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.pullImageCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.pullImageCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

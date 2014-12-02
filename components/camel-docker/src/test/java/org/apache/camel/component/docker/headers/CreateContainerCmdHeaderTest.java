@@ -24,6 +24,7 @@ import com.github.dockerjava.api.model.ExposedPort;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -51,13 +52,13 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         template.sendBodyAndHeaders("direct:in", "", headers);
         
         Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(imageId);
-        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Mockito.any(ExposedPort.class));
+        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Matchers.any(ExposedPort.class));
         
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.createContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.createContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

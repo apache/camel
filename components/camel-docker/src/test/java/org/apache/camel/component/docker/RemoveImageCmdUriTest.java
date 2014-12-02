@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.RemoveImageCmd;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.headers.BaseDockerHeaderTest;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -65,7 +66,7 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.removeImageCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.removeImageCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override
