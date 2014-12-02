@@ -71,7 +71,7 @@ public class PropertiesComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
-    private PropertiesParser propertiesParser = new DefaultPropertiesParser();
+    private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private String[] locations;
     private boolean ignoreMissingLocation;
     private boolean cache = true;
@@ -171,6 +171,13 @@ public class PropertiesComponent extends DefaultComponent {
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
+    }
+
+    /**
+     * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
+     */
+    public boolean isDefaultCreated() {
+        return locations == null;
     }
 
     public String[] getLocations() {
