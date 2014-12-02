@@ -68,18 +68,18 @@
         <version>${google-api-services-mail-version}</version>
     </dependency>
 
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${javax-mail-version}</version>
-            <exclusions>
-              <!-- javax activation is part of the JDK now -->
-              <exclusion>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-              </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>${javax-mail-version}</version>
+        <exclusions>
+          <!-- javax activation is part of the JDK now -->
+          <exclusion>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+          </exclusion>
+        </exclusions>
+    </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
     <dependency>
