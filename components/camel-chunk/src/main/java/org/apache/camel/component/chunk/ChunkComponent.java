@@ -19,39 +19,17 @@ package org.apache.camel.component.chunk;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Represents the component that manages {@link ChunksEndpoint}.
- *
- * @version 
- */
-public class ChunkComponent extends DefaultComponent {
+public class ChunkComponent extends UriEndpointComponent {
+
+    public ChunkComponent() {
+        super(ChunkEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ChunkEndpoint endpoint = new ChunkEndpoint(uri, this, remaining);
-        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        if (ObjectHelper.isNotEmpty(encoding)) {
-            endpoint.setEncoding(encoding);
-        }
-        String themesFolder = getAndRemoveParameter(parameters, "themesFolder", String.class);
-        if (ObjectHelper.isNotEmpty(themesFolder)) {
-            endpoint.setThemeFolder(themesFolder);
-        }
-        String themeSubfolder = getAndRemoveParameter(parameters, "themeSubfolder", String.class);
-        if (ObjectHelper.isNotEmpty(themeSubfolder)) {
-            endpoint.setThemeSubfolder(themeSubfolder);
-        }
-        String themeLayer = getAndRemoveParameter(parameters, "themeLayer", String.class);
-        if (ObjectHelper.isNotEmpty(themeLayer)) {
-            endpoint.setThemeLayer(themeLayer);
-        }
-        String extension = getAndRemoveParameter(parameters, "extension", String.class);
-        if (ObjectHelper.isNotEmpty(extension)) {
-            endpoint.setExtension(extension);
-        }
         setProperties(endpoint, parameters);
         return endpoint;
     }

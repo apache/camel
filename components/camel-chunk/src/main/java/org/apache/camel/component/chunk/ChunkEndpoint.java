@@ -41,10 +41,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_LAYER_SEPARA
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI;
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
-/**
- * Represents a Camel Chunk endpoint
- */
-@UriEndpoint(scheme = "chunk", label = "templating")
+@UriEndpoint(scheme = "chunk", label = "transformation")
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
@@ -135,7 +132,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
      * Create a Chunk template
      *
      * @param resourceReader Reader used to get template
-     * @param Theme The theme
+     * @param theme The theme
      * @return Chunk
      */
     private Chunk createChunk(Reader resourceReader, Theme theme, boolean fromTemplate) throws IOException {
@@ -145,7 +142,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
-            Chunk newChunk = null;
+            Chunk newChunk;
             if (fromTemplate) {
                 newChunk = theme.makeChunk();
                 String targetString = IOUtils.toString(resourceReader);
