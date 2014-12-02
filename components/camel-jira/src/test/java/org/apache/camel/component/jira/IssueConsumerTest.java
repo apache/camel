@@ -77,7 +77,7 @@ public class IssueConsumerTest extends CamelTestSupport {
     public void singleIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
-        MockJiraRestClient client = (MockJiraRestClient) factory.getClient();
+        MockJiraRestClient client = factory.getClient();
         MockSearchRestClient restClient = (MockSearchRestClient) client.getSearchClient();
         BasicIssue issue1 = restClient.addIssue();
 
@@ -90,7 +90,7 @@ public class IssueConsumerTest extends CamelTestSupport {
     public void multipleIssuesTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
-        MockJiraRestClient client = (MockJiraRestClient) factory.getClient();
+        MockJiraRestClient client = factory.getClient();
         MockSearchRestClient restClient = (MockSearchRestClient) client.getSearchClient();
         BasicIssue issue1 = restClient.addIssue();
         BasicIssue issue2 = restClient.addIssue();

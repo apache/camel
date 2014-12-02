@@ -28,7 +28,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
 
 public class JettyHttpsProducerSslContextInUriTest extends JettyProducerHttpsRouteTest {
 

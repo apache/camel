@@ -57,7 +57,7 @@ public class EmbeddedZookeeper {
         if (this.port == -1) {
             this.port = TestUtils.getAvailablePort();
         }
-        this.factory = NIOServerCnxnFactory.createFactory(new InetSocketAddress("localhost", port), 1024);
+        this.factory = ServerCnxnFactory.createFactory(new InetSocketAddress("localhost", port), 1024);
         this.snapshotDir = TestUtils.constructTempDir("embeeded-zk/snapshot");
         this.logDir = TestUtils.constructTempDir("embeeded-zk/log");
 

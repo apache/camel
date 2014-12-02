@@ -74,7 +74,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     
     @Override
     protected void afterConfigureProperties() {
-        switch ((GoogleDriveApiName)apiName) {
+        switch (apiName) {
         case DRIVE_FILES:
             apiProxy = getClient().files();
             break;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

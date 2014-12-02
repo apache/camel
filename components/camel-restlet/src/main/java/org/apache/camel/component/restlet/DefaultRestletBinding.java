@@ -52,7 +52,6 @@ import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Status;
 import org.restlet.engine.application.DecodeRepresentation;
-import org.restlet.engine.application.EncodeRepresentation;
 import org.restlet.engine.header.Header;
 import org.restlet.engine.header.HeaderConstants;
 import org.restlet.representation.FileRepresentation;

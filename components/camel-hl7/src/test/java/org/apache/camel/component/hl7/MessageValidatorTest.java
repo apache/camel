@@ -29,7 +29,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.component.hl7.HL7.messageConforms;
@@ -50,6 +49,8 @@ public class MessageValidatorTest extends CamelTestSupport {
         defaultContext.getParserConfiguration().setValidating(false);
 
         ValidationRuleBuilder builder = new ValidationRuleBuilder() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected void configure() {
                 forVersion(Version.V24)

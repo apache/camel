@@ -79,7 +79,7 @@ public class CommentConsumerTest extends CamelTestSupport {
     public void singleIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
-        MockJiraRestClient jiraRestClient = (MockJiraRestClient) factory.getClient();
+        MockJiraRestClient jiraRestClient = factory.getClient();
         MockSearchRestClient searchRestClient = (MockSearchRestClient) jiraRestClient.getSearchClient();
         BasicIssue issue1 = searchRestClient.addIssue();
         String commentText = "Comment added at " + new Date();
@@ -94,7 +94,7 @@ public class CommentConsumerTest extends CamelTestSupport {
     public void multiIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
-        MockJiraRestClient jiraRestClient = (MockJiraRestClient) factory.getClient();
+        MockJiraRestClient jiraRestClient = factory.getClient();
         MockSearchRestClient searchRestClient = (MockSearchRestClient) jiraRestClient.getSearchClient();
         BasicIssue issue1 = searchRestClient.addIssue();
         Comment comment1 = searchRestClient.addCommentToIssue(issue1, "Comment added at " + new Date());

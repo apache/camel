@@ -36,7 +36,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
