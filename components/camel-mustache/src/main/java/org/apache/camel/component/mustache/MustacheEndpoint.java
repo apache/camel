@@ -31,6 +31,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
@@ -40,12 +42,16 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
 /**
  * Represents a Camel Mustache endpoint.
  */
+@UriEndpoint(scheme = "mustache", label = "transformation")
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;
     private Mustache mustache;
+    @UriParam
     private String encoding;
+    @UriParam
     private String startDelimiter;
+    @UriParam
     private String endDelimiter;
 
     public MustacheEndpoint() {

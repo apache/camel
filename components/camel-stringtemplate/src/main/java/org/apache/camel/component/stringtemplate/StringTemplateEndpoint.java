@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 import org.stringtemplate.v4.NoIndentWriter;
 import org.stringtemplate.v4.ST;
@@ -32,8 +34,12 @@ import org.stringtemplate.v4.STGroup;
 /**
  * @version
  */
+@UriEndpoint(scheme = "stringtemplate", label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
+
+    @UriParam
     private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
+    @UriParam
     private char delimiterStop = STGroup.defaultGroup.delimiterStopChar;
 
     public StringTemplateEndpoint() {
