@@ -2362,6 +2362,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             addStartupListener(listener);
         }
 
+        if (service instanceof CamelContextAware) {
+            CamelContextAware aware = (CamelContextAware) service;
+            aware.setCamelContext(this);
+        }
+
         service.start();
     }
     
