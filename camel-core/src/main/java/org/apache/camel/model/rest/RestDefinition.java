@@ -53,6 +53,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private RestBindingMode bindingMode;
 
+    @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
@@ -276,6 +279,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
             verb.setBindingMode(mode);
+        }
+
+        return this;
+    }
+
+    public RestDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        if (getVerbs().isEmpty()) {
+            this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
         }
 
         return this;

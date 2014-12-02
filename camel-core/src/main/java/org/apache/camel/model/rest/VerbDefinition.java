@@ -48,6 +48,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private RestBindingMode bindingMode;
 
     @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
+    @XmlAttribute
     private String type;
 
     @XmlAttribute
@@ -116,6 +119,14 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
+    }
+
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
     public String getType() {
