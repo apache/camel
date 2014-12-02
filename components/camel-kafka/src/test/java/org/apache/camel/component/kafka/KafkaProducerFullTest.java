@@ -30,7 +30,6 @@ import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -39,7 +38,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +48,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerFullTest.class);
 
-    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC 
+    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC 
         + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner&serializerClass=kafka.serializer.StringEncoder"
         + "&requestRequiredAcks=-1")
     private Endpoint to;
@@ -63,13 +61,15 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     @Before
     public void before() {
         Properties props = new Properties();
-        props.put("zookeeper.connect", "localhost:2181");
+       
+        props.put("zookeeper.connect", "localhost:" + getZookeeperPort());
         props.put("group.id", KafkaConstants.DEFAULT_GROUP);
-        props.put("zookeeper.session.timeout.ms", "400");
+        props.put("zookeeper.session.timeout.ms", "6000");
+        props.put("zookeeper.connectiontimeout.ms", "12000");
         props.put("zookeeper.sync.time.ms", "200");
         props.put("auto.commit.interval.ms", "1000");
         props.put("auto.offset.reset", "smallest");
-
+       
         kafkaConsumer = kafka.consumer.Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
     }
 

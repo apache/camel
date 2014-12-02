@@ -21,8 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.embedded.EmbeddedKafkaCluster;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -31,13 +35,22 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     static EmbeddedZookeeper embeddedZookeeper;
     static EmbeddedKafkaCluster embeddedKafkaCluster;
-
+    
+    private static volatile int zookeeperPort;
+    
+    private static volatile int karfkaPort;
+   
     @BeforeClass
     public static void beforeClass() {
-        embeddedZookeeper = new EmbeddedZookeeper(2181);
+        // start from somewhere in the 23xxx range
+        zookeeperPort = AvailablePortFinder.getNextAvailable(23000);
+        // find another ports for proxy route test
+        karfkaPort = AvailablePortFinder.getNextAvailable(24000);
+        
+        embeddedZookeeper = new EmbeddedZookeeper(zookeeperPort);
         List<Integer> kafkaPorts = new ArrayList<Integer>();
         // -1 for any available port
-        kafkaPorts.add(9092);
+        kafkaPorts.add(karfkaPort);
         embeddedKafkaCluster = new EmbeddedKafkaCluster(embeddedZookeeper.getConnection(), new Properties(), kafkaPorts);
         try {
             embeddedZookeeper.startup();
@@ -53,6 +66,34 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
     public static void afterClass() {
         embeddedKafkaCluster.shutdown();
         embeddedZookeeper.shutdown();
+    }
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        Properties prop = new Properties();
+        prop.setProperty("zookeeperPort", "" + getZookeeperPort());
+        prop.setProperty("karfkaPort", "" + getKarfkaPort());
+        jndi.bind("prop", prop);
+        return jndi;
+    }
+    
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        return context;
+    }
+    
+
+    protected static int getZookeeperPort() {
+        return zookeeperPort;
+    }
+    
+    protected static int getKarfkaPort() {
+        return karfkaPort;
     }
 
 }

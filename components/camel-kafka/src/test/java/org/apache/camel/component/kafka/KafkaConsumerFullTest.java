@@ -35,7 +35,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort=2181"
+    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort={{zookeeperPort}}"
         + "&groupId=group1&autoOffsetReset=smallest")
     private Endpoint from;
 
@@ -47,7 +47,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     @Before
     public void before() {
         Properties props = new Properties();
-        props.put("metadata.broker.list", "localhost:9092");
+        props.put("metadata.broker.list", "localhost:" + getKarfkaPort());
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("partitioner.class", "org.apache.camel.component.kafka.SimplePartitioner");
         props.put("request.required.acks", "1");
