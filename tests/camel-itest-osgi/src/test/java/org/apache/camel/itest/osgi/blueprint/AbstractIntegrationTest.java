@@ -131,8 +131,7 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
      * Provides an iterable collection of references, even if the original array is null
      */
     private static Collection<ServiceReference<?>> asCollection(ServiceReference<?>[] references) {
-        return (Collection<ServiceReference<?>>)(references != null ? Arrays.asList(references) 
-            : Collections.<ServiceReference<?>>emptyList());
+        return references != null ? Arrays.asList(references) : Collections.<ServiceReference<?>>emptyList();
     }
 
     /**

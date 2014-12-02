@@ -22,8 +22,6 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;

@@ -19,7 +19,6 @@ package org.apache.camel.component.twitter;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**

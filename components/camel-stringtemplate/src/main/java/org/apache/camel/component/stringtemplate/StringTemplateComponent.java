@@ -19,7 +19,6 @@ package org.apache.camel.component.stringtemplate;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ResourceHelper;
 
