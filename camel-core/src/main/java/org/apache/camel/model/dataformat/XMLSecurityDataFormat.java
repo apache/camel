@@ -60,6 +60,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String digestAlgorithm;
     @XmlAttribute
     private String mgfAlgorithm;
+    @XmlAttribute
+    private boolean addKeyValueForEncryptedKey = true;
 
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
@@ -274,6 +276,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         if (mgfAlgorithm != null) {
             setProperty(camelContext, dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
         }
+        
+        setProperty(camelContext, dataFormat, "addKeyValueForEncryptedKey", isAddKeyValueForEncryptedKey());
     }
 
     public String getXmlCipherAlgorithm() {
@@ -362,6 +366,14 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     public void setMgfAlgorithm(String mgfAlgorithm) {
         this.mgfAlgorithm = mgfAlgorithm;
+    }
+    
+    public boolean isAddKeyValueForEncryptedKey() {
+        return addKeyValueForEncryptedKey;
+    }
+
+    public void setAddKeyValueForEncryptedKey(boolean addKeyValueForEncryptedKey) {
+        this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
 
     @Override
