@@ -84,8 +84,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         for (String endpoint : endpoints) {
             stopWatch.restart();
             for (int requestIndex = 0; requestIndex < numberOfRequests; requestIndex++) {
-                futures.add(template.asyncRequestBody(
-                        endpoint, null, File.class));
+                futures.add(template.asyncRequestBody(endpoint, null, File.class));
             }
 
             for (int i = 0; i < futures.size(); i++) {
