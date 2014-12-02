@@ -62,6 +62,35 @@ public class PropertiesComponentGetOrElseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testPropertiesComponentSimpleLanguage() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .transform().simple("Hi ${body} do you think ${properties:cool.name} rocks?");
+            }
+        });
+        context.start();
+
+        String reply = template.requestBody("direct:start", "Claus", String.class);
+        assertEquals("Hi Claus do you think Camel rocks?", reply);
+    }
+
+    public void testPropertiesComponentSimpleLanguageUsingDefaultValue() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .transform().simple("Hi ${body} do you think ${properties:unknown:Beer} rocks?");
+            }
+        });
+        context.start();
+
+        String reply = template.requestBody("direct:start", "Claus", String.class);
+        assertEquals("Hi Claus do you think Beer rocks?", reply);
+    }
+
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
