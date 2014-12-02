@@ -16,11 +16,14 @@
  */
 
 package org.apache.camel.component.cxf;
+
 import javax.xml.namespace.QName;
+
 import org.w3c.dom.Document;
+
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -65,8 +68,8 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
             public void configure() throws Exception {
                 CxfEndpoint endpoint = new CxfEndpoint();
                 endpoint.setAddress("http://localhost:" + port1 + "/PersonService");
-                endpoint.setServiceName(new QName("http://camel.apache.org/wsdl-first","PersonService"));
-                endpoint.setPortName(new QName("http://camel.apache.org/wsdl-first","soap"));
+                endpoint.setServiceName(new QName("http://camel.apache.org/wsdl-first", "PersonService"));
+                endpoint.setPortName(new QName("http://camel.apache.org/wsdl-first", "soap"));
                 endpoint.setWsdlURL("classpath:person.wsdl");
                 endpoint.setDataFormat(DataFormat.PAYLOAD);
                 context.addEndpoint("personService", endpoint);

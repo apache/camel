@@ -43,7 +43,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -113,7 +112,7 @@ import org.slf4j.LoggerFactory;
  * mode is {@link DataFormat#POJO}.
  */
 @UriEndpoint(scheme = "cxf", consumerClass = CxfConsumer.class, label = "http,soap,webservice")
-public class CxfEndpoint extends DefaultEndpoint implements CamelContextAware, HeaderFilterStrategyAware, Service, Cloneable {
+public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
