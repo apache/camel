@@ -120,6 +120,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private InterceptorHolder interceptorHolder = new InterceptorHolder();
     private Map<String, Object> properties;
    
+    public CxfRsEndpoint() {
+    }
 
     @Deprecated
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
