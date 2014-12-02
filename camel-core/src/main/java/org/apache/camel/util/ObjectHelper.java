@@ -1491,7 +1491,7 @@ public final class ObjectHelper {
      * @return the Iterable
      */
     public static Iterable<Throwable> createExceptionIterable(Throwable exception) {
-        List<Throwable> throwables = new ArrayList<>();
+        List<Throwable> throwables = new ArrayList<Throwable>();
 
         Throwable current = exception;
         // spool to the bottom of the caused by tree
