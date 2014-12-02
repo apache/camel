@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -70,6 +71,7 @@ public class PropertiesComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
+    private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private String[] locations;
@@ -84,7 +86,7 @@ public class PropertiesComponent extends DefaultComponent {
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
     private Properties overrideProperties;
-    
+
     public PropertiesComponent() {
     }
     
@@ -313,6 +315,20 @@ public class PropertiesComponent extends DefaultComponent {
      */
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    /**
+     * Gets the functions registered in this properties component.
+     */
+    public Map<String, PropertiesFunction> getFunctions() {
+        return functions;
+    }
+
+    /**
+     * Add the function
+     */
+    public void addFunction(PropertiesFunction function) {
+        this.functions.put(function.getName(), function);
     }
 
     @Override

@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import static java.lang.String.format;
-
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.lang.String.format;
 
 /**
  * A parser to parse a string which contains property placeholders.
@@ -209,6 +209,19 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Value of the property with the given key
          */
         private String getPropertyValue(String key, String input) {
+
+            // the key may be a function, so lets check this first
+            if (propertiesComponent != null) {
+                for (PropertiesFunction function : propertiesComponent.getFunctions().values()) {
+                    String token = function.getName() + ":";
+                    if (key.startsWith(token)) {
+                        String remainder = key.substring(token.length());
+                        log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
+                        return function.apply(remainder);
+                    }
+                }
+            }
+
             // they key may have a get or else expression
             String defaultValue = null;
             if (key.contains(GET_OR_ELSE_TOKEN)) {
