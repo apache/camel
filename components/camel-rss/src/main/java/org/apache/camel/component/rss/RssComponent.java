@@ -31,6 +31,10 @@ import org.apache.camel.util.URISupport;
  */
 public class RssComponent extends FeedComponent {
 
+    public RssComponent() {
+        super(RssEndpoint.class);
+    }
+
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new RssEndpoint(uri, this, null);
     }
