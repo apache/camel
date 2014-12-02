@@ -100,6 +100,7 @@
     <module>camel-github</module>
     <module>camel-google-calendar</module>
     <module>camel-google-drive</module>
+    <module>camel-google-mail</module>
     <module>camel-gora</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
