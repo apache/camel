@@ -19,7 +19,6 @@
            xmlns:camel="http://camel.apache.org/schema/blueprint">
 
     <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint">
-        <endpoint id="traced" uri="mock:traced"/>
         <route>
             <from uri="direct:start"/>
             <to uri="mock:result"/>
@@ -27,12 +26,11 @@
     </camelContext>
 
     <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
-        <property name="traceExceptions" value="false"/>
         <property name="traceInterceptors" value="true"/>
         <property name="traceExceptions" value="true"/>
         <property name="logLevel" value="INFO"/>
         <property name="logName" value="org.apache.camel.blueprint.log"/>
-        <property name="destination" ref="traced"/>
+        <property name="destinationUri" value="mock:traced"/>
     </bean>
 
 </blueprint>

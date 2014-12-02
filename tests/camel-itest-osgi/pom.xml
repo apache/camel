@@ -504,7 +504,6 @@
                   <exclude>**/FtpConsumeTest.*</exclude>
                   <exclude>**/BlobStoreRouteTest.*</exclude> <!-- CAMEL-6134 -->
                   <exclude>**/BlobStoreBlueprintRouteTest.*</exclude> <!-- CAMEL-6134 -->
-                  <exclude>**/BlueprintTracerTest.*</exclude> <!-- We get a Gave up waiting for service (&(objectClass=org.apache.camel.CamelContext) -->
               </excludes>
               <systemPropertyVariables>
                   <karafVersion>${karaf-version}</karafVersion>
