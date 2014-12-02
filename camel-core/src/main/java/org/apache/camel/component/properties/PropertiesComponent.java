@@ -325,15 +325,23 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     /**
-     * Add the function
+     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
      */
     public void addFunction(PropertiesFunction function) {
         this.functions.put(function.getName(), function);
     }
 
+    /**
+     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     */
+    public boolean hasFunction(String name) {
+        return functions.containsKey(name);
+    }
+
     @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
+        functions.clear();
         super.doStop();
     }
 
