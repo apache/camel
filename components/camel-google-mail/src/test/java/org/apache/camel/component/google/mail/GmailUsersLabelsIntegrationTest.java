@@ -25,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.apache.camel.component.google.mail.internal.GmailUsersLabelsApiMethod;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Labels} APIs.
@@ -41,7 +39,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
     public void testLabels() throws Exception {
         // using String message body for single parameter "userId"
         com.google.api.services.gmail.model.ListLabelsResponse labels = requestBody("direct://LIST", CURRENT_USERID);
-             
+
         String labelId = null;
         if (getTestLabel(labels) == null) {
             Map<String, Object> headers = new HashMap<String, Object>();
@@ -50,9 +48,9 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
             Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show").setLabelListVisibility("labelShow");
             // parameter type is com.google.api.services.gmail.model.Label
             headers.put("CamelGoogleMail.content", label);
-    
+
             com.google.api.services.gmail.model.Label result = requestBodyAndHeaders("direct://CREATE", null, headers);
-    
+
             assertNotNull("create result", result);
             labelId = result.getId();
         } else {
@@ -88,30 +86,25 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 // test route for create
-                from("direct://CREATE")
-                  .to("google-mail://" + PATH_PREFIX + "/create");
+                from("direct://CREATE").to("google-mail://" + PATH_PREFIX + "/create");
 
                 // test route for delete
-                from("direct://DELETE")
-                  .to("google-mail://" + PATH_PREFIX + "/delete");
+                from("direct://DELETE").to("google-mail://" + PATH_PREFIX + "/delete");
 
                 // test route for get
-                from("direct://GET")
-                  .to("google-mail://" + PATH_PREFIX + "/get");
+                from("direct://GET").to("google-mail://" + PATH_PREFIX + "/get");
 
                 // test route for list
-                from("direct://LIST")
-                  .to("google-mail://" + PATH_PREFIX + "/list?inBody=userId");
+                from("direct://LIST").to("google-mail://" + PATH_PREFIX + "/list?inBody=userId");
 
                 // test route for patch
-                from("direct://PATCH")
-                  .to("google-mail://" + PATH_PREFIX + "/patch");
+                from("direct://PATCH").to("google-mail://" + PATH_PREFIX + "/patch");
 
                 // test route for update
-                from("direct://UPDATE")
-                  .to("google-mail://" + PATH_PREFIX + "/update");
+                from("direct://UPDATE").to("google-mail://" + PATH_PREFIX + "/update");
 
             }
         };

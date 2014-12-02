@@ -21,11 +21,10 @@ import java.util.Map;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiProducer;
 import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
-import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 
 /**
  * The GoogleMail producer.
@@ -35,7 +34,7 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
     public GoogleMailProducer(GoogleMailEndpoint endpoint) {
         super(endpoint, GoogleMailPropertiesHelper.getHelper());
     }
-    
+
     @Override
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);

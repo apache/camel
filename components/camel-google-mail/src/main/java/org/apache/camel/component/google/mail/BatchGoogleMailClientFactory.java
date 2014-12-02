@@ -45,24 +45,20 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
 
             if (refreshToken != null && !"".equals(refreshToken)) {
                 credential.setRefreshToken(refreshToken);
-            } 
+            }
             if (accessToken != null && !"".equals(accessToken)) {
                 credential.setAccessToken(accessToken);
             }
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
-            LOG.error("Could not create Google Drive client.", e);            
+            LOG.error("Could not create Google Drive client.", e);
         }
         return null;
     }
-    
+
     // Authorizes the installed application to access user's protected data.
     private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
         // authorize
-        return new GoogleCredential.Builder()
-            .setJsonFactory(jsonFactory)
-            .setTransport(transport)
-            .setClientSecrets(clientId, clientSecret)
-            .build();
+        return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport).setClientSecrets(clientId, clientSecret).build();
     }
 }

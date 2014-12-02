@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.google.mail;
 
-
 import com.google.api.services.gmail.Gmail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiComponent;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 
 /**
  * Represents the component that manages {@link GoogleMailEndpoint}.
@@ -34,7 +31,7 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
 
     private Gmail client;
     private GoogleMailClientFactory clientFactory;
-    
+
     public GoogleMailComponent() {
         super(GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
     }
@@ -50,26 +47,25 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
 
     public Gmail getClient() {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), 
-                configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
+            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), configuration.getApplicationName(),
+                    configuration.getRefreshToken(), configuration.getAccessToken());
         }
         return client;
     }
-    
+
     public GoogleMailClientFactory getClientFactory() {
         if (clientFactory == null) {
             clientFactory = new BatchGoogleMailClientFactory();
         }
         return clientFactory;
     }
-    
+
     public void setClientFactory(GoogleMailClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
-    
+
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, GoogleMailApiName apiName,
-                                      GoogleMailConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(String uri, String methodName, GoogleMailApiName apiName, GoogleMailConfiguration endpointConfiguration) {
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 }

@@ -23,14 +23,12 @@ import com.google.api.services.gmail.Gmail;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
+import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
-import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
-import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 
 /**
  * Represents a GoogleMail endpoint.
@@ -41,16 +39,17 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     // TODO create and manage API proxy
     private Object apiProxy;
 
-    public GoogleMailEndpoint(String uri, GoogleMailComponent component,
-                         GoogleMailApiName apiName, String methodName, GoogleMailConfiguration endpointConfiguration) {
+    public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName, GoogleMailConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleMailApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
 
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new GoogleMailProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -67,6 +66,7 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
         return GoogleMailPropertiesHelper.getHelper();
     }
 
+    @Override
     protected String getThreadProfileName() {
         return GoogleMailConstants.THREAD_PROFILE_NAME;
     }
@@ -74,36 +74,36 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     @Override
     protected void afterConfigureProperties() {
         switch (apiName) {
-            case ATTACHMENTS:
-                apiProxy = getClient().users().messages().attachments();
-                break;
-            case DRAFTS:
-                apiProxy = getClient().users().drafts();
-                break;
-            case HISTORY:
-                apiProxy = getClient().users().history();
-                break;
-            case LABELS:
-                apiProxy = getClient().users().labels();
-                break;
-            case MESSAGES:
-                apiProxy = getClient().users().messages();
-                break;
-            case THREADS:
-                apiProxy = getClient().users().threads();
-                break;               
-            case USERS:
-                apiProxy = getClient().users();
-                break;                               
-            default:
-                throw new IllegalArgumentException("Invalid API name " + apiName);
+        case ATTACHMENTS:
+            apiProxy = getClient().users().messages().attachments();
+            break;
+        case DRAFTS:
+            apiProxy = getClient().users().drafts();
+            break;
+        case HISTORY:
+            apiProxy = getClient().users().history();
+            break;
+        case LABELS:
+            apiProxy = getClient().users().labels();
+            break;
+        case MESSAGES:
+            apiProxy = getClient().users().messages();
+            break;
+        case THREADS:
+            apiProxy = getClient().users().threads();
+            break;
+        case USERS:
+            apiProxy = getClient().users();
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 
     public Gmail getClient() {
-        return ((GoogleMailComponent)getComponent()).getClient();
+        return ((GoogleMailComponent) getComponent()).getClient();
     }
-    
+
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;

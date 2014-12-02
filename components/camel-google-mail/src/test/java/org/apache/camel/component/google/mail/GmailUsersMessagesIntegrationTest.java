@@ -36,24 +36,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 
 /**
- * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
+ * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages}
+ * APIs.
  */
 public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSupport {
 
-    //  userid of the currently authenticated user
+    // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
 
     @Test
     public void testMessages() throws Exception {
-        
+
         // ==== Send test email ====
-        Message testEmail = createTestEmail();        
+        Message testEmail = createTestEmail();
         Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
@@ -63,7 +62,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         com.google.api.services.gmail.model.Message result = requestBodyAndHeaders("direct://SEND", null, headers);
         assertNotNull("send result", result);
         String testEmailId = result.getId();
-        
+
         // ==== Search for message we just sent ====
         headers = new HashMap<String, Object>();
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
@@ -85,7 +84,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         // using String message body for single parameter "userId"
         listOfMessages = requestBody("direct://LIST", CURRENT_USERID);
         assertFalse(idInList(testEmailId, listOfMessages));
-        
+
         // ===== untrash it ====
         headers = new HashMap<String, Object>();
         // parameter type is String
@@ -100,7 +99,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         // using String message body for single parameter "userId"
         listOfMessages = requestBody("direct://LIST", CURRENT_USERID);
         assertTrue(idInList(testEmailId, listOfMessages));
-        
+
         // ===== permanently delete it ====
         headers = new HashMap<String, Object>();
         // parameter type is String
@@ -130,11 +129,11 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
     }
 
     private Message createTestEmail() throws MessagingException, IOException {
-        com.google.api.services.gmail.model.Profile profile = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);       
+        com.google.api.services.gmail.model.Profile profile = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage mm = new MimeMessage(session);
-        mm.addRecipients(RecipientType.TO, profile.getEmailAddress());
+        mm.addRecipients(javax.mail.Message.RecipientType.TO, profile.getEmailAddress());
         mm.setSubject("Hello from camel-google-mail");
         mm.setContent("Camel rocks!", "text/plain");
         Message createMessageWithEmail = createMessageWithEmail(mm);
@@ -149,72 +148,59 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
 
         return new MimeMessage(session, new ByteArrayInputStream(emailBytes));
     }
-    
-    private Message createMessageWithEmail(MimeMessage email)
-            throws MessagingException, IOException {
-          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          email.writeTo(baos);
-          String encodedEmail = Base64.encodeBase64URLSafeString(baos.toByteArray());
-          Message message = new Message();
-          message.setRaw(encodedEmail);
-          return message;
+
+    private Message createMessageWithEmail(MimeMessage email) throws MessagingException, IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        email.writeTo(baos);
+        String encodedEmail = Base64.encodeBase64URLSafeString(baos.toByteArray());
+        Message message = new Message();
+        message.setRaw(encodedEmail);
+        return message;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 // test route for attachments
-                from("direct://ATTACHMENTS")
-                  .to("google-mail://" + PATH_PREFIX + "/attachments");
+                from("direct://ATTACHMENTS").to("google-mail://" + PATH_PREFIX + "/attachments");
 
                 // test route for delete
-                from("direct://DELETE")
-                  .to("google-mail://" + PATH_PREFIX + "/delete");
+                from("direct://DELETE").to("google-mail://" + PATH_PREFIX + "/delete");
 
                 // test route for get
-                from("direct://GET")
-                  .to("google-mail://" + PATH_PREFIX + "/get");
+                from("direct://GET").to("google-mail://" + PATH_PREFIX + "/get");
 
                 // test route for gmailImport
-                from("direct://GMAILIMPORT")
-                  .to("google-mail://" + PATH_PREFIX + "/gmailImport");
+                from("direct://GMAILIMPORT").to("google-mail://" + PATH_PREFIX + "/gmailImport");
 
                 // test route for gmailImport
-                from("direct://GMAILIMPORT_1")
-                  .to("google-mail://" + PATH_PREFIX + "/gmailImport");
+                from("direct://GMAILIMPORT_1").to("google-mail://" + PATH_PREFIX + "/gmailImport");
 
                 // test route for insert
-                from("direct://INSERT")
-                  .to("google-mail://" + PATH_PREFIX + "/insert");
+                from("direct://INSERT").to("google-mail://" + PATH_PREFIX + "/insert");
 
                 // test route for insert
-                from("direct://INSERT_1")
-                  .to("google-mail://" + PATH_PREFIX + "/insert");
+                from("direct://INSERT_1").to("google-mail://" + PATH_PREFIX + "/insert");
 
                 // test route for list
-                from("direct://LIST")
-                  .to("google-mail://" + PATH_PREFIX + "/list?inBody=userId");
+                from("direct://LIST").to("google-mail://" + PATH_PREFIX + "/list?inBody=userId");
 
                 // test route for modify
-                from("direct://MODIFY")
-                  .to("google-mail://" + PATH_PREFIX + "/modify");
+                from("direct://MODIFY").to("google-mail://" + PATH_PREFIX + "/modify");
 
                 // test route for send
-                from("direct://SEND")
-                  .to("google-mail://" + PATH_PREFIX + "/send");
+                from("direct://SEND").to("google-mail://" + PATH_PREFIX + "/send");
 
                 // test route for send
-                from("direct://SEND_1")
-                  .to("google-mail://" + PATH_PREFIX + "/send");
+                from("direct://SEND_1").to("google-mail://" + PATH_PREFIX + "/send");
 
                 // test route for trash
-                from("direct://TRASH")
-                  .to("google-mail://" + PATH_PREFIX + "/trash");
+                from("direct://TRASH").to("google-mail://" + PATH_PREFIX + "/trash");
 
                 // test route for untrash
-                from("direct://UNTRASH")
-                  .to("google-mail://" + PATH_PREFIX + "/untrash");
+                from("direct://UNTRASH").to("google-mail://" + PATH_PREFIX + "/untrash");
 
             }
         };

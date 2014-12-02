@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.io.IOException;
 import java.util.Map;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -25,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 
 /**
  * The GoogleMail consumer.
@@ -35,7 +33,7 @@ public class GoogleMailConsumer extends AbstractApiConsumer<GoogleMailApiName, G
     public GoogleMailConsumer(GoogleMailEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
-    
+
     @Override
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
@@ -43,13 +41,13 @@ public class GoogleMailConsumer extends AbstractApiConsumer<GoogleMailApiName, G
             setProperty(properties, request, "q");
             setProperty(properties, request, "maxResults");
             setProperty(properties, request, "pageToken");
-            setProperty(properties, request, "format");            
+            setProperty(properties, request, "format");
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
-    
+
     private void setProperty(Map<String, Object> properties, AbstractGoogleClientRequest request, String key) throws Exception {
         if (properties.containsKey(key)) {
             IntrospectionSupport.setProperty(getEndpoint().getCamelContext().getTypeConverter(), request, key, properties.get(key));

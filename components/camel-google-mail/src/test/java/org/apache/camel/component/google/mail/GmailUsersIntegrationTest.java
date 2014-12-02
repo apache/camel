@@ -16,17 +16,10 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users} APIs.
@@ -49,10 +42,10 @@ public class GmailUsersIntegrationTest extends AbstractGoogleMailTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 // test route for getProfile
-                from("direct://GETPROFILE")
-                  .to("google-mail://" + PATH_PREFIX + "/getProfile?inBody=userId");
+                from("direct://GETPROFILE").to("google-mail://" + PATH_PREFIX + "/getProfile?inBody=userId");
 
             }
         };

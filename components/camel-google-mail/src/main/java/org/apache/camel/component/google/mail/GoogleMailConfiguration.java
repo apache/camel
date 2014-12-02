@@ -29,11 +29,11 @@ import org.apache.camel.spi.UriParams;
  */
 @UriParams
 public class GoogleMailConfiguration {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(GmailScopes.GMAIL_COMPOSE, GmailScopes.GMAIL_MODIFY, GmailScopes.MAIL_GOOGLE_COM); 
-    
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList(GmailScopes.GMAIL_COMPOSE, GmailScopes.GMAIL_MODIFY, GmailScopes.MAIL_GOOGLE_COM);
+
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-    
+
     @UriParam
     private String clientId;
 
@@ -48,7 +48,7 @@ public class GoogleMailConfiguration {
 
     @UriParam
     private String applicationName;
-    
+
     public String getClientId() {
         return clientId;
     }
@@ -88,7 +88,7 @@ public class GoogleMailConfiguration {
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-    
+
     public List<String> getScopes() {
         return scopes;
     }
