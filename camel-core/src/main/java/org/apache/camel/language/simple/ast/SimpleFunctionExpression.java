@@ -166,13 +166,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("properties-location:", function);
         if (remainder != null) {
             String[] parts = remainder.split(":");
-            if (parts.length > 2) {
+            if (parts.length > 3) {
                 throw new SimpleParserException("Valid syntax: ${properties-location:location:key[:default]} was: " + function, token.getIndex());
             }
 
             String locations = null;
             String key = remainder;
-            if (parts.length == 2) {
+            if (parts.length >= 2) {
                 locations = ObjectHelper.before(remainder, ":");
                 key = ObjectHelper.after(remainder, ":");
             }
