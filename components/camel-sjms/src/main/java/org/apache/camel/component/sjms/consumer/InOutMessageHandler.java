@@ -56,7 +56,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
     public void handleMessage(final Exchange exchange) {
         try {
             MessageProducer messageProducer = null;
-            Object obj = exchange.getIn().getHeader(JmsMessageHelper.JMS_REPLY_TO);
+            Object obj = exchange.getIn().getHeader(JmsConstants.JMS_REPLY_TO);
             if (obj != null) {
                 Destination replyTo;
                 if (isDestination(obj)) {
