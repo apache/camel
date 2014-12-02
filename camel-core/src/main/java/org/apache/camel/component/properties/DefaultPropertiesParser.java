@@ -26,14 +26,31 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * A parser to parse a string which contains property placeholders
+ * A parser to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private static final String GET_OR_ELSE_TOKEN = ":";
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    private PropertiesComponent propertiesComponent;
+
+    public DefaultPropertiesParser() {
+    }
+
+    public DefaultPropertiesParser(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = propertiesComponent;
+    }
+
+    public PropertiesComponent getPropertiesComponent() {
+        return propertiesComponent;
+    }
+
+    public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = propertiesComponent;
+    }
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
@@ -215,6 +232,10 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
 
             if (value == null) {
                 StringBuilder esb = new StringBuilder();
+                if (propertiesComponent.isDefaultCreated()) {
+                    // if the component was auto created then include more information that the end user should define it
+                    esb.append("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders. ");
+                }
                 esb.append("Property with key [").append(augmentedKey).append("] ");
                 if (shouldFallback) {
                     esb.append("(and original key [").append(key).append("]) ");
