@@ -39,7 +39,7 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
         String s = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>123</personId></GetPerson>";
         Document xml = context.getTypeConverter().convertTo(Document.class, s);
 
-        System.out.println("Endpoints: " + context.getEndpoints());
+        log.info("Endpoints: {}", context.getEndpoints());
         Object output = template.requestBody("personService", xml);
         assertNotNull(output);
 
