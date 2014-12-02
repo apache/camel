@@ -68,7 +68,7 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Consumer is not supported");
     }
 
     @Override
