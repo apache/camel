@@ -84,12 +84,20 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         }
 
         // setup json data format
+        DataFormat json;
+        DataFormat outJson;
+
         String name = context.getRestConfiguration().getJsonDataFormat();
         if (name == null) {
+            // this will create a new instance as we use the default name
             name = "json-jackson";
+            json = context.resolveDataFormat(name);
+            outJson = context.resolveDataFormat(name);
+        } else {
+            json = context.resolveDataFormat(name);
+            // for out we need to make a new instance of the same class
+            outJson = context.getInjector().newInstance(json.getClass(), json);
         }
-        DataFormat json = context.resolveDataFormat(name);
-        DataFormat outJson = context.resolveDataFormat(name);
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
@@ -123,12 +131,21 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         }
 
         // setup xml data format
+        // setup json data format
+        DataFormat jaxb;
+        DataFormat outJaxb;
+
         name = context.getRestConfiguration().getXmlDataFormat();
         if (name == null) {
+            // this will create a new instance as we use the default name
             name = "jaxb";
+            jaxb = context.resolveDataFormat(name);
+            outJaxb = context.resolveDataFormat(name);
+        } else {
+            jaxb = context.resolveDataFormat(name);
+            // for out we need to make a new instance of the same class
+            outJaxb = context.getInjector().newInstance(jaxb.getClass(), json);
         }
-        DataFormat jaxb = context.resolveDataFormat(name);
-        DataFormat outJaxb = context.resolveDataFormat(name);
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
             throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
