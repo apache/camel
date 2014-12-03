@@ -72,7 +72,9 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                     // The bytes between in.position() and in.limit()
                     // now contain a full MLLP message including the
                     // start and end bytes.
-                    out.write(parseMessage(in.slice(), charsetDecoder(session)));
+                    out.write(config.isProduceString()
+                            ? parseMessageToString(in.slice(), charsetDecoder(session))
+                            : parseMessageToByteArray(in.slice()));
                 } catch (CharacterCodingException cce) {
                     throw new IllegalArgumentException("Exception while finalizing the message", cce);
                 } finally {
@@ -99,9 +101,27 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
     // Make a defensive byte copy (the buffer will be reused)
     // and omit the start and the two end bytes of the MLLP message
-    // TODO: I wonder if it would make sense to return the plain byte array and let some subsequent
-    // processor do the conversion
-    private Object parseMessage(IoBuffer slice, CharsetDecoder decoder) throws CharacterCodingException {
+    // returning a byte array
+    private Object parseMessageToByteArray(IoBuffer slice) throws CharacterCodingException {
+        byte[] dst = new byte[slice.limit() - 3];
+        slice.skip(1); // skip start byte
+        slice.get(dst, 0, dst.length);
+
+        // Only do this if conversion is enabled
+        if (config.isConvertLFtoCR()) {
+            for (int i = 0; i < dst.length; i++) {
+                if (dst[i] == (byte)'\n') {
+                    dst[i] = (byte)'\r';
+                }
+            }
+        }
+        return dst;
+    }
+
+    // Make a defensive byte copy (the buffer will be reused)
+    // and omit the start and the two end bytes of the MLLP message
+    // returning a String
+    private Object parseMessageToString(IoBuffer slice, CharsetDecoder decoder) throws CharacterCodingException {
         slice.skip(1); // skip start byte
         String message = slice.getString(slice.limit() - 3, decoder);
 

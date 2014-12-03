@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hl7;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ACK;
@@ -91,13 +92,13 @@ public class AckExpressionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:test1").transform(ack());
-                from("direct:test2").transform(ack(AckCode.CA));
+                from("direct:test2").transform(ack(AcknowledgmentCode.CA));
                 from("direct:test3").onException(HL7Exception.class).handled(true).transform(ack()).end()
                     .transform(terser("/.BLORG"));
                 from("direct:test4").onException(HL7Exception.class).handled(true)
-                    .transform(ack(AckCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR)).end()
+                    .transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR)).end()
                     .transform(terser("/.BLORG"));
-                from("direct:test5").transform(ack(AckCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR));
+                from("direct:test5").transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR));
             }
         };
     }

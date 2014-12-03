@@ -109,4 +109,11 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
         config.setValidate(validate);
     }
 
+    public boolean isProduceString() {
+        return config.isProduceString();
+    }
+
+    public void setProduceString(boolean apply) {
+        config.setProduceString(apply);
+    }
 }
