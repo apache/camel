@@ -52,6 +52,9 @@ public class SqsConfiguration {
     private Integer messageRetentionPeriod;
     private Integer receiveMessageWaitTimeSeconds;
     private String policy;
+    
+    // dead letter queue properties
+    private String redrivePolicy;
 
     public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
         this.amazonSQSEndpoint = amazonSQSEndpoint;
@@ -165,6 +168,14 @@ public class SqsConfiguration {
         this.policy = policy;
     }
 
+    public String getRedrivePolicy() {
+        return redrivePolicy;
+    }
+
+    public void setRedrivePolicy(String redrivePolicy) {
+        this.redrivePolicy = redrivePolicy;
+    }
+
     public boolean isExtendMessageVisibility() {
         return this.extendMessageVisibility;
     }
@@ -231,6 +242,7 @@ public class SqsConfiguration {
             + ", receiveMessageWaitTimeSeconds=" + receiveMessageWaitTimeSeconds
             + ", delaySeconds=" + delaySeconds
             + ", policy=" + policy
+            + ", redrivePolicy=" + redrivePolicy
             + ", extendMessageVisibility=" + extendMessageVisibility
             + ", queueOwnerAWSAccountId=" + queueOwnerAWSAccountId
             + ", region=" + region
