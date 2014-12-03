@@ -43,6 +43,7 @@ import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.message.MessageImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +122,30 @@ public class CxfRsProducer extends DefaultProducer {
         
     }
     
+    protected void setupClientMatrix(WebClient client, Exchange exchange) throws Exception {
+        
+        org.apache.cxf.message.Message cxfMessage = (org.apache.cxf.message.Message) exchange.getIn().getHeader("CamelCxfMessage");
+        if (cxfMessage != null) {
+            String requestURL = (String)cxfMessage.get("org.apache.cxf.request.uri"); 
+            String matrixParam = null;
+            int matrixStart = requestURL.indexOf(";");
+            int matrixEnd = requestURL.indexOf("?") > -1 ? requestURL.indexOf("?") : requestURL.length();
+            Map<String, String> maps = null;
+            if (requestURL != null && matrixStart > 0) {
+                matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
+                if (matrixParam != null) {
+                    maps = getMatrixParametersFromMatrixString(matrixParam, IOHelper.getCharsetName(exchange));
+                }
+            }
+            if (maps != null) {
+                for (Map.Entry<String, String> entry : maps.entrySet()) {
+                    client.matrix(entry.getKey(), entry.getValue());
+                    LOG.debug("Matrix param " + entry.getKey() + " :: " + entry.getValue());
+                }
+            }
+        }
+    }
+    
     protected void setupClientHeaders(Client client, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
@@ -172,6 +197,8 @@ public class CxfRsProducer extends DefaultProducer {
                 }
             }
         }
+        
+        setupClientMatrix(client, exchange); 
 
         setupClientQueryAndHeaders(client, exchange);
         
@@ -342,6 +369,21 @@ public class CxfRsProducer extends DefaultProducer {
         return answer;
     }
 
+    private Map<String, String> getMatrixParametersFromMatrixString(String matrixString, String charset) throws UnsupportedEncodingException {
+        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        for (String param : matrixString.split(";")) {
+            String[] pair = param.split("=", 2);
+            if (pair.length == 2) {
+                String name = URLDecoder.decode(pair[0], charset);
+                String value = URLDecoder.decode(pair[1], charset);
+                answer.put(name, value);
+            } else {
+                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+            }
+        }
+        return answer;
+    }
+    
     private String arrayToString(Object[] array) {
         StringBuilder buffer = new StringBuilder("[");
         for (Object obj : array) {
