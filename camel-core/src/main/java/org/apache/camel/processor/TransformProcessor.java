@@ -25,6 +25,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -46,13 +47,30 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
 
-            Message old = exchange.getIn();
+            boolean out = exchange.hasOut();
+            Message old = out ? exchange.getOut() : exchange.getIn();
 
             // create a new message container so we do not drag specialized message objects along
-            Message msg = new DefaultMessage();
-            msg.copyFrom(old);
-            msg.setBody(newBody);
-            exchange.setOut(msg);
+            // but that is only needed if the old message is a specialized message
+            boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
+
+            if (copyNeeded) {
+                Message msg = new DefaultMessage();
+                msg.copyFrom(old);
+                msg.setBody(newBody);
+
+                // replace message on exchange (must set as OUT)
+                ExchangeHelper.replaceMessage(exchange, msg, true);
+            } else {
+                // no copy needed so set replace value directly
+                old.setBody(newBody);
+
+                // but the message must be on OUT
+                if (!exchange.hasOut()) {
+                    exchange.setOut(exchange.getIn());
+                }
+            }
+
         } catch (Exception e) {
             exchange.setException(e);
         }

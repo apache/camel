@@ -25,6 +25,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * A processor which sets the body on the IN or OUT message with an {@link Expression}
@@ -49,15 +50,21 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
             Message old = out ? exchange.getOut() : exchange.getIn();
 
             // create a new message container so we do not drag specialized message objects along
-            Message msg = new DefaultMessage();
-            msg.copyFrom(old);
-            msg.setBody(newBody);
+            // but that is only needed if the old message is a specialized message
+            boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
-            if (out) {
-                exchange.setOut(msg);
+            if (copyNeeded) {
+                Message msg = new DefaultMessage();
+                msg.copyFrom(old);
+                msg.setBody(newBody);
+
+                // replace message on exchange
+                ExchangeHelper.replaceMessage(exchange, msg, false);
             } else {
-                exchange.setIn(msg);
+                // no copy needed so set replace value directly
+                old.setBody(newBody);
             }
+
         } catch (Exception e) {
             exchange.setException(e);
         }
