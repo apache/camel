@@ -730,7 +730,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         EncryptedKey encryptedKey = keyCipher.encryptKey(document, dataEncryptionkey, mgfAlgorithm, null);
         if (addKeyValueForEncryptedKey && keyEncryptionKey instanceof PublicKey) {
             KeyInfo keyInfo = new KeyInfo(document);
-            keyInfo.add(((PublicKey)keyEncryptionKey));
+            keyInfo.add((PublicKey)keyEncryptionKey);
             encryptedKey.setKeyInfo(keyInfo);
         }
         

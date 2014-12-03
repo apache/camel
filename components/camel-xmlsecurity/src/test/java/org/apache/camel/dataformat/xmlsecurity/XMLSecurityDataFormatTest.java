@@ -21,6 +21,9 @@ import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,8 +34,7 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.Assert;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+
 
 /**
  * Unit test of the encryptXML data format.
