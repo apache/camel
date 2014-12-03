@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.core.*;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ITopic;
+import com.hazelcast.core.Message;
+import com.hazelcast.core.MessageListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;

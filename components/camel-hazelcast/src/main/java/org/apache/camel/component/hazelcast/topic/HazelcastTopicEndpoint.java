@@ -19,9 +19,9 @@ package org.apache.camel.component.hazelcast.topic;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 
 /**

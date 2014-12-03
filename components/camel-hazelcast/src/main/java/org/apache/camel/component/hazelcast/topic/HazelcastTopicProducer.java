@@ -37,24 +37,20 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-
         final int operation = lookupOperationNumber(exchange);
 
         switch (operation) {
-
-            case -1:
-                // default operation to publish
-            case HazelcastConstants.PUBLISH_OPERATION:
-                this.publish(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the TOPIC cache.", operation, HazelcastConstants.OPERATION));
-
+        case -1:
+            // default operation to publish
+        case HazelcastConstants.PUBLISH_OPERATION:
+            this.publish(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the TOPIC cache.", operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
         HazelcastComponentHelper.copyHeaders(exchange);
-
     }
 
     private void publish(Exchange exchange) {
