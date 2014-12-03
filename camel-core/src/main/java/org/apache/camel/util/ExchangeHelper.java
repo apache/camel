@@ -43,6 +43,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.MessageSupport;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -814,6 +815,27 @@ public final class ExchangeHelper {
         }
         answer.setException(exchange.getException());
         return answer;
+    }
+
+    /**
+     * Replaces the existing message with the new message
+     *
+     * @param exchange  the exchange
+     * @param newMessage the new message
+     * @param outOnly    whether to replace the message as OUT message
+     */
+    public static void replaceMessage(Exchange exchange, Message newMessage, boolean outOnly) {
+        Message old = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        if (outOnly || exchange.hasOut()) {
+            exchange.setOut(newMessage);
+        } else {
+            exchange.setIn(newMessage);
+        }
+
+        // need to de-reference old from the exchange so it can be GC
+        if (old instanceof MessageSupport) {
+            ((MessageSupport) old).setExchange(null);
+        }
     }
 
     @SuppressWarnings("unchecked")
