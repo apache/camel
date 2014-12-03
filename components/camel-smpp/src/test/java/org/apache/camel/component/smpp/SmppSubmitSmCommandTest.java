@@ -140,7 +140,7 @@ public class SmppSubmitSmCommandTest {
         assertEquals(2, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 
-    @Test(expected=SmppException.class)
+    @Test(expected = SmppException.class)
     public void executeLongBodyRejection() throws Exception {
         byte[] firstSM = new byte[]{5, 0, 3, 1, 2, 1, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54,
             55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50,
