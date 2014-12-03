@@ -39,6 +39,7 @@ public class RestConfiguration {
     private String contextPath;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
+    private boolean skipBindingOnErrorCode = true;
     private String jsonDataFormat;
     private String xmlDataFormat;
     private Map<String, Object> componentProperties;
@@ -191,6 +192,24 @@ public class RestConfiguration {
      */
     public void setBindingMode(String bindingMode) {
         this.bindingMode = RestBindingMode.valueOf(bindingMode);
+    }
+
+    /**
+     * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     */
+    public boolean isSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    /**
+     * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     */
+    public void setSkipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
     /**

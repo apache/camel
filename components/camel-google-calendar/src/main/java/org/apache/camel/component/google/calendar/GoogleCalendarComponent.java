@@ -22,13 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleCalendarEndpoint}.
  */
-@UriEndpoint(scheme = "google-calendar", consumerClass = GoogleCalendarConsumer.class, consumerPrefix = "consumer")
 public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
 
     private Calendar client;
@@ -69,6 +67,8 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, GoogleCalendarApiName apiName,
                                       GoogleCalendarConfiguration endpointConfiguration) {
+        endpointConfiguration.setApiName(apiName);
+        endpointConfiguration.setMethodName(methodName);
         return new GoogleCalendarEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 }

@@ -351,25 +351,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-                    String docComment = elementUtils.getDocComment(fieldElement);
-                    if (isNullOrEmpty(docComment)) {
-                        String setter = "set" + fieldName.substring(0, 1).toUpperCase();
-                        if (fieldName.length() > 1) {
-                            setter += fieldName.substring(1);
-                        }
-                        //  lets find the setter
-                        List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-                        for (ExecutableElement method : methods) {
-                            String methodName = method.getSimpleName().toString();
-                            if (setter.equals(methodName) && method.getParameters().size() == 1) {
-                                String doc = elementUtils.getDocComment(method);
-                                if (!isNullOrEmpty(doc)) {
-                                    docComment = doc;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
                     if (isNullOrEmpty(docComment)) {
                         docComment = path.description();
                     }
@@ -421,25 +403,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         }
                         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
-                        String docComment = elementUtils.getDocComment(fieldElement);
-                        if (isNullOrEmpty(docComment)) {
-                            String setter = "set" + fieldName.substring(0, 1).toUpperCase();
-                            if (fieldName.length() > 1) {
-                                setter += fieldName.substring(1);
-                            }
-                            //  lets find the setter
-                            List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-                            for (ExecutableElement method : methods) {
-                                String methodName = method.getSimpleName().toString();
-                                if (setter.equals(methodName) && method.getParameters().size() == 1) {
-                                    String doc = elementUtils.getDocComment(method);
-                                    if (!isNullOrEmpty(doc)) {
-                                        docComment = doc;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
                         if (isNullOrEmpty(docComment)) {
                             docComment = param.description();
                         }
@@ -478,6 +442,53 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 break;
             }
         }
+    }
+
+    protected String findJavaDoc(Elements elementUtils, VariableElement fieldElement, String fieldName, TypeElement classElement) {
+        String answer = elementUtils.getDocComment(fieldElement);
+        if (isNullOrEmpty(answer)) {
+            String setter = "set" + fieldName.substring(0, 1).toUpperCase();
+            if (fieldName.length() > 1) {
+                setter += fieldName.substring(1);
+            }
+            //  lets find the setter
+            List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+            for (ExecutableElement method : methods) {
+                String methodName = method.getSimpleName().toString();
+                if (setter.equals(methodName) && method.getParameters().size() == 1) {
+                    String doc = elementUtils.getDocComment(method);
+                    if (!isNullOrEmpty(doc)) {
+                        answer = doc;
+                        break;
+                    }
+                }
+            }
+
+            // lets find the getter
+            if (answer == null) {
+                String getter1 = "get" + fieldName.substring(0, 1).toUpperCase();
+                if (fieldName.length() > 1) {
+                    getter1 += fieldName.substring(1);
+                }
+                String getter2 = "is" + fieldName.substring(0, 1).toUpperCase();
+                if (fieldName.length() > 1) {
+                    getter2 += fieldName.substring(1);
+                }
+                //  lets find the getter
+                methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+                for (ExecutableElement method : methods) {
+                    String methodName = method.getSimpleName().toString();
+                    if ((getter1.equals(methodName) || getter2.equals(methodName)) && method.getParameters().size() == 0) {
+                        String doc = elementUtils.getDocComment(method);
+                        if (!isNullOrEmpty(doc)) {
+                            answer = doc;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return answer;
     }
 
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
@@ -821,6 +832,29 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         public Set<String> getEnums() {
             return enums;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            EndpointPath that = (EndpointPath) o;
+
+            if (!name.equals(that.name)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
         }
     }
 

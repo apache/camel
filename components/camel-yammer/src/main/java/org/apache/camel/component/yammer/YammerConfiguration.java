@@ -18,10 +18,14 @@ package org.apache.camel.component.yammer;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class YammerConfiguration {
 
+    @UriPath(name = "function")
+    private YammerFunctionType functionType;
+    private String function;
     @UriParam
     private String consumerKey;
     @UriParam
@@ -42,8 +46,6 @@ public class YammerConfiguration {
     private String threaded;
     @UriParam
     private String userId;
-
-    private String function;
     private ApiRequestor requestor;
 
     public String getConsumerKey() {
@@ -76,6 +78,14 @@ public class YammerConfiguration {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public YammerFunctionType getFunctionType() {
+        return functionType;
+    }
+
+    public void setFunctionType(YammerFunctionType functionType) {
+        this.functionType = functionType;
     }
 
     public String getFunction() {

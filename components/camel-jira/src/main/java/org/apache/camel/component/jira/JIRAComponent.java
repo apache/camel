@@ -26,11 +26,10 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class JIRAComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
-        
-        Endpoint endpoint = new JIRAEndpoint(uri, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        JIRAEndpoint endpoint = new JIRAEndpoint(uri, this);
         setProperties(endpoint, parameters);
+        endpoint.setType(getCamelContext().getTypeConverter().convertTo(JIRAType.class, remaining));
         return endpoint;
     }
 }

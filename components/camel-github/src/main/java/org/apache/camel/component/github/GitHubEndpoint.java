@@ -16,23 +16,20 @@
  */
 package org.apache.camel.component.github;
 
-import java.util.regex.Pattern;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.github.consumer.CommitConsumer;
-import org.apache.camel.component.github.consumer.ConsumerType;
 import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
-import org.apache.camel.component.github.producer.ProducerType;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
@@ -55,9 +52,13 @@ import org.apache.camel.spi.UriParams;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "github")
-@UriParams
+@UriEndpoint(scheme = "github", label = "api,file")
 public class GitHubEndpoint extends DefaultEndpoint {
+
+    @UriPath
+    private GitHubType type;
+    @UriPath
+    private String branchName;
     @UriParam
     private String username;
     @UriParam
@@ -74,63 +75,46 @@ public class GitHubEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        String uri = getEndpointUri();
-        String[] uriSplit = splitUri(getEndpointUri());
-        
-        if (uriSplit.length > 0) {
-            switch (ProducerType.fromUri(uriSplit[0])) {
-            case CLOSEPULLREQUEST:
-                return new ClosePullRequestProducer(this);
-            case PULLREQUESTCOMMENT:
-                return new PullRequestCommentProducer(this);
-            default:
-                break;
-            }
+        if (type == GitHubType.CLOSEPULLREQUEST) {
+            return new ClosePullRequestProducer(this);
+        } else if (type == GitHubType.PULLREQUESTCOMMENT) {
+            return new PullRequestCommentProducer(this);
         }
-
-        throw new IllegalArgumentException("Cannot create any producer with uri " + uri
-                + ". A producer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException("Cannot create producer with type " + type);
     }
     
     public Consumer createConsumer(Processor processor) throws Exception {
-        String uri = getEndpointUri();
-        String[] uriSplit = splitUri(getEndpointUri());
-        
-        if (uriSplit.length > 0) {
-            switch (ConsumerType.fromUri(uriSplit[0])) {
-            case COMMIT:
-                if (uriSplit.length >= 2 && uriSplit[1].length() > 1) {
-                    return new CommitConsumer(uriSplit[1], this, processor);
-                } else {
-                    throw new IllegalArgumentException("Must provide a branch name when using the COMMIT consumer.  github://commit/[branch name]?[options]");
-                }
-            case PULLREQUEST:
-                return new PullRequestConsumer(this, processor);
-            case PULLREQUESTCOMMENT:
-                return new PullRequestCommentConsumer(this, processor);
-            case TAG:
-                return new TagConsumer(this, processor);
-            default:
-                break;
-            }
+        if (type == GitHubType.COMMIT) {
+            ObjectHelper.notEmpty(branchName, "branchName", this);
+            return new CommitConsumer(this, processor, branchName);
+        } else if (type == GitHubType.PULLREQUEST) {
+            return new PullRequestConsumer(this, processor);
+        } else if (type == GitHubType.PULLREQUESTCOMMENT) {
+            return new PullRequestCommentConsumer(this, processor);
+        } else if (type == GitHubType.TAG) {
+            return new TagConsumer(this, processor);
         }
-
-        throw new IllegalArgumentException("Cannot create any consumer with uri " + uri
-                + ". A consumer type was not provided (or an incorrect pairing was used).");
+        throw new IllegalArgumentException("Cannot create consumer with type " + type);
     }
 
     public boolean isSingleton() {
         return true;
     }
 
-    private static String[] splitUri(String uri) {
-        Pattern p1 = Pattern.compile("github:(//)*");
-        Pattern p2 = Pattern.compile("\\?.*");
+    public GitHubType getType() {
+        return type;
+    }
 
-        uri = p1.matcher(uri).replaceAll("");
-        uri = p2.matcher(uri).replaceAll("");
+    public void setType(GitHubType type) {
+        this.type = type;
+    }
 
-        return uri.split("/");
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 
     public String getUsername() {

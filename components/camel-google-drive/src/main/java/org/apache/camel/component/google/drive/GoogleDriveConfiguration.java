@@ -20,9 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.services.drive.DriveScopes;
-
+import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Component configuration for GoogleDrive component.
@@ -30,7 +31,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class GoogleDriveConfiguration {
     private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
-            DriveScopes.DRIVE); 
+            DriveScopes.DRIVE);
+
+    @UriPath
+    private GoogleDriveApiName apiName;
+
+    @UriPath
+    private String methodName;
     
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
@@ -49,7 +56,23 @@ public class GoogleDriveConfiguration {
 
     @UriParam
     private String applicationName;
-    
+
+    public GoogleDriveApiName getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(GoogleDriveApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
     public String getClientId() {
         return clientId;
     }

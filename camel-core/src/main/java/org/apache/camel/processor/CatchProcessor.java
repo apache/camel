@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
@@ -124,11 +123,9 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable 
      */
     protected Throwable catches(Exchange exchange, Throwable exception) {
         // use the exception iterator to walk the caused by hierarchy
-        Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
-        while (it.hasNext()) {
-            Throwable e = it.next();
+        for (final Throwable e : ObjectHelper.createExceptionIterable(exception)) {
             // see if we catch this type
-            for (Class<?> type : exceptions) {
+            for (final Class<?> type : exceptions) {
                 if (type.isInstance(e) && matchesWhen(exchange)) {
                     return e;
                 }

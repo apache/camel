@@ -479,6 +479,38 @@ public final class ObjectHelper {
     }
 
     /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by comma,
+     * or a primitive type array; otherwise to simplify the caller's code,
+     * we just create a singleton collection iterator over a single value
+     * <p/>
+     * Will default use comma for String separating String values.
+     * This method does <b>not</b> allow empty values
+     *
+     * @param value  the value
+     * @return the iterable
+     */
+    public static Iterable<Object> createIterable(Object value) {
+        return createIterable(value, DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     * <p/>
+     * This method does <b>not</b> allow empty values
+     *
+     * @param value      the value
+     * @param delimiter  delimiter for separating String values
+     * @return the iterable
+     */
+    public static Iterable<Object> createIterable(Object value, String delimiter) {
+        return createIterable(value, delimiter, false);
+    }
+
+    /**
      * Creates an iterator over the value if the value is a collection, an
      * Object[], a String with values separated by comma,
      * or a primitive type array; otherwise to simplify the caller's code,
@@ -515,8 +547,28 @@ public final class ObjectHelper {
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
-     * 
+     *
      * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues).iterator();
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     * 
+     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
      * over the corresponding Java primitive wrapper objects of the given elements
      * inside the {@code value} array. That's we get an autoboxing of the primitive
      * types here for free as it's also the case in Java language itself.
@@ -524,10 +576,11 @@ public final class ObjectHelper {
      * @param value             the value
      * @param delimiter         delimiter for separating String values
      * @param allowEmptyValues  whether to allow empty values
-     * @return the iterator
+     * @return the iterable
+     * @see java.lang.Iterable
      */
     @SuppressWarnings("unchecked")
-    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
+    public static Iterable<Object> createIterable(Object value, String delimiter, final boolean allowEmptyValues) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
@@ -535,58 +588,72 @@ public final class ObjectHelper {
         }
 
         if (value == null) {
-            return Collections.emptyList().iterator();
+            return Collections.emptyList();
         } else if (value instanceof Iterator) {
-            return (Iterator<Object>)value;
+            final Iterator<Object> iterator = (Iterator<Object>)value;
+            return new Iterable<Object>() {
+                @Override
+                public Iterator<Object> iterator() {
+                    return iterator;
+                }
+            };
         } else if (value instanceof Iterable) {
-            return ((Iterable<Object>)value).iterator();
+            return (Iterable<Object>)value;
         } else if (value.getClass().isArray()) {
             if (isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
-                return new Iterator<Object>() {
-                    private int idx;
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        return new Iterator<Object>() {
+                            private int idx;
 
-                    public boolean hasNext() {
-                        return idx < Array.getLength(array);
+                            public boolean hasNext() {
+                                return idx < Array.getLength(array);
+                            }
+
+                            public Object next() {
+                                if (!hasNext()) {
+                                    throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
+                                }
+
+                                return Array.get(array, idx++);
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
                     }
-
-                    public Object next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
-                        }
-
-                        return Array.get(array, idx++);
-                    }
-
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-
                 };
             } else {
-                List<Object> list = Arrays.asList((Object[]) value);
-                return list.iterator();
+                return Arrays.asList((Object[]) value);
             }
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
-            return new Iterator<Object>() {
-                private int idx;
+            return new Iterable<Object>() {
+                @Override
+                public Iterator<Object> iterator() {
+                    return new Iterator<Object>() {
+                        private int idx;
 
-                public boolean hasNext() {
-                    return idx < nodeList.getLength();
-                }
+                        public boolean hasNext() {
+                            return idx < nodeList.getLength();
+                        }
 
-                public Object next() {
-                    if (!hasNext()) {
-                        throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
-                    }
+                        public Object next() {
+                            if (!hasNext()) {
+                                throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
+                            }
 
-                    return nodeList.item(idx++);
-                }
+                            return nodeList.item(idx++);
+                        }
 
-                public void remove() {
-                    throw new UnsupportedOperationException();
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
                 }
             };
         } else if (value instanceof String) {
@@ -596,7 +663,7 @@ public final class ObjectHelper {
 
             if (delimiter != null && s.contains(delimiter)) {
                 // use a scanner if it contains the delimiter
-                Scanner scanner = new Scanner((String)value);
+                final Scanner scanner = new Scanner((String)value);
 
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
                     // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
@@ -611,34 +678,44 @@ public final class ObjectHelper {
                     // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
                     delimiter = ",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))";
                 }
-
                 scanner.useDelimiter(delimiter);
-                return CastUtils.cast(scanner);
+
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        return CastUtils.cast(scanner);
+                    }
+                };
             } else {
-                // use a plain iterator that returns the value as is as there are only a single value
-                return new Iterator<Object>() {
-                    private int idx;
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        // use a plain iterator that returns the value as is as there are only a single value
+                        return new Iterator<Object>() {
+                            private int idx;
 
-                    public boolean hasNext() {
-                        return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
-                    }
+                            public boolean hasNext() {
+                                return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
+                            }
 
-                    public Object next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
-                        }
+                            public Object next() {
+                                if (!hasNext()) {
+                                    throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
+                                }
 
-                        idx++;
-                        return s;
-                    }
+                                idx++;
+                                return s;
+                            }
 
-                    public void remove() {
-                        throw new UnsupportedOperationException();
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
                     }
                 };
             }
         } else {
-            return Collections.singletonList(value).iterator();
+            return Collections.singletonList(value);
         }
     }
 
@@ -1406,14 +1483,37 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator to walk the exception from the bottom up
+     * Creates an Iterable to walk the exception from the bottom up
      * (the last caused by going upwards to the root exception).
      *
+     * @see java.lang.Iterable
      * @param exception  the exception
-     * @return the iterator
+     * @return the Iterable
+     */
+    public static Iterable<Throwable> createExceptionIterable(Throwable exception) {
+        List<Throwable> throwables = new ArrayList<Throwable>();
+
+        Throwable current = exception;
+        // spool to the bottom of the caused by tree
+        while (current != null) {
+            throwables.add(current);
+            current = current.getCause();
+        }
+        Collections.reverse(throwables);
+
+        return throwables;
+    }
+
+    /**
+     * Creates an Iterator to walk the exception from the bottom up
+     * (the last caused by going upwards to the root exception).
+     *
+     * @see Iterator
+     * @param exception  the exception
+     * @return the Iterator
      */
     public static Iterator<Throwable> createExceptionIterator(Throwable exception) {
-        return new ExceptionIterator(exception);
+        return createExceptionIterable(exception).iterator();
     }
 
     /**
@@ -1435,11 +1535,9 @@ public final class ObjectHelper {
         }
 
         // walk the hierarchy and look for it
-        Iterator<Throwable> it = createExceptionIterator(exception);
-        while (it.hasNext()) {
-            Throwable e = it.next();
-            if (type.isInstance(e)) {
-                return type.cast(e);
+        for (final Throwable throwable : createExceptionIterable(exception)) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
             }
         }
 
@@ -1543,35 +1641,5 @@ public final class ObjectHelper {
         }
         // value must be a number
         return value.equals(Float.NaN) || value.equals(Double.NaN);
-    }
-
-    private static final class ExceptionIterator implements Iterator<Throwable> {
-        private List<Throwable> tree = new ArrayList<Throwable>();
-        private Iterator<Throwable> it;
-
-        public ExceptionIterator(Throwable exception) {
-            Throwable current = exception;
-            // spool to the bottom of the caused by tree
-            while (current != null) {
-                tree.add(current);
-                current = current.getCause();
-            }
-
-            // reverse tree so we go from bottom to top
-            Collections.reverse(tree);
-            it = tree.iterator();
-        }
-
-        public boolean hasNext() {
-            return it.hasNext();
-        }
-
-        public Throwable next() {
-            return it.next();
-        }
-
-        public void remove() {
-            it.remove();
-        }
     }
 }

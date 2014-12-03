@@ -163,8 +163,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
             } else {
                 throw new XmlSignatureInvalidException("XML signature validation failed");
             }
-            collectedObjects.addAll((List<XMLObject>) signature.getObjects());
-            collectedReferences.addAll((List<Reference>) signature.getSignedInfo().getReferences());
+            collectedObjects.addAll(signature.getObjects());
+            collectedReferences.addAll(signature.getSignedInfo().getReferences());
         }
         map2Message(collectedReferences, collectedObjects, out, doc);
     }

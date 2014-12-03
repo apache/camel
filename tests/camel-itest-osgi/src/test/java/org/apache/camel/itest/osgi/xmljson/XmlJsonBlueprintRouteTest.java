@@ -22,6 +22,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +38,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 /**
  * OSGi integration test for camel-xmljson
  */
+@Ignore("see CAMEL-8029 and the <details> XML tag of camel-xmljson Karaf feature about running this test")
 @RunWith(PaxExam.class)
 public class XmlJsonBlueprintRouteTest extends OSGiBlueprintTestSupport {
 

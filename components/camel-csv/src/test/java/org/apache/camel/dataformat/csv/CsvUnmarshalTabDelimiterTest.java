@@ -22,6 +22,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
@@ -45,7 +46,7 @@ public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
         assertEquals("1", body.get(0).get(2));
         assertEquals("124", body.get(1).get(0));
         assertEquals("ActiveMQ in Action", body.get(1).get(1));
-        assertEquals("2", body.get(1).get(2));        
+        assertEquals("2", body.get(1).get(2));
     }
 
     @SuppressWarnings("unchecked")
@@ -63,17 +64,17 @@ public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
         assertEquals("Camel in Action", body.get(0).get(1));
         assertEquals("1", body.get(0).get(2));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                csv.setDelimiter("\t");
+                CsvDataFormat csv = new CsvDataFormat()
+                        .setDelimiter('\t');
 
                 from("direct:start").unmarshal(csv)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

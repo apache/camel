@@ -26,7 +26,6 @@ import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.util.Version;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
     
     @Test
     public void testPhraseSearcher() throws Exception {
-        final StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_46);
+        final StandardAnalyzer analyzer = new StandardAnalyzer();
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
         
         context.stop();
@@ -97,7 +96,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
     
     @Test
     public void testWildcardSearcher() throws Exception {
-        final WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_46);
+        final WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
         
         context.stop();

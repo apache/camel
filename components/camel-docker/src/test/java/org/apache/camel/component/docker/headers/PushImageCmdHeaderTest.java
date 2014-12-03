@@ -24,6 +24,7 @@ import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -62,7 +63,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.pushImageCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.pushImageCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

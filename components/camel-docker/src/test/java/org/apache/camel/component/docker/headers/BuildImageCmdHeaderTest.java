@@ -26,6 +26,7 @@ import com.github.dockerjava.api.command.BuildImageCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -54,7 +55,7 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         
         template.sendBodyAndHeaders("direct:in", inputStream, getHeaders());
         
-        Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Mockito.any(InputStream.class));
+        Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Matchers.any(InputStream.class));
         Mockito.verify(mockObject, Mockito.times(1)).withQuiet();
         Mockito.verify(mockObject, Mockito.times(1)).withNoCache();
         Mockito.verify(mockObject, Mockito.times(1)).withRemove();
@@ -67,7 +68,7 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         
         template.sendBodyAndHeaders("direct:in", file, getHeaders());
         
-        Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Mockito.any(File.class));
+        Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Matchers.any(File.class));
         Mockito.verify(mockObject, Mockito.times(1)).withQuiet();
         Mockito.verify(mockObject, Mockito.times(1)).withNoCache();
         Mockito.verify(mockObject, Mockito.times(1)).withRemove();
@@ -77,8 +78,8 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
     
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.buildImageCmd(Mockito.any(InputStream.class))).thenReturn(mockObject);
-        Mockito.when(dockerClient.buildImageCmd(Mockito.any(File.class))).thenReturn(mockObject);
+        Mockito.when(dockerClient.buildImageCmd(Matchers.any(InputStream.class))).thenReturn(mockObject);
+        Mockito.when(dockerClient.buildImageCmd(Matchers.any(File.class))).thenReturn(mockObject);
 
     }
 

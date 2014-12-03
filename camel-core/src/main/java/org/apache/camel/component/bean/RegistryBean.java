@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.CamelContextHelper;
 
 /**
  * An implementation of a {@link BeanHolder} which will look up a bean from the registry and act as a cache of its metadata

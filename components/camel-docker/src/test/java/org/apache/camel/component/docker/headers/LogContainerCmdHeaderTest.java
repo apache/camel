@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.LogContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -57,18 +58,18 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).logContainerCmd(containerId);
-        Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Mockito.eq(followStream));
-        Mockito.verify(mockObject, Mockito.times(1)).withTail(Mockito.eq(tail));
+        Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Matchers.eq(followStream));
+        Mockito.verify(mockObject, Mockito.times(1)).withTail(Matchers.eq(tail));
         Mockito.verify(mockObject, Mockito.times(1)).withTailAll();
-        Mockito.verify(mockObject, Mockito.times(1)).withStdErr(Mockito.eq(stdErr));
-        Mockito.verify(mockObject, Mockito.times(1)).withStdOut(Mockito.eq(stdOut));
-        Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(Mockito.eq(timestamps));
+        Mockito.verify(mockObject, Mockito.times(1)).withStdErr(Matchers.eq(stdErr));
+        Mockito.verify(mockObject, Mockito.times(1)).withStdOut(Matchers.eq(stdOut));
+        Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(Matchers.eq(timestamps));
         
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.logContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.logContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

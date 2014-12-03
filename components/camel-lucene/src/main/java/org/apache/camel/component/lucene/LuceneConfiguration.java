@@ -35,7 +35,7 @@ public class LuceneConfiguration {
     private File indexDirectory;
     private Analyzer analyzer;
     private int maxHits;
-    private Version luceneVersion = Version.LUCENE_46; 
+    private Version luceneVersion = Version.LUCENE_4_10_2; 
 
     public LuceneConfiguration() {
     }
@@ -65,7 +65,7 @@ public class LuceneConfiguration {
         indexDirectory = component.resolveAndRemoveReferenceParameter(
                 parameters, "indexDir", File.class, new File("file:///./indexDirectory"));
         analyzer = component.resolveAndRemoveReferenceParameter(
-                parameters, "analyzer", Analyzer.class, new StandardAnalyzer(luceneVersion));
+                parameters, "analyzer", Analyzer.class, new StandardAnalyzer());
 
         setMaxHits(component.getAndRemoveParameter(parameters, "maxHits", Integer.class, 10));
     }

@@ -44,6 +44,7 @@
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
+        <include>org.apache.camel:camel-chunk</include>
         <include>org.apache.camel:camel-cmis</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
@@ -74,6 +75,7 @@
         <include>org.apache.camel:camel-github</include>
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
+        <include>org.apache.camel:camel-google-mail</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guava-eventbus</include>

@@ -28,11 +28,15 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
@@ -49,10 +53,45 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
         assertMockEndpointsSatisfied();
         assertTrue(String.class.isInstance(message.getIn().getBody()));
     }
-    
+
+    @Test
+    public void testJMSMessageHelperMap() throws Exception {
+        getMockEndpoint(MOCK_RESULT_URI).expectedMessageCount(1);
+
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        map.put("Hello", "Camel");
+        map.put("Int", Integer.MAX_VALUE);
+        map.put("Boolean", Boolean.TRUE);
+        map.put(Boolean.TRUE, Long.MAX_VALUE);
+
+        template.sendBody(SJMS_QUEUE_URI, map);
+        assertMockEndpointsSatisfied();
+        assertTrue(Map.class.isInstance(message.getIn().getBody()));
+        assertEquals("Camel", message.getIn().getBody(Map.class).get("Hello"));
+        assertEquals(Integer.MAX_VALUE, message.getIn().getBody(Map.class).get("Int"));
+        assertEquals(Boolean.TRUE, message.getIn().getBody(Map.class).get("Boolean"));
+        assertEquals(Long.MAX_VALUE, message.getIn().getBody(Map.class).get("true"));
+    }
+
+    @Ignore
+    @Test
+    public void testJMSMessageHelperCollection() throws Exception {
+        // TODO: Once SJMS can accept a Collection as Body
+    }
+
+    @Test
+    public void testJMSMessageHelperByteArray() throws Exception {
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel".getBytes());
+
+        byte[] bytes = "Hello Camel".getBytes();
+        template.sendBody(SJMS_QUEUE_URI, bytes);
+        assertMockEndpointsSatisfied();
+        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
+    }
+
     @Test
     public void testJMSMessageHelperInputStream() throws Exception {
-        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel".getBytes());
         String p = "Hello Camel";
         InputStream is = new ByteArrayInputStream(p.getBytes());
         template.sendBody(SJMS_QUEUE_URI, is);
@@ -61,10 +100,19 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
     }
     
     @Test
-    public void testJMSMessageHelperByteBuffer() throws Exception {
+    public void testJMSMessageHelperCharBuffer() throws Exception {
         getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
+        CharBuffer cb = CharBuffer.wrap("Hello Camel");
+        template.sendBody(SJMS_QUEUE_URI, cb);
+        assertMockEndpointsSatisfied();
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
+    }
+
+    @Test
+    public void testJMSMessageHelperByteBuffer() throws Exception {
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel".getBytes());
         String p = "Hello Camel";
-        ByteBuffer bb = ByteBuffer.wrap(p.getBytes()); 
+        ByteBuffer bb = ByteBuffer.wrap(p.getBytes());
         template.sendBody(SJMS_QUEUE_URI, bb);
         assertMockEndpointsSatisfied();
         assertTrue(byte[].class.isInstance(message.getIn().getBody()));
@@ -72,7 +120,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
     
     @Test
     public void testJMSMessageHelperFile() throws InterruptedException, IOException {
-        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel");
+        getMockEndpoint(MOCK_RESULT_URI).expectedBodiesReceived("Hello Camel".getBytes());
         String p = "Hello Camel";
         File f = File.createTempFile("tmp-test", ".txt");
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
@@ -96,9 +144,8 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
         Reader test = new BufferedReader(new FileReader(f.getAbsolutePath()));
         template.sendBody(SJMS_QUEUE_URI, test);
         assertMockEndpointsSatisfied();
-        boolean resultDelete = f.delete();
-        assertTrue(resultDelete);
-        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
+        assertTrue(f.delete());
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
     }
     
     @Test
@@ -108,7 +155,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
         StringReader test = new StringReader(p);
         template.sendBody(SJMS_QUEUE_URI, test);
         assertMockEndpointsSatisfied();
-        assertTrue(byte[].class.isInstance(message.getIn().getBody()));
+        assertTrue(String.class.isInstance(message.getIn().getBody()));
     }
     
     @Test
@@ -143,7 +190,7 @@ public class JMSMessageHelperTypeConversionTest extends JmsTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint(MOCK_RESULT_URI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        message = (Exchange) exchange;
+                        message = exchange;
                     }
                 });
                 

@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.NioWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.util.ThreadNameDeterminer;
-import org.jboss.netty.util.internal.ExecutorUtil;
 
 /**
  * A builder to create Netty {@link WorkerPool} which can be used for sharing worker pools
@@ -67,32 +64,7 @@ public final class NettyWorkerPoolBuilder {
      */
     public WorkerPool build() {
         int count = workerCount > 0 ? workerCount : NettyHelper.DEFAULT_IO_THREADS;
-        workerPool = new CamelNioWorkerPool(Executors.newCachedThreadPool(), count, new CamelNettyThreadNameDeterminer(pattern, name));
+        workerPool = new NioWorkerPool(Executors.newCachedThreadPool(), count, new CamelNettyThreadNameDeterminer(pattern, name));
         return workerPool;
-    }
-    
-    class CamelNioWorkerPool extends NioWorkerPool {
-        private Executor executor;
-        CamelNioWorkerPool(Executor workerExecutor, int count, ThreadNameDeterminer determiner) {
-            super(workerExecutor, count, determiner);
-            executor = workerExecutor;
-        }
-        
-        // Just make sure we shutdown the executor;
-        public void shutdown() {
-            super.shutdown();
-            ExecutorUtil.shutdownNow(executor);
-        }
-         
-    }
-
-    /**
-     * Shutdown the created worker pool
-     */
-    public void destroy() {
-        if (workerPool != null) {
-            workerPool.shutdown();
-            workerPool = null;
-        }
     }
 }

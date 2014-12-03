@@ -24,12 +24,12 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
- * @version 
  */
 public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
@@ -46,22 +46,22 @@ public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
         String body = result.getReceivedExchanges().get(0).getIn().getBody(
                 String.class);
-        String[] lines = body.split("\n");
+        String[] lines = body.split(System.lineSeparator());
         assertEquals(2, lines.length);
-        assertEquals("123|Camel in Action|1", lines[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines[1]);
+        assertEquals("123|Camel in Action|1", lines[0].trim());
+        assertEquals("124|ActiveMQ in Action|2", lines[1].trim());
     }
 
     private List<Map<String, Object>> createBody() {
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> data = new ArrayList<>();
 
-        Map<String, Object> row1 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row1 = new LinkedHashMap<>();
         row1.put("orderId", 123);
         row1.put("item", "Camel in Action");
         row1.put("amount", 1);
         data.add(row1);
 
-        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
+        Map<String, Object> row2 = new LinkedHashMap<>();
         row2.put("orderId", 124);
         row2.put("item", "ActiveMQ in Action");
         row2.put("amount", 2);

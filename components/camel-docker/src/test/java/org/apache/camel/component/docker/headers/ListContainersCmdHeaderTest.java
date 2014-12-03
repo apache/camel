@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.ListContainersCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -51,9 +52,9 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).listContainersCmd();
-        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Mockito.eq(showAll));
-        Mockito.verify(mockObject, Mockito.times(1)).withShowSize(Mockito.eq(showSize));
-        Mockito.verify(mockObject, Mockito.times(1)).withLimit(Mockito.eq(limit));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Matchers.eq(showAll));
+        Mockito.verify(mockObject, Mockito.times(1)).withShowSize(Matchers.eq(showSize));
+        Mockito.verify(mockObject, Mockito.times(1)).withLimit(Matchers.eq(limit));
 
         
     }

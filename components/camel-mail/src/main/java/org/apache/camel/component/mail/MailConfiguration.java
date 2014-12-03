@@ -27,6 +27,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -40,11 +41,11 @@ public class MailConfiguration implements Cloneable {
     private JavaMailSender javaMailSender;
     private Properties javaMailProperties;
     private Properties additionalJavaMailProperties;
-    @UriParam
+    // protocol is implied by component name so it should not be in UriPath
     private String protocol;
-    @UriParam
+    @UriPath
     private String host;
-    @UriParam
+    @UriPath
     private int port = -1;
     @UriParam
     private String username;
@@ -53,44 +54,44 @@ public class MailConfiguration implements Cloneable {
     @UriParam
     private String subject;
     private Session session;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean mapMailMessage = true;
-    @UriParam
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM)
     private String from = MailConstants.MAIL_DEFAULT_FROM;
-    @UriParam
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER)
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean delete;
     @UriParam
     private String copyTo;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean unseen = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     @UriParam
     private String replyTo;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int fetchSize = -1;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean debugMode;
-    @UriParam
+    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean dummyTrustManager;
-    @UriParam
+    @UriParam(defaultValue = "text/plain")
     private String contentType = "text/plain";
-    @UriParam
+    @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY)
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean useInlineAttachments;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean ignoreUnsupportedCharset;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disconnect;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean closeFolder = true;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean peek = true;
     private SSLContextParameters sslContextParameters;
 

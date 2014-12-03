@@ -27,6 +27,9 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
     public static final int SMPP_NEG_RESPONSE_MSG_TOO_LONG = 1;
 
+    protected Charset ascii = Charset.forName("US-ASCII");
+    protected Charset latin1 = Charset.forName("ISO-8859-1");
+
     protected Charset charset;
 
     public SmppSmCommand(SMPPSession session, SmppConfiguration config) {
@@ -137,16 +140,24 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
         Alphabet alphabetObj;
         if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
-            byte[] messageBytes = body.getBytes(charset);
-            if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
-                alphabetObj = Alphabet.ALPHA_DEFAULT;
-            } else {
-                alphabetObj = Alphabet.ALPHA_UCS2;
+            alphabetObj = Alphabet.ALPHA_UCS2;
+            if (isLatin1Compatible(charset)) {
+                byte[] messageBytes = body.getBytes(charset);
+                if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
+                    alphabetObj = Alphabet.ALPHA_DEFAULT;
+                }
             }
         } else {
             alphabetObj = Alphabet.valueOf(alphabet);
         }
 
         return alphabetObj;
+    }
+
+    private boolean isLatin1Compatible(Charset c) {
+        if (c.equals(ascii) || c.equals(latin1)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -30,7 +30,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.util.Version;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +52,11 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
         registry.bind("std", new File("target/stdindexDir"));
         registry.bind("load_dir", new File("src/test/resources/sources"));
-        registry.bind("stdAnalyzer", new StandardAnalyzer(Version.LUCENE_46));
+        registry.bind("stdAnalyzer", new StandardAnalyzer());
         registry.bind("simple", new File("target/simpleindexDir"));
-        registry.bind("simpleAnalyzer", new SimpleAnalyzer(Version.LUCENE_46));
+        registry.bind("simpleAnalyzer", new SimpleAnalyzer());
         registry.bind("whitespace", new File("target/whitespaceindexDir"));
-        registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer(Version.LUCENE_46));
+        registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
         return registry;
     }
     

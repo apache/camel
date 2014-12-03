@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.UnpauseContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -51,7 +52,7 @@ public class UnpauseContainerCmdHeaderTest extends BaseDockerHeaderTest<UnpauseC
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.unpauseContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.unpauseContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

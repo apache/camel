@@ -41,7 +41,7 @@
       javax.xml.ws*;version="[0.0,3.0)",
       javax.servlet*;resolution="optional";version="[0,4)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
-      org.springframework.beans*;resolution:=optional,
+      org.springframework*;version="${spring-version-range}";resolution:=optional,
       ${camel.osgi.import.defaults},
       ${camel.osgi.import.additional},
       org.osgi.framework;resolution:=optional,

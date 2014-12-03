@@ -104,19 +104,19 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         super.doStart();
 
         if (getPort() != SparkBase.SPARK_DEFAULT_PORT) {
-            Spark.setPort(getPort());
+            SparkBase.setPort(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration();
             if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
                 int port = config.getPort();
                 if (port > 0) {
-                    Spark.setPort(port);
+                    SparkBase.setPort(port);
                 }
             }
         }
         if (getIpAddress() != null) {
-            Spark.setIpAddress(getIpAddress());
+            SparkBase.setIpAddress(getIpAddress());
         }
 
         // configure component options
@@ -132,7 +132,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        Spark.stop();
+        SparkBase.stop();
     }
 
     @Override

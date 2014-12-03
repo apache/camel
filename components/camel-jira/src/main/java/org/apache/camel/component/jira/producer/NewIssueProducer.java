@@ -42,6 +42,8 @@ public class NewIssueProducer extends AbstractJIRAProducer {
             // copy the header of in message to the out message
             exchange.getOut().copyFrom(exchange.getIn());
             exchange.getOut().setBody(issue);
+        } else {
+            exchange.getIn().setBody(issue);
         }
     }
 

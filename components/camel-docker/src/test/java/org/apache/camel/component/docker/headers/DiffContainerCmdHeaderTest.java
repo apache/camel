@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.ContainerDiffCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -50,7 +51,7 @@ public class DiffContainerCmdHeaderTest extends BaseDockerHeaderTest<ContainerDi
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.containerDiffCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.containerDiffCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

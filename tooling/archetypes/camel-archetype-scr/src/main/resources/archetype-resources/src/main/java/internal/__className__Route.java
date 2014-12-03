@@ -30,17 +30,11 @@ public class ${className}Route extends RouteBuilder {
     SimpleRegistry registry;
 
     // Configured fields
-    @SuppressWarnings("unused")
     private String camelRouteId;
-    @SuppressWarnings("unused")
     private Integer maximumRedeliveries;
-    @SuppressWarnings("unused")
     private Long redeliveryDelay;
-    @SuppressWarnings("unused")
     private Double backOffMultiplier;
-    @SuppressWarnings("unused")
     private Long maximumRedeliveryDelay;
-    protected boolean summaryLogging = false;
 
     public ${className}Route(final SimpleRegistry registry) {
         this.registry = registry;
@@ -61,8 +55,23 @@ public class ${className}Route extends RouteBuilder {
             .maximumRedeliveryDelay(maximumRedeliveryDelay));
 
         from("{{from}}")
+            .startupOrder(2)
             .routeId(camelRouteId)
+            .onCompletion()
+                .to("direct:processCompletion")
+            .end()
+            .removeHeaders("CamelHttp*")
             .to("{{to}}");
+
+        from("direct:processCompletion")
+            .startupOrder(1)
+            .routeId(camelRouteId + ".completion")
+            .choice()
+            .when(simple("${exception} == null"))
+                .log("{{messageOk}}")
+            .otherwise()
+                .log(LoggingLevel.ERROR, "{{messageError}}")
+            .end();
 	}
 
     public void checkProperties() {

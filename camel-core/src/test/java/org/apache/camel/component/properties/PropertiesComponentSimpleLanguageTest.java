@@ -65,7 +65,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().simple("Hi ${body}. ${properties:org/apache/camel/component/properties/bar.properties:bar.quote}.");
+                    .transform().simple("Hi ${body}. ${properties-location:org/apache/camel/component/properties/bar.properties:bar.quote}.");
             }
         });
         context.start();
@@ -80,7 +80,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().simple("Hi ${body}. ${properties:org/apache/camel/component/properties/bar.properties:bar.quote}.");
+                    .transform().simple("Hi ${body}. ${properties-location:org/apache/camel/component/properties/bar.properties:bar.quote}.");
             }
         });
         context.start();
@@ -95,7 +95,7 @@ public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().simple("Hi ${body}. ${properties:org/apache/camel/component/properties/bar.properties,"
+                    .transform().simple("Hi ${body}. ${properties-location:org/apache/camel/component/properties/bar.properties,"
                         + "org/apache/camel/component/properties/cheese.properties:cheese.quote}.");
             }
         });

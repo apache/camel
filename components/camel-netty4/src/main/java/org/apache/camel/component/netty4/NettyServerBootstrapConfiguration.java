@@ -17,61 +17,84 @@
 package org.apache.camel.component.netty4;
 
 import java.io.File;
-import java.util.Locale;
 import java.util.Map;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.ssl.SslHandler;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
+@UriParams
 public class NettyServerBootstrapConfiguration implements Cloneable {
-    private static String defaultEnabledProtocols;
+    public static final String DEFAULT_ENABLED_PROTOCOLS = "TLSv1,TLSv1.1,TLSv1.2";
+
+    @UriPath
     protected String protocol;
+    @UriPath
     protected String host;
+    @UriPath
     protected int port;
+    @UriParam(defaultValue = "false")
     protected boolean broadcast;
+    @UriParam(defaultValue = "65536")
     protected int sendBufferSize = 65536;
+    @UriParam(defaultValue = "65536")
     protected int receiveBufferSize = 65536;
+    @UriParam
     protected int receiveBufferSizePredictor;
+    @UriParam(defaultValue = "1")
     protected int bossCount = 1;
+    @UriParam
     protected int workerCount;
+    @UriParam(defaultValue = "true")
     protected boolean keepAlive = true;
+    @UriParam(defaultValue = "true")
     protected boolean tcpNoDelay = true;
+    @UriParam(defaultValue = "true")
     protected boolean reuseAddress = true;
+    @UriParam(defaultValue = "10000")
     protected int connectTimeout = 10000;
+    @UriParam
     protected int backlog;
+    @UriParam
     protected ServerInitializerFactory serverInitializerFactory;
+    @UriParam
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
+    @UriParam(defaultValue = "false")
     protected boolean ssl;
+    @UriParam(defaultValue = "false")
     protected boolean sslClientCertHeaders;
+    @UriParam
     protected SslHandler sslHandler;
+    @UriParam
     protected SSLContextParameters sslContextParameters;
+    @UriParam(defaultValue = "false")
     protected boolean needClientAuth;
+    @UriParam
     protected File keyStoreFile;
+    @UriParam
     protected File trustStoreFile;
+    @UriParam
     protected String keyStoreResource;
+    @UriParam
     protected String trustStoreResource;
+    @UriParam
     protected String keyStoreFormat;
+    @UriParam
     protected String securityProvider;
-    protected String enabledProtocols = defaultEnabledProtocols;
+    @UriParam(defaultValue = DEFAULT_ENABLED_PROTOCOLS)
+    protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
+    @UriParam
     protected String passphrase;
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
+    @UriParam
     protected String networkInterface;
     
-    // setup the default value of TLS
-    static {
-        // JDK6 doesn't support TLSv1.1,TLSv1.2
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        if (javaVersion.startsWith("1.6")) {
-            defaultEnabledProtocols = "TLSv1";
-        } else {
-            defaultEnabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
-        }
-    }
-
     public String getAddress() {
         return host + ":" + port;
     }

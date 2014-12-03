@@ -20,24 +20,35 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.notnoop.apns.ApnsService;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
-/**
- * Represents a direct endpoint that synchronously invokes the consumers of the
- * endpoint when a producer sends a message to it.
- */
+@UriEndpoint(scheme = "apns", consumerClass = ApnsConsumer.class, label = "eventbus,mobile")
 public class ApnsEndpoint extends ScheduledPollEndpoint {
 
     private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<DefaultConsumer>();
+
+    @UriPath(description = "Name of the endpoint.")
+    private String name;
+    @UriParam
     private String tokens;
 
     public ApnsEndpoint(String uri, ApnsComponent component) {
         super(uri, component);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getTokens() {

@@ -43,6 +43,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     public void setAllowStreaming(Boolean b) {
         allowStreaming = b;
     }
+
     public Boolean getAllowStreaming() {
         return allowStreaming;
     }
@@ -73,7 +74,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             if (getCamelContext().equals(result.getCamelContext())) {
                 result.setCamelContext(getCamelContext());
             }
-            
+            result.setBeanId(beanId);
+
         } else {
             // endpoint URI does not specify a bean
             result = new CxfEndpoint(remaining, this);

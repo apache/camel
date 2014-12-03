@@ -69,7 +69,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResult");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFlag", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFlag", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
         Exchange received = mockEndpoint.getExchanges().get(0);
@@ -86,7 +86,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResult");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFactory", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFactory", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
         Exchange received = mockEndpoint.getExchanges().get(0);
@@ -103,7 +103,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResult");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithObjectModel", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithObjectModel", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
         Exchange received = mockEndpoint.getExchanges().get(0);
@@ -120,7 +120,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFlagPredicate", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFlagPredicate", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
     }
@@ -134,7 +134,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFactoryPredicate", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFactoryPredicate", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
     }
@@ -148,7 +148,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithObjectModelPredicate", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithObjectModelPredicate", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
     }

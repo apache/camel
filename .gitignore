@@ -5,6 +5,7 @@ target
 .idea
 .DS_Store
 .classpath
+.ekstazi
 .project
 .settings
 .checkstyle

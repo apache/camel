@@ -37,7 +37,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -148,6 +147,7 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
@@ -721,7 +721,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // can either be routes or a single route
-        RoutesDefinition answer = null;
+        RoutesDefinition answer;
         if (result instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) result;
             answer = new RoutesDefinition();
@@ -1467,18 +1467,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                if (pc != null) {
-                    // the parser will throw exception if property key was not found
-                    String answer = pc.parseUri(text);
-                    log.debug("Resolved text: {} -> {}", text, answer);
-                    return answer;
-                } else {
-                    throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                            + " in CamelContext to support property placeholders.");
+                if (pc == null) {
+                    // create a default properties component to be used as there may be default values we can use
+                    log.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+                    pc = getComponent("properties", PropertiesComponent.class);
                 }
-                
-            // Component available, use actual tokens
-            } else if (pc != null && text.contains(pc.getPrefixToken())) {
+            }
+
+            if (pc != null && text.contains(pc.getPrefixToken())) {
                 // the parser will throw exception if property key was not found
                 String answer = pc.parseUri(text);
                 log.debug("Resolved text: {} -> {}", text, answer);
@@ -1659,7 +1655,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.getId().equals(id)) {
+            if (route.idOrCreate(nodeIdFactory).equals(id)) {
                 return route;
             }
         }
@@ -1676,13 +1672,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         this.restDefinitions.addAll(restDefinitions);
-
-        // convert rests into routes so we reuse routes for runtime
-        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
-        for (RestDefinition rest : restDefinitions) {
-            routes.addAll(rest.asRouteDefinition(this));
-        }
-        addRouteDefinitions(routes);
     }
 
     public RestConfiguration getRestConfiguration() {
@@ -2367,6 +2356,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (service instanceof StartupListener) {
             StartupListener listener = (StartupListener) service;
             addStartupListener(listener);
+        }
+
+        if (service instanceof CamelContextAware) {
+            CamelContextAware aware = (CamelContextAware) service;
+            aware.setCamelContext(this);
         }
 
         service.start();

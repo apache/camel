@@ -16,8 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.util.AbstractSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -159,4 +161,37 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
         return entrySetView;
     }
+
+    @Override
+    public Set<String> keySet() {
+        return new CaseInsensitiveKeySet();
+    }
+
+    /**
+     * To use the original keys but support checking if a key exist using case insensitive.
+     */
+    private final class CaseInsensitiveKeySet extends AbstractSet<String> {
+
+        public Iterator<String> iterator() {
+            // use the original case keys, which is stored in as values
+            return originalKeys.values().iterator();
+        }
+
+        public int size() {
+            return CaseInsensitiveMap.this.size();
+        }
+
+        public boolean contains(Object o) {
+            return CaseInsensitiveMap.this.containsKey(o);
+        }
+
+        public boolean remove(Object o) {
+            return CaseInsensitiveMap.this.remove(o) != null;
+        }
+
+        public void clear() {
+            CaseInsensitiveMap.this.clear();
+        }
+    }
+
 }

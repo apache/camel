@@ -29,17 +29,18 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(scheme = "rest", label = "core,http,rest")
 public class RestEndpoint extends DefaultEndpoint {
 
-    @UriParam
+    @UriPath
     private String method;
-    @UriParam
+    @UriPath
     private String path;
-    @UriParam
+    @UriPath
     private String uriTemplate;
     @UriParam
     private String consumes;

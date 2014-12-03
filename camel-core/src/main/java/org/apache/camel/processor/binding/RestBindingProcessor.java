@@ -48,10 +48,11 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final String consumes;
     private final String produces;
     private final String bindingMode;
+    private final boolean skipBindingOnErrorCode;
 
     public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                                 DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                                String consumes, String produces, String bindingMode) {
+                                String consumes, String produces, String bindingMode, boolean skipBindingOnErrorCode) {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -82,6 +83,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         this.consumes = consumes;
         this.produces = produces;
         this.bindingMode = bindingMode;
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
     @Override
@@ -238,6 +240,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             // only marshal if there was no exception
             if (exchange.getException() != null) {
                 return;
+            }
+
+            if (skipBindingOnErrorCode) {
+                Integer code = exchange.hasOut() ? exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class) : exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                // if there is a custom http error code then skip binding
+                if (code != null && code >= 300) {
+                    return;
+                }
             }
 
             if (bindingMode == null || "off".equals(bindingMode)) {

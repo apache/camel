@@ -42,6 +42,7 @@ public class MailComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
+        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"type\": \"string\""));
         assertTrue(json.contains("\"contentType\": { \"kind\": \"parameter\", \"type\": \"string\""));
         assertTrue(json.contains("\"debugMode\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
