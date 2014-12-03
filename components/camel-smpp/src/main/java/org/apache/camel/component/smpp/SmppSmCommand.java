@@ -48,7 +48,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             case ALLOW:
                 return segments;
             case TRUNCATE:
-                return new byte[][] { segments[0] };
+                return new byte[][] {segments[0]};
             case REJECT:
                 // FIXME - JSMPP needs to have an enum of the negative response
                 // codes instead of just using them like this
