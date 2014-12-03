@@ -144,11 +144,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-<<<<<<< HEAD
-=======
 
 import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
->>>>>>> d00b08d... CAMEL-8107: Allow to use property placeholder with default values without having to setup the properties component
 
 /**
  * Represents the context used to configure routes and the policies to use.
