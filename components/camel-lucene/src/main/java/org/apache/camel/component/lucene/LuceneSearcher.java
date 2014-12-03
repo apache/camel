@@ -59,7 +59,7 @@ public class LuceneSearcher {
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
-        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_4_9);
+        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_4_10_2);
     }
 
     public Hits search(String searchPhrase, int maxNumberOfHits, Version luceneVersion) throws Exception {
@@ -83,7 +83,7 @@ public class LuceneSearcher {
     private int doSearch(String searchPhrase, int maxNumberOfHits, Version luceneVersion) throws NullPointerException, ParseException, IOException {
         LOG.trace("*** Search Phrase: {} ***", searchPhrase);
 
-        QueryParser parser = new QueryParser(luceneVersion, "contents", analyzer);
+        QueryParser parser = new QueryParser("contents", analyzer);
         Query query = parser.parse(searchPhrase);
         TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfHits, true);
         indexSearcher.search(query, collector);
