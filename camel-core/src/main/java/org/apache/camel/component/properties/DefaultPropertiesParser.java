@@ -31,9 +31,8 @@ import org.slf4j.LoggerFactory;
  * A parser to parse a string which contains property placeholders
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
     private static final String GET_OR_ELSE_TOKEN = ":";
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
