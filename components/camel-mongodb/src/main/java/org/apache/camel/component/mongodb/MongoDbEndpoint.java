@@ -170,7 +170,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (db == null) {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
         }
-        if(collection != null) {
+        if (collection != null) {
             if (!createCollection && !db.collectionExists(collection)) {
                 throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
             }
