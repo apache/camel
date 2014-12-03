@@ -24,7 +24,7 @@ public enum SmppSplittingPolicy {
 
     public static SmppSplittingPolicy fromString(String policyName) throws SmppException {
 
-        if(policyName == null) {
+        if (policyName == null) {
             throw new SmppException("policyName must not be null");
         }
 

@@ -41,7 +41,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         byte[] shortMessage = getShortMessage(message);
         SmppSplitter splitter = createSplitter(message);
         byte[][] segments = splitter.split(shortMessage);
-        if(segments.length > 1) {
+        if (segments.length > 1) {
             // Message body is split into multiple parts,
             // check if this is permitted
             SmppSplittingPolicy policy = getSplittingPolicy(message);
@@ -64,7 +64,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     }
 
     private SmppSplittingPolicy getSplittingPolicy(Message message) throws SmppException {
-        if(message.getHeaders().containsKey(SmppConstants.SPLITTING_POLICY)) {
+        if (message.getHeaders().containsKey(SmppConstants.SPLITTING_POLICY)) {
             String policyName = message.getHeader(SmppConstants.SPLITTING_POLICY, String.class);
             return SmppSplittingPolicy.fromString(policyName);
         }
