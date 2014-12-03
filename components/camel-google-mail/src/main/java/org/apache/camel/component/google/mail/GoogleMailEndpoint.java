@@ -23,6 +23,8 @@ import com.google.api.services.gmail.Gmail;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
+import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;

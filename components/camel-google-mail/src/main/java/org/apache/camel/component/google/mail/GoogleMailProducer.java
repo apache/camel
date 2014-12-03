@@ -21,6 +21,7 @@ import java.util.Map;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiProducer;

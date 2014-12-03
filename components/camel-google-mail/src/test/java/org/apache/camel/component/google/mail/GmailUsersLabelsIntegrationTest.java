@@ -22,6 +22,8 @@ import java.util.Map;
 import com.google.api.services.gmail.model.Label;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.mail.internal.GmailUsersLabelsApiMethod;
+import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

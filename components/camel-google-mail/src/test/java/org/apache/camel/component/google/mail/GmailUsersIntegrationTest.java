@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.mail;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
+import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

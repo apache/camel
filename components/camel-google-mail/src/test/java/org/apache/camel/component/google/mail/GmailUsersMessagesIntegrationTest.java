@@ -33,6 +33,8 @@ import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
+import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
