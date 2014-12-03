@@ -17,18 +17,21 @@
 package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.metrics.MetricsComponent;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
-    private MetricRegistry registry = new MetricRegistry();
+    private MetricRegistry metricRegistry = new MetricRegistry();
 
     @Override
     protected boolean useJmx() {
@@ -38,6 +41,14 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
+    
+    // Setup the common MetricsRegistry for MetricsComponent and MetricsRoutePolicy to use
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind(MetricsComponent.METRIC_REGISTRY_NAME, metricRegistry);
+        return registry;
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -45,7 +56,6 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
         MetricsRoutePolicyFactory factory = new MetricsRoutePolicyFactory();
         factory.setUseJmx(true);
-        factory.setMetricsRegistry(registry);
         factory.setPrettyPrint(true);
         context.addRoutePolicyFactory(factory);
 
@@ -66,19 +76,20 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should be 2 names
-        assertEquals(2, registry.getNames().size());
+        // there should be 3 names
+        assertEquals(3, metricRegistry.getNames().size());
 
-        // there should be 2 mbeans
+        // there should be 3 mbeans
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
-        assertEquals(2, set.size());
+        assertEquals(3, set.size());
 
         String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsRegistryService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
         String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
-
+        
+        assertTrue(json.contains("test"));
         assertTrue(json.contains("bar.responses"));
         assertTrue(json.contains("foo.responses"));
     }
@@ -88,7 +99,7 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo")
+                from("seda:foo").routeId("foo").to("metrics:counter:test")
                     .to("mock:result");
 
                 from("seda:bar").routeId("bar")

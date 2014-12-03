@@ -227,6 +227,30 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
     }
 
+    public void testManagedCamelContextExplainEndpointUri() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainEndpointJson", new Object[]{"log:foo?groupDelay=2000&groupSize=5", false},
+                new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+
+        assertEquals(5, StringHelper.countChar(json, '{'));
+        assertEquals(5, StringHelper.countChar(json, '}'));
+        assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"value\": \"2000\","
+                + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"value\": \"5\","
+                + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

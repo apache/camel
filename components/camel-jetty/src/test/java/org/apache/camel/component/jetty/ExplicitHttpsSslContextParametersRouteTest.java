@@ -26,12 +26,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 
 public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
-    private SslSelectChannelConnector createSslSocketConnector(CamelContext context) throws Exception {
+    private Connector createSslSocketConnector(CamelContext context, int port) throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setPassword(pwd);
@@ -46,6 +47,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
         // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector instead of SslSocketConnector
         SslSelectChannelConnector sslSocketConnector = new SslSelectChannelConnector();
         sslSocketConnector.getSslContextFactory().setSslContext(sslContextParameters.createSSLContext());
+        sslSocketConnector.setPort(port);
         
         return sslSocketConnector;
     }
@@ -57,9 +59,9 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
-                Map<Integer, SslSelectChannelConnector> connectors = new HashMap<Integer, SslSelectChannelConnector>();
-                connectors.put(port1, createSslSocketConnector(getContext()));
-                connectors.put(port2, createSslSocketConnector(getContext()));
+                Map<Integer, Connector> connectors = new HashMap<Integer, Connector>();
+                connectors.put(port1, createSslSocketConnector(getContext(), port1));
+                connectors.put(port2, createSslSocketConnector(getContext(), port2));
 
                 // create jetty component
                 JettyHttpComponent jetty = new JettyHttpComponent();

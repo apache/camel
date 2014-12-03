@@ -39,13 +39,15 @@ import org.slf4j.LoggerFactory;
 /**
  * HTTP based {@link NettyEndpoint}
  */
-@UriEndpoint(scheme = "netty-http", consumerClass = NettyHttpConsumer.class)
+@UriEndpoint(scheme = "netty-http", consumerClass = NettyHttpConsumer.class, label = "http")
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
+    private NettyHttpConfiguration configuration;
+    @UriParam(defaultValue = "false")
     private boolean traceEnabled;
     @UriParam
     private String httpMethodRestrict;
@@ -121,6 +123,12 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
         return true;
+    }
+
+    @Override
+    public void setConfiguration(NettyConfiguration configuration) {
+        super.setConfiguration(configuration);
+        this.configuration = (NettyHttpConfiguration) configuration;
     }
 
     @Override

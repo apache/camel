@@ -16,6 +16,7 @@
  */
 package org.apache.camel.karaf.commands;
 
+import org.apache.camel.commands.CamelController;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
@@ -27,6 +28,14 @@ public abstract class CamelCommandSupport extends OsgiCommandSupport {
 
     public void setCamelController(CamelController camelController) {
         this.camelController = camelController;
+    }
+
+    String safeNull(String s) {
+        if (s == null) {
+            return "";
+        } else {
+            return s;
+        }
     }
 
 }

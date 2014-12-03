@@ -24,13 +24,15 @@ import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.producer.DockerProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a Docker endpoint.
  */
-@UriEndpoint(scheme = "docker", consumerClass = DockerEventsConsumer.class)
+@UriEndpoint(scheme = "docker", consumerClass = DockerEventsConsumer.class, label = "container,cloud,platform")
 public class DockerEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private DockerConfiguration configuration;
 
     public DockerEndpoint() {

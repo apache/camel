@@ -16,15 +16,11 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.commands.BacklogTracerStartCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-/**
- * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
- */
 @Command(scope = "camel", name = "backlog-tracer-start", description = "Starts the Backlog tracer")
 public class BacklogTracerStart extends CamelCommandSupport {
 
@@ -50,29 +46,8 @@ public class BacklogTracerStart extends CamelCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        CamelContext camel = camelController.getCamelContext(context);
-        if (camel == null) {
-            System.err.println("CamelContext " + context + " not found.");
-            return null;
-        }
-
-        BacklogTracer backlogTracer = BacklogTracer.getBacklogTracer(camel);
-        if (backlogTracer == null) {
-            backlogTracer = (BacklogTracer) camel.getDefaultBacklogTracer();
-        }
-
-        backlogTracer.setEnabled(true);
-        if (backlogSize != null) {
-            backlogTracer.setBacklogSize(backlogSize);
-        }
-        if (removeOnDump != null) {
-            backlogTracer.setRemoveOnDump(removeOnDump);
-        }
-        backlogTracer.setTracePattern(pattern);
-        backlogTracer.setTraceFilter(filter);
-
-        System.out.println("BacklogTracer started on " + camel.getName() + " with size: " + backlogTracer.getBacklogSize());
-        return null;
+        BacklogTracerStartCommand command = new BacklogTracerStartCommand(context, pattern, filter, backlogSize, removeOnDump);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

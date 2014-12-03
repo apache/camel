@@ -40,10 +40,10 @@ public class WebsocketHandler implements WebSocketProtocol {
     
     @Override
     public void onClose(WebSocket webSocket) {
-        LOG.info("closing websocket");
+        LOG.debug("closing websocket");
         store.removeWebSocket(webSocket);
         
-        LOG.info("websocket closed");
+        LOG.debug("websocket closed");
     }
 
     @Override
@@ -53,24 +53,24 @@ public class WebsocketHandler implements WebSocketProtocol {
 
     @Override
     public void onOpen(WebSocket webSocket) {
-        LOG.info("opening websocket");
+        LOG.debug("opening websocket");
         String connectionKey = UUID.randomUUID().toString();
         store.addWebSocket(connectionKey, webSocket);
-        LOG.info("websocket opened");
+        LOG.debug("websocket opened");
     }
 
     @Override
     public List<AtmosphereRequest> onMessage(WebSocket webSocket, String data) {
-        LOG.info("processing text message {}", data);
+        LOG.debug("processing text message {}", data);
         String connectionKey = store.getConnectionKey(webSocket);
         consumer.sendMessage(connectionKey, data);
-        LOG.info("text message sent");
+        LOG.debug("text message sent");
         return null;
     }
     
     @Override
     public List<AtmosphereRequest> onMessage(WebSocket webSocket, byte[] data, int offset, int length) {
-        LOG.info("processing byte message {}", data);
+        LOG.debug("processing byte message {}", data);
         String connectionKey = store.getConnectionKey(webSocket);
         if (length < data.length) {
             // create a copy that contains the relevant section as camel expects bytes without offset.
@@ -80,7 +80,7 @@ public class WebsocketHandler implements WebSocketProtocol {
             System.arraycopy(rawdata, offset, data, 0, length);
         }
         consumer.sendMessage(connectionKey, data);
-        LOG.info("byte message sent");
+        LOG.debug("byte message sent");
         return null;
     }
 

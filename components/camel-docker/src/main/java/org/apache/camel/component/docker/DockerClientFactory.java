@@ -17,8 +17,10 @@
 package org.apache.camel.component.docker;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
+import com.github.dockerjava.jaxrs.DockerCmdExecFactoryImpl;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.util.ObjectHelper;
@@ -62,7 +64,7 @@ public final class DockerClientFactory {
         Integer requestTimeout = DockerHelper.getProperty(DockerConstants.DOCKER_API_REQUEST_TIMEOUT, dockerConfiguration, message, Integer.class);
         String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message, String.class);
         Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class);
-        
+        String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class);
         
         DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(uriHost);
@@ -72,6 +74,7 @@ public final class DockerClientFactory {
         clientProfile.setPassword(password);
         clientProfile.setRequestTimeout(requestTimeout);
         clientProfile.setServerAddress(serverAddress);
+        clientProfile.setCertPath(certPath);
         
         if (secure != null && secure) {
             clientProfile.setSecure(secure);
@@ -82,14 +85,16 @@ public final class DockerClientFactory {
         if (client != null) {
             return client;
         }
-        
+ 
         DockerClientConfig.DockerClientConfigBuilder configBuilder = new DockerClientConfig.DockerClientConfigBuilder()
-            .withUsername(username).withPassword(password).withEmail(email).withReadTimeout(requestTimeout)
+            .withUsername(username).withPassword(password).withEmail(email).withReadTimeout(requestTimeout).withDockerCertPath(certPath)
             .withUri(clientProfile.toUrl());
         
         DockerClientConfig config = configBuilder.build();
         
-        return DockerClientBuilder.getInstance(config).build();
+        DockerCmdExecFactory dockerClientFactory = new DockerCmdExecFactoryImpl();
+        
+        return DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerClientFactory).build();
         
     }
 

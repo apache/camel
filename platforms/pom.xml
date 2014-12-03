@@ -32,6 +32,8 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>catalog</module>
+    <module>commands</module>
     <module>karaf</module>
   </modules>
 </project>

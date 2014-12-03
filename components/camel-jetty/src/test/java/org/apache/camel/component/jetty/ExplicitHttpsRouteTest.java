@@ -24,12 +24,13 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 
 public class ExplicitHttpsRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
-    private SslSelectChannelConnector createSslSocketConnector() throws URISyntaxException {
+    private Connector createSslSocketConnector(int port) throws URISyntaxException {
         // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector instead of SslSocketConnector
         SslSelectChannelConnector sslSocketConnector = new SslSelectChannelConnector();
         sslSocketConnector.getSslContextFactory().setKeyManagerPassword(pwd);
@@ -37,6 +38,7 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
         URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         sslSocketConnector.getSslContextFactory().setKeyStorePath(keyStoreUrl.toURI().getPath());
         sslSocketConnector.getSslContextFactory().setTrustStoreType("JKS");
+        sslSocketConnector.setPort(port);
         return sslSocketConnector;
     }
     // END SNIPPET: e2
@@ -47,9 +49,9 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
             public void configure() throws URISyntaxException {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
-                Map<Integer, SslSelectChannelConnector> connectors = new HashMap<Integer, SslSelectChannelConnector>();
-                connectors.put(port1, createSslSocketConnector());
-                connectors.put(port2, createSslSocketConnector());
+                Map<Integer, Connector> connectors = new HashMap<Integer, Connector>();
+                connectors.put(port1, createSslSocketConnector(port1));
+                connectors.put(port2, createSslSocketConnector(port2));
 
                 // create jetty component
                 JettyHttpComponent jetty = new JettyHttpComponent();

@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +37,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -70,6 +70,7 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -131,10 +132,12 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -144,6 +147,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -263,9 +268,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.managementStrategy = createManagementStrategy();
         this.managementMBeanAssembler = createManagementMBeanAssembler();
 
+        // Call all registered trackers with this context
+        // Note, this may use a partially constructed object
+        CamelContextTrackerRegistry.INSTANCE.contextCreated(this);
+
+        // [TODO] Remove in 3.0
         Container.Instance.manage(this);
     }
-
+    
     /**
      * Creates the {@link CamelContext} using the given JNDI context as the registry
      *
@@ -653,12 +663,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return routeStartupOrder;
     }
 
-    public synchronized List<Route> getRoutes() {
+    public List<Route> getRoutes() {
         // lets return a copy of the collection as objects are removed later when services are stopped
         if (routes.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return new ArrayList<Route>(routes);
+            synchronized (routes) {
+                return new ArrayList<Route>(routes);
+            }
         }
     }
 
@@ -676,12 +688,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRouteCollection instead");
     }
 
-    synchronized void removeRouteCollection(Collection<Route> routes) {
-        this.routes.removeAll(routes);
+    void removeRouteCollection(Collection<Route> routes) {
+        synchronized (routes) {
+            this.routes.removeAll(routes);
+        }
     }
 
-    synchronized void addRouteCollection(Collection<Route> routes) throws Exception {
-        this.routes.addAll(routes);
+    void addRouteCollection(Collection<Route> routes) throws Exception {
+        synchronized (routes) {
+            this.routes.addAll(routes);
+        }
     }
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
@@ -705,7 +721,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // can either be routes or a single route
-        RoutesDefinition answer = null;
+        RoutesDefinition answer;
         if (result instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) result;
             answer = new RoutesDefinition();
@@ -912,6 +928,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized boolean removeRoute(String routeId) throws Exception {
+        // remove the route from ErrorHandlerBuilder if possible
+        if (getErrorHandlerBuilder() instanceof ErrorHandlerBuilderSupport) {
+            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerBuilder();
+            builder.removeOnExceptionList(routeId);
+        }
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             if (getRouteStatus(routeId).isStopped()) {
@@ -1067,6 +1088,39 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public String resolveComponentDefaultName(String javaType) {
+        // special for some components
+        // TODO: ActiveMQ 5.11 will include this out of the box, so not needed when its released
+        if ("org.apache.activemq.camel.component.ActiveMQComponent".equals(javaType)) {
+            return "jms";
+        }
+
+        // try to find the component by its java type from the in-use components
+        if (javaType != null) {
+            // find all the components which will include the default component name
+            try {
+                Map<String, Properties> all = CamelContextHelper.findComponents(this);
+                for (Map.Entry<String, Properties> entry : all.entrySet()) {
+                    String fqn = (String) entry.getValue().get("class");
+                    if (javaType.equals(fqn)) {
+                        // is there component docs for that name?
+                        String name = entry.getKey();
+                        String json = getComponentParameterJsonSchema(name);
+                        if (json != null) {
+                            return name;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+                return null;
+            }
+        }
+
+        // could not find a component with that name
+        return null;
+    }
+
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
         return CamelContextHelper.findComponents(this);
     }
@@ -1077,6 +1131,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
         log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
+    }
+
+    public String getComponentParameterJsonSchema(String componentName) throws IOException {
+        String packageName = sanitizeComponentName(componentName);
+        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".json";
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
         if (inputStream != null) {
             try {
                 return IOHelper.loadText(inputStream);
@@ -1106,8 +1176,148 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "netty/http";
         } else if ("netty4-http".equals(componentName)) {
             return "netty4/http";
+        } else if ("spring-event".equals(componentName)) {
+            return "event";
+        } else if ("class".equals(componentName)) {
+            return "beanclass";
+        } else if ("smtp".equals(componentName) || "smtps".equals(componentName)
+                || "imap".equals(componentName) || "imaps".equals(componentName)
+                || "pop3".equals(componentName) || "pop3s".equals(componentName)) {
+            return "mail";
         }
         return componentName.replaceAll("-", "");
+    }
+
+    public String explainEndpointJson(String uri, boolean includeAllOptions) {
+        try {
+            URI u = new URI(uri);
+
+            String json = getComponentParameterJsonSchema(u.getScheme());
+            if (json == null) {
+                return null;
+            }
+
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+
+            // selected rows to use for answer
+            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+
+            // insert values from uri
+            Map<String, Object> options = URISupport.parseParameters(u);
+
+            // extract consumer. prefix options
+            Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
+            // and add back again without the consumer. prefix as that json schema omits that
+            options.putAll(consumerOptions);
+
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String name = entry.getKey();
+                String value = "";
+                if (entry.getValue() != null) {
+                    value = entry.getValue().toString();
+                }
+                value = URISupport.sanitizePath(value);
+
+                // find type and description from the json schema
+                String type = null;
+                String kind = null;
+                String javaType = null;
+                String defaultValue = null;
+                String description = null;
+                for (Map<String, String> row : rows) {
+                    if (name.equals(row.get("name"))) {
+                        type = row.get("type");
+                        kind = row.get("kind");
+                        javaType = row.get("javaType");
+                        defaultValue = row.get("defaultValue");
+                        description = row.get("description");
+                        break;
+                    }
+                }
+
+                // add as selected row
+                selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
+            }
+
+            // include other rows
+            for (Map<String, String> row : rows) {
+                String name = row.get("name");
+                String kind = row.get("kind");
+                String value = row.get("value");
+                String defaultValue = row.get("defaultValue");
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                value = URISupport.sanitizePath(value);
+                String description = row.get("description");
+
+                if ("path".equals(kind)) {
+                    // if its the path option then we need to grab the actual value from the uri, which is the remainder path
+                    value = URISupport.extractRemainderPath(u, false);
+                    value = URISupport.sanitizePath(value);
+                }
+
+                // always include path options
+                if (includeAllOptions || "path".equals(kind)) {
+                    // add as selected row
+                    if (!selected.containsKey(name)) {
+                        selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
+                    }
+                }
+            }
+
+            StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+
+            boolean first = true;
+            for (String[] row : selected.values()) {
+                if (first) {
+                    first = false;
+                } else {
+                    buffer.append(",");
+                }
+                buffer.append("\n    ");
+
+                String name = row[0];
+                String kind = row[1];
+                String type = row[2];
+                String javaType = row[3];
+                String value = row[4];
+                String defaultValue = row[5];
+                String description = row[6];
+
+                // add json of the option
+                buffer.append(doubleQuote(name)).append(": { ");
+                CollectionStringBuffer csb = new CollectionStringBuffer();
+                if (kind != null) {
+                    csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (type != null) {
+                    csb.append("\"type\": \"" + type + "\"");
+                }
+                if (javaType != null) {
+                    csb.append("\"javaType\": \"" + javaType + "\"");
+                }
+                if (value != null) {
+                    csb.append("\"value\": \"" + value + "\"");
+                }
+                if (defaultValue != null) {
+                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
+                }
+                if (description != null) {
+                    csb.append("\"description\": \"" + description + "\"");
+                }
+                if (!csb.isEmpty()) {
+                    buffer.append(csb.toString());
+                }
+                buffer.append(" }");
+            }
+
+            buffer.append("\n  }\n}\n");
+            return buffer.toString();
+
+        } catch (Exception e) {
+            // ignore and return empty response
+            return null;
+        }
     }
 
     public String createRouteStaticEndpointJson(String routeId) {
@@ -1257,18 +1467,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                if (pc != null) {
-                    // the parser will throw exception if property key was not found
-                    String answer = pc.parseUri(text);
-                    log.debug("Resolved text: {} -> {}", text, answer);
-                    return answer;
-                } else {
-                    throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                            + " in CamelContext to support property placeholders.");
+                if (pc == null) {
+                    // create a default properties component to be used as there may be default values we can use
+                    log.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+                    pc = getComponent("properties", PropertiesComponent.class);
                 }
-                
-            // Component available, use actual tokens
-            } else if (pc != null && text.contains(pc.getPrefixToken())) {
+            }
+
+            if (pc != null && text.contains(pc.getPrefixToken())) {
                 // the parser will throw exception if property key was not found
                 String answer = pc.parseUri(text);
                 log.debug("Resolved text: {} -> {}", text, answer);
@@ -1449,7 +1655,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.getId().equals(id)) {
+            if (route.idOrCreate(nodeIdFactory).equals(id)) {
                 return route;
             }
         }
@@ -1466,13 +1672,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         this.restDefinitions.addAll(restDefinitions);
-
-        // convert rests into routes so we reuse routes for runtime
-        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
-        for (RestDefinition rest : restDefinitions) {
-            routes.addAll(rest.asRouteDefinition(this));
-        }
-        addRouteDefinitions(routes);
     }
 
     public RestConfiguration getRestConfiguration() {
@@ -2047,6 +2246,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // and clear start date
         startDate = null;
 
+        // [TODO] Remove in 3.0
         Container.Instance.unmanage(this);
     }
 
@@ -2156,6 +2356,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (service instanceof StartupListener) {
             StartupListener listener = (StartupListener) service;
             addStartupListener(listener);
+        }
+
+        if (service instanceof CamelContextAware) {
+            CamelContextAware aware = (CamelContextAware) service;
+            aware.setCamelContext(this);
         }
 
         service.start();

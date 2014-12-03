@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms.consumer;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.spi.Synchronization;
@@ -47,16 +46,14 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
     }
 
     /**
-     * @param message
+     * @param exchange
      */
     @Override
     public void handleMessage(final Exchange exchange) {
         if (log.isDebugEnabled()) {
             log.debug("Handling InOnly Message: {}", exchange.getIn().getBody());
         }
-        if (exchange.isFailed()) {
-            return;
-        } else {
+        if (!exchange.isFailed()) {
             NoOpAsyncCallback callback = new NoOpAsyncCallback();
             if (isTransacted() || isSynchronous()) {
                 // must process synchronous if transacted or configured to
@@ -73,7 +70,7 @@ public class InOnlyMessageHandler extends AbstractMessageHandler {
                 }
             } else {
                 // process asynchronous using the async routing engine
-                log.debug("Aynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
+                log.debug("Asynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
 
                 getProcessor().process(exchange, callback);
             }

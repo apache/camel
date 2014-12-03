@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JIRAEndpoint;
 
-
 /**
  * Consumes new JIRA issues.
  * 

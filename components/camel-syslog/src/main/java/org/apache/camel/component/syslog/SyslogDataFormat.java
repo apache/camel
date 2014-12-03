@@ -18,6 +18,7 @@ package org.apache.camel.component.syslog;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -39,7 +40,11 @@ public class SyslogDataFormat implements DataFormat {
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_FACILITY, message.getFacility());
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_SEVERITY, message.getSeverity());
         exchange.getOut().setHeader(SyslogConstants.SYSLOG_HOSTNAME, message.getHostname());
-        exchange.getOut().setHeader(SyslogConstants.SYSLOG_TIMESTAMP, message.getTimestamp());
+        // use java.util.Date as timestamp
+        Date time = message.getTimestamp() != null ? message.getTimestamp().getTime() : null;
+        if (time != null) {
+            exchange.getOut().setHeader(SyslogConstants.SYSLOG_TIMESTAMP, time);
+        }
 
         // Since we are behind the fact of being in an Endpoint...
         // We need to pull in the remote/local via either Mina or Netty.

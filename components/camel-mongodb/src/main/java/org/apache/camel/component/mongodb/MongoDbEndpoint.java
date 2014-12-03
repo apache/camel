@@ -163,27 +163,29 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void initializeConnection() throws CamelMongoDbException {
         LOG.info("Initialising MongoDb endpoint: {}", this.toString());
-        if (database == null || collection == null) {
+        if (database == null || (collection == null && !(MongoDbOperation.getDbStats.equals(operation) || MongoDbOperation.command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
         db = mongoConnection.getDB(database);
         if (db == null) {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
         }
-        if (!createCollection && !db.collectionExists(collection)) {
-            throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
-        }
-        dbCollection = db.getCollection(collection);
-
-        LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
-                new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
-
-        try {
-            if (ObjectHelper.isNotEmpty(collectionIndex)) {
-                ensureIndex(dbCollection, createIndex());
+        if (collection != null) {
+            if (!createCollection && !db.collectionExists(collection)) {
+                throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
             }
-        } catch (Exception e) {
-            throw new CamelMongoDbException("Error creating index", e);
+            dbCollection = db.getCollection(collection);
+
+            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
+                    new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
+
+            try {
+                if (ObjectHelper.isNotEmpty(collectionIndex)) {
+                    ensureIndex(dbCollection, createIndex());
+                }
+            } catch (Exception e) {
+                throw new CamelMongoDbException("Error creating index", e);
+            }
         }
     }
 

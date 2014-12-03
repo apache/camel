@@ -203,12 +203,8 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         return isSynchronous();
     }
 
-    protected SjmsEndpoint getSjmsEndpoint() {
-        return (SjmsEndpoint) this.getEndpoint();
-    }
-
     protected ConnectionResource getConnectionResource() {
-        return getSjmsEndpoint().getConnectionResource();
+        return getEndpoint().getConnectionResource();
     }
 
     /**
@@ -217,7 +213,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return int
      */
     public int getAcknowledgeMode() {
-        return getSjmsEndpoint().getAcknowledgementMode().intValue();
+        return getEndpoint().getAcknowledgementMode().intValue();
     }
 
     /**
@@ -226,7 +222,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return true if synchronous, otherwise false
      */
     public boolean isSynchronous() {
-        return getSjmsEndpoint().isSynchronous();
+        return getEndpoint().isSynchronous();
     }
 
     /**
@@ -235,7 +231,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return String
      */
     public String getReplyTo() {
-        return getSjmsEndpoint().getNamedReplyTo();
+        return getEndpoint().getNamedReplyTo();
     }
 
     /**
@@ -244,7 +240,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return String
      */
     public String getDestinationName() {
-        return getSjmsEndpoint().getDestinationName();
+        return getEndpoint().getDestinationName();
     }
 
     /**
@@ -272,7 +268,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return true if it is a Topic, otherwise it is a Queue
      */
     public boolean isTopic() {
-        return getSjmsEndpoint().isTopic();
+        return getEndpoint().isTopic();
     }
 
     /**
@@ -281,7 +277,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return true if transacted, otherwise false
      */
     public boolean isEndpointTransacted() {
-        return getSjmsEndpoint().isTransacted();
+        return getEndpoint().isTransacted();
     }
 
     /**
@@ -290,7 +286,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return true if it is a Topic, otherwise it is a Queue
      */
     public String getNamedReplyTo() {
-        return getSjmsEndpoint().getNamedReplyTo();
+        return getEndpoint().getNamedReplyTo();
     }
 
     /**
@@ -299,7 +295,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return int
      */
     public int getProducerCount() {
-        return getSjmsEndpoint().getProducerCount();
+        return getEndpoint().getProducerCount();
     }
 
     /**
@@ -308,7 +304,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return int
      */
     public int getConsumerCount() {
-        return getSjmsEndpoint().getConsumerCount();
+        return getEndpoint().getConsumerCount();
     }
 
     /**
@@ -326,7 +322,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return long
      */
     public long getTtl() {
-        return getSjmsEndpoint().getTtl();
+        return getEndpoint().getTtl();
     }
 
     /**
@@ -335,7 +331,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return true if persistent, otherwise false
      */
     public boolean isPersistent() {
-        return getSjmsEndpoint().isPersistent();
+        return getEndpoint().isPersistent();
     }
 
     /**
@@ -344,7 +340,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return long
      */
     public long getResponseTimeOut() {
-        return getSjmsEndpoint().getResponseTimeOut();
+        return getEndpoint().getResponseTimeOut();
     }
 
     /**
@@ -353,7 +349,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
      * @return TransactionCommitStrategy
      */
     public TransactionCommitStrategy getCommitStrategy() {
-        return getSjmsEndpoint().getTransactionCommitStrategy();
+        return getEndpoint().getTransactionCommitStrategy();
     }
 
 }

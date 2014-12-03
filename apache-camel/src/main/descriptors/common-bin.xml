@@ -44,6 +44,7 @@
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
+        <include>org.apache.camel:camel-chunk</include>
         <include>org.apache.camel:camel-cmis</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
@@ -72,7 +73,9 @@
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-geocoder</include>
         <include>org.apache.camel:camel-github</include>
+        <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
+        <include>org.apache.camel:camel-google-mail</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
@@ -157,6 +160,7 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scala</include>
         <include>org.apache.camel:camel-schematron</include>
+        <include>org.apache.camel:camel-scr</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-servletlistener</include>
@@ -193,6 +197,7 @@
         <include>org.apache.camel:camel-test-spring40</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
+        <include>org.apache.camel:camel-univocity-parsers</include>
         <include>org.apache.camel:camel-urlrewrite</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-vertx</include>
@@ -207,6 +212,8 @@
         <include>org.apache.camel:camel-yammer</include>
         <include>org.apache.camel:camel-zipfile</include>
         <include>org.apache.camel:camel-zookeeper</include>
+        <include>org.apache.camel:camel-catalog</include>
+        <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <!-- this jar is mandatory -->
         <include>org.slf4j:slf4j-api</include>

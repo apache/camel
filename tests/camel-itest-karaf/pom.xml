@@ -83,6 +83,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+            <version>${javax-inject-bundle-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.junit</artifactId>
             <version>${junit-bundle-version}</version>
         </dependency>
@@ -175,7 +180,8 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
+                    <forkCount>1</forkCount>
+		    <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
                         <karafVersion>${karaf-version}</karafVersion>
                     </systemPropertyVariables>

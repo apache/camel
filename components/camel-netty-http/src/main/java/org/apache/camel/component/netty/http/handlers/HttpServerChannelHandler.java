@@ -90,7 +90,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            messageEvent.getChannel().close();
             return;
         }
 
@@ -118,7 +119,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            messageEvent.getChannel().close();
             return;
         }
         if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
@@ -127,7 +129,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            messageEvent.getChannel().close();
             return;
         }
         // must include HOST header as required by HTTP 1.1
@@ -137,7 +140,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            messageEvent.getChannel().close();
             return;
         }
 
@@ -199,7 +203,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
                     response.headers().set(Exchange.CONTENT_LENGTH, 0);
                     response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
-                    messageEvent.getChannel().write(response);
+                    messageEvent.getChannel().write(response).syncUninterruptibly();
+                    messageEvent.getChannel().close();
                     return;
                 } else {
                     LOG.debug("Http Basic Auth authorized for username: {}", principal.getUsername());

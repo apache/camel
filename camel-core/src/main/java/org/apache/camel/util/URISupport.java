@@ -94,6 +94,28 @@ public final class URISupport {
     }
 
     /**
+     * Extracts the scheme specific path from the URI that is used as the remainder option when creating endpoints.
+     *
+     * @param u      the URI
+     * @param useRaw whether to force using raw values
+     * @return the remainder path
+     */
+    public static String extractRemainderPath(URI u, boolean useRaw) {
+        String path = useRaw ? u.getRawSchemeSpecificPart() : u.getSchemeSpecificPart();
+
+        // lets trim off any query arguments
+        if (path.startsWith("//")) {
+            path = path.substring(2);
+        }
+        int idx = path.indexOf('?');
+        if (idx > -1) {
+            path = path.substring(0, idx);
+        }
+
+        return path;
+    }
+
+    /**
      * Parses the query part of the uri (eg the parameters).
      * <p/>
      * The URI parameters will by default be URI encoded. However you can define a parameter

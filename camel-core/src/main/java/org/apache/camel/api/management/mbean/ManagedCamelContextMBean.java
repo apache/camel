@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -221,15 +223,32 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Find all Camel components names available in the classpath")
     List<String> findComponentNames() throws Exception;
 
+    /**
+     * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
+     *
+     * @return a list with the data
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "List all Camel components available in the classpath")
+    TabularData listComponents() throws Exception;
 
     /**
-     * Returns the JSON schema representation of the endpoint parameters for the given component name
+     * Returns the JSON schema representation with information about the component and the endpoint parameters it supports
      *
      * @param componentName the name of the component to lookup
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
     String componentParameterJsonSchema(String componentName) throws Exception;
+
+    /**
+     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri
+     *
+     * @param uri the endpoint uri
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     */
+    @ManagedOperation(description = " Returns a JSON schema representation of the endpoint parameters for the given endpoint uri")
+    String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception;
 
     /**
      * Resets all the performance counters.
@@ -239,7 +258,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
-
 
     /**
      * Helper method for tooling which returns the completion list of the endpoint path

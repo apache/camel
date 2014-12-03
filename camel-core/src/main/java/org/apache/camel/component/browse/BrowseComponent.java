@@ -33,6 +33,9 @@ public class BrowseComponent extends UriEndpointComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new BrowseEndpoint(uri, this);
+        BrowseEndpoint endpoint = new BrowseEndpoint(uri, this);
+        endpoint.setName(remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 }

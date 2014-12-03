@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -50,13 +51,13 @@ public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyFil
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).copyFileFromContainerCmd(containerId, resource);
-        Mockito.verify(mockObject, Mockito.times(1)).withHostPath(Mockito.eq(hostPath));
+        Mockito.verify(mockObject, Mockito.times(1)).withHostPath(Matchers.eq(hostPath));
         
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.copyFileFromContainerCmd(Mockito.anyString(), Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.copyFileFromContainerCmd(Matchers.anyString(), Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

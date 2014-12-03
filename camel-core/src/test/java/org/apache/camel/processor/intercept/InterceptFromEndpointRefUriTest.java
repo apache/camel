@@ -27,7 +27,7 @@ import org.apache.camel.impl.SimpleRegistry;
  */
 public class InterceptFromEndpointRefUriTest extends ContextTestSupport {
 
-    private SimpleRegistry reg = new SimpleRegistry();
+    SimpleRegistry reg = new SimpleRegistry();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -40,11 +40,11 @@ public class WeatherComponentConfigurationAndDocumentationTest extends CamelTest
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-        System.out.println(json);
 
-        assertTrue(json.contains("\"lat\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"location\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"mode\": { \"type\": \"string\", \"enum\": [ \"HTML\", \"JSON\", \"XML\" ] }"));
+        assertTrue(json.contains("\"lat\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"location\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"mode\": { \"kind\": \"parameter\", \"type\": \"string\","
+                + " \"javaType\": \"org.apache.camel.component.weather.WeatherMode\", \"enum\": [ \"HTML\", \"JSON\", \"XML\" ] }"));
     }
 
     @Test

@@ -120,6 +120,76 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("banana", exchange.getProperty("beer", "banana"));
         assertEquals("banana", exchange.getProperty("beer", "banana", String.class));
     }
+    
+    public void testRemoveProperties() throws Exception {
+        exchange.removeProperty("foobar");
+        assertFalse(exchange.hasProperties());
+
+        exchange.setProperty("fruit", "apple");
+        exchange.setProperty("fruit1", "banana");
+        exchange.setProperty("zone", "Africa");
+        assertTrue(exchange.hasProperties());
+
+        assertEquals("apple", exchange.getProperty("fruit"));
+        assertEquals("banana", exchange.getProperty("fruit1"));
+        assertEquals("Africa", exchange.getProperty("zone"));
+
+        exchange.removeProperties("fr*");
+        assertTrue(exchange.hasProperties());
+        assertEquals(exchange.getProperties().size(), 1);
+        assertEquals(null, exchange.getProperty("fruit", String.class));
+        assertEquals(null, exchange.getProperty("fruit1", String.class));
+        assertEquals("Africa", exchange.getProperty("zone", String.class));
+    }
+    
+    public void testRemovePropertiesWithExclusion() throws Exception {
+        exchange.removeProperty("foobar");
+        assertFalse(exchange.hasProperties());
+
+        exchange.setProperty("fruit", "apple");
+        exchange.setProperty("fruit1", "banana");
+        exchange.setProperty("fruit2", "peach");
+        exchange.setProperty("zone", "Africa");
+        assertTrue(exchange.hasProperties());
+
+        assertEquals("apple", exchange.getProperty("fruit"));
+        assertEquals("banana", exchange.getProperty("fruit1"));
+        assertEquals("peach", exchange.getProperty("fruit2"));
+        assertEquals("Africa", exchange.getProperty("zone"));
+
+        exchange.removeProperties("fr*", "fruit1", "fruit2");
+        assertTrue(exchange.hasProperties());
+        assertEquals(exchange.getProperties().size(), 3);
+        assertEquals(null, exchange.getProperty("fruit", String.class));
+        assertEquals("banana", exchange.getProperty("fruit1", String.class));
+        assertEquals("peach", exchange.getProperty("fruit2", String.class));
+        assertEquals("Africa", exchange.getProperty("zone", String.class));
+    }
+    
+    public void testRemovePropertiesPatternWithAllExcluded() throws Exception {
+        exchange.removeProperty("foobar");
+        assertFalse(exchange.hasProperties());
+
+        exchange.setProperty("fruit", "apple");
+        exchange.setProperty("fruit1", "banana");
+        exchange.setProperty("fruit2", "peach");
+        exchange.setProperty("zone", "Africa");
+        assertTrue(exchange.hasProperties());
+
+        assertEquals("apple", exchange.getProperty("fruit"));
+        assertEquals("banana", exchange.getProperty("fruit1"));
+        assertEquals("peach", exchange.getProperty("fruit2"));
+        assertEquals("Africa", exchange.getProperty("zone"));
+
+        exchange.removeProperties("fr*", "fruit", "fruit1", "fruit2", "zone");
+        assertTrue(exchange.hasProperties());
+        assertEquals(exchange.getProperties().size(), 4);
+        assertEquals("apple", exchange.getProperty("fruit", String.class));
+        assertEquals("banana", exchange.getProperty("fruit1", String.class));
+        assertEquals("peach", exchange.getProperty("fruit2", String.class));
+        assertEquals("Africa", exchange.getProperty("zone", String.class));
+    }
+    
 
     public void testInType() throws Exception {
         exchange.setIn(new MyMessage());

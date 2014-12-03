@@ -27,6 +27,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import static org.apache.camel.component.metrics.AbstractMetricsProducer.HEADER_PATTERN;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
@@ -41,7 +42,7 @@ public class AbstractMetricsProducerTest {
     public static final String METRIC_NAME = "a metric";
 
     @Mock
-    private AbstractMetricsEndpoint endpoint;
+    private MetricsEndpoint endpoint;
 
     @Mock
     private Exchange exchange;
@@ -52,23 +53,23 @@ public class AbstractMetricsProducerTest {
     @Mock
     private MetricRegistry registry;
 
-    private AbstractMetricsProducer<AbstractMetricsEndpoint> okProducer;
+    private AbstractMetricsProducer okProducer;
 
-    private AbstractMetricsProducer<AbstractMetricsEndpoint> failProducer;
+    private AbstractMetricsProducer failProducer;
 
     private InOrder inOrder;
 
     @Before
     public void setUp() throws Exception {
-        okProducer = new AbstractMetricsProducer<AbstractMetricsEndpoint>(endpoint) {
+        okProducer = new AbstractMetricsProducer(endpoint) {
             @Override
-            protected void doProcess(Exchange exchange, AbstractMetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
             }
         };
-        failProducer = new AbstractMetricsProducer<AbstractMetricsEndpoint>(endpoint) {
+        failProducer = new AbstractMetricsProducer(endpoint) {
 
             @Override
-            protected void doProcess(Exchange exchange, AbstractMetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
                 throw new Exception("Muchos problemos");
             }
         };

@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.RemoveContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -50,8 +51,8 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).removeContainerCmd(containerId);
-        Mockito.verify(mockObject, Mockito.times(1)).withForce(Mockito.eq(force));
-        Mockito.verify(mockObject, Mockito.times(1)).withRemoveVolumes(Mockito.eq(removeVolumes));
+        Mockito.verify(mockObject, Mockito.times(1)).withForce(Matchers.eq(force));
+        Mockito.verify(mockObject, Mockito.times(1)).withRemoveVolumes(Matchers.eq(removeVolumes));
 
 
         
@@ -59,7 +60,7 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.removeContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.removeContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

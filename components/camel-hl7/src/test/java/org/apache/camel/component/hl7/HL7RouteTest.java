@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.hl7;
 
-import java.security.SecureRandom;
-import java.util.Random;
-
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;

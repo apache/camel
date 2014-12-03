@@ -30,15 +30,16 @@ import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 /**
  * Basic tests for the XML JSON data format
  */
-public class XmlJsonDataFormatTest extends CamelTestSupport {
+public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {

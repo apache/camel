@@ -42,6 +42,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
+import org.jboss.netty.channel.SucceededChannelFuture;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -51,6 +52,7 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
+import org.jboss.netty.util.ExternalResourceReleasable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +162,12 @@ public class NettyProducer extends DefaultAsyncProducer {
             bossPool = null;
         }
         if (workerPool != null) {
-            workerPool.shutdown();
+            if (workerPool instanceof ExternalResourceReleasable) {
+                // this will first invoke workerPool#shutdown() internally (e.g. org.jboss.netty.channel.socket.nio.AbstractNioWorkerPool)
+                ((ExternalResourceReleasable) workerPool).releaseExternalResources();
+            } else {
+                workerPool.shutdown();
+            }
             workerPool = null;
         }
 
@@ -170,6 +177,18 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             pool.close();
             pool = null;
+        }
+        
+        if (channelFactory != null) {
+            // this will first invoke channelFactory#shutdown() internally (see it's javadoc)
+            channelFactory.releaseExternalResources();
+            channelFactory = null;
+        }
+        
+        if (datagramChannelFactory != null) {
+            // this will first invoke datagramChannelFactory#shutdown() internally (see it's javadoc)
+            datagramChannelFactory.releaseExternalResources();
+            datagramChannelFactory = null;
         }
 
         super.doStop();
@@ -234,8 +253,14 @@ public class NettyProducer extends DefaultAsyncProducer {
         // setup state as attachment on the channel, so we can access the state later when needed
         channel.setAttachment(new NettyCamelState(producerCallback, exchange));
 
+        InetSocketAddress remoteAddress = null;
+        if (!isTcp()) {
+            // Need to specify the remoteAddress for udp connection
+            remoteAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort()); 
+        }
+        
         // write body
-        NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
+        NettyHelper.writeBodyAsync(LOG, channel, remoteAddress, body, exchange, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
@@ -396,11 +421,20 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             // set the pipeline factory, which creates the pipeline for each newly created channels
             connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
-            // bind and store channel so we can close it when stopping
-            Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-            allChannels.add(channel);
-            answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-
+           
+            // if udp connectionless sending is true we don't do a connect.
+            // we just send on the channel created with bind which means
+            // really fire and forget. You wont get an PortUnreachableException
+            // if no one is listen on the port
+            if (!configuration.isUdpConnectionlessSending()) {
+                answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            } else {
+                // bind and store channel so we can close it when stopping
+                Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+                allChannels.add(channel);
+                answer = new SucceededChannelFuture(channel);
+            }
+            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
                        new Object[]{configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap.getOptions()});
@@ -523,8 +557,14 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         @Override
         public boolean validateObject(Channel channel) {
-            // we need a connected channel to be valid
-            boolean answer = channel.isConnected();
+            boolean answer = false;    
+            if (configuration.isUdpConnectionlessSending()) {
+                // we don't need check if the channel is connected
+                answer = channel.isOpen();
+            } else {
+                // we need a connected channel to be valid
+                answer = channel.isConnected();
+            }
             LOG.trace("Validating channel: {} -> {}", channel, answer);
             return answer;
         }

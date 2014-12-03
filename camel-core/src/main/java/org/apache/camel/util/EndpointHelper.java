@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -430,9 +431,15 @@ public final class EndpointHelper {
             return null;
         }
 
+        // it may be a delegate endpoint, which we need to match as well
+        Endpoint delegate = null;
+        if (endpoint instanceof DelegateEndpoint) {
+            delegate = ((DelegateEndpoint) endpoint).getEndpoint();
+        }
+
         Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().findByTypeWithName(Endpoint.class);
         for (Map.Entry<String, Endpoint> entry : map.entrySet()) {
-            if (entry.getValue().equals(endpoint)) {
+            if (entry.getValue().equals(endpoint) || entry.getValue().equals(delegate)) {
                 return entry.getKey();
             }
         }

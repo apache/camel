@@ -136,11 +136,14 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                     //try and re-open stream
                     br = initializeStream();
                 }
-                try {
-                    Thread.sleep(endpoint.getScanStreamDelay());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
+                // sleep only if there is no input
+                if (eos) {
+                    try {
+                        Thread.sleep(endpoint.getScanStreamDelay());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
             }
         } else {

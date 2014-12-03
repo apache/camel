@@ -18,11 +18,13 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +32,9 @@ import java.util.Map;
 
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -54,23 +59,27 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.client.Address;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.http.ssl.SslContextFactory;
+import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.jmx.MBeanContainer;
+import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.servlets.MultiPartFilter;
+import org.eclipse.jetty.util.component.Container;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -95,8 +104,8 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
-    protected Map<Integer, SslSelectChannelConnector> sslSocketConnectors;
-    protected Map<Integer, SelectChannelConnector> socketConnectors;
+    protected Map<Integer, Connector> sslSocketConnectors;
+    protected Map<Integer, Connector> socketConnectors;
     protected Map<String, Object> sslSocketConnectorProperties;
     protected Map<String, Object> socketConnectorProperties;
     protected Integer httpClientMinThreads;
@@ -163,6 +172,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                                                               Boolean.class, true);
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
+        Boolean enableCors = getAndRemoveParameter(parameters, "enableCORS", Boolean.class, false);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
@@ -255,6 +265,12 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             endpoint.setMultipartFilter(multipartFilter);
             endpoint.setEnableMultipartFilter(true);
         }
+        if (enableCors) {
+            if (filters == null) {
+                filters = new ArrayList<Filter>(1);
+            }
+            filters.add(new CrossOriginFilter());
+        }
         if (filters != null) {
             endpoint.setFilters(filters);
         }
@@ -297,27 +313,16 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         synchronized (CONNECTORS) {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef == null) {
-                Connector connector;
-                if ("https".equals(endpoint.getProtocol())) {
-                    connector = getSslSocketConnector(endpoint);
-                } else {
-                    connector = getSocketConnector(endpoint.getPort());
-                }
-                connector.setPort(endpoint.getPort());
-                connector.setHost(endpoint.getHttpUri().getHost());
+                Server server = createServer();
+                Connector connector = getConnector(server, endpoint);
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
                     LOG.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
                 }
-                Server server = createServer();
                 if (endpoint.isEnableJmx()) {
                     enableJmx(server);
                 }
-                // This setting is only work for the first endpoint which create the server
-                // just set if we need sendServerVersion, the default value is true
-                server.setSendServerVersion(endpoint.isSendServerVersion());
                 server.addConnector(connector);
-                server.setSendDateHeader(endpoint.isSendDateHeader());
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
@@ -360,7 +365,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
             LOG.info("Jetty JMX Extensions is enabled");
-            server.getContainer().addEventListener(containerToRegister);
+            addServerMBean(server);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
             //server.addBean(mbContainer);
@@ -453,8 +458,8 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                     // Camel controls the lifecycle of these entities so remove the
                     // registered MBeans when Camel is done with the managed objects.
                     if (mbContainer != null) {
-                        mbContainer.removeBean(connectorRef.server);
-                        mbContainer.removeBean(connectorRef.connector);
+                        this.removeServerMBean(connectorRef.server);
+                        //mbContainer.removeBean(connectorRef.connector);
                     }
                 }
             }
@@ -492,143 +497,253 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         return sslKeystore;
     }
 
-    protected Connector getSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
+    
+    protected Connector getConnector(Server server, JettyHttpEndpoint endpoint) {
+        Connector connector;
+        if ("https".equals(endpoint.getProtocol())) {
+            connector = getSslSocketConnector(server, endpoint);
+        } else {
+            connector = getSocketConnector(server, endpoint);
+        }
+        return connector;
+    }   
+    protected Connector getSocketConnector(Server server, JettyHttpEndpoint endpoint) {
+        Connector answer = null;
+        if (socketConnectors != null) {
+            answer = socketConnectors.get(endpoint.getPort());
+        }
+        if (answer == null) {
+            answer = createConnector(server, endpoint);
+        }
+        return answer;
+    }
+
+    protected Connector getSslSocketConnector(Server server, JettyHttpEndpoint endpoint) {
         Connector answer = null;
         if (sslSocketConnectors != null) {
             answer = sslSocketConnectors.get(endpoint.getPort());
         }
         if (answer == null) {
-            answer = createSslSocketConnector(endpoint);
+            answer = createConnector(server, endpoint);
         }
         return answer;
     }
-    
-    protected Connector createSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
-        SslSelectChannelConnector answer = null;
+        
+    protected Connector createConnector(Server server, JettyHttpEndpoint endpoint) {
+        String hosto = endpoint.getHttpUri().getHost();
+        int porto = endpoint.getPort();
+        
+        // now we just use the SelectChannelConnector as the default connector
+        SslContextFactory sslcf = null;
         
         // Note that this was set on the endpoint when it was constructed.  It was
         // either explicitly set at the component or on the endpoint, but either way,
         // the value is already set.  We therefore do not need to look at the component
         // level SSLContextParameters again in this method.
-        SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();
+        SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();        
         
         if (endpointSslContextParameters != null) {
-            SslContextFactory contextFact = createSslContextFactory(endpointSslContextParameters);
-            for (Constructor<?> c : SslSelectChannelConnector.class.getConstructors()) {
-                if (c.getParameterTypes().length == 1
-                    && c.getParameterTypes()[0].isInstance(contextFact)) {
-                    answer = (SslSelectChannelConnector)c.newInstance(contextFact);
-                }
+            try {
+                sslcf = createSslContextFactory(endpointSslContextParameters);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
             }
-        } else {
-            answer = new SslSelectChannelConnector();
-            // with default null values, jetty ssl system properties
-            // and console will be read by jetty implementation
-    
+        } else if ("https".equals(endpoint.getProtocol())) {
+            sslcf = new SslContextFactory();  
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
-                setKeyStorePath(answer, keystoreProperty);
+                sslcf.setKeyStorePath(keystoreProperty);
             } else if (sslKeystore != null) {
-                setKeyStorePath(answer, sslKeystore);
+                sslcf.setKeyStorePath(sslKeystore);
             }
     
             String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
             if (keystorePassword != null) {
-                setKeyManagerPassword(answer, keystorePassword);
+                sslcf.setKeyManagerPassword(keystorePassword);
             } else if (sslKeyPassword != null) {
-                setKeyManagerPassword(answer, sslKeyPassword);
+                sslcf.setKeyManagerPassword(sslKeyPassword);
             }
     
             String password = System.getProperty(JETTY_SSL_PASSWORD);
             if (password != null) {
-                setKeyStorePassword(answer, password);
+                sslcf.setKeyStorePassword(password);
             } else if (sslPassword != null) {
-                setKeyStorePassword(answer, sslPassword);
-            }
-        }
-        
-        if (getSslSocketConnectorProperties() != null) {
-            if (endpointSslContextParameters != null) {
-                LOG.warn("An SSLContextParameters instance is configured "
-                         + "in addition to SslSocketConnectorProperties.  Any SslSocketConnector properties"
-                         + "related to the SSLContext will be ignored in favor of the settings provided through"
-                         + "SSLContextParameters.");
-            }
-            
-            // must copy the map otherwise it will be deleted
-            Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
-            IntrospectionSupport.setProperties(answer, properties);
-            if (properties.size() > 0) {
-                throw new IllegalArgumentException("There are " + properties.size()
-                    + " parameters that couldn't be set on the SslSocketConnector."
-                    + " Check the uri if the parameters are spelt correctly and that they are properties of the SslSocketConnector."
-                    + " Unknown parameters=[" + properties + "]");
+                sslcf.setKeyStorePassword(sslPassword);
             }
         }
 
-        if (answer != null && requestBufferSize != null) {
-            answer.setRequestBufferSize(requestBufferSize);
-        }
-        if (answer != null && requestHeaderSize != null) {
-            answer.setRequestHeaderSize(requestHeaderSize);
-        }
-        if (answer != null && responseBufferSize != null) {
-            answer.setResponseBufferSize(responseBufferSize);
-        }
-        if (answer != null && responseHeaderSize != null) {
-            answer.setResponseBufferSize(responseHeaderSize);
-        }
-        return answer;
+        AbstractConnector result = null;
+        if (!Server.getVersion().startsWith("8")) {
+            result = createConnectorJetty9(server, endpoint, sslcf, hosto, porto);
+        } else {
+            result = createConnectorJetty8(server, endpoint, sslcf, hosto, porto);
+        }        
+        
+        try {
+            result.getClass().getMethod("setPort", Integer.TYPE).invoke(result, porto);
+            if (hosto != null) {
+                result.getClass().getMethod("setHost", String.class).invoke(result, hosto);
+            }
+            if (getSocketConnectorProperties() != null && !"https".equals(endpoint.getProtocol())) {
+                // must copy the map otherwise it will be deleted
+                Map<String, Object> properties = new HashMap<String, Object>(getSocketConnectorProperties());
+                IntrospectionSupport.setProperties(result, properties);
+                if (properties.size() > 0) {
+                    throw new IllegalArgumentException("There are " + properties.size()
+                        + " parameters that couldn't be set on the SocketConnector."
+                        + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
+                        + " Unknown parameters=[" + properties + "]");
+                }
+            } else if (getSslSocketConnectorProperties() != null && "https".equals(endpoint.getProtocol())) {
+                // must copy the map otherwise it will be deleted
+                Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
+                IntrospectionSupport.setProperties(result, properties);
+                if (properties.size() > 0) {
+                    throw new IllegalArgumentException("There are " + properties.size()
+                        + " parameters that couldn't be set on the SocketConnector."
+                        + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
+                        + " Unknown parameters=[" + properties + "]");
+                }                
+            }
+
+        } catch (RuntimeException rex) {
+            throw rex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }     
+
+        
+        return result;
     }
+    protected AbstractConnector createConnectorJetty9(Server server,
+                                                      JettyHttpEndpoint endpoint,
+                                                      SslContextFactory sslcf,
+                                                      String hosto, int porto) {
+        //Jetty 9
+        AbstractConnector result = null;
+        try {
+            Class<?> configClass = ObjectHelper.loadClass("org.eclipse.jetty.server.HttpConfiguration", 
+                                                          Server.class.getClassLoader()); 
+            Object httpConfig = configClass.newInstance();
+            httpConfig.getClass().getMethod("setSendServerVersion", Boolean.TYPE)
+                .invoke(httpConfig, endpoint.isSendServerVersion());
+
+            httpConfig.getClass().getMethod("setSendDateHeader", Boolean.TYPE)
+                .invoke(httpConfig, endpoint.isSendDateHeader());
+
+            httpConfig.getClass().getMethod("setSendDateHeader", Boolean.TYPE)
+                .invoke(httpConfig, endpoint.isSendDateHeader());
+            
+            if (requestBufferSize != null) {
+                configClass.getMethod("setRequestBufferSize", Integer.TYPE)
+                    .invoke(result, requestBufferSize);
+            }
+            if (requestHeaderSize != null) {
+                configClass.getMethod("setRequestHeaderSize", Integer.TYPE)
+                    .invoke(result, requestHeaderSize);
+            }
+            if (responseBufferSize != null) {
+                configClass.getMethod("setOutputBufferSize", Integer.TYPE)
+                    .invoke(result, responseBufferSize);
+            }
+            if (responseHeaderSize != null) {
+                configClass.getMethod("setResponseHeaderSize", Integer.TYPE)
+                    .invoke(result, responseHeaderSize);
+            }
+            
+            
+            Object httpFactory = ObjectHelper.loadClass("org.eclipse.jetty.server.HttpConnectionFactory", 
+                                                        Server.class.getClassLoader())
+                                                            .getConstructor(configClass).newInstance(httpConfig); 
+
+            Collection<Object> connectionFactories = new ArrayList<Object>();
+            result = (AbstractConnector)ObjectHelper.loadClass("org.eclipse.jetty.server.ServerConnector", 
+                                                               Server.class.getClassLoader())
+                                                                   .getConstructor(Server.class)
+                                                                   .newInstance(server);
+            
+            if (sslcf != null) {
+                Class<?> src = ObjectHelper.loadClass("org.eclipse.jetty.server.SecureRequestCustomizer",
+                                                      Server.class.getClassLoader());
+                httpConfig.getClass().getMethod("addCustomizer", src.getInterfaces()[0])
+                    .invoke(httpConfig, src.newInstance());
+                Object scf = ObjectHelper.loadClass("org.eclipse.jetty.server.SslConnectionFactory",
+                                                    Server.class.getClassLoader())
+                                                        .getConstructor(SslContextFactory.class,
+                                                                                     String.class)
+                                                        .newInstance(sslcf, "HTTP/1.1");
+                connectionFactories.add(scf);
+                result.getClass().getMethod("setDefaultProtocol", String.class).invoke(result, "SSL-HTTP/1.1");
+            }
+            connectionFactories.add(httpFactory);
+            result.getClass().getMethod("setConnectionFactories", Collection.class)
+                .invoke(result, connectionFactories);
+        } catch (RuntimeException rex) {
+            throw rex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return result;
+    }
+    protected AbstractConnector createConnectorJetty8(Server server,
+                                                      JettyHttpEndpoint endpoint,
+                                                      SslContextFactory sslcf,
+                                                      String hosto, int porto) {
+        //Jetty 8
+        AbstractConnector result = null;
+        try {
+            if (sslcf == null && !"https".equals(endpoint.getProtocol())) { 
+                result = (AbstractConnector)ObjectHelper
+                    .loadClass("org.eclipse.jetty.server.nio.SelectChannelConnector",
+                               Server.class.getClassLoader()).newInstance();
+            } else if (sslcf == null) {
+                result = (AbstractConnector)ObjectHelper
+                    .loadClass("org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
+                               Server.class.getClassLoader()).newInstance();
+            } else {
+                result = (AbstractConnector)ObjectHelper
+                    .loadClass("org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
+                               Server.class.getClassLoader()).getConstructor(SslContextFactory.class)
+                               .newInstance(sslcf);
+            }
+            Server.class.getMethod("setSendServerVersion", Boolean.TYPE).invoke(server, 
+                                                                                endpoint.isSendServerVersion());
+            
+            Server.class.getMethod("setSendDateHeader", Boolean.TYPE).invoke(server, 
+                                                                             endpoint.isSendDateHeader());
+            
+            
+            if (result != null && requestBufferSize != null) {
+                result.getClass().getMethod("setRequestBufferSize", Integer.TYPE)
+                    .invoke(result, requestBufferSize);
+            }
+            if (result != null && requestHeaderSize != null) {
+                result.getClass().getMethod("setRequestHeaderSize", Integer.TYPE)
+                    .invoke(result, requestHeaderSize);
+            }
+            if (result != null && responseBufferSize != null) {
+                result.getClass().getMethod("setResponseBufferSize", Integer.TYPE)
+                    .invoke(result, responseBufferSize);
+            }
+            if (result != null && responseHeaderSize != null) {
+                result.getClass().getMethod("setResponseBufferSize", Integer.TYPE)
+                    .invoke(result, responseHeaderSize);
+            }
+
+        } catch (RuntimeException rex) {
+            throw rex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return result;
+    }    
     
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
-        SslContextFactory answer = new SslContextFactory() {
-
-            // This method is for Jetty 7.0.x ~ 7.4.x
-            @SuppressWarnings("unused")
-            public boolean checkConfig() {
-                if (getSslContext() == null) {
-                    return checkSSLContextFactoryConfig(this);
-                } else {
-                    return true;
-                }
-            }
-            // This method is for Jetty 7.5.x
-            public void checkKeyStore() {
-                // here we don't check the SslContext as it is already created
-            }
-            
-        };
+        SslContextFactory answer = new SslContextFactory();
         answer.setSslContext(ssl.createSSLContext());
         return answer;
     }
     
-    private void invokeSslContextFactoryMethod(Object connector, String method, String value) {
-        Object factory;
-        try {
-            factory = connector.getClass().getMethod("getSslContextFactory").invoke(connector);
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Error invoking method getSslContextFactory on " + connector, e);
-        }
-        try {
-            factory.getClass().getMethod(method, String.class).invoke(factory, value);
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Error invoking method " + method + " on " + factory, e);
-        }
-    }
-        
-    private void setKeyStorePassword(SslSelectChannelConnector answer, String password) {
-        invokeSslContextFactoryMethod(answer, "setKeyStorePassword", password);
-    }
-
-    private void setKeyManagerPassword(SslSelectChannelConnector answer, String keystorePassword) {
-        invokeSslContextFactoryMethod(answer, "setKeyManagerPassword", keystorePassword);
-    }
-
-    private void setKeyStorePath(SslSelectChannelConnector answer, String keystoreProperty) {
-        invokeSslContextFactoryMethod(answer, "setKeyStorePath", keystoreProperty);
-    }
-
     protected boolean checkSSLContextFactoryConfig(Object instance) {
         try {
             Method method = instance.getClass().getMethod("checkConfig");
@@ -645,55 +760,15 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         return false;
     }
 
-    public Map<Integer, SslSelectChannelConnector> getSslSocketConnectors() {
+    public Map<Integer, Connector> getSslSocketConnectors() {
         return sslSocketConnectors;
     }
 
-    public void setSslSocketConnectors(Map <Integer, SslSelectChannelConnector> connectors) {
+    public void setSslSocketConnectors(Map <Integer, Connector> connectors) {
         sslSocketConnectors = connectors;
     }
 
-    public Connector getSocketConnector(int port) throws Exception {
-        Connector answer = null;
-        if (socketConnectors != null) {
-            answer = socketConnectors.get(port);
-        }
-        if (answer == null) {
-            answer = createSocketConnector();
-        }
-        return answer;
-    }
-
-    protected Connector createSocketConnector() throws Exception {
-        SelectChannelConnector answer = new SelectChannelConnector();
-        if (getSocketConnectorProperties() != null) {
-            // must copy the map otherwise it will be deleted
-            Map<String, Object> properties = new HashMap<String, Object>(getSocketConnectorProperties());
-            IntrospectionSupport.setProperties(answer, properties);
-            if (properties.size() > 0) {
-                throw new IllegalArgumentException("There are " + properties.size()
-                    + " parameters that couldn't be set on the SocketConnector."
-                    + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                    + " Unknown parameters=[" + properties + "]");
-            }
-        }
-
-        if (requestBufferSize != null) {
-            answer.setRequestBufferSize(requestBufferSize);
-        }
-        if (requestHeaderSize != null) {
-            answer.setRequestHeaderSize(requestHeaderSize);
-        }
-        if (responseBufferSize != null) {
-            answer.setResponseBufferSize(responseBufferSize);
-        }
-        if (responseHeaderSize != null) {
-            answer.setResponseBufferSize(responseHeaderSize);
-        }
-        return answer;
-    }
-
-    public void setSocketConnectors(Map<Integer, SelectChannelConnector> socketConnectors) {
+    public void setSocketConnectors(Map<Integer, Connector> socketConnectors) {
         this.socketConnectors = socketConnectors;
     }
 
@@ -713,7 +788,6 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         } else {
             httpClient = new CamelHttpClient();
         }
-        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
         
         CamelContext context = endpoint.getCamelContext();
 
@@ -723,14 +797,14 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             String host = context.getProperty("http.proxyHost");
             int port = Integer.parseInt(context.getProperty("http.proxyPort"));
             LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
-            httpClient.setProxy(new Address(host, port));
+            httpClient.setProxy(host, port);
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
             String host = endpoint.getProxyHost();
             int port = endpoint.getProxyPort();
             LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
-            httpClient.setProxy(new Address(host, port));
+            httpClient.setProxy(host, port);
         }
         
         // must have both min and max
@@ -749,7 +823,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             qtp.setDaemon(true);
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
-            httpClient.setThreadPool(qtp);
+            httpClient.setThreadPoolOrExecutor(qtp);
         }
         
         if (LOG.isDebugEnabled()) {
@@ -1021,7 +1095,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         // disable this filter as we want to use ours
         endpoint.setEnableMultipartFilter(false);
         // use the rest binding
-        endpoint.setBinding(new JettyRestHttpBinding());
+        endpoint.setBinding(new JettyRestHttpBinding(endpoint));
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
@@ -1035,7 +1109,10 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
     protected CamelServlet createServletForConnector(Server server, Connector connector,
                                                      List<Handler> handlers, JettyHttpEndpoint endpoint) throws Exception {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
-        context.setConnectorNames(new String[] {connector.getName()});
+        if (Server.getVersion().startsWith("8")) {
+            context.getClass().getMethod("setConnectorNames", new Class[] {String[].class})
+                .invoke(context, new Object[] {new String[] {connector.getName()}});
+        }
 
         addJettyHandlers(server, handlers);
 
@@ -1075,8 +1152,11 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
                 if (handler instanceof HandlerWrapper) {
-                    ((HandlerWrapper) handler).setHandler(server.getHandler());
-                    server.setHandler(handler);
+                    // avoid setting the security handler more than once
+                    if (!handler.equals(server.getHandler())) {
+                        ((HandlerWrapper) handler).setHandler(server.getHandler());
+                        server.setHandler(handler);
+                    }
                 } else {
                     HandlerCollection handlerCollection = new HandlerCollection();
                     handlerCollection.addHandler(server.getHandler());
@@ -1088,39 +1168,78 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         
     }
     
-    protected Server createServer() throws Exception {
-        Server server = new Server();
-        ContextHandlerCollection collection = new ContextHandlerCollection();
-        server.setHandler(collection);
-
+    protected Server createServer() {
+        Server s = null;
+        ThreadPool tp = threadPool;
+        QueuedThreadPool qtp = null;
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
                 throw new IllegalArgumentException("You cannot configure both minThreads/maxThreads and a custom threadPool on JettyHttpComponent: " + this);
             }
-            QueuedThreadPool qtp = new QueuedThreadPool();
+            qtp = new QueuedThreadPool();
             if (minThreads != null) {
                 qtp.setMinThreads(minThreads.intValue());
             }
             if (maxThreads != null) {
                 qtp.setMaxThreads(maxThreads.intValue());
             }
+            tp = qtp;
+        }
+        if (tp != null) {
+            try {
+                if (!Server.getVersion().startsWith("8")) {
+                    s = Server.class.getConstructor(ThreadPool.class).newInstance(tp);
+                    
+                } else {
+                    s = new Server();
+                    Server.class.getMethod("setThreadPool", ThreadPool.class).invoke(s, tp);
+                }
+            } catch (Exception e) {
+                //ignore
+            }
+        }
+        if (s == null) {
+            s = new Server();
+        }
+        if (qtp != null) {
             // let the thread names indicate they are from the server
-            qtp.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(server) + ")");
+            qtp.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(s) + ")");
             try {
                 qtp.start();
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error starting JettyServer thread pool: " + qtp, e);
             }
-            server.setThreadPool(qtp);
         }
+        ContextHandlerCollection collection = new ContextHandlerCollection();
+        s.setHandler(collection);
 
-        if (getThreadPool() != null) {
-            server.setThreadPool(getThreadPool());
+        if (!Server.getVersion().startsWith("8")) {
+            //need an error handler that won't leak information about the exception 
+            //back to the client.
+            ErrorHandler eh = new ErrorHandler() {
+                public void handle(String target, Request baseRequest, 
+                                   HttpServletRequest request, HttpServletResponse response) 
+                    throws IOException {
+                    String msg = HttpStatus.getMessage(response.getStatus());
+                    request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
+                    if (response instanceof Response) {
+                        //need to use the deprecated method to support compiling with Jetty 8
+                        ((Response)response).setStatus(response.getStatus(), msg);
+                    }
+                    super.handle(target, baseRequest, request, response);
+                }
+                protected void writeErrorPage(HttpServletRequest request, Writer writer, int code,
+                                              String message, boolean showStacks)
+                    throws IOException {
+                    super.writeErrorPage(request, writer, code, message, false);
+                }
+            };
+            s.addBean(eh);
         }
-
-        return server;
+        return s;
     }
+    
     
     /**
      * Starts {@link #mbContainer} and registers the container with itself as a managed bean
@@ -1128,12 +1247,17 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
      * Does nothing if {@link #mbContainer} is {@code null}.
      */
     protected void startMbContainer() {
-        if (mbContainer != null && !mbContainer.isStarted()) {
+        if (mbContainer != null
+            && Server.getVersion().startsWith("8")) {
+            //JETTY8 only
             try {
-                mbContainer.start();
-                // Publish the container itself for consistency with
-                // traditional embedded Jetty configurations.
-                mbContainer.addBean(mbContainer);
+                boolean b = (boolean)mbContainer.getClass().getMethod("isStarted").invoke(mbContainer);
+                if (b) {
+                    mbContainer.getClass().getMethod("start").invoke(mbContainer);
+                    // Publish the container itself for consistency with
+                    // traditional embedded Jetty configurations.
+                    mbContainer.getClass().getMethod("addBean", Object.class).invoke(mbContainer, mbContainer);
+                }
             } catch (Throwable e) {
                 LOG.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
             }
@@ -1155,20 +1279,75 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                 if (connectorRef != null && connectorRef.getRefCount() == 0) {
                     connectorRef.server.removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
-                    connectorRef.server.stop();
                     // Camel controls the lifecycle of these entities so remove the
                     // registered MBeans when Camel is done with the managed objects.
-                    if (mbContainer != null) {
-                        mbContainer.removeBean(connectorRef.server);
-                        mbContainer.removeBean(connectorRef.connector);
-                    }
+                    removeServerMBean(connectorRef.server);
+                    connectorRef.server.stop();
+                    //removeServerMBean(connectorRef.connector);
                     CONNECTORS.remove(connectorKey);
                 }
             }
         }
         if (mbContainer != null) {
-            mbContainer.stop();
+            try {
+                //JETTY8
+                mbContainer.getClass().getMethod("stop").invoke(mbContainer);
+            } catch (Throwable t) {
+                //JETTY9
+                mbContainer.getClass().getMethod("destroy").invoke(mbContainer);
+            }
             mbContainer = null;
         }
     }
+    
+    private void addServerMBean(Server server) {
+        if (mbContainer == null) {
+            return;
+        }        
+        
+        try {
+            Object o = getContainer(server);
+            o.getClass().getMethod("addEventListener", Container.Listener.class).invoke(o, mbContainer);
+            if (Server.getVersion().startsWith("8")) {
+                return;
+            }
+            mbContainer.getClass().getMethod("beanAdded", Container.class, Object.class)
+                .invoke(mbContainer, null, server);
+        } catch (RuntimeException rex) {
+            throw rex;
+        } catch (Exception r) {
+            throw new RuntimeException(r);
+        }
+    }
+    private void removeServerMBean(Server server) {
+        try {
+            mbContainer.getClass().getMethod("beanRemoved", Container.class, Object.class)
+                .invoke(mbContainer, null, server);
+        } catch (RuntimeException rex) {
+            throw rex;
+        } catch (Exception r) {
+            try {
+                mbContainer.getClass().getMethod("removeBean", Object.class)
+                    .invoke(mbContainer, server);
+            } catch (RuntimeException rex) {
+                throw rex;
+            } catch (Exception r2) {
+                throw new RuntimeException(r);
+            }
+        }
+    }
+    private static Container getContainer(Object server) {
+        if (server instanceof Container) {
+            return (Container)server;
+        }
+        try {
+            return (Container)server.getClass().getMethod("getContainer").invoke(server);
+        } catch (RuntimeException t) {
+            throw t;
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+    
+    
 }

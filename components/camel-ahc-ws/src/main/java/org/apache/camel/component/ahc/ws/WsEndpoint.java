@@ -160,12 +160,12 @@ public class WsEndpoint extends AhcEndpoint {
         
         @Override
         public void onOpen(WebSocket websocket) {
-            LOG.info("websocket opened");
+            LOG.debug("websocket opened");
         }
 
         @Override
         public void onClose(WebSocket websocket) {
-            LOG.info("websocket closed");
+            LOG.debug("websocket closed");
         }
 
         @Override
@@ -175,7 +175,7 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onMessage(byte[] message) {
-            LOG.info("received message --> {}", message);
+            LOG.debug("received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
@@ -183,8 +183,8 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onFragment(byte[] fragment, boolean last) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("received fragment({}) --> {}", last, fragment);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("received fragment({}) --> {}", last, fragment);
             }
             // for now, construct a memory based stream. In future, we provide a fragmented stream that can
             // be consumed before the final fragment is added.
@@ -208,7 +208,7 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onMessage(String message) {
-            LOG.info("received message --> {}", message);
+            LOG.debug("received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
@@ -216,8 +216,8 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onFragment(String fragment, boolean last) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("received fragment({}) --> {}", last, fragment);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("received fragment({}) --> {}", last, fragment);
             }
             // for now, construct a memory based stream. In future, we provide a fragmented stream that can
             // be consumed before the final fragment is added.

@@ -17,7 +17,6 @@
 package org.apache.camel.component.sjms.support;
 
 import javax.jms.Connection;
-import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.management.MalformedObjectNameException;

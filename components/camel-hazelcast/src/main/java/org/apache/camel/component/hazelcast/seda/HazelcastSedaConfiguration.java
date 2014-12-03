@@ -22,7 +22,7 @@ package org.apache.camel.component.hazelcast.seda;
 public class HazelcastSedaConfiguration {
 
     private int concurrentConsumers = 1;
-    private int pollInterval = 1000;
+    private int pollTimeout = 1000;
     private String queueName;
     private boolean transferExchange;
     private boolean transacted;
@@ -46,12 +46,28 @@ public class HazelcastSedaConfiguration {
         this.queueName = queueName;
     }
 
+    /**
+     * @deprecated use pollTimeout instead
+     */
+    @Deprecated
     public int getPollInterval() {
-        return pollInterval;
+        return pollTimeout;
     }
 
+    /**
+     * @deprecated use pollTimeout instead
+     */
+    @Deprecated
     public void setPollInterval(int pollInterval) {
-        this.pollInterval = pollInterval;
+        this.pollTimeout = pollInterval;
+    }
+
+    public int getPollTimeout() {
+        return pollTimeout;
+    }
+
+    public void setPollTimeout(int pollTimeout) {
+        this.pollTimeout = pollTimeout;
     }
 
     public boolean isTransferExchange() {

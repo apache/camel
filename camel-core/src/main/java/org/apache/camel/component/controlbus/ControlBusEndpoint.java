@@ -26,22 +26,25 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 
 /**
  * The control bus endpoint.
  */
-@UriEndpoint(scheme = "controlbus")
+@UriEndpoint(scheme = "controlbus", label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
+    @UriPath(description = "Command can be either route or language")
+    private String command;
     private Language language;
     @UriParam
     private String routeId;
     @UriParam
     private String action;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean async;
-    @UriParam
+    @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
 
     public ControlBusEndpoint(String endpointUri, Component component) {

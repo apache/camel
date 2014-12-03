@@ -45,8 +45,11 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
 
         for (Map.Entry<String, DataHandler> entry : exchange.getIn().getAttachments().entrySet()) {
             final Message copy = exchange.getIn().copy();
-            copy.getAttachments().clear();
-            copy.getAttachments().put(entry.getKey(), entry.getValue());
+            final String key = entry.getKey();
+            Map<String, DataHandler> attachments = copy.getAttachments();
+            attachments.clear();
+            attachments.put(key, entry.getValue());
+            copy.setHeader("CamelSplitAttachmentId", key);
             answer.add(copy);
         }
 

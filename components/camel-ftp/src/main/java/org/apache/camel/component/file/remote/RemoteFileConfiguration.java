@@ -19,6 +19,8 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,22 +37,39 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public enum PathSeparator { UNIX, Windows, Auto }
 
+    // component name is implied as the protocol, eg ftp/ftps etc
     private String protocol;
-    private String username;
+    @UriPath
     private String host;
+    @UriPath
     private int port;
+    @UriParam
+    private String username;
+    @UriParam
     private String password;
+    @UriParam(defaultValue = "false")
     private boolean binary;
+    @UriParam(defaultValue = "false")
     private boolean passiveMode;
+    @UriParam(defaultValue = "10000")
     private int connectTimeout = 10000;
+    @UriParam(defaultValue = "30000")
     private int timeout = 30000;
+    @UriParam
     private int soTimeout;
+    @UriParam(defaultValue = "false")
     private boolean throwExceptionOnConnectFailed;
+    @UriParam
     private String siteCommand;
+    @UriParam(defaultValue = "true")
     private boolean stepwise = true;
+    @UriParam(defaultValue = "Auto")
     private PathSeparator separator = PathSeparator.Auto;
+    @UriParam(defaultValue = "false")
     private boolean streamDownload;
+    @UriParam(defaultValue = "true")
     private boolean useList = true;
+    @UriParam(defaultValue = "false")
     private boolean ignoreFileNotFoundOrPermissionError;
 
     public RemoteFileConfiguration() {

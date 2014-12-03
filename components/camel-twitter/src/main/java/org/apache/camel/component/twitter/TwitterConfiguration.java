@@ -20,8 +20,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -31,6 +33,12 @@ import twitter4j.conf.ConfigurationBuilder;
 
 @UriParams
 public class TwitterConfiguration {
+
+    /**
+     * Defines the Twitter API endpoint.
+     */
+    @UriPath(description = "What kind of type to use")
+    private EndpointType type = EndpointType.DIRECT;
 
     /**
      * OAuth
@@ -45,15 +53,9 @@ public class TwitterConfiguration {
     private String accessTokenSecret;
 
     /**
-     * Defines the Twitter API endpoint.
-     */
-    @UriParam
-    private String type;
-
-    /**
      * Polling delay.
      */
-    @UriParam
+    @UriParam(defaultValue = "60")
     private int delay = 60;
 
     /**
@@ -83,7 +85,7 @@ public class TwitterConfiguration {
     /**
      * Filter out old tweets that have been previously polled.
      */
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean filterOld = true;
 
     /**
@@ -95,7 +97,7 @@ public class TwitterConfiguration {
     /**
      * Used to set the sinceId from pulling
      */
-    @UriParam
+    @UriParam(defaultValue = "1")
     private long sinceId  = 1;
 
     /**
@@ -116,7 +118,7 @@ public class TwitterConfiguration {
     /**
      * Number of page to iterate before stop (default is 1)
      */
-    @UriParam
+    @UriParam(defaultValue = "1")
     private Integer numberOfPages = 1;
     
     @UriParam
@@ -235,11 +237,11 @@ public class TwitterConfiguration {
         this.delay = delay;
     }
 
-    public String getType() {
+    public EndpointType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EndpointType type) {
         this.type = type;
     }
 

@@ -28,6 +28,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.net.ftp.FTPClient;
@@ -40,9 +41,10 @@ import org.apache.commons.net.ftp.FTPSClient;
  * 
  * @version 
  */
-@UriEndpoint(scheme = "ftps", consumerClass = FtpConsumer.class)
+@UriEndpoint(scheme = "ftps", consumerClass = FtpConsumer.class, label = "file")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
-    
+    @UriParam
+    protected FtpsConfiguration configuration;
     protected Map<String, Object> ftpClientKeyStoreParameters;
     protected Map<String, Object> ftpClientTrustStoreParameters;
     protected SSLContextParameters sslContextParameters;
@@ -50,8 +52,9 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     public FtpsEndpoint() {
     }
 
-    public FtpsEndpoint(String uri, RemoteFileComponent<FTPFile> remoteFileComponent, RemoteFileConfiguration configuration) {
+    public FtpsEndpoint(String uri, RemoteFileComponent<FTPFile> remoteFileComponent, FtpsConfiguration configuration) {
         super(uri, remoteFileComponent, configuration);
+        this.configuration = configuration;
     }
 
     @Override

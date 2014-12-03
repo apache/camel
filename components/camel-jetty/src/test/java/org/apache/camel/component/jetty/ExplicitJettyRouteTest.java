@@ -18,11 +18,13 @@ package org.apache.camel.component.jetty;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.Test;
 
@@ -39,11 +41,12 @@ public class ExplicitJettyRouteTest extends BaseJettyTest {
         assertEquals("<html><body>Book 123 is Camel in Action</body></html>", body);
     }
 
-    private SelectChannelConnector createSocketConnector() {
+    private Connector createSocketConnector() {
         SelectChannelConnector answer = new SelectChannelConnector();
         answer.setAcceptors(2);
         answer.setStatsOn(false);
         answer.setSoLingerTime(5000);
+        answer.setPort(getPort());
         return answer;
     }
 
@@ -53,7 +56,7 @@ public class ExplicitJettyRouteTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // create socket connectors for port 9080
-                Map<Integer, SelectChannelConnector> connectors = new HashMap<Integer, SelectChannelConnector>();
+                Map<Integer, Connector> connectors = new HashMap<Integer, Connector>();
                 connectors.put(getPort(), createSocketConnector());
 
                 // create jetty component

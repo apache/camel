@@ -22,21 +22,22 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Endpoint for the bean component.
  *
  * @version 
  */
-@UriEndpoint(scheme = "bean")
+@UriEndpoint(scheme = "bean", label = "core,java")
 public class BeanEndpoint extends ProcessorEndpoint {
     private BeanHolder beanHolder;
-    @UriParam
-    private boolean cache;
-    @UriParam
-    private boolean multiParameterArray;
-    @UriParam
+    @UriPath
     private String beanName;
+    @UriParam(defaultValue = "false")
+    private boolean cache;
+    @UriParam(defaultValue = "false")
+    private boolean multiParameterArray;
     @UriParam
     private String method;
 

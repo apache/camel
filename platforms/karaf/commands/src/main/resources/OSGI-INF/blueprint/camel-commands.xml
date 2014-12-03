@@ -26,6 +26,7 @@
     <command name="camel/context-info">
       <action class="org.apache.camel.karaf.commands.ContextInfo">
         <property name="camelController" ref="camelController"/>
+        <property name="stringEscape" ref="stringEscape"/>
       </action>
       <completers>
         <ref component-id="camelContextCompleter"/>
@@ -80,6 +81,7 @@
     <command name="camel/route-info">
       <action class="org.apache.camel.karaf.commands.RouteInfo">
         <property name="camelController" ref="camelController"/>
+        <property name="stringEscape" ref="stringEscape"/>
       </action>
       <completers>
         <ref component-id="routeCompleter"/>
@@ -89,6 +91,7 @@
     <command name="camel/route-profile">
       <action class="org.apache.camel.karaf.commands.RouteProfile">
         <property name="camelController" ref="camelController"/>
+        <property name="stringEscape" ref="stringEscape"/>
       </action>
       <completers>
         <ref component-id="routeCompleter"/>
@@ -158,6 +161,15 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/endpoint-explain">
+      <action class="org.apache.camel.karaf.commands.EndpointExplain">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel/backlog-tracer-info">
       <action class="org.apache.camel.karaf.commands.BacklogTracerInfo">
         <property name="camelController" ref="camelController"/>
@@ -212,6 +224,25 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/component-list">
+      <action class="org.apache.camel.karaf.commands.ComponentList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
+    <command name="camel/catalog-component-list">
+      <action class="org.apache.camel.karaf.commands.CatalogComponentList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-label-list">
+      <action class="org.apache.camel.karaf.commands.CatalogLabelList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
   </command-bundle>
 
   <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">
@@ -225,5 +256,7 @@
   <bean id="camelController" class="org.apache.camel.karaf.commands.internal.CamelControllerImpl">
     <property name="bundleContext" ref="blueprintBundleContext"/>
   </bean>
+
+  <bean id="stringEscape" class="org.apache.camel.karaf.commands.internal.StringEscape"/>
 
 </blueprint>

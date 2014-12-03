@@ -26,18 +26,22 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  *
  */
-@UriEndpoint(scheme = "atmosphere-websocket", consumerClass = WebsocketConsumer.class)
+@UriEndpoint(scheme = "atmosphere-websocket", consumerClass = WebsocketConsumer.class, label = "http,websocket")
 public class WebsocketEndpoint extends ServletEndpoint {
+
+    @UriPath
+    private String servicePath;
     private WebSocketStore store;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean sendToAll;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean useStreaming;
     
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
@@ -47,34 +51,25 @@ public class WebsocketEndpoint extends ServletEndpoint {
         //TODO find a better way of assigning the store
         int idx = endPointURI.indexOf('?');
         String name = idx > -1 ? endPointURI.substring(0, idx) : endPointURI;
-        this.store = component.getWebSocketStore(name);
+
+        this.servicePath = name;
+        this.store = component.getWebSocketStore(servicePath);
     }
     
-
-    /* (non-Javadoc)
-     * @see org.apache.camel.Endpoint#createProducer()
-     */
     @Override
     public Producer createProducer() throws Exception {
         return new WebsocketProducer(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
-     */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new WebsocketConsumer(this, processor);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.IsSingleton#isSingleton()
-     */
     @Override
     public boolean isSingleton() {
         return true;
     }
-
 
     /**
      * @return the sendToAll
@@ -103,7 +98,6 @@ public class WebsocketEndpoint extends ServletEndpoint {
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
     }
-
 
     WebSocketStore getWebSocketStore() {
         return store;

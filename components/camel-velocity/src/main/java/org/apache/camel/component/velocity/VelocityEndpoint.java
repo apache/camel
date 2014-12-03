@@ -28,6 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -38,11 +40,16 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
+@UriEndpoint(scheme = "velocity", label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
     
     private VelocityEngine velocityEngine;
+
+    @UriParam(defaultValue = "true")
     private boolean loaderCache = true;
+    @UriParam
     private String encoding;
+    @UriParam
     private String propertiesFile;
 
     public VelocityEndpoint() {

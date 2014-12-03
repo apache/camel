@@ -60,8 +60,16 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         super(JmsEndpoint.class);
     }
 
+    public JmsComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
+
     public JmsComponent(CamelContext context) {
         super(context, JmsEndpoint.class);
+    }
+
+    public JmsComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
+        super(context, endpointClass);
     }
 
     public JmsComponent(JmsConfiguration configuration) {
@@ -490,16 +498,16 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         JmsEndpoint endpoint;
         if (pubSubDomain) {
             if (tempDestination) {
-                endpoint = new JmsTemporaryTopicEndpoint(uri, this, subject, newConfiguration);
+                endpoint = createTemporaryTopicEndpoint(uri, this, subject, newConfiguration);
             } else {
-                endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, newConfiguration);
+                endpoint = createTopicEndpoint(uri, this, subject, newConfiguration);
             }
         } else {
             QueueBrowseStrategy strategy = getQueueBrowseStrategy();
             if (tempDestination) {
-                endpoint = new JmsTemporaryQueueEndpoint(uri, this, subject, newConfiguration, strategy);
+                endpoint = createTemporaryQueueEndpoint(uri, this, subject, newConfiguration, strategy);
             } else {
-                endpoint = new JmsQueueEndpoint(uri, this, subject, newConfiguration, strategy);
+                endpoint = createQueueEndpoint(uri, this, subject, newConfiguration, strategy);
             }
         }
 
@@ -547,6 +555,22 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;
+    }
+
+    protected JmsEndpoint createTemporaryTopicEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
+        return new JmsTemporaryTopicEndpoint(uri, component, subject, configuration);
+    }
+
+    protected JmsEndpoint createTopicEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
+        return new JmsEndpoint(uri, component, subject, true, configuration);
+    }
+
+    protected JmsEndpoint createTemporaryQueueEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+        return new JmsTemporaryQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
+    }
+
+    protected JmsEndpoint createQueueEndpoint(String uri, JmsComponent component, String subject, JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+        return new JmsQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }
 
     /**

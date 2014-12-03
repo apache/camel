@@ -133,6 +133,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-chunk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-cmis</artifactId>
     </dependency>
     <dependency>
@@ -237,7 +241,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-calendar</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-google-drive</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-mail</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -584,6 +596,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
     </dependency>
     <dependency>
@@ -728,6 +744,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-univocity-parsers</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-urlrewrite</artifactId>
     </dependency>
     <dependency>
@@ -783,7 +803,15 @@
       <artifactId>camel-zookeeper</artifactId>
     </dependency>
 
-    <!-- camel karaf -->
+    <!-- camel catalog and commands -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+    </dependency>  
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-commands-core</artifactId>
+    </dependency>      
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-karaf-commands</artifactId>

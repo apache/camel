@@ -66,7 +66,7 @@ public class BeanstalkComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        return new BeanstalkEndpoint(uri, this, connectionSettingsFactory.parseUri(remaining));
+        return new BeanstalkEndpoint(uri, this, connectionSettingsFactory.parseUri(remaining), remaining);
     }
 
     /**

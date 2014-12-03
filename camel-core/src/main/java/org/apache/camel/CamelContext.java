@@ -1336,6 +1336,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
 
+
+    /**
+     * Resolves a component's default name from its java type.
+     * <p/>
+     * A component may be used with a non default name such as <tt>activemq</tt>, <tt>wmq</tt> for the JMS component.
+     * This method can resolve the default component name by its java type.
+     *
+     * @param javaType the FQN name of the java type
+     * @return the default component name.
+     */
+    String resolveComponentDefaultName(String javaType);
+
     /**
      * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
      *
@@ -1346,9 +1358,27 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
     /**
-     * Returns the HTML documentation for the given camel component
+     * Returns the HTML documentation for the given Camel component
+     *
+     * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
      */
     String getComponentDocumentation(String componentName) throws IOException;
+
+    /**
+     * Returns the JSON schema representation of the endpoint parameters for the given component name.
+     *
+     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSon schema support
+     */
+    String getComponentParameterJsonSchema(String componentName) throws IOException;
+
+    /**
+     * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.
+     *
+     * @param uri the endpoint uri
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if uri parameters is invalid, or the component is <b>not</b> built with JSon schema support
+     */
+    String explainEndpointJson(String uri, boolean includeAllOptions);
 
     /**
      * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).

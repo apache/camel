@@ -41,9 +41,9 @@ public class OptaPlannerComponentConfigurationAndDocumentationTest extends Camel
         ComponentConfiguration componentConfiguration = component.createComponentConfiguration();
         String json = componentConfiguration.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"resourceUri\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        
+        assertTrue(json.contains("\"resourceUri\": { \"kind\": \"path\", \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

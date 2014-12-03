@@ -58,15 +58,12 @@ public class CxfRsProducer extends DefaultProducer {
 
     private boolean throwException;
     
-    private CxfRsEndpoint cxfRsEndpoint;
-    
     // using a cache of factory beans instead of setting the address of a single cfb
     // to avoid concurrent issues
     private ClientFactoryBeanCache clientFactoryBeanCache;
     
     public CxfRsProducer(CxfRsEndpoint endpoint) {
         super(endpoint);
-        cxfRsEndpoint = endpoint;
         this.throwException = endpoint.isThrowExceptionOnFailure();
         clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
     }
@@ -217,6 +214,11 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+        } else {
+            // just close the input stream of the response object
+            if (response instanceof Response) {
+                ((Response)response).close();
+            }
         }
     }
 
@@ -272,6 +274,11 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+        } else {
+            // just close the input stream of the response object
+            if (response instanceof Response) {
+                ((Response)response).close();
+            }
         }
     }
     

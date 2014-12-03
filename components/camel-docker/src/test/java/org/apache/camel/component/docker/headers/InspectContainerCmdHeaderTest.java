@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.InspectContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -51,7 +52,7 @@ public class InspectContainerCmdHeaderTest extends BaseDockerHeaderTest<InspectC
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.inspectContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.inspectContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

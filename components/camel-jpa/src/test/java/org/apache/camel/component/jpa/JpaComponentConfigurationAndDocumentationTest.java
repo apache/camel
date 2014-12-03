@@ -43,8 +43,9 @@ public class JpaComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"persistenceUnit\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"usePassedInEntityManager\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"entityType\": { \"kind\": \"path\", \"type\": \"string\""));
+        assertTrue(json.contains("\"persistenceUnit\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"usePassedInEntityManager\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

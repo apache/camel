@@ -23,7 +23,7 @@ import java.util.Map;
  * Docker Component constants
  */
 public final class DockerConstants {
-   
+    
     public static final String DOCKER_PREFIX = "CamelDocker";
 
     public static final Map<String, Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<String, Class<?>>();
@@ -34,6 +34,7 @@ public final class DockerConstants {
     public static final String DOCKER_PORT = "CamelDockerPort";
     public static final String DOCKER_SECURE = "CamelDockerSecure";
     public static final String DOCKER_API_REQUEST_TIMEOUT = "CamelDockerRequestTimeout";
+    public static final String DOCKER_CERT_PATH = "CamelDockerCertPath";
     
     
     /** List Images **/
@@ -160,6 +161,7 @@ public final class DockerConstants {
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_EMAIL, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SERVER_ADDRESS, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SECURE, Boolean.class);
+        DOCKER_DEFAULT_PARAMETERS.put(DOCKER_CERT_PATH, String.class);
     }
     
     private DockerConstants() {

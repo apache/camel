@@ -27,7 +27,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
- * Test Component.
+ * Component for testing by polling test messages from another endpoint on startup as the expected message bodies to
+ * receive during testing.
  *
  * @version 
  */

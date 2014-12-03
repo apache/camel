@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedComponentMBean {
 
@@ -31,5 +32,8 @@ public interface ManagedComponentMBean {
 
     @ManagedAttribute(description = "Camel ManagementName")
     String getCamelManagementName();
+
+    @ManagedOperation(description = "Component information as JSon")
+    String informationJson();
 
 }

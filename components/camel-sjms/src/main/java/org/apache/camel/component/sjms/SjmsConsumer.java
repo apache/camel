@@ -177,7 +177,6 @@ public class SjmsConsumer extends DefaultConsumer {
      * Creates a {@link MessageConsumerResources} with a dedicated
      * {@link Session} required for transacted and InOut consumers.
      */
-    @SuppressWarnings("unused")
     private MessageConsumerResources createConsumer() throws Exception {
         MessageConsumerResources answer;
         Connection conn = getConnectionResource().borrowConnection();

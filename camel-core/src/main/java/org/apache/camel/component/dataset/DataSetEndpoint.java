@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -40,20 +41,21 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class)
+@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class, label = "core,testing")
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
+    @UriPath(name = "name", description = "name of DataSet to lookup in the registry")
     private volatile DataSet dataSet;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriParam
+    @UriParam(defaultValue = "0")
     private int minRate;
-    @UriParam
+    @UriParam(defaultValue = "3")
     private long produceDelay = 3;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private long consumeDelay;
-    @UriParam
+    @UriParam(defaultValue = "0")
     private long preloadSize;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long initialDelay = 1000;
 
     @Deprecated

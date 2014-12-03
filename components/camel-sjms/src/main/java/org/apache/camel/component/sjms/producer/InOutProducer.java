@@ -17,14 +17,11 @@
 package org.apache.camel.component.sjms.producer;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.Message;
@@ -39,8 +36,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.MessageConsumerResources;
 import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.SjmsProducer;
+import org.apache.camel.component.sjms.jms.JmsConstants;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.util.ObjectHelper;
@@ -52,12 +50,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public class InOutProducer extends SjmsProducer {
 
-    /**
-     * We use the {@link ReadWriteLock} to manage the {@link TreeMap} in place
-     * of a {@link ConcurrentMap} because due to significant performance gains.
-     */
-    private static Map<String, Exchanger<Object>> exchangerMap = new TreeMap<String, Exchanger<Object>>();
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<String, Exchanger<Object>>();
 
     /**
      * A pool of {@link MessageConsumerResources} objects that are the reply
@@ -87,16 +80,14 @@ public class InOutProducer extends SjmsProducer {
                 messageConsumer.setMessageListener(new MessageListener() {
 
                     @Override
-                    public void onMessage(Message message) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Message Received in the Consumer Pool");
-                            log.debug("  Message : {}", message);
-                        }
+                    public void onMessage(final Message message) {
+                        log.debug("Message Received in the Consumer Pool");
+                        log.debug("  Message : {}", message);
                         try {
-                            Exchanger<Object> exchanger = exchangerMap.get(message.getJMSCorrelationID());
+                            Exchanger<Object> exchanger = EXCHANGERS.get(message.getJMSCorrelationID());
                             exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
                         } catch (Exception e) {
-                            ObjectHelper.wrapRuntimeCamelException(e);
+                            log.error("Unable to exchange message: {}", message, e);
                         }
 
                     }
@@ -132,9 +123,8 @@ public class InOutProducer extends SjmsProducer {
 
     private GenericObjectPool<MessageConsumerResources> consumers;
 
-    public InOutProducer(SjmsEndpoint endpoint) {
+    public InOutProducer(final SjmsEndpoint endpoint) {
         super(endpoint);
-        endpoint.getConsumerCount();
     }
 
     @Override
@@ -195,28 +185,23 @@ public class InOutProducer extends SjmsProducer {
             exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
         }
 
-        Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+        Message request = JmsMessageHelper.createMessage(exchange, producer.getSession(), getEndpoint());
 
         // TODO just set the correlation id don't get it from the
         // message
-        String correlationId = null;
-        if (exchange.getIn().getHeader("JMSCorrelationID", String.class) == null) {
+        String correlationId;
+        if (exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class) == null) {
             correlationId = UUID.randomUUID().toString().replace("-", "");
         } else {
-            correlationId = exchange.getIn().getHeader("JMSCorrelationID", String.class);
+            correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);
         }
         Object responseObject = null;
         Exchanger<Object> messageExchanger = new Exchanger<Object>();
-        SjmsExchangeMessageHelper.setCorrelationId(request, correlationId);
-        lock.writeLock().lock();
-        try {
-            exchangerMap.put(correlationId, messageExchanger);
-        } finally {
-            lock.writeLock().unlock();
-        }
+        JmsMessageHelper.setCorrelationId(request, correlationId);
+        EXCHANGERS.put(correlationId, messageExchanger);
 
         MessageConsumerResources consumer = consumers.borrowObject();
-        SjmsExchangeMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
+        JmsMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
         consumers.returnObject(consumer);
         producer.getMessageProducer().send(request);
 
@@ -231,13 +216,7 @@ public class InOutProducer extends SjmsProducer {
 
         try {
             responseObject = messageExchanger.exchange(null, getResponseTimeOut(), TimeUnit.MILLISECONDS);
-
-            lock.writeLock().lock();
-            try {
-                exchangerMap.remove(correlationId);
-            } finally {
-                lock.writeLock().unlock();
-            }
+            EXCHANGERS.remove(correlationId);
         } catch (InterruptedException e) {
             log.debug("Exchanger was interrupted while waiting on response", e);
             exchange.setException(e);
@@ -251,7 +230,7 @@ public class InOutProducer extends SjmsProducer {
                 exchange.setException((Throwable) responseObject);
             } else if (responseObject instanceof Message) {
                 Message response = (Message) responseObject;
-                SjmsExchangeMessageHelper.populateExchange(response, exchange, true, getEndpoint().getJmsKeyFormatStrategy());
+                JmsMessageHelper.populateExchange(response, exchange, true, getEndpoint().getJmsKeyFormatStrategy());
             } else {
                 exchange.setException(new CamelException("Unknown response type: " + responseObject));
             }

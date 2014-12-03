@@ -35,15 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommentConsumerTest extends CamelTestSupport {
+
     public static final Logger LOG = LoggerFactory.getLogger(CommentConsumerTest.class);
+
     private static final String URL = "https://somerepo.atlassian.net";
     private static final String USERNAME = "someguy";
     private static final String PASSWORD = "xU3xjhay9yjEaZq";
     private static final String JIRA_CREDENTIALS = URL + "&username=" + USERNAME + "&password=" + PASSWORD;
     protected MockJerseyJiraRestClientFactory factory;
-   
-    
-
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -53,7 +52,6 @@ public class CommentConsumerTest extends CamelTestSupport {
 
         return registry;
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -77,29 +75,26 @@ public class CommentConsumerTest extends CamelTestSupport {
         mockResultEndpoint.assertIsSatisfied();
     }
 
-
     @Test
     public void singleIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
-        MockJiraRestClient jiraRestClient = (MockJiraRestClient) factory.getClient();
+        MockJiraRestClient jiraRestClient = factory.getClient();
         MockSearchRestClient searchRestClient = (MockSearchRestClient) jiraRestClient.getSearchClient();
         BasicIssue issue1 = searchRestClient.addIssue();
         String commentText = "Comment added at " + new Date();
         Comment comment1 = searchRestClient.addCommentToIssue(issue1, commentText);
 
         mockResultEndpoint.expectedBodiesReceived(comment1);
-        
 
         mockResultEndpoint.assertIsSatisfied();
     }
-
 
     @Test
     public void multiIssueTest() throws Exception {
         MockEndpoint mockResultEndpoint = getMockEndpoint("mock:result");
 
-        MockJiraRestClient jiraRestClient = (MockJiraRestClient) factory.getClient();
+        MockJiraRestClient jiraRestClient = factory.getClient();
         MockSearchRestClient searchRestClient = (MockSearchRestClient) jiraRestClient.getSearchClient();
         BasicIssue issue1 = searchRestClient.addIssue();
         Comment comment1 = searchRestClient.addCommentToIssue(issue1, "Comment added at " + new Date());

@@ -448,17 +448,22 @@ public final class RouteDefinitionHelper {
                     } catch (Exception e) {
                         throw ObjectHelper.wrapRuntimeCamelException(e);
                     }
+                    boolean isRefPattern = pattern.startsWith("ref*") || pattern.startsWith("ref:");
 
                     match = false;
                     for (FromDefinition input : route.getInputs()) {
                         // a bit more logic to lookup the endpoint as it can be uri/ref based
                         String uri = input.getUri();
-                        if (uri != null && uri.startsWith("ref:")) {
-                            // its a ref: so lookup the endpoint to get its url
-                            uri = CamelContextHelper.getMandatoryEndpoint(context, uri).getEndpointUri();
-                        } else if (input.getRef() != null) {
-                            // lookup the endpoint to get its url
-                            uri = CamelContextHelper.getMandatoryEndpoint(context, "ref:" + input.getRef()).getEndpointUri();
+                        // if the pattern is not a ref itself, then resolve the ref uris, so we can match the actual uri's with each other
+                        if (!isRefPattern) {
+                            if (uri != null && uri.startsWith("ref:")) {
+                                // its a ref: so lookup the endpoint to get its url
+                                String ref = uri.substring(4);
+                                uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
+                            } else if (input.getRef() != null) {
+                                // lookup the endpoint to get its url
+                                uri = CamelContextHelper.getMandatoryEndpoint(context, input.getRef()).getEndpointUri();
+                            }
                         }
                         if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
                             match = true;

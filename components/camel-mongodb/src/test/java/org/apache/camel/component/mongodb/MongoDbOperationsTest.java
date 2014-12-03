@@ -65,17 +65,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     }
 
     @Test
-    public void testStoreOid() throws Exception {
+    public void testStoreOidOnInsert() throws Exception {
         DBObject dbObject = new BasicDBObject();
-        ObjectId oid = template.requestBody("direct:testStoreOid", dbObject, ObjectId.class);
+        ObjectId oid = template.requestBody("direct:testStoreOidOnInsert", dbObject, ObjectId.class);
         assertEquals(dbObject.get("_id"), oid);
     }
 
     @Test
-    public void testStoreOids() throws Exception {
+    public void testStoreOidsOnInsert() throws Exception {
         DBObject firstDbObject = new BasicDBObject();
         DBObject secondDbObject = new BasicDBObject();
-        List<ObjectId> oids = template.requestBody("direct:testStoreOid", asList(firstDbObject, secondDbObject), List.class);
+        List<?> oids = template.requestBody("direct:testStoreOidOnInsert", asList(firstDbObject, secondDbObject), List.class);
         assertTrue(oids.contains(firstDbObject.get("_id")));
         assertTrue(oids.contains(secondDbObject.get("_id")));
     }
@@ -100,6 +100,13 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         record1 = testCollection.findOne("testSave1");
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record1.get("scientist"));
 
+    }
+
+    @Test
+    public void testStoreOidOnSave() throws Exception {
+        DBObject dbObject = new BasicDBObject();
+        ObjectId oid = template.requestBody("direct:testStoreOidOnSave", dbObject, ObjectId.class);
+        assertEquals(dbObject.get("_id"), oid);
     }
     
     @Test
@@ -206,7 +213,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertTrue("Result is not of type DBObject", result instanceof DBObject);
         assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
     }
-    
+
+    @Test
+    public void testCommand() throws Exception {
+        //Call hostInfo, command working with every configuration
+        Object result = template
+                .requestBody("direct:command",
+                        "{\"hostInfo\":\"1\"}");
+        assertTrue("Result is not of type DBObject", result instanceof DBObject);
+        assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
+    }
+
     @Test
     public void testOperationHeader() throws Exception {
         // Test that the collection has 0 documents in it
@@ -232,15 +249,17 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
                 
                 from("direct:count").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
                 from("direct:insert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
-                from("direct:testStoreOid").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
+                from("direct:testStoreOidOnInsert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
                     setBody().header(MongoDbConstants.OID);
                 from("direct:save").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE");
+                from("direct:testStoreOidOnSave").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeConcern=SAFE").
+                    setBody().header(MongoDbConstants.OID);
                 from("direct:update").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update&writeConcern=SAFE");
                 from("direct:remove").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove&writeConcern=SAFE");
                 from("direct:aggregate").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&writeConcern=SAFE");
-                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats");
+                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&operation=getDbStats");
                 from("direct:getColStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
-
+                from("direct:command").to("mongodb:myDb?database={{mongodb.testDb}}&operation=command");
 
             }
         };

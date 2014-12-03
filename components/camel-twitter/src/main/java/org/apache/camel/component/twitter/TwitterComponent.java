@@ -19,7 +19,6 @@ package org.apache.camel.component.twitter;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
@@ -50,7 +49,8 @@ public class TwitterComponent extends UriEndpointComponent {
         setProperties(properties, parameters);
 
         TwitterEndpoint endpoint;
-        switch (EndpointType.fromUri(properties.getType())) {
+
+        switch (properties.getType()) {
         case POLLING:
             endpoint = new TwitterEndpointPolling(uri, this, properties);
             break;

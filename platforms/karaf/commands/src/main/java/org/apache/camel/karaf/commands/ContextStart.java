@@ -16,18 +16,20 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.commands.ContextStartCommand;
+import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to start a Camel context.
- */
 @Command(scope = "camel", name = "context-start", description = "Start a Camel context.")
-public class ContextStart extends AbstractContextCommand {
+public class ContextStart extends CamelCommandSupport {
+
+    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    String context;
 
     @Override
-    protected void performContextCommand(CamelContext camelContext) throws Exception {
-        camelContext.start();
+    protected Object doExecute() throws Exception {
+        ContextStartCommand command = new ContextStartCommand(context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

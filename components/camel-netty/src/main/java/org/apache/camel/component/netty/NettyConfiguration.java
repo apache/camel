@@ -44,52 +44,54 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     @UriParam
     private long requestTimeout;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean sync = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean textline;
-    @UriParam
+    @UriParam(defaultValue = "LINE")
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean autoAppendDelimiter = true;
-    @UriParam
+    @UriParam(defaultValue = "1024")
     private int decoderMaxLineLength = 1024;
     @UriParam
     private String encoding;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disconnect;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean lazyChannelCreation = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transferExchange;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam
+    @UriParam(defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-    @UriParam
+    @UriParam(defaultValue = "WARN")
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
-    @UriParam
+    @UriParam(defaultValue = "DEBUG")
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean allowDefaultCodec = true;
     @UriParam
     private ClientPipelineFactory clientPipelineFactory;
-    @UriParam
+    //CAMEL-8031 Moved this option to NettyComponent
     private int maximumPoolSize = 16;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean orderedThreadPoolExecutor = true;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int producerPoolMaxActive = -1;
     @UriParam
     private int producerPoolMinIdle;
-    @UriParam
+    @UriParam(defaultValue = "100")
     private int producerPoolMaxIdle = 100;
-    @UriParam
+    @UriParam(defaultValue = "" + 5 * 60 * 1000L)
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean producerPoolEnabled = true;
+    @UriParam(defaultValue = "false")
+    private boolean udpConnectionlessSending;
 
     /**
      * Returns a copy of this configuration
@@ -444,6 +446,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
+    }
+    
+    public boolean isUdpConnectionlessSending() {
+        return udpConnectionlessSending;
+    }
+
+    public void setUdpConnectionlessSending(boolean udpConnectionlessSending) {
+        this.udpConnectionlessSending = udpConnectionlessSending;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

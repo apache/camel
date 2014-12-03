@@ -59,6 +59,9 @@ public class RestConfigurationDefinition {
     private RestBindingMode bindingMode;
 
     @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
+    @XmlAttribute
     private String jsonDataFormat;
 
     @XmlAttribute
@@ -130,6 +133,14 @@ public class RestConfigurationDefinition {
 
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
+    }
+
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
     public String getJsonDataFormat() {
@@ -251,6 +262,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify whether to skip binding output if there is a custom HTTP error code
+     */
+    public RestConfigurationDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+        return this;
+    }
+
+    /**
      * To use a specific json data format
      *
      * @param name  name of the data format to {@link org.apache.camel.CamelContext#resolveDataFormat(java.lang.String) resolve}
@@ -346,6 +365,9 @@ public class RestConfigurationDefinition {
         }
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());
+        }
+        if (skipBindingOnErrorCode != null) {
+            answer.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
         }
         if (jsonDataFormat != null) {
             answer.setJsonDataFormat(jsonDataFormat);

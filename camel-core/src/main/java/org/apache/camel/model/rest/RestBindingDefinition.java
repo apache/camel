@@ -51,6 +51,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     @XmlAttribute
     private String outType;
 
+    @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
     @Override
     public String toString() {
         return "RestBinding";
@@ -72,9 +75,12 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
             mode = bindingMode.name();
         }
 
+        // skip by default
+        boolean skip = skipBindingOnErrorCode == null || skipBindingOnErrorCode;
+
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode);
+            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip);
         }
 
         // setup json data format
@@ -161,7 +167,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
             context.addService(outJaxb);
         }
 
-        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode);
+        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip);
     }
 
     private void setAdditionalConfiguration(CamelContext context, DataFormat dataFormat) throws Exception {
@@ -214,4 +220,11 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         this.outType = outType;
     }
 
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
 }

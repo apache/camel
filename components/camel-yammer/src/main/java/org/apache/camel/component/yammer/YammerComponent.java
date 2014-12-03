@@ -43,6 +43,7 @@ public class YammerComponent extends DefaultComponent {
         endpointConfig.setConsumerSecret(consumerSecret);
         endpointConfig.setAccessToken(accessToken);
         endpointConfig.setFunction(remaining);
+        endpointConfig.setFunctionType(YammerFunctionType.fromUri(remaining));
         
         // and then override from parameters
         setProperties(endpointConfig, parameters);

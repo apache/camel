@@ -25,15 +25,16 @@ import org.w3c.dom.Document;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 /**
  * Testing options to the XML JSON data format
  */
-public class XmlJsonOptionsTest extends CamelTestSupport {
+public class XmlJsonOptionsTest extends AbstractJsonTestSupport {
 
     @Test
     public void testSomeOptionsToJSON() throws Exception {

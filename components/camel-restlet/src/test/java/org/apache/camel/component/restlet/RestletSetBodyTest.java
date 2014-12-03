@@ -26,8 +26,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
+import org.restlet.data.Encoding;
 import org.restlet.data.MediaType;
+import org.restlet.engine.application.EncodeRepresentation;
 import org.restlet.representation.InputRepresentation;
+import org.restlet.representation.StringRepresentation;
 
 /**
  * @version 
@@ -66,6 +69,12 @@ public class RestletSetBodyTest extends RestletTestSupport {
         }
     }
     
+    @Test
+    public void testGzipEntity() {
+        String response = template.requestBody("restlet:http://0.0.0.0:" + portNum + "/gzip/data?restletMethod=get", null, String.class);
+        assertEquals("Hello World!", response);
+    }
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -88,6 +97,9 @@ public class RestletSetBodyTest extends RestletTestSupport {
 
                 from("restlet:http://0.0.0.0:" + portNum + "/images/{symbol}?restletMethods=get")
                     .setBody().constant(new InputRepresentation(inputStream, MediaType.IMAGE_PNG, 10));
+                
+                from("restlet:http://0.0.0.0:" + portNum + "/gzip/data?restletMethods=get")
+                    .setBody().constant(new EncodeRepresentation(Encoding.GZIP, new StringRepresentation("Hello World!", MediaType.TEXT_XML)));
             }
         };
     }

@@ -59,7 +59,6 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     protected final ApiMethodHelper<? extends ApiMethod> methodHelper;
 
     // endpoint configuration
-    @UriParam
     protected final T configuration;
 
     // property name for Exchange 'In' message body

@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +38,13 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "test")
+@UriEndpoint(scheme = "test", label = "core,testing")
 public class TestEndpoint extends MockEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;
-    @UriParam
+    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing")
+    private String name;
+    @UriParam(defaultValue = "2000")
     private long timeout = 2000L;
 
     public TestEndpoint(String endpointUri, Component component, Endpoint expectedMessageEndpoint) {
@@ -77,6 +80,9 @@ public class TestEndpoint extends MockEndpoint {
         return timeout;
     }
 
+    /**
+     * The timeout to use when polling for message bodies from the URI
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

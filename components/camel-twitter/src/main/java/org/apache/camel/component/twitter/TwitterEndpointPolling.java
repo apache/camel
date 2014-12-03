@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
  * Twitter polling endpoint
  */
 @ManagedResource(description = "Managed Twitter Endpoint")
-@UriEndpoint(scheme = "twitter", consumerClass = Twitter4JConsumer.class)
+@UriEndpoint(scheme = "twitter", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
     @UriParam

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.IOException;
+
 import org.apache.camel.Component;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
@@ -23,6 +25,7 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -70,5 +73,18 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
     public Object getInstance() {
         return component;
+    }
+
+    @Override
+    public String informationJson() {
+        try {
+            // a component may have been given a different name, so resolve its default name by its java type
+            // as we can find the component json information from the default component name
+            String defaultName = component.getCamelContext().resolveComponentDefaultName(component.getClass().getName());
+            String target = defaultName != null ? defaultName : name;
+            return component.getCamelContext().getComponentParameterJsonSchema(target);
+        } catch (IOException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 }

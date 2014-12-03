@@ -21,6 +21,7 @@ import java.net.URI;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.sshd.common.KeyPairProvider;
 
@@ -28,22 +29,22 @@ import org.apache.sshd.common.KeyPairProvider;
 public class SshConfiguration implements Cloneable {
     public static final int DEFAULT_SSH_PORT = 22;
 
+    @UriPath
+    private String host;
+    @UriPath
+    private int port = DEFAULT_SSH_PORT;
     @UriParam
     private String username;
-    @UriParam
-    private String host;
-    @UriParam
-    private int port = DEFAULT_SSH_PORT;
     @UriParam
     private String password;
     @UriParam
     private String pollCommand;
     private KeyPairProvider keyPairProvider;
-    @UriParam
+    @UriParam(defaultValue = KeyPairProvider.SSH_RSA)
     private String keyType = KeyPairProvider.SSH_RSA;
     @UriParam
     private String certResource;
-    @UriParam
+    @UriParam(defaultValue = "30000")
     private long timeout = 30000;
 
     public SshConfiguration() {
