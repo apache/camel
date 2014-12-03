@@ -119,9 +119,8 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         }
     }
 
-    protected SubmitMulti[] createSubmitMulti(Exchange exchange) {
-        SmppSplitter splitter = createSplitter(exchange.getIn());
-        byte[][] segments = splitter.split(getShortMessage(exchange.getIn()));
+    protected SubmitMulti[] createSubmitMulti(Exchange exchange) throws SmppException {
+        byte[][] segments = splitBody(exchange.getIn());
 
         ESMClass esmClass;
         // multipart message

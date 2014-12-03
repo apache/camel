@@ -70,6 +70,7 @@ public class SmppConfiguration implements Cloneable {
     private String httpProxyUsername;
     private String httpProxyPassword;
     private SessionStateListener sessionStateListener;
+    private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
 
     
     /**
@@ -361,6 +362,14 @@ public class SmppConfiguration implements Cloneable {
         this.addressRange = addressRange;
     }
 
+    public SmppSplittingPolicy getSplittingPolicy() {
+        return splittingPolicy;
+    }
+
+    public void setSplittingPolicy(SmppSplittingPolicy splittingPolicy) {
+        this.splittingPolicy = splittingPolicy;
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL 
@@ -395,6 +404,7 @@ public class SmppConfiguration implements Cloneable {
             + ", httpProxyPort=" + httpProxyPort
             + ", httpProxyUsername=" + httpProxyUsername
             + ", httpProxyPassword=" + httpProxyPassword
+            + ", splittingPolicy=" + splittingPolicy
             + "]";
     }
 }

@@ -20,9 +20,12 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.Message;
 import org.jsmpp.bean.Alphabet;
+import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.session.SMPPSession;
 
 public abstract class SmppSmCommand extends AbstractSmppCommand {
+
+    public static final int SMPP_NEG_RESPONSE_MSG_TOO_LONG = 1;
 
     protected Charset ascii = Charset.forName("US-ASCII");
     protected Charset latin1 = Charset.forName("ISO-8859-1");
@@ -32,6 +35,40 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     public SmppSmCommand(SMPPSession session, SmppConfiguration config) {
         super(session, config);
         this.charset = Charset.forName(config.getEncoding());
+    }
+
+    protected byte[][] splitBody(Message message) throws SmppException {
+        byte[] shortMessage = getShortMessage(message);
+        SmppSplitter splitter = createSplitter(message);
+        byte[][] segments = splitter.split(shortMessage);
+        if (segments.length > 1) {
+            // Message body is split into multiple parts,
+            // check if this is permitted
+            SmppSplittingPolicy policy = getSplittingPolicy(message);
+            switch(policy) {
+            case ALLOW:
+                return segments;
+            case TRUNCATE:
+                return new byte[][] {java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length)};
+            case REJECT:
+                // FIXME - JSMPP needs to have an enum of the negative response
+                // codes instead of just using them like this
+                NegativeResponseException nre = new NegativeResponseException(SMPP_NEG_RESPONSE_MSG_TOO_LONG);
+                throw new SmppException(nre);
+            default:
+                throw new SmppException("Unknown splitting policy: " + policy);
+            }
+        } else {
+            return segments;
+        }
+    }
+
+    private SmppSplittingPolicy getSplittingPolicy(Message message) throws SmppException {
+        if (message.getHeaders().containsKey(SmppConstants.SPLITTING_POLICY)) {
+            String policyName = message.getHeader(SmppConstants.SPLITTING_POLICY, String.class);
+            return SmppSplittingPolicy.fromString(policyName);
+        }
+        return config.getSplittingPolicy();
     }
 
     protected SmppSplitter createSplitter(Message message) {
