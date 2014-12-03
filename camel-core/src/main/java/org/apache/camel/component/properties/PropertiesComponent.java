@@ -339,6 +339,16 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // inject the component to the parser
+        if (propertiesParser instanceof DefaultPropertiesParser) {
+            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
         functions.clear();
