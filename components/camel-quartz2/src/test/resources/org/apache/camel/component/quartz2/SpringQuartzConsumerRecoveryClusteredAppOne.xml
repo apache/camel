@@ -58,6 +58,8 @@
       </props>
     </property>
   </bean>
+  
+  <bean id="myProcessor" class="org.apache.camel.component.quartz2.SpringQuartzConsumerTwoAppsClusteredRecoveryTest$MyProcessor" />
 
   <camelContext id="camelContext" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
@@ -67,9 +69,7 @@
         <simple>clustering PINGS!</simple>
       </transform>
       <to uri="log:triggered" />
-      <!--delay>
-         <constant>10000</constant>
-       </delay-->
+      <process ref="myProcessor"/>
       <to uri="mock:result" />
     </route>
   </camelContext>

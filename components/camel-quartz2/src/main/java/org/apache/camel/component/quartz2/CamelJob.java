@@ -23,8 +23,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.quartz.Job;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
@@ -91,10 +93,12 @@ public class CamelJob implements Job {
 
     protected QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
+        JobDetail jobDetail = quartzContext.getJobDetail(); 
+        JobKey jobKey =  jobDetail.getKey();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
         }
-
+        
         // check all active routes for the quartz endpoint this task matches
         // as we prefer to use the existing endpoint from the routes
         for (Route route : camelContext.getRoutes()) {
@@ -108,7 +112,8 @@ public class CamelJob implements Job {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 }
-                if (triggerKey.equals(checkTriggerKey)) {
+                if (triggerKey.equals(checkTriggerKey)
+                    || (jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup()) && jobKey.getName().equals(checkTriggerKey.getName()))) {
                     return quartzEndpoint;
                 }
             }
