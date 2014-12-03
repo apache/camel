@@ -346,6 +346,11 @@ public class PropertiesComponent extends DefaultComponent {
         if (propertiesParser instanceof DefaultPropertiesParser) {
             ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
         }
+
+        // include out of the box functions
+        addFunction(new EnvPropertiesFunction());
+        addFunction(new SysPropertiesFunction());
+        addFunction(new ServicePropertiesFunction());
     }
 
     @Override
