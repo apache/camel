@@ -143,7 +143,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
             dataSm.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, java.lang.Byte.class));
         } else if (in.getHeaders().containsKey(SmppConstants.ALPHABET)) {
-            dataSm.setDataCoding(in.getHeader(SmppConstants.ALPHABET, Byte.class));
+            dataSm.setDataCoding(in.getHeader(SmppConstants.ALPHABET, java.lang.Byte.class));
         } else {
             dataSm.setDataCoding(config.getDataCoding());
         }
