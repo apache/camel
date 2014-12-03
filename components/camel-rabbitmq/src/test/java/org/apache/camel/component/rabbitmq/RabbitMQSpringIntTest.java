@@ -28,30 +28,40 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Test RabbitMQ component with Spring DSL
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class RabbitMQSpringIntTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQSpringIntTest.class);
     @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate template;
     @Autowired
     private ConnectionFactory connectionFactory;
     private Connection connection;
     private Channel channel;
-
+    private boolean isConnectionOpened() {
+        return connection!=null && connection.isOpen();
+    }
     private Connection openConnection() throws IOException {
-        if (connection == null) {
+        if (!isConnectionOpened()) {
+            LOGGER.info("Open connection");
             connection = connectionFactory.newConnection();
         }
         return connection;
     }
-
+    private boolean isChannelOpened() {
+        return channel != null && channel.isOpen();
+    }
     private Channel openChannel() throws IOException {
-        if (channel == null) {
+        if (!isChannelOpened()) {
+            LOGGER.info("Open channel");
             channel = openConnection().createChannel();
         }
         return channel;
@@ -60,21 +70,26 @@ public class RabbitMQSpringIntTest {
     @Before
     public void bindQueueExchange() throws IOException {
         openChannel();
-        channel.exchangeDeclare("ex2", "direct", true, false, null);
+        /*
+        LOGGER.info("Declare exchange queue");
+        channel.exchangeDeclare("ex2", "direct", true, false, new HashMap<String, Object>());
         channel.queueDeclare("q2", true, false, false, null);
         channel.queueBind("q2", "ex2", "rk2");
+        */
     }
 
     @After
     public void closeConnection() {
-        if (channel != null) {
+        if (isChannelOpened()) {
             try {
+                LOGGER.info("Close channel");
                 channel.close();
             } catch (IOException e) {
             }
         }
-        if (connection != null) {
+        if (isConnectionOpened()) {
             try {
+                LOGGER.info("Close connection");
                 connection.close();
             } catch (IOException e) {
             }
@@ -97,6 +112,9 @@ public class RabbitMQSpringIntTest {
         public byte[] getLastBody() {
             return lastBody;
         }
+        public String getLastBodyAsString() {
+            return lastBody == null ? null : new String(lastBody);
+        }
     }
 
     @Test
@@ -112,6 +130,6 @@ public class RabbitMQSpringIntTest {
             Thread.sleep(1000L);
             i--;
         }
-        assertEquals(body, new String(consumer.getLastBody()));
+        assertEquals(body, consumer.getLastBodyAsString());
     }
 }
