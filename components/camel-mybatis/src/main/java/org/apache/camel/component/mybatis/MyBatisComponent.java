@@ -35,6 +35,7 @@ public class MyBatisComponent extends UriEndpointComponent {
 
     private SqlSessionFactory sqlSessionFactory;
     private String configurationUri = "SqlMapConfig.xml";
+    private InputStream configurationInputStream;
 
     public MyBatisComponent() {
         super(MyBatisEndpoint.class);
@@ -48,12 +49,18 @@ public class MyBatisComponent extends UriEndpointComponent {
     }
 
     protected SqlSessionFactory createSqlSessionFactory() throws IOException {
-        ObjectHelper.notNull(configurationUri, "configurationUri", this);
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationUri);
+
+        if(configurationInputStream == null) {
+
+            ObjectHelper.notNull(configurationUri, "configurationUri", this);
+            configurationInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationUri);
+
+        }
         try {
-            return new SqlSessionFactoryBuilder().build(is);
+            return new SqlSessionFactoryBuilder().build(configurationInputStream);
         } finally {
-            IOHelper.close(is);
+            IOHelper.close(configurationInputStream);
+            configurationInputStream = null;
         }
     }
 
@@ -63,6 +70,14 @@ public class MyBatisComponent extends UriEndpointComponent {
 
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
+    }
+
+    public InputStream getConfigurationInputStream() {
+        return configurationInputStream;
+    }
+
+    public void setConfigurationInputStream(InputStream configurationInputStream) {
+        this.configurationInputStream = configurationInputStream;
     }
 
     public String getConfigurationUri() {
