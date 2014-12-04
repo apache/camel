@@ -214,6 +214,8 @@ public class RestConfiguration {
 
     /**
      * Gets the name of the json data format.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -223,6 +225,8 @@ public class RestConfiguration {
 
     /**
      * Sets a custom json data format to be used
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name name of the data format
      */
@@ -232,6 +236,8 @@ public class RestConfiguration {
 
     /**
      * Gets the name of the xml data format.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -240,7 +246,9 @@ public class RestConfiguration {
     }
 
     /**
-     * Sets a custom xml data format to be used
+     * Sets a custom xml data format to be used.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name name of the data format
      */
