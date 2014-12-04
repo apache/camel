@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -32,12 +33,12 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class)
+@UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class, label = "database")
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     private ExecutorType executorType;
-    @UriParam
+    @UriPath
     private String statement;
     @UriParam
     private StatementType statementType;
@@ -83,6 +84,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         return statement;
     }
 
+    /**
+     * The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate.
+     */
     public void setStatement(String statement) {
         this.statement = statement;
     }
@@ -91,6 +95,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         return statementType;
     }
 
+    /**
+     * Mandatory to specify for the producer to control which kind of operation to invoke.
+     */
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
     }
@@ -99,6 +106,14 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         return executorType;
     }
 
+    /**
+     * The executor type to be used while executing statements.
+     * <ul>
+     *     <li>simple - executor does nothing special.</li>
+     *     <li>reuse - executor reuses prepared statements.</li>
+     *     <li>batch - executor reuses statements and batches updates.</li>
+     * </ul>
+     */
     public void setExecutorType(ExecutorType executorType) {
         this.executorType = executorType;
     }

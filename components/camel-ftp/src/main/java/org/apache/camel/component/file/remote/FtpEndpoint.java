@@ -34,13 +34,15 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP endpoint
  */
-@UriEndpoint(scheme = "ftp", consumerClass = FtpConsumer.class)
+@UriEndpoint(scheme = "ftp", consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
     protected FTPClient ftpClient;
     protected FTPClientConfig ftpClientConfig;
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
+    @UriParam
+    protected FtpConfiguration configuration;
     @UriParam
     protected int soTimeout;
     @UriParam
@@ -49,8 +51,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     public FtpEndpoint() {
     }
 
-    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, RemoteFileConfiguration configuration) {
+    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, FtpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override
@@ -141,7 +144,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (configuration == null) {
             configuration = new FtpConfiguration();
         }
-        return (FtpConfiguration)configuration;
+        return configuration;
     }
 
     @Override
@@ -149,7 +152,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (configuration == null) {
             throw new IllegalArgumentException("FtpConfiguration expected");
         }
-        this.configuration = configuration;
+        // need to set on both
+        this.configuration = (FtpConfiguration) configuration;
+        super.setConfiguration(configuration);
     }
 
     public FTPClient getFtpClient() {

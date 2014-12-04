@@ -42,8 +42,9 @@ public class GLoginComponentConfigurationAndDocumentationTest extends CamelTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"clientName\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"devMode\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"hostName\": { \"kind\": \"path\", \"type\": \"string\""));
+        assertTrue(json.contains("\"clientName\": { \"kind\": \"path\", \"type\": \"string\""));
+        assertTrue(json.contains("\"devMode\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

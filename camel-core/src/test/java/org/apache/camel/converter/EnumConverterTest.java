@@ -38,6 +38,21 @@ public class EnumConverterTest extends ContextTestSupport {
         assertEquals(LoggingLevel.WARN, level);
     }
 
+    public void testCaseInsensitive() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        LoggingLevel level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, exchange, "Warn");
+        assertEquals(LoggingLevel.WARN, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, exchange, "warn");
+        assertEquals(LoggingLevel.WARN, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, exchange, "wARn");
+        assertEquals(LoggingLevel.WARN, level);
+
+        level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, exchange, "inFO");
+        assertEquals(LoggingLevel.INFO, level);
+    }
+
     public void testMandatoryConvertFailed() throws Exception {
         try {
             context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX");

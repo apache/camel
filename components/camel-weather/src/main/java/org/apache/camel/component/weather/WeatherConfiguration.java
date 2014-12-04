@@ -21,6 +21,7 @@ import java.util.Scanner;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -34,6 +35,8 @@ public class WeatherConfiguration {
 
     private final WeatherComponent component;
 
+    @UriPath(description = "The name value is not used.")
+    private String name;
     @UriParam
     private String location = "";
     @UriParam
@@ -42,9 +45,9 @@ public class WeatherConfiguration {
     private String lon;
     @UriParam
     private String period = "";
-    @UriParam
+    @UriParam(defaultValue = "JSON")
     private WeatherMode mode = JSON;
-    @UriParam
+    @UriParam(defaultValue = "METRIC")
     private WeatherUnits units = METRIC;
     @UriParam
     private String headerName;
@@ -68,6 +71,14 @@ public class WeatherConfiguration {
         if (result != 0) {
             this.period = "" + result;
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public WeatherMode getMode() {

@@ -33,7 +33,7 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
     @Test
     public void testComponentConfiguration() throws Exception {
         SqlComponent comp = context.getComponent("sql", SqlComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("sql:select?dataSourceRef=jdbc/myDataSource&allowNamedParameters=true");
+        EndpointConfiguration conf = comp.createConfiguration("sql:select?dataSourceRef=jdbc/myDataSource&allowNamedParameters=true&consumer.delay=5000");
 
         assertEquals("jdbc/myDataSource", conf.getParameter("dataSourceRef"));
         assertEquals("true", conf.getParameter("allowNamedParameters"));
@@ -42,9 +42,18 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+    }
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\" }"));
+    @Test
+    public void testExplainEndpoint() throws Exception {
+        String json = context.explainEndpointJson("sql:select?dataSourceRef=jdbc/myDataSource&allowNamedParameters=true&consumer.onConsume=foo", true);
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains(" \"onConsume\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"value\": \"foo\""));
     }
 
     @Test

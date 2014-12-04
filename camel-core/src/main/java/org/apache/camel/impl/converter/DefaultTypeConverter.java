@@ -40,6 +40,12 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
     }
 
     @Override
+    public boolean isRunAllowed() {
+        // as type converter is used during initialization then allow it to always run
+        return true;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         // load type converters up front

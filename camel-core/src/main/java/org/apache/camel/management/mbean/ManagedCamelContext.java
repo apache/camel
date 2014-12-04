@@ -30,6 +30,11 @@ import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -41,6 +46,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
@@ -50,6 +56,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -474,6 +482,60 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return new ArrayList<String>(map.keySet());
     }
 
+    @Override
+    public TabularData listComponents() throws Exception {
+        try {
+            // find all components
+            Map<String, Properties> components = context.findComponents();
+
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listComponentsTabularType());
+
+            // gather component detail for each component
+            for (Map.Entry<String, Properties> entry : components.entrySet()) {
+                String name = entry.getKey();
+                String description = null;
+                String label = null;
+                String status = context.hasComponent(name) != null ? "in use" : "on classpath";
+                String type = (String) entry.getValue().get("class");
+                String groupId = null;
+                String artifactId = null;
+                String version = null;
+
+                // a component may have been given a different name, so resolve its default name by its java type
+                // as we can find the component json information from the default component name
+                String defaultName = context.resolveComponentDefaultName(type);
+                String target = defaultName != null ? defaultName : name;
+
+                // load component json data, and parse it to gather the component meta-data
+                String json = context.getComponentParameterJsonSchema(target);
+                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("description")) {
+                        description = row.get("description");
+                    } else if (row.containsKey("label")) {
+                        label = row.get("label");
+                    } else if (row.containsKey("javaType")) {
+                        type = row.get("javaType");
+                    } else if (row.containsKey("groupId")) {
+                        groupId = row.get("groupId");
+                    } else if (row.containsKey("artifactId")) {
+                        artifactId = row.get("artifactId");
+                    } else if (row.containsKey("version")) {
+                        version = row.get("version");
+                    }
+                }
+
+                CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+                        new Object[]{name, description, label, status, type, groupId, artifactId, version});
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
     public List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters,
                                              String completionText) throws Exception {
         if (completionText == null) {
@@ -490,13 +552,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String componentParameterJsonSchema(String componentName) throws Exception {
-        Component component = context.getComponent(componentName);
-        if (component != null) {
-            ComponentConfiguration configuration = component.createComponentConfiguration();
-            return configuration.createParameterJsonSchema();
-        } else {
-            return null;
+        // favor using pre generated schema if component has that
+        String json = context.getComponentParameterJsonSchema(componentName);
+        if (json == null) {
+            // okay this requires having the component on the classpath and being instantiated
+            Component component = context.getComponent(componentName);
+            if (component != null) {
+                ComponentConfiguration configuration = component.createComponentConfiguration();
+                json = configuration.createParameterJsonSchema();
+            }
         }
+        return json;
+    }
+
+    public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
+        return context.explainEndpointJson(uri, includeAllOptions);
     }
 
     public void reset(boolean includeRoutes) throws Exception {

@@ -88,6 +88,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
         private final Endpoint childEndpoint;
         
         MyEndpoint(String uri, Endpoint childEndpoint) {
+            super(uri);
             this.childEndpoint = childEndpoint;
         }
 
@@ -110,7 +111,12 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
         public Endpoint getEndpoint() {
             return childEndpoint;
         }
-        
+
+        @Override
+        protected String createEndpointUri() {
+            return "my:" + childEndpoint.getEndpointUri();
+        }
+
     }
 
 }

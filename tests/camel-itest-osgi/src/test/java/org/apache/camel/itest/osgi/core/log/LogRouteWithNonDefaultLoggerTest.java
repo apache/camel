@@ -31,8 +31,6 @@ import org.ops4j.pax.exam.karaf.options.DoNotModifyLogOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
 import org.slf4j.LoggerFactory;
 
-
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 @RunWith(PaxExam.class)
@@ -46,8 +44,8 @@ public class LogRouteWithNonDefaultLoggerTest extends OSGiIntegrationTestSupport
 
         File logDir = new File(System.getProperty("karaf.base"), "data/log");
         File[] files = logDir.listFiles();
-        assertThat(files.length, equalTo(1));
-        assertThat(files[0].getName(), equalTo(bundleContext.getBundle().getSymbolicName() + ".log"));
+        assertEquals(1, files.length);
+        assertEquals(bundleContext.getBundle().getSymbolicName() + ".log", files[0].getName());
     }
 
     @Test
@@ -58,8 +56,8 @@ public class LogRouteWithNonDefaultLoggerTest extends OSGiIntegrationTestSupport
 
         File logDir = new File(System.getProperty("karaf.base"), "data/log");
         File[] files = logDir.listFiles();
-        assertThat(files.length, equalTo(1));
-        assertThat(files[0].getName(), equalTo(bundleContext.getBundle().getSymbolicName() + ".log"));
+        assertEquals(1, files.length);
+        assertEquals(bundleContext.getBundle().getSymbolicName() + ".log", files[0].getName());
     }
 
     @Override
@@ -69,8 +67,8 @@ public class LogRouteWithNonDefaultLoggerTest extends OSGiIntegrationTestSupport
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        LOG.info("Get the bundleContext is " + bundleContext);
-        LOG.info("Application installed as bundle id: " + bundleContext.getBundle().getBundleId());
+        LOG.info("Get the bundleContext is {}", bundleContext);
+        LOG.info("Application installed as bundle id: {}", bundleContext.getBundle().getBundleId());
 
         setThreadContextClassLoader();
 

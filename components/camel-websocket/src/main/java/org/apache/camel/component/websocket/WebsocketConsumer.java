@@ -51,6 +51,10 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     }
 
     public void sendMessage(final String connectionKey, final String message) {
+        sendMessage(connectionKey, (Object)message);
+    }
+
+    public void sendMessage(final String connectionKey, final Object message) {
 
         final Exchange exchange = getEndpoint().createExchange();
 

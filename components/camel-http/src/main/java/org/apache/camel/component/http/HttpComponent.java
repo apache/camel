@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -37,8 +38,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 /**
- * Defines the <a href="http://camel.apache.org/http.html">HTTP
- * Component</a>
+ * The <a href="http://camel.apache.org/http.html">HTTP Component</a>
  *
  * @version 
  */
@@ -248,7 +248,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
        
         // create the endpoint and connectionManagerParams already be set
-        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, thisHttpConnectionManager, configurer);
+        HttpEndpoint endpoint = createHttpEndpoint(endpointUri.toString(), this, clientParams, thisHttpConnectionManager, configurer);
         
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
@@ -304,6 +304,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         endpoint.setHttpUri(httpUri);
         return endpoint;
+    }
+
+    protected HttpEndpoint createHttpEndpoint(String uri, HttpComponent component, HttpClientParams clientParams,
+                                              HttpConnectionManager connectionManager, HttpClientConfigurer configurer) throws URISyntaxException {
+        return new HttpEndpoint(uri, component, clientParams, connectionManager, configurer);
     }
     
     @Override

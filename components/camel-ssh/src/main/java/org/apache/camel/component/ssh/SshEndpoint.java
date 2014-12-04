@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an SSH endpoint.
  */
-@UriEndpoint(scheme = "ssh", consumerClass = SshConsumer.class)
+@UriEndpoint(scheme = "ssh", consumerClass = SshConsumer.class, label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -85,7 +85,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
             throw new IllegalStateException("Configuration must be set");
         }
 
-        ConnectFuture connectFuture = client.connect(getHost(), getPort());
+        ConnectFuture connectFuture = client.connect(null, getHost(), getPort());
 
         // Wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(getTimeout());

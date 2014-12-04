@@ -119,9 +119,8 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         }
     }
 
-    protected SubmitMulti[] createSubmitMulti(Exchange exchange) {
-        SmppSplitter splitter = createSplitter(exchange.getIn());
-        byte[][] segments = splitter.split(getShortMessage(exchange.getIn()));
+    protected SubmitMulti[] createSubmitMulti(Exchange exchange) throws SmppException {
+        byte[][] segments = splitBody(exchange.getIn());
 
         ESMClass esmClass;
         // multipart message
@@ -152,6 +151,8 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
 
         if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
             submitMulti.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else if (in.getHeaders().containsKey(SmppConstants.ALPHABET)) {
+            submitMulti.setDataCoding(in.getHeader(SmppConstants.ALPHABET, Byte.class));
         } else {
             submitMulti.setDataCoding(config.getDataCoding());
         }

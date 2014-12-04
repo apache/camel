@@ -35,14 +35,11 @@ public class XsltReferenceParameterTest extends TestSupport {
 
     private static final String TEST_URI_1 =
         "xslt:org/apache/camel/component/xslt/transform.xsl?converter=#testConverter&transformerFactory=#testTransformerFactory";
-    private static final String TEST_URI_2 =
-        "xslt:org/apache/camel/component/xslt/transform.xsl?converter=testConverter&transformerFactory=testTransformerFactory";
 
     private TestConverter testConverter;
     private TransformerFactory testTransformerFactory;
 
     private XsltBuilder builder1;
-    private XsltBuilder builder2;
 
     public void setUp() throws Exception {
         JndiRegistry registry = new JndiRegistry(new JndiContext());
@@ -56,10 +53,8 @@ public class XsltReferenceParameterTest extends TestSupport {
         registry.bind("testTransformerFactory", testTransformerFactory);
 
         ProcessorEndpoint pep1 = context.getEndpoint(TEST_URI_1, ProcessorEndpoint.class);
-        ProcessorEndpoint pep2 = context.getEndpoint(TEST_URI_2, ProcessorEndpoint.class);
 
         builder1 = (XsltBuilder)pep1.getProcessor();
-        builder2 = (XsltBuilder)pep2.getProcessor();
 
         context.addRoutes(builder);
         context.start();
@@ -67,19 +62,16 @@ public class XsltReferenceParameterTest extends TestSupport {
 
     public void testConverterReference() {
         assertSame(testConverter, builder1.getConverter());
-        assertSame(testConverter, builder2.getConverter());
     }
 
     public void testTransformerFactoryReference() {
         assertSame(testTransformerFactory, builder1.getConverter().getTransformerFactory());
-        assertSame(testTransformerFactory, builder2.getConverter().getTransformerFactory());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a").to(TEST_URI_1);
-                from("direct:b").to(TEST_URI_2);
             }
         };
     }

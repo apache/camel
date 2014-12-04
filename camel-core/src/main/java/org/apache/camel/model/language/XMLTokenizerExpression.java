@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
 
 /**

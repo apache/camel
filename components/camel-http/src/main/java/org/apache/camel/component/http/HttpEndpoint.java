@@ -29,6 +29,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -42,25 +43,27 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "http", consumerClass = HttpConsumer.class)
+@UriEndpoint(scheme = "http,https", consumerClass = HttpConsumer.class, label = "http")
 public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpBinding binding;
     private HttpComponent component;
+    @UriPath
     private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean matchOnUriPrefix;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disableStreamCache;
     @UriParam
     private String proxyHost;
@@ -70,7 +73,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private String authMethodPriority;
     @UriParam
     private boolean transferException;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean traceEnabled;
     @UriParam
     private String httpMethodRestrict;
@@ -249,6 +252,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return httpUri;
     }
 
+    /**
+     * The url of the HTTP endpoint to call.
+     */
     public void setHttpUri(URI httpUri) {
         this.httpUri = httpUri;
     }

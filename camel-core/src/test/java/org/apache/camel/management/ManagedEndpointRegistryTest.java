@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -65,11 +66,17 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
         assertTrue(source.startsWith("EndpointRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
+        TabularData data = (TabularData) mbeanServer.invoke(on, "listEndpoints", null, null);
+        assertEquals(2, data.size());
+
         // purge
         mbeanServer.invoke(on, "purge", null, null);
 
         current = (Integer) mbeanServer.getAttribute(on, "Size");
         assertEquals(0, current.intValue());
+
+        data = (TabularData) mbeanServer.invoke(on, "listEndpoints", null, null);
+        assertEquals(0, data.size());
     }
 
     @Override

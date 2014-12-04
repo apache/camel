@@ -40,8 +40,10 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
     @Override
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
-        String message = in.getMandatoryBody(String.class);
-
+        Object message = in.getMandatoryBody();
+        if (!(message == null || message instanceof String || message instanceof byte[])) {
+            message = in.getMandatoryBody(String.class);
+        }
         if (isSendToAllSet(in)) {
             sendToAll(store, message, exchange);
         } else {
@@ -80,7 +82,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         return value == null ? false : value;
     }
 
-    void sendToAll(WebsocketStore store, String message, Exchange exchange) throws Exception {
+    void sendToAll(WebsocketStore store, Object message, Exchange exchange) throws Exception {
         log.debug("Sending to all {}", message);
         Collection<DefaultWebsocket> websockets = store.getAll();
         Exception exception = null;
@@ -98,11 +100,15 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         }
     }
 
-    void sendMessage(DefaultWebsocket websocket, String message) throws IOException {
+    void sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
         // in case there is web socket and socket connection is open - send message
         if (websocket != null && websocket.getConnection().isOpen()) {
             log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
-            websocket.getConnection().sendMessage(message);
+            if (message instanceof String) {
+                websocket.getConnection().sendMessage((String)message);
+            } else if (message instanceof byte[]) {
+                websocket.getConnection().sendMessage((byte[])message, 0, ((byte[])message).length);
+            }
         }
     }
 }

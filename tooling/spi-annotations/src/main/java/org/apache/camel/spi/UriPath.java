@@ -29,4 +29,21 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD })
 public @interface UriPath {
+
+    /**
+     * Returns the name of the uri path.
+     * <p/>
+     * This can be used to name the uri path something meaningful, such as a <tt>directory</tt>, <tt>queueName</tt> etc.
+     * <p/>
+     * If this is not specified then the name of the field or property which has this annotation is used.
+     */
+    String name() default "";
+
+    /**
+     * Returns a description of this uri path
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String description() default "";
+
 }

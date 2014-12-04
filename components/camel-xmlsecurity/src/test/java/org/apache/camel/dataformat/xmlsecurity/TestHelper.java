@@ -124,7 +124,7 @@ public class TestHelper {
         });
     }
       
-    protected void testEncryption(String fragment, CamelContext context) throws Exception {
+    protected Document testEncryption(String fragment, CamelContext context) throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:encrypted", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
         context.start();
@@ -136,6 +136,7 @@ public class TestHelper {
             logMessage(exchange, inDoc);
         }
         Assert.assertTrue("The XML message has no encrypted data.", hasEncryptedData(inDoc));
+        return inDoc;
     }
     
 

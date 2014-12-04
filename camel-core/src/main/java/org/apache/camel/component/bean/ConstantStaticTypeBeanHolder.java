@@ -17,8 +17,6 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class

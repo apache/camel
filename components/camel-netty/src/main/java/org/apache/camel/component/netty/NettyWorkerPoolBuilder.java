@@ -67,14 +67,4 @@ public final class NettyWorkerPoolBuilder {
         workerPool = new NioWorkerPool(Executors.newCachedThreadPool(), count, new CamelNettyThreadNameDeterminer(pattern, name));
         return workerPool;
     }
-
-    /**
-     * Shutdown the created worker pool
-     */
-    public void destroy() {
-        if (workerPool != null) {
-            workerPool.shutdown();
-            workerPool = null;
-        }
-    }
 }

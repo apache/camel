@@ -30,7 +30,6 @@ import org.apache.camel.component.jira.JIRAEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Consumes new comments on JIRA issues.
  * 

@@ -25,13 +25,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Stress tests for the XML JSON data format: concurrency and large JSON and XML documents
  */
-public class XmlJsonStressTest extends CamelTestSupport {
+public class XmlJsonStressTest extends AbstractJsonTestSupport {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {

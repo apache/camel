@@ -118,6 +118,12 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def recipients(expression: Exchange => Any) = wrap(target.recipientList(expression))
   def resequence(expression: Exchange => Any) = SResequenceDefinition(target.resequence(expression))
+  def removeHeader(name : String) = wrap(target.removeHeader(name))
+  def removeHeaders(pattern: String) = wrap(target.removeHeaders(pattern))
+  def removeHeaders(pattern: String, excludePatterns: String*) = wrap(target.removeHeaders(pattern, excludePatterns:_*))
+  def removeProperty(name: String) = wrap(target.removeProperty(name))
+  def removeProperties(pattern: String) = wrap(target.removeProperties(pattern))
+  def removeProperties(pattern: String, excludePatterns: String*) = wrap(target.removeProperties(pattern, excludePatterns:_*))
   def rollback = wrap(target.rollback)
   def routeId(routeId: String) = wrap(target.routeId(routeId))
   @Deprecated

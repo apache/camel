@@ -39,6 +39,7 @@ The following are additional optional parameters
 | email | CamelDockerEmail | Email address associated with the user | |
 | secure | CamelDockerSecure | Use HTTPS communication | false |
 | requestTimeout | CamelDockerRequestTimeout | Request timeout for response (in seconds) | 30 |
+|certPath | CamelDockerCertPath | Location containing the SSL certificate chain | | 
 
 
 ## Consumer Operations

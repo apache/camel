@@ -25,10 +25,10 @@ public final class AddressBookProtos {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  public interface PersonOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface PersonOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.apache.camel.dataformat.protobuf.generated.Person)
+      com.google.protobuf.MessageOrBuilder {
 
-    // required string name = 1;
     /**
      * <code>required string name = 1;</code>
      */
@@ -43,7 +43,6 @@ public final class AddressBookProtos {
     com.google.protobuf.ByteString
         getNameBytes();
 
-    // required int32 id = 2;
     /**
      * <code>required int32 id = 2;</code>
      */
@@ -53,7 +52,6 @@ public final class AddressBookProtos {
      */
     int getId();
 
-    // optional string email = 3;
     /**
      * <code>optional string email = 3;</code>
      */
@@ -68,7 +66,6 @@ public final class AddressBookProtos {
     com.google.protobuf.ByteString
         getEmailBytes();
 
-    // repeated .org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber phone = 4;
     /**
      * <code>repeated .org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber phone = 4;</code>
      */
@@ -97,8 +94,9 @@ public final class AddressBookProtos {
    * Protobuf type {@code org.apache.camel.dataformat.protobuf.generated.Person}
    */
   public static final class Person extends
-      com.google.protobuf.GeneratedMessage
-      implements PersonOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.apache.camel.dataformat.protobuf.generated.Person)
+      PersonOrBuilder {
     // Use Person.newBuilder() to construct.
     private Person(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -145,8 +143,9 @@ public final class AddressBookProtos {
               break;
             }
             case 10: {
+              com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000001;
-              name_ = input.readBytes();
+              name_ = bs;
               break;
             }
             case 16: {
@@ -155,8 +154,9 @@ public final class AddressBookProtos {
               break;
             }
             case 26: {
+              com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000004;
-              email_ = input.readBytes();
+              email_ = bs;
               break;
             }
             case 34: {
@@ -300,10 +300,10 @@ public final class AddressBookProtos {
       // @@protoc_insertion_point(enum_scope:org.apache.camel.dataformat.protobuf.generated.Person.PhoneType)
     }
 
-    public interface PhoneNumberOrBuilder
-        extends com.google.protobuf.MessageOrBuilder {
+    public interface PhoneNumberOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber)
+        com.google.protobuf.MessageOrBuilder {
 
-      // required string number = 1;
       /**
        * <code>required string number = 1;</code>
        */
@@ -318,7 +318,6 @@ public final class AddressBookProtos {
       com.google.protobuf.ByteString
           getNumberBytes();
 
-      // optional .org.apache.camel.dataformat.protobuf.generated.Person.PhoneType type = 2 [default = HOME];
       /**
        * <code>optional .org.apache.camel.dataformat.protobuf.generated.Person.PhoneType type = 2 [default = HOME];</code>
        */
@@ -332,8 +331,9 @@ public final class AddressBookProtos {
      * Protobuf type {@code org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber}
      */
     public static final class PhoneNumber extends
-        com.google.protobuf.GeneratedMessage
-        implements PhoneNumberOrBuilder {
+        com.google.protobuf.GeneratedMessage implements
+        // @@protoc_insertion_point(message_implements:org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber)
+        PhoneNumberOrBuilder {
       // Use PhoneNumber.newBuilder() to construct.
       private PhoneNumber(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
@@ -380,8 +380,9 @@ public final class AddressBookProtos {
                 break;
               }
               case 10: {
+                com.google.protobuf.ByteString bs = input.readBytes();
                 bitField0_ |= 0x00000001;
-                number_ = input.readBytes();
+                number_ = bs;
                 break;
               }
               case 16: {
@@ -435,7 +436,6 @@ public final class AddressBookProtos {
       }
 
       private int bitField0_;
-      // required string number = 1;
       public static final int NUMBER_FIELD_NUMBER = 1;
       private java.lang.Object number_;
       /**
@@ -478,7 +478,6 @@ public final class AddressBookProtos {
         }
       }
 
-      // optional .org.apache.camel.dataformat.protobuf.generated.Person.PhoneType type = 2 [default = HOME];
       public static final int TYPE_FIELD_NUMBER = 2;
       private org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneType type_;
       /**
@@ -501,9 +500,8 @@ public final class AddressBookProtos {
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) {
-            return isInitialized == 1;
-        }
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
 
         if (!hasNumber()) {
           memoizedIsInitialized = 0;
@@ -528,9 +526,7 @@ public final class AddressBookProtos {
       private int memoizedSerializedSize = -1;
       public int getSerializedSize() {
         int size = memoizedSerializedSize;
-        if (size != -1) {
-            return size;
-        }
+        if (size != -1) return size;
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -623,8 +619,9 @@ public final class AddressBookProtos {
        * Protobuf type {@code org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder>
-         implements org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumberOrBuilder {
+          com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber)
+          org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumberOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
           return org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_descriptor;
@@ -712,9 +709,7 @@ public final class AddressBookProtos {
         }
 
         public Builder mergeFrom(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber other) {
-          if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber.getDefaultInstance()) {
-            return this;
-        }
+          if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber.getDefaultInstance()) return this;
           if (other.hasNumber()) {
             bitField0_ |= 0x00000001;
             number_ = other.number_;
@@ -754,7 +749,6 @@ public final class AddressBookProtos {
         }
         private int bitField0_;
 
-        // required string number = 1;
         private java.lang.Object number_ = "";
         /**
          * <code>required string number = 1;</code>
@@ -768,9 +762,12 @@ public final class AddressBookProtos {
         public java.lang.String getNumber() {
           java.lang.Object ref = number_;
           if (!(ref instanceof java.lang.String)) {
-            java.lang.String s = ((com.google.protobuf.ByteString) ref)
-                .toStringUtf8();
-            number_ = s;
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            if (bs.isValidUtf8()) {
+              number_ = s;
+            }
             return s;
           } else {
             return (java.lang.String) ref;
@@ -828,7 +825,6 @@ public final class AddressBookProtos {
           return this;
         }
 
-        // optional .org.apache.camel.dataformat.protobuf.generated.Person.PhoneType type = 2 [default = HOME];
         private org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneType type_ = org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneType.HOME;
         /**
          * <code>optional .org.apache.camel.dataformat.protobuf.generated.Person.PhoneType type = 2 [default = HOME];</code>
@@ -876,7 +872,6 @@ public final class AddressBookProtos {
     }
 
     private int bitField0_;
-    // required string name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private java.lang.Object name_;
     /**
@@ -919,7 +914,6 @@ public final class AddressBookProtos {
       }
     }
 
-    // required int32 id = 2;
     public static final int ID_FIELD_NUMBER = 2;
     private int id_;
     /**
@@ -935,7 +929,6 @@ public final class AddressBookProtos {
       return id_;
     }
 
-    // optional string email = 3;
     public static final int EMAIL_FIELD_NUMBER = 3;
     private java.lang.Object email_;
     /**
@@ -978,7 +971,6 @@ public final class AddressBookProtos {
       }
     }
 
-    // repeated .org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber phone = 4;
     public static final int PHONE_FIELD_NUMBER = 4;
     private java.util.List<org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber> phone_;
     /**
@@ -1023,9 +1015,8 @@ public final class AddressBookProtos {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) {
-        return isInitialized == 1;
-    }
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasName()) {
         memoizedIsInitialized = 0;
@@ -1066,9 +1057,7 @@ public final class AddressBookProtos {
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
-      if (size != -1) {
-        return size;
-    }
+      if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -1169,8 +1158,9 @@ public final class AddressBookProtos {
      * Protobuf type {@code org.apache.camel.dataformat.protobuf.generated.Person}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.PersonOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.apache.camel.dataformat.protobuf.generated.Person)
+        org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.PersonOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor;
@@ -1280,9 +1270,7 @@ public final class AddressBookProtos {
       }
 
       public Builder mergeFrom(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person other) {
-        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.getDefaultInstance()) {
-            return this;
-        }
+        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.getDefaultInstance()) return this;
         if (other.hasName()) {
           bitField0_ |= 0x00000001;
           name_ = other.name_;
@@ -1363,7 +1351,6 @@ public final class AddressBookProtos {
       }
       private int bitField0_;
 
-      // required string name = 1;
       private java.lang.Object name_ = "";
       /**
        * <code>required string name = 1;</code>
@@ -1377,9 +1364,12 @@ public final class AddressBookProtos {
       public java.lang.String getName() {
         java.lang.Object ref = name_;
         if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
-          name_ = s;
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            name_ = s;
+          }
           return s;
         } else {
           return (java.lang.String) ref;
@@ -1437,7 +1427,6 @@ public final class AddressBookProtos {
         return this;
       }
 
-      // required int32 id = 2;
       private int id_ ;
       /**
        * <code>required int32 id = 2;</code>
@@ -1470,7 +1459,6 @@ public final class AddressBookProtos {
         return this;
       }
 
-      // optional string email = 3;
       private java.lang.Object email_ = "";
       /**
        * <code>optional string email = 3;</code>
@@ -1484,9 +1472,12 @@ public final class AddressBookProtos {
       public java.lang.String getEmail() {
         java.lang.Object ref = email_;
         if (!(ref instanceof java.lang.String)) {
-          java.lang.String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
-          email_ = s;
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            email_ = s;
+          }
           return s;
         } else {
           return (java.lang.String) ref;
@@ -1544,7 +1535,6 @@ public final class AddressBookProtos {
         return this;
       }
 
-      // repeated .org.apache.camel.dataformat.protobuf.generated.Person.PhoneNumber phone = 4;
       private java.util.List<org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber> phone_ =
         java.util.Collections.emptyList();
       private void ensurePhoneIsMutable() {
@@ -1686,7 +1676,8 @@ public final class AddressBookProtos {
           java.lang.Iterable<? extends org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber> values) {
         if (phoneBuilder_ == null) {
           ensurePhoneIsMutable();
-          super.addAll(values, phone_);
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, phone_);
           onChanged();
         } else {
           phoneBuilder_.addAllMessages(values);
@@ -1795,10 +1786,10 @@ public final class AddressBookProtos {
     // @@protoc_insertion_point(class_scope:org.apache.camel.dataformat.protobuf.generated.Person)
   }
 
-  public interface AddressBookOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface AddressBookOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.apache.camel.dataformat.protobuf.generated.AddressBook)
+      com.google.protobuf.MessageOrBuilder {
 
-    // repeated .org.apache.camel.dataformat.protobuf.generated.Person person = 1;
     /**
      * <code>repeated .org.apache.camel.dataformat.protobuf.generated.Person person = 1;</code>
      */
@@ -1827,8 +1818,9 @@ public final class AddressBookProtos {
    * Protobuf type {@code org.apache.camel.dataformat.protobuf.generated.AddressBook}
    */
   public static final class AddressBook extends
-      com.google.protobuf.GeneratedMessage
-      implements AddressBookOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.apache.camel.dataformat.protobuf.generated.AddressBook)
+      AddressBookOrBuilder {
     // Use AddressBook.newBuilder() to construct.
     private AddressBook(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -1924,7 +1916,6 @@ public final class AddressBookProtos {
       return PARSER;
     }
 
-    // repeated .org.apache.camel.dataformat.protobuf.generated.Person person = 1;
     public static final int PERSON_FIELD_NUMBER = 1;
     private java.util.List<org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person> person_;
     /**
@@ -1966,9 +1957,8 @@ public final class AddressBookProtos {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) {
-        return isInitialized == 1;
-    }
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       for (int i = 0; i < getPersonCount(); i++) {
         if (!getPerson(i).isInitialized()) {
@@ -1992,9 +1982,7 @@ public final class AddressBookProtos {
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
-      if (size != -1) {
-        return size;
-    }
+      if (size != -1) return size;
 
       size = 0;
       for (int i = 0; i < person_.size(); i++) {
@@ -2083,8 +2071,9 @@ public final class AddressBookProtos {
      * Protobuf type {@code org.apache.camel.dataformat.protobuf.generated.AddressBook}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBookOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.apache.camel.dataformat.protobuf.generated.AddressBook)
+        org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBookOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_descriptor;
@@ -2174,9 +2163,7 @@ public final class AddressBookProtos {
       }
 
       public Builder mergeFrom(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook other) {
-        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook.getDefaultInstance()) {
-            return this;
-        }
+        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook.getDefaultInstance()) return this;
         if (personBuilder_ == null) {
           if (!other.person_.isEmpty()) {
             if (person_.isEmpty()) {
@@ -2236,7 +2223,6 @@ public final class AddressBookProtos {
       }
       private int bitField0_;
 
-      // repeated .org.apache.camel.dataformat.protobuf.generated.Person person = 1;
       private java.util.List<org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person> person_ =
         java.util.Collections.emptyList();
       private void ensurePersonIsMutable() {
@@ -2378,7 +2364,8 @@ public final class AddressBookProtos {
           java.lang.Iterable<? extends org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person> values) {
         if (personBuilder_ == null) {
           ensurePersonIsMutable();
-          super.addAll(values, person_);
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, person_);
           onChanged();
         } else {
           personBuilder_.addAllMessages(values);
@@ -2487,17 +2474,17 @@ public final class AddressBookProtos {
     // @@protoc_insertion_point(class_scope:org.apache.camel.dataformat.protobuf.generated.AddressBook)
   }
 
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_apache_camel_dataformat_protobuf_generated_Person_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -2526,35 +2513,35 @@ public final class AddressBookProtos {
       "at.protobuf.generatedB\021AddressBookProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public com.google.protobuf.ExtensionRegistry assignDescriptors(
-            com.google.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-          internal_static_org_apache_camel_dataformat_protobuf_generated_Person_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor,
-              new java.lang.String[] { "Name", "Id", "Email", "Phone", });
-          internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_descriptor =
-            internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor.getNestedTypes().get(0);
-          internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_descriptor,
-              new java.lang.String[] { "Number", "Type", });
-          internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_descriptor =
-            getDescriptor().getMessageTypes().get(1);
-          internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_descriptor,
-              new java.lang.String[] { "Person", });
-          return null;
-        }
-      };
+        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public com.google.protobuf.ExtensionRegistry assignDescriptors(
+              com.google.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
+    internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_org_apache_camel_dataformat_protobuf_generated_Person_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor,
+        new java.lang.String[] { "Name", "Id", "Email", "Phone", });
+    internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_descriptor =
+      internal_static_org_apache_camel_dataformat_protobuf_generated_Person_descriptor.getNestedTypes().get(0);
+    internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_apache_camel_dataformat_protobuf_generated_Person_PhoneNumber_descriptor,
+        new java.lang.String[] { "Number", "Type", });
+    internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_apache_camel_dataformat_protobuf_generated_AddressBook_descriptor,
+        new java.lang.String[] { "Person", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

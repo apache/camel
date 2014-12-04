@@ -27,7 +27,7 @@ import org.apache.camel.impl.SimpleRegistry;
  */
 public class InterceptFromEndpointRefTest extends ContextTestSupport {
 
-    private SimpleRegistry reg = new SimpleRegistry();
+    SimpleRegistry reg = new SimpleRegistry();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -50,6 +50,7 @@ public class InterceptFromEndpointRefTest extends ContextTestSupport {
                 reg.put("start", context.getEndpoint("direct:start"));
                 reg.put("bar", context.getEndpoint("seda:bar"));
 
+                // ref:start -> direct:start so we should intercept that as well
                 interceptFrom("direct*").to("mock:intercepted");
 
                 from("ref:start").to("mock:first").to("ref:bar");

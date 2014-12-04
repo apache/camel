@@ -28,6 +28,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "quartz", consumerClass = QuartzConsumer.class)
+@UriEndpoint(scheme = "quartz", consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
@@ -52,12 +53,21 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private Trigger trigger;
     private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
-    @UriParam
-    private volatile boolean stateful;
-    @UriParam
+    @UriPath
+    private String groupName;
+    @UriPath
+    private String timerName;
+    @UriParam(defaultValue = "false")
+    private boolean stateful;
+    @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean pauseJob;
+    /** If it is true, the CamelContext name is used,
+     *  if it is false, use the CamelContext management name which could be changed during the deploy time 
+     **/
+    @UriParam
+    private boolean usingFixedCamelContextName;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
@@ -78,8 +88,12 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             trigger.setStartTime(new Date());
         }
         detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT_URI, getEndpointUri());
-        // must use management name as it should be unique in the same JVM
-        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, QuartzHelper.getQuartzContextName(getCamelContext()));
+        if (isUsingFixedCamelContextName()) {
+            detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, getCamelContext().getName());
+        } else {
+            // must use management name as it should be unique in the same JVM
+            detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, QuartzHelper.getQuartzContextName(getCamelContext()));
+        }
         if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
@@ -174,10 +188,23 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     }
 
     public LoadBalancer getLoadBalancer() {
-        if (loadBalancer == null) {
-            loadBalancer = createLoadBalancer();
-        }
         return loadBalancer;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getTimerName() {
+        return timerName;
+    }
+
+    public void setTimerName(String timerName) {
+        this.timerName = timerName;
     }
 
     public void setLoadBalancer(final LoadBalancer loadBalancer) {
@@ -227,6 +254,14 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    public boolean isUsingFixedCamelContextName() {
+        return usingFixedCamelContextName;
+    }
+
+    public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
+        this.usingFixedCamelContextName = usingFixedCamelContextName;
+    }
+
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");
         LOG.debug("Adding consumer {}", consumer.getProcessor());
@@ -257,6 +292,11 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getComponent(), "QuartzComponent", this);
+
+        if (loadBalancer == null) {
+            loadBalancer = createLoadBalancer();
+        }
+
         ServiceHelper.startService(loadBalancer);
 
         if (isDeleteJob() && isPauseJob()) {

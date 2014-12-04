@@ -22,6 +22,8 @@ import java.util.List;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * <code>ZookeeperConfiguration</code> encapsulates the configuration used to
@@ -35,24 +37,26 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     private transient boolean changed;
 
-    @UriParam
-    private int timeout = 5000;
-    @UriParam
-    private long backoff = 5000;
+    @UriPath
+    private String serverUrls;
     private List<String> servers;
-    @UriParam
+    @UriPath
     private String path;
-    @UriParam
+    @UriParam(defaultValue = "5000")
+    private int timeout = 5000;
+    @UriParam(defaultValue = "5000")
+    private long backoff = 5000;
+    @UriParam(defaultValue = "true")
     private boolean awaitExistence = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean repeat;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean listChildren;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean shouldCreate;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private String createMode;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean sendEmptyMessageOnDelete = true;
 
     public void addZookeeperServer(String server) {
@@ -65,6 +69,20 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     public List<String> getServers() {
         return servers;
+    }
+
+    /**
+     * The zookeeper server hosts (multiple servers can be separated by comma)
+     */
+    public String getServerUrls() {
+        if (servers != null) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (String server : servers) {
+                csb.append(server);
+            }
+            return csb.toString();
+        }
+        return null;
     }
 
     public void setServers(List<String> servers) {
@@ -106,6 +124,9 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     }
 
+    /**
+     * The zookeeper path
+     */
     public void setPath(String path) {
         this.path = path;
     }

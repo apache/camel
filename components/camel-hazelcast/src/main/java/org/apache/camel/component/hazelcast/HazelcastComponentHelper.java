@@ -107,6 +107,9 @@ public final class HazelcastComponentHelper {
         addMapping("offer", HazelcastConstants.OFFER_OPERATION);
         addMapping("peek", HazelcastConstants.PEEK_OPERATION);
         addMapping("poll", HazelcastConstants.POLL_OPERATION);
+
+        // topic
+        addMapping("publish", HazelcastConstants.PUBLISH_OPERATION);
     }
 
     private void addMapping(String operationName, int operationNumber) {

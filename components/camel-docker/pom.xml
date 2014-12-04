@@ -34,7 +34,6 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.docker.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=docker</camel.osgi.export.service>
-  	<docker.java.version>0.10.2</docker.java.version>
   	<jffi.version>1.2.7</jffi.version>
   	<jnr-x86asm.version>1.0.2</jnr-x86asm.version>
   </properties>
@@ -49,7 +48,7 @@
     <dependency>
       <groupId>com.github.docker-java</groupId>
       <artifactId>docker-java</artifactId>
-      <version>${docker.java.version}</version>
+      <version>${docker-java-version}</version>
     </dependency>
     
     <!-- need to avoid the snapshot dependency -->

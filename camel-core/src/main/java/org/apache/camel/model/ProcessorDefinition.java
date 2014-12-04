@@ -67,8 +67,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1134,8 +1132,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // must do this ugly cast to avoid compiler error on AIX/HP-UX
         ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
         
-        // when using doTry .. doCatch .. doFinally we should always
-        // end the try definition to avoid having to use 2 x end() in the route
+        // when using choice .. when .. otherwise - doTry .. doCatch .. doFinally we should always
+        // end the choice/try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
         // TODO (camel-3.0): this should be done inside of TryDefinition or even better
         //  in Block(s) in general, but the api needs to be revisited for that.
@@ -1168,8 +1166,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
+     * <p/>
+     * <b>Important:</b> If you want to end the entire choice block, then use {@link #end()} instead.
+     * The purpose of {@link #endChoice()} is to return <i>control</i> back to the {@link ChoiceDefinition choice()} DSL,
+     * so you can add subsequent <tt>when</tt> and <tt>otherwise</tt> to the choice. There can be situations where
+     * you would need to use {@link #endChoice()} often when you add additional EIPs inside the <tt>when</tt>'s, and
+     * the DSL <t>looses</t> scope when using a regular {@link #end()}, and you would need to use this {@link #endChoice()}
+     * to return back the scope to the {@link ChoiceDefinition choice()} DSL.
+     * <p/>
+     * For more details and examples see also this FAQ:
+     * <a href="http://camel.apache.org/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html">Why can I not use when or otherwise in a Java Camel route </a>.
      *
-     * @return the builder
+     * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
         // are we nested choice?
@@ -2870,6 +2878,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type removeProperty(String name) {
         RemovePropertyDefinition answer = new RemovePropertyDefinition(name);
+        addOutput(answer);
+        return (Type) this;
+    }
+    
+    /**
+     * Adds a processor which removes the properties in the exchange
+     *
+     * @param pattern a pattern to match properties names to be removed
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeProperties(String pattern) {
+        RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Adds a processor which removes the properties in the exchange
+     *
+     * @param pattern a pattern to match properties names to be removed
+     * @param excludePatterns one or more pattern of properties names that should be excluded (= preserved)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeProperties(String pattern, String... excludePatterns) {
+        RemovePropertiesDefinition answer = new RemovePropertiesDefinition(pattern, excludePatterns);
         addOutput(answer);
         return (Type) this;
     }

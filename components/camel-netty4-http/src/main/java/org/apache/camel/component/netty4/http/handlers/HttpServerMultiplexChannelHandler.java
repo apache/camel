@@ -122,6 +122,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
+            ctx.close();
         }
     }
 
@@ -139,6 +140,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
+            ctx.close();
         }
     }
 

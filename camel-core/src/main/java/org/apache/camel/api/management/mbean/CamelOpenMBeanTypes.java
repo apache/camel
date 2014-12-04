@@ -53,4 +53,38 @@ public final class CamelOpenMBeanTypes {
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
+    public static TabularType listEndpointsTabularType() throws OpenDataException {
+        CompositeType ct = listEndpointsCompositeType();
+        return new TabularType("listEndpoints", "Lists all the endpoints in the registry", ct, new String[]{"url"});
+    }
+
+    public static CompositeType listEndpointsCompositeType() throws OpenDataException {
+        return new CompositeType("url", "Endpoints", new String[]{"url"},
+                new String[]{"Url"},
+                new OpenType[]{SimpleType.STRING});
+    }
+
+    public static TabularType explainEndpointTabularType() throws OpenDataException {
+        CompositeType ct = explainEndpointsCompositeType();
+        return new TabularType("explainEndpoint", "Explain how this endpoint is configured", ct, new String[]{"option", "kind", "type", "java type", "value", "default value", "description"});
+    }
+
+    public static CompositeType explainEndpointsCompositeType() throws OpenDataException {
+        return new CompositeType("endpoint", "Explain Endpoint", new String[]{"option", "kind", "type", "java type", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Type", "Java Type", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+    public static TabularType listComponentsTabularType() throws OpenDataException {
+        CompositeType ct = listComponentsCompositeType();
+        return new TabularType("listComponents", "Lists all the components", ct, new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"});
+    }
+
+    public static CompositeType listComponentsCompositeType() throws OpenDataException {
+        return new CompositeType("name", "Components", new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+                new String[]{"Name", "Description", "Label", "Status", "Type", "GroupId", "ArtifactId", "Version"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
+
 }

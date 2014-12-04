@@ -151,12 +151,22 @@ public abstract class MessageSupport implements Message {
                 getHeaders().putAll(that.getHeaders());
             }
         }
-        
-        if (hasAttachments()) {
-            getAttachments().clear();
+
+        // the attachments may be the same instance if the end user has made some mistake
+        // and set the OUT message with the same attachment instance of the IN message etc
+        boolean sameAttachments = false;
+        if (hasAttachments() && that.hasAttachments() && getAttachments() == that.getAttachments()) {
+            sameAttachments = true;
         }
-        if (that.hasAttachments()) {
-            getAttachments().putAll(that.getAttachments());
+
+        if (!sameAttachments) {
+            if (hasAttachments()) {
+                // okay its safe to clear the attachments
+                getAttachments().clear();
+            }
+            if (that.hasAttachments()) {
+                getAttachments().putAll(that.getAttachments());
+            }
         }
     }
 

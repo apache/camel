@@ -16,14 +16,10 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.commands.BacklogTracerStopCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
- */
 @Command(scope = "camel", name = "backlog-tracer-stop", description = "Stops the Backlog tracer")
 public class BacklogTracerStop extends CamelCommandSupport {
 
@@ -32,23 +28,8 @@ public class BacklogTracerStop extends CamelCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        CamelContext camel = camelController.getCamelContext(context);
-        if (camel == null) {
-            System.err.println("CamelContext " + context + " not found.");
-            return null;
-        }
-
-        BacklogTracer backlogTracer = BacklogTracer.getBacklogTracer(camel);
-        if (backlogTracer == null) {
-            backlogTracer = (BacklogTracer) camel.getDefaultBacklogTracer();
-        }
-
-        // disable tracer and clear counter and the backlog queue
-        backlogTracer.setEnabled(false);
-        backlogTracer.resetTraceCounter();
-        backlogTracer.clear();
-        System.out.println("BacklogTracer stopped on " + camel.getName());
-        return null;
+        BacklogTracerStopCommand command = new BacklogTracerStopCommand(context);
+        return command.execute(camelController, System.out, System.err);
     }
 
 }

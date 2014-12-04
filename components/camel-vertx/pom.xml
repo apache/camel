@@ -70,7 +70,8 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>perTest</forkMode>
+          <forkCount>1</forkCount>
+	  <reuseForks>false</reuseForks>
           <enableAssertions>false</enableAssertions>
         </configuration>
       </plugin>

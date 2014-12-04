@@ -29,13 +29,17 @@ import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
 
-@UriEndpoint(scheme = "dataformat")
+@UriEndpoint(scheme = "dataformat", label = "core,transformation")
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private MarshalProcessor marshal;
     private UnmarshalProcessor unmarshal;
+
+    @UriPath(description = "Name of data format followed by operation which must be either marhsal or unmarshal")
+    private String name;
     @UriParam
     private DataFormat dataFormat;
     @UriParam

@@ -22,8 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observer;
 import rx.Subscription;
 import rx.functions.Func1;
@@ -32,6 +33,9 @@ import rx.functions.Func1;
  * An RX {@link Subscription} on a Camel {@link Endpoint}
  */
 public class EndpointSubscription<T> implements Subscription {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointSubscription.class);
+
     private final Endpoint endpoint;
     private final Observer<? super T> observer;
     private Consumer consumer;
@@ -63,10 +67,8 @@ public class EndpointSubscription<T> implements Subscription {
             if (consumer != null) {
                 try {
                     ServiceHelper.stopServices(consumer);
-                    // TODO should this fire the observer.onComplete()?
-                    observer.onCompleted();
                 } catch (Exception e) {
-                    observer.onError(e);
+                    LOG.warn("Error stopping consumer: " + consumer + " due " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
         }

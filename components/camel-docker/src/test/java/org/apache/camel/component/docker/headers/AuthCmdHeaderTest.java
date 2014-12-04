@@ -66,15 +66,13 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
         clientProfile.setPassword(password);
         clientProfile.setUsername(userName);
         clientProfile.setServerAddress(serverAddress);
-
+       
         return clientProfile;
-
     }
 
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.authCmd()).thenReturn(mockObject);
-
     }
 
     @Override

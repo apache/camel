@@ -41,6 +41,19 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(false, it.hasNext());
     }
 
+    @SuppressWarnings("unchecked")
+    public void testIterable() {
+        for (final String name : (Iterable<String>)ObjectConverter.iterable("Claus,Jonathan")) {
+            switch (name) {
+            case "Claus":
+            case "Jonathan":
+                break;
+            default:
+                fail();
+            }
+        }
+    }
+
     public void testToByte() {
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte(Byte.valueOf("4")));
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte(Integer.valueOf("4")));

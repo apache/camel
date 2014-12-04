@@ -23,6 +23,7 @@ import com.github.dockerjava.api.command.WaitContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -51,7 +52,7 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.waitContainerCmd(Mockito.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.waitContainerCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override

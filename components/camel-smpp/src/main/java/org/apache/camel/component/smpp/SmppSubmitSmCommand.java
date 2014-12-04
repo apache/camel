@@ -90,12 +90,10 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         message.setHeader(SmppConstants.SENT_MESSAGE_COUNT, messageIDs.size());
     }
 
-    protected SubmitSm[] createSubmitSm(Exchange exchange) {
-        byte[] shortMessage = getShortMessage(exchange.getIn());
+    protected SubmitSm[] createSubmitSm(Exchange exchange) throws SmppException {
 
         SubmitSm template = createSubmitSmTemplate(exchange);
-        SmppSplitter splitter = createSplitter(exchange.getIn());
-        byte[][] segments = splitter.split(shortMessage);
+        byte[][] segments = splitBody(exchange.getIn());
 
         // multipart message
         if (segments.length > 1) {

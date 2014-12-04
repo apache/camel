@@ -16,8 +16,7 @@
  */
 package org.apache.camel.karaf.commands.completers;
 
-import org.apache.camel.karaf.commands.CamelController;
-
+import org.apache.camel.commands.CamelController;
 import org.apache.karaf.shell.console.Completer;
 
 /**

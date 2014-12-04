@@ -27,8 +27,20 @@ import org.apache.camel.impl.DefaultComponent;
 public class GitHubComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new GitHubEndpoint(uri, this);
+        GitHubEndpoint endpoint = new GitHubEndpoint(uri, this);
         setProperties(endpoint, parameters);
+
+        String[] parts = remaining.split("/");
+        if (parts.length >= 1) {
+            String s = parts[0];
+            GitHubType type = getCamelContext().getTypeConverter().convertTo(GitHubType.class, s);
+            endpoint.setType(type);
+            if (parts.length > 1) {
+                s = parts[1];
+                endpoint.setBranchName(s);
+            }
+        }
+
         return endpoint;
     }
 }

@@ -66,6 +66,7 @@ public class GTaskComponent extends ServletComponent {
         endpoint.setWorkerRoot(workerRoot);
         endpoint.setOutboundBinding(outboundBinding);
         endpoint.setInboundBinding(inboundBinding);
+        endpoint.setQueueName(remaining);
         endpoint.setQueue(QueueFactory.getQueue(remaining));
         return endpoint;
     }

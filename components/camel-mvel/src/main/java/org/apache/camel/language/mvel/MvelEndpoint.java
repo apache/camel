@@ -25,6 +25,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.mvel2.ParserContext;
@@ -32,11 +34,13 @@ import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
+@UriEndpoint(scheme = "mvel", label = "transformation,script")
 public class MvelEndpoint extends ResourceEndpoint {
 
+    @UriParam
     private String encoding;
-    private String template;
-    private CompiledTemplate compiled;
+    private volatile String template;
+    private volatile CompiledTemplate compiled;
 
     public MvelEndpoint(String uri, MvelComponent component, String resourceUri) {
         super(uri, component, resourceUri);

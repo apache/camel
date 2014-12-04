@@ -36,7 +36,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Endpoint for Camel Mail.
  */
-@UriEndpoint(scheme = "mail", consumerClass = MailConsumer.class)
+@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
     @UriParam

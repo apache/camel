@@ -44,9 +44,9 @@ public class JcrComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = componentConfiguration.createParameterJsonSchema();
 
         assertNotNull(json);
-        assertTrue(json.contains("\"deep\": { \"type\": \"boolean\" }"));
-        assertTrue(json.contains("\"eventTypes\": { \"type\": \"integer\" }"));
-        assertTrue(json.contains("\"noLocal\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"deep\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"eventTypes\": { \"kind\": \"parameter\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"noLocal\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

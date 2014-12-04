@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jsch;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.Provider;
 import java.security.Provider.Service;
@@ -31,7 +30,6 @@ import com.jcraft.jsch.UserInfo;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.FileUtil;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;

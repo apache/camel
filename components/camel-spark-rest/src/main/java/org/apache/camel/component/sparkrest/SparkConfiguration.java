@@ -22,13 +22,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class SparkConfiguration {
 
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disableStreamCache;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean urlDecodeHeaders;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transferException;
 
     public boolean isMapHeaders() {

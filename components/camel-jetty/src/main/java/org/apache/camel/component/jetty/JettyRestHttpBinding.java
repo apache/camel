@@ -19,9 +19,16 @@ package org.apache.camel.component.jetty;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.component.http.DefaultHttpBinding;
+import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMessage;
 
 public class JettyRestHttpBinding extends DefaultHttpBinding {
+    @Deprecated
+    public JettyRestHttpBinding() {
+    }
+    public JettyRestHttpBinding(HttpEndpoint ep) {
+        super(ep);
+    }
 
     @Override
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {

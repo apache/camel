@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -70,8 +71,9 @@ public class PropertiesComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
+    private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
-    private PropertiesParser propertiesParser = new DefaultPropertiesParser();
+    private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private String[] locations;
     private boolean ignoreMissingLocation;
     private boolean cache = true;
@@ -84,7 +86,7 @@ public class PropertiesComponent extends DefaultComponent {
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
     private Properties overrideProperties;
-    
+
     public PropertiesComponent() {
     }
     
@@ -171,6 +173,13 @@ public class PropertiesComponent extends DefaultComponent {
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
+    }
+
+    /**
+     * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
+     */
+    public boolean isDefaultCreated() {
+        return locations == null;
     }
 
     public String[] getLocations() {
@@ -308,9 +317,46 @@ public class PropertiesComponent extends DefaultComponent {
         this.overrideProperties = overrideProperties;
     }
 
+    /**
+     * Gets the functions registered in this properties component.
+     */
+    public Map<String, PropertiesFunction> getFunctions() {
+        return functions;
+    }
+
+    /**
+     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
+     */
+    public void addFunction(PropertiesFunction function) {
+        this.functions.put(function.getName(), function);
+    }
+
+    /**
+     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     */
+    public boolean hasFunction(String name) {
+        return functions.containsKey(name);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // inject the component to the parser
+        if (propertiesParser instanceof DefaultPropertiesParser) {
+            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        }
+
+        // include out of the box functions
+        addFunction(new EnvPropertiesFunction());
+        addFunction(new SysPropertiesFunction());
+        addFunction(new ServicePropertiesFunction());
+    }
+
     @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
+        functions.clear();
         super.doStop();
     }
 

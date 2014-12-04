@@ -876,7 +876,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
         mockVerified.expectedBodiesReceived(detachedPayload);
         Map<String, Object> headers = new TreeMap<String, Object>();
-        headers.put(XmlSignatureConstants.HEADER_SCHEMA_RESOURCE_URI, (Object) "org/apache/camel/component/xmlsecurity/TestComplex.xsd");
+        headers.put(XmlSignatureConstants.HEADER_SCHEMA_RESOURCE_URI, "org/apache/camel/component/xmlsecurity/TestComplex.xsd");
         Map<String, String> namespaceMap = new TreeMap<String, String>();
         namespaceMap.put("ns", "http://test");
         namespaceMap.put("ns1", "http://testB");
@@ -886,7 +886,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         List<XPathFilterParameterSpec> xpaths = new ArrayList<XPathFilterParameterSpec>();
         xpaths.add(xpath1);
         xpaths.add(xpath2);
-        headers.put(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES, (Object) xpaths);
+        headers.put(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES, xpaths);
         sendBody("direct:detached", detachedPayload, headers);
         assertMockEndpointsSatisfied();
         Map<String, String> namespaceMap2 = new TreeMap<String, String>();

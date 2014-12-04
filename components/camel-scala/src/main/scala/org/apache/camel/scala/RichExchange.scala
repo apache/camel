@@ -75,6 +75,10 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def removeProperty(name: String) = exchange.removeProperty(name)
 
+  def removeProperties(pattern: String) = exchange.removeProperties(pattern)
+
+  def removeProperties(pattern: String, excludePatterns: String*) = exchange.removeProperties(pattern, excludePatterns: _*)
+
   def isTransacted = exchange.isTransacted
 
   def isExternalRedelivered = exchange.isExternalRedelivered

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jdbc;
 
 import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
@@ -27,30 +26,31 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * @version
  */
-@UriEndpoint(scheme = "jdbc")
+@UriEndpoint(scheme = "jdbc", label = "database")
 public class JdbcEndpoint extends DefaultEndpoint {
+    @UriPath
+    private DataSource dataSource;
     @UriParam
     private int readSize;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transacted;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
-    @UriParam
-    private DataSource dataSource;
     private Map<String, Object> parameters;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
     @UriParam
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean useHeadersAsParameters;
-    @UriParam
+    @UriParam(defaultValue = "SelectList")
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
     @UriParam
     private String outputClass;
@@ -105,6 +105,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return dataSource;
     }
 
+    /**
+     * The data source to use
+     */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }

@@ -25,7 +25,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A type converter which is used to convert from String to enum type
- * @version 
  */
 public class EnumTypeConverter extends TypeConverterSupport {
 
@@ -33,6 +32,16 @@ public class EnumTypeConverter extends TypeConverterSupport {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isEnum() && value != null) {
             String text = value.toString();
+            Class<Enum> enumClass = (Class<Enum>) type;
+
+            // we want to match case insensitive for enums
+            for (Enum enumValue : enumClass.getEnumConstants()) {
+                if (enumValue.name().equalsIgnoreCase(text)) {
+                    return type.cast(enumValue);
+                }
+            }
+
+            // fallback to the JDK valueOf which is case-sensitive and throws exception if not found
             Method method;
             try {
                 method = type.getMethod("valueOf", String.class);

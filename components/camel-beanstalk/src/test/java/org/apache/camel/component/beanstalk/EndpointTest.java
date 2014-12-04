@@ -17,7 +17,7 @@
 package org.apache.camel.component.beanstalk;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
@@ -63,19 +63,19 @@ public class EndpointTest {
     public void testCommand() {
         BeanstalkEndpoint endpoint = context.getEndpoint("beanstalk:default?command=release", BeanstalkEndpoint.class);
         assertNotNull("Beanstalk endpoint", endpoint);
-        assertEquals("Command", BeanstalkComponent.COMMAND_RELEASE, endpoint.getCommand());
+        assertEquals("Command", BeanstalkComponent.COMMAND_RELEASE, endpoint.getCommand().name());
     }
 
     @Test
     public void testTubes() {
         BeanstalkEndpoint endpoint = context.getEndpoint("beanstalk:host:11303/tube1+tube%2B+tube%3F?command=kick", BeanstalkEndpoint.class);
         assertNotNull("Beanstalk endpoint", endpoint);
-        assertEquals("Command", BeanstalkComponent.COMMAND_KICK, endpoint.getCommand());
+        assertEquals("Command", BeanstalkComponent.COMMAND_KICK, endpoint.getCommand().name());
         assertEquals("Host", "host", endpoint.conn.host);
         assertArrayEquals("Tubes", new String[]{"tube1", "tube+", "tube?"}, endpoint.conn.tubes);
     }
 
-    @Test(expected = FailedToCreateProducerException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testWrongCommand() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

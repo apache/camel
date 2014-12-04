@@ -18,9 +18,12 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
+import org.apache.camel.spi.UriParams;
+
 /**
  * FTP configuration
  */
+@UriParams
 public class FtpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_FTP_PORT = 21;

@@ -42,7 +42,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +141,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 try {
                     HttpHelper.writeObjectToStream(bos, obj);
-                    httpExchange.setRequestContent(new ByteArrayBuffer(bos.toByteArray()));
+                    httpExchange.setRequestContent(bos.toByteArray());
                 } finally {
                     IOHelper.close(bos, "body", LOG);
                 }
@@ -155,15 +154,11 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                     // do not fallback to use the default charset as it can influence the request
                     // (for example application/x-www-form-urlencoded forms being sent)
                     String charset = IOHelper.getCharsetName(exchange, false);
-                    if (charset != null) {
-                        httpExchange.setRequestContent(new ByteArrayBuffer(data, charset));
-                    } else {
-                        httpExchange.setRequestContent(new ByteArrayBuffer(data));
-                    }
+                    httpExchange.setRequestContent(data, charset);
                 } else {
                     // then fallback to input stream
                     InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
-                    httpExchange.setRequestContentSource(is);
+                    httpExchange.setRequestContent(is);
                 }
             }
         }
@@ -229,7 +224,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending HTTP request to: {}", httpExchange.getUrl());
         }
-        client.send(httpExchange);
+        httpExchange.send(client);
     }
 
     public JettyHttpBinding getBinding() {
@@ -262,15 +257,25 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         this.sharedClient = true;
     }
 
+    private Object getClientThreadPool() {
+        try {
+            return client.getClass().getMethod("getThreadPool").invoke(client);
+        } catch (Throwable t) {
+            // not found in Jetty 9 which is OK as the threadpool is auto started on Jetty 9
+        }
+        return null;
+    }
+    
     @Override
     protected void doStart() throws Exception {
         // only start non-shared client
         if (!sharedClient && client != null) {
             client.start();
             // start the thread pool
-            if (client.getThreadPool() instanceof LifeCycle) {
-                LOG.debug("Starting client thread pool {}", client.getThreadPool());
-                ((LifeCycle) client.getThreadPool()).start();
+            Object tp = getClientThreadPool();
+            if (tp instanceof LifeCycle) {
+                LOG.debug("Starting client thread pool {}", tp);
+                ((LifeCycle) tp).start();
             }
         }
         super.doStart();
@@ -283,9 +288,10 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         if (!sharedClient && client != null) {
             client.stop();
             // stop thread pool
-            if (client.getThreadPool() instanceof LifeCycle) {
-                LOG.debug("Stopping client thread pool {}", client.getThreadPool());
-                ((LifeCycle) client.getThreadPool()).stop();
+            Object tp = getClientThreadPool();
+            if (tp instanceof LifeCycle) {
+                LOG.debug("Stopping client thread pool {}", tp);
+                ((LifeCycle) tp).stop();
             }
         }
     }

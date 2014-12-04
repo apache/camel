@@ -54,4 +54,31 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         assertEquals(5566, e2.getConfiguration().getPort());
     }
 
+    @Test
+    public void testNettyComponentUdpWithConfiguration() throws Exception {
+        NettyComponent comp = context.getComponent("netty4", NettyComponent.class);
+
+        NettyConfiguration cfg = new NettyConfiguration();
+
+        comp.setConfiguration(cfg);
+        assertSame(cfg, comp.getConfiguration());
+
+        NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty4://udp://localhost:8601?sync=false");
+        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty4://udp://localhost:8602?sync=false&udpConnectionlessSending=true");
+
+        // should not be same
+        assertNotSame(e1, e2);
+        assertNotSame(e1.getConfiguration(), e2.getConfiguration());
+
+        // both endpoints are sync=false
+        assertEquals(false, e1.getConfiguration().isSync());
+        assertEquals(false, e2.getConfiguration().isSync());
+        // if not set it should be false
+        assertEquals(false, e1.getConfiguration().isUdpConnectionlessSending());
+        assertEquals(true, e2.getConfiguration().isUdpConnectionlessSending());
+
+        assertEquals(8601, e1.getConfiguration().getPort());
+        assertEquals(8602, e2.getConfiguration().getPort());
+    }
+
 }

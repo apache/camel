@@ -19,6 +19,7 @@ package org.apache.camel.component.metrics;
 import java.util.EnumSet;
 
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 

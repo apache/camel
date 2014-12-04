@@ -43,8 +43,8 @@ public class GHttpComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"GHTTP_SCHEME\": { \"type\": \"string\" }"));
-        assertTrue(json.contains("\"HTTPS_SCHEME\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"httpUri\": { \"kind\": \"path\", \"type\": \"string\""));
+        assertTrue(json.contains("\"bridgeEndpoint\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
     @Test

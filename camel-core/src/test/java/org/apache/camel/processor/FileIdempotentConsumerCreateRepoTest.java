@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.io.File;
-import java.io.IOException;
 
 import static java.util.UUID.randomUUID;
 

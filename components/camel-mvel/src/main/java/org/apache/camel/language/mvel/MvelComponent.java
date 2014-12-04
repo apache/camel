@@ -19,25 +19,25 @@ package org.apache.camel.language.mvel;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ResourceHelper;
 
 /**
  * An <a href="http://camel.apache.org/mvel.html">Mvel Component</a>
  * for performing transforming messages
  */
-public class MvelComponent extends DefaultComponent {
+public class MvelComponent extends UriEndpointComponent {
+
+    public MvelComponent() {
+        super(MvelEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
         MvelEndpoint answer = new MvelEndpoint(uri, this, remaining);
+        setProperties(answer, parameters);
         answer.setContentCache(cache);
-        if (ObjectHelper.isNotEmpty(encoding)) {
-            answer.setEncoding(encoding);
-        }
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
@@ -47,12 +48,12 @@ public class ElasticsearchConfiguration {
     private static final Integer DEFAULT_PORT = 9300;
 
     private URI uri;
+    @UriPath
+    private String clusterName;
     @UriParam
     private String protocolType;
     @UriParam
     private String authority;
-    @UriParam
-    private String clusterName;
     @UriParam
     private String indexName;
     @UriParam

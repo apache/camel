@@ -33,6 +33,7 @@ import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -46,10 +47,15 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
 /**
  * Represents a Facebook endpoint.
  */
-@UriEndpoint(scheme = "facebook", consumerClass = FacebookConsumer.class)
+@UriEndpoint(scheme = "facebook", consumerClass = FacebookConsumer.class, label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
+
+    // Facebook4J method name
+    @UriPath
+    private final String methodName;
+    private FacebookNameStyle nameStyle;
 
     @UriParam
     private FacebookEndpointConfiguration configuration;
@@ -57,10 +63,6 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     // property name for Exchange 'In' message body
     @UriParam
     private String inBody;
-
-    // Facebook4J method name
-    private final String methodName;
-    private FacebookNameStyle nameStyle;
 
     // candidate methods based on method name and endpoint configuration
     private List<FacebookMethodsType> candidates;

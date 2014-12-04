@@ -436,6 +436,7 @@ public final class CamelContextHelper {
                     properties.put("component", component);
                     properties.put("class", component.getClass().getName());
                     properties.put("name", name);
+                    // override default component if name clash
                     map.put(name, properties);
                 }
             }

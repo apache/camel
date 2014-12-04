@@ -162,6 +162,30 @@ public class KafkaEndpoint extends DefaultEndpoint {
         configuration.setConsumerStreams(consumerStreams);
     }
 
+    public int getBatchSize() {
+        return configuration.getBatchSize();
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.configuration.setBatchSize(batchSize);
+    }
+
+    public int getBarrierAwaitTimeoutMs() {
+        return configuration.getBarrierAwaitTimeoutMs();
+    }
+
+    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
+        this.configuration.setBarrierAwaitTimeoutMs(barrierAwaitTimeoutMs);
+    }
+
+    public int getConsumersCount() {
+        return this.configuration.getConsumersCount();
+    }
+
+    public void setConsumersCount(int consumersCount) {
+        this.configuration.setConsumersCount(consumersCount);
+    }
+
     public void setConsumerTimeoutMs(int consumerTimeoutMs) {
         configuration.setConsumerTimeoutMs(consumerTimeoutMs);
     }
@@ -310,7 +334,7 @@ public class KafkaEndpoint extends DefaultEndpoint {
         return configuration.getRebalanceMaxRetries();
     }
 
-    public boolean isAutoCommitEnable() {
+    public Boolean isAutoCommitEnable() {
         return configuration.isAutoCommitEnable();
     }
 

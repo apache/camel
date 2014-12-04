@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -44,7 +45,7 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
         assertEquals("1", body.get(0).get(2));
         assertEquals("124", body.get(1).get(0));
         assertEquals("ActiveMQ in Action", body.get(1).get(1));
-        assertEquals("2", body.get(1).get(2));        
+        assertEquals("2", body.get(1).get(2));
     }
 
     @SuppressWarnings("unchecked")
@@ -62,7 +63,7 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
         assertEquals("Camel in Action", body.get(0).get(1));
         assertEquals("1", body.get(0).get(2));
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalTabDelimiterSpringTest-context.xml");

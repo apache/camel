@@ -24,6 +24,8 @@ import javax.jms.Session;
  * Strategy for creating Destination's
  */
 public interface DestinationCreationStrategy {
+
     Destination createDestination(Session session, String name, boolean topic) throws JMSException;
+
     Destination createTemporaryDestination(Session session, boolean topic) throws JMSException;
 }

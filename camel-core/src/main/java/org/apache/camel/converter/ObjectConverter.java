@@ -70,8 +70,15 @@ public final class ObjectConverter {
     public static Iterator<?> iterator(Object value) {
         return ObjectHelper.createIterator(value);
     }
-    
-    
+
+    /**
+     * Creates an iterable over the value
+     */
+    @Converter
+    public static Iterable<?> iterable(Object value) {
+        return ObjectHelper.createIterable(value);
+    }
+
     /**
      * Returns the converted value, or null if the value is null
      */

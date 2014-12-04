@@ -175,6 +175,12 @@ public class FileUtilTest extends TestCase {
         }
     }
 
+    public void testCompactWindowsStylePath() {
+        String path = "E:\\workspace\\foo\\bar\\some-thing\\.\\target\\processes\\2";
+        String expected = "E:\\workspace\\foo\\bar\\some-thing\\target\\processes\\2";
+        assertEquals(expected, FileUtil.compactPath(path, '\\'));
+    }
+
     public void testCompactPathSeparator() {
         assertEquals(null, FileUtil.compactPath(null, '\''));
         assertEquals("..\\foo", FileUtil.compactPath("..\\foo", '\\'));

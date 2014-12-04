@@ -317,7 +317,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                 // Add any Restlet server parameters that were included
                 Series<Parameter> params = server.getContext().getParameters();
                 
-                if (endpoint.getProtocol().equals("https")) {
+                if ("https".equals(endpoint.getProtocol())) {
                     SSLContextParameters scp = endpoint.getSslContextParameters();
                     if (endpoint.getSslContextParameters() == null) {
                         throw new InvalidParameterException("Need to specify the SSLContextParameters option here!");

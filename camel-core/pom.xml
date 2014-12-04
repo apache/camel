@@ -264,6 +264,11 @@
             <exclude>${platform.skip.tests}</exclude>
           </excludes>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
+          <!-- needed for testing the properties component -->
+          <environmentVariables>
+            <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
+            <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
+          </environmentVariables>
         </configuration>
       </plugin>
 

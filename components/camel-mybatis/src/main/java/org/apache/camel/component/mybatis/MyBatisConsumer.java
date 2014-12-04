@@ -40,11 +40,11 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
-    private static final class DataHolder {
-        private Exchange exchange;
-        private Object data;
+    static final class DataHolder {
+        Exchange exchange;
+        Object data;
 
-        private DataHolder() {
+        DataHolder() {
         }
     }
 
@@ -65,8 +65,6 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
      * Whether allow empty resultset to be routed to the next hop
      */
     private boolean routeEmptyResultSet;
-
-    private int maxMessagesPerPoll;
 
     public MyBatisConsumer(MyBatisEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

@@ -1,0 +1,2 @@
+This is the body {$body} and the result {$headers.result}
+{% include file %}

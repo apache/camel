@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.s3;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -73,7 +75,6 @@ import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
-
 import org.junit.Assert;
 
 public class AmazonS3ClientMock extends AmazonS3Client {
@@ -300,6 +301,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("resource")
     @Override
     public PutObjectResult putObject(PutObjectRequest putObjectRequest) throws AmazonClientException, AmazonServiceException {
         putObjectRequests.add(putObjectRequest);
@@ -307,7 +309,15 @@ public class AmazonS3ClientMock extends AmazonS3Client {
         S3Object s3Object = new S3Object();
         s3Object.setBucketName(putObjectRequest.getBucketName());
         s3Object.setKey(putObjectRequest.getKey());
-        s3Object.setObjectContent(putObjectRequest.getInputStream());
+        if (putObjectRequest.getFile() != null) {
+            try {
+                s3Object.setObjectContent(new FileInputStream(putObjectRequest.getFile()));
+            } catch (FileNotFoundException e) {
+                throw new AmazonServiceException("Cannot store the file object.", e);
+            }
+        } else {
+            s3Object.setObjectContent(putObjectRequest.getInputStream());
+        }
         objects.add(s3Object);
         
         PutObjectResult putObjectResult = new PutObjectResult();

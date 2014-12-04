@@ -28,6 +28,9 @@ public class KafkaConfiguration {
     private String groupId;
     private String partitioner = DefaultPartitioner.class.getCanonicalName();
     private int consumerStreams = 10;
+    private int consumersCount = 1;
+    private int batchSize = 100;
+    private int barrierAwaitTimeoutMs = 10000;
 
     //Common configuration properties
     private String clientId;
@@ -195,6 +198,30 @@ public class KafkaConfiguration {
 
     public void setConsumerStreams(int consumerStreams) {
         this.consumerStreams = consumerStreams;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public int getBarrierAwaitTimeoutMs() {
+        return barrierAwaitTimeoutMs;
+    }
+
+    public void setBarrierAwaitTimeoutMs(int barrierAwaitTimeoutMs) {
+        this.barrierAwaitTimeoutMs = barrierAwaitTimeoutMs;
+    }
+
+    public int getConsumersCount() {
+        return consumersCount;
+    }
+
+    public void setConsumersCount(int consumersCount) {
+        this.consumersCount = consumersCount;
     }
 
     public String getClientId() {

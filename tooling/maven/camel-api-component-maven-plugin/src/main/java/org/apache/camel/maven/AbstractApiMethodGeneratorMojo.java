@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.component.ApiMethodParser;
@@ -111,7 +112,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     public File getApiMethodFile() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(outPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getEnumName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }
@@ -133,7 +134,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getTestFilePath() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(componentPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(componentPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getUnitTestName()).append(".java");
         return fileName.toString();
     }
@@ -195,7 +196,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private File getConfigurationFile() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
         // endpoint configuration goes in component package
-        fileName.append(componentPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(componentPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getConfigName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }

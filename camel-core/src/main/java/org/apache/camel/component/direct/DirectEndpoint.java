@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,13 +35,15 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@UriEndpoint(scheme = "direct", consumerClass = DirectConsumer.class)
+@UriEndpoint(scheme = "direct", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectEndpoint extends DefaultEndpoint {
 
+    @UriPath(description = "Name of direct endpoint")
+    private String name;
     private volatile Map<String, DirectConsumer> consumers;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean block;
-    @UriParam
+    @UriParam(defaultValue = "30000")
     private long timeout = 30000L;
 
     public DirectEndpoint() {
@@ -94,18 +97,44 @@ public class DirectEndpoint extends DefaultEndpoint {
         return consumers.get(key);
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     * <p/>
+     * Is by default <tt>false</tt>.
+     */
     public boolean isBlock() {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     * <p/>
+     * Is by default <tt>false</tt>.
+     *
+     * @param block whether to block
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     * <p/>
+     * Is by default <tt>30000</tt>.
+     */
     public long getTimeout() {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     * <p/>
+     * Is by default <tt>30000</tt>.
+     *
+     * @param timeout the timeout value
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

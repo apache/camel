@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -42,6 +43,10 @@ public class SedaComponent extends UriEndpointComponent {
 
     public SedaComponent() {
         super(SedaEndpoint.class);
+    }
+
+    public SedaComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
     public void setQueueSize(int size) {
@@ -164,12 +169,20 @@ public class SedaComponent extends UriEndpointComponent {
         if (queue == null) {
             BlockingQueueFactory<Exchange> queueFactory = resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
             // defer creating queue till endpoint is started, so we pass the queue factory
-            answer = new SedaEndpoint(uri, this, queueFactory, consumers);
+            answer = createEndpoint(uri, this, queueFactory, consumers);
         } else {
-            answer = new SedaEndpoint(uri, this, queue, consumers);
+            answer = createEndpoint(uri, this, queue, consumers);
         }
         answer.configureProperties(parameters);
         return answer;
+    }
+
+    protected SedaEndpoint createEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+        return new SedaEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
+    }
+
+    protected SedaEndpoint createEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+        return new SedaEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 
     public String getQueueKey(String uri) {
