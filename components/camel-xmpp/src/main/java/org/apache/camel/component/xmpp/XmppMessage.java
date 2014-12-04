@@ -25,8 +25,6 @@ import org.jivesoftware.smack.packet.Packet;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
- *
- * @version 
  */
 public class XmppMessage extends DefaultMessage {
     private Packet xmppPacket;
@@ -38,11 +36,11 @@ public class XmppMessage extends DefaultMessage {
     public XmppMessage(Message jmsMessage) {
         this.xmppPacket = jmsMessage;
     }
-    
+
     public XmppMessage(Packet jmsMessage) {
         this.xmppPacket = jmsMessage;
     }
-    
+
     @Override
     public String toString() {
         if (xmppPacket != null) {
@@ -56,7 +54,7 @@ public class XmppMessage extends DefaultMessage {
      * Returns the underlying XMPP message
      */
     public Message getXmppMessage() {
-        return (xmppPacket instanceof Message) ? (Message)xmppPacket : null;
+        return (xmppPacket instanceof Message) ? (Message) xmppPacket : null;
     }
 
     public void setXmppMessage(Message xmppMessage) {
@@ -73,7 +71,7 @@ public class XmppMessage extends DefaultMessage {
     public void setXmppPacket(Packet xmppPacket) {
         this.xmppPacket = xmppPacket;
     }
-    
+
     @Override
     public XmppMessage newInstance() {
         return new XmppMessage();
@@ -84,12 +82,12 @@ public class XmppMessage extends DefaultMessage {
         if (xmppPacket != null) {
             XmppBinding binding = ExchangeHelper.getBinding(getExchange(), XmppBinding.class);
             if (binding != null) {
-                return (getHeader(XmppConstants.docHeader) == null) ? binding.extractBodyFromXmpp(getExchange(), xmppPacket): getHeader(XmppConstants.docHeader);
+                return (getHeader(XmppConstants.DOC_HEADER) == null) ? binding.extractBodyFromXmpp(getExchange(), xmppPacket) : getHeader(XmppConstants.DOC_HEADER);
             }
         }
         return null;
     }
-    
+
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (xmppPacket != null) {

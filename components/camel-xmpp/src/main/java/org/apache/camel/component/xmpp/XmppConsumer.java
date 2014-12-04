@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -46,8 +47,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
- *
- * @version 
  */
 public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
     private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
@@ -70,7 +69,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         } catch (XMPPException e) {
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeException("Could not connect to XMPP server.", e);
-            }  else {
+            } else {
                 LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
                 if (getExceptionHandler() != null) {
                     getExceptionHandler().handleException(XmppEndpoint.getXmppExceptionLogMessage(e), e);
@@ -82,13 +81,13 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
         chatManager = connection.getChatManager();
         chatManager.addChatListener(this);
-        
+
         OrFilter pubsubPacketFilter = new OrFilter();
-        if(endpoint.isPubsub()){
-        	//xep-0060: pubsub#notification_type can be 'headline' or 'normal'
-        	pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.headline));
-        	pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.normal));
-        	connection.addPacketListener(this, pubsubPacketFilter);
+        if (endpoint.isPubsub()) {
+            //xep-0060: pubsub#notification_type can be 'headline' or 'normal'
+            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.headline));
+            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.normal));
+            connection.addPacketListener(this, pubsubPacketFilter);
         }
 
         if (endpoint.getRoom() == null) {
@@ -99,7 +98,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                     LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
                 }
                 privateChat.addMessageListener(this);
-            } else {                
+            } else {
                 privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Opening private chat to " + privateChat.getParticipant());
@@ -169,6 +168,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             }
         }
     }
+
     private ScheduledExecutorService getExecutor() {
         if (this.scheduledExecutor == null) {
             scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "connectionPoll");
@@ -210,7 +210,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
     public void processPacket(Packet packet) {
         if (packet instanceof Message) {
-            processMessage(null, (Message)packet);
+            processMessage(null, (Message) packet);
         }
     }
 
@@ -221,8 +221,8 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
         Exchange exchange = endpoint.createExchange(message);
 
-        if(endpoint.isDoc() == true) {
-        	exchange.getIn().setHeader(XmppConstants.docHeader, message);
+        if (endpoint.isDoc()) {
+            exchange.getIn().setHeader(XmppConstants.DOC_HEADER, message);
         }
         try {
             getProcessor().process(exchange);
@@ -237,5 +237,5 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             }
         }
     }
-    
+
 }

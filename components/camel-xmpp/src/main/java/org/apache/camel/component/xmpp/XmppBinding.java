@@ -26,7 +26,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +33,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
  * XMPP {@link Message}
- *
- * @version 
  */
 public class XmppBinding {
 
@@ -83,13 +80,13 @@ public class XmppBinding {
                 }
             }
         }
-        
+
         String id = exchange.getExchangeId();
         if (id != null) {
             message.setProperty("exchangeId", id);
         }
     }
-    
+
     /**
      * Populates the given XMPP packet from the inbound exchange
      */
@@ -99,33 +96,35 @@ public class XmppBinding {
             String name = entry.getKey();
             Object value = entry.getValue();
             if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
-                    try {
-                    	packet.setProperty(name, value);
-                        LOG.debug("Added property name: " + name + " value: " + value.toString());
-                    } catch (IllegalArgumentException iae) {
-                        LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
-                    }
+                try {
+                    packet.setProperty(name, value);
+                    LOG.debug("Added property name: " + name + " value: " + value.toString());
+                } catch (IllegalArgumentException iae) {
+                    LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
                 }
-            }        
+            }
+        }
         String id = exchange.getExchangeId();
         if (id != null) {
-        	packet.setProperty("exchangeId", id);
+            packet.setProperty("exchangeId", id);
         }
     }
-    
+
 
     /**
      * Extracts the body from the XMPP message
      */
     public Object extractBodyFromXmpp(Exchange exchange, Packet xmppPacket) {
-        return (xmppPacket instanceof Message)? GetMessageBody((Message)xmppPacket): xmppPacket;
+        return (xmppPacket instanceof Message) ? getMessageBody((Message) xmppPacket) : xmppPacket;
     }
-    
-    private Object GetMessageBody(Message message) {
-    	String messageBody = message.getBody();
-    	if(messageBody == null) //probably a pubsub message
-    		return message;
-    	return messageBody;
+
+    private Object getMessageBody(Message message) {
+        String messageBody = message.getBody();
+        if (messageBody == null) {
+            //probably a pubsub message
+            return message;
+        }
+        return messageBody;
     }
 
     public Map<String, Object> extractHeadersFromXmpp(Packet xmppPacket, Exchange exchange) {
@@ -139,19 +138,19 @@ public class XmppBinding {
             }
         }
 
-        if(xmppPacket instanceof Message) {
-            Message xmppMessage = (Message)xmppPacket;
+        if (xmppPacket instanceof Message) {
+            Message xmppMessage = (Message) xmppPacket;
             answer.put(XmppConstants.MESSAGE_TYPE, xmppMessage.getType());
             answer.put(XmppConstants.SUBJECT, xmppMessage.getSubject());
             answer.put(XmppConstants.THREAD_ID, xmppMessage.getThread());
-        } else if(xmppPacket instanceof PubSub) {
-        	PubSub pubsubPacket = (PubSub)xmppPacket;
+        } else if (xmppPacket instanceof PubSub) {
+            PubSub pubsubPacket = (PubSub) xmppPacket;
             answer.put(XmppConstants.MESSAGE_TYPE, pubsubPacket.getType());
         }
         answer.put(XmppConstants.FROM, xmppPacket.getFrom());
         answer.put(XmppConstants.PACKET_ID, xmppPacket.getPacketID());
         answer.put(XmppConstants.TO, xmppPacket.getTo());
-                
+
         return answer;
     }
 }

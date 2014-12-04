@@ -18,8 +18,6 @@ package org.apache.camel.component.xmpp;
 
 /**
  * Constants used in Camel XMPP module
- *
- * @version 
  */
 public interface XmppConstants {
     String MESSAGE_TYPE = "CamelXmppMessageType";
@@ -28,5 +26,5 @@ public interface XmppConstants {
     String FROM = "CamelXmppFrom";
     String PACKET_ID = "CamelXmppPacketID";
     String TO = "CamelXmppTo";
-    String docHeader = "doc";
+    String DOC_HEADER = "CamelXmppDoc";
 }

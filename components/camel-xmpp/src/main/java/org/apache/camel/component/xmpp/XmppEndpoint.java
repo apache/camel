@@ -34,7 +34,6 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -43,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A XMPP Endpoint
- *
- * @version 
  */
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
@@ -62,10 +59,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String nickname;
     private String serviceName;
     private XMPPConnection connection;
-    private boolean pubsub = false;
+    private boolean pubsub;
     //Set a doc header on the IN message containing a Document form of the incoming packet; 
     //default is true if pubsub is true, otherwise false
-    private boolean doc = false;
+    private boolean doc;
     private boolean testConnectionOnStartup = true;
     private int connectionPollDelay = 10;
 
@@ -85,9 +82,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (room != null) {
             return createGroupChatProducer();
         } else {
-        	if(isPubsub() == true) {
-        		return createPubSubProducer();
-        	}
+            if (isPubsub()) {
+                return createPubSubProducer();
+            }
             if (getParticipant() == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
             }
@@ -102,9 +99,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public Producer createPrivateChatProducer(String participant) throws Exception {
         return new XmppPrivateChatProducer(this, participant);
     }
-    
+
     public Producer createPubSubProducer() throws Exception {
-    	return new XmppPubSubProducer(this);
+        return new XmppPubSubProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -201,6 +198,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         return connection;
     }
+
     /*
      * If there is no "@" symbol in the room, find the chat service JID and
      * return fully qualified JID for the room as room@conference.server.domain
@@ -237,8 +235,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         StringBuilder strBuff = new StringBuilder();
         if (xmppError != null) {
             strBuff.append("[ ").append(xmppError.getCode()).append(" ] ")
-                .append(xmppError.getCondition()).append(" : ")
-                .append(xmppError.getMessage());
+                    .append(xmppError.getCondition()).append(" : ")
+                    .append(xmppError.getMessage());
         }
         if (t != null) {
             strBuff.append(" ( ").append(e.getWrappedThrowable().getMessage()).append(" )");
@@ -354,7 +352,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public String getServiceName() {
         return serviceName;
-    }    
+    }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
@@ -380,24 +378,24 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.connectionPollDelay = connectionPollDelay;
     }
 
-	public void setPubsub(boolean pubsub) {
-		this.pubsub = pubsub;
-		if(pubsub == true) {
-			setDoc(true);
-		}
-	}
+    public void setPubsub(boolean pubsub) {
+        this.pubsub = pubsub;
+        if (pubsub) {
+            setDoc(true);
+        }
+    }
 
-	public boolean isPubsub() {
-		return pubsub;
-	}
+    public boolean isPubsub() {
+        return pubsub;
+    }
 
-	public void setDoc(boolean doc) {
-		this.doc = doc;
-	}
+    public void setDoc(boolean doc) {
+        this.doc = doc;
+    }
 
-	public boolean isDoc() {
-		return doc;
-	}
+    public boolean isDoc() {
+        return doc;
+    }
 
     // Implementation methods
     // -------------------------------------------------------------------------

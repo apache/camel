@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.Exchange;
@@ -10,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XmppPubSubProducer extends DefaultProducer {
-	private static final transient Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
     private final XmppEndpoint endpoint;
     private XMPPConnection connection;
 
@@ -20,7 +36,7 @@ public class XmppPubSubProducer extends DefaultProducer {
         LOG.debug("Creating XmppPresenceProducer");
     }
 
-	public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         try {
             if (connection == null) {
                 connection = endpoint.createConnection();
@@ -35,19 +51,19 @@ public class XmppPubSubProducer extends DefaultProducer {
             }
         } catch (XMPPException e) {
             throw new RuntimeExchangeException("Cannot connect to XMPP Server: "
-                    + ((connection != null) ? XmppEndpoint.getConnectionMessage(connection): endpoint.getHost()), exchange, e);
+                    + ((connection != null) ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()), exchange, e);
         }
-        
+
         try {
             Object body = exchange.getIn().getBody(Object.class);
-            if(body instanceof PubSub) {
-            	PubSub pubsubpacket = (PubSub) body;
+            if (body instanceof PubSub) {
+                PubSub pubsubpacket = (PubSub) body;
                 endpoint.getBinding().populateXmppPacket(pubsubpacket, exchange);
-            	exchange.getIn().setHeader(XmppConstants.docHeader, pubsubpacket);
-            	connection.sendPacket(pubsubpacket);
+                exchange.getIn().setHeader(XmppConstants.DOC_HEADER, pubsubpacket);
+                connection.sendPacket(pubsubpacket);
             } else {
-                throw new Exception("Message does not contain a pubsub packet");        	
-            }        	
+                throw new Exception("Message does not contain a pubsub packet");
+            }
         } catch (XMPPException xmppe) {
             throw new RuntimeExchangeException("Cannot send XMPP pubsub: from " + endpoint.getUser()
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
@@ -55,6 +71,6 @@ public class XmppPubSubProducer extends DefaultProducer {
             throw new RuntimeExchangeException("Cannot send XMPP pubsub: from " + endpoint.getUser()
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
-	}
+    }
 
 }
