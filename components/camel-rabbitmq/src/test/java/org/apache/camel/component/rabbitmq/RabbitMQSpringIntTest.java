@@ -16,39 +16,48 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import com.rabbitmq.client.*;
+import java.io.IOException;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import static org.junit.Assert.assertEquals;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 /**
  * Test RabbitMQ component with Spring DSL
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class RabbitMQSpringIntTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQSpringIntTest.class);
+
     @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate template;
     @Autowired
     private ConnectionFactory connectionFactory;
     private Connection connection;
     private Channel channel;
+
     private boolean isConnectionOpened() {
-        return connection!=null && connection.isOpen();
+        return connection != null && connection.isOpen();
     }
+
     private Connection openConnection() throws IOException {
         if (!isConnectionOpened()) {
             LOGGER.info("Open connection");
@@ -56,9 +65,11 @@ public class RabbitMQSpringIntTest {
         }
         return connection;
     }
+
     private boolean isChannelOpened() {
         return channel != null && channel.isOpen();
     }
+
     private Channel openChannel() throws IOException {
         if (!isChannelOpened()) {
             LOGGER.info("Open channel");
@@ -70,12 +81,6 @@ public class RabbitMQSpringIntTest {
     @Before
     public void bindQueueExchange() throws IOException {
         openChannel();
-        /*
-        LOGGER.info("Declare exchange queue");
-        channel.exchangeDeclare("ex2", "direct", true, false, new HashMap<String, Object>());
-        channel.queueDeclare("q2", true, false, false, null);
-        channel.queueBind("q2", "ex2", "rk2");
-        */
     }
 
     @After
@@ -118,7 +123,7 @@ public class RabbitMQSpringIntTest {
     }
 
     @Test
-    public void testSendCsutomConnectionFactory() throws Exception {
+    public void testSendCustomConnectionFactory() throws Exception {
         String body = "Hello Rabbit";
         template.sendBodyAndHeader(body, RabbitMQConstants.ROUTING_KEY, "rk2");
 
