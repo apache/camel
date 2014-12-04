@@ -157,7 +157,7 @@ public class Mina2Consumer extends DefaultConsumer {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls());
-            filter.setUseClientMode(true);
+            filter.setUseClientMode(false);
             acceptor.getFilterChain().addFirst("sslFilter", filter);
         }
     }
