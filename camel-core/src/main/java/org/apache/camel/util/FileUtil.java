@@ -324,13 +324,28 @@ public final class FileUtil {
                                    + " does not exist, please set java.io.tempdir"
                                    + " to an existing directory");
         }
+        
+        if (!checkExists.canWrite()) {
+            throw new RuntimeException("The directory "
+                + checkExists.getAbsolutePath()
+                + " is not writable, please set java.io.tempdir"
+                + " to a writable directory");
+        }
 
         // create a sub folder with a random number
         Random ran = new Random();
         int x = ran.nextInt(1000000);
-
         File f = new File(s, "camel-tmp-" + x);
+        int count = 0;
+        // Let us just try 100 times to avoid the infinite loop
         while (!f.mkdir()) {
+            count++;
+            if (count >= 100) {
+                throw new RuntimeException("Camel cannot a temp directory from"
+                    + checkExists.getAbsolutePath()
+                    + " 100 times , please set java.io.tempdir"
+                    + " to a writable directory");
+            }
             x = ran.nextInt(1000000);
             f = new File(s, "camel-tmp-" + x);
         }

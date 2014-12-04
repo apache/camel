@@ -85,9 +85,16 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         // setup json data format
         String name = context.getRestConfiguration().getJsonDataFormat();
-        if (name == null) {
+        if (name != null) {
+            // must only be a name, not refer to an existing instance
+            Object instance = context.getRegistry().lookupByName(name);
+            if (instance != null) {
+                throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+            }
+        } else {
             name = "json-jackson";
         }
+        // this will create a new instance as the name was not already pre-created
         DataFormat json = context.resolveDataFormat(name);
         DataFormat outJson = context.resolveDataFormat(name);
 
@@ -124,11 +131,19 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         // setup xml data format
         name = context.getRestConfiguration().getXmlDataFormat();
-        if (name == null) {
+        if (name != null) {
+            // must only be a name, not refer to an existing instance
+            Object instance = context.getRegistry().lookupByName(name);
+            if (instance != null) {
+                throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
+            }
+        } else {
             name = "jaxb";
         }
+        // this will create a new instance as the name was not already pre-created
         DataFormat jaxb = context.resolveDataFormat(name);
         DataFormat outJaxb = context.resolveDataFormat(name);
+
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
             throw new IllegalArgumentException("XML DataFormat " + name + " not found.");

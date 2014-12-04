@@ -34,7 +34,6 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -43,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A XMPP Endpoint
- *
- * @version 
  */
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
@@ -62,6 +59,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String nickname;
     private String serviceName;
     private XMPPConnection connection;
+    private boolean pubsub;
+    //Set a doc header on the IN message containing a Document form of the incoming packet; 
+    //default is true if pubsub is true, otherwise false
+    private boolean doc;
     private boolean testConnectionOnStartup = true;
     private int connectionPollDelay = 10;
 
@@ -81,6 +82,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (room != null) {
             return createGroupChatProducer();
         } else {
+            if (isPubsub()) {
+                return createPubSubProducer();
+            }
             if (getParticipant() == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
             }
@@ -96,6 +100,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return new XmppPrivateChatProducer(this, participant);
     }
 
+    public Producer createPubSubProducer() throws Exception {
+        return new XmppPubSubProducer(this);
+    }
+
     public Consumer createConsumer(Processor processor) throws Exception {
         XmppConsumer answer = new XmppConsumer(this, processor);
         configureConsumer(answer);
@@ -107,14 +115,14 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return createExchange(pattern, null);
     }
 
-    public Exchange createExchange(Message message) {
-        return createExchange(getExchangePattern(), message);
+    public Exchange createExchange(Packet packet) {
+        return createExchange(getExchangePattern(), packet);
     }
 
-    private Exchange createExchange(ExchangePattern pattern, Message message) {
+    private Exchange createExchange(ExchangePattern pattern, Packet packet) {
         Exchange exchange = new DefaultExchange(this, getExchangePattern());
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(new XmppMessage(message));
+        exchange.setIn(new XmppMessage(packet));
         return exchange;
     }
 
@@ -190,6 +198,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         return connection;
     }
+
     /*
      * If there is no "@" symbol in the room, find the chat service JID and
      * return fully qualified JID for the room as room@conference.server.domain
@@ -226,8 +235,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         StringBuilder strBuff = new StringBuilder();
         if (xmppError != null) {
             strBuff.append("[ ").append(xmppError.getCode()).append(" ] ")
-                .append(xmppError.getCondition()).append(" : ")
-                .append(xmppError.getMessage());
+                    .append(xmppError.getCondition()).append(" : ")
+                    .append(xmppError.getMessage());
         }
         if (t != null) {
             strBuff.append(" ( ").append(e.getWrappedThrowable().getMessage()).append(" )");
@@ -343,7 +352,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public String getServiceName() {
         return serviceName;
-    }    
+    }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
@@ -367,6 +376,25 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public void setConnectionPollDelay(int connectionPollDelay) {
         this.connectionPollDelay = connectionPollDelay;
+    }
+
+    public void setPubsub(boolean pubsub) {
+        this.pubsub = pubsub;
+        if (pubsub) {
+            setDoc(true);
+        }
+    }
+
+    public boolean isPubsub() {
+        return pubsub;
+    }
+
+    public void setDoc(boolean doc) {
+        this.doc = doc;
+    }
+
+    public boolean isDoc() {
+        return doc;
     }
 
     // Implementation methods

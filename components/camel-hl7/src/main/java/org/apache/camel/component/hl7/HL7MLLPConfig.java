@@ -39,6 +39,8 @@ class HL7MLLPConfig {
 
     private Parser parser = hapiContext.getGenericParser();
 
+    private boolean produceString = true;
+
     public Charset getCharset() {
         return charset;
     }
@@ -102,5 +104,13 @@ class HL7MLLPConfig {
 
     public void setValidate(boolean validate) {
         parser.getParserConfiguration().setValidating(validate);
+    }
+
+    public boolean isProduceString() {
+        return produceString;
+    }
+
+    public void setProduceString(boolean produceString) {
+        this.produceString = produceString;
     }
 }
