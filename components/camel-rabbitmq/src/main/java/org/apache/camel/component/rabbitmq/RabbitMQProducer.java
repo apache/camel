@@ -35,18 +35,10 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 
 public class RabbitMQProducer extends DefaultProducer {
 
-    private int closeTimeout = 30 * 1000;
     private Connection conn;
-    /**
-     * Maximum number of opened channel in pool
-     */
-    private int channelPoolMaxSize = 10;
-    /**
-     * Maximum time (in milliseconds) waiting for channel
-     */
-    private long channelPoolMaxWait = 1000;
     private ObjectPool<Channel> channelPool;
     private ExecutorService executorService;
+    private int closeTimeout = 30 * 1000;
 
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
@@ -85,7 +77,8 @@ public class RabbitMQProducer extends DefaultProducer {
         log.debug("Created connection: {}", conn);
 
         log.trace("Creating channel pool...");
-        channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getChannelPoolMaxSize(), GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getChannelPoolMaxWait());
+        channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
+                GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
         if (getEndpoint().isDeclare()) {
             execute(new ChannelCallback<Void>() {
                 @Override
@@ -297,39 +290,4 @@ public class RabbitMQProducer extends DefaultProducer {
         this.closeTimeout = closeTimeout;
     }
 
-    /**
-     * Get maximum number of opened channel in pool
-     *
-     * @return Maximum number of opened channel in pool
-     */
-    public int getChannelPoolMaxSize() {
-        return channelPoolMaxSize;
-    }
-
-    /**
-     * Set maximum number of opened channel in pool
-     *
-     * @param channelPoolMaxSize Maximum number of opened channel in pool
-     */
-    public void setChannelPoolMaxSize(int channelPoolMaxSize) {
-        this.channelPoolMaxSize = channelPoolMaxSize;
-    }
-
-    /**
-     * Get the maximum number of milliseconds to wait for a channel from the pool
-     *
-     * @return Maximum number of milliseconds waiting for a channel
-     */
-    public long getChannelPoolMaxWait() {
-        return channelPoolMaxWait;
-    }
-
-    /**
-     * Set the maximum number of milliseconds to wait for a channel from the pool
-     *
-     * @param channelPoolMaxWait Maximum number of milliseconds waiting for a channel
-     */
-    public void setChannelPoolMaxWait(long channelPoolMaxWait) {
-        this.channelPoolMaxWait = channelPoolMaxWait;
-    }
 }
