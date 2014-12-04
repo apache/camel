@@ -84,20 +84,19 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         }
 
         // setup json data format
-        DataFormat json;
-        DataFormat outJson;
-
         String name = context.getRestConfiguration().getJsonDataFormat();
-        if (name == null) {
-            // this will create a new instance as we use the default name
-            name = "json-jackson";
-            json = context.resolveDataFormat(name);
-            outJson = context.resolveDataFormat(name);
+        if (name != null) {
+            // must only be a name, not refer to an existing instance
+            Object instance = context.getRegistry().lookupByName(name);
+            if (instance != null) {
+                throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+            }
         } else {
-            json = context.resolveDataFormat(name);
-            // for out we need to make a new instance of the same class
-            outJson = context.getInjector().newInstance(json.getClass(), json);
+            name = "json-jackson";
         }
+        // this will create a new instance as the name was not already pre-created
+        DataFormat json = context.resolveDataFormat(name);
+        DataFormat outJson = context.resolveDataFormat(name);
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
@@ -131,21 +130,20 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         }
 
         // setup xml data format
-        // setup json data format
-        DataFormat jaxb;
-        DataFormat outJaxb;
-
         name = context.getRestConfiguration().getXmlDataFormat();
-        if (name == null) {
-            // this will create a new instance as we use the default name
-            name = "jaxb";
-            jaxb = context.resolveDataFormat(name);
-            outJaxb = context.resolveDataFormat(name);
+        if (name != null) {
+            // must only be a name, not refer to an existing instance
+            Object instance = context.getRegistry().lookupByName(name);
+            if (instance != null) {
+                throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
+            }
         } else {
-            jaxb = context.resolveDataFormat(name);
-            // for out we need to make a new instance of the same class
-            outJaxb = context.getInjector().newInstance(jaxb.getClass(), json);
+            name = "jaxb";
         }
+        // this will create a new instance as the name was not already pre-created
+        DataFormat jaxb = context.resolveDataFormat(name);
+        DataFormat outJaxb = context.resolveDataFormat(name);
+
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
             throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
