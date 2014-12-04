@@ -16,20 +16,20 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.rabbitmq.pool.PoolableChannelFactory;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
@@ -42,11 +42,12 @@ public class RabbitMQProducer extends DefaultProducer {
      */
     private int channelPoolMaxSize = 10;
     /**
-    * Maximum time (in milliseconds) waiting for channel
-    */
+     * Maximum time (in milliseconds) waiting for channel
+     */
     private long channelPoolMaxWait = 1000;
     private ObjectPool<Channel> channelPool;
     private ExecutorService executorService;
+
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
     }
@@ -55,12 +56,14 @@ public class RabbitMQProducer extends DefaultProducer {
     public RabbitMQEndpoint getEndpoint() {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
+
     /**
      * Channel callback (similar to Spring JDBC ConnectionCallback)
      */
     private static interface ChannelCallback<T> {
-        public T doWithChannel(Channel channel) throws Exception;
+        T doWithChannel(Channel channel) throws Exception;
     }
+
     /**
      * Do something with a pooled channel (similar to Spring JDBC TransactionTemplate#execute)
      */
@@ -72,6 +75,7 @@ public class RabbitMQProducer extends DefaultProducer {
             channelPool.returnObject(channel);
         }
     }
+
     /**
      * Open connection and initialize channel pool
      */
@@ -81,7 +85,7 @@ public class RabbitMQProducer extends DefaultProducer {
         log.debug("Created connection: {}", conn);
 
         log.trace("Creating channel pool...");
-        channelPool = new GenericObjectPool<>(new PoolableChannelFactory(this.conn), getChannelPoolMaxSize(), GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getChannelPoolMaxWait());
+        channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getChannelPoolMaxSize(), GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getChannelPoolMaxWait());
         if (getEndpoint().isDeclare()) {
             execute(new ChannelCallback<Void>() {
                 @Override
@@ -147,14 +151,15 @@ public class RabbitMQProducer extends DefaultProducer {
     }
 
     /**
-     * Send a message borrowing a channel from the pool
-     * @param exchange Target exchange
+     * Send a message borrowing a channel from the pool.
+     *
+     * @param exchange   Target exchange
      * @param routingKey Routing key
      * @param properties Header properties
-     * @param body Body content
+     * @param body       Body content
      */
     private void basicPublish(final String exchange, final String routingKey, final AMQP.BasicProperties properties, final byte[] body) throws Exception {
-        if (channelPool==null) {
+        if (channelPool == null) {
             // Open connection and channel lazily
             openConnectionAndChannelPool();
         }
@@ -174,7 +179,7 @@ public class RabbitMQProducer extends DefaultProducer {
         if (contentType != null) {
             properties.contentType(contentType.toString());
         }
-        
+
         final Object priority = exchange.getIn().getHeader(RabbitMQConstants.PRIORITY);
         if (priority != null) {
             properties.priority(Integer.parseInt(priority.toString()));
@@ -263,8 +268,8 @@ public class RabbitMQProducer extends DefaultProducer {
     /**
      * Strategy to test if the given header is valid
      *
-     * @param headerValue  the header value
-     * @return  the value to use, <tt>null</tt> to ignore this header
+     * @param headerValue the header value
+     * @return the value to use, <tt>null</tt> to ignore this header
      * @see com.rabbitmq.client.impl.Frame#fieldValueSize
      */
     private Object getValidRabbitMQHeaderValue(Object headerValue) {
@@ -294,33 +299,37 @@ public class RabbitMQProducer extends DefaultProducer {
 
     /**
      * Get maximum number of opened channel in pool
+     *
      * @return Maximum number of opened channel in pool
      */
     public int getChannelPoolMaxSize() {
-            return channelPoolMaxSize;
+        return channelPoolMaxSize;
     }
 
     /**
      * Set maximum number of opened channel in pool
+     *
      * @param channelPoolMaxSize Maximum number of opened channel in pool
      */
     public void setChannelPoolMaxSize(int channelPoolMaxSize) {
-            this.channelPoolMaxSize = channelPoolMaxSize;
+        this.channelPoolMaxSize = channelPoolMaxSize;
     }
 
     /**
      * Get the maximum number of milliseconds to wait for a channel from the pool
+     *
      * @return Maximum number of milliseconds waiting for a channel
      */
     public long getChannelPoolMaxWait() {
-            return channelPoolMaxWait;
+        return channelPoolMaxWait;
     }
 
     /**
      * Set the maximum number of milliseconds to wait for a channel from the pool
+     *
      * @param channelPoolMaxWait Maximum number of milliseconds waiting for a channel
      */
     public void setChannelPoolMaxWait(long channelPoolMaxWait) {
-            this.channelPoolMaxWait = channelPoolMaxWait;
+        this.channelPoolMaxWait = channelPoolMaxWait;
     }
 }
