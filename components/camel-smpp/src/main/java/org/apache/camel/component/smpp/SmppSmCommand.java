@@ -26,17 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class SmppSmCommand extends AbstractSmppCommand {
-    private static final Logger LOG = LoggerFactory.getLogger(SmppSmCommand.class);
 
+    // FIXME: these constants should be defined somewhere in jSMPP:
     public static final int SMPP_NEG_RESPONSE_MSG_TOO_LONG = 1;
 
     protected Charset ascii = Charset.forName("US-ASCII");
     protected Charset latin1 = Charset.forName("ISO-8859-1");
-    protected Charset charset;
+    protected Charset defaultCharset;
+
+    private final Logger logger = LoggerFactory.getLogger(SmppSmCommand.class);
 
     public SmppSmCommand(SMPPSession session, SmppConfiguration config) {
         super(session, config);
-        this.charset = Charset.forName(config.getEncoding());
+        defaultCharset = Charset.forName(config.getEncoding());
     }
 
     protected byte[][] splitBody(Message message) throws SmppException {
@@ -132,7 +134,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             if (Charset.isSupported(encoding)) {
                 return Charset.forName(encoding);
             } else {
-                LOG.warn("Unsupported encoding \"{}\" requested in header.", encoding);
+                logger.warn("Unsupported encoding \"{}\" requested in header.", encoding);
             }
         }
         return null;
@@ -150,22 +152,22 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             return Charset.forName(SmppConstants.UCS2_ENCODING); 
         }
         
-        return charset;
+        return defaultCharset;
     }
 
     private Alphabet determineAlphabet(Message message) {
         String body = message.getBody(String.class);
         byte alphabet = getProvidedAlphabet(message);
-        Charset _charset = getCharsetForMessage(message);
-        if (_charset == null) {
-            _charset = charset;
+        Charset charset = getCharsetForMessage(message);
+        if (charset == null) {
+            charset = defaultCharset;
         }
 
         Alphabet alphabetObj;
         if (alphabet == SmppConstants.UNKNOWN_ALPHABET) {
             alphabetObj = Alphabet.ALPHA_UCS2;
-            if (isLatin1Compatible(_charset)) {
-                byte[] messageBytes = body.getBytes(_charset);
+            if (isLatin1Compatible(charset)) {
+                byte[] messageBytes = body.getBytes(charset);
                 if (SmppUtils.isGsm0338Encodeable(messageBytes)) {
                     alphabetObj = Alphabet.ALPHA_DEFAULT;
                 }
