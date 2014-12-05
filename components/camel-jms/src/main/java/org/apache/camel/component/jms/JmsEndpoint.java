@@ -261,8 +261,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        JmsOperations template = createInOnlyTemplate();
-        JmsPollingConsumer answer = new JmsPollingConsumer(this, template);
+        JmsPollingConsumer answer = new JmsPollingConsumer(this);
         configurePollingConsumer(answer);
         return answer;
     }

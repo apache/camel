@@ -1070,7 +1070,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the service pool
      */
     ServicePool<Endpoint, Producer> getProducerServicePool();
+    
+    /**
+     * Sets a pluggable service pool to use for {@link PollingConsumer} pooling.
+     *
+     * @param servicePool the pool
+     */
+    void setPollingConsumerServicePool(ServicePool<Endpoint, PollingConsumer> servicePool);
 
+    /**
+     * Gets the service pool for {@link Producer} pooling.
+     *
+     * @return the service pool
+     */
+    ServicePool<Endpoint, PollingConsumer> getPollingConsumerServicePool();
+    
     /**
      * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
      *

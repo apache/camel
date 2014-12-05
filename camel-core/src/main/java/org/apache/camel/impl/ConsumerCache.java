@@ -24,6 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServicePoolAware;
+import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
@@ -39,6 +42,7 @@ import org.slf4j.LoggerFactory;
 public class ConsumerCache extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
     private final CamelContext camelContext;
+    private final ServicePool<Endpoint, PollingConsumer> pool;
     private final Map<String, PollingConsumer> consumers;
     private final Object source;
 
@@ -49,11 +53,17 @@ public class ConsumerCache extends ServiceSupport {
     public ConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
         this(source, camelContext, createLRUCache(cacheSize));
     }
-
+    
     public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache) {
+        this(source, camelContext, cache, camelContext.getPollingConsumerServicePool());
+    }
+
+
+    public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache, ServicePool<Endpoint, PollingConsumer> pool) {
         this.camelContext = camelContext;
         this.consumers = cache;
         this.source = source;
+        this.pool = pool;
     }
 
     /**
@@ -71,10 +81,59 @@ public class ConsumerCache extends ServiceSupport {
         // be stopped so they can shutdown internal resources that otherwise may cause leaks
         return new LRUCache<String, PollingConsumer>(cacheSize);
     }
+    
+    /**
+     * Acquires a pooled PollingConsumer which you <b>must</b> release back again after usage using the
+     * {@link #releasePollingConsumer(org.apache.camel.Endpoint, org.apache.camel.PollingConsumer)} method.
+     *
+     * @param endpoint the endpoint
+     * @return the PollingConsumer
+     */
+    public PollingConsumer acquirePollingConsumer(Endpoint endpoint) {
+        return doGetPollingConsumer(endpoint, true);
+    }
 
-    public synchronized PollingConsumer getConsumer(Endpoint endpoint) {
+    /**
+     * Releases an acquired producer back after usage.
+     *
+     * @param endpoint the endpoint
+     * @param pollingConsumer the pollingConsumer to release
+     */
+    public void releasePollingConsumer(Endpoint endpoint, PollingConsumer pollingConsumer) {
+        if (pollingConsumer instanceof ServicePoolAware) {
+            // release back to the pool
+            pool.release(endpoint, pollingConsumer);
+        } else {
+            boolean singleton = false;
+            if (pollingConsumer instanceof IsSingleton) {
+                singleton = ((IsSingleton) pollingConsumer).isSingleton();
+            }
+            if (!singleton) {
+                try {
+                    // stop and shutdown non-singleton producers as we should not leak resources
+                    ServiceHelper.stopAndShutdownService(pollingConsumer);
+                } catch (Exception ex) {
+                    if (ex instanceof RuntimeCamelException) {
+                        throw (RuntimeCamelException)ex;
+                    } else {
+                        throw new RuntimeCamelException(ex);
+                    }
+                }
+            }
+        }
+    }
+
+    public PollingConsumer getConsumer(Endpoint endpoint) {
+        return doGetPollingConsumer(endpoint, true);
+    }
+    
+    protected synchronized PollingConsumer doGetPollingConsumer(Endpoint endpoint, boolean pooled) {
         String key = endpoint.getEndpointUri();
         PollingConsumer answer = consumers.get(key);
+        if (pooled && answer == null) {
+            pool.acquire(endpoint);
+        }  
+        
         if (answer == null) {
             try {
                 answer = endpoint.createPollingConsumer();
@@ -82,41 +141,63 @@ public class ConsumerCache extends ServiceSupport {
             } catch (Exception e) {
                 throw new FailedToCreateConsumerException(endpoint, e);
             }
-
-            boolean singleton = true;
-            if (answer instanceof IsSingleton) {
-                singleton = ((IsSingleton) answer).isSingleton();
-            }
-
-            if (singleton) {
-                LOG.debug("Adding to consumer cache with key: {} for consumer: {}", endpoint, answer);
-                consumers.put(key, answer);
+            if (pooled && answer instanceof ServicePoolAware) {
+                LOG.debug("Adding to producer service pool with key: {} for producer: {}", endpoint, answer);
+                answer = pool.addAndAcquire(endpoint, answer);
             } else {
-                LOG.debug("Consumer for endpoint: {} is not singleton and thus not added to consumer cache", key);
+                boolean singleton = false;
+                if (answer instanceof IsSingleton) {
+                    singleton = ((IsSingleton) answer).isSingleton();
+                }
+                if (singleton) {
+                    LOG.debug("Adding to consumer cache with key: {} for consumer: {}", endpoint, answer);
+                    consumers.put(key, answer);
+                } else {
+                    LOG.debug("Consumer for endpoint: {} is not singleton and thus not added to consumer cache", key);
+                }
             }
         }
         return answer;
+        
     }
-
+ 
     public Exchange receive(Endpoint endpoint) {
         LOG.debug("<<<< {}", endpoint);
-
-        PollingConsumer consumer = getConsumer(endpoint);
-        return consumer.receive();
+        PollingConsumer consumer = null;
+        try {
+            consumer = acquirePollingConsumer(endpoint);
+            return consumer.receive();
+        } finally {
+            if (consumer != null) {
+                releasePollingConsumer(endpoint, consumer);
+            }
+        }
     }
 
     public Exchange receive(Endpoint endpoint, long timeout) {
         LOG.debug("<<<< {}", endpoint);
-
-        PollingConsumer consumer = getConsumer(endpoint);
-        return consumer.receive(timeout);
+        PollingConsumer consumer = null;
+        try {
+            consumer = acquirePollingConsumer(endpoint);
+            return consumer.receive(timeout);
+        } finally {
+            if (consumer != null) {
+                releasePollingConsumer(endpoint, consumer);
+            }
+        }
     }
 
     public Exchange receiveNoWait(Endpoint endpoint) {
         LOG.debug("<<<< {}", endpoint);
-
-        PollingConsumer consumer = getConsumer(endpoint);
-        return consumer.receiveNoWait();
+        PollingConsumer consumer = null;
+        try {
+            consumer = doGetPollingConsumer(endpoint, true);
+            return consumer.receiveNoWait();
+        } finally {
+            if (consumer != null) {
+                releasePollingConsumer(endpoint, consumer);
+            }
+        }
     }
     
     public CamelContext getCamelContext() {
@@ -237,6 +318,8 @@ public class ConsumerCache extends ServiceSupport {
         // when stopping we intend to shutdown
         ServiceHelper.stopAndShutdownServices(consumers.values());
         consumers.clear();
+        // we need to stop the pool service here
+        ServiceHelper.stopService(pool);
     }
 
 }

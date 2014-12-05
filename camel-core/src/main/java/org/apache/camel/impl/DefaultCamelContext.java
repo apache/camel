@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -37,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -53,6 +56,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
@@ -148,8 +152,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
-
 /**
  * Represents the context used to configure routes and the policies to use.
  *
@@ -223,6 +225,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
+    private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = new SharedPollingConsumerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private ProcessorFactory processorFactory;
     private InterceptStrategy defaultTracer;
@@ -1816,6 +1819,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public ServicePool<Endpoint, Producer> getProducerServicePool() {
         return producerServicePool;
+    }
+    
+    public ServicePool<Endpoint, PollingConsumer> getPollingConsumerServicePool() {
+        return pollingConsumerServicePool;
+    }
+
+    public void setPollingConsumerServicePool(ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool) {
+        this.pollingConsumerServicePool = pollingConsumerServicePool;
     }
 
     public UnitOfWorkFactory getUnitOfWorkFactory() {

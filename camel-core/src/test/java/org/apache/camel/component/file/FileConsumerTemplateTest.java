@@ -39,12 +39,15 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
 
     public void testFileConsumerTemplate() throws Exception {
         template.sendBodyAndHeader("file:target/consumer", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        // file should exist
+        File file = new File("target/consumer/hello.txt");
 
+        assertTrue("File should exist " + file, file.exists());
+        
         String body = consumer.receiveBody("file:target/consumer?delete=true", 5000, String.class);
         assertEquals("Hello World", body);
 
         // file should be deleted
-        File file = new File("target/consumer/hello.txt");
         assertFalse("File should be deleted " + file, file.exists());
     }
 

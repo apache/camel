@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
+public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor, IsSingleton {
     private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
     private final BlockingQueue<Exchange> queue;
     private ExceptionHandler interruptedExceptionHandler;
@@ -202,5 +203,11 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(consumer);
         queue.clear();
+    }
+
+    @Override
+    // As the consumer could take the messages at once, so we cannot release the consumer
+    public boolean isSingleton() {
+        return true;
     }
 }

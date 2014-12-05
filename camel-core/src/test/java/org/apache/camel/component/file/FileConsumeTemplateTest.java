@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 
@@ -28,11 +29,12 @@ public class FileConsumeTemplateTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/template");
         super.setUp();
-        template.sendBodyAndHeader("file://target/template", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/template/", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
     public void testConsumeFileWithTemplate() throws Exception {
+        template.sendBodyAndHeader("file://target/template", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/template", "Bye World", Exchange.FILE_NAME, "bye.txt");
+
         Exchange out = consumer.receive("file://target/template?sortBy=file:name");
         assertNotNull(out);
 

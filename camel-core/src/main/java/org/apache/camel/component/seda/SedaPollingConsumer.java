@@ -20,10 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public class SedaPollingConsumer extends PollingConsumerSupport {
+public class SedaPollingConsumer extends PollingConsumerSupport implements IsSingleton {
 
     public SedaPollingConsumer(Endpoint endpoint) {
         super(endpoint);
@@ -67,5 +68,10 @@ public class SedaPollingConsumer extends PollingConsumerSupport {
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 }
