@@ -315,7 +315,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls());
             filter.setUseClientMode(true);
-            acceptor.getFilterChain().addFirst("sslFilter", filter);
+            connector.getFilterChain().addFirst("sslFilter", filter);
         }
         configureCodecFactory("Mina2Producer", connector);
         connector.setConnectTimeoutMillis(timeout);
