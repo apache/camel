@@ -31,51 +31,14 @@ import org.osgi.framework.Constants;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 @RunWith(PaxExam.class)
-public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
-
-    protected String name = BlueprintTracerTest.class.getName();
+public class BlueprintTracerRefTest extends BlueprintTracerTest {
 
     @Test
+    @Override
     public void testTracer() throws Exception {
-        // start bundle
-        getInstalledBundle(name).start();
+        name = BlueprintTracerRefTest.class.getName();
 
-        // must use the camel context from osgi
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + name + ")", 30000);
-
-        ProducerTemplate myTemplate = ctx.createProducerTemplate();
-        myTemplate.start();
-
-        // do our testing
-        MockEndpoint result = ctx.getEndpoint("mock:result", MockEndpoint.class);
-        result.expectedMessageCount(1);
-
-        MockEndpoint tracer = ctx.getEndpoint("mock:traced", MockEndpoint.class);
-
-        myTemplate.sendBody("direct:start", "Hello World");
-
-        result.assertIsSatisfied();
-
-        DefaultTraceEventMessage em = tracer.getReceivedExchanges().get(0).getIn().getBody(DefaultTraceEventMessage.class);
-        assertEquals("Hello World", em.getBody());
-
-        assertEquals("String", em.getBodyType());
-        assertEquals(null, em.getCausedByException());
-        assertNotNull(em.getExchangeId());
-        assertNotNull(em.getShortExchangeId());
-        assertNotNull(em.getExchangePattern());
-        assertEquals("direct://start", em.getFromEndpointUri());
-        // there is always a breadcrumb header
-        assertNotNull(em.getHeaders());
-        assertNotNull(em.getProperties());
-        assertNull(em.getOutBody());
-        assertNull(em.getOutBodyType());
-        assertNull(em.getOutHeaders());
-        assertNull(em.getPreviousNode());
-        assertNotNull(em.getToNode());
-        assertNotNull(em.getTimestamp());
-
-        myTemplate.stop();
+        super.testTracer();
     }
 
     @Configuration
@@ -85,11 +48,14 @@ public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
                 getDefaultCamelKarafOptions(),
 
                 bundle(TinyBundles.bundle()
-                        .add("OSGI-INF/blueprint/test.xml", BlueprintTracerTest.class.getResource("blueprint-29.xml"))
-                        .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintTracerTest.class.getName())
+                        .add("OSGI-INF/blueprint/test.xml", BlueprintTracerRefTest.class.getResource("blueprint-30.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintTracerRefTest.class.getName())
                         .set(Constants.BUNDLE_VERSION, "1.0.0")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
+
+                // do eagerly register the Camel context so that OsgiCamelContextPublisher can publish it early enough as an OSGi service
+                org.ops4j.pax.exam.CoreOptions.systemProperty("registerBlueprintCamelContextEager").value("true"),
 
                 // using the features to install the camel components
                 loadCamelFeatures("camel-blueprint"));

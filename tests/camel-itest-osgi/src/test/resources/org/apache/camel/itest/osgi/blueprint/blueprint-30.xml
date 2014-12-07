@@ -18,6 +18,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
   <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint">
+    <endpoint id="traced" uri="mock:traced" />
     <route>
       <from uri="direct:start" />
       <to uri="mock:result" />
@@ -29,7 +30,7 @@
     <property name="traceExceptions" value="true" />
     <property name="logLevel" value="INFO" />
     <property name="logName" value="org.apache.camel.blueprint.log" />
-    <property name="destinationUri" value="mock:traced" />
+    <property name="destination" ref="traced" />
   </bean>
 
 </blueprint>
