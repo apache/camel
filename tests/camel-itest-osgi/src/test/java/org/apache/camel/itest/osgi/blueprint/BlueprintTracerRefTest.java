@@ -36,7 +36,7 @@ public class BlueprintTracerRefTest extends BlueprintTracerTest {
     @Test
     @Override
     public void testTracer() throws Exception {
-        name = BlueprintTracerRefTest.class.getName();
+        name = getClass().getName();
 
         super.testTracer();
     }

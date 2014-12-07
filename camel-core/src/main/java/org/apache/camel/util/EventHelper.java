@@ -763,7 +763,7 @@ public final class EventHelper {
         }
 
         if (!notifier.isEnabled(event)) {
-            LOG.trace("Notification of event is disabled: {}", event);
+            LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
             return;
         }
 
