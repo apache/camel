@@ -231,10 +231,14 @@ public class RestEndpoint extends DefaultEndpoint {
             // the route id when using rest-dsl
             String routeId = (String) getParameters().get("routeId");
 
+            // optional description
+            String description = (String) getParameters().get("description");
+
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatic keep track when the consumer is removed,
             // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(), getConsumes(), getProduces(), inType, outType, routeId);
+            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(),
+                    getConsumes(), getProduces(), inType, outType, routeId, description);
             return consumer;
         } else {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");

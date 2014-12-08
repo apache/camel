@@ -40,8 +40,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
 
     public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
-                               String consumes, String produces, String inType, String outType, String routeId) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId);
+                               String consumes, String produces, String inType, String outType, String routeId, String description) {
+        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId, description);
         registry.put(consumer, entry);
     }
 
@@ -95,9 +95,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final String inType;
         private final String outType;
         private final String routeId;
+        private final String description;
 
-        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
-                                 String method, String consumes, String produces, String inType, String outType, String routeId) {
+        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
+                                 String consumes, String produces, String inType, String outType, String routeId, String description) {
             this.consumer = consumer;
             this.url = url;
             this.baseUrl = baseUrl;
@@ -109,6 +110,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             this.inType = inType;
             this.outType = outType;
             this.routeId = routeId;
+            this.description = description;
         }
 
         public Consumer getConsumer() {
@@ -166,6 +168,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
         public String getRouteId() {
             return routeId;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
 
