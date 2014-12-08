@@ -40,8 +40,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
 
     public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
-                               String consumes, String produces, String inType, String outType) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType);
+                               String consumes, String produces, String inType, String outType, String routeId) {
+        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId);
         registry.put(consumer, entry);
     }
 
@@ -94,9 +94,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final String produces;
         private final String inType;
         private final String outType;
+        private final String routeId;
 
         private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
-                                 String method, String consumes, String produces, String inType, String outType) {
+                                 String method, String consumes, String produces, String inType, String outType, String routeId) {
             this.consumer = consumer;
             this.url = url;
             this.baseUrl = baseUrl;
@@ -107,6 +108,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             this.produces = produces;
             this.inType = inType;
             this.outType = outType;
+            this.routeId = routeId;
         }
 
         public Consumer getConsumer() {
@@ -160,6 +162,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 status = ServiceStatus.Stopped;
             }
             return status.name();
+        }
+
+        public String getRouteId() {
+            return routeId;
         }
     }
 

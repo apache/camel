@@ -433,6 +433,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
+            // include route id
+            String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
+            options.put("routeId", routeId);
+
             if (!options.isEmpty()) {
                 String query;
                 try {
