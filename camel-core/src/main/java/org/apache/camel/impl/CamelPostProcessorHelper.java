@@ -37,6 +37,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;
@@ -229,7 +230,14 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();
             String suffix = getCamelContext().getPropertySuffixToken();
-            if (!propertyName.contains(prefix)) {
+
+            if (prefix == null && suffix == null) {
+                // if no custom prefix/suffix then use defaults
+                prefix = PropertiesComponent.DEFAULT_PREFIX_TOKEN;
+                suffix = PropertiesComponent.DEFAULT_SUFFIX_TOKEN;
+            }
+
+            if (!propertyName.startsWith(prefix)) {
                 // must enclose the property name with prefix/suffix to have it resolved
                 key = prefix + propertyName + suffix;
             } else {
