@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
@@ -37,7 +38,6 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;
@@ -227,17 +227,13 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue,
                                             String injectionPointName, Object bean, String beanName) {
         try {
+            // enforce a properties component to be created if none existed
+            CamelContextHelper.lookupPropertiesComponent(getCamelContext(), true);
+
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();
             String suffix = getCamelContext().getPropertySuffixToken();
-
-            if (prefix == null && suffix == null) {
-                // if no custom prefix/suffix then use defaults
-                prefix = PropertiesComponent.DEFAULT_PREFIX_TOKEN;
-                suffix = PropertiesComponent.DEFAULT_SUFFIX_TOKEN;
-            }
-
-            if (!propertyName.startsWith(prefix)) {
+            if (!propertyName.contains(prefix)) {
                 // must enclose the property name with prefix/suffix to have it resolved
                 key = prefix + propertyName + suffix;
             } else {

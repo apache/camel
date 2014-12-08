@@ -35,6 +35,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.slf4j.Logger;
@@ -475,5 +476,31 @@ public final class CamelContextHelper {
         }
         return 0;
     }
+
+    /**
+     * Lookup the {@link org.apache.camel.component.properties.PropertiesComponent} from the {@link org.apache.camel.CamelContext}.
+     * <p/>
+     * @param camelContext the camel context
+     * @param autoCreate whether to automatic create a new default {@link org.apache.camel.component.properties.PropertiesComponent} if no custom component
+     *                   has been configured.
+     * @return the properties component, or <tt>null</tt> if none has been defined, and auto create is <tt>false</tt>.
+     */
+    public static Component lookupPropertiesComponent(CamelContext camelContext, boolean autoCreate) {
+        // no existing properties component so lookup and add as component if possible
+        PropertiesComponent answer = (PropertiesComponent) camelContext.hasComponent("properties");
+        if (answer == null) {
+            answer = camelContext.getRegistry().lookupByNameAndType("properties", PropertiesComponent.class);
+            if (answer != null) {
+                camelContext.addComponent("properties", answer);
+            }
+        }
+        if (answer == null && autoCreate) {
+            // create a default properties component to be used as there may be default values we can use
+            LOG.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+            answer = camelContext.getComponent("properties", PropertiesComponent.class);
+        }
+        return answer;
+    }
+
 
 }
