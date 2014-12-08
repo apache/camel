@@ -444,6 +444,6 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     
     public static boolean isJavaVersion(String version) {
         String javaVersion = System.getProperty("java.version");
-        return javaVersion.contains(version.toLowerCase(Locale.US));
+        return javaVersion.contains(version.toLowerCase(Locale.ENGLISH));
     }
 }

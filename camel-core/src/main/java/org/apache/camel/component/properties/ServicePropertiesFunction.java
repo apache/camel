@@ -52,7 +52,7 @@ public class ServicePropertiesFunction implements PropertiesFunction {
         }
 
         // make sure to use upper case
-        key = key.toUpperCase(Locale.US);
+        key = key.toUpperCase(Locale.ENGLISH);
 
         // a service should have both the host and port defined
         String host = System.getenv(key + HOST_PREFIX);

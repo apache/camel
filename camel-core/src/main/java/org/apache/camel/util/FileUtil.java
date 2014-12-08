@@ -53,7 +53,7 @@ public final class FileUtil {
 
     private static boolean initWindowsOs() {
         // initialize once as System.getProperty is not fast
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         return osName.contains("windows");
     }
 
