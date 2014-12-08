@@ -56,6 +56,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
 
+    @XmlAttribute
+    private Boolean enableCORS;
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
@@ -111,7 +114,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
-    
+
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -305,6 +316,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition enableCORS(boolean enableCORS) {
+        if (getVerbs().isEmpty()) {
+            this.enableCORS = enableCORS;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setEnableCORS(enableCORS);
+        }
+
+        return this;
+    }
+
     /**
      * Routes directly to the given endpoint.
      * <p/>
@@ -404,6 +427,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 binding.setBindingMode(verb.getBindingMode());
             } else {
                 binding.setBindingMode(getBindingMode());
+            }
+            if (verb.getSkipBindingOnErrorCode() != null) {
+                binding.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
+            } else {
+                binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+            }
+            if (verb.getEnableCORS() != null) {
+                binding.setEnableCORS(verb.getEnableCORS());
+            } else {
+                binding.setEnableCORS(getEnableCORS());
             }
             route.getOutputs().add(0, binding);
 

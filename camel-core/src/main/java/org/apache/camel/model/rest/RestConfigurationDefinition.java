@@ -62,6 +62,9 @@ public class RestConfigurationDefinition {
     private Boolean skipBindingOnErrorCode;
 
     @XmlAttribute
+    private Boolean enableCORS;
+
+    @XmlAttribute
     private String jsonDataFormat;
 
     @XmlAttribute
@@ -78,6 +81,9 @@ public class RestConfigurationDefinition {
 
     @XmlElement(name = "dataFormatProperty")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<RestPropertyDefinition>();
+
+    @XmlElement(name = "corsHeaders")
+    private List<RestPropertyDefinition> corsHeaders = new ArrayList<RestPropertyDefinition>();
 
     public String getComponent() {
         return component;
@@ -143,6 +149,14 @@ public class RestConfigurationDefinition {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
+    }
+
     public String getJsonDataFormat() {
         return jsonDataFormat;
     }
@@ -189,6 +203,14 @@ public class RestConfigurationDefinition {
 
     public void setDataFormatProperties(List<RestPropertyDefinition> dataFormatProperties) {
         this.dataFormatProperties = dataFormatProperties;
+    }
+
+    public List<RestPropertyDefinition> getCorsHeaders() {
+        return corsHeaders;
+    }
+
+    public void setCorsHeaders(List<RestPropertyDefinition> corsHeaders) {
+        this.corsHeaders = corsHeaders;
     }
 
     // Fluent API
@@ -270,6 +292,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response.
+     */
+    public RestConfigurationDefinition enableCORS(boolean enableCORS) {
+        setEnableCORS(enableCORS);
+        return this;
+    }
+
+    /**
      * To use a specific json data format
      * <p/>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
@@ -337,6 +367,17 @@ public class RestConfigurationDefinition {
         return this;
     }
 
+    /**
+     * For configuring CORS headers
+     */
+    public RestConfigurationDefinition corsHeaderProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getCorsHeaders().add(prop);
+        return this;
+    }
+
     // Implementation
     //-------------------------------------------------------------------------
 
@@ -372,6 +413,9 @@ public class RestConfigurationDefinition {
         }
         if (skipBindingOnErrorCode != null) {
             answer.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+        }
+        if (enableCORS != null) {
+            answer.setEnableCORS(enableCORS);
         }
         if (jsonDataFormat != null) {
             answer.setJsonDataFormat(jsonDataFormat);
@@ -414,6 +458,15 @@ public class RestConfigurationDefinition {
                 props.put(key, value);
             }
             answer.setDataFormatProperties(props);
+        }
+        if (!corsHeaders.isEmpty()) {
+            Map<String, String> props = new HashMap<String, String>();
+            for (RestPropertyDefinition prop : corsHeaders) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            answer.setCorsHeaders(props);
         }
         return answer;
     }

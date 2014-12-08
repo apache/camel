@@ -54,6 +54,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
 
+    @XmlAttribute
+    private Boolean enableCORS;
+
     @Override
     public String toString() {
         return "RestBinding";
@@ -69,18 +72,26 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         CamelContext context = routeContext.getCamelContext();
 
-        // the default binding mode can be overridden per rest verb
+        // these options can be overriden per rest verb
         String mode = context.getRestConfiguration().getBindingMode().name();
         if (bindingMode != null) {
             mode = bindingMode.name();
         }
+        boolean cors = context.getRestConfiguration().isEnableCORS();
+        if (enableCORS != null) {
+            cors = enableCORS;
+        }
+        boolean skip = context.getRestConfiguration().isSkipBindingOnErrorCode();
+        if (skipBindingOnErrorCode != null) {
+            skip = skipBindingOnErrorCode;
+        }
 
-        // skip by default
-        boolean skip = skipBindingOnErrorCode == null || skipBindingOnErrorCode;
+        // cors headers
+        Map<String, String> corsHeaders = context.getRestConfiguration().getCorsHeaders();
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip);
+            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders);
         }
 
         // setup json data format
@@ -182,7 +193,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
             context.addService(outJaxb);
         }
 
-        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip);
+        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders);
     }
 
     private void setAdditionalConfiguration(CamelContext context, DataFormat dataFormat) throws Exception {
@@ -241,5 +252,13 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
     }
 }

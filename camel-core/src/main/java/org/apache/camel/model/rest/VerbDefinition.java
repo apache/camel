@@ -51,6 +51,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private Boolean skipBindingOnErrorCode;
 
     @XmlAttribute
+    private Boolean enableCORS;
+
+    @XmlAttribute
     private String type;
 
     @XmlAttribute
@@ -127,6 +130,14 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
     }
 
     public String getType() {
