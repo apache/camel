@@ -99,7 +99,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 try {
                     log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                     if (outputType == SqlOutputType.SelectList) {
-                        List<Map<String, Object>> data = getEndpoint().queryForList(rs);
+                        List<?> data = getEndpoint().queryForList(rs, true);
                         addListToQueue(data, answer);
                     } else if (outputType == SqlOutputType.SelectOne) {
                         Object data = getEndpoint().queryForObject(rs);

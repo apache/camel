@@ -252,11 +252,19 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return "sql:" + UnsafeUriCharactersEncoder.encode(query);
     }
 
-    protected List<Map<String, Object>> queryForList(ResultSet rs) throws SQLException {
-        ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
-        List<Map<String, Object>> data = mapper.extractData(rs);
-        return data;
+    protected List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
+        if (allowMapToClass && outputClass != null) {
+            Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
+            RowMapper rowMapper = new BeanPropertyRowMapper(outputClzz);
+            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
+            List<?> data = mapper.extractData(rs);
+            return data;
+        } else {
+            ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
+            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+            List<Map<String, Object>> data = mapper.extractData(rs);
+            return data;
+        }
     }
 
     @SuppressWarnings("unchecked")
