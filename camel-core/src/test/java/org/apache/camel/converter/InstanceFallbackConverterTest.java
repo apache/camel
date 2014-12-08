@@ -33,7 +33,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
 
     public void testInstanceFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Currency cur = Currency.getInstance(Locale.ENGLISH);
+        Currency cur = Currency.getInstance(Locale.US);
 
         String money = context.getTypeConverter().convertTo(String.class, exchange, cur);
         assertEquals("Money talks", money);
@@ -41,7 +41,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
 
     public void testInstanceFallbackMandatoryConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Currency cur = Currency.getInstance(Locale.ENGLISH);
+        Currency cur = Currency.getInstance(Locale.US);
 
         String money = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, cur);
         assertEquals("Money talks", money);
