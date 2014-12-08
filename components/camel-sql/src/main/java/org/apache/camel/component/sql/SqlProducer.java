@@ -128,7 +128,7 @@ public class SqlProducer extends DefaultProducer {
                         SqlOutputType outputType = getEndpoint().getOutputType();
                         log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                         if (outputType == SqlOutputType.SelectList) {
-                            List<Map<String, Object>> data = getEndpoint().queryForList(rs);
+                            List<?> data = getEndpoint().queryForList(rs, true);
                             // for noop=true we still want to enrich with the row count header
                             if (getEndpoint().isNoop()) {
                                 exchange.getOut().setBody(exchange.getIn().getBody());
@@ -161,7 +161,7 @@ public class SqlProducer extends DefaultProducer {
                         exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
                         exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
                     } else {
-                        List<Map<String, Object>> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys());
+                        List<?> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys(), false);
                         exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
                         exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, generatedKeys.size());
                     }
