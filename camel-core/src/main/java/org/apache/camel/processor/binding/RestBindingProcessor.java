@@ -112,14 +112,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         String contentType = ExchangeHelper.getContentType(exchange);
         if (contentType != null) {
-            isXml = contentType.toLowerCase(Locale.US).contains("xml");
-            isJson = contentType.toLowerCase(Locale.US).contains("json");
+            isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
+            isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
         }
         // if content type could not tell us if it was json or xml, then fallback to if the binding was configured with
         // that information in the consumes
         if (!isXml && !isJson) {
-            isXml = consumes != null && consumes.toLowerCase(Locale.US).contains("xml");
-            isJson = consumes != null && consumes.toLowerCase(Locale.US).contains("json");
+            isXml = consumes != null && consumes.toLowerCase(Locale.ENGLISH).contains("xml");
+            isJson = consumes != null && consumes.toLowerCase(Locale.ENGLISH).contains("json");
         }
 
         // only allow xml/json if the binding mode allows that
@@ -270,22 +270,22 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
             // accept takes precedence
             if (accept != null) {
-                isXml = accept.toLowerCase(Locale.US).contains("xml");
-                isJson = accept.toLowerCase(Locale.US).contains("json");
+                isXml = accept.toLowerCase(Locale.ENGLISH).contains("xml");
+                isJson = accept.toLowerCase(Locale.ENGLISH).contains("json");
             }
             // fallback to content type if still undecided
             if (!isXml && !isJson) {
                 String contentType = ExchangeHelper.getContentType(exchange);
                 if (contentType != null) {
-                    isXml = contentType.toLowerCase(Locale.US).contains("xml");
-                    isJson = contentType.toLowerCase(Locale.US).contains("json");
+                    isXml = contentType.toLowerCase(Locale.ENGLISH).contains("xml");
+                    isJson = contentType.toLowerCase(Locale.ENGLISH).contains("json");
                 }
             }
             // if content type could not tell us if it was json or xml, then fallback to if the binding was configured with
             // that information in the consumes
             if (!isXml && !isJson) {
-                isXml = produces != null && produces.toLowerCase(Locale.US).contains("xml");
-                isJson = produces != null && produces.toLowerCase(Locale.US).contains("json");
+                isXml = produces != null && produces.toLowerCase(Locale.ENGLISH).contains("xml");
+                isJson = produces != null && produces.toLowerCase(Locale.ENGLISH).contains("json");
             }
 
             // only allow xml/json if the binding mode allows that

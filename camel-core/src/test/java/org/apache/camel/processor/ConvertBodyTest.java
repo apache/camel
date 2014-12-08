@@ -130,7 +130,7 @@ public class ConvertBodyTest extends ContextTestSupport {
     public void testConvertToStringCharsetFail() throws Exception {
 
         // does not work on AIX
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         boolean aix = osName.indexOf("aix") > -1;
         if (aix) {
             return;
