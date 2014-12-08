@@ -437,6 +437,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
             options.put("routeId", routeId);
 
+            // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description
+            // this allows end users to define general descriptions and override then per to/route or verb
+            String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
+            if (description == null) {
+                description = verb.getDescriptionText();
+            }
+            if (description == null) {
+                description = getDescriptionText();
+            }
+            if (description != null) {
+                options.put("description", description);
+            }
+
             if (!options.isEmpty()) {
                 String query;
                 try {

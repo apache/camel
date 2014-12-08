@@ -81,15 +81,15 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 rest("/say/hello/{name}")
-                    .get().to("direct:hello");
+                    .get().to("direct:hello").description("Calling direct route");
 
-                rest("/say/bye")
-                    .get().consumes("application/json")
+                rest("/say/bye").description("the bye rest service")
+                    .get().consumes("application/json").description("I am saying bye world")
                         .route().routeId("myRestRoute").transform().constant("Bye World").endRest()
                     .post()
                         .to("mock:update");
 
-                from("direct:hello")
+                from("direct:hello").description("The hello route")
                     .transform().simple("Hello ${header.name}");
             }
         };
