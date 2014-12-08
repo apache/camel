@@ -175,6 +175,10 @@ public class CryptoDataFormat implements DataFormat {
 
     private void inlineInitVector(OutputStream outputStream, byte[] iv) throws IOException {
         if (inline) {
+            if (iv == null) {
+                throw new IllegalStateException("Inlining cannot be performed, as no initialization vector was specified");
+            }
+
             DataOutputStream dout = new DataOutputStream(outputStream);
             dout.writeInt(iv.length);
             outputStream.write(iv);
@@ -251,7 +255,7 @@ public class CryptoDataFormat implements DataFormat {
      * encrypted ciphertext. When the payload is to be decrypted this
      * initialization vector will need to be read from the stream. Requires that
      * the formatter has been configured with an init vector that is valid for
-     * the give algorithm.
+     * the given algorithm.
      *
      * @param inline true if the initialization vector should be inlined in the stream.
      */
