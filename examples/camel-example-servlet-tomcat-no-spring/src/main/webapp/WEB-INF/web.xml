@@ -36,6 +36,14 @@
     <!-- note: instead of using a XML file we can also define the routes in Java code in a RouteBuilder class -->
     <param-value>classpath:camel-config.xml</param-value>
   </context-param>
+  <context-param>
+    <!-- define a lifecycle which could help user to setup the registry which could be use as a reference in camel route -->
+    <!-- If you use org.apache.camel.component.servletlistener.JndiCamelServletContextListener then the CamelContextLifecycle
+     must use the JndiRegistry as well. And likewise if the servlet is org.apache.camel.component.servletlistener.SimpleCamelServletContextListener 
+     then the CamelContextLifecycle must use the SimpleRegistry -->
+    <param-name>CamelContextLifecycle</param-name>
+    <param-value>org.apache.camel.example.servletlistener.MyLifecycle</param-value>
+  </context-param>
 
   <!-- the listener that kick-starts Camel -->
   <listener>
