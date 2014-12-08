@@ -33,13 +33,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 @RunWith(PaxExam.class)
 public class BlueprintTracerRefTest extends BlueprintTracerTest {
 
-    @Test
-    @Override
-    public void testTracer() throws Exception {
-        name = getClass().getName();
-
-        super.testTracer();
-    }
+    // implicitly inherit the test method from super
 
     @Configuration
     public static Option[] configure() throws Exception {

@@ -33,10 +33,10 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 @RunWith(PaxExam.class)
 public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
 
-    protected String name = getClass().getName();
-
     @Test
     public void testTracer() throws Exception {
+        final String name = getClass().getName();
+
         // start bundle
         getInstalledBundle(name).start();
 
