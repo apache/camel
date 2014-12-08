@@ -37,7 +37,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -1458,23 +1457,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (text != null && !text.startsWith("properties:")) {
             // No component, assume default tokens.
             if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
-
-                // try to lookup component, as we may be initializing CamelContext itself
-                Component existing = lookupPropertiesComponent();
-                if (existing != null) {
-                    if (existing instanceof PropertiesComponent) {
-                        pc = (PropertiesComponent) existing;
-                    } else {
-                        // properties component must be expected type
-                        throw new IllegalArgumentException("Found properties component of type: " + existing.getClass() + " instead of expected: " + PropertiesComponent.class);
-                    }
-                }
-
-                if (pc == null) {
-                    // create a default properties component to be used as there may be default values we can use
-                    log.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
-                    pc = getComponent("properties", PropertiesComponent.class);
-                }
+                // lookup existing properties component, or force create a new default component
+                pc = (PropertiesComponent) CamelContextHelper.lookupPropertiesComponent(this, true);
             }
 
             if (pc != null && text.contains(pc.getPrefixToken())) {
@@ -2111,7 +2095,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
         // due we use properties component for property placeholder resolution at runtime
-        Component existing = lookupPropertiesComponent();
+        Component existing = CamelContextHelper.lookupPropertiesComponent(this, false);
         if (existing != null) {
             // store reference to the existing properties component
             if (existing instanceof PropertiesComponent) {
@@ -3075,16 +3059,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.util.CamelContextHelper#lookupPropertiesComponent(org.apache.camel.CamelContext, boolean)}
+     */
+    @Deprecated
     protected Component lookupPropertiesComponent() {
-        // no existing properties component so lookup and add as component if possible
-        PropertiesComponent answer = (PropertiesComponent) hasComponent("properties");
-        if (answer == null) {
-            answer = getRegistry().lookupByNameAndType("properties", PropertiesComponent.class);
-            if (answer != null) {
-                addComponent("properties", answer);
-            }
-        }
-        return answer;
+        return CamelContextHelper.lookupPropertiesComponent(this, false);
     }
 
     public ShutdownStrategy getShutdownStrategy() {

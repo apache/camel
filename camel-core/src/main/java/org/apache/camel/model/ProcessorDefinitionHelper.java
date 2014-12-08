@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -524,6 +525,9 @@ public final class ProcessorDefinitionHelper {
                     String local = key.getLocalPart();
                     Object value = processorDefinition.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
+                        // enforce a properties component to be created if none existed
+                        CamelContextHelper.lookupPropertiesComponent(routeContext.getCamelContext(), true);
+
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
                         String prefixToken = routeContext.getCamelContext().getPropertyPrefixToken();
