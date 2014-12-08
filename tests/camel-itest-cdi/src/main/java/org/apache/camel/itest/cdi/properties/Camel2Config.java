@@ -30,4 +30,9 @@ public class Camel2Config implements PropertyFileConfig {
         return "camel2.properties";
     };
 
+    @Override
+    public boolean isOptional() {
+        return false;
+    }
+
 }
