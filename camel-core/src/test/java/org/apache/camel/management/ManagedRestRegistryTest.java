@@ -84,14 +84,13 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
                     .get().to("direct:hello");
 
                 rest("/say/bye")
-                    .get().consumes("application/json").to("direct:bye")
-                    .post().to("mock:update");
+                    .get().consumes("application/json")
+                        .route().routeId("myRestRoute").transform().constant("Bye World").endRest()
+                    .post()
+                        .to("mock:update");
 
                 from("direct:hello")
                     .transform().simple("Hello ${header.name}");
-
-                from("direct:bye")
-                    .transform().constant("Bye World");
             }
         };
     }
