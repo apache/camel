@@ -32,6 +32,7 @@
 
     <route>
       <from uri="direct:start"/>
+      <to uri="log:{{sys:os.name}}"/>
       <to uri="{{beer:FOO}}"/>
       <to uri="{{beer:BAR}}"/>
     </route>
