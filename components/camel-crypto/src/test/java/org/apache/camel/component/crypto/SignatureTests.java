@@ -37,6 +37,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,6 +55,10 @@ public class SignatureTests extends CamelTestSupport {
         JndiRegistry registry = super.createRegistry();
         KeyStore keystore = loadKeystore();
         Certificate cert = keystore.getCertificate("bob");
+        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setPassword("letmein");
+        keystoreParameters.setResource("./ks.keystore");
+        registry.bind("signatureParams", keystoreParameters);
         registry.bind("keystore", keystore);
         registry.bind("myPublicKey", cert.getPublicKey());
         registry.bind("myCert", cert);
@@ -130,6 +135,12 @@ public class SignatureTests extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: keystore
                 from("direct:keystore").to("crypto:sign://keystore?keystore=#keystore&alias=bob&password=letmein", "crypto:verify://keystore?keystore=#keystore&alias=bob", "mock:result");
+                // END SNIPPET: keystore
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: keystore
+                from("direct:keystoreParameters").to("crypto:sign://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein", "crypto:verify://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
                 // END SNIPPET: keystore
             }
         }, new RouteBuilder() {
@@ -241,6 +252,13 @@ public class SignatureTests extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testSetKeystoreParametersInRouteDefinition() throws Exception {
+        setupMock();
+        sendBody("direct:keystoreParameters", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
     @Test
     public void testSignatureHeaderInRouteDefinition() throws Exception {
         setupMock();

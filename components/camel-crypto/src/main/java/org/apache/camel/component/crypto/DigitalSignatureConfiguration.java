@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.crypto;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -26,6 +28,7 @@ import java.security.cert.Certificate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 
 
 public class DigitalSignatureConfiguration implements Cloneable, CamelContextAware {
@@ -296,6 +299,13 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      */
     public void setPassword(char[] password) {
         this.password = password;
+    }
+    
+    public void setKeyStoreParameters(KeyStoreParameters parameters) 
+        throws GeneralSecurityException, IOException {
+        if (parameters != null) {
+            this.keystore = parameters.createKeyStore();
+        }
     }
 
     /**
