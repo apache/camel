@@ -88,13 +88,19 @@ public class PropertiesComponent extends DefaultComponent {
     private Properties overrideProperties;
 
     public PropertiesComponent() {
+        // include out of the box functions
+        addFunction(new EnvPropertiesFunction());
+        addFunction(new SysPropertiesFunction());
+        addFunction(new ServicePropertiesFunction());
     }
     
     public PropertiesComponent(String location) {
+        this();
         setLocation(location);
     }
 
     public PropertiesComponent(String... locations) {
+        this();
         setLocations(locations);
     }
 
@@ -346,17 +352,11 @@ public class PropertiesComponent extends DefaultComponent {
         if (propertiesParser instanceof DefaultPropertiesParser) {
             ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
         }
-
-        // include out of the box functions
-        addFunction(new EnvPropertiesFunction());
-        addFunction(new SysPropertiesFunction());
-        addFunction(new ServicePropertiesFunction());
     }
 
     @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
-        functions.clear();
         super.doStop();
     }
 
