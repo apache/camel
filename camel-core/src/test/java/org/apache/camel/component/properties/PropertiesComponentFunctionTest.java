@@ -47,6 +47,7 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
+                        .to("log:{{sys:os.name}}")
                         .to("{{beer:FOO}}")
                         .to("{{beer:BAR}}");
             }

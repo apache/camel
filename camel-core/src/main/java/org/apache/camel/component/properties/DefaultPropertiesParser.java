@@ -106,6 +106,9 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Evaluated string
          */
         private String doParse(String input, Set<String> replacedPropertyKeys) {
+            if (input == null) {
+                return null;
+            }
             String answer = input;
             Property property;
             while ((property = readProperty(answer)) != null) {
@@ -217,7 +220,16 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                     if (key.startsWith(token)) {
                         String remainder = key.substring(token.length());
                         log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
-                        return function.apply(remainder);
+                        String value = function.apply(remainder);
+                        if (value == null) {
+                            throw new IllegalArgumentException("Property with key [" + key + "] using function [" + function.getName() + "]" +
+                                    " returned null value which is not allowed, from input: " + input);
+                        } else {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Property with key [{}] applied by function [{}] -> {}", new Object[]{key, function.getName(), value});
+                            }
+                            return value;
+                        }
                     }
                 }
             }
