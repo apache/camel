@@ -44,6 +44,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean ignoreJAXBElement;
     @XmlAttribute
+    private Boolean mustBeJAXBElement;
+    @XmlAttribute
     private Boolean filterNonXmlChars;
     @XmlAttribute
     private String encoding;
@@ -101,7 +103,15 @@ public class JaxbDataFormat extends DataFormatDefinition {
     public void setIgnoreJAXBElement(Boolean ignoreJAXBElement) {
         this.ignoreJAXBElement = ignoreJAXBElement;
     }
-    
+
+    public Boolean getMustBeJAXBElement() {
+        return mustBeJAXBElement;
+    }
+
+    public void setMustBeJAXBElement(Boolean mustBeJAXBElement) {
+        this.mustBeJAXBElement = mustBeJAXBElement;
+    }
+
     public void setFragment(Boolean fragment) {
         this.fragment = fragment;
     }
@@ -179,6 +189,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "ignoreJAXBElement", Boolean.FALSE);
         } else { // the default value is true
             setProperty(camelContext, dataFormat, "ignoreJAXBElement", Boolean.TRUE);
+        }
+        answer = ObjectHelper.toBoolean(getMustBeJAXBElement());
+        if (answer != null && answer) {
+            setProperty(camelContext, dataFormat, "mustBeJAXBElement", Boolean.TRUE);
+        } else { // the default value is false
+            setProperty(camelContext, dataFormat, "mustBeJAXBElement", Boolean.FALSE);
         }
         answer = ObjectHelper.toBoolean(getFilterNonXmlChars());
         if (answer != null && answer) {
