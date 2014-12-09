@@ -76,33 +76,32 @@ public class CachedOutputStream extends OutputStream {
         this.closedOnCompletion = closedOnCompletion;
         this.strategy = exchange.getContext().getStreamCachingStrategy();
         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
-        
-        // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                try {
-                    if (fileInputStreamCache != null) {
-                        fileInputStreamCache.close();
-                    }
-                    if (closedOnCompletion) {
+        if (closedOnCompletion) {
+            // add on completion so we can cleanup after the exchange is done such as deleting temporary files
+            exchange.addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    try {
+                        if (fileInputStreamCache != null) {
+                            fileInputStreamCache.close();
+                        }
                         close();
                         try {
                             cleanUpTempFile();
                         } catch (Exception e) {
                             LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
                         }
+                    } catch (Exception e) {
+                        LOG.warn("Error closing streams. This exception will be ignored.", e);
                     }
-                } catch (Exception e) {
-                    LOG.warn("Error closing streams. This exception will be ignored.", e);
                 }
-            }
-    
-            @Override
-            public String toString() {
-                return "OnCompletion[CachedOutputStream]";
-            }
-        });
+        
+                @Override
+                public String toString() {
+                    return "OnCompletion[CachedOutputStream]";
+                }
+            });
+        }
     }
 
     public void flush() throws IOException {
@@ -113,6 +112,9 @@ public class CachedOutputStream extends OutputStream {
         currentStream.close();
         // need to clean up the temp file this time
         if (!closedOnCompletion) {
+            if (fileInputStreamCache != null) {
+                fileInputStreamCache.close();
+            }
             try {
                 cleanUpTempFile();
             } catch (Exception e) {
