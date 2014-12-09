@@ -26,6 +26,8 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
  * Util methods to manage Cassandra in Unit tests
  */
 public class CassandraUnitUtils {
+    public static final String HOST = "localhost";
+    public static final String KEYSPACE = "camel_ks";
 
     private static CassandraCQLUnit cassandraCQLUnit;
     /**
@@ -33,13 +35,16 @@ public class CassandraUnitUtils {
      */
     public static CassandraCQLUnit cassandraCQLUnit() {
         if (cassandraCQLUnit == null) {
-            cassandraCQLUnit = cassandraCQLUnit(new ClassPathCQLDataSet("BasicDataSet.cql", "camel_ks"));
+            cassandraCQLUnit = cassandraCQLUnit("BasicDataSet.cql");
         }
         return cassandraCQLUnit;
     }
+    public static CassandraCQLUnit cassandraCQLUnit(String dataSetCql) {
+        return cassandraCQLUnit(new ClassPathCQLDataSet(dataSetCql, KEYSPACE));
+    }
 
     public static CassandraCQLUnit cassandraCQLUnit(CQLDataSet dataset) {
-        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml", "localhost", 9042);
+        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml", HOST, 9042);
     }
     /**
      * Start embedded Cassandra.
@@ -56,9 +61,9 @@ public class CassandraUnitUtils {
     }
     public static Session connectCassandra() {
         Cluster cluster = Cluster.builder()
-                .addContactPoint("localhost")
+                .addContactPoint(HOST)
                 .withClusterName("camel-cluster")
                 .build();
-        return cluster.connect("camel_ks");
+        return cluster.connect(KEYSPACE);
     }
 }

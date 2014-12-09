@@ -12,7 +12,7 @@ import org.apache.camel.util.EndpointHelper;
 
 /**
  * Represents the component that manages {@link CassandraQlEndpoint}. This
- * component is base on Datastax Java Driver for Cassandra.
+ * component is based on Datastax Java Driver for Cassandra.
  *
  * URI examples:
  * <ul>
