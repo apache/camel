@@ -83,7 +83,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
    
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
-    private boolean mustBeJAXBElement;
+    private boolean mustBeJAXBElement = true;
     private boolean filterNonXmlChars;
     private String encoding;
     private boolean fragment;
