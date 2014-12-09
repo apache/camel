@@ -170,9 +170,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
                 JAXBContext jc = JAXBContext.newInstance(clazz);
                 IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
             }
-            if (context.getRestConfiguration().getDataFormatProperties() != null) {
-                IntrospectionSupport.setProperties(context.getTypeConverter(), jaxb, context.getRestConfiguration().getDataFormatProperties());
-            }
             setAdditionalConfiguration(context, jaxb);
             context.addService(jaxb);
 
