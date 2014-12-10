@@ -116,7 +116,7 @@ public abstract class AbstractCamelController implements CamelController {
         return answer;
     }
 
-    public void resetRouteStats(String camelContextName) throws Exception{
+    public void resetRouteStats(String camelContextName) throws Exception {
         CamelContext context = this.getCamelContext(camelContextName);
         if (context == null) {
             return;
@@ -441,7 +441,7 @@ public abstract class AbstractCamelController implements CamelController {
         for (String label : labels) {
             List<Map<String, String>> components = listComponentsCatalog(label);
             if (!components.isEmpty()) {
-                Set<String> names = new LinkedHashSet<>();
+                Set<String> names = new LinkedHashSet<String>();
                 for (Map<String, String> info : components) {
                     String name = info.get("name");
                     if (name != null) {

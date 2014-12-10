@@ -63,6 +63,9 @@ public class EndpointExplainCommand extends AbstractContextCommand {
 
         for (Map<String, String> row : endpoints) {
             String json = camelController.explainEndpointAsJSon(context, row.get("uri"), verbose);
+            if (json == null) {
+                continue;
+            }
 
             out.println("Context:\t" + context);
 
