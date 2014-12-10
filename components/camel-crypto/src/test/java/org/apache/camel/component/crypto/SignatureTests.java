@@ -140,7 +140,8 @@ public class SignatureTests extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: keystore
-                from("direct:keystoreParameters").to("crypto:sign://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein", "crypto:verify://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
+                from("direct:keystoreParameters").to("crypto:sign://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein",
+                    "crypto:verify://keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
                 // END SNIPPET: keystore
             }
         }, new RouteBuilder() {
@@ -198,14 +199,14 @@ public class SignatureTests extends CamelTestSupport {
         sendBody("direct:algorithm", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA1() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha1", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testRSASHA256() throws Exception {
         setupMock();
@@ -258,7 +259,7 @@ public class SignatureTests extends CamelTestSupport {
         sendBody("direct:keystoreParameters", payload);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSignatureHeaderInRouteDefinition() throws Exception {
         setupMock();

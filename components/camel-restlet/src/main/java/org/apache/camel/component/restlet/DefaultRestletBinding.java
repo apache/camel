@@ -178,7 +178,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     } else {
                         // put the user stuff in the form
                         if (value instanceof Collection) {
-                            for (Object v: (Collection<?>) value) {
+                            for (Object v : (Collection<?>) value) {
                                 form.add(key, v.toString());
                             }
                         } else {
@@ -337,8 +337,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             if (mediaType != null && mediaType.equals(MediaType.APPLICATION_OCTET_STREAM)) {
                 exchange.getOut().setBody(response.getEntity().getStream());
             } else if (response.getEntity() instanceof Representation) {
-                Representation representationDecoded = new DecodeRepresentation(response.getEntity()); 
-                exchange.getOut().setBody(representationDecoded.getText());    
+                Representation representationDecoded = new DecodeRepresentation(response.getEntity());
+                exchange.getOut().setBody(representationDecoded.getText());
             } else {
                 // get content text by default
                 String text = response.getEntity().getText();

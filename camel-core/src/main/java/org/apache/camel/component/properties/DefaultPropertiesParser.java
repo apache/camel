@@ -222,8 +222,8 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                         log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
                         String value = function.apply(remainder);
                         if (value == null) {
-                            throw new IllegalArgumentException("Property with key [" + key + "] using function [" + function.getName() + "]" +
-                                    " returned null value which is not allowed, from input: " + input);
+                            throw new IllegalArgumentException("Property with key [" + key + "] using function [" + function.getName() + "]"
+                                    + " returned null value which is not allowed, from input: " + input);
                         } else {
                             if (log.isDebugEnabled()) {
                                 log.debug("Property with key [{}] applied by function [{}] -> {}", new Object[]{key, function.getName(), value});
