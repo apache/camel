@@ -35,6 +35,9 @@ public final class ProcessorStatDump {
     private Integer index;
 
     @XmlAttribute
+    private String state;
+
+    @XmlAttribute
     private Long exchangesCompleted;
 
     @XmlAttribute
@@ -108,6 +111,14 @@ public final class ProcessorStatDump {
 
     public void setIndex(Integer index) {
         this.index = index;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Long getExchangesCompleted() {

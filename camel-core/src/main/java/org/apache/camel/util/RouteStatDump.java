@@ -36,6 +36,9 @@ public final class RouteStatDump {
     private String id;
 
     @XmlAttribute
+    private String state;
+
+    @XmlAttribute
     private Long exchangesCompleted;
 
     @XmlAttribute
@@ -110,6 +113,14 @@ public final class RouteStatDump {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Long getExchangesCompleted() {

@@ -370,7 +370,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         StringBuilder sb = new StringBuilder();
-        sb.append("<camelContextStat").append(String.format(" id=\"%s\"", getCamelId()));
+        sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
@@ -397,7 +397,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             sb.append("  <routeStats>\n");
             for (ObjectName on : routes) {
                 ManagedRouteMBean route = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedRouteMBean.class, true);
-                sb.append("    <routeStat").append(String.format(" id=\"%s\"", route.getRouteId()));
+                sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
                 sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
@@ -408,7 +408,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     for (ManagedProcessorMBean processor : processors) {
                         // the processor must belong to this route
                         if (route.getRouteId().equals(processor.getRouteId())) {
-                            sb.append("        <processorStat").append(String.format(" id=\"%s\"", processor.getProcessorId()));
+                            sb.append("        <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
                             // use substring as we only want the attributes
                             sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
                         }
