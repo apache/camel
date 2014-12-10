@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
@@ -38,6 +41,7 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -104,16 +108,6 @@ public abstract class AbstractCamelController implements CamelController {
         return routes;
     }
 
-    public Route getRoute(String routeId, String camelContextName) {
-        List<Route> routes = this.getRoutes(camelContextName);
-        for (Route route : routes) {
-            if (route.getId().equals(routeId)) {
-                return route;
-            }
-        }
-        return null;
-    }
-
     @SuppressWarnings("deprecation")
     public String getRouteModelAsXml(String routeId, String camelContextName) {
         CamelContext context = this.getCamelContext(camelContextName);
@@ -132,6 +126,36 @@ public abstract class AbstractCamelController implements CamelController {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         return xml;
+    }
+
+    @Override
+    public String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) {
+        CamelContext context = this.getCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        try {
+            ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+            if (agent != null) {
+                MBeanServer mBeanServer = agent.getMBeanServer();
+                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);
+                Iterator<ObjectName> iterator = set.iterator();
+                if (iterator.hasNext()) {
+                    ObjectName routeMBean = iterator.next();
+
+                    // the route must be part of the camel context
+                    String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                    if (camelId != null && camelId.equals(camelContextName)) {
+                        String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
+                        return xml;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return null;
     }
 
     @SuppressWarnings("deprecation")

@@ -65,15 +65,6 @@ public interface CamelController {
     List<Route> getRoutes(String camelContextName, String filter);
 
     /**
-     * Return the route with the given route ID.
-     *
-     * @param routeId          the route ID.
-     * @param camelContextName the Camel context name.
-     * @return the route.
-     */
-    Route getRoute(String routeId, String camelContextName);
-
-    /**
      * Return the definition of a route as XML identified by a ID and a Camel context.
      *
      * @param routeId          the route ID.
@@ -81,6 +72,17 @@ public interface CamelController {
      * @return the route model as XML
      */
     String getRouteModelAsXml(String routeId, String camelContextName);
+
+    /**
+     * Returns detailed route statistics as XML identified by a ID and a Camel context.
+     *
+     * @param routeId           the route ID.
+     * @param camelContextName  the Camel context.
+     * @param fullStats         whether to include verbose stats
+     * @param includeProcessors whether to embed per processor stats from the route
+     * @return the route statistics as XML
+     */
+    String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors);
 
     /**
      * Return the endpoints

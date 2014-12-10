@@ -17,23 +17,23 @@
 package org.apache.camel.commands;
 
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.util.RouteStatDump;
 
 /**
  * Command to display detailed information about a Camel route.
  */
 public class RouteInfoCommand extends AbstractRouteCommand {
 
+    public static final String XML_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    public static final String OUTPUT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private StringEscape stringEscape;
 
     public RouteInfoCommand(String route, String context) {
@@ -52,89 +52,57 @@ public class RouteInfoCommand extends AbstractRouteCommand {
         out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Route " + camelRoute.getId() + "\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tCamel Context: " + camelRoute.getRouteContext().getCamelContext().getName()));
         out.println("");
-        out.println(stringEscape.unescapeJava("\u001B[1mProperties\u001B[0m"));
-        for (Map.Entry<String, Object> entry : camelRoute.getProperties().entrySet()) {
-            out.println(stringEscape.unescapeJava("\t" + entry.getKey() + " = " + entry.getValue()));
-        }
-        out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
-        if (camelContext != null) {
-            ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
-            if (agent != null) {
-                MBeanServer mBeanServer = agent.getMBeanServer();
-                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + camelRoute.getId() + "\",*"), null);
-                Iterator<ObjectName> iterator = set.iterator();
-                if (iterator.hasNext()) {
-                    ObjectName routeMBean = iterator.next();
 
-                    // the route must be part of the camel context
-                    String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
-                    if (camelId != null && camelId.equals(camelContext.getName())) {
-                        Integer inflightExchange = (Integer) mBeanServer.getAttribute(routeMBean, "InflightExchanges");
-                        out.println(stringEscape.unescapeJava("\tInflight Exchanges: " + inflightExchange));
-                        Long exchangesTotal = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesTotal");
-                        out.println(stringEscape.unescapeJava("\tExchanges Total: " + exchangesTotal));
-                        Long exchangesCompleted = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesCompleted");
-                        out.println(stringEscape.unescapeJava("\tExchanges Completed: " + exchangesCompleted));
-                        Long exchangesFailed = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesFailed");
-                        out.println(stringEscape.unescapeJava("\tExchanges Failed: " + exchangesFailed));
-                        Long minProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MinProcessingTime");
-                        out.println(stringEscape.unescapeJava("\tMin Processing Time: " + minProcessingTime + " ms"));
-                        Long maxProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MaxProcessingTime");
-                        out.println(stringEscape.unescapeJava("\tMax Processing Time: " + maxProcessingTime + " ms"));
-                        Long meanProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MeanProcessingTime");
-                        out.println(stringEscape.unescapeJava("\tMean Processing Time: " + meanProcessingTime + " ms"));
-                        Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
-                        out.println(stringEscape.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + " ms"));
-                        Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
-                        out.println(stringEscape.unescapeJava("\tLast Processing Time: " + lastProcessingTime + " ms"));
-                        Long deltaProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "DeltaProcessingTime");
-                        out.println(stringEscape.unescapeJava("\tDelta Processing Time: " + deltaProcessingTime + " ms"));
-                        String load01 = (String) mBeanServer.getAttribute(routeMBean, "Load01");
-                        String load05 = (String) mBeanServer.getAttribute(routeMBean, "Load05");
-                        String load15 = (String) mBeanServer.getAttribute(routeMBean, "Load15");
-                        out.println(stringEscape.unescapeJava("\tLoad Avg: " + load01 + ", " + load05 + ", " + load15));
+        String xml = camelController.getRouteStatsAsXml(camelRoute.getId(), camelContext.getName(), true, false);
+        if (xml != null) {
+            JAXBContext context = JAXBContext.newInstance(RouteStatDump.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
 
-                        // Test for null to see if a any exchanges have been processed first to avoid NPE
-                        Object resetTimestampObj = mBeanServer.getAttribute(routeMBean, "ResetTimestamp");
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        if (resetTimestampObj == null) {
-                            // Print an empty value for scripting
-                            out.println(stringEscape.unescapeJava("\tReset Statistics Date:"));
-                        } else {
-                            Date firstExchangeTimestamp = (Date) resetTimestampObj;
-                            out.println(stringEscape.unescapeJava("\tReset Statistics Date: " + format.format(firstExchangeTimestamp)));
-                        }
+            RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
-                        // Test for null to see if a any exchanges have been processed first to avoid NPE
-                        Object firstExchangeTimestampObj = mBeanServer.getAttribute(routeMBean, "FirstExchangeCompletedTimestamp");
-                        if (firstExchangeTimestampObj == null) {
-                            // Print an empty value for scripting
-                            out.println(stringEscape.unescapeJava("\tFirst Exchange Date:"));
-                        } else {
-                            Date firstExchangeTimestamp = (Date) firstExchangeTimestampObj;
-                            out.println(stringEscape.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
-                        }
+            out.println(stringEscape.unescapeJava("\tExchanges Total: " + route.getExchangesCompleted() + route.getExchangesFailed()));
+            out.println(stringEscape.unescapeJava("\tExchanges Completed: " + route.getExchangesCompleted()));
+            out.println(stringEscape.unescapeJava("\tExchanges Failed: " + route.getExchangesFailed()));
+            out.println(stringEscape.unescapeJava("\tMin Processing Time: " + route.getMinProcessingTime() + " ms"));
+            out.println(stringEscape.unescapeJava("\tMax Processing Time: " + route.getMaxProcessingTime() + " ms"));
+            out.println(stringEscape.unescapeJava("\tMean Processing Time: " + route.getMeanProcessingTime() + " ms"));
+            out.println(stringEscape.unescapeJava("\tTotal Processing Time: " + route.getTotalProcessingTime() + " ms"));
+            out.println(stringEscape.unescapeJava("\tLast Processing Time: " + route.getLastProcessingTime() + " ms"));
+            out.println(stringEscape.unescapeJava("\tDelta Processing Time: " + route.getDeltaProcessingTime() + " ms"));
 
-                        // Again, check for null to avoid NPE
-                        Object lastExchangeCompletedTimestampObj = mBeanServer.getAttribute(routeMBean, "LastExchangeCompletedTimestamp");
-                        if (lastExchangeCompletedTimestampObj == null) {
-                            // Print an empty value for scripting
-                            out.println(stringEscape.unescapeJava("\tLast Exchange Completed Date:"));
-                        } else {
-                            Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
-                            out.println(stringEscape.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
-                        }
-                    }
-                }
+            // Test for null to see if a any exchanges have been processed first to avoid NPE
+            if (route.getResetTimestamp() == null) {
+                // Print an empty value for scripting
+                out.println(stringEscape.unescapeJava("\tReset Statistics Date:"));
             } else {
-                out.println("");
-                out.println(stringEscape.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the Camel context"));
-                out.println(stringEscape.unescapeJava("In consequence, some statistics are not available.\u001B[0m"));
+                Date date = new SimpleDateFormat(XML_TIMESTAMP_FORMAT).parse(route.getResetTimestamp());
+                String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
+                out.println(stringEscape.unescapeJava("\tReset Statistics Date: " + text));
+            }
+
+            // Test for null to see if a any exchanges have been processed first to avoid NPE
+            if (route.getFirstExchangeCompletedTimestamp() == null) {
+                // Print an empty value for scripting
+                out.println(stringEscape.unescapeJava("\tFirst Exchange Date:"));
+            } else {
+                Date date = new SimpleDateFormat(XML_TIMESTAMP_FORMAT).parse(route.getFirstExchangeCompletedTimestamp());
+                String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
+                out.println(stringEscape.unescapeJava("\tFirst Exchange Date: " + text));
+            }
+
+            // Test for null to see if a any exchanges have been processed first to avoid NPE
+            if (route.getLastExchangeCompletedTimestamp() == null) {
+                // Print an empty value for scripting
+                out.println(stringEscape.unescapeJava("\tLast Exchange Date:"));
+            } else {
+                Date date = new SimpleDateFormat(XML_TIMESTAMP_FORMAT).parse(route.getLastExchangeCompletedTimestamp());
+                String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
+                out.println(stringEscape.unescapeJava("\tLast Exchange Date: " + text));
             }
 
             out.println("");
-            String xml = camelController.getRouteModelAsXml(camelRoute.getId(), camelRoute.getRouteContext().getCamelContext().getName());
+            xml = camelController.getRouteModelAsXml(camelRoute.getId(), camelRoute.getRouteContext().getCamelContext().getName());
             if (xml != null) {
                 out.println(stringEscape.unescapeJava("\u001B[1mDefinition\u001B[0m"));
                 out.println(stringEscape.unescapeJava(xml));
