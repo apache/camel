@@ -36,6 +36,7 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
     private static final String URI_TEMPLATE_LABEL = "Uri Template";
     private static final String METHOD_COLUMN_LABEL = "Method";
     private static final String STATE_COLUMN_LABEL = "State";
+    private static final String ROUTE_COLUMN_LABEL = "Route";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final String DEFAULT_FIELD_PREAMBLE = " ";
@@ -71,8 +72,8 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
 
         if (services.size() > 0) {
             if (verbose) {
-                out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URL_COLUMN_NAME, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL));
-                out.println(String.format(headerFormat, "-------", "---", "---------", "------------", "------", "-----"));
+                out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URL_COLUMN_NAME, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL, ROUTE_COLUMN_LABEL));
+                out.println(String.format(headerFormat, "-------", "---", "---------", "------------", "------", "-----", "-----"));
             } else {
                 out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL));
                 out.println(String.format(headerFormat, "-------", "---------", "------------", "------", "-----"));
@@ -96,8 +97,9 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
                     String uriTemplate = service.getUriTemplate() != null ? service.getUriTemplate() : "";
                     String method = service.getMethod();
                     String state = service.getState();
+                    String route = service.getRouteId();
                     if (verbose) {
-                        out.println(String.format(rowFormat, contextId, uri, basePath, uriTemplate, method, state));
+                        out.println(String.format(rowFormat, contextId, uri, basePath, uriTemplate, method, state, route));
                     } else {
                         out.println(String.format(rowFormat, contextId, basePath, uriTemplate, method, state));
                     }
@@ -115,6 +117,7 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         int maxUriTemplateLen = 0;
         int maxMethodLen = 0;
         int maxStatusLen = 0;
+        int maxRouteLen = 0;
 
         for (Map.Entry<String, List<RestRegistry.RestService>> entry : services.entrySet()) {
             String contextName = entry.getKey();
@@ -141,6 +144,9 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
 
                 String status = service.getState();
                 maxStatusLen = Math.max(maxStatusLen, status == null ? 0 : status.length());
+
+                String route = service.getRouteId();
+                maxRouteLen = Math.max(maxRouteLen, route == null ? 0 : route.length());
             }
         }
 
@@ -151,6 +157,7 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         retval.put(URI_TEMPLATE_LABEL, maxUriTemplateLen);
         retval.put(METHOD_COLUMN_LABEL, maxMethodLen);
         retval.put(STATE_COLUMN_LABEL, maxStatusLen);
+        retval.put(ROUTE_COLUMN_LABEL, maxRouteLen);
 
         return retval;
     }
@@ -175,11 +182,13 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         int uriTemplateLen = Math.min(columnWidths.get(URI_TEMPLATE_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int methodLen = Math.min(columnWidths.get(METHOD_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int statusLen = Math.min(columnWidths.get(STATE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        int routeLen = Math.min(columnWidths.get(ROUTE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         contextLen = Math.max(MIN_COLUMN_WIDTH, contextLen);
         basePathLen = Math.max(MIN_COLUMN_WIDTH, basePathLen);
         uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
         uriTemplateLen = Math.max(MIN_COLUMN_WIDTH, uriTemplateLen);
         methodLen = Math.max(MIN_COLUMN_WIDTH, methodLen);
+        routeLen = Math.max(MIN_COLUMN_WIDTH, routeLen);
 
         // last row does not have min width
 
@@ -192,6 +201,7 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         retval.append(fieldPreamble).append("%-").append(uriTemplateLen).append('.').append(uriTemplateLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(methodLen).append('.').append(methodLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(statusLen).append('.').append(statusLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%-").append(routeLen).append('.').append(routeLen).append('s').append(fieldPostamble).append(' ');
 
         return retval.toString();
     }
