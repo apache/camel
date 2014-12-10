@@ -23,8 +23,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.RestRegistry;
 
 /**
@@ -63,6 +61,13 @@ public interface CamelController {
      * @return the list of the Camel routes.
      */
     List<Route> getRoutes(String camelContextName, String filter);
+
+    /**
+     * Reset all the route stats for the given Camel context
+     *
+     * @param camelContextName the Camel context.
+     */
+    void resetRouteStats(String camelContextName);
 
     /**
      * Return the definition of a route as XML identified by a ID and a Camel context.

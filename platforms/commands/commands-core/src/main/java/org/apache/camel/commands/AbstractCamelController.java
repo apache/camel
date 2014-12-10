@@ -108,6 +108,32 @@ public abstract class AbstractCamelController implements CamelController {
         return routes;
     }
 
+    public void resetRouteStats(String camelContextName) {
+        CamelContext context = this.getCamelContext(camelContextName);
+        if (context == null) {
+            return;
+        }
+
+        try {
+            ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+            if (agent != null) {
+                MBeanServer mBeanServer = agent.getMBeanServer();
+
+                // reset route mbeans
+                ObjectName query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=routes,*");
+                Set<ObjectName> set = mBeanServer.queryNames(query, null);
+                for (ObjectName routeMBean : set) {
+                    String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                    if (camelId != null && camelId.equals(context.getName())) {
+                        mBeanServer.invoke(routeMBean, "reset", new Object[]{true}, new String[]{"boolean"});
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public String getRouteModelAsXml(String routeId, String camelContextName) {
         CamelContext context = this.getCamelContext(camelContextName);

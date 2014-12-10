@@ -24,7 +24,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 import org.apache.camel.util.RouteStatDump;
 
 /**
@@ -48,13 +47,13 @@ public class RouteInfoCommand extends AbstractRouteCommand {
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, Route camelRoute, PrintStream out, PrintStream err) throws Exception {
-        out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Route " + camelRoute.getId() + "\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tCamel Context: " + camelRoute.getRouteContext().getCamelContext().getName()));
+    public void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception {
+        out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Route " + routeId + "\u001B[0m"));
+        out.println(stringEscape.unescapeJava("\tCamel Context: " + camelContext.getName()));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
 
-        String xml = camelController.getRouteStatsAsXml(camelRoute.getId(), camelContext.getName(), true, false);
+        String xml = camelController.getRouteStatsAsXml(routeId, camelContext.getName(), true, false);
         if (xml != null) {
             JAXBContext context = JAXBContext.newInstance(RouteStatDump.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -103,7 +102,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             }
 
             out.println("");
-            xml = camelController.getRouteModelAsXml(camelRoute.getId(), camelRoute.getRouteContext().getCamelContext().getName());
+            xml = camelController.getRouteModelAsXml(routeId, camelContext.getName());
             if (xml != null) {
                 out.println(stringEscape.unescapeJava("\u001B[1mDefinition\u001B[0m"));
                 out.println(stringEscape.unescapeJava(xml));

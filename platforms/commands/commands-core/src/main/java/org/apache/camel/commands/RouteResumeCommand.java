@@ -31,7 +31,7 @@ public class RouteResumeCommand extends AbstractRouteCommand {
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, Route camelRoute, PrintStream out, PrintStream err) throws Exception {
-        camelContext.resumeRoute(camelRoute.getId());
+    public void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception {
+        camelContext.resumeRoute(routeId);
     }
 }

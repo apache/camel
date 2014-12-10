@@ -24,7 +24,7 @@ public class RouteResetStats extends AbstractRouteCommand {
 
     @Override
     protected Object doExecute() throws Exception {
-        RouteResetStatsCommand command = new RouteResetStatsCommand(route, context);
+        RouteResetStatsCommand command = new RouteResetStatsCommand(context);
         return command.execute(camelController, System.out, System.err);
     }
 

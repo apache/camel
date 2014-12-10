@@ -17,38 +17,21 @@
 package org.apache.camel.commands;
 
 import java.io.PrintStream;
-import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.spi.ManagementAgent;
 
 /**
  * Command to reset route stats.
  */
-public class RouteResetStatsCommand extends AbstractRouteCommand {
+public class RouteResetStatsCommand extends AbstractContextCommand {
 
-    public RouteResetStatsCommand(String route, String context) {
-        super(route, context);
+    public RouteResetStatsCommand(String context) {
+        super(context);
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, Route camelRoute, PrintStream out, PrintStream err) throws Exception {
-        ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
-        if (agent != null) {
-            MBeanServer mBeanServer = agent.getMBeanServer();
-
-            // reset route mbeans
-            ObjectName query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=routes,*");
-            Set<ObjectName> set = mBeanServer.queryNames(query, null);
-            for (ObjectName routeMBean : set) {
-                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
-                if (camelId != null && camelId.equals(camelContext.getName())) {
-                    mBeanServer.invoke(routeMBean, "reset", new Object[]{true}, new String[]{"boolean"});
-                }
-            }
-        }
+    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
+        camelController.resetRouteStats(camelContext.getName());
+        return null;
     }
 }

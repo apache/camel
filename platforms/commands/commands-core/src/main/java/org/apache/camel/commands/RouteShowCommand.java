@@ -19,7 +19,6 @@ package org.apache.camel.commands;
 import java.io.PrintStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 
 /**
  * Command to show the route marshaled in XML.
@@ -31,10 +30,10 @@ public class RouteShowCommand extends AbstractRouteCommand {
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, Route camelRoute, PrintStream out, PrintStream err) throws Exception {
-        String xml = camelController.getRouteModelAsXml(camelRoute.getId(), camelRoute.getRouteContext().getCamelContext().getName());
+    public void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception {
+        String xml = camelController.getRouteModelAsXml(routeId, camelContext.getName());
         if (xml == null) {
-            err.println("Definition of route " + camelRoute.getId() + " not found.");
+            err.println("Definition of route " + routeId + " not found.");
         }
         System.out.println(xml);
     }
