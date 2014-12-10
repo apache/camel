@@ -26,9 +26,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Attachments;
 import org.apache.camel.Body;
@@ -296,18 +298,24 @@ public class BeanInfo {
 
         LOG.trace("Introspecting class: {}", clazz);
 
-        // if the class is not public then fallback and use interface methods if possible
-        // this allow Camel to invoke private beans which implements interfaces
-        List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
-        if (!Modifier.isPublic(clazz.getModifiers())) {
-            LOG.trace("Preferring interface methods as class: {} is not public accessible", clazz);
-            List<Method> interfaceMethods = getInterfaceMethods(clazz);
-            
-            // still keep non-accessible class methods to provide more specific Exception if method is non-accessible
-            interfaceMethods.addAll(methods);
-            methods = interfaceMethods;
+        // favor interface methods, and then other declared methods which does not override the existing methods
+        List<Method> interfaceMethods = getInterfaceMethods(clazz);
+        Set<Method> overrides = new HashSet<Method>();
+        Set<Method> extraMethods = new HashSet<Method>(Arrays.asList(clazz.getDeclaredMethods()));
+        for (Method target : extraMethods) {
+            for (Method interfaceMethod : interfaceMethods) {
+                if (ObjectHelper.isOverridingMethod(interfaceMethod, target, false)) {
+                    overrides.add(target);
+                }
+            }
         }
-        
+        // remove all the overrides methods
+        extraMethods.removeAll(overrides);
+
+        List<Method> methods = interfaceMethods;
+        methods.addAll(extraMethods);
+
+        // now introspect the methods and filter non valid methods
         for (Method method : methods) {
             boolean valid = isValidMethod(clazz, method);
             LOG.trace("Method: {} is valid: {}", method, valid);
@@ -382,6 +390,16 @@ public class BeanInfo {
      */
     public MethodInfo getMethodInfo(Method method) {
         MethodInfo answer = methodMap.get(method);
+        if (answer == null) {
+            // maybe the method overrides, and the method map keeps info of the source override we can use
+            for (Method source : methodMap.keySet()) {
+                if (ObjectHelper.isOverridingMethod(source, method, false)) {
+                    answer = methodMap.get(source);
+                    break;
+                }
+            }
+        }
+
         if (answer == null) {
             // maybe the method is defined on a base class?
             if (type != Object.class) {
@@ -875,10 +893,17 @@ public class BeanInfo {
     
     private static List<Method> getInterfaceMethods(Class<?> clazz) {
         final List<Method> answer = new ArrayList<Method>();
-        for (Class<?> interfaceClazz : clazz.getInterfaces()) {
-            for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
-                answer.add(interfaceMethod);
+
+        while (clazz != null && !clazz.equals(Object.class)) {
+            for (Class<?> interfaceClazz : clazz.getInterfaces()) {
+                for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
+                    // must be a public method
+                    if (Modifier.isPublic(interfaceMethod.getModifiers())) {
+                        answer.add(interfaceMethod);
+                    }
+                }
             }
+            clazz = clazz.getSuperclass();
         }
 
         return answer;

@@ -1094,22 +1094,54 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target) {
-        if (source.getName().equals(target.getName())
-                && source.getReturnType().equals(target.getReturnType()) 
-                && source.getParameterTypes().length == target.getParameterTypes().length) {
+        return isOverridingMethod(source, target, true);
+    }
 
-            // test if parameter types is the same as well
-            for (int i = 0; i < source.getParameterTypes().length; i++) {
+    /**
+     * Tests whether the target method overrides the source method.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param source  the source method
+     * @param target  the target method
+     * @param exact   <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types should be assignable
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+        if (!source.getName().equals(target.getName())) {
+            return false;
+        }
+
+        if (exact) {
+            if (!source.getReturnType().equals(target.getReturnType())) {
+                return false;
+            }
+        } else {
+            if (!source.getReturnType().isAssignableFrom(target.getReturnType())) {
+                return false;
+            }
+        }
+
+        // must have same number of parameter types
+        if (source.getParameterTypes().length != target.getParameterTypes().length) {
+            return false;
+        }
+
+        // test if parameter types is the same as well
+        for (int i = 0; i < source.getParameterTypes().length; i++) {
+            if (exact) {
                 if (!(source.getParameterTypes()[i].equals(target.getParameterTypes()[i]))) {
                     return false;
                 }
+            } else {
+                if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
+                    return false;
+                }
             }
-
-            // the have same name, return type and parameter list, so its overriding
-            return true;
         }
 
-        return false;
+        // the have same name, return type and parameter list, so its overriding
+        return true;
     }
 
     /**
