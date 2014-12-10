@@ -66,6 +66,9 @@ public final class RouteStatDump {
     private Long meanProcessingTime;
 
     @XmlAttribute
+    private Long exchangesInflight;
+
+    @XmlAttribute
     private Long selfProcessingTime;
 
     @XmlAttribute
@@ -195,6 +198,14 @@ public final class RouteStatDump {
 
     public void setSelfProcessingTime(Long selfProcessingTime) {
         this.selfProcessingTime = selfProcessingTime;
+    }
+
+    public Long getExchangesInflight() {
+        return exchangesInflight;
+    }
+
+    public void setExchangesInflight(Long exchangesInflight) {
+        this.exchangesInflight = exchangesInflight;
     }
 
     public String getResetTimestamp() {

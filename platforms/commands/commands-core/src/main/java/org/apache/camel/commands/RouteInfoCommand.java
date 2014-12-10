@@ -64,6 +64,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             out.println(stringEscape.unescapeJava("\tExchanges Total: " + route.getExchangesCompleted() + route.getExchangesFailed()));
             out.println(stringEscape.unescapeJava("\tExchanges Completed: " + route.getExchangesCompleted()));
             out.println(stringEscape.unescapeJava("\tExchanges Failed: " + route.getExchangesFailed()));
+            out.println(stringEscape.unescapeJava("\tExchanges Inflight: " + route.getExchangesInflight()));
             out.println(stringEscape.unescapeJava("\tMin Processing Time: " + route.getMinProcessingTime() + " ms"));
             out.println(stringEscape.unescapeJava("\tMax Processing Time: " + route.getMaxProcessingTime() + " ms"));
             out.println(stringEscape.unescapeJava("\tMean Processing Time: " + route.getMeanProcessingTime() + " ms"));

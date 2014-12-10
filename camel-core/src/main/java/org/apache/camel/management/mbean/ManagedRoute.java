@@ -323,10 +323,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             routeSelfTime = 0;
         }
 
+        int inflight = context.getInflightRepository().size(getRouteId());
+
         StringBuilder answer = new StringBuilder();
         answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
+        answer.append(" exchangesInflight=\"").append(inflight).append("\"");
         answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
         answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
