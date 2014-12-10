@@ -91,12 +91,12 @@ public interface CamelController {
     List<Endpoint> getEndpoints(String camelContextName);
 
     /**
-     * Return the definition of the REST services for the given Camel context.
+     * Return the definition of the REST services as XML for the given Camel context.
      *
      * @param camelContextName the Camel context.
-     * @return the <code>RouteDefinition</code>.
+     * @return the REST model as xml
      */
-    List<RestDefinition> getRestDefinitions(String camelContextName);
+    String getRestModelAsXml(String camelContextName);
 
     /**
      * Return the REST services

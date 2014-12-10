@@ -17,12 +17,8 @@
 package org.apache.camel.commands;
 
 import java.io.PrintStream;
-import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 
 /**
  * Command to show the REST marshaled in XML.
@@ -35,15 +31,12 @@ public class RestShowCommand extends AbstractContextCommand {
 
     @Override
     protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        List<RestDefinition> rests = camelController.getRestDefinitions(context);
-        if (rests == null || rests.isEmpty()) {
+        String xml = camelController.getRestModelAsXml(context);
+        if (xml == null) {
             out.println("There are no REST services in CamelContext with name: " + context);
             return null;
         }
-        // use a routes definition to dump the rests
-        RestsDefinition def = new RestsDefinition();
-        def.setRests(rests);
-        out.println(ModelHelper.dumpModelAsXml(def));
+        out.println(xml);
         return null;
     }
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -33,10 +34,13 @@ import org.apache.camel.Route;
 import org.apache.camel.catalog.CamelComponentCatalog;
 import org.apache.camel.catalog.DefaultCamelComponentCatalog;
 import org.apache.camel.commands.internal.RegexUtil;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Abstract {@link org.apache.camel.commands.CamelController} that implementators should extend.
@@ -120,12 +124,26 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @SuppressWarnings("deprecation")
-    public List<RestDefinition> getRestDefinitions(String camelContextName) {
+    public String getRestModelAsXml(String camelContextName) {
         CamelContext context = this.getCamelContext(camelContextName);
         if (context == null) {
             return null;
         }
-        return context.getRestDefinitions();
+
+        List<RestDefinition> rests = context.getRestDefinitions();
+        if (rests == null || rests.isEmpty()) {
+            return null;
+        }
+        // use a rests definition to dump the rests
+        RestsDefinition def = new RestsDefinition();
+        def.setRests(rests);
+        String xml;
+        try {
+            xml = ModelHelper.dumpModelAsXml(def);
+        } catch (JAXBException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return xml;
     }
 
     public List<Endpoint> getEndpoints(String camelContextName) {
