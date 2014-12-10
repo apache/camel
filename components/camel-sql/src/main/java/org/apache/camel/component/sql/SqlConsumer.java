@@ -153,7 +153,11 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     protected Exchange createExchange(Object data) {
         final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
         Message msg = exchange.getIn();
-        msg.setBody(data);
+        if (getEndpoint().getOutputHeader() != null) {
+            msg.setHeader(getEndpoint().getOutputHeader(), data);
+        } else {
+            msg.setBody(data);
+        }
         return exchange;
     }
 

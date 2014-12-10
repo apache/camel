@@ -132,6 +132,9 @@ public class SqlProducer extends DefaultProducer {
                             // for noop=true we still want to enrich with the row count header
                             if (getEndpoint().isNoop()) {
                                 exchange.getOut().setBody(exchange.getIn().getBody());
+                            } else if (getEndpoint().getOutputHeader() != null) {
+                                exchange.getOut().setBody(exchange.getIn().getBody());
+                                exchange.getOut().setHeader(getEndpoint().getOutputHeader(), data);
                             } else {
                                 exchange.getOut().setBody(data);
                             }
@@ -142,6 +145,9 @@ public class SqlProducer extends DefaultProducer {
                                 // for noop=true we still want to enrich with the row count header
                                 if (getEndpoint().isNoop()) {
                                     exchange.getOut().setBody(exchange.getIn().getBody());
+                                } else if (getEndpoint().getOutputHeader() != null) {
+                                    exchange.getOut().setBody(exchange.getIn().getBody());
+                                    exchange.getOut().setHeader(getEndpoint().getOutputHeader(), data);
                                 } else {
                                     exchange.getOut().setBody(data);
                                 }
