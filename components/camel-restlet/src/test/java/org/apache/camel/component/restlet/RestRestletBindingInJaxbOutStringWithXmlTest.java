@@ -52,7 +52,7 @@ public class RestRestletBindingInJaxbOutStringWithXmlTest extends RestletTestSup
             public void configure() throws Exception {
                 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto)
                         // turn off must be JAXB as we create the output type ourselves as xml in a String type
-                        .dataFormatProperty("mustBeJAXBElement", "false");
+                        .dataFormatProperty("xml.out.mustBeJAXBElement", "false");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
