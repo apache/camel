@@ -33,24 +33,27 @@ public interface CamelController {
      * Get the list of Camel context.
      *
      * @return the list of Camel contexts.
+     * @throws java.lang.Exception can be thrown
      */
-    List<CamelContext> getCamelContexts();
+    List<CamelContext> getCamelContexts() throws Exception;
 
     /**
      * Get a Camel context identified by the given name.
      *
      * @param name the Camel context name.
      * @return the Camel context or null if not found.
+     * @throws java.lang.Exception can be thrown
      */
-    CamelContext getCamelContext(String name);
+    CamelContext getCamelContext(String name) throws Exception;
 
     /**
      * Get all routes. If Camel context name is null, all routes from all contexts are listed.
      *
      * @param camelContextName the Camel context name. If null, all contexts are considered.
      * @return the list of the Camel routes.
+     * @throws java.lang.Exception can be thrown
      */
-    List<Route> getRoutes(String camelContextName);
+    List<Route> getRoutes(String camelContextName) throws Exception;
 
     /**
      * Get all routes filtered by the regex.
@@ -58,47 +61,53 @@ public interface CamelController {
      * @param camelContextName the Camel context name. If null, all contexts are considered.
      * @param filter           the filter which supports * and ? as wildcards
      * @return the list of the Camel routes.
+     * @throws java.lang.Exception can be thrown
      */
-    List<Route> getRoutes(String camelContextName, String filter);
+    List<Route> getRoutes(String camelContextName, String filter) throws Exception;
 
     /**
      * Reset all the route stats for the given Camel context
      *
      * @param camelContextName the Camel context.
+     * @throws java.lang.Exception can be thrown
      */
-    void resetRouteStats(String camelContextName);
+    void resetRouteStats(String camelContextName) throws Exception;
 
     /**
      * Starts the given route
      *
      * @param camelContextName the Camel context.
      * @param routeId          the route ID.
+     * @throws java.lang.Exception can be thrown
      */
-    void startRoute(String camelContextName, String routeId);
+    void startRoute(String camelContextName, String routeId) throws Exception;
 
     /**
      * Stops the given route
      *
      * @param camelContextName the Camel context.
      * @param routeId          the route ID.
+     * @throws java.lang.Exception can be thrown
      */
-    void stopRoute(String camelContextName, String routeId);
+    void stopRoute(String camelContextName, String routeId) throws Exception;
 
     /**
      * Suspends the given route
      *
      * @param camelContextName the Camel context.
      * @param routeId          the route ID.
+     * @throws java.lang.Exception can be thrown
      */
-    void suspendRoute(String camelContextName, String routeId);
+    void suspendRoute(String camelContextName, String routeId) throws Exception;
 
     /**
      * Resumes the given route
      *
      * @param camelContextName the Camel context.
      * @param routeId          the route ID.
+     * @throws java.lang.Exception can be thrown
      */
-    void resumeRoute(String camelContextName, String routeId);
+    void resumeRoute(String camelContextName, String routeId) throws Exception;
 
     /**
      * Return the definition of a route as XML identified by a ID and a Camel context.
@@ -106,8 +115,9 @@ public interface CamelController {
      * @param routeId          the route ID.
      * @param camelContextName the Camel context.
      * @return the route model as XML
+     * @throws java.lang.Exception can be thrown
      */
-    String getRouteModelAsXml(String routeId, String camelContextName);
+    String getRouteModelAsXml(String routeId, String camelContextName) throws Exception;
 
     /**
      * Returns detailed route statistics as XML identified by a ID and a Camel context.
@@ -117,32 +127,36 @@ public interface CamelController {
      * @param fullStats         whether to include verbose stats
      * @param includeProcessors whether to embed per processor stats from the route
      * @return the route statistics as XML
+     * @throws java.lang.Exception can be thrown
      */
-    String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors);
+    String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception;
 
     /**
      * Return the endpoints
      *
      * @param camelContextName the Camel context.
      * @return a list of key/value pairs with endpoint information
+     * @throws java.lang.Exception can be thrown
      */
-    List<Map<String, String>> getEndpoints(String camelContextName);
+    List<Map<String, String>> getEndpoints(String camelContextName) throws Exception;
 
     /**
      * Return the definition of the REST services as XML for the given Camel context.
      *
      * @param camelContextName the Camel context.
      * @return the REST model as xml
+     * @throws java.lang.Exception can be thrown
      */
-    String getRestModelAsXml(String camelContextName);
+    String getRestModelAsXml(String camelContextName) throws Exception;
 
     /**
      * Return the REST services for the given Camel context.
      *
      * @param camelContextName the Camel context.
      * @return a list of key/value pairs with REST information
+     * @throws java.lang.Exception can be thrown
      */
-    List<Map<String, String>> getRestServices(String camelContextName);
+    List<Map<String, String>> getRestServices(String camelContextName) throws Exception;
 
     /**
      * Explains an endpoint uri
@@ -151,7 +165,7 @@ public interface CamelController {
      * @param uri              the endpoint uri
      * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
      * @return a JSON schema with explanation of the options
-     * @throws java.lang.Exception is thrown if error loading resources to explain the endpoint
+     * @throws java.lang.Exception can be thrown
      */
     String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception;
 
@@ -160,7 +174,7 @@ public interface CamelController {
      *
      * @param camelContextName the Camel context.
      * @return a list of key/value pairs with component information
-     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     * @throws java.lang.Exception can be thrown
      */
     List<Map<String, String>> listComponents(String camelContextName) throws Exception;
 
@@ -169,7 +183,7 @@ public interface CamelController {
      *
      * @param filter optional filter to filter by labels
      * @return a list of key/value pairs with component information
-     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     * @throws java.lang.Exception can be thrown
      */
     List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
 
@@ -177,7 +191,7 @@ public interface CamelController {
      * Lists all the labels from the Camel components catalog
      *
      * @return a map which key is the label, and the set is the component names that has the given label
-     * @throws java.lang.Exception is thrown if error loading resources to gather component information
+     * @throws java.lang.Exception can be thrown
      */
     Map<String, Set<String>> listLabelCatalog() throws Exception;
 
