@@ -20,12 +20,9 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 import org.apache.camel.commands.internal.RegexUtil;
-
-import static org.apache.camel.util.CamelContextHelper.getRouteStartupOrder;
 
 /**
  * Abstract command for working with a one ore more routes.
@@ -45,7 +42,7 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
     }
 
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        List<Route> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
+        List<Map<String, String>> camelRoutes = camelController.getRoutes(context, RegexUtil.wildcardAsRegex(route));
         if (camelRoutes == null || camelRoutes.isEmpty()) {
             err.println("Camel routes using " + route + " not found.");
             return null;
@@ -53,16 +50,10 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
         // we want the routes sorted
         Collections.sort(camelRoutes, new RouteComparator());
 
-        for (Route camelRoute : camelRoutes) {
-            CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-            // Setting thread context classloader to the bundle classloader to enable legacy code that relies on it
-            ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
-            try {
-                executeOnRoute(camelController, camelContext.getName(), camelRoute.getId(), out, err);
-            } finally {
-                Thread.currentThread().setContextClassLoader(oldClassloader);
-            }
+        for (Map<String, String> row : camelRoutes) {
+            String camelContextName = row.get("camelContextName");
+            String routeId = row.get("routeId");
+            executeOnRoute(camelController, camelContextName, routeId, out, err);
         }
 
         return null;
@@ -73,26 +64,18 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
     /**
      * To sort the routes.
      */
-    private static final class RouteComparator implements Comparator<Route> {
+    private static final class RouteComparator implements Comparator<Map<String, String>> {
 
         @Override
-        public int compare(Route route1, Route route2) {
+        public int compare(Map<String, String> route1, Map<String, String> route2) {
             // sort by camel context first
-            CamelContext camel1 = route1.getRouteContext().getCamelContext();
-            CamelContext camel2 = route2.getRouteContext().getCamelContext();
+            String camel1 = route1.get("camelContextName");
+            String camel2 = route2.get("camelContextName");
 
-            if (camel1.getName().equals(camel2.getName())) {
-                // and then accordingly to startup order
-                Integer order1 = getRouteStartupOrder(camel1, route1.getId());
-                Integer order2 = getRouteStartupOrder(camel2, route2.getId());
-                if (order1 == 0 && order2 == 0) {
-                    // fallback and use name if not startup order was found
-                    return route1.getId().compareTo(route2.getId());
-                } else {
-                    return order1.compareTo(order2);
-                }
+            if (camel1.equals(camel2)) {
+                return route1.get("routeId").compareTo(route2.get("routeId"));
             } else {
-                return camel1.getName().compareTo(camel2.getName());
+                return camel1.compareTo(camel2);
             }
         }
     }

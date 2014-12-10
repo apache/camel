@@ -21,9 +21,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Route;
-import org.apache.camel.ServiceStatus;
-
 /**
  * Command to list all Camel routes.
  */
@@ -50,7 +47,7 @@ public class RouteListCommand extends AbstractCamelCommand {
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        List<Route> routes = camelController.getRoutes(name);
+        List<Map<String, String>> routes = camelController.getRoutes(name);
 
         final Map<String, Integer> columnWidths = computeColumnWidths(routes);
         final String headerFormat = buildFormatString(columnWidths, true);
@@ -59,18 +56,18 @@ public class RouteListCommand extends AbstractCamelCommand {
         if (routes.size() > 0) {
             out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, ROUTE_COLUMN_LABEL, STATUS_COLUMN_LABEL));
             out.println(String.format(headerFormat, "-------", "-----", "------"));
-            for (Route route : routes) {
-                String contextId = route.getRouteContext().getCamelContext().getName();
-                String routeId = route.getId();
-                ServiceStatus status = route.getRouteContext().getCamelContext().getRouteStatus(routeId);
-                out.println(String.format(rowFormat, contextId, routeId, status));
+            for (Map<String, String> row : routes) {
+                String contextId = row.get("camelContextName");
+                String routeId = row.get("routeId");
+                String state = row.get("state");
+                out.println(String.format(rowFormat, contextId, routeId, state));
             }
         }
 
         return null;
     }
 
-    private static Map<String, Integer> computeColumnWidths(final Iterable<Route> routes) throws Exception {
+    private static Map<String, Integer> computeColumnWidths(final Iterable<Map<String, String>> routes) throws Exception {
         if (routes == null) {
             throw new IllegalArgumentException("Unable to determine column widths from null Iterable<Route>");
         } else {
@@ -78,14 +75,14 @@ public class RouteListCommand extends AbstractCamelCommand {
             int maxRouteLen = 0;
             int maxStatusLen = 0;
 
-            for (final Route route : routes) {
-                final String contextId = route.getRouteContext().getCamelContext().getName();
+            for (Map<String, String> row : routes) {
+                final String contextId = row.get("camelContextName");
                 maxContextLen = java.lang.Math.max(maxContextLen, contextId == null ? 0 : contextId.length());
 
-                final String routeId = route.getId();
+                final String routeId = row.get("routeId");
                 maxRouteLen = java.lang.Math.max(maxRouteLen, routeId == null ? 0 : routeId.length());
 
-                final String status = route.getRouteContext().getCamelContext().getRouteStatus(routeId).name();
+                final String status = row.get("state");
                 maxStatusLen = java.lang.Math.max(maxStatusLen, status == null ? 0 : status.length());
             }
 

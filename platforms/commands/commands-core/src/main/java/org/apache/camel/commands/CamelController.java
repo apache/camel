@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 
 /**
@@ -50,20 +49,20 @@ public interface CamelController {
      * Get all routes. If Camel context name is null, all routes from all contexts are listed.
      *
      * @param camelContextName the Camel context name. If null, all contexts are considered.
-     * @return the list of the Camel routes.
+     * @return a list of key/value pairs with routes information
      * @throws java.lang.Exception can be thrown
      */
-    List<Route> getRoutes(String camelContextName) throws Exception;
+    List<Map<String, String>> getRoutes(String camelContextName) throws Exception;
 
     /**
      * Get all routes filtered by the regex.
      *
      * @param camelContextName the Camel context name. If null, all contexts are considered.
      * @param filter           the filter which supports * and ? as wildcards
-     * @return the list of the Camel routes.
+     * @return a list of key/value pairs with routes information
      * @throws java.lang.Exception can be thrown
      */
-    List<Route> getRoutes(String camelContextName, String filter) throws Exception;
+    List<Map<String, String>> getRoutes(String camelContextName, String filter) throws Exception;
 
     /**
      * Reset all the route stats for the given Camel context

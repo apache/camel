@@ -62,19 +62,23 @@ public abstract class AbstractCamelController implements CamelController {
         return null;
     }
 
-    public List<Route> getRoutes(String camelContextName) throws Exception {
+    public List<Map<String, String>> getRoutes(String camelContextName) throws Exception {
         return getRoutes(camelContextName, null);
     }
 
-    public List<Route> getRoutes(String camelContextName, String filter) throws Exception {
-        List<Route> routes = new ArrayList<Route>();
+    public List<Map<String, String>> getRoutes(String camelContextName, String filter) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
         if (camelContextName != null) {
             CamelContext context = this.getCamelContext(camelContextName);
             if (context != null) {
                 for (Route route : context.getRoutes()) {
                     if (filter == null || route.getId().matches(filter)) {
-                        routes.add(route);
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("camelContextName", context.getName());
+                        row.put("routeId", route.getId());
+                        row.put("state", getRouteState(route));
+                        answer.add(row);
                     }
                 }
             }
@@ -83,29 +87,33 @@ public abstract class AbstractCamelController implements CamelController {
             for (CamelContext camelContext : camelContexts) {
                 for (Route route : camelContext.getRoutes()) {
                     if (filter == null || route.getId().matches(filter)) {
-                        routes.add(route);
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("camelContextName", camelContext.getName());
+                        row.put("routeId", route.getId());
+                        row.put("state", getRouteState(route));
+                        answer.add(row);
                     }
                 }
             }
         }
 
         // sort the list
-        Collections.sort(routes, new Comparator<Route>() {
+        Collections.sort(answer, new Comparator<Map<String, String>>() {
             @Override
-            public int compare(Route o1, Route o2) {
+            public int compare(Map<String, String> o1, Map<String, String> o2) {
                 // group by camel context first, then by route name
-                String c1 = o1.getRouteContext().getCamelContext().getName();
-                String c2 = o2.getRouteContext().getCamelContext().getName();
+                String c1 = o1.get("camelContextName");
+                String c2 = o2.get("camelContextName");
 
                 int answer = c1.compareTo(c2);
                 if (answer == 0) {
                     // okay from same camel context, then sort by route id
-                    answer = o1.getId().compareTo(o2.getId());
+                    answer = o1.get("routeId").compareTo(o2.get("routeId"));
                 }
                 return answer;
             }
         });
-        return routes;
+        return answer;
     }
 
     public void resetRouteStats(String camelContextName) throws Exception{
@@ -451,6 +459,17 @@ public abstract class AbstractCamelController implements CamelController {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (endpoint instanceof StatefulService) {
             ServiceStatus status = ((StatefulService) endpoint).getStatus();
+            return status.name();
+        }
+
+        // assume started if not a ServiceSupport instance
+        return ServiceStatus.Started.name();
+    }
+
+    private static String getRouteState(Route route) {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        if (route instanceof StatefulService) {
+            ServiceStatus status = ((StatefulService) route).getStatus();
             return status.name();
         }
 
