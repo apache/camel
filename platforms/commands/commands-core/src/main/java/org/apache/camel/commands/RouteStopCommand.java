@@ -18,8 +18,6 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 
-import org.apache.camel.CamelContext;
-
 /**
  * Command to stop a route.
  */
@@ -30,7 +28,7 @@ public class RouteStopCommand extends AbstractRouteCommand {
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception {
-        camelContext.stopRoute(routeId);
+    public void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception {
+        camelController.stopRoute(contextName, routeId);
     }
 }

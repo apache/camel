@@ -23,7 +23,6 @@ import java.util.Date;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.util.RouteStatDump;
 
 /**
@@ -47,13 +46,13 @@ public class RouteInfoCommand extends AbstractRouteCommand {
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception {
+    public void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception {
         out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Route " + routeId + "\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tCamel Context: " + camelContext.getName()));
+        out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
 
-        String xml = camelController.getRouteStatsAsXml(routeId, camelContext.getName(), true, false);
+        String xml = camelController.getRouteStatsAsXml(routeId, contextName, true, false);
         if (xml != null) {
             JAXBContext context = JAXBContext.newInstance(RouteStatDump.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -102,7 +101,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             }
 
             out.println("");
-            xml = camelController.getRouteModelAsXml(routeId, camelContext.getName());
+            xml = camelController.getRouteModelAsXml(routeId, contextName);
             if (xml != null) {
                 out.println(stringEscape.unescapeJava("\u001B[1mDefinition\u001B[0m"));
                 out.println(stringEscape.unescapeJava(xml));

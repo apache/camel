@@ -70,6 +70,38 @@ public interface CamelController {
     void resetRouteStats(String camelContextName);
 
     /**
+     * Starts the given route
+     *
+     * @param camelContextName the Camel context.
+     * @param routeId          the route ID.
+     */
+    void startRoute(String camelContextName, String routeId);
+
+    /**
+     * Stops the given route
+     *
+     * @param camelContextName the Camel context.
+     * @param routeId          the route ID.
+     */
+    void stopRoute(String camelContextName, String routeId);
+
+    /**
+     * Suspends the given route
+     *
+     * @param camelContextName the Camel context.
+     * @param routeId          the route ID.
+     */
+    void suspendRoute(String camelContextName, String routeId);
+
+    /**
+     * Resumes the given route
+     *
+     * @param camelContextName the Camel context.
+     * @param routeId          the route ID.
+     */
+    void resumeRoute(String camelContextName, String routeId);
+
+    /**
      * Return the definition of a route as XML identified by a ID and a Camel context.
      *
      * @param routeId          the route ID.

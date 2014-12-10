@@ -59,7 +59,7 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
             ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
             try {
-                executeOnRoute(camelController, camelContext, camelRoute.getId(), out, err);
+                executeOnRoute(camelController, camelContext.getName(), camelRoute.getId(), out, err);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldClassloader);
             }
@@ -68,7 +68,7 @@ public abstract class AbstractRouteCommand extends AbstractCamelCommand {
         return null;
     }
 
-    public abstract void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception;
+    public abstract void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception;
 
     /**
      * To sort the routes.

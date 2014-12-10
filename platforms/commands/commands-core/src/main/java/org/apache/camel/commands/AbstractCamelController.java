@@ -134,6 +134,50 @@ public abstract class AbstractCamelController implements CamelController {
         }
     }
 
+    public void startRoute(String camelContextName, String routeId) {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            try {
+                context.startRoute(routeId);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+    }
+
+    public void stopRoute(String camelContextName, String routeId) {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            try {
+                context.stopRoute(routeId);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+    }
+
+    public void suspendRoute(String camelContextName, String routeId) {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            try {
+                context.suspendRoute(routeId);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+    }
+
+    public void resumeRoute(String camelContextName, String routeId) {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            try {
+                context.resumeRoute(routeId);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public String getRouteModelAsXml(String routeId, String camelContextName) {
         CamelContext context = this.getCamelContext(camelContextName);

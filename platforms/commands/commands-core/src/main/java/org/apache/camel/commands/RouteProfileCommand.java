@@ -21,7 +21,6 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.util.ProcessorStatDump;
 import org.apache.camel.util.RouteStatDump;
 
@@ -48,20 +47,20 @@ public class RouteProfileCommand extends AbstractRouteCommand {
     }
 
     @Override
-    public void executeOnRoute(CamelController camelController, CamelContext camelContext, String routeId, PrintStream out, PrintStream err) throws Exception {
+    public void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception {
 
         JAXBContext context = JAXBContext.newInstance(RouteStatDump.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         // write new header for new camel context
-        if (previousCamelContextName == null || !previousCamelContextName.equals(camelContext.getName())) {
+        if (previousCamelContextName == null || !previousCamelContextName.equals(contextName)) {
             System.out.println("");
             System.out.println(stringEscape.unescapeJava("\u001B[1mProfile\u001B[0m"));
-            System.out.println(stringEscape.unescapeJava("\tCamel Context: " + camelContext.getName()));
+            System.out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
             System.out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Total (ms)", "Self (ms)"));
         }
 
-        String xml = camelController.getRouteStatsAsXml(routeId, camelContext.getName(), true, true);
+        String xml = camelController.getRouteStatsAsXml(routeId, contextName, true, true);
         RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
         long count = route.getExchangesCompleted() + route.getExchangesFailed();
@@ -78,6 +77,6 @@ public class RouteProfileCommand extends AbstractRouteCommand {
         }
 
         // we want to group routes from the same context in the same table
-        previousCamelContextName = camelContext.getName();
+        previousCamelContextName = contextName;
     }
 }
