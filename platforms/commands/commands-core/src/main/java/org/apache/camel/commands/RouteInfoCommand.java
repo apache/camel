@@ -27,8 +27,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ManagementAgent;
 
 /**
@@ -136,9 +134,11 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             }
 
             out.println("");
-            out.println(stringEscape.unescapeJava("\u001B[1mDefinition\u001B[0m"));
-            RouteDefinition definition = camelController.getRouteDefinition(camelRoute.getId(), camelRoute.getRouteContext().getCamelContext().getName());
-            out.println(stringEscape.unescapeJava(ModelHelper.dumpModelAsXml(definition)));
+            String xml = camelController.getRouteModelAsXml(camelRoute.getId(), camelRoute.getRouteContext().getCamelContext().getName());
+            if (xml != null) {
+                out.println(stringEscape.unescapeJava("\u001B[1mDefinition\u001B[0m"));
+                out.println(stringEscape.unescapeJava(xml));
+            }
         }
     }
 }

@@ -74,13 +74,13 @@ public interface CamelController {
     Route getRoute(String routeId, String camelContextName);
 
     /**
-     * Return the definition of a route identified by a ID and a Camel context.
+     * Return the definition of a route as XML identified by a ID and a Camel context.
      *
      * @param routeId          the route ID.
      * @param camelContextName the Camel context.
-     * @return the <code>RouteDefinition</code>.
+     * @return the route model as XML
      */
-    RouteDefinition getRouteDefinition(String routeId, String camelContextName);
+    String getRouteModelAsXml(String routeId, String camelContextName);
 
     /**
      * Return the endpoints

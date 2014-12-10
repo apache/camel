@@ -115,12 +115,23 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @SuppressWarnings("deprecation")
-    public RouteDefinition getRouteDefinition(String routeId, String camelContextName) {
+    public String getRouteModelAsXml(String routeId, String camelContextName) {
         CamelContext context = this.getCamelContext(camelContextName);
         if (context == null) {
             return null;
         }
-        return context.getRouteDefinition(routeId);
+        RouteDefinition route = context.getRouteDefinition(routeId);
+        if (route == null) {
+            return null;
+        }
+
+        String xml;
+        try {
+            xml = ModelHelper.dumpModelAsXml(route);
+        } catch (JAXBException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return xml;
     }
 
     @SuppressWarnings("deprecation")
