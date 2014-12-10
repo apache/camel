@@ -298,21 +298,36 @@ public class BeanInfo {
 
         LOG.trace("Introspecting class: {}", clazz);
 
-        // favor interface methods, and then other declared methods which does not override the existing methods
-        List<Method> interfaceMethods = getInterfaceMethods(clazz);
+        // favor declared methods, and then filter out duplicate interface methods
+        Set<Method> methods = new HashSet<Method>(Arrays.asList(clazz.getDeclaredMethods()));
+
+        // it may have duplicate methods already in the declared list of methods, so lets remove those
         Set<Method> overrides = new HashSet<Method>();
-        Set<Method> extraMethods = new HashSet<Method>(Arrays.asList(clazz.getDeclaredMethods()));
+        for (Method source : methods) {
+            for (Method target : methods) {
+                // skip overselves
+                if (ObjectHelper.isOverridingMethod(source, target, true)) {
+                    continue;
+                }
+
+                if (ObjectHelper.isOverridingMethod(source, target, false)) {
+                    overrides.add(target);
+                }
+            }
+        }
+        methods.removeAll(overrides);
+        overrides.clear();
+
+        List<Method> extraMethods = getInterfaceMethods(clazz);
         for (Method target : extraMethods) {
-            for (Method interfaceMethod : interfaceMethods) {
-                if (ObjectHelper.isOverridingMethod(interfaceMethod, target, false)) {
+            for (Method source : methods) {
+                if (ObjectHelper.isOverridingMethod(source, target, false)) {
                     overrides.add(target);
                 }
             }
         }
         // remove all the overrides methods
         extraMethods.removeAll(overrides);
-
-        List<Method> methods = interfaceMethods;
         methods.addAll(extraMethods);
 
         // now introspect the methods and filter non valid methods
@@ -897,10 +912,7 @@ public class BeanInfo {
         while (clazz != null && !clazz.equals(Object.class)) {
             for (Class<?> interfaceClazz : clazz.getInterfaces()) {
                 for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
-                    // must be a public method
-                    if (Modifier.isPublic(interfaceMethod.getModifiers())) {
-                        answer.add(interfaceMethod);
-                    }
+                    answer.add(interfaceMethod);
                 }
             }
             clazz = clazz.getSuperclass();
