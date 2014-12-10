@@ -241,8 +241,8 @@ public abstract class AbstractCamelController implements CamelController {
         return answer;
     }
 
-    public Map<String, List<RestRegistry.RestService>> getRestServices(String camelContextName) {
-        Map<String, List<RestRegistry.RestService>> answer = new LinkedHashMap<String, List<RestRegistry.RestService>>();
+    public List<Map<String, String>> getRestServices(String camelContextName) {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
         if (camelContextName != null) {
             CamelContext context = this.getCamelContext(camelContextName);
@@ -254,30 +254,28 @@ public abstract class AbstractCamelController implements CamelController {
                         return o1.getUrl().compareTo(o2.getUrl());
                     }
                 });
-                if (!services.isEmpty()) {
-                    answer.put(camelContextName, services);
-                }
-            }
-        } else {
-            // already sorted by camel context
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                List<RestRegistry.RestService> services = new ArrayList<RestRegistry.RestService>(camelContext.getRestRegistry().listAllRestServices());
-                Collections.sort(services, new Comparator<RestRegistry.RestService>() {
-                    @Override
-                    public int compare(RestRegistry.RestService o1, RestRegistry.RestService o2) {
-                        return o1.getUrl().compareTo(o2.getUrl());
-                    }
-                });
-                if (!services.isEmpty()) {
-                    answer.put(camelContext.getName(), services);
+                for (RestRegistry.RestService service : services) {
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("basePath", service.getBasePath());
+                    row.put("baseUrl", service.getBaseUrl());
+                    row.put("consumes", service.getConsumes());
+                    row.put("description", service.getDescription());
+                    row.put("inType", service.getInType());
+                    row.put("method", service.getMethod());
+                    row.put("outType", service.getOutType());
+                    row.put("produces", service.getProduces());
+                    row.put("routeId", service.getRouteId());
+                    row.put("state", service.getState());
+                    row.put("uriTemplate", service.getUriTemplate());
+                    row.put("url", service.getUrl());
+                    answer.add(row);
                 }
             }
         }
         return answer;
     }
 
-    public String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception {
+    public String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception {
         CamelContext context = this.getCamelContext(camelContextName);
         if (context == null) {
             return null;

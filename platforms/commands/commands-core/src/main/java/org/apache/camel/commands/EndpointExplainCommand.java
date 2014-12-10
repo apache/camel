@@ -63,7 +63,7 @@ public class EndpointExplainCommand extends AbstractCamelCommand {
         }
 
         for (Endpoint endpoint : endpoints) {
-            String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
+            String json = camelController.explainEndpointAsJSon(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
 
             out.println("Context:\t" + endpoint.getCamelContext().getName());
 

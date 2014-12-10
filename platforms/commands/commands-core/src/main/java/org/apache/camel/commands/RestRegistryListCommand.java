@@ -22,21 +22,20 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.URISupport;
 
 /**
  * List the Camel REST services from the Rest registry available in the JVM.
  */
-public class RestRegistryListCommand extends AbstractCamelCommand {
+public class RestRegistryListCommand extends AbstractContextCommand {
 
-    private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String URL_COLUMN_NAME = "Url";
     private static final String BASE_PATH_LABEL = "Base Path";
     private static final String URI_TEMPLATE_LABEL = "Uri Template";
     private static final String METHOD_COLUMN_LABEL = "Method";
     private static final String STATE_COLUMN_LABEL = "State";
-    private static final String ROUTE_COLUMN_LABEL = "Route";
+    private static final String ROUTE_COLUMN_LABEL = "Route Id";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final String DEFAULT_FIELD_PREAMBLE = " ";
@@ -48,19 +47,18 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
     private static final int MAX_COLUMN_WIDTH = 120;
     private static final int MIN_COLUMN_WIDTH = 12;
 
-    String name;
     Boolean decode = true;
     Boolean verbose = false;
 
-    public RestRegistryListCommand(String name, Boolean decode, Boolean verbose) {
-        this.name = name;
+    public RestRegistryListCommand(String context, Boolean decode, Boolean verbose) {
+        super(context);
         this.decode = decode;
         this.verbose = verbose;
     }
 
     @Override
-    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        Map<String, List<RestRegistry.RestService>> services = camelController.getRestServices(name);
+    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> services = camelController.getRestServices(context);
         if (services.isEmpty()) {
             out.print("There are no REST services");
             return null;
@@ -72,37 +70,32 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
 
         if (services.size() > 0) {
             if (verbose) {
-                out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URL_COLUMN_NAME, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL, ROUTE_COLUMN_LABEL));
-                out.println(String.format(headerFormat, "-------", "---", "---------", "------------", "------", "-----", "-----"));
+                out.println(String.format(headerFormat, URL_COLUMN_NAME, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL, ROUTE_COLUMN_LABEL));
+                out.println(String.format(headerFormat, "---", "---------", "------------", "------", "-----", "--------"));
             } else {
-                out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL));
-                out.println(String.format(headerFormat, "-------", "---------", "------------", "------", "-----"));
+                out.println(String.format(headerFormat, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL));
+                out.println(String.format(headerFormat, "---------", "------------", "------", "-----"));
             }
-            for (Map.Entry<String, List<RestRegistry.RestService>> entry : services.entrySet()) {
-                String contextName = entry.getKey();
-                for (final RestRegistry.RestService service : entry.getValue()) {
-                    String contextId = contextName;
-
-                    String uri = null;
-                    if (verbose) {
-                        uri = service.getUrl();
-                        if (decode == null || decode) {
-                            // decode uri so its more human readable
-                            uri = URLDecoder.decode(uri, "UTF-8");
-                        }
-                        // sanitize and mask uri so we dont see passwords
-                        uri = URISupport.sanitizeUri(uri);
+            for (Map<String, String> row : services) {
+                String uri = null;
+                if (verbose) {
+                    uri = row.get("url");
+                    if (decode == null || decode) {
+                        // decode uri so its more human readable
+                        uri = URLDecoder.decode(uri, "UTF-8");
                     }
-                    String basePath = service.getBasePath();
-                    String uriTemplate = service.getUriTemplate() != null ? service.getUriTemplate() : "";
-                    String method = service.getMethod();
-                    String state = service.getState();
-                    String route = service.getRouteId();
-                    if (verbose) {
-                        out.println(String.format(rowFormat, contextId, uri, basePath, uriTemplate, method, state, route));
-                    } else {
-                        out.println(String.format(rowFormat, contextId, basePath, uriTemplate, method, state));
-                    }
+                    // sanitize and mask uri so we dont see passwords
+                    uri = URISupport.sanitizeUri(uri);
+                }
+                String basePath = row.get("basePath");
+                String uriTemplate = row.get("uriTemplate") != null ? row.get("uriTemplate") : "";
+                String method = row.get("method");
+                String state = row.get("state");
+                String route = row.get("routeId");
+                if (verbose) {
+                    out.println(String.format(rowFormat, uri, basePath, uriTemplate, method, state, route));
+                } else {
+                    out.println(String.format(rowFormat, basePath, uriTemplate, method, state));
                 }
             }
         }
@@ -110,8 +103,7 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         return null;
     }
 
-    private Map<String, Integer> computeColumnWidths(Map<String, List<RestRegistry.RestService>> services) throws Exception {
-        int maxContextLen = 0;
+    private Map<String, Integer> computeColumnWidths(List<Map<String, String>> services) throws Exception {
         int maxUriLen = 0;
         int maxBasePathLen = 0;
         int maxUriTemplateLen = 0;
@@ -119,39 +111,33 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         int maxStatusLen = 0;
         int maxRouteLen = 0;
 
-        for (Map.Entry<String, List<RestRegistry.RestService>> entry : services.entrySet()) {
-            String contextName = entry.getKey();
-            for (final RestRegistry.RestService service : entry.getValue()) {
-                maxContextLen = Math.max(maxContextLen, contextName == null ? 0 : contextName.length());
-
-                String uri = service.getUrl();
-                if (decode == null || decode) {
-                    // decode uri so its more human readable
-                    uri = URLDecoder.decode(uri, "UTF-8");
-                }
-                // sanitize and mask uri so we dont see passwords
-                uri = URISupport.sanitizeUri(uri);
-                maxUriLen = Math.max(maxUriLen, uri == null ? 0 : uri.length());
-
-                String basePath = service.getBasePath();
-                maxBasePathLen = Math.max(maxBasePathLen, basePath == null ? 0 : basePath.length());
-
-                String uriTemplate = service.getUriTemplate();
-                maxUriTemplateLen = Math.max(maxUriTemplateLen, uriTemplate == null ? 0 : uriTemplate.length());
-
-                String method = service.getMethod();
-                maxMethodLen = Math.max(maxMethodLen, method == null ? 0 : method.length());
-
-                String status = service.getState();
-                maxStatusLen = Math.max(maxStatusLen, status == null ? 0 : status.length());
-
-                String route = service.getRouteId();
-                maxRouteLen = Math.max(maxRouteLen, route == null ? 0 : route.length());
+        for (Map<String, String> row : services) {
+            String uri = row.get("url");
+            if (decode == null || decode) {
+                // decode uri so its more human readable
+                uri = URLDecoder.decode(uri, "UTF-8");
             }
+            // sanitize and mask uri so we dont see passwords
+            uri = URISupport.sanitizeUri(uri);
+            maxUriLen = Math.max(maxUriLen, uri == null ? 0 : uri.length());
+
+            String basePath = row.get("basePath");
+            maxBasePathLen = Math.max(maxBasePathLen, basePath == null ? 0 : basePath.length());
+
+            String uriTemplate = row.get("uriTemplate");
+            maxUriTemplateLen = Math.max(maxUriTemplateLen, uriTemplate == null ? 0 : uriTemplate.length());
+
+            String method = row.get("method");
+            maxMethodLen = Math.max(maxMethodLen, method == null ? 0 : method.length());
+
+            String status = row.get("state");
+            maxStatusLen = Math.max(maxStatusLen, status == null ? 0 : status.length());
+
+            String routeId = row.get("routeId");
+            maxRouteLen = Math.max(maxRouteLen, routeId == null ? 0 : routeId.length());
         }
 
-        final Map<String, Integer> retval = new Hashtable<String, Integer>(6);
-        retval.put(CONTEXT_COLUMN_LABEL, maxContextLen);
+        final Map<String, Integer> retval = new Hashtable<String, Integer>();
         retval.put(URL_COLUMN_NAME, maxUriLen);
         retval.put(BASE_PATH_LABEL, maxBasePathLen);
         retval.put(URI_TEMPLATE_LABEL, maxUriTemplateLen);
@@ -176,14 +162,12 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         }
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
-        int contextLen = Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int uriLen = Math.min(columnWidths.get(URL_COLUMN_NAME) + columnWidthIncrement, getMaxColumnWidth());
         int basePathLen = Math.min(columnWidths.get(BASE_PATH_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int uriTemplateLen = Math.min(columnWidths.get(URI_TEMPLATE_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int methodLen = Math.min(columnWidths.get(METHOD_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int statusLen = Math.min(columnWidths.get(STATE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int routeLen = Math.min(columnWidths.get(ROUTE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-        contextLen = Math.max(MIN_COLUMN_WIDTH, contextLen);
         basePathLen = Math.max(MIN_COLUMN_WIDTH, basePathLen);
         uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
         uriTemplateLen = Math.max(MIN_COLUMN_WIDTH, uriTemplateLen);
@@ -193,7 +177,6 @@ public class RestRegistryListCommand extends AbstractCamelCommand {
         // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
-        retval.append(fieldPreamble).append("%-").append(contextLen).append('.').append(contextLen).append('s').append(fieldPostamble).append(' ');
         if (isVerbose) {
             retval.append(fieldPreamble).append("%-").append(uriLen).append('.').append(uriLen).append('s').append(fieldPostamble).append(' ');
         }

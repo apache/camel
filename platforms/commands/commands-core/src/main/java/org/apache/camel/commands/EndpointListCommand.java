@@ -87,7 +87,7 @@ public class EndpointListCommand extends AbstractCamelCommand {
 
                 if (explain) {
                     boolean first = true;
-                    String json = camelController.explainEndpoint(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
+                    String json = camelController.explainEndpointAsJSon(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
                     // use a basic json parser
                     List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 

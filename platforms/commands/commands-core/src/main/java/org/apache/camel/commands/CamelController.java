@@ -106,12 +106,12 @@ public interface CamelController {
     String getRestModelAsXml(String camelContextName);
 
     /**
-     * Return the REST services
+     * Return the REST services for the given Camel context.
      *
      * @param camelContextName the Camel context.
-     * @return the REST services
+     * @return a list of key/value pairs with REST information
      */
-    Map<String, List<RestRegistry.RestService>> getRestServices(String camelContextName);
+    List<Map<String, String>> getRestServices(String camelContextName);
 
     /**
      * Explains an endpoint uri
@@ -122,7 +122,7 @@ public interface CamelController {
      * @return a JSON schema with explanation of the options
      * @throws java.lang.Exception is thrown if error loading resources to explain the endpoint
      */
-    String explainEndpoint(String camelContextName, String uri, boolean allOptions) throws Exception;
+    String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception;
 
     /**
      * Lists Components which are in use or available on the classpath and include information
