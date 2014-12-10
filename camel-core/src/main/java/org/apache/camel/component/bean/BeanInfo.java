@@ -299,7 +299,14 @@ public class BeanInfo {
         LOG.trace("Introspecting class: {}", clazz);
 
         // favor declared methods, and then filter out duplicate interface methods
-        Set<Method> methods = new HashSet<Method>(Arrays.asList(clazz.getDeclaredMethods()));
+        List<Method> methods;
+        if (Modifier.isPublic(clazz.getModifiers())) {
+            LOG.trace("Preferring class methods as class: {} is public accessible", clazz);
+            methods = new ArrayList<Method>(Arrays.asList(clazz.getDeclaredMethods()));
+        } else {
+            LOG.trace("Preferring interface methods as class: {} is not public accessible", clazz);
+            methods = getInterfaceMethods(clazz);
+        }
 
         // it may have duplicate methods already in the declared list of methods, so lets remove those
         Set<Method> overrides = new HashSet<Method>();
@@ -318,17 +325,20 @@ public class BeanInfo {
         methods.removeAll(overrides);
         overrides.clear();
 
-        List<Method> extraMethods = getInterfaceMethods(clazz);
-        for (Method target : extraMethods) {
-            for (Method source : methods) {
-                if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                    overrides.add(target);
+        if (Modifier.isPublic(clazz.getModifiers())) {
+            // add additional interface methods
+            List<Method> extraMethods = getInterfaceMethods(clazz);
+            for (Method target : extraMethods) {
+                for (Method source : methods) {
+                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
+                        overrides.add(target);
+                    }
                 }
             }
+            // remove all the overrides methods
+            extraMethods.removeAll(overrides);
+            methods.addAll(extraMethods);
         }
-        // remove all the overrides methods
-        extraMethods.removeAll(overrides);
-        methods.addAll(extraMethods);
 
         // now introspect the methods and filter non valid methods
         for (Method method : methods) {
