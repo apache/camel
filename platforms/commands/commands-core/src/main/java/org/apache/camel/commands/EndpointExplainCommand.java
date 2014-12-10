@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
@@ -31,44 +31,43 @@ import org.apache.camel.util.URISupport;
 /**
  * Explain the Camel endpoints available in the JVM.
  */
-public class EndpointExplainCommand extends AbstractCamelCommand {
+public class EndpointExplainCommand extends AbstractContextCommand {
 
-    private String name;
     private boolean verbose;
     private String filter;
 
     public EndpointExplainCommand(String name, boolean verbose, String filter) {
-        this.name = name;
+        super(name);
         this.verbose = verbose;
         this.filter = filter;
     }
 
     @Override
-    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        List<Endpoint> endpoints = camelController.getEndpoints(name);
+    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> endpoints = camelController.getEndpoints(context);
         if (endpoints == null || endpoints.isEmpty()) {
             return null;
         }
 
         // filter endpoints
         if (filter != null) {
-            Iterator<Endpoint> it = endpoints.iterator();
+            Iterator<Map<String, String>> it = endpoints.iterator();
             while (it.hasNext()) {
-                Endpoint endpoint = it.next();
-                if (!EndpointHelper.matchPattern(endpoint.getEndpointUri(), filter)) {
+                Map<String, String> row = it.next();
+                if (!EndpointHelper.matchPattern(row.get("uri"), filter)) {
                     // did not match
                     it.remove();
                 }
             }
         }
 
-        for (Endpoint endpoint : endpoints) {
-            String json = camelController.explainEndpointAsJSon(endpoint.getCamelContext().getName(), endpoint.getEndpointUri(), verbose);
+        for (Map<String, String> row : endpoints) {
+            String json = camelController.explainEndpointAsJSon(context, row.get("uri"), verbose);
 
-            out.println("Context:\t" + endpoint.getCamelContext().getName());
+            out.println("Context:\t" + context);
 
             // sanitize and mask uri so we dont see passwords
-            String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
+            String uri = URISupport.sanitizeUri(row.get("uri"));
             String header = "Uri:            " + uri;
             out.println(header);
             for (int i = 0; i < header.length(); i++) {

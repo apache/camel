@@ -34,6 +34,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.StatefulService;
 import org.apache.camel.catalog.CamelComponentCatalog;
 import org.apache.camel.catalog.DefaultCamelComponentCatalog;
 import org.apache.camel.commands.internal.RegexUtil;
@@ -251,8 +253,8 @@ public abstract class AbstractCamelController implements CamelController {
         return xml;
     }
 
-    public List<Endpoint> getEndpoints(String camelContextName) {
-        List<Endpoint> answer = new ArrayList<Endpoint>();
+    public List<Map<String, String>> getEndpoints(String camelContextName) {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
         if (camelContextName != null) {
             CamelContext context = this.getCamelContext(camelContextName);
@@ -265,21 +267,13 @@ public abstract class AbstractCamelController implements CamelController {
                         return o1.getEndpointKey().compareTo(o2.getEndpointKey());
                     }
                 });
-                answer.addAll(endpoints);
-            }
-        } else {
-            // already sorted by camel context
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                List<Endpoint> endpoints = new ArrayList<Endpoint>(camelContext.getEndpoints());
-                // sort routes
-                Collections.sort(endpoints, new Comparator<Endpoint>() {
-                    @Override
-                    public int compare(Endpoint o1, Endpoint o2) {
-                        return o1.getEndpointKey().compareTo(o2.getEndpointKey());
-                    }
-                });
-                answer.addAll(endpoints);
+                for (Endpoint endpoint : endpoints) {
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("camelContextName", context.getName());
+                    row.put("uri", endpoint.getEndpointUri());
+                    row.put("state", getEndpointState(endpoint));
+                    answer.add(row);
+                }
             }
         }
         return answer;
@@ -490,4 +484,16 @@ public abstract class AbstractCamelController implements CamelController {
 
         return answer;
     }
+
+    private static String getEndpointState(Endpoint endpoint) {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        if (endpoint instanceof StatefulService) {
+            ServiceStatus status = ((StatefulService) endpoint).getStatus();
+            return status.name();
+        }
+
+        // assume started if not a ServiceSupport instance
+        return ServiceStatus.Started.name();
+    }
+
 }

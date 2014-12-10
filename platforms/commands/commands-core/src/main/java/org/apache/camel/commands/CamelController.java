@@ -23,7 +23,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.spi.RestRegistry;
 
 /**
  * CamelController interface defines the expected behaviors to manipulate Camel resources (context, route, etc).
@@ -125,9 +124,9 @@ public interface CamelController {
      * Return the endpoints
      *
      * @param camelContextName the Camel context.
-     * @return the endpoints
+     * @return a list of key/value pairs with endpoint information
      */
-    List<Endpoint> getEndpoints(String camelContextName);
+    List<Map<String, String>> getEndpoints(String camelContextName);
 
     /**
      * Return the definition of the REST services as XML for the given Camel context.
