@@ -20,7 +20,7 @@
     \u001B[36mcamel:context-stop\u001B[0m Stops a Camel context.
     \u001B[36mcamel:context-suspend\u001B[0m Suspends a Camel context.
     \u001B[36mcamel:endpoint-explain\u001B[0m Explain all Camel endpoints available in Camel Context deployed
-    \u001B[36mcamel:endpoint-list\u001B[0m List all Camel endpoints available in Camel Context deployed
+    \u001B[36mcamel:endpoint-list\u001B[0m List the Camel endpoints.
     \u001B[36mcamel:rest-registry-list\u001B[0m Lists all Camel REST services enlisted in the Rest Registry from all CamelContexts.
     \u001B[36mcamel:rest-show\u001B[0m Display the Camel REST definition in XML..
     \u001B[36mcamel:route-info\u001B[0m Display information about a Camel route.
