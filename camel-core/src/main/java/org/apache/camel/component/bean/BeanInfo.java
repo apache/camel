@@ -306,17 +306,20 @@ public class BeanInfo {
         } else {
             LOG.trace("Preferring interface methods as class: {} is not public accessible", clazz);
             methods = getInterfaceMethods(clazz);
+            // and then we must add its declared methods as well
+            List<Method> extraMethods = Arrays.asList(clazz.getDeclaredMethods());
+            methods.addAll(extraMethods);
         }
 
-        // it may have duplicate methods already in the declared list of methods, so lets remove those
+        // it may have duplicate methods already, even from declared or from interfaces + declared
         Set<Method> overrides = new HashSet<Method>();
         for (Method source : methods) {
             for (Method target : methods) {
-                // skip overselves
+                // skip ourselves
                 if (ObjectHelper.isOverridingMethod(source, target, true)) {
                     continue;
                 }
-
+                // skip duplicates which may be assign compatible (favor keep first added method when duplicate)
                 if (ObjectHelper.isOverridingMethod(source, target, false)) {
                     overrides.add(target);
                 }
@@ -325,6 +328,7 @@ public class BeanInfo {
         methods.removeAll(overrides);
         overrides.clear();
 
+        // if we are a public class, then add non duplicate interface classes also
         if (Modifier.isPublic(clazz.getModifiers())) {
             // add additional interface methods
             List<Method> extraMethods = getInterfaceMethods(clazz);
