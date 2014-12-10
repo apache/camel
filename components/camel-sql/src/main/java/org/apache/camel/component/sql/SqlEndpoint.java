@@ -76,6 +76,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private int parametersCount;
     @UriParam
     private boolean noop;
+    @UriParam
+    private String outputHeader;
 
     public SqlEndpoint() {
     }
@@ -291,6 +293,21 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setNoop(boolean noop) {
         this.noop = noop;
+    }
+
+    public String getOutputHeader() {
+        return outputHeader;
+    }
+
+    /**
+     * Store the query result in a header instead of the message body.
+     * By default, outputHeader == null and the query result is stored in the message body,
+     * any existing content in the message body is discarded.
+     * If outputHeader is set, the value is used as the name of the header to store the
+     * query result and the original message body is preserved.
+     */
+    public void setOutputHeader(String outputHeader) {
+        this.outputHeader = outputHeader;
     }
 
     @Override
