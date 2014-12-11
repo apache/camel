@@ -91,6 +91,28 @@ public abstract class AbstractCamelController implements CamelController {
         return answer;
     }
 
+    public String getCamelContextStatsAsXml(String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception {
+        CamelContext context = this.getCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+        if (agent != null) {
+            MBeanServer mBeanServer = agent.getMBeanServer();
+            ObjectName query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=context,*");
+            Set<ObjectName> set = mBeanServer.queryNames(query, null);
+            for (ObjectName contextMBean : set) {
+                String camelId = (String) mBeanServer.getAttribute(contextMBean, "CamelId");
+                if (camelId != null && camelId.equals(context.getName())) {
+                    String xml = (String) mBeanServer.invoke(contextMBean, "dumpRoutesStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
+                    return xml;
+                }
+            }
+        }
+        return null;
+    }
+
     public void startContext(String camelContextName) throws Exception {
         CamelContext context = getCamelContext(camelContextName);
         if (context != null) {

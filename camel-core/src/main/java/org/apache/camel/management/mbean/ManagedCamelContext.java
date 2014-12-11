@@ -373,6 +373,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
+        sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
@@ -400,6 +401,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
+                sb.append(" exchangesInflight=\"").append(context.getInflightRepository().size(route.getRouteId())).append("\"");
                 sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
                 // add processor details if needed

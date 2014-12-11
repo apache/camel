@@ -23,7 +23,10 @@ import java.util.Date;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.RouteStatDump;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
  * Command to display detailed information about a Camel route.
@@ -47,7 +50,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
 
     @Override
     public void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception {
-        out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Route " + routeId + "\u001B[0m"));
+        out.println(stringEscape.unescapeJava("\u001B[1mCamel Route " + routeId + "\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
@@ -59,7 +62,8 @@ public class RouteInfoCommand extends AbstractRouteCommand {
 
             RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
-            out.println(stringEscape.unescapeJava("\tExchanges Total: " + route.getExchangesCompleted() + route.getExchangesFailed()));
+            long total = route.getExchangesCompleted() + route.getExchangesFailed();
+            out.println(stringEscape.unescapeJava("\tExchanges Total: " + total));
             out.println(stringEscape.unescapeJava("\tExchanges Completed: " + route.getExchangesCompleted()));
             out.println(stringEscape.unescapeJava("\tExchanges Failed: " + route.getExchangesFailed()));
             out.println(stringEscape.unescapeJava("\tExchanges Inflight: " + route.getExchangesInflight()));
@@ -71,7 +75,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             out.println(stringEscape.unescapeJava("\tDelta Processing Time: " + route.getDeltaProcessingTime() + " ms"));
 
             // Test for null to see if a any exchanges have been processed first to avoid NPE
-            if (route.getResetTimestamp() == null) {
+            if (isEmpty(route.getResetTimestamp())) {
                 // Print an empty value for scripting
                 out.println(stringEscape.unescapeJava("\tReset Statistics Date:"));
             } else {
@@ -81,7 +85,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             }
 
             // Test for null to see if a any exchanges have been processed first to avoid NPE
-            if (route.getFirstExchangeCompletedTimestamp() == null) {
+            if (isEmpty(route.getFirstExchangeCompletedTimestamp())) {
                 // Print an empty value for scripting
                 out.println(stringEscape.unescapeJava("\tFirst Exchange Date:"));
             } else {
@@ -91,7 +95,7 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             }
 
             // Test for null to see if a any exchanges have been processed first to avoid NPE
-            if (route.getLastExchangeCompletedTimestamp() == null) {
+            if (isEmpty(route.getLastExchangeCompletedTimestamp())) {
                 // Print an empty value for scripting
                 out.println(stringEscape.unescapeJava("\tLast Exchange Date:"));
             } else {

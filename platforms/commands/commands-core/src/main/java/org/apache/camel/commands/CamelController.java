@@ -70,6 +70,17 @@ public interface CamelController {
     List<Map<String, String>> getCamelContexts2() throws Exception;
 
     /**
+     * Returns detailed CamelContext and route statistics as XML identified by a ID and a Camel context.
+     *
+     * @param camelContextName  the Camel context.
+     * @param fullStats         whether to include verbose stats
+     * @param includeProcessors whether to embed per processor stats from the route
+     * @return the CamelContext statistics as XML
+     * @throws java.lang.Exception can be thrown
+     */
+    String getCamelContextStatsAsXml(String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception;
+
+    /**
      * Starts the given Camel context.
      *
      * @param camelContextName the Camel context.

@@ -72,8 +72,8 @@ public class RestRegistryListCommand extends AbstractContextCommand {
                 out.println(String.format(headerFormat, URL_COLUMN_NAME, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL, ROUTE_COLUMN_LABEL));
                 out.println(String.format(headerFormat, "---", "---------", "------------", "------", "-----", "--------"));
             } else {
-                out.println(String.format(headerFormat, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL));
-                out.println(String.format(headerFormat, "---------", "------------", "------", "-----"));
+                out.println(String.format(headerFormat, BASE_PATH_LABEL, URI_TEMPLATE_LABEL, METHOD_COLUMN_LABEL, STATE_COLUMN_LABEL, ROUTE_COLUMN_LABEL));
+                out.println(String.format(headerFormat, "---------", "------------", "------", "-----", "--------"));
             }
             for (Map<String, String> row : services) {
                 String uri = null;
@@ -167,11 +167,11 @@ public class RestRegistryListCommand extends AbstractContextCommand {
         int methodLen = Math.min(columnWidths.get(METHOD_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int statusLen = Math.min(columnWidths.get(STATE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         int routeLen = Math.min(columnWidths.get(ROUTE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-        basePathLen = Math.max(MIN_COLUMN_WIDTH, basePathLen);
         uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
+        basePathLen = Math.max(MIN_COLUMN_WIDTH, basePathLen);
         uriTemplateLen = Math.max(MIN_COLUMN_WIDTH, uriTemplateLen);
         methodLen = Math.max(MIN_COLUMN_WIDTH, methodLen);
-        routeLen = Math.max(MIN_COLUMN_WIDTH, routeLen);
+        statusLen = Math.max(MIN_COLUMN_WIDTH, statusLen);
 
         // last row does not have min width
 

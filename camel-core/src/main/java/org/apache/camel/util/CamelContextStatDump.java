@@ -16,23 +16,24 @@
  */
 package org.apache.camel.util;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A model of a route stat dump from {@link org.apache.camel.api.management.mbean.ManagedRouteMBean#dumpRouteStatsAsXml(boolean, boolean)}.
+ * A model of a CamelContext stat dump from {@link org.apache.camel.api.management.mbean.ManagedCamelContextMBean#dumpRoutesStatsAsXml(boolean, boolean)}.
  */
-@XmlRootElement(name = "processorStat")
+@XmlRootElement(name = "camelContextStat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class ProcessorStatDump {
+public final class CamelContextStatDump {
 
     @XmlAttribute
     private String id;
-
-    @XmlAttribute
-    private Integer index;
 
     @XmlAttribute
     private String state;
@@ -68,7 +69,10 @@ public final class ProcessorStatDump {
     private Long meanProcessingTime;
 
     @XmlAttribute
-    private Long accumulatedProcessingTime;
+    private Long exchangesInflight;
+
+    @XmlAttribute
+    private Long selfProcessingTime;
 
     @XmlAttribute
     private String resetTimestamp;
@@ -97,20 +101,18 @@ public final class ProcessorStatDump {
     @XmlAttribute
     private String lastExchangeFailureExchangeId;
 
+    @XmlElementWrapper(name = "routeStats")
+    @XmlElements({
+            @XmlElement(type = RouteStatDump.class, name = "routeStat")
+    })
+    private List<RouteStatDump> routeStats;
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Integer getIndex() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
     }
 
     public String getState() {
@@ -201,12 +203,20 @@ public final class ProcessorStatDump {
         this.meanProcessingTime = meanProcessingTime;
     }
 
-    public Long getAccumulatedProcessingTime() {
-        return accumulatedProcessingTime;
+    public Long getSelfProcessingTime() {
+        return selfProcessingTime;
     }
 
-    public void setAccumulatedProcessingTime(Long accumulatedProcessingTime) {
-        this.accumulatedProcessingTime = accumulatedProcessingTime;
+    public void setSelfProcessingTime(Long selfProcessingTime) {
+        this.selfProcessingTime = selfProcessingTime;
+    }
+
+    public Long getExchangesInflight() {
+        return exchangesInflight;
+    }
+
+    public void setExchangesInflight(Long exchangesInflight) {
+        this.exchangesInflight = exchangesInflight;
     }
 
     public String getResetTimestamp() {
@@ -279,6 +289,14 @@ public final class ProcessorStatDump {
 
     public void setLastExchangeFailureExchangeId(String lastExchangeFailureExchangeId) {
         this.lastExchangeFailureExchangeId = lastExchangeFailureExchangeId;
+    }
+
+    public List<RouteStatDump> getRouteStats() {
+        return routeStats;
+    }
+
+    public void setRouteStats(List<RouteStatDump> routeStats) {
+        this.routeStats = routeStats;
     }
 
 }

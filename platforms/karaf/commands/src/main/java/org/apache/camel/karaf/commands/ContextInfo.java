@@ -20,6 +20,7 @@ import org.apache.camel.commands.ContextInfoCommand;
 import org.apache.camel.commands.StringEscape;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.felix.gogo.commands.Option;
 
 @Command(scope = "camel", name = "context-info", description = "Display detailed information about a Camel context.")
 public class ContextInfo extends CamelCommandSupport {
@@ -27,8 +28,9 @@ public class ContextInfo extends CamelCommandSupport {
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
     String name;
 
-    @Argument(index = 1, name = "mode", description = "Allows for different display modes (--verbose, etc)", required = false, multiValued = false)
-    String mode;
+    @Option(name = "--verbose", aliases = "-v", description = "Verbose output",
+            required = false, multiValued = false, valueToShowInHelp = "false")
+    boolean verbose;
 
     private StringEscape stringEscape;
 
@@ -38,7 +40,7 @@ public class ContextInfo extends CamelCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        ContextInfoCommand command = new ContextInfoCommand(name, mode);
+        ContextInfoCommand command = new ContextInfoCommand(name, verbose);
         command.setStringEscape(stringEscape);
         return command.execute(camelController, System.out, System.err);
     }
