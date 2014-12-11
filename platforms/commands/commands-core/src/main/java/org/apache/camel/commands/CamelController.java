@@ -21,12 +21,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 
 /**
  * CamelController interface defines the expected behaviors to manipulate Camel resources (context, route, etc).
  */
 public interface CamelController {
+
+    // TODO: migrate camel context commands
+    // TODO: fix classloading in karaf for explain-endpoint
+    // TODO: AbstractCamelController should have a LocalAbstractCamelController
+    // .. and then the AbstractCamelController is pure base, that can be used for remotes
 
     /**
      * Get the list of Camel context.
@@ -34,6 +38,7 @@ public interface CamelController {
      * @return the list of Camel contexts.
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     List<CamelContext> getCamelContexts() throws Exception;
 
     /**
@@ -43,6 +48,7 @@ public interface CamelController {
      * @return the Camel context or null if not found.
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     CamelContext getCamelContext(String name) throws Exception;
 
     /**
