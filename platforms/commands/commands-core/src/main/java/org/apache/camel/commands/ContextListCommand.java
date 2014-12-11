@@ -40,7 +40,7 @@ public class ContextListCommand extends AbstractCamelCommand {
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        final List<Map<String, String>> camelContexts = camelController.getCamelContexts2();
+        final List<Map<String, String>> camelContexts = camelController.getCamelContexts();
 
         final Map<String, Integer> columnWidths = computeColumnWidths(camelContexts);
         final String headerFormat = buildFormatString(columnWidths, true);

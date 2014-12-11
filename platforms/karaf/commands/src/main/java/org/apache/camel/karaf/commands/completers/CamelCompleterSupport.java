@@ -16,7 +16,7 @@
  */
 package org.apache.camel.karaf.commands.completers;
 
-import org.apache.camel.commands.CamelController;
+import org.apache.camel.commands.LocalCamelController;
 import org.apache.karaf.shell.console.Completer;
 
 /**
@@ -24,9 +24,9 @@ import org.apache.karaf.shell.console.Completer;
  */
 public abstract class CamelCompleterSupport implements Completer {
 
-    protected CamelController camelController;
+    protected LocalCamelController camelController;
 
-    public void setCamelController(CamelController camelController) {
+    public void setCamelController(LocalCamelController camelController) {
         this.camelController = camelController;
     }
 

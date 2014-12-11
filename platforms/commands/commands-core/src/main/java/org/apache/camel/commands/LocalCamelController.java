@@ -14,31 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands.completers;
+package org.apache.camel.commands;
 
 import java.util.List;
 
-import jline.console.completer.StringsCompleter;
 import org.apache.camel.CamelContext;
 
-/**
- * A JLine completer for the Camel contexts.
- */
-public class CamelContextCompleter extends CamelCompleterSupport {
+public interface LocalCamelController extends CamelController{
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public int complete(String buffer, int cursor, List candidates) {
-        try {
-            StringsCompleter delegate = new StringsCompleter();
-            List<CamelContext> camelContexts = camelController.getLocalCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                delegate.getStrings().add(camelContext.getName());
-            }
-            return delegate.complete(buffer, cursor, candidates);
-        } catch (Exception e) {
-            // nothing to do, no completion
-        }
-        return 0;
-    }
+    /**
+     * Get the list of Camel context.
+     *
+     * @return the list of Camel contexts.
+     * @throws Exception can be thrown
+     */
+    List<CamelContext> getLocalCamelContexts() throws Exception;
 
+    /**
+     * Get a Camel context identified by the given name.
+     *
+     * @param name the Camel context name.
+     * @return the Camel context or null if not found.
+     * @throws Exception can be thrown
+     */
+    CamelContext getLocalCamelContext(String name) throws Exception;
 }

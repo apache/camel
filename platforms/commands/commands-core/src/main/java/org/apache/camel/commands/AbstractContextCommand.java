@@ -17,6 +17,8 @@
 package org.apache.camel.commands;
 
 import java.io.PrintStream;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 
@@ -36,7 +38,30 @@ public abstract class AbstractContextCommand extends AbstractCamelCommand {
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(context);
+        if (camelController instanceof LocalCamelController) {
+            return executeLocal((LocalCamelController) camelController, out, err);
+        } else {
+            boolean found = false;
+            List<Map<String, String>> contexts = camelController.getCamelContexts();
+            for (Map<String, String> entry : contexts) {
+                String name = entry.get("name");
+                if (context.equals(name)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                err.println("Camel context " + context + " not found.");
+                return null;
+            } else {
+                return performContextCommand(camelController, context, out, err);
+            }
+        }
+    }
+
+    protected Object executeLocal(LocalCamelController camelController, PrintStream out, PrintStream err) throws Exception {
+        CamelContext camelContext = camelController.getLocalCamelContext(context);
         if (camelContext == null) {
             err.println("Camel context " + context + " not found.");
             return null;
