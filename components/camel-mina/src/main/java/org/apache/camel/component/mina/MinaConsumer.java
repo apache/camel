@@ -118,7 +118,7 @@ public class MinaConsumer extends DefaultConsumer {
             // if sync then we should return a response
             if (sync) {
                 Object body;
-                if (ExchangeHelper.isOutCapable(exchange)) {
+                if (exchange.hasOut()) {
                     body = MinaPayloadHelper.getOut(getEndpoint(), exchange);
                 } else {
                     body = MinaPayloadHelper.getIn(getEndpoint(), exchange);
