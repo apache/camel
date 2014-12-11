@@ -78,6 +78,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean reuseAddress;
     private boolean disableStreamCache;
     private int port;
+    private Boolean synchronous;
 
     public RestletComponent() {
         this(new Component());
@@ -93,6 +94,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
+        if (synchronous != null) {
+            result.setSynchronous(synchronous);
+        }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
@@ -501,6 +505,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public Boolean getSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(Boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     @Override
