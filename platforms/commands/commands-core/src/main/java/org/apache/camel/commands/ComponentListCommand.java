@@ -21,8 +21,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-
 /**
  * List all the Camel components that are currently used/loaded in the JVM.
  */
@@ -51,8 +49,8 @@ public class ComponentListCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> components = camelController.listComponents(context);
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> components = camelController.listComponents(contextName);
 
         if (components == null || components.isEmpty()) {
             return null;

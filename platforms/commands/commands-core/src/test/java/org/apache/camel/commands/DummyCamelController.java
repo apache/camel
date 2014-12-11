@@ -17,7 +17,9 @@
 package org.apache.camel.commands;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 
@@ -33,6 +35,17 @@ public class DummyCamelController extends AbstractCamelController {
     public List<CamelContext> getCamelContexts() {
         List<CamelContext> answer = new ArrayList<CamelContext>(1);
         answer.add(camelContext);
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getCamelContexts2() throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>(1);
+        Map<String, String> row = new LinkedHashMap<String, String>();
+        row.put("name", camelContext.getName());
+        row.put("state", camelContext.getStatus().name());
+        row.put("uptime", camelContext.getUptime());
+        answer.add(row);
         return answer;
     }
 }

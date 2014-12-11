@@ -18,8 +18,6 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 
-import org.apache.camel.CamelContext;
-
 /**
  * Command to resume a Camel context.
  */
@@ -30,8 +28,8 @@ public class ContextResumeCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        camelContext.resume();
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
+        camelController.resumeContext(contextName);
         return null;
     }
 }

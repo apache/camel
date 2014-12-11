@@ -24,7 +24,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -59,8 +58,8 @@ public class EndpointListCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> endpoints = camelController.getEndpoints(context);
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> endpoints = camelController.getEndpoints(contextName);
 
         final Map<String, Integer> columnWidths = computeColumnWidths(endpoints);
         final String headerFormat = buildFormatString(columnWidths, true);

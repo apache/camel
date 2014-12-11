@@ -36,17 +36,19 @@ import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
 /**
  * Command to display detailed information about a given {@link org.apache.camel.CamelContext}.
  */
-public class ContextInfoCommand extends AbstractContextCommand {
+public class ContextInfoCommand extends AbstractCamelCommand {
 
     private StringEscape stringEscape;
+    private String context;
     private String mode;
+
 
     /**
      * @param context The name of the Camel context
      * @param mode Allows for different display modes (--verbose, etc)
      */
     public ContextInfoCommand(String context, String mode) {
-        super(context);
+        this.context = context;
         this.mode = mode;
     }
 
@@ -58,7 +60,12 @@ public class ContextInfoCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
+    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
+        CamelContext camelContext = camelController.getCamelContext(context);
+        if (camelContext == null) {
+            err.println("Camel context " + context + " not found.");
+            return null;
+        }
 
         out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Context " + context + "\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tName: " + camelContext.getName()));

@@ -52,6 +52,47 @@ public interface CamelController {
     CamelContext getCamelContext(String name) throws Exception;
 
     /**
+     * Get the list of Camel context.
+     *
+     * @return a list of key/value pairs with CamelContext information
+     * @throws java.lang.Exception can be thrown
+     */
+    // TODO: rename
+    List<Map<String, String>> getCamelContexts2() throws Exception;
+
+    /**
+     * Starts the given Camel context.
+     *
+     * @param camelContextName the Camel context.
+     * @throws java.lang.Exception can be thrown
+     */
+    void startContext(String camelContextName) throws Exception;
+
+    /**
+     * Stops the given Camel context.
+     *
+     * @param camelContextName the Camel context.
+     * @throws java.lang.Exception can be thrown
+     */
+    void stopContext(String camelContextName) throws Exception;
+
+    /**
+     * Suspends the given Camel context.
+     *
+     * @param camelContextName the Camel context.
+     * @throws java.lang.Exception can be thrown
+     */
+    void suspendContext(String camelContextName) throws Exception;
+
+    /**
+     * Resumes the given Camel context.
+     *
+     * @param camelContextName the Camel context.
+     * @throws java.lang.Exception can be thrown
+     */
+    void resumeContext(String camelContextName) throws Exception;
+
+    /**
      * Get all routes. If Camel context name is null, all routes from all contexts are listed.
      *
      * @param camelContextName the Camel context name. If null, all contexts are considered.

@@ -21,8 +21,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-
 /**
  * Command to list all {@link org.apache.camel.CamelContext} in the JVM.
  */
@@ -42,7 +40,7 @@ public class ContextListCommand extends AbstractCamelCommand {
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        final List<CamelContext> camelContexts = camelController.getCamelContexts();
+        final List<Map<String, String>> camelContexts = camelController.getCamelContexts2();
 
         final Map<String, Integer> columnWidths = computeColumnWidths(camelContexts);
         final String headerFormat = buildFormatString(columnWidths, true);
@@ -51,15 +49,15 @@ public class ContextListCommand extends AbstractCamelCommand {
         if (camelContexts.size() > 0) {
             out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, STATUS_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
             out.println(String.format(headerFormat, "-------", "------", "------"));
-            for (final CamelContext camelContext : camelContexts) {
-                out.println(String.format(rowFormat, camelContext.getName(), camelContext.getStatus(), camelContext.getUptime()));
+            for (Map<String, String> row : camelContexts) {
+                out.println(String.format(rowFormat, row.get("name"), row.get("state"), row.get("updtime")));
             }
         }
 
         return null;
     }
 
-    private static Map<String, Integer> computeColumnWidths(final Iterable<CamelContext> camelContexts) throws Exception {
+    private static Map<String, Integer> computeColumnWidths(final Iterable<Map<String, String>> camelContexts) throws Exception {
         if (camelContexts == null) {
             throw new IllegalArgumentException("Unable to determine column widths from null Iterable<CamelContext>");
         } else {
@@ -67,14 +65,14 @@ public class ContextListCommand extends AbstractCamelCommand {
             int maxStatusLen = 0;
             int maxUptimeLen = 0;
 
-            for (final CamelContext camelContext : camelContexts) {
-                final String name = camelContext.getName();
+            for (Map<String, String> row : camelContexts) {
+                final String name = row.get("name");
                 maxNameLen = java.lang.Math.max(maxNameLen, name == null ? 0 : name.length());
 
-                final String status = camelContext.getStatus().toString();
+                final String status = row.get("state");
                 maxStatusLen = java.lang.Math.max(maxStatusLen, status == null ? 0 : status.length());
 
-                final String uptime = camelContext.getUptime();
+                final String uptime = row.get("uptime");
                 maxUptimeLen = java.lang.Math.max(maxUptimeLen, uptime == null ? 0 : uptime.length());
             }
 

@@ -18,8 +18,6 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 
-import org.apache.camel.CamelContext;
-
 /**
  * Command to show the REST marshaled in XML.
  */
@@ -30,10 +28,10 @@ public class RestShowCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        String xml = camelController.getRestModelAsXml(context);
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
+        String xml = camelController.getRestModelAsXml(contextName);
         if (xml == null) {
-            out.println("There are no REST services in CamelContext with name: " + context);
+            out.println("There are no REST services in CamelContext with name: " + contextName);
             return null;
         }
         out.println(xml);

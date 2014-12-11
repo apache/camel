@@ -62,6 +62,34 @@ public abstract class AbstractCamelController implements CamelController {
         return null;
     }
 
+    public void startContext(String camelContextName) throws Exception {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            context.start();
+        }
+    }
+
+    public void stopContext(String camelContextName) throws Exception {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            context.stop();
+        }
+    }
+
+    public void suspendContext(String camelContextName) throws Exception {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            context.suspend();
+        }
+    }
+
+    public void resumeContext(String camelContextName) throws Exception {
+        CamelContext context = getCamelContext(camelContextName);
+        if (context != null) {
+            context.resume();
+        }
+    }
+
     public List<Map<String, String>> getRoutes(String camelContextName) throws Exception {
         return getRoutes(camelContextName, null);
     }
@@ -83,17 +111,10 @@ public abstract class AbstractCamelController implements CamelController {
                 }
             }
         } else {
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                for (Route route : camelContext.getRoutes()) {
-                    if (filter == null || route.getId().matches(filter)) {
-                        Map<String, String> row = new LinkedHashMap<String, String>();
-                        row.put("camelContextName", camelContext.getName());
-                        row.put("routeId", route.getId());
-                        row.put("state", getRouteState(route));
-                        answer.add(row);
-                    }
-                }
+            List<Map<String, String>> camelContexts = this.getCamelContexts2();
+            for (Map<String, String> row : camelContexts) {
+                List<Map<String, String>> routes = getRoutes(row.get("name"), filter);
+                answer.addAll(routes);
             }
         }
 

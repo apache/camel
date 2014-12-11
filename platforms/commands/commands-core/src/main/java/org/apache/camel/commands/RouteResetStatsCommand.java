@@ -18,8 +18,6 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 
-import org.apache.camel.CamelContext;
-
 /**
  * Command to reset route stats.
  */
@@ -30,8 +28,8 @@ public class RouteResetStatsCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        camelController.resetRouteStats(camelContext.getName());
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
+        camelController.resetRouteStats(contextName);
         return null;
     }
 }

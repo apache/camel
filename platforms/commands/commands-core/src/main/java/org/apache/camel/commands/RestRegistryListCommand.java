@@ -22,7 +22,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -57,8 +56,8 @@ public class RestRegistryListCommand extends AbstractContextCommand {
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> services = camelController.getRestServices(context);
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
+        List<Map<String, String>> services = camelController.getRestServices(contextName);
         if (services.isEmpty()) {
             out.print("There are no REST services");
             return null;

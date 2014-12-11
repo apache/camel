@@ -46,7 +46,7 @@ public abstract class AbstractContextCommand extends AbstractCamelCommand {
         ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(camelContext.getApplicationContextClassLoader());
         try {
-            return performContextCommand(camelController, camelContext, out, err);
+            return performContextCommand(camelController, camelContext.getName(), out, err);
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassloader);
         }
@@ -56,12 +56,12 @@ public abstract class AbstractContextCommand extends AbstractCamelCommand {
      * Perform Context-specific command
      *
      * @param camelController the Camel controller
-     * @param camelContext    non-null {@link CamelContext}
+     * @param contextName     the Camel context name
      * @param out             the output printer stream
      * @param err             the error print stream
      * @return response from command, or <tt>null</tt> if nothing to return
      * @throws Exception is thrown if error executing command
      */
-    protected abstract Object performContextCommand(CamelController camelController, CamelContext camelContext, PrintStream out, PrintStream err) throws Exception;
+    protected abstract Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception;
 
 }
