@@ -34,6 +34,7 @@ import org.jolokia.client.request.J4pReadRequest;
 import org.jolokia.client.request.J4pReadResponse;
 import org.jolokia.client.request.J4pSearchRequest;
 import org.jolokia.client.request.J4pSearchResponse;
+import org.json.simple.JSONObject;
 
 /**
  * A {@link org.apache.camel.commands.CamelController} that uses Jolokia Client to connect to remote JVMs which
@@ -386,34 +387,110 @@ public class JolokiaCamelController extends AbstractCamelController implements R
     }
 
     @Override
-    public List<Map<String, String>> getEndpoints(String s) throws Exception {
+    public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            J4pSearchResponse sr = jolokia.execute(new J4pSearchRequest("*:type=endpoints,*"));
+
+            List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
+            for (ObjectName on : sr.getObjectNames()) {
+                list.add(new J4pReadRequest(on, "CamelId", "EndpointUri", "State"));
+            }
+
+            List<J4pReadResponse> lrr = jolokia.execute(list);
+            for (J4pReadResponse rr : lrr) {
+                Map<String, String> row = new LinkedHashMap<String, String>();
+                row.put("camelContextName", rr.getValue("CamelId").toString());
+                row.put("uri", rr.getValue("EndpointUri").toString());
+                row.put("state", rr.getValue("State").toString());
+                answer.add(row);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getRestServices(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultRestRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listRestServices()"));
+            if (response != null) {
+                JSONObject data = response.asJSONObject();
+                // TODO: parse the open data type
+            }
+
+            /*
+                List<RestRegistry.RestService> services = new ArrayList<RestRegistry.RestService>(context.getRestRegistry().listAllRestServices());
+                Collections.sort(services, new Comparator<RestRegistry.RestService>() {
+                    @Override
+                    public int compare(RestRegistry.RestService o1, RestRegistry.RestService o2) {
+                        return o1.getUrl().compareTo(o2.getUrl());
+                    }
+                });
+                for (RestRegistry.RestService service : services) {
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("basePath", service.getBasePath());
+                    row.put("baseUrl", service.getBaseUrl());
+                    row.put("consumes", service.getConsumes());
+                    row.put("description", service.getDescription());
+                    row.put("inType", service.getInType());
+                    row.put("method", service.getMethod());
+                    row.put("outType", service.getOutType());
+                    row.put("produces", service.getProduces());
+                    row.put("routeId", service.getRouteId());
+                    row.put("state", service.getState());
+                    row.put("uriTemplate", service.getUriTemplate());
+                    row.put("url", service.getUrl());
+                    answer.add(row);
+                }
+            }   */
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(found, "explainEndpointJson(java.lang.String,boolean)", uri, allOptions));
+            if (response != null) {
+                String json = response.getValue();
+                return json;
+            }
+        }
+
         return null;
     }
 
     @Override
-    public List<Map<String, String>> getRestServices(String s) throws Exception {
+    public List<Map<String, String>> listComponents(String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
-        return null;
-    }
 
-    @Override
-    public String explainEndpointAsJSon(String s, String s2, boolean b) throws Exception {
-        if (jolokia == null) {
-            throw new IllegalStateException("Need to connect to remote jolokia first");
-        }
-        return null;
-    }
+        // TODO: implement me
 
-    @Override
-    public List<Map<String, String>> listComponents(String s) throws Exception {
-        if (jolokia == null) {
-            throw new IllegalStateException("Need to connect to remote jolokia first");
-        }
         return null;
     }
 

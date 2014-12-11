@@ -150,4 +150,31 @@ public class JolokiaRemoteTest {
         System.out.println(data);
     }
 
+    @Test
+    public void testGetEndpoints() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        List<Map<String, String>> data = controller.getEndpoints("myCamel");
+        System.out.println(data);
+    }
+
+    @Test
+    public void testGetRestServices() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        List<Map<String, String>> data = controller.getRestServices("myCamel");
+        System.out.println(data);
+    }
+
+    @Test
+    public void testExplainEndpointJson() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.explainEndpointAsJSon("myCamel", "log:foo", true);
+        System.out.println(data);
+    }
+
 }
