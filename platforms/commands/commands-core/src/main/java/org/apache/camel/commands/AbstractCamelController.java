@@ -62,6 +62,35 @@ public abstract class AbstractCamelController implements CamelController {
         return null;
     }
 
+    @Override
+    public Map<String, Object> getCamelContextInformation(String name) throws Exception {
+        Map<String, Object> answer = new LinkedHashMap<String, Object>();
+        CamelContext context = getCamelContext(name);
+        if (context != null) {
+            answer.put("name", context.getName());
+            answer.put("managementName", context.getManagementName());
+            answer.put("version", context.getVersion());
+            answer.put("status", context.getStatus().name());
+            answer.put("uptime", context.getUptime());
+            answer.put("autoStartup", context.isAutoStartup());
+            answer.put("startingRoutes", context.isStartingRoutes());
+            answer.put("suspended", context.getStatus().isSuspended());
+            answer.put("allowUseOriginalMessage", context.isAllowUseOriginalMessage());
+            answer.put("messageHistory", context.isMessageHistory());
+            answer.put("tracing", context.isTracing());
+            answer.put("shutdownTimeout", context.getShutdownStrategy().getTimeUnit().toSeconds(context.getShutdownStrategy().getTimeout()));
+            answer.put("classResolver", context.getClassResolver().toString());
+            answer.put("packageScanClassResolver", context.getPackageScanClassResolver().toString());
+            answer.put("applicationContextClassLoader", context.getApplicationContextClassLoader().toString());
+
+            for (Map.Entry<String, String> entry : context.getProperties().entrySet()) {
+                answer.put("property." + entry.getKey(), entry.getValue());
+            }
+        }
+
+        return answer;
+    }
+
     public void startContext(String camelContextName) throws Exception {
         CamelContext context = getCamelContext(camelContextName);
         if (context != null) {

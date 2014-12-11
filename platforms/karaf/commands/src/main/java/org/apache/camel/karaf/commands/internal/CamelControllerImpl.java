@@ -19,7 +19,9 @@ package org.apache.camel.karaf.commands.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.commands.AbstractCamelController;
@@ -41,6 +43,7 @@ public class CamelControllerImpl extends AbstractCamelController {
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public List<CamelContext> getCamelContexts() {
         List<CamelContext> camelContexts = new ArrayList<CamelContext>();
         try {
@@ -68,6 +71,22 @@ public class CamelControllerImpl extends AbstractCamelController {
         });
 
         return camelContexts;
+    }
+
+    @Override
+    public List<Map<String, String>> getCamelContexts2() throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>(1);
+
+        List<CamelContext> camelContexts = getCamelContexts();
+        for (CamelContext camelContext : camelContexts) {
+            Map<String, String> row = new LinkedHashMap<String, String>();
+            row.put("name", camelContext.getName());
+            row.put("state", camelContext.getStatus().name());
+            row.put("uptime", camelContext.getUptime());
+            answer.add(row);
+        }
+
+        return answer;
     }
 
 }

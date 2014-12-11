@@ -50,7 +50,7 @@ public class ContextListCommand extends AbstractCamelCommand {
             out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, STATUS_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
             out.println(String.format(headerFormat, "-------", "------", "------"));
             for (Map<String, String> row : camelContexts) {
-                out.println(String.format(rowFormat, row.get("name"), row.get("state"), row.get("updtime")));
+                out.println(String.format(rowFormat, row.get("name"), row.get("state"), row.get("uptime")));
             }
         }
 

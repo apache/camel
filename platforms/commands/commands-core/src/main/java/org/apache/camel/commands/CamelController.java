@@ -52,6 +52,15 @@ public interface CamelController {
     CamelContext getCamelContext(String name) throws Exception;
 
     /**
+     * Gets information about a given Camel context by the given name.
+     *
+     * @param name the Camel context name.
+     * @return a list of key/value pairs with CamelContext information
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Object> getCamelContextInformation(String name) throws Exception;
+
+    /**
      * Get the list of Camel context.
      *
      * @return a list of key/value pairs with CamelContext information

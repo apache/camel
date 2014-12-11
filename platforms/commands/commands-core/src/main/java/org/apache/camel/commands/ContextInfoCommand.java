@@ -27,7 +27,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.spi.ManagementAgent;
 
@@ -61,75 +60,47 @@ public class ContextInfoCommand extends AbstractCamelCommand {
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(context);
-        if (camelContext == null) {
+        Map<String, Object> row = camelController.getCamelContextInformation(context);
+        if (row == null || row.isEmpty()) {
             err.println("Camel context " + context + " not found.");
             return null;
         }
 
-        out.println(stringEscape.unescapeJava("\u001B[1m\u001B[33mCamel Context " + context + "\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tName: " + camelContext.getName()));
-        out.println(stringEscape.unescapeJava("\tManagementName: " + camelContext.getManagementName()));
-        out.println(stringEscape.unescapeJava("\tVersion: " + camelContext.getVersion()));
-        out.println(stringEscape.unescapeJava("\tStatus: " + camelContext.getStatus()));
-        out.println(stringEscape.unescapeJava("\tUptime: " + camelContext.getUptime()));
-
-        // the statistics are in the mbeans
-        printCamelManagedBeansStatus(camelContext, out);
+        out.println("");
+        out.println(stringEscape.unescapeJava("\u001B[1mCamel Context " + context + "\u001B[0m"));
+        out.println(stringEscape.unescapeJava("\tName: " + row.get("name")));
+        out.println(stringEscape.unescapeJava("\tManagementName: " + row.get("managementName")));
+        out.println(stringEscape.unescapeJava("\tVersion: " + row.get("version")));
+        out.println(stringEscape.unescapeJava("\tStatus: " + row.get("status")));
+        out.println(stringEscape.unescapeJava("\tUptime: " + row.get("uptime")));
 
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
-        out.println(stringEscape.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
-        out.println(stringEscape.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
-        out.println(stringEscape.unescapeJava("\tShutdown timeout: "
-                + camelContext.getShutdownStrategy().getTimeUnit().toSeconds(camelContext.getShutdownStrategy().getTimeout()) + " sec."));
-        out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + camelContext.isAllowUseOriginalMessage()));
-        out.println(stringEscape.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
-        out.println(stringEscape.unescapeJava("\tTracing: " + camelContext.isTracing()));
+        out.println(stringEscape.unescapeJava("\tAuto Startup: " + row.get("autoStartup")));
+        out.println(stringEscape.unescapeJava("\tStarting Routes: " + row.get("startingRoutes")));
+        out.println(stringEscape.unescapeJava("\tSuspended: " + row.get("suspended")));
+        out.println(stringEscape.unescapeJava("\tShutdown Timeout: " + row.get("shutdownTimeout") + " sec."));
+        out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));
+        out.println(stringEscape.unescapeJava("\tMessage History: " + row.get("messageHistory")));
+        out.println(stringEscape.unescapeJava("\tTracing: " + row.get("tracing")));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mProperties\u001B[0m"));
-        for (Map.Entry<String, String> entry : camelContext.getProperties().entrySet()) {
-            out.println(stringEscape.unescapeJava("\t" + entry.getKey() + " = " + entry.getValue()));
+        for (Map.Entry<String, Object> entry : row.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("property.")) {
+                key = key.substring(9);
+                out.println(stringEscape.unescapeJava("\t" + key + " = " + entry.getValue()));
+            }
         }
-
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tClassResolver: " + camelContext.getClassResolver()));
-        out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + camelContext.getPackageScanClassResolver()));
-        out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + camelContext.getApplicationContextClassLoader()));
+        out.println(stringEscape.unescapeJava("\tClassResolver: " + row.get("classResolver")));
+        out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + row.get("packageScanClassResolver")));
+        out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
 
-        out.println("");
-        out.println(stringEscape.unescapeJava("\u001B[1mComponents\u001B[0m"));
-        for (String component : camelContext.getComponentNames()) {
-            System.out.println(stringEscape.unescapeJava("\t" + component));
-        }
-
-        out.println("");
-        out.println(stringEscape.unescapeJava("\u001B[1mDataformats\u001B[0m"));
-        for (String name : camelContext.getDataFormats().keySet()) {
-            out.println(stringEscape.unescapeJava("\t" + name));
-        }
-
-        if (mode != null && mode.equals("--verbose")) {
-            out.println("");
-            out.println(stringEscape.unescapeJava("\u001B[1mLanguages\u001B[0m"));
-            for (String language : camelContext.getLanguageNames()) {
-                out.println(stringEscape.unescapeJava("\t" + language));
-            }
-
-            out.println("");
-            out.println(stringEscape.unescapeJava("\u001B[1mEndpoints\u001B[0m"));
-            for (Endpoint endpoint : camelContext.getEndpoints()) {
-                out.println(stringEscape.unescapeJava("\t" + endpoint.getEndpointUri()));
-            }
-        }
-
-        out.println("");
-        out.println(stringEscape.unescapeJava("\u001B[1mRoutes\u001B[0m"));
-        for (Route route : camelContext.getRoutes()) {
-            out.println(stringEscape.unescapeJava("\t" + route.getId()));
-        }
+        // the statistics are in the mbeans
+        // TODO: use dump stats as xml
+        // printCamelManagedBeansStatus(camelContext, out);
 
         return null;
     }
