@@ -45,12 +45,8 @@ public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTes
                 SSLContextParameters sslContextParameters = new SSLContextParameters();
                 sslContextParameters.setKeyManagers(kmp);
                 jetty.setSslContextParameters(sslContextParameters);
-                
                 // NOTE: These are here to check that they are properly ignored.
-                jetty.addSslSocketConnectorProperty("keyPassword", "sadfasdfasdfas");
-                jetty.addSslSocketConnectorProperty("password", "asdfasdfasdfdasfs");
-                jetty.addSslSocketConnectorProperty("keystore", "");
-                jetty.addSslSocketConnectorProperty("truststoreType", "JKS");
+                setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
 
                 // add jetty to camel context
                 context.addComponent("jetty", jetty);

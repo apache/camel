@@ -51,16 +51,9 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                // create jetty component
                 JettyHttpComponent jetty = new JettyHttpComponent();
-                
                 // NOTE: These are here to check that they are properly ignored.
-                jetty.addSslSocketConnectorProperty("keyPassword", "sadfasdfasdfas");
-                jetty.addSslSocketConnectorProperty("password", "asdfasdfasdfdasfs");
-                jetty.addSslSocketConnectorProperty("keystore", "");
-                jetty.addSslSocketConnectorProperty("truststoreType", "JKS");
-
-                // add jetty to camel context
+                setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
                 context.addComponent("jetty", jetty);
 
                 from("jetty:https://localhost:" + port1 + "/test?sslContextParametersRef=sslContextParameters").to("mock:a");
