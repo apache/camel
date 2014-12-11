@@ -23,7 +23,6 @@ import java.util.Date;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.RouteStatDump;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -52,8 +51,6 @@ public class RouteInfoCommand extends AbstractRouteCommand {
     public void executeOnRoute(CamelController camelController, String contextName, String routeId, PrintStream out, PrintStream err) throws Exception {
         out.println(stringEscape.unescapeJava("\u001B[1mCamel Route " + routeId + "\u001B[0m"));
         out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
-        out.println("");
-        out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
 
         String xml = camelController.getRouteStatsAsXml(routeId, contextName, true, false);
         if (xml != null) {
@@ -61,7 +58,10 @@ public class RouteInfoCommand extends AbstractRouteCommand {
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
             RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
+            out.println(stringEscape.unescapeJava("\tState: " + route.getState()));
 
+            out.println("");
+            out.println(stringEscape.unescapeJava("\u001B[1mStatistics\u001B[0m"));
             long total = route.getExchangesCompleted() + route.getExchangesFailed();
             out.println(stringEscape.unescapeJava("\tExchanges Total: " + total));
             out.println(stringEscape.unescapeJava("\tExchanges Completed: " + route.getExchangesCompleted()));
@@ -102,13 +102,6 @@ public class RouteInfoCommand extends AbstractRouteCommand {
                 Date date = new SimpleDateFormat(XML_TIMESTAMP_FORMAT).parse(route.getLastExchangeCompletedTimestamp());
                 String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
                 out.println(stringEscape.unescapeJava("\tLast Exchange Date: " + text));
-            }
-
-            out.println("");
-            xml = camelController.getRouteModelAsXml(routeId, contextName);
-            if (xml != null) {
-                out.println(stringEscape.unescapeJava("\u001B[1mDefinition\u001B[0m"));
-                out.println(stringEscape.unescapeJava(xml));
             }
         }
     }

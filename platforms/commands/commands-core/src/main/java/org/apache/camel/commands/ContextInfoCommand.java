@@ -90,13 +90,14 @@ public class ContextInfoCommand extends AbstractCamelCommand {
                 out.println(stringEscape.unescapeJava("\t" + key + " = " + entry.getValue()));
             }
         }
-        out.println("");
-        out.println(stringEscape.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tClassResolver: " + row.get("classResolver")));
-        out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + row.get("packageScanClassResolver")));
-        out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
 
         if (verbose) {
+            out.println("");
+            out.println(stringEscape.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
+            out.println(stringEscape.unescapeJava("\tClassResolver: " + row.get("classResolver")));
+            out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + row.get("packageScanClassResolver")));
+            out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
+
             printStatistics(camelController, out);
         }
 
