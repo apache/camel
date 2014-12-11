@@ -20,7 +20,13 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 
-public interface LocalCamelController extends CamelController{
+/**
+ * A {@link org.apache.camel.commands.CamelController} that runs locally, eg within the same JVM as the {@link CamelContext}s
+ * it manages.
+ *
+ * For example the Apache Camel Karaf commands does this.
+ */
+public interface LocalCamelController extends CamelController {
 
     /**
      * Get the list of Camel context.
