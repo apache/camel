@@ -272,59 +272,121 @@ public class JolokiaCamelController extends AbstractCamelController implements R
     }
 
     @Override
-    public void startRoute(String s, String s2) throws Exception {
+    public void startRoute(String camelContextName, String routeId) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=routes,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), routeId);
+            ObjectName on = ObjectName.getInstance(pattern);
+            jolokia.execute(new J4pExecRequest(on, "start()"));
         }
     }
 
     @Override
-    public void stopRoute(String s, String s2) throws Exception {
+    public void stopRoute(String camelContextName, String routeId) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=routes,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), routeId);
+            ObjectName on = ObjectName.getInstance(pattern);
+            jolokia.execute(new J4pExecRequest(on, "stop()"));
         }
     }
 
     @Override
-    public void suspendRoute(String s, String s2) throws Exception {
+    public void suspendRoute(String camelContextName, String routeId) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=routes,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), routeId);
+            ObjectName on = ObjectName.getInstance(pattern);
+            jolokia.execute(new J4pExecRequest(on, "suspend()"));
         }
     }
 
     @Override
-    public void resumeRoute(String s, String s2) throws Exception {
+    public void resumeRoute(String camelContextName, String routeId) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=routes,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), routeId);
+            ObjectName on = ObjectName.getInstance(pattern);
+            jolokia.execute(new J4pExecRequest(on, "resume()"));
         }
     }
 
     @Override
-    public String getRouteModelAsXml(String s, String s2) throws Exception {
+    public String getRouteModelAsXml(String camelContextName, String routeId) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=routes,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), routeId);
+            ObjectName on = ObjectName.getInstance(pattern);
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "dumpRouteAsXml()"));
+            if (response != null) {
+                String xml = response.getValue();
+                return xml;
+            }
+        }
+
         return null;
     }
 
     @Override
-    public String getRouteStatsAsXml(String s, String s2, boolean b, boolean b2) throws Exception {
+    public String getRouteStatsAsXml(String camelContextName, String routeId, boolean fullStats, boolean includeProcessors) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=routes,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), routeId);
+            ObjectName on = ObjectName.getInstance(pattern);
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "dumpRouteStatsAsXml(boolean,boolean)", fullStats, includeProcessors));
+            if (response != null) {
+                String xml = response.getValue();
+                return xml;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getRestModelAsXml(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(found, "dumpRestsAsXml()"));
+            if (response != null) {
+                String xml = response.getValue();
+                return xml;
+            }
+        }
+
         return null;
     }
 
     @Override
     public List<Map<String, String>> getEndpoints(String s) throws Exception {
-        if (jolokia == null) {
-            throw new IllegalStateException("Need to connect to remote jolokia first");
-        }
-        return null;
-    }
-
-    @Override
-    public String getRestModelAsXml(String s) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }

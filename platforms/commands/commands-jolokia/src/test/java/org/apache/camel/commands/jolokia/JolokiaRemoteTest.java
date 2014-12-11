@@ -107,4 +107,47 @@ public class JolokiaRemoteTest {
         controller.resetRouteStats("myCamel");
     }
 
+    @Test
+    public void testRemoteRouteControl() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        controller.suspendRoute("myCamel", "route2");
+        List<Map<String, String>> data = controller.getRoutes("myCamel", "route2");
+        System.out.println(data);
+
+        Thread.sleep(500);
+
+        controller.resumeRoute("myCamel", "route2");
+        data = controller.getRoutes("myCamel", "route2");
+        System.out.println(data);
+    }
+
+    @Test
+    public void testRouteModel() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.getRouteModelAsXml("myCamel", "route2");
+        System.out.println(data);
+    }
+
+    @Test
+    public void testRouteStats() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.getRouteStatsAsXml("myCamel", "route2", true, true);
+        System.out.println(data);
+    }
+
+    @Test
+    public void testRestsModel() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.getRestModelAsXml("myCamel");
+        System.out.println(data);
+    }
+
 }
