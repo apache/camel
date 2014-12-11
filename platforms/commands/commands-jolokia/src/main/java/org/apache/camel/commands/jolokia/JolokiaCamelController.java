@@ -431,35 +431,37 @@ public class JolokiaCamelController extends AbstractCamelController implements R
 
             J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listRestServices()"));
             if (response != null) {
-                JSONObject data = response.asJSONObject();
-                // TODO: parse the open data type
-            }
+                JSONObject data = response.getValue();
+                for (Object obj : data.values()) {
+                    JSONObject data2 = (JSONObject) obj;
+                    JSONObject service = (JSONObject) data2.values().iterator().next();
 
-            /*
-                List<RestRegistry.RestService> services = new ArrayList<RestRegistry.RestService>(context.getRestRegistry().listAllRestServices());
-                Collections.sort(services, new Comparator<RestRegistry.RestService>() {
-                    @Override
-                    public int compare(RestRegistry.RestService o1, RestRegistry.RestService o2) {
-                        return o1.getUrl().compareTo(o2.getUrl());
-                    }
-                });
-                for (RestRegistry.RestService service : services) {
                     Map<String, String> row = new LinkedHashMap<String, String>();
-                    row.put("basePath", service.getBasePath());
-                    row.put("baseUrl", service.getBaseUrl());
-                    row.put("consumes", service.getConsumes());
-                    row.put("description", service.getDescription());
-                    row.put("inType", service.getInType());
-                    row.put("method", service.getMethod());
-                    row.put("outType", service.getOutType());
-                    row.put("produces", service.getProduces());
-                    row.put("routeId", service.getRouteId());
-                    row.put("state", service.getState());
-                    row.put("uriTemplate", service.getUriTemplate());
-                    row.put("url", service.getUrl());
+                    row.put("basePath", asString(service.get("basePath")));
+                    row.put("baseUrl", asString(service.get("baseUrl")));
+                    row.put("consumes", asString(service.get("consumes")));
+                    row.put("description", asString(service.get("description")));
+                    row.put("inType", asString(service.get("inType")));
+                    row.put("method", asString(service.get("method")));
+                    row.put("outType", asString(service.get("outType")));
+                    row.put("produces", asString(service.get("produces")));
+                    row.put("routeId", asString(service.get("routeId")));
+                    row.put("state", asString(service.get("state")));
+                    row.put("uriTemplate", asString(service.get("uriTemplate")));
+                    row.put("url", asString(service.get("url")));
                     answer.add(row);
                 }
-            }   */
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> service1, Map<String, String> service2) {
+                    String url1 = service1.get("url");
+                    String url2 = service2.get("url");
+                    return url1.compareTo(url2);
+                }
+            });
         }
 
         return answer;
@@ -497,6 +499,14 @@ public class JolokiaCamelController extends AbstractCamelController implements R
     private static String asKey(String attributeKey) {
         char ch = Character.toLowerCase(attributeKey.charAt(0));
         return ch + attributeKey.substring(1);
+    }
+
+    private static String asString(Object basePath) {
+        if (basePath == null) {
+            return null;
+        } else {
+            return basePath.toString();
+        }
     }
 
 }
