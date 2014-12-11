@@ -89,18 +89,22 @@ public final class ChannelHandlerFactories {
     }
    
     public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, String protocol) {
+        return newDelimiterBasedFrameDecoder(maxFrameLength, delimiters, true, protocol);
+    }
+    
+    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, final boolean stripDelimiter, String protocol) {
         if ("udp".equals(protocol)) {
             return new DefaultChannelHandlerFactory() {
                 @Override
                 public ChannelHandler newChannelHandler() {
-                    return new DatagramPacketDelimiterDecoder(maxFrameLength, delimiters);
+                    return new DatagramPacketDelimiterDecoder(maxFrameLength, stripDelimiter, delimiters);
                 }
             };
         } else {
             return new DefaultChannelHandlerFactory() {
                 @Override
                 public ChannelHandler newChannelHandler() {
-                    return new DelimiterBasedFrameDecoder(maxFrameLength, true, delimiters);
+                    return new DelimiterBasedFrameDecoder(maxFrameLength, stripDelimiter, delimiters);
                 }
             };
         }

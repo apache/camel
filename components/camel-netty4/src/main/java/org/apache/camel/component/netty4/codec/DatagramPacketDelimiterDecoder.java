@@ -29,8 +29,13 @@ public class DatagramPacketDelimiterDecoder extends MessageToMessageDecoder<Addr
     private final DelimiterBasedFrameDecoder delegateDecoder;
     
     public DatagramPacketDelimiterDecoder(int maxFrameLength, ByteBuf[] delimiters) {
-        delegateDecoder = new DelimiterBasedFrameDecoder(maxFrameLength, true, delimiters);
+        this(maxFrameLength, true, delimiters);
     }
+    
+    public DatagramPacketDelimiterDecoder(int maxFrameLength, boolean stripDelimiter,  ByteBuf[] delimiters) {
+        delegateDecoder = new DelimiterBasedFrameDecoder(maxFrameLength, stripDelimiter, delimiters);
+    }
+    
     @Override
     protected void decode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
                           List<Object> out) throws Exception {
