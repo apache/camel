@@ -63,7 +63,7 @@ public class JettySuspendResumeTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://" + serverUri)
+                from("jetty://" + serverUri).id("route1")
                     .transform(body().prepend("Bye "));
             }
         };
