@@ -491,9 +491,42 @@ public class JolokiaCamelController extends AbstractCamelController implements R
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
 
-        // TODO: implement me
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
-        return null;
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(found, "listComponents()"));
+            if (response != null) {
+                JSONObject data = response.getValue();
+                for (Object obj : data.values()) {
+                    JSONObject data2 = (JSONObject) obj;
+                    JSONObject component = (JSONObject) data2.values().iterator().next();
+
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("artifactId", asString(component.get("artifactId")));
+                    row.put("description", asString(component.get("description")));
+                    row.put("groupId", asString(component.get("groupId")));
+                    row.put("label", asString(component.get("label")));
+                    row.put("name", asString(component.get("name")));
+                    row.put("status", asString(component.get("status")));
+                    row.put("type", asString(component.get("type")));
+                    row.put("version", asString(component.get("version")));
+                    answer.add(row);
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> component1, Map<String, String> component2) {
+                    String name1 = component1.get("name");
+                    String name2 = component2.get("name");
+                    return name1.compareTo(name2);
+                }
+            });
+        }
+
+        return answer;
     }
 
     private static String asKey(String attributeKey) {

@@ -177,4 +177,13 @@ public class JolokiaRemoteTest {
         System.out.println(data);
     }
 
+    @Test
+    public void testListComponents() throws Exception {
+        controller = new JolokiaCamelController();
+        controller.connect(url, null, null);
+
+        List<Map<String, String>> data = controller.listComponents("myCamel");
+        System.out.println(data);
+    }
+
 }
