@@ -75,12 +75,22 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
         assertEquals("should get the exception here", out, "java.lang.IllegalArgumentException: Forced exception");
     }
+    
+    @Test
+    public void testExchangeWithInOnly() throws IOException {
+        String out = sendAndReceive("force-set-in-body");
+        assertEquals("Get a wrong response message", "Update the in message!", out);
+    }
 
     private String sendAndReceive(String input) throws IOException {
+        return sendAndReceive(input, getPort());
+    }
+    
+    private String sendAndReceive(String input, int port) throws IOException {
         byte buf[] = new byte[128];
 
         Socket soc = new Socket();
-        soc.connect(new InetSocketAddress("localhost", getPort()));
+        soc.connect(new InetSocketAddress("localhost", port));
 
         // Send message using plain Socket to test if this works
         OutputStream os = null;
@@ -132,9 +142,11 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
                                 // clear out before throwing exception
                                 e.getOut().setBody(null);
                                 throw new IllegalArgumentException("Forced exception");
+                            } else if ("force-set-in-body".equals(in)) {
+                                e.getIn().setBody("Update the in message!");
                             } else {
                                 e.getOut().setBody("Hello " + in);
-                            }
+                            } 
                         }
                     });
             }

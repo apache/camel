@@ -346,8 +346,12 @@ public class Mina2Consumer extends DefaultConsumer {
             //
             boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
             Object response = null;
-            response = Mina2PayloadHelper.getOut(getEndpoint(), exchange);
-
+            if (exchange.hasOut()) {
+                response = Mina2PayloadHelper.getOut(getEndpoint(), exchange);
+            } else {
+                response = Mina2PayloadHelper.getIn(getEndpoint(), exchange);
+            }
+            
             boolean failed = exchange.isFailed();
             if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
                 if (exchange.getException() != null) {
