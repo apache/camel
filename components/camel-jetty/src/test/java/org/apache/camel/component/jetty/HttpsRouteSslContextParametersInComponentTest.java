@@ -31,8 +31,7 @@ public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTes
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                // create jetty component
-                JettyHttpComponent jetty = new JettyHttpComponent();
+                JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 
                 KeyStoreParameters ksp = new KeyStoreParameters();
                 ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
@@ -47,9 +46,6 @@ public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTes
                 jetty.setSslContextParameters(sslContextParameters);
                 // NOTE: These are here to check that they are properly ignored.
                 setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
-
-                // add jetty to camel context
-                context.addComponent("jetty", jetty);
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 

@@ -63,12 +63,8 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
                 connectors.put(port1, createSslSocketConnector(getContext(), port1));
                 connectors.put(port2, createSslSocketConnector(getContext(), port2));
 
-                // create jetty component
-                JettyHttpComponent jetty = new JettyHttpComponent();
-                // add connectors
+                JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSslSocketConnectors(connectors);
-                // add jetty to camel context
-                context.addComponent("jetty", jetty);
                 // END SNIPPET: e1
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");

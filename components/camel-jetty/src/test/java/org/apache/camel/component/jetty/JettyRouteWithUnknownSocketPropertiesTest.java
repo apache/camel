@@ -41,12 +41,8 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
                 properties.put("soLingerTime", "5000");
                 properties.put("doesNotExist", 2000);
 
-                // create jetty component
-                JettyHttpComponent jetty = new JettyHttpComponent();
-                // set properties
+                JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSocketConnectorProperties(properties);
-                // add jetty to camel context
-                context.addComponent("jetty", jetty);
 
                 from("jetty:http://localhost:{{port}}/myapp/myservice").to("log:foo");
             }

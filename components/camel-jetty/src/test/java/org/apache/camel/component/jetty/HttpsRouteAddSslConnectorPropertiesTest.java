@@ -34,9 +34,8 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 String path = keyStoreUrl.toURI().getPath();
 
-                JettyHttpComponent jetty = new JettyHttpComponent();
+                JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 setSSLProps(jetty, path, pwd, pwd);
-                context.addComponent("jetty", jetty);
                 // END SNIPPET: e1
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");

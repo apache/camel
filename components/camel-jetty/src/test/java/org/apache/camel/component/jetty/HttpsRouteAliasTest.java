@@ -31,8 +31,7 @@ public class HttpsRouteAliasTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                // create jetty component
-                JettyHttpComponent jetty = new JettyHttpComponent();
+                JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 
                 KeyStoreParameters ksp = new KeyStoreParameters();
                 ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost-alias.ks").toString());
@@ -50,14 +49,7 @@ public class HttpsRouteAliasTest extends HttpsRouteTest {
                 
                 jetty.setSslContextParameters(sslContextParameters);
                 
-                // NOTE: These are here to check that they are properly ignored.
-                jetty.addSslSocketConnectorProperty("keyPassword", "sadfasdfasdfas");
-                jetty.addSslSocketConnectorProperty("password", "asdfasdfasdfdasfs");
-                jetty.addSslSocketConnectorProperty("keystore", "");
-                jetty.addSslSocketConnectorProperty("truststoreType", "JKS");
-
-                // add jetty to camel context
-                context.addComponent("jetty", jetty);
+                setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 

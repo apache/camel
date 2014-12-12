@@ -51,10 +51,9 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                JettyHttpComponent jetty = new JettyHttpComponent();
+                JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 // NOTE: These are here to check that they are properly ignored.
                 setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
-                context.addComponent("jetty", jetty);
 
                 from("jetty:https://localhost:" + port1 + "/test?sslContextParametersRef=sslContextParameters").to("mock:a");
 

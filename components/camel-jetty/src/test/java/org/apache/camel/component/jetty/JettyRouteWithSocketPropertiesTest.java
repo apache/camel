@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
@@ -49,12 +50,8 @@ public class JettyRouteWithSocketPropertiesTest extends BaseJettyTest {
                 properties.put("statsOn", "false");
                 properties.put("soLingerTime", "5000");
 
-                // create jetty component
-                JettyHttpComponent jetty = new JettyHttpComponent();
-                // set properties
+                JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSocketConnectorProperties(properties);
-                // add jetty to camel context
-                context.addComponent("jetty", jetty);
                 // END SNIPPET: e1
 
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());

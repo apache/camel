@@ -36,19 +36,8 @@ public class HttpsRouteWithSslConnectorPropertiesTest extends HttpsRouteTest {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 String path = keyStoreUrl.toURI().getPath();
 
-                // map with properties
-                Map<String, Object> properties = new HashMap<String, Object>();
-                properties.put("keyPassword", pwd);
-                properties.put("password", pwd);
-                properties.put("keystore", path);
-                properties.put("truststoreType", "JKS");
-
-                // create jetty component
-                JettyHttpComponent jetty = new JettyHttpComponent();
-                jetty.setSslSocketConnectorProperties(properties);
-
-                // add jetty to camel context
-                context.addComponent("jetty", jetty);
+                JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
+                setSSLProps(jetty, path, pwd, pwd);
                 // END SNIPPET: e1
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
