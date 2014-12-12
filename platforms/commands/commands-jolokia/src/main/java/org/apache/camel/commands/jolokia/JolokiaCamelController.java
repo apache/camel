@@ -499,8 +499,7 @@ public class JolokiaCamelController extends AbstractCamelController implements R
             if (response != null) {
                 JSONObject data = response.getValue();
                 for (Object obj : data.values()) {
-                    JSONObject data2 = (JSONObject) obj;
-                    JSONObject component = (JSONObject) data2.values().iterator().next();
+                    JSONObject component = (JSONObject) obj;
 
                     Map<String, String> row = new LinkedHashMap<String, String>();
                     row.put("artifactId", asString(component.get("artifactId")));
