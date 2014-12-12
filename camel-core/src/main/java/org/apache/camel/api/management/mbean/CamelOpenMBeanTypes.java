@@ -61,7 +61,7 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("url", "Endpoints", new String[]{"url"},
+        return new CompositeType("endpoints", "Endpoints", new String[]{"url"},
                 new String[]{"Url"},
                 new OpenType[]{SimpleType.STRING});
     }
@@ -72,7 +72,7 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("endpoint", "Explain Endpoint", new String[]{"option", "kind", "type", "java type", "value", "default value", "description"},
+        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "type", "java type", "value", "default value", "description"},
                 new String[]{"Option", "Kind", "Type", "Java Type", "Value", "Default Value", "Description"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
@@ -83,7 +83,7 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listComponentsCompositeType() throws OpenDataException {
-        return new CompositeType("name", "Components", new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+        return new CompositeType("components", "Components", new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
                 new String[]{"Name", "Description", "Label", "Status", "Type", "GroupId", "ArtifactId", "Version"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
