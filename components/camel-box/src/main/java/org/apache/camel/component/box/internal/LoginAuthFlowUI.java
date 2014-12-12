@@ -66,8 +66,6 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
     private final BoxConfiguration configuration;
     private final BoxClient boxClient;
 
-    private IAuthFlowListener listener;
-
     public LoginAuthFlowUI(BoxConfiguration configuration, BoxClient boxClient) {
         this.configuration = configuration;
         this.boxClient = boxClient;
@@ -153,7 +151,6 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
             if (!csrfId.equals(state)) {
                 final SecurityException e = new SecurityException("Invalid CSRF code!");
                 listener.onAuthFlowException(e);
-                this.listener.onAuthFlowException(e);
             } else {
 
                 // get authorization code
@@ -168,19 +165,17 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
                 final OAuthDataMessage authDataMessage = new OAuthDataMessage(oAuthToken,
                     boxClient.getJSONParser(), boxClient.getResourceHub());
                 listener.onAuthFlowEvent(OAuthEvent.OAUTH_CREATED, authDataMessage);
-                this.listener.onAuthFlowEvent(OAuthEvent.OAUTH_CREATED, authDataMessage);
             }
 
         } catch (Exception e) {
             // forward login exceptions to listener
             listener.onAuthFlowException(e);
-            this.listener.onAuthFlowException(e);
         }
     }
 
     @Override
     public void addAuthFlowListener(IAuthFlowListener listener) {
-        this.listener = listener;
+        throw new UnsupportedOperationException("addAuthFlowListener");
     }
 
     @Override
