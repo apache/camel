@@ -21,10 +21,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.springboot")
 public class CamelConfigurationProperties {
 
+    /**
+     * Enable JMX support for the CamelContext.
+     */
     private boolean jmxEnabled = true;
 
+    /**
+     * Producer template endpoints cache size.
+     */
     private int producerTemplateCacheSize = 1000;
 
+    /**
+     * Consumer template endpoints cache size.
+     */
     private int consumerTemplateCacheSize = 1000;
 
     public boolean isJmxEnabled() {
