@@ -23,11 +23,19 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 
 public class ElasticsearchComponentTest extends CamelTestSupport {
@@ -217,9 +225,75 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         assertNull("response source should be null", response.getSource());
     }
 
+    @Test
+    public void indexRequestBody() throws Exception {
+        // given
+        IndexRequest request = new IndexRequest("foo", "bar", "testId");
+        request.source("{\"content\": \"hello\"}");
+
+        // when
+        String documentId = template.requestBody("direct:index", request,
+                String.class);
+
+        // then
+        assertThat(documentId, equalTo("testId"));
+    }
+
+    @Test
+    public void getRequestBody() throws Exception {
+        // given
+        GetRequest request = new GetRequest("foo").type("bar");
+
+        // when
+        String documentId = template.requestBody("direct:index",
+                new IndexRequest("foo", "bar", "testId")
+                        .source("{\"content\": \"hello\"}"), String.class);
+        GetResponse response = template.requestBody("direct:get",
+                request.id(documentId), GetResponse.class);
+
+        // then
+        assertThat(response, notNullValue());
+        assertThat("hello", equalTo(response.getSourceAsMap().get("content")));
+    }
+
+    @Test
+    public void deleteRequestBody() throws Exception {
+        // given
+        DeleteRequest request = new DeleteRequest("foo").type("bar");
+
+        // when
+        String documentId = template.requestBody("direct:index",
+                new IndexRequest("foo", "bar", "testId")
+                        .source("{\"content\": \"hello\"}"), String.class);
+        DeleteResponse response = template.requestBody("direct:delete",
+                request.id(documentId), DeleteResponse.class);
+
+        // then
+        assertThat(response, notNullValue());
+        assertThat(documentId, equalTo(response.getId()));
+    }
+
+    @Test
+    public void bulkRequestBody() throws Exception {
+        // given
+        BulkRequest request = new BulkRequest();
+        request.add(new IndexRequest("foo", "bar", "baz")
+                .source("{\"content\": \"hello\"}"));
+
+        // when
+        List<String> indexedDocumentIds = template.requestBody(
+                "direct:bulk_index", request, List.class);
+
+        // then
+        assertThat(indexedDocumentIds, notNullValue());
+        assertThat(indexedDocumentIds.size(), equalTo(1));
+        assertThat(indexedDocumentIds, hasItem("baz"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("direct:start").to("elasticsearch://local");
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
