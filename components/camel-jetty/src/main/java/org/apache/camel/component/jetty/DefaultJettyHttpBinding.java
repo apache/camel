@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -133,7 +134,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                                                                                 int responseCode) throws IOException {
         HttpOperationFailedException answer;
         String uri = httpExchange.getUrl();
-        Map<String, String> headers = httpExchange.getHeaders();
+        Map<String, String> headers = getSimpleMap(httpExchange.getResponseHeaders());
         Object responseBody = extractResponseBody(exchange, httpExchange);
 
         if (transferException && responseBody != null && responseBody instanceof Exception) {
@@ -168,7 +169,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     }
 
     protected Object extractResponseBody(Exchange exchange, JettyContentExchange httpExchange) throws IOException {
-        String contentType = httpExchange.getHeaders().get(Exchange.CONTENT_TYPE);
+        Map<String, String> headers = getSimpleMap(httpExchange.getResponseHeaders());
+        String contentType = headers.get(Exchange.CONTENT_TYPE);
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
@@ -189,4 +191,13 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         this.supportRedirect = supportRedirect;
     }
 
+    Map<String, String> getSimpleMap(Map<String, Collection<String>> headers) {
+        Map<String, String> result = new HashMap<String ,String>();
+        for (String key : headers.keySet()) {
+            Collection<String> valueCol = headers.get(key);
+            String value = (valueCol == null) ? null : valueCol.iterator().next();
+            result.put(key, value);
+        }
+        return result;
+    }
 }

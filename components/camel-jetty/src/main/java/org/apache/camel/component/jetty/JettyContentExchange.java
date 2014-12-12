@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
@@ -30,8 +29,6 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpEventListener;
@@ -39,8 +36,6 @@ import org.eclipse.jetty.client.HttpEventListenerWrapper;
 import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.io.Buffer;
-import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +48,6 @@ public class JettyContentExchange {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyContentExchange.class);
 
-    private final Map<String, String> headers = new LinkedHashMap<String, String>();
     private volatile Exchange exchange;
     private volatile AsyncCallback callback;
     private volatile JettyHttpBinding jettyBinding;
@@ -73,11 +67,6 @@ public class JettyContentExchange {
             public void onRequestComplete() throws IOException {
                 JettyContentExchange.this.onRequestComplete();
                 super.onRequestComplete();
-            }
-
-            public void onResponseHeader(Buffer name, Buffer value) throws IOException {
-                JettyContentExchange.this.onResponseHeader(name, value);
-                super.onResponseHeader(name, value);
             }
 
             @Override
@@ -120,38 +109,6 @@ public class JettyContentExchange {
         this.callback = callback;
     }
 
-    protected void onResponseHeader(Buffer name, Buffer value) throws IOException {
-        String k = name.toString();
-        String v = value.toString();
-        LOG.trace("onResponseHeader {} -> {}", k, v);
-
-        // need to remove quotes from charset which can be returned by some http servers
-        if (Exchange.CONTENT_TYPE.equalsIgnoreCase(k)) {
-            String charset = ObjectHelper.after(v, "charset=");
-            if (charset != null) {
-                // there may be another parameter as well, we only want the charset parameter
-                String extra = "";
-                if (charset.contains(";")) {
-                    extra = ObjectHelper.after(charset, ";");
-                    charset = ObjectHelper.before(charset, ";");
-                }
-                charset = charset.trim();
-                String s = StringHelper.removeLeadingAndEndingQuotes(charset);
-                if (!charset.equals(s)) {
-                    v = ObjectHelper.before(v, "charset=") + "charset=" + s;
-                    LOG.debug("Removed quotes from charset in " + Exchange.CONTENT_TYPE + " from {} to {}", charset, s);
-                    // add extra parameters
-                    if (extra != null) {
-                        v = v + ";" + extra;
-                    }
-                    // use a new buffer to adjust the value
-                    value = new ByteArrayBuffer.CaseInsensitive(v);
-                }
-            }
-        }
-        headers.put(k, v);
-    }
-
     protected void onRequestComplete() throws IOException {
         LOG.trace("onRequestComplete");
         
@@ -185,10 +142,6 @@ public class JettyContentExchange {
         // need to close the request input stream
         closeRequestContentSource();
         doTaskCompleted(ex);
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
     }
 
     public byte[] getBody() {
