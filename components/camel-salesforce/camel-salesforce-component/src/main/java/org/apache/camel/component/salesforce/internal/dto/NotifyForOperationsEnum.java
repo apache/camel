@@ -26,7 +26,8 @@ public enum NotifyForOperationsEnum {
 
     CREATE("Create"),
     UPDATE("Update"),
-    ALL("All");
+    ALL("All"),
+    EXTENDED("Extended");
 
     final String value;
 
