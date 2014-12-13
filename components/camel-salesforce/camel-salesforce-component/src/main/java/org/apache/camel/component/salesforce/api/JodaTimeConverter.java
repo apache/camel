@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.api;
 
 import java.lang.reflect.Constructor;
 
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -29,6 +30,9 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+/**
+ * XStream converter for handling JodaTime fields.
+ */
 public class JodaTimeConverter implements Converter {
 
     private final DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
@@ -48,7 +52,7 @@ public class JodaTimeConverter implements Converter {
             // normalize date time to UTC
             return constructor.newInstance(dateTimeStr, DateTimeZone.UTC);
         } catch (Exception e) {
-            throw new IllegalArgumentException(
+            throw new ConversionException(
                     String.format("Error reading Joda DateTime from value %s: %s",
                             dateTimeStr, e.getMessage()),
                     e);
