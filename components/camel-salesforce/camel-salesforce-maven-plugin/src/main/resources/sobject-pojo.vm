@@ -23,15 +23,25 @@ package $packageName;
 
 ## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
+#set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-#if ( $hasPicklists )
+#if ( $hasPicklists || $hasMultiSelectPicklists )
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 #end
-import org.codehaus.jackson.annotate.JsonProperty;
 #if ( $hasPicklists )
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 #end
+#if ( $hasMultiSelectPicklists )
+import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
+import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
+import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
+#end
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.codehaus.jackson.annotate.JsonProperty;
+#if ( $hasMultiSelectPicklists )
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+#end
 
 /**
  * Salesforce DTO for SObject $desc.Name
@@ -43,6 +53,7 @@ public class $desc.Name extends AbstractSObjectBase {
 #if ( $utility.notBaseField($field.Name) )
 #set ( $fieldName = $field.Name )
 #set ( $fieldType = $utility.getFieldType($field) )
+#set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
     // $fieldName
 #if ( $utility.isBlobField($field) )
 #set ( $propertyName = $fieldName + "Url" )
@@ -50,8 +61,10 @@ public class $desc.Name extends AbstractSObjectBase {
 #set ( $propertyName = $fieldName )
 #end
 ## add a converter annotation if needed
-#if ( $utility.isPicklist($field) )
+#if ( !$isMultiSelectPicklist && $utility.isPicklist($field) )
     @XStreamConverter(PicklistEnumConverter.class)
+#elseif ( $isMultiSelectPicklist )
+    @XStreamConverter(MultiSelectPicklistConverter.class)
 #else
 ## add an alias for blob field url if needed
 #if ( $propertyName != $fieldName )
@@ -62,11 +75,17 @@ public class $desc.Name extends AbstractSObjectBase {
     private $fieldType $propertyName;
 
     @JsonProperty("$fieldName")
+#if ( $isMultiSelectPicklist )
+    @JsonSerialize(using = MultiSelectPicklistSerializer.class)
+#end
     public $fieldType get$propertyName() {
         return this.$propertyName;
     }
 
     @JsonProperty("$fieldName")
+#if ( $isMultiSelectPicklist )
+    @JsonDeserialize(using = MultiSelectPicklistDeserializer.class)
+#end
     public void set$propertyName($fieldType $propertyName) {
         this.$propertyName = $propertyName;
     }

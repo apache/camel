@@ -386,7 +386,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             // write required Enumerations for any picklists
             for (SObjectField field : description.getFields()) {
-                if (utility.isPicklist(field)) {
+                if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
                     fileName = utility.enumTypeName(field.getName()) + JAVA_EXT;
                     File enumFile = new File(pkgDir, fileName);
                     writer = new BufferedWriter(new FileWriter(enumFile));
@@ -497,6 +497,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         private static final String BASE64BINARY = "base64Binary";
+        private static final String MULTIPICKLIST = "multipicklist";
+        private static final String PICKLIST = "picklist";
 
         public boolean isBlobField(SObjectField field) {
             final String soapType = field.getSoapType();
@@ -512,6 +514,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
             if (isPicklist(field)) {
                 // use a pick list enum, which will be created after generating the SObject class
                 return enumTypeName(field.getName());
+            } else if (isMultiSelectPicklist(field)) {
+                // use a pick list enum array, enum will be created after generating the SObject class
+                return enumTypeName(field.getName()) + "[]";
             } else {
                 // map field to Java type
                 final String soapType = field.getSoapType();
@@ -524,9 +529,22 @@ public class CamelSalesforceMojo extends AbstractMojo {
             }
         }
 
+        public boolean isMultiSelectPicklist(SObjectField field) {
+            return MULTIPICKLIST.equals(field.getType());
+        }
+
         public boolean hasPicklists(SObjectDescription desc) {
             for (SObjectField field : desc.getFields()) {
                 if (isPicklist(field)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean hasMultiSelectPicklists(SObjectDescription desc) {
+            for (SObjectField field : desc.getFields()) {
+                if (isMultiSelectPicklist(field)) {
                     return true;
                 }
             }
@@ -539,7 +557,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         public boolean isPicklist(SObjectField field) {
-            return field.getPicklistValues() != null && !field.getPicklistValues().isEmpty();
+//            return field.getPicklistValues() != null && !field.getPicklistValues().isEmpty();
+            return PICKLIST.equals(field.getType());
         }
 
         public String enumTypeName(String name) {
