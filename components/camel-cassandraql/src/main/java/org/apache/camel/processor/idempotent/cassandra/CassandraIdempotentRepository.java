@@ -16,7 +16,6 @@
 package org.apache.camel.processor.idempotent.cassandra;
 
 import com.datastax.driver.core.Cluster;
-import org.apache.camel.utils.cassandra.CassandraPKHelper;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
@@ -51,9 +50,9 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
      */
     private String table = "CAMEL_IDEMPOTENT";
     /**
-     * Primary key generator
+     * Primary key columns
      */
-    private final CassandraPKHelper pkHelper = new CassandraPKHelper();
+    private String[] pkColumns;
     /**
      * Time to live in seconds used for inserts
      */
@@ -110,16 +109,7 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     // Add key to repository
 
     protected void initInsertStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("insert into ")
-                .append(table).append("(");
-        pkHelper.appendColumns(cqlBuilder, ",");
-        cqlBuilder.append(") values (");
-        pkHelper.appendPlaceholders(cqlBuilder);
-        cqlBuilder.append(") if not exists");
-        if (ttl!=null) {
-            cqlBuilder.append(" using ttl=").append(ttl);
-        }
-        String cql = cqlBuilder.toString();
+        String cql = generateInsert(table, pkColumns, true, ttl).toString();
         LOGGER.debug("Generated Insert {}", cql);
         insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
@@ -135,11 +125,7 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     // Check if key is in repository
 
     protected void initSelectStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("select ");
-        pkHelper.appendColumns(cqlBuilder, ",");
-        cqlBuilder.append(" from ").append(table);
-        pkHelper.appendWhere(cqlBuilder);
-        String cql = cqlBuilder.toString();
+        String cql = generateSelect(table, pkColumns, pkColumns).toString();
         LOGGER.debug("Generated Select {}", cql);
         selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
@@ -160,10 +146,7 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     // Remove key from repository
 
     protected void initDeleteStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("delete from ").append(table);
-        pkHelper.appendWhere(cqlBuilder);
-        cqlBuilder.append(" if exists");
-        String cql = cqlBuilder.toString();
+        String cql = generateDelete(table, pkColumns, true).toString();
         LOGGER.debug("Generated Delete {}", cql);
         deleteStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
@@ -195,11 +178,11 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     }
 
     public String[] getPKColumns() {
-        return pkHelper.getColumns();
+        return pkColumns;
     }
 
-    public void setPKColumns(String... pkColumnNames) {
-        this.pkHelper.setColumns(pkColumnNames);
+    public void setPKColumns(String... pkColumns) {
+        this.pkColumns=pkColumns;
     }
 
     public Integer getTtl() {

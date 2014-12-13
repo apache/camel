@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.utils.cassandra.CassandraPKHelper;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
@@ -65,9 +64,9 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
      */
     private String exchangeColumn="EXCHANGE";
     /**
-     * Primary key generator
+     * Primary key columns
      */
-    private final CassandraPKHelper pkHelper = new CassandraPKHelper();
+    private String[] pkColumns;
     /**
      * Exchange marshaller/unmarshaller
      */
@@ -119,8 +118,11 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     /**
      * Get aggregation key colum name.
      */
-    private String getKeyColumnName() {
-        return pkHelper.getColumns()[pkHelper.getColumns().length-1];
+    private String getKeyColumn() {
+        return pkColumns[pkColumns.length-1];
+    }
+    private String[] getAllColumns() {
+        return append(pkColumns, exchangeIdColumn, exchangeColumn);
     }
     //--------------------------------------------------------------------------
     // Service support
@@ -144,18 +146,9 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Add exchange to repository
 
     private void initInsertStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("insert into ")
-                .append(table).append("(");
-        pkHelper.appendColumns(cqlBuilder, ",");
-        cqlBuilder.append(',').append(exchangeIdColumn);
-        cqlBuilder.append(',').append(exchangeColumn);
-        cqlBuilder.append(") values (");
-        pkHelper.appendPlaceholders(cqlBuilder);
-        cqlBuilder.append(",?,?)");
-        if (ttl!=null) {
-            cqlBuilder.append(" using ttl=").append(ttl);
-        }
-        String cql = cqlBuilder.toString();
+        String cql = generateInsert(table, 
+                getAllColumns(), 
+                false, ttl).toString();
         LOGGER.debug("Generated Insert {}", cql);
         insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
@@ -180,12 +173,9 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Get exchange from repository
 
     protected void initSelectStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("select ");
-        pkHelper.appendColumns(cqlBuilder, ",");
-        cqlBuilder.append(',').append(exchangeColumn);
-        cqlBuilder.append(" from ").append(table);
-        pkHelper.appendWhere(cqlBuilder);
-        String cql = cqlBuilder.toString();
+        String cql = generateSelect(table, 
+                getAllColumns(), 
+                pkColumns).toString();
         LOGGER.debug("Generated Select {}", cql);
         selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
@@ -213,8 +203,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // -------------------------------------------------------------------------
     // Confirm exchange in repository
     private void initDeleteIfIdStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("delete from ").append(table);
-        pkHelper.appendWhere(cqlBuilder);
+        StringBuilder cqlBuilder = generateDelete(table, pkColumns, false);
         cqlBuilder.append(" if ").append(exchangeIdColumn).append("=?");
         String cql = cqlBuilder.toString();
         LOGGER.debug("Generated Delete If Id {}", cql);
@@ -227,7 +216,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         Object[] pkValues = getPKValues();
-        String keyColumn= getKeyColumnName();
+        String keyColumn= getKeyColumn();
         LOGGER.debug("Selecting Ids {} ", pkValues);
         List<Row> rows = selectKeyIds();
         for(Row row:rows) {
@@ -244,9 +233,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Remove exchange from repository
 
     private void initDeleteStatement() {
-        StringBuilder cqlBuilder = new StringBuilder("delete from ").append(table);
-        pkHelper.appendWhere(cqlBuilder);
-        String cql = cqlBuilder.toString();
+        String cql = generateDelete(table, pkColumns, false).toString();
         LOGGER.debug("Generated Delete {}", cql);
         deleteStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
@@ -262,12 +249,9 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     }
     // -------------------------------------------------------------------------
     private void initSelectKeyIdStatement() { 
-        StringBuilder cqlBuilder = new StringBuilder("select ");
-        cqlBuilder.append(getKeyColumnName());
-        cqlBuilder.append(",").append(exchangeIdColumn);
-        cqlBuilder.append(" from ").append(table);
-        pkHelper.appendWhere(cqlBuilder, pkHelper.getColumns().length-1);
-        String cql = cqlBuilder.toString();
+        String cql = generateSelect(table, 
+                new String[]{getKeyColumn(), exchangeIdColumn}, // Key + Exchange Id columns
+                pkColumns, pkColumns.length-1).toString(); // Where fixed PK columns
         LOGGER.debug("Generated Select keys {}", cql);
         selectKeyIdStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
@@ -312,10 +296,10 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
         this.table = table;
     }
     public String[] getPKColumns() {
-        return pkHelper.getColumns();
+        return pkColumns;
     }
-    public void setPKColumns(String ... pkColumnNames) {
-        pkHelper.setColumns(pkColumnNames);
+    public void setPKColumns(String ... pkColumns) {
+        this.pkColumns = pkColumns;
     }
 
     public String getExchangeIdColumn() {
