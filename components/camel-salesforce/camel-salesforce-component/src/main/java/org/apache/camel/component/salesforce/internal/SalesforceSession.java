@@ -121,7 +121,7 @@ public class SalesforceSession implements Service {
 
             try {
 
-                LOG.info("Logging clientId: {} into Salesforce url: {}", config.getClientId(), url);
+                LOG.info("Login user {} at Salesforce url: {}", config.getUserName(), url);
 
                 // set form content
                 loginPost.setRequestContent(new ByteArrayBuffer(

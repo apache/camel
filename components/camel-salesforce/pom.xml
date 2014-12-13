@@ -35,4 +35,31 @@
         <module>camel-salesforce-maven-plugin</module>
     </modules>
 
+    <profiles>
+
+      <profile>
+        <id>salesforce-test</id>
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <childDelegation>false</childDelegation>
+                <useFile>true</useFile>
+                <forkCount>1</forkCount>
+                <reuseForks>true</reuseForks>
+                <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                <excludes>
+                  <exclude>**/*XXXTest.java</exclude>
+                </excludes>
+                <includes>
+                  <include>**/*Test.java</include>
+                </includes>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+    </profiles>
+
 </project>
