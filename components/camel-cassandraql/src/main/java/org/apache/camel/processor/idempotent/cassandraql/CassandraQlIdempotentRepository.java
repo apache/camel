@@ -15,6 +15,8 @@
  */
 package org.apache.camel.processor.idempotent.cassandraql;
 
+import com.datastax.driver.core.Cluster;
+import org.apache.camel.utils.cassandraql.CassandraPKHelper;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
@@ -22,43 +24,48 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.utils.cassandraql.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.apache.camel.utils.cassandraql.CassandraUtils.*;
 
 /**
  * Implementation of {@link IdempotentRepository} using Cassandra table to store
  * message ids.
+ * Advice: use LeveledCompaction for this table and tune read/write consistency levels.
  * Warning: Cassandra is not the best tool for queuing use cases
  * @see http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
- * @param <T> Repository Id
  * @param <K> Message Id
  */
-public class CassandraQlIdempotentRepository<T,K> extends ServiceSupport implements IdempotentRepository<K> {
+public abstract class CassandraQlIdempotentRepository<K> extends ServiceSupport implements IdempotentRepository<K> {
     /**
      * Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraQlIdempotentRepository.class);
     /**
-     * Session with keyspace
+     * Session holder
      */
-    private Session session;
+    private CassandraSessionHolder sessionHolder;
     /**
      * Table name
      */
-    private String tableName = "CAMEL_IDEMPOTENT";
+    private String table = "CAMEL_IDEMPOTENT";
     /**
-     * Partition + cluster key column names
+     * Primary key generator
      */
-    private String[] idColumnNames = new String[]{"ID", "KEY"};
-    /**
-     * Partition key
-     */
-    private T id;
+    private final CassandraPKHelper pkHelper = new CassandraPKHelper();
     /**
      * Time to live in seconds used for inserts
      */
     private Integer ttl;
-    
+    /**
+     * Write consistency level
+     */
+    private ConsistencyLevel writeConsistencyLevel;
+    /**
+     * Read consistency level
+     */
+    private ConsistencyLevel readConsistencyLevel;
     private PreparedStatement insertStatement;
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
@@ -66,9 +73,11 @@ public class CassandraQlIdempotentRepository<T,K> extends ServiceSupport impleme
     public CassandraQlIdempotentRepository() {
     }
 
-    public CassandraQlIdempotentRepository(Session session, T id) {
-        this.session = session;
-        this.id = id;
+    public CassandraQlIdempotentRepository(Session session) {
+        this.sessionHolder = new CassandraSessionHolder(session);
+    }
+    public CassandraQlIdempotentRepository(Cluster cluster, String keyspace) {
+        this.sessionHolder = new CassandraSessionHolder(cluster, keyspace);
     }
 
     private boolean isKey(ResultSet resultSet) {
@@ -81,36 +90,13 @@ public class CassandraQlIdempotentRepository<T,K> extends ServiceSupport impleme
             return row.getColumnDefinitions().size()>1;
         }
     }
-    /**
-     * Generate partition+cluster key.
-     * Override this method to customize primary key generation.
-     * @param key Message key
-     * @return Partition+cluster key
-     */
-    protected Object[] getIdValues(T id, K key) {
-        return new Object[]{id, key};
-    }
-
-    protected final void appendIdColumnNames(StringBuilder cqlBuilder, String sep) {
-        for (int i = 0; i < idColumnNames.length; i++) {
-            if (i > 0) {
-                cqlBuilder.append(sep);
-            }
-            cqlBuilder.append(idColumnNames[i]);
-        }
-    }
-
-    protected final void appendWhereId(StringBuilder cqlBuilder) {
-        cqlBuilder.append(" where ");
-        appendIdColumnNames(cqlBuilder, "=? and ");
-        cqlBuilder.append("=?");
-    }
-
+    protected abstract Object[] getPKValues(K key);
     // -------------------------------------------------------------------------
     // Lifecycle methods
 
     @Override
     protected void doStart() throws Exception {
+        sessionHolder.start();
         initInsertStatement();
         initSelectStatement();
         initDeleteStatement();
@@ -118,130 +104,126 @@ public class CassandraQlIdempotentRepository<T,K> extends ServiceSupport impleme
 
     @Override
     protected void doStop() throws Exception {
+        sessionHolder.stop();
     }
     // -------------------------------------------------------------------------
     // Add key to repository
 
-    protected String createInsertCql() {
+    protected void initInsertStatement() {
         StringBuilder cqlBuilder = new StringBuilder("insert into ")
-                .append(tableName).append("(");
-        appendIdColumnNames(cqlBuilder, ",");
+                .append(table).append("(");
+        pkHelper.appendColumns(cqlBuilder, ",");
         cqlBuilder.append(") values (");
-        for (int i = 0; i < idColumnNames.length; i++) {
-            if (i > 0) {
-                cqlBuilder.append(",");
-            }
-            cqlBuilder.append("?");
-        }
+        pkHelper.appendPlaceholders(cqlBuilder);
         cqlBuilder.append(") if not exists");
         if (ttl!=null) {
             cqlBuilder.append(" using ttl=").append(ttl);
         }
-        final String cql = cqlBuilder.toString();
+        String cql = cqlBuilder.toString();
         LOGGER.debug("Generated Insert {}", cql);
-        return cql;
-    }
-
-    protected void initInsertStatement() {
-        insertStatement = session
-                .prepare(createInsertCql())
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
 
     @Override
     public boolean add(K key) {
-        final Object[] idValues = getIdValues(this.id, key);
+        Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {}", (Object) idValues);
-        return !isKey(session.execute(insertStatement.bind(idValues)));
+        return !isKey(getSession().execute(insertStatement.bind(idValues)));
     }
 
     // -------------------------------------------------------------------------
     // Check if key is in repository
-    protected String createSelectCql() {
-        StringBuilder cqlBuilder = new StringBuilder("select ");
-        appendIdColumnNames(cqlBuilder, ",");
-        cqlBuilder.append(" from ").append(tableName);
-        appendWhereId(cqlBuilder);
-        final String cql = cqlBuilder.toString();
-        LOGGER.debug("Generated Select {}", cql);
-        return cql;
-    }
 
     protected void initSelectStatement() {
-        selectStatement = session
-                .prepare(createSelectCql())
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        StringBuilder cqlBuilder = new StringBuilder("select ");
+        pkHelper.appendColumns(cqlBuilder, ",");
+        cqlBuilder.append(" from ").append(table);
+        pkHelper.appendWhere(cqlBuilder);
+        String cql = cqlBuilder.toString();
+        LOGGER.debug("Generated Select {}", cql);
+        selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
 
     @Override
     public boolean contains(K key) {
-        final Object[] idValues = getIdValues(this.id, key);
+        Object[] idValues = getPKValues(key);
         LOGGER.debug("Checking key {}", (Object) idValues);
-        return isKey(session.execute(selectStatement.bind(idValues)));
+        return isKey(getSession().execute(selectStatement.bind(idValues)));
     }
 
     @Override
     public boolean confirm(K key) {
-        return contains(key);
+        return true;
     }
 
     // -------------------------------------------------------------------------
     // Remove key from repository
-    protected String createDeleteCql() {
-        StringBuilder cqlBuilder = new StringBuilder("delete from ").append(tableName);
-        appendWhereId(cqlBuilder);
-        cqlBuilder.append(" if exists");
-        final String cql = cqlBuilder.toString();
-        LOGGER.debug("Generated Delete {}", cql);
-        return cql;
-    }
 
     protected void initDeleteStatement() {
-        deleteStatement = session
-                .prepare(createDeleteCql())
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        StringBuilder cqlBuilder = new StringBuilder("delete from ").append(table);
+        pkHelper.appendWhere(cqlBuilder);
+        cqlBuilder.append(" if exists");
+        String cql = cqlBuilder.toString();
+        LOGGER.debug("Generated Delete {}", cql);
+        deleteStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
 
     @Override
     public boolean remove(K key) {
-        final Object[] idValues = getIdValues(this.id, key);
+        Object[] idValues = getPKValues(key);
         LOGGER.debug("Deleting key {}", (Object) idValues);
-        session.execute(deleteStatement.bind(idValues));
+        getSession().execute(deleteStatement.bind(idValues));
         return true;
     }
     // -------------------------------------------------------------------------
     // Getters & Setters
 
     public Session getSession() {
-        return session;
+        return sessionHolder.getSession();
     }
 
     public void setSession(Session session) {
-        this.session = session;
+        this.sessionHolder = new CassandraSessionHolder(session);
     }
 
-    public String getTableName() {
-        return tableName;
+    public String getTable() {
+        return table;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+    public void setTable(String table) {
+        this.table = table;
     }
 
-    public String[] getIdColumnNames() {
-        return idColumnNames;
+    public String[] getPKColumns() {
+        return pkHelper.getColumns();
     }
 
-    public void setIdColumnNames(String... idColumnNames) {
-        this.idColumnNames = idColumnNames;
+    public void setPKColumns(String... pkColumnNames) {
+        this.pkHelper.setColumns(pkColumnNames);
     }
 
-    public T getId() {
-        return id;
+    public Integer getTtl() {
+        return ttl;
     }
 
-    public void setId(T id) {
-        this.id = id;
+    public void setTtl(Integer ttl) {
+        this.ttl = ttl;
     }
 
+    public ConsistencyLevel getWriteConsistencyLevel() {
+        return writeConsistencyLevel;
+    }
+
+    public void setWriteConsistencyLevel(ConsistencyLevel writeConsistencyLevel) {
+        this.writeConsistencyLevel = writeConsistencyLevel;
+    }
+
+    public ConsistencyLevel getReadConsistencyLevel() {
+        return readConsistencyLevel;
+    }
+
+    public void setReadConsistencyLevel(ConsistencyLevel readConsistencyLevel) {
+        this.readConsistencyLevel = readConsistencyLevel;
+    }
+    
 }

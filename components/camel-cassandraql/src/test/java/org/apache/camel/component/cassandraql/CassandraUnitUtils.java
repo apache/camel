@@ -17,6 +17,7 @@ package org.apache.camel.component.cassandraql;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+import org.cassandraunit.CQLDataLoader;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.CQLDataSet;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
@@ -26,7 +27,7 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
  * Util methods to manage Cassandra in Unit tests
  */
 public class CassandraUnitUtils {
-    public static final String HOST = "localhost";
+    public static final String HOST = "127.0.0.1";
     public static final String KEYSPACE = "camel_ks";
 
     private static CassandraCQLUnit cassandraCQLUnit;
@@ -40,7 +41,15 @@ public class CassandraUnitUtils {
         return cassandraCQLUnit;
     }
     public static CassandraCQLUnit cassandraCQLUnit(String dataSetCql) {
-        return cassandraCQLUnit(new ClassPathCQLDataSet(dataSetCql, KEYSPACE));
+        return cassandraCQLUnit(cqlDataSet(dataSetCql));
+    }
+
+    public static CQLDataSet cqlDataSet(String dataSetCql) {
+        return new ClassPathCQLDataSet(dataSetCql, KEYSPACE);
+    }
+    public static void loadCQLDataSet(Session session, String dataSetCql) {
+        CQLDataLoader loader = new CQLDataLoader(session);
+        loader.load(cqlDataSet(dataSetCql));
     }
 
     public static CassandraCQLUnit cassandraCQLUnit(CQLDataSet dataset) {
@@ -59,11 +68,10 @@ public class CassandraUnitUtils {
     public static void cleanEmbeddedCassandra() throws Exception {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
-    public static Session connectCassandra() {
-        Cluster cluster = Cluster.builder()
+    public static Cluster cassandraCluster() {
+        return Cluster.builder()
                 .addContactPoint(HOST)
                 .withClusterName("camel-cluster")
                 .build();
-        return cluster.connect(KEYSPACE);
     }
 }

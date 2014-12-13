@@ -11,28 +11,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.utils.cassandraql.CassandraSessionHolder;
 
 /**
  * Cassandra 2 CQL3 endpoint
  */
 public class CassandraQlEndpoint extends DefaultEndpoint {
-
     /**
-     * Cluster
+     * Session holder
      */
-    private final Cluster cluster;
-    /**
-     * Session
-     */
-    private Session session;
-    /**
-     * Keyspace name
-     */
-    private String keyspace;
-    /**
-     * Indicates whether Session is externally managed
-     */
-    private final boolean managedSession;
+    private CassandraSessionHolder sessionHolder;
     /**
      * CQL query
      */
@@ -57,29 +45,22 @@ public class CassandraQlEndpoint extends DefaultEndpoint {
      */
     public CassandraQlEndpoint(String uri, CassandraQlComponent component, Cluster cluster, Session session, String keyspace) {
         super(uri, component);
-        this.cluster = cluster;
-        this.session = session;
-        this.managedSession = session != null;
-        this.keyspace = keyspace;
+        if (session == null) {
+            sessionHolder = new CassandraSessionHolder(cluster, keyspace);
+        } else {
+            sessionHolder = new CassandraSessionHolder(session);
+        }
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (!managedSession && session == null) {
-            if (keyspace == null) {
-                this.session = cluster.connect();
-            } else {
-                this.session = cluster.connect(keyspace);
-            }
-        }
+        sessionHolder.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (managedSession && session != null) {
-            session.close();
-        }
+        sessionHolder.stop();
         super.doStop();
     }
 
@@ -96,7 +77,7 @@ public class CassandraQlEndpoint extends DefaultEndpoint {
     }
 
     public Session getSession() {
-        return session;
+        return sessionHolder.getSession();
     }
 
     public String getCql() {
@@ -108,11 +89,7 @@ public class CassandraQlEndpoint extends DefaultEndpoint {
     }
 
     public String getKeyspace() {
-        return keyspace;
-    }
-
-    public void setKeyspace(String keyspace) {
-        this.keyspace = keyspace;
+        return sessionHolder.getKeyspace();
     }
 
     public ConsistencyLevel getConsistencyLevel() {

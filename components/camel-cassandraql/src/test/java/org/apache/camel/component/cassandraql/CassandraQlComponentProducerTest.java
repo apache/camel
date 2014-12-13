@@ -1,5 +1,6 @@
 package org.apache.camel.component.cassandraql;
 
+import com.datastax.driver.core.Cluster;
 import org.apache.camel.component.cassandraql.CassandraQlEndpoint;
 import org.apache.camel.component.cassandraql.CassandraQlConstants;
 import com.datastax.driver.core.ConsistencyLevel;
@@ -50,25 +51,29 @@ public class CassandraQlComponentProducerTest extends CamelTestSupport {
     public void testRequest_UriCql() throws Exception {
         Object response = producerTemplate.requestBody(Arrays.asList("w_jiang","Willem","Jiang"));
         
-        Session session = CassandraUnitUtils.connectCassandra();
+        Cluster cluster = CassandraUnitUtils.cassandraCluster();
+        Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
         ResultSet resultSet = session.execute("select login, first_name, last_name from camel_user where login = ?", "w_jiang");
         Row row = resultSet.one();
         assertNotNull(row);
         assertEquals("Willem", row.getString("first_name"));
         assertEquals("Jiang", row.getString("last_name"));
         session.close();
+        cluster.close();
     }
     @Test
     public void testRequest_MessageCql() throws Exception {
         Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2","Ibsen 2", "c_ibsen"}, CassandraQlConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
         
-        Session session = CassandraUnitUtils.connectCassandra();
+        Cluster cluster = CassandraUnitUtils.cassandraCluster();
+        Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
         ResultSet resultSet = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row = resultSet.one();
         assertNotNull(row);
         assertEquals("Claus 2", row.getString("first_name"));
         assertEquals("Ibsen 2", row.getString("last_name"));
         session.close();
+        cluster.close();
     }
 
     @Test

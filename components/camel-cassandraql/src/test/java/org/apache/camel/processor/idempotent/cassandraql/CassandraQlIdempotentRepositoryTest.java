@@ -15,6 +15,7 @@
  */
 package org.apache.camel.processor.idempotent.cassandraql;
 
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.component.cassandraql.CassandraUnitUtils;
 import org.cassandraunit.CassandraCQLUnit;
@@ -30,8 +31,9 @@ import org.junit.Rule;
  * Unit test for {@link CassandraQlIdempotentRepository}
  */
 public class CassandraQlIdempotentRepositoryTest {
+    private Cluster cluster;
     private Session session;
-    private CassandraQlIdempotentRepository<String,String> idempotentRepository;
+    private CassandraQlIdempotentRepository<String> idempotentRepository;
     @Rule
     public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("IdempotentDataSet.cql");
     
@@ -41,14 +43,16 @@ public class CassandraQlIdempotentRepositoryTest {
     }
     @Before
     public void setUp() throws Exception {
-        session = CassandraUnitUtils.connectCassandra();
-        idempotentRepository = new CassandraQlIdempotentRepository<String, String>(session, "ID");
+        cluster = CassandraUnitUtils.cassandraCluster();
+        session = cluster.connect(CassandraUnitUtils.KEYSPACE);
+        idempotentRepository = new NamedCassandraQlIdempotentRepository<String>(session, "ID");
         idempotentRepository.start();
     }
     @After
     public void tearDown() throws Exception {
         idempotentRepository.stop();
         session.close();
+        cluster.close();
     }
     @AfterClass
     public static void tearDownClass() throws Exception {
@@ -56,9 +60,8 @@ public class CassandraQlIdempotentRepositoryTest {
     }
     private boolean exists(String key) {
         return session.execute(
-                session.prepare("select KEY from CAMEL_IDEMPOTENT where ID=? and KEY=?")
-                    .bind("ID", key)
-                ).one()!=null;
+                "select KEY from CAMEL_IDEMPOTENT where NAME=? and KEY=?","ID", key)
+                .one()!=null;
     }
     @Test
     public void testAdd_NotExists() {
