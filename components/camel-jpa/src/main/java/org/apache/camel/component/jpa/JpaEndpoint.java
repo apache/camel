@@ -67,6 +67,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean joinTransaction = true;
     @UriParam
     private boolean usePassedInEntityManager;
+    @UriParam
     private boolean sharedEntityManager = false;
 
     public JpaEndpoint() {
@@ -267,6 +268,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return sharedEntityManager;
     }
 
+    /**
+     * Whether to use spring's SharedEntityManager for the consumer/producer. Sets joinTransaction=false 
+     * @param sharedEntityManager
+     */
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
 //        if (sharedEntityManager)
