@@ -36,6 +36,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -66,6 +67,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean joinTransaction = true;
     @UriParam
     private boolean usePassedInEntityManager;
+    private boolean sharedEntityManager = false;
 
     public JpaEndpoint() {
     }
@@ -261,6 +263,16 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.usePassedInEntityManager = usePassedIn;
     }
 
+    public boolean isSharedEntityManager() {
+        return sharedEntityManager;
+    }
+
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
+//        if (sharedEntityManager)
+//            this.joinTransaction = false;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -287,7 +299,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     @Deprecated
     protected EntityManager createEntityManager() {
-        return getEntityManagerFactory().createEntityManager();
+        if (sharedEntityManager)
+            return SharedEntityManagerCreator.createSharedEntityManager(getEntityManagerFactory());
+        else
+            return getEntityManagerFactory().createEntityManager();
     }
 
     protected TransactionTemplate createTransactionTemplate() {
@@ -317,5 +332,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
             }
         };
     }
+
 
 }
