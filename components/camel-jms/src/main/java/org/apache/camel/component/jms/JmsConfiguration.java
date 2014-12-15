@@ -71,16 +71,19 @@ public class JmsConfiguration implements Cloneable {
     @UriParam
     private String acknowledgementModeName;
     // Used to configure the spring Container
+    @UriParam
     private ExceptionListener exceptionListener;
-    @UriParam
+    @UriParam(defaultValue = "Default")
     private ConsumerType consumerType = ConsumerType.Default;
+    @UriParam
     private ErrorHandler errorHandler;
+    @UriParam(defaultValue = "WARN")
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean errorHandlerLogStackTrace = true;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean autoStartup = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean acceptMessagesWhileStopping;
     @UriParam
     private String clientId;
@@ -90,71 +93,70 @@ public class JmsConfiguration implements Cloneable {
     @UriParam
     private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean pubSubNoLocal;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int maxMessagesPerTask = -1;
     private int cacheLevel = -1;
     @UriParam
     private String cacheLevelName;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private long recoveryInterval = -1;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private long receiveTimeout = -1;
-    @UriParam
+    @UriParam(defaultValue = "20000")
     private long requestTimeout = 20000L;
-    @UriParam
+    @UriParam(defaultValue = "1000")
     private long requestTimeoutCheckerInterval = 1000L;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int idleTaskExecutionLimit = 1;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int idleConsumerLimit = 1;
     @UriParam
     private int maxConcurrentConsumers;
     // JmsTemplate only
-    @UriParam
+    @UriParam(defaultValue = "false")
     private Boolean explicitQosEnabled;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean deliveryPersistent = true;
     @UriParam
     private Integer deliveryMode;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean replyToDeliveryPersistent = true;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private long timeToLive = -1;
     private MessageConverter messageConverter;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean mapJmsMessage = true;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean messageIdEnabled = true;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean messageTimestampEnabled = true;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int priority = -1;
     // Transaction related configuration
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transacted;
-    @UriParam
     private boolean transactedInOut;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean lazyCreateTransactionManager = true;
     private PlatformTransactionManager transactionManager;
     @UriParam
     private String transactionName;
-    @UriParam
+    @UriParam(defaultValue = "-1")
     private int transactionTimeout = -1;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean preserveMessageQos;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disableReplyTo;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean alwaysCopyMessage;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean useMessageIDAsCorrelationID;
     private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
     private JmsOperations metadataJmsOperations;
@@ -162,39 +164,43 @@ public class JmsConfiguration implements Cloneable {
     private String replyToDestination;
     @UriParam
     private String replyToDestinationSelectorName;
+    @UriParam
     private String replyToOverride;
+    @UriParam
     private JmsMessageType jmsMessageType;
+    @UriParam
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transferExchange;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean transferException;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean testConnectionOnStartup;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean asyncStartListener;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean asyncStopListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the
     // producer to send the javax.jms.Message body to the next JMS destination
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean disableTimeToLive;
+    @UriParam(defaultValue = "false")
     private ReplyToType replyToType;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
     @UriParam
     private String replyToCacheLevelName;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean allowNullBody = true;
     private MessageListenerContainerFactory messageListenerContainerFactory;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean includeSentJMSMessageID;
     private DefaultTaskExecutorType defaultTaskExecutorType;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean includeAllJMSXProperties;
 
     public JmsConfiguration() {
