@@ -27,11 +27,11 @@ public class JolokiaRemoteTest {
 
     private String url = "http://localhost:8080/jolokia";
 
-    private RemoteCamelController controller;
+    private JolokiaCamelController controller;
 
     @Test
     public void testRemoteCamelContexts() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.getCamelContexts();
@@ -40,7 +40,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteCamelContextInformation() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         Map<String, Object> data = controller.getCamelContextInformation("myCamel");
@@ -49,7 +49,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteCamelContextStatsAsXml() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         String data = controller.getCamelContextStatsAsXml("myCamel", true, false);
@@ -58,7 +58,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteCamelContextControl() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         controller.suspendContext("myCamel");
@@ -74,7 +74,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteGetAllRoutes() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.getRoutes(null);
@@ -83,7 +83,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteGetRoutes() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.getRoutes("myCamel");
@@ -92,7 +92,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteGetRoutesFilter() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.getRoutes(null, "route2");
@@ -101,7 +101,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteResetRouteStats() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         controller.resetRouteStats("myCamel");
@@ -109,7 +109,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRemoteRouteControl() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         controller.suspendRoute("myCamel", "route2");
@@ -125,7 +125,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRouteModel() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         String data = controller.getRouteModelAsXml("myCamel", "route2");
@@ -134,7 +134,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRouteStats() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         String data = controller.getRouteStatsAsXml("myCamel", "route2", true, true);
@@ -143,7 +143,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testRestsModel() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         String data = controller.getRestModelAsXml("myCamel");
@@ -152,7 +152,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testGetEndpoints() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.getEndpoints("myCamel");
@@ -161,7 +161,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testGetRestServices() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.getRestServices("myCamel");
@@ -170,7 +170,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testExplainEndpointJson() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         String data = controller.explainEndpointAsJSon("myCamel", "log:foo", true);
@@ -179,7 +179,7 @@ public class JolokiaRemoteTest {
 
     @Test
     public void testListComponents() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
         List<Map<String, String>> data = controller.listComponents("myCamel");

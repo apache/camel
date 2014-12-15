@@ -26,12 +26,16 @@ public class JolokiaCommandsTest {
 
     private String url = "http://localhost:8080/jolokia";
 
-    private RemoteCamelController controller;
+    private JolokiaCamelController controller;
 
     @Test
     public void testContextList() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
+
+        if (!controller.ping()) {
+            throw new IllegalArgumentException("Error connecting to " + url);
+        }
 
         ContextListCommand cmd = new ContextListCommand();
         cmd.execute(controller, System.out, System.err);
@@ -39,8 +43,12 @@ public class JolokiaCommandsTest {
 
     @Test
     public void testContextInfo() throws Exception {
-        controller = new JolokiaCamelController();
+        controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
+
+        if (!controller.ping()) {
+            throw new IllegalArgumentException("Error connecting to " + url);
+        }
 
         ContextInfoCommand cmd = new ContextInfoCommand("myCamel", true);
         cmd.setStringEscape(new NoopStringEscape());
