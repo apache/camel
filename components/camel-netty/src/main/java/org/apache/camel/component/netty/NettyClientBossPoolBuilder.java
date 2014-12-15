@@ -103,10 +103,9 @@ public final class NettyClientBossPoolBuilder {
         }
         
         
-        @SuppressWarnings("unchecked")
         public Set<Timeout> stop() {
             // do nothing here;
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         
         
