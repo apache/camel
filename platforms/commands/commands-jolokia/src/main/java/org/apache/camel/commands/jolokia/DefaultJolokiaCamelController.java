@@ -101,26 +101,47 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
 
+        // org.apache.camel:context=camel-1,type=services,name=DefaultTypeConverter
+
         Map<String, Object> answer = new LinkedHashMap<String, Object>();
 
         ObjectName found = lookupCamelContext(camelContextName);
         if (found != null) {
-            J4pReadResponse rr = jolokia.execute(new J4pReadRequest(found));
-            if (rr != null) {
-                for (String key : rr.getAttributes()) {
-                    answer.put(asKey(key), rr.getValue(key));
-                }
-            }
 
-            // store some data using special names as that is what the core-commands expects
-            answer.put("name", answer.get("camelId"));
-            answer.put("status", answer.get("state"));
-            answer.put("version", answer.get("camelVersion"));
-            answer.put("suspended", "Suspended".equals(answer.get("state")));
-            TimeUnit unit = TimeUnit.valueOf((String) answer.get("timeUnit"));
-            long timeout = (Long) answer.get("timeout");
-            answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
-            answer.put("applicationContextClassLoader", answer.get("applicationContextClassName"));
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultTypeConverter", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName tc = ObjectName.getInstance(pattern);
+
+            List<J4pReadRequest> list = new ArrayList<>();
+            list.add(new J4pReadRequest(found));
+            list.add(new J4pReadRequest(tc));
+
+            List<J4pReadResponse> rr = jolokia.execute(list);
+            if (rr != null && rr.size() > 0) {
+                // camel context attributes
+                J4pReadResponse first = rr.get(0);
+                for (String key : first.getAttributes()) {
+                    answer.put(asKey(key), first.getValue(key));
+                }
+
+                // type converter attributes
+                if (rr.size() == 2) {
+                    J4pReadResponse second = rr.get(1);
+                    for (String key : second.getAttributes()) {
+
+                        answer.put("typeConverter." + asKey(key), second.getValue(key));
+                    }
+                }
+
+                // store some data using special names as that is what the core-commands expects
+                answer.put("name", answer.get("camelId"));
+                answer.put("status", answer.get("state"));
+                answer.put("version", answer.get("camelVersion"));
+                answer.put("suspended", "Suspended".equals(answer.get("state")));
+                TimeUnit unit = TimeUnit.valueOf((String) answer.get("timeUnit"));
+                long timeout = (Long) answer.get("timeout");
+                answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
+                answer.put("applicationContextClassLoader", answer.get("applicationContextClassName"));
+            }
         }
 
         return answer;
