@@ -21,7 +21,7 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "endpoint-explain", description = "Explain all Camel endpoints available in CamelContexts.")
+@Command(scope = "camel", name = "endpoint-explain", description = "Explain all Camel endpoints available in the CamelContext")
 public class EndpointExplain extends CamelCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)

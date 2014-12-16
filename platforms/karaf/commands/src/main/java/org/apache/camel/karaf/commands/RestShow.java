@@ -20,7 +20,7 @@ import org.apache.camel.commands.RestShowCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-@Command(scope = "camel", name = "rest-show", description = "Display the Camel REST definition in XML.")
+@Command(scope = "camel", name = "rest-show", description = "Display the Camel REST definition in XML")
 public class RestShow extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The Camel context name.", required = true, multiValued = false)

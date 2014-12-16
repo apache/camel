@@ -17,10 +17,14 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteResetStatsCommand;
+import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-@Command(scope = "camel", name = "route-reset-stats", description = "Reset performance stats on a route or group of routes")
-public class RouteResetStats extends AbstractRouteCommand {
+@Command(scope = "camel", name = "route-reset-stats", description = "Reset route performance stats from a CamelContext")
+public class RouteResetStats extends CamelCommandSupport {
+
+    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    String context;
 
     @Override
     protected Object doExecute() throws Exception {

@@ -19,7 +19,7 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteStopCommand;
 import org.apache.felix.gogo.commands.Command;
 
-@Command(scope = "camel", name = " route-stop", description = "Stop a Camel route or a group of routes.")
+@Command(scope = "camel", name = " route-stop", description = "Stop a Camel route")
 public class RouteStop extends AbstractRouteCommand {
 
     @Override

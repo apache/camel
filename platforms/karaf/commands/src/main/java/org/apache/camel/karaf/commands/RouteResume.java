@@ -19,7 +19,7 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteResumeCommand;
 import org.apache.felix.gogo.commands.Command;
 
-@Command(scope = "camel", name = "route-resume", description = "Resume a Camel route or a group of routes.")
+@Command(scope = "camel", name = "route-resume", description = "Resume a Camel route")
 public class RouteResume extends AbstractRouteCommand {
 
     @Override

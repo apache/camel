@@ -19,7 +19,7 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteStartCommand;
 import org.apache.felix.gogo.commands.Command;
 
-@Command(scope = "camel", name = "route-start", description = "Start a Camel route or a group of routes")
+@Command(scope = "camel", name = "route-start", description = "Start a Camel route")
 public class RouteStart extends AbstractRouteCommand {
 
     @Override

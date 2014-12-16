@@ -20,7 +20,7 @@ import org.apache.camel.commands.RouteShowCommand;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-@Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML.")
+@Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML")
 public class RouteShow extends CamelCommandSupport {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
