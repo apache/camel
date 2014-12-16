@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.management.ObjectName;
 
 import org.apache.camel.commands.AbstractCamelController;
@@ -110,6 +111,15 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                     answer.put(asKey(key), rr.getValue(key));
                 }
             }
+
+            // store some data using special names as that is what the core-commands expects
+            answer.put("name", answer.get("camelId"));
+            answer.put("status", answer.get("state"));
+            answer.put("version", answer.get("camelVersion"));
+            answer.put("suspended", "Suspended".equals(answer.get("state")));
+            TimeUnit unit = TimeUnit.valueOf((String) answer.get("timeUnit"));
+            long timeout = (Long) answer.get("timeout");
+            answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
         }
 
         return answer;

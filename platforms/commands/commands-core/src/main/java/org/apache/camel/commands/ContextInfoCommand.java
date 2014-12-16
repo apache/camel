@@ -73,8 +73,6 @@ public class ContextInfoCommand extends AbstractCamelCommand {
 
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
-        out.println(stringEscape.unescapeJava("\tAuto Startup: " + row.get("autoStartup")));
-        out.println(stringEscape.unescapeJava("\tStarting Routes: " + row.get("startingRoutes")));
         out.println(stringEscape.unescapeJava("\tSuspended: " + row.get("suspended")));
         out.println(stringEscape.unescapeJava("\tShutdown Timeout: " + row.get("shutdownTimeout") + " sec."));
         out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));

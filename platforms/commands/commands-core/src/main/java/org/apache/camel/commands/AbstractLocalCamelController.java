@@ -67,8 +67,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("version", context.getVersion());
             answer.put("status", context.getStatus().name());
             answer.put("uptime", context.getUptime());
-            answer.put("autoStartup", context.isAutoStartup());
-            answer.put("startingRoutes", context.isStartingRoutes());
             answer.put("suspended", context.getStatus().isSuspended());
             answer.put("allowUseOriginalMessage", context.isAllowUseOriginalMessage());
             answer.put("messageHistory", context.isMessageHistory());
