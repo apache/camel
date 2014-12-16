@@ -149,30 +149,25 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         assertFalse(resultList.get(0).getId().equals(resultList.get(1)));
     }
 
-    @Ignore
     @Test
     public void testPatch() throws Exception {
-        // TODO have to support setting patch parameters before calling execute like:
-        /*
-      File file = new File();
-      file.setTitle(newTitle);
+        File file = uploadTestFile();
 
-      // Rename the file using a patch request.
-      Files.Patch patchRequest = service.files().patch(fileId, file);
-      patchRequest.setFields("title");
-
-      File updatedFile = patchRequest.execute();
-         */        
+        // lets update the filename
+        file.setTitle(UPLOAD_FILE.getName() + "PATCHED");
         
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", file.getId());
+        // parameter type is String
+        headers.put("CamelGoogleDrive.fields", "title");       
         // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.content", file);
 
-        final com.google.api.services.drive.Drive.Files.Patch result = requestBodyAndHeaders("direct://PATCH", null, headers);
+        File result = requestBodyAndHeaders("direct://PATCH", null, headers);
 
         assertNotNull("patch result", result);
+        assertEquals(UPLOAD_FILE.getName() + "PATCHED", result.getTitle());
         LOG.debug("patch: " + result);
     }
 
