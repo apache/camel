@@ -97,7 +97,8 @@ public class ContextInfoCommand extends AbstractCamelCommand {
 
             printStatistics(camelController, out);
 
-            // add type converter statistics if enabled
+            // add type converter details
+            out.println(stringEscape.unescapeJava("\tNumber of type converters: " + row.get("typeConverter.numberOfTypeConverters")));
             boolean enabled = false;
             if (row.get("typeConverter.statisticsEnabled") != null) {
                 enabled = (boolean) row.get("typeConverter.statisticsEnabled");
@@ -107,7 +108,41 @@ public class ContextInfoCommand extends AbstractCamelCommand {
                 long hit = (long) row.get("typeConverter.hitCounter");
                 long miss = (long) row.get("typeConverter.missCounter");
                 long failed = (long) row.get("typeConverter.failedCounter");
-                out.println(stringEscape.unescapeJava(String.format("\tTypeConverterRegistry utilization: [attempts=%s, hits=%s, misses=%s, failures=%s]", attempt, hit, miss, failed)));
+                out.println(stringEscape.unescapeJava(String.format("\tType converter usage: [attempts=%s, hits=%s, misses=%s, failures=%s]", attempt, hit, miss, failed)));
+            }
+
+            // add stream caching details if enabled
+            enabled = (boolean) row.get("streamCachingEnabled");
+            if (enabled) {
+                Object spoolDirectory = safeNull(row.get("streamCaching.spoolDirectory"));
+                Object spoolChiper = safeNull(row.get("streamCaching.spoolChiper"));
+                Object spoolThreshold = safeNull(row.get("streamCaching.spoolThreshold"));
+                Object spoolUsedHeapMemoryThreshold = safeNull(row.get("streamCaching.spoolUsedHeapMemoryThreshold"));
+                Object spoolUsedHeapMemoryLimit = safeNull(row.get("streamCaching.spoolUsedHeapMemoryLimit"));
+                Object anySpoolRules = safeNull(row.get("streamCaching.anySpoolRules"));
+                Object bufferSize = safeNull(row.get("streamCaching.bufferSize"));
+                Object removeSpoolDirectoryWhenStopping = safeNull(row.get("streamCaching.removeSpoolDirectoryWhenStopping"));
+                boolean statisticsEnabled = (boolean) row.get("streamCaching.statisticsEnabled");
+
+                String text = String.format("\tStream caching: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, "
+                                + "spoolUsedHeapMemoryLimit=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
+                        spoolDirectory, spoolChiper, spoolThreshold, spoolUsedHeapMemoryThreshold, spoolUsedHeapMemoryLimit, anySpoolRules, bufferSize,
+                        removeSpoolDirectoryWhenStopping, statisticsEnabled);
+                out.println(stringEscape.unescapeJava(text));
+
+                if (statisticsEnabled) {
+                    Object cacheMemoryCounter = safeNull(row.get("streamCaching.cacheMemoryCounter"));
+                    Object cacheMemorySize = safeNull(row.get("streamCaching.cacheMemorySize"));
+                    Object cacheMemoryAverageSize = safeNull(row.get("streamCaching.cacheMemoryAverageSize"));
+                    Object cacheSpoolCounter = safeNull(row.get("streamCaching.cacheSpoolCounter"));
+                    Object cacheSpoolSize = safeNull(row.get("streamCaching.cacheSpoolSize"));
+                    Object cacheSpoolAverageSize = safeNull(row.get("streamCaching.cacheSpoolAverageSize"));
+
+                    text = String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheMemoryAverageSize=%s, cacheSpoolCounter=%s, "
+                            + "cacheSpoolSize=%s, cacheSpoolAverageSize=%s]",
+                            cacheMemoryCounter, cacheMemorySize, cacheMemoryAverageSize, cacheSpoolCounter, cacheSpoolSize, cacheSpoolAverageSize);
+                    out.println(stringEscape.unescapeJava(text));
+                }
             }
 
             long totalRoutes = (long) row.get("totalRoutes");
@@ -171,40 +206,16 @@ public class ContextInfoCommand extends AbstractCamelCommand {
                 String text = new SimpleDateFormat(OUTPUT_TIMESTAMP_FORMAT).format(date);
                 out.println(stringEscape.unescapeJava("\tLast Exchange Date: " + text));
             }
-
-            // TODO: put that info in the controller
-            /*
-
-                // add stream caching details if enabled
-                if (camelContext.getStreamCachingStrategy().isEnabled()) {
-                    out.println(stringEscape.unescapeJava(
-                            String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, "
-                                            + "spoolUsedHeapMemoryLimit=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
-                                    camelContext.getStreamCachingStrategy().getSpoolDirectory(),
-                                    camelContext.getStreamCachingStrategy().getSpoolChiper(),
-                                    camelContext.getStreamCachingStrategy().getSpoolThreshold(),
-                                    camelContext.getStreamCachingStrategy().getSpoolUsedHeapMemoryThreshold(),
-                                    camelContext.getStreamCachingStrategy().getSpoolUsedHeapMemoryLimit(),
-                                    camelContext.getStreamCachingStrategy().isAnySpoolRules(),
-                                    camelContext.getStreamCachingStrategy().getBufferSize(),
-                                    camelContext.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping(),
-                                    camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled())));
-
-                    if (camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled()) {
-                        out.println(stringEscape.unescapeJava(
-                                String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheMemoryAverageSize=%s, cacheSpoolCounter=%s, "
-                                                + "cacheSpoolSize=%s, cacheSpoolAverageSize=%s]",
-                                        camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryCounter(),
-                                        printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheMemorySize()),
-                                        printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryAverageSize()),
-                                        camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolCounter(),
-                                        printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolSize()),
-                                        printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolAverageSize()))));
-                    }
-                }
-            }*/
         }
 
+    }
+
+    private static String safeNull(Object value) {
+        if (value == null) {
+            return "";
+        } else {
+            return value.toString();
+        }
     }
 
 }

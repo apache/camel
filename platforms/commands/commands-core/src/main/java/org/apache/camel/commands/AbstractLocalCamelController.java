@@ -80,12 +80,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                 answer.put("property." + entry.getKey(), entry.getValue());
             }
 
-            answer.put("typeConverter.statisticsEnabled", context.getTypeConverterRegistry().getStatistics().isStatisticsEnabled());
-            answer.put("typeConverter.attemptCounter", context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
-            answer.put("typeConverter.hitCounter", context.getTypeConverterRegistry().getStatistics().getHitCounter());
-            answer.put("typeConverter.missCounter", context.getTypeConverterRegistry().getStatistics().getMissCounter());
-            answer.put("typeConverter.failedCounter", context.getTypeConverterRegistry().getStatistics().getFailedCounter());
-
             long activeRoutes = 0;
             long inactiveRoutes = 0;
             List<Route> routeList = context.getRoutes();
@@ -98,6 +92,39 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             }
             answer.put("startedRoutes", activeRoutes);
             answer.put("totalRoutes", activeRoutes + inactiveRoutes);
+
+            // add type converter details
+            answer.put("typeConverter.numberOfTypeConverters", context.getTypeConverterRegistry().size());
+            answer.put("typeConverter.statisticsEnabled", context.getTypeConverterRegistry().getStatistics().isStatisticsEnabled());
+            answer.put("typeConverter.attemptCounter", context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
+            answer.put("typeConverter.hitCounter", context.getTypeConverterRegistry().getStatistics().getHitCounter());
+            answer.put("typeConverter.missCounter", context.getTypeConverterRegistry().getStatistics().getMissCounter());
+            answer.put("typeConverter.failedCounter", context.getTypeConverterRegistry().getStatistics().getFailedCounter());
+
+            // add stream caching details if enabled
+            if (context.getStreamCachingStrategy().isEnabled()) {
+                answer.put("streamCachingEnabled", true);
+                answer.put("streamCaching.spoolDirectory", context.getStreamCachingStrategy().getSpoolDirectory());
+                answer.put("streamCaching.spoolChiper", context.getStreamCachingStrategy().getSpoolChiper());
+                answer.put("streamCaching.spoolThreshold", context.getStreamCachingStrategy().getSpoolThreshold());
+                answer.put("streamCaching.spoolUsedHeapMemoryThreshold", context.getStreamCachingStrategy().getSpoolUsedHeapMemoryThreshold());
+                answer.put("streamCaching.spoolUsedHeapMemoryLimit", context.getStreamCachingStrategy().getSpoolUsedHeapMemoryLimit());
+                answer.put("streamCaching.anySpoolRules", context.getStreamCachingStrategy().isAnySpoolRules());
+                answer.put("streamCaching.bufferSize", context.getStreamCachingStrategy().getBufferSize());
+                answer.put("streamCaching.removeSpoolDirectoryWhenStopping", context.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping());
+                answer.put("streamCaching.statisticsEnabled", context.getStreamCachingStrategy().getStatistics().isStatisticsEnabled());
+
+                if (context.getStreamCachingStrategy().getStatistics().isStatisticsEnabled()) {
+                    answer.put("streamCaching.cacheMemoryCounter", context.getStreamCachingStrategy().getStatistics().getCacheMemoryCounter());
+                    answer.put("streamCaching.cacheMemorySize", context.getStreamCachingStrategy().getStatistics().getCacheMemorySize());
+                    answer.put("streamCaching.cacheMemoryAverageSize", context.getStreamCachingStrategy().getStatistics().getCacheMemoryAverageSize());
+                    answer.put("streamCaching.cacheSpoolCounter", context.getStreamCachingStrategy().getStatistics().getCacheSpoolCounter());
+                    answer.put("streamCaching.cacheSpoolSize", context.getStreamCachingStrategy().getStatistics().getCacheSpoolSize());
+                    answer.put("streamCaching.cacheSpoolAverageSize", context.getStreamCachingStrategy().getStatistics().getCacheSpoolAverageSize());
+                }
+            } else {
+                answer.put("streamCachingEnabled", false);
+            }
         }
 
         return answer;

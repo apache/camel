@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
 import org.apache.camel.commands.AbstractCamelController;
@@ -30,6 +31,7 @@ import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.StringHelper;
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.exception.J4pException;
+import org.jolokia.client.exception.J4pRemoteException;
 import org.jolokia.client.request.J4pExecRequest;
 import org.jolokia.client.request.J4pExecResponse;
 import org.jolokia.client.request.J4pReadRequest;
@@ -101,8 +103,6 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
 
-        // org.apache.camel:context=camel-1,type=services,name=DefaultTypeConverter
-
         Map<String, Object> answer = new LinkedHashMap<String, Object>();
 
         ObjectName found = lookupCamelContext(camelContextName);
@@ -111,7 +111,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             String pattern = String.format("%s:context=%s,type=services,name=DefaultTypeConverter", found.getDomain(), found.getKeyProperty("context"));
             ObjectName tc = ObjectName.getInstance(pattern);
 
-            List<J4pReadRequest> list = new ArrayList<>();
+            List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
             list.add(new J4pReadRequest(found));
             list.add(new J4pReadRequest(tc));
 
@@ -124,24 +124,45 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                 }
 
                 // type converter attributes
-                if (rr.size() == 2) {
+                if (rr.size() >= 2) {
                     J4pReadResponse second = rr.get(1);
                     for (String key : second.getAttributes()) {
-
                         answer.put("typeConverter." + asKey(key), second.getValue(key));
                     }
                 }
-
-                // store some data using special names as that is what the core-commands expects
-                answer.put("name", answer.get("camelId"));
-                answer.put("status", answer.get("state"));
-                answer.put("version", answer.get("camelVersion"));
-                answer.put("suspended", "Suspended".equals(answer.get("state")));
-                TimeUnit unit = TimeUnit.valueOf((String) answer.get("timeUnit"));
-                long timeout = (Long) answer.get("timeout");
-                answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
-                answer.put("applicationContextClassLoader", answer.get("applicationContextClassName"));
             }
+
+            // would be great if there was an api in jolokia to read optional (eg ignore if an mbean does not exists)
+            answer.put("streamCachingEnabled", false);
+            try {
+                pattern = String.format("%s:context=%s,type=services,name=DefaultStreamCachingStrategy", found.getDomain(), found.getKeyProperty("context"));
+                ObjectName sc = ObjectName.getInstance(pattern);
+
+                // there is only a mbean if stream caching is enabled
+                J4pReadResponse rsc = jolokia.execute(new J4pReadRequest(sc));
+                if (rsc != null) {
+                    for (String key : rsc.getAttributes()) {
+                        answer.put("streamCaching." + asKey(key), rsc.getValue(key));
+                    }
+                }
+                answer.put("streamCachingEnabled", true);
+            } catch (J4pRemoteException e) {
+                // ignore
+                boolean ignore = InstanceNotFoundException.class.getName().equals(e.getErrorType());
+                if (!ignore) {
+                    throw e;
+                }
+            }
+
+            // store some data using special names as that is what the core-commands expects
+            answer.put("name", answer.get("camelId"));
+            answer.put("status", answer.get("state"));
+            answer.put("version", answer.get("camelVersion"));
+            answer.put("suspended", "Suspended".equals(answer.get("state")));
+            TimeUnit unit = TimeUnit.valueOf((String) answer.get("timeUnit"));
+            long timeout = (Long) answer.get("timeout");
+            answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
+            answer.put("applicationContextClassLoader", answer.get("applicationContextClassName"));
         }
 
         return answer;
