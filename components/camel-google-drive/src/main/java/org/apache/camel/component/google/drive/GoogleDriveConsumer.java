@@ -46,6 +46,7 @@ public class GoogleDriveConsumer extends AbstractApiConsumer<GoogleDriveApiName,
             setProperty(properties, request, "q");
             setProperty(properties, request, "maxResults");
             setProperty(properties, request, "pageToken");
+            setProperty(properties, request, "fields");
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
