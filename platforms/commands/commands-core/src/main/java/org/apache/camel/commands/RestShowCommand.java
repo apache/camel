@@ -32,9 +32,9 @@ public class RestShowCommand extends AbstractContextCommand {
         String xml = camelController.getRestModelAsXml(contextName);
         if (xml == null) {
             out.println("There are no REST services in CamelContext with name: " + contextName);
-            return null;
+        } else {
+            out.println(xml);
         }
-        out.println(xml);
         return null;
     }
 }

@@ -32,7 +32,8 @@ public class RouteShowCommand extends AbstractRouteCommand {
         String xml = camelController.getRouteModelAsXml(routeId, contextName);
         if (xml == null) {
             err.println("Definition of route " + routeId + " not found.");
+        } else {
+            out.println(xml);
         }
-        System.out.println(xml);
     }
 }

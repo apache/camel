@@ -54,17 +54,17 @@ public class RouteProfileCommand extends AbstractRouteCommand {
 
         // write new header for new camel context
         if (previousCamelContextName == null || !previousCamelContextName.equals(contextName)) {
-            System.out.println("");
-            System.out.println(stringEscape.unescapeJava("\u001B[1mProfile\u001B[0m"));
-            System.out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
-            System.out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Total (ms)", "Self (ms)"));
+            out.println("");
+            out.println(stringEscape.unescapeJava("\u001B[1mProfile\u001B[0m"));
+            out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
+            out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Total (ms)", "Self (ms)"));
         }
 
         String xml = camelController.getRouteStatsAsXml(routeId, contextName, true, true);
         RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
         long count = route.getExchangesCompleted() + route.getExchangesFailed();
-        System.out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
+        out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
                 route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
 
         for (ProcessorStatDump ps : route.getProcessorStats()) {
@@ -72,7 +72,7 @@ public class RouteProfileCommand extends AbstractRouteCommand {
             long selfTime = ps.getTotalProcessingTime();
             count = ps.getExchangesCompleted() + ps.getExchangesFailed();
             // indent route id with 2 spaces
-            System.out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), count, ps.getLastProcessingTime(), ps.getDeltaProcessingTime(),
+            out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), count, ps.getLastProcessingTime(), ps.getDeltaProcessingTime(),
                     ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), ps.getAccumulatedProcessingTime(), selfTime));
         }
 
