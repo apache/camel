@@ -29,7 +29,7 @@ public class ContextSuspendCommand extends AbstractContextCommand {
 
     @Override
     protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
-        camelController.resumeContext(contextName);
+        camelController.suspendContext(contextName);
         return null;
     }
 }
