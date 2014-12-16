@@ -221,9 +221,11 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
-        if (camelContextName != null) {
+        ObjectName found = camelContextName != null ? lookupCamelContext(camelContextName) : null;
+        if (found != null) {
 
-            J4pSearchResponse sr = jolokia.execute(new J4pSearchRequest("*:type=routes,*"));
+            String pattern = String.format("%s:context=%s,type=routes,*", found.getDomain(), found.getKeyProperty("context"));
+            J4pSearchResponse sr = jolokia.execute(new J4pSearchRequest(pattern));
 
             List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
             for (ObjectName on : sr.getObjectNames()) {
