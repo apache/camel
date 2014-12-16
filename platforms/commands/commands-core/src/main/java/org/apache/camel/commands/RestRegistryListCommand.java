@@ -46,10 +46,10 @@ public class RestRegistryListCommand extends AbstractContextCommand {
     private static final int MAX_COLUMN_WIDTH = 120;
     private static final int MIN_COLUMN_WIDTH = 12;
 
-    Boolean decode = true;
-    Boolean verbose = false;
+    boolean decode = true;
+    boolean verbose;
 
-    public RestRegistryListCommand(String context, Boolean decode, Boolean verbose) {
+    public RestRegistryListCommand(String context, boolean decode, boolean verbose) {
         super(context);
         this.decode = decode;
         this.verbose = verbose;
@@ -79,7 +79,7 @@ public class RestRegistryListCommand extends AbstractContextCommand {
                 String uri = null;
                 if (verbose) {
                     uri = row.get("url");
-                    if (decode == null || decode) {
+                    if (decode) {
                         // decode uri so its more human readable
                         uri = URLDecoder.decode(uri, "UTF-8");
                     }
@@ -94,7 +94,7 @@ public class RestRegistryListCommand extends AbstractContextCommand {
                 if (verbose) {
                     out.println(String.format(rowFormat, uri, basePath, uriTemplate, method, state, route));
                 } else {
-                    out.println(String.format(rowFormat, basePath, uriTemplate, method, state));
+                    out.println(String.format(rowFormat, basePath, uriTemplate, method, state, route));
                 }
             }
         }
@@ -112,7 +112,7 @@ public class RestRegistryListCommand extends AbstractContextCommand {
 
         for (Map<String, String> row : services) {
             String uri = row.get("url");
-            if (decode == null || decode) {
+            if (decode) {
                 // decode uri so its more human readable
                 uri = URLDecoder.decode(uri, "UTF-8");
             }
@@ -189,7 +189,7 @@ public class RestRegistryListCommand extends AbstractContextCommand {
     }
 
     private int getMaxColumnWidth() {
-        if (verbose != null && verbose) {
+        if (verbose) {
             return Integer.MAX_VALUE;
         } else {
             return MAX_COLUMN_WIDTH;

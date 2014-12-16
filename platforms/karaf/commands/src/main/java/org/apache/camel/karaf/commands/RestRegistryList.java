@@ -21,10 +21,10 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "rest-registry-list", description = "Lists all Camel REST services enlisted in the Rest Registry from one or more CamelContexts.")
+@Command(scope = "camel", name = "rest-registry-list", description = "Lists all Camel REST services enlisted in the Rest Registry from a CamelContext")
 public class RestRegistryList extends CamelCommandSupport {
 
-    @Argument(index = 0, name = "name", description = "The Camel context name where to look for the REST services", required = false, multiValued = false)
+    @Argument(index = 0, name = "name", description = "The Camel context name where to look for the REST services", required = true, multiValued = false)
     String name;
 
     @Option(name = "--decode", aliases = "-d", description = "Whether to decode the endpoint uri so its human readable",

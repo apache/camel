@@ -61,19 +61,21 @@ public class RouteProfileCommand extends AbstractRouteCommand {
         }
 
         String xml = camelController.getRouteStatsAsXml(routeId, contextName, true, true);
-        RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
+        if (xml != null) {
+            RouteStatDump route = (RouteStatDump) unmarshaller.unmarshal(new StringReader(xml));
 
-        long count = route.getExchangesCompleted() + route.getExchangesFailed();
-        out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
-                route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
+            long count = route.getExchangesCompleted() + route.getExchangesFailed();
+            out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
+                    route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
 
-        for (ProcessorStatDump ps : route.getProcessorStats()) {
-            // the self time is the total time of the processor itself
-            long selfTime = ps.getTotalProcessingTime();
-            count = ps.getExchangesCompleted() + ps.getExchangesFailed();
-            // indent route id with 2 spaces
-            out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), count, ps.getLastProcessingTime(), ps.getDeltaProcessingTime(),
-                    ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), ps.getAccumulatedProcessingTime(), selfTime));
+            for (ProcessorStatDump ps : route.getProcessorStats()) {
+                // the self time is the total time of the processor itself
+                long selfTime = ps.getTotalProcessingTime();
+                count = ps.getExchangesCompleted() + ps.getExchangesFailed();
+                // indent route id with 2 spaces
+                out.println(String.format(OUTPUT_FORMAT, "  " + ps.getId(), count, ps.getLastProcessingTime(), ps.getDeltaProcessingTime(),
+                        ps.getMeanProcessingTime(), ps.getMinProcessingTime(), ps.getMaxProcessingTime(), ps.getAccumulatedProcessingTime(), selfTime));
+            }
         }
 
         // we want to group routes from the same context in the same table

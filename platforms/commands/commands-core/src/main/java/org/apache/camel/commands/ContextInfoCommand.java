@@ -39,7 +39,6 @@ public class ContextInfoCommand extends AbstractCamelCommand {
     private String context;
     private boolean verbose;
 
-
     /**
      * @param context The name of the Camel context
      * @param verbose Whether to output verbose
