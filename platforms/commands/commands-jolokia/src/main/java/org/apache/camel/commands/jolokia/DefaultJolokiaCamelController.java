@@ -120,6 +120,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             TimeUnit unit = TimeUnit.valueOf((String) answer.get("timeUnit"));
             long timeout = (Long) answer.get("timeout");
             answer.put("shutdownTimeout", "" + unit.toSeconds(timeout));
+            answer.put("applicationContextClassLoader", answer.get("applicationContextClassName"));
         }
 
         return answer;

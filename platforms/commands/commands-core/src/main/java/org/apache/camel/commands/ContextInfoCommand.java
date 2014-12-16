@@ -96,6 +96,24 @@ public class ContextInfoCommand extends AbstractCamelCommand {
             out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
 
             printStatistics(camelController, out);
+
+            // add type converter statistics if enabled
+            boolean enabled = false;
+            if (row.get("typeConverter.statisticsEnabled") != null) {
+                enabled = (boolean) row.get("typeConverter.statisticsEnabled");
+            }
+            if (enabled) {
+                long attempt = (long) row.get("typeConverter.attemptCounter");
+                long hit = (long) row.get("typeConverter.hitCounter");
+                long miss = (long) row.get("typeConverter.missCounter");
+                long failed = (long) row.get("typeConverter.failedCounter");
+                out.println(stringEscape.unescapeJava(String.format("\tTypeConverterRegistry utilization: [attempts=%s, hits=%s, misses=%s, failures=%s]", attempt, hit, miss, failed)));
+            }
+
+            long totalRoutes = (long) row.get("totalRoutes");
+            long startedRoutes = (long) row.get("totalRoutes");
+            out.println(stringEscape.unescapeJava("\tNumber of running routes: " + startedRoutes));
+            out.println(stringEscape.unescapeJava("\tNumber of not running routes: " + (totalRoutes - startedRoutes)));
         }
 
         return null;
@@ -156,14 +174,6 @@ public class ContextInfoCommand extends AbstractCamelCommand {
 
             // TODO: put that info in the controller
             /*
-                // add type converter statistics if enabled
-                if (camelContext.getTypeConverterRegistry().getStatistics().isStatisticsEnabled()) {
-                    out.println(stringEscape.unescapeJava(String.format("\tTypeConverterRegistry utilization: [attempts=%s, hits=%s, misses=%s, failures=%s]",
-                            camelContext.getTypeConverterRegistry().getStatistics().getAttemptCounter(),
-                            camelContext.getTypeConverterRegistry().getStatistics().getHitCounter(),
-                            camelContext.getTypeConverterRegistry().getStatistics().getMissCounter(),
-                            camelContext.getTypeConverterRegistry().getStatistics().getFailedCounter())));
-                }
 
                 // add stream caching details if enabled
                 if (camelContext.getStreamCachingStrategy().isEnabled()) {
@@ -192,20 +202,6 @@ public class ContextInfoCommand extends AbstractCamelCommand {
                                         printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolAverageSize()))));
                     }
                 }
-
-                long activeRoutes = 0;
-                long inactiveRoutes = 0;
-                List<Route> routeList = camelContext.getRoutes();
-                for (Route route : routeList) {
-                    if (camelContext.getRouteStatus(route.getId()).isStarted()) {
-                        activeRoutes++;
-                    } else {
-                        inactiveRoutes++;
-                    }
-                }
-
-                out.println(stringEscape.unescapeJava("\tNumber of running routes: " + activeRoutes));
-                out.println(stringEscape.unescapeJava("\tNumber of not running routes: " + inactiveRoutes));
             }*/
         }
 

@@ -79,6 +79,25 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             for (Map.Entry<String, String> entry : context.getProperties().entrySet()) {
                 answer.put("property." + entry.getKey(), entry.getValue());
             }
+
+            answer.put("typeConverter.statisticsEnabled", context.getTypeConverterRegistry().getStatistics().isStatisticsEnabled());
+            answer.put("typeConverter.attemptCounter", context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
+            answer.put("typeConverter.hitCounter", context.getTypeConverterRegistry().getStatistics().getHitCounter());
+            answer.put("typeConverter.missCounter", context.getTypeConverterRegistry().getStatistics().getMissCounter());
+            answer.put("typeConverter.failedCounter", context.getTypeConverterRegistry().getStatistics().getFailedCounter());
+
+            long activeRoutes = 0;
+            long inactiveRoutes = 0;
+            List<Route> routeList = context.getRoutes();
+            for (Route route : routeList) {
+                if (context.getRouteStatus(route.getId()).isStarted()) {
+                    activeRoutes++;
+                } else {
+                    inactiveRoutes++;
+                }
+            }
+            answer.put("startedRoutes", activeRoutes);
+            answer.put("totalRoutes", activeRoutes + inactiveRoutes);
         }
 
         return answer;
