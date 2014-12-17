@@ -79,7 +79,7 @@ public class JolokiaCommandsTest {
             throw new IllegalArgumentException("Error connecting to " + url);
         }
 
-        EndpointExplainCommand cmd = new EndpointExplainCommand("camel-1", true, null);
+        EndpointExplainCommand cmd = new EndpointExplainCommand("myCamel", true, "rest*");
         cmd.execute(controller, System.out, System.err);
     }
 

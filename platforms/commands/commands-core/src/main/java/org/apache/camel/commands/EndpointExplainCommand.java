@@ -85,7 +85,12 @@ public class EndpointExplainCommand extends AbstractContextCommand {
                 @Override
                 public int compare(Map<String, String> o1, Map<String, String> o2) {
                     // sort by kind first (need to -1 as we want path on top), then name
-                    int answer = -1 * o1.get("kind").compareTo(o2.get("kind"));
+                    String kind1 = o1.get("kind");
+                    String kind2 = o2.get("kind");
+                    int answer = 0;
+                    if (kind1 != null && kind2 != null) {
+                        answer = -1 * kind1.compareTo(kind2);
+                    }
                     if (answer == 0) {
                         answer = o1.get("name").compareTo(o2.get("name"));
                     }
@@ -96,8 +101,11 @@ public class EndpointExplainCommand extends AbstractContextCommand {
             for (Map<String, String> option : options) {
                 out.print("Option:        ");
                 out.println(option.get("name"));
-                out.print("Kind:          ");
-                out.println(option.get("kind"));
+                String kind = option.get("kind");
+                if (kind != null) {
+                    out.print("Kind:          ");
+                    out.println(kind);
+                }
                 String type = option.get("type");
                 if (type != null) {
                     out.print("Type:          ");
