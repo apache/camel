@@ -47,6 +47,14 @@ public class RestEndpoint extends DefaultEndpoint {
     private String produces;
     @UriParam
     private String componentName;
+    @UriParam
+    private String inType;
+    @UriParam
+    private String outType;
+    @UriParam
+    private String routeId;
+    @UriParam
+    private String description;
 
     private Map<String, Object> parameters;
 
@@ -105,6 +113,38 @@ public class RestEndpoint extends DefaultEndpoint {
 
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public String getInType() {
+        return inType;
+    }
+
+    public void setInType(String inType) {
+        this.inType = inType;
+    }
+
+    public String getOutType() {
+        return outType;
+    }
+
+    public void setOutType(String outType) {
+        this.outType = outType;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Map<String, Object> getParameters() {
@@ -224,21 +264,11 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
 
-            // optional binding type information
-            String inType = (String) getParameters().get("inType");
-            String outType = (String) getParameters().get("outType");
-
-            // the route id when using rest-dsl
-            String routeId = (String) getParameters().get("routeId");
-
-            // optional description
-            String description = (String) getParameters().get("description");
-
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatic keep track when the consumer is removed,
             // and un-register the REST service from the registry
             getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(),
-                    getConsumes(), getProduces(), inType, outType, routeId, description);
+                    getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
             return consumer;
         } else {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");
