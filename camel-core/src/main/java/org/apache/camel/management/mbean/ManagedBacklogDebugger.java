@@ -211,4 +211,12 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             }
         }
     }
+    
+    public long getFallbackTimeout() {
+        return backlogDebugger.getFallbackTimeout();
+    }
+   
+    public void setFallbackTimeout(long fallbackTimeout) {
+        backlogDebugger.setFallbackTimeout(fallbackTimeout);
+    }
 }
