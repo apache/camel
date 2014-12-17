@@ -18,7 +18,6 @@ package org.apache.camel.component.elasticsearch.converter;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConfiguration;
@@ -28,10 +27,6 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
-/**
- *
- * @author Derek Abdine
- */
 @Converter
 public class ElasticsearchActionRequestConverter {
 
