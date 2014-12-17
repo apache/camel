@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.RemovePropertiesProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -72,11 +72,11 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPattern(), "patterns", this);
         if (getExcludePatterns() != null) {
-            return ProcessorBuilder.removeProperties(getPattern(), getExcludePatterns());
+            return new RemovePropertiesProcessor(getPattern(), getExcludePatterns());
         } else if (getExcludePattern() != null) {
-            return ProcessorBuilder.removeProperties(getPattern(), getExcludePattern());
+            return new RemovePropertiesProcessor(getPattern(), new String[]{getExcludePattern()});
         } else {
-            return ProcessorBuilder.removeProperties(getPattern());
+            return new RemovePropertiesProcessor(getPattern(), null);
         }
     }
 

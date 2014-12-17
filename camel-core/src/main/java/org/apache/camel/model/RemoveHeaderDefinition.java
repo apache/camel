@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -60,7 +60,7 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getHeaderName(), "headerName", this);
-        return ProcessorBuilder.removeHeader(getHeaderName());
+        return new RemoveHeaderProcessor(getHeaderName());
     }
 
     public void setHeaderName(String headerName) {

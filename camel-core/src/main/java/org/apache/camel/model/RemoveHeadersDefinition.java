@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.RemoveHeadersProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -72,11 +72,11 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPattern(), "patterns", this);
         if (getExcludePatterns() != null) {
-            return ProcessorBuilder.removeHeaders(getPattern(), getExcludePatterns());
+            return new RemoveHeadersProcessor(getPattern(), getExcludePatterns());
         } else if (getExcludePattern() != null) {
-            return ProcessorBuilder.removeHeaders(getPattern(), getExcludePattern());
+            return new RemoveHeadersProcessor(getPattern(), new String[]{getExcludePattern()});
         } else {
-            return ProcessorBuilder.removeHeaders(getPattern());
+            return new RemoveHeadersProcessor(getPattern(), null);
         }
     }
 

@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -76,7 +76,7 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPropertyName(), "propertyName", this);
         Expression expr = getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setProperty(getPropertyName(), expr);
+        return new SetPropertyProcessor(getPropertyName(), expr);
     }
 
     @Required
