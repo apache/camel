@@ -248,7 +248,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
             if (getConfiguration().getKeyAccessor() == null) {
                 throw new XmlSignatureNoKeyException(
-                    "Key selector is missing for XML signature generation. Specify a key selector in the configuration.");
+                    "Key accessor is missing for XML signature generation. Specify a key accessor in the configuration.");
             }
             
             final KeySelector keySelector = getConfiguration().getKeyAccessor().getKeySelector(out);
@@ -281,23 +281,30 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 // parent only relevant for enveloped or detached signature
                 Node parent = getParentOfSignature(out, node, contentReferenceUri, signatureType);
 
-                XmlSignatureProperties.Input input = new InputBuilder().contentDigestAlgorithm(getDigestAlgorithmUri()).keyInfo(keyInfo)
-                        .message(out).messageBodyNode(node).parent(parent).signatureAlgorithm(getConfiguration().getSignatureAlgorithm())
-                        .signatureFactory(fac).signatureId(signatureId).contentReferenceUri(contentReferenceUri)
-                        .signatureType(signatureType).build();
-
-                XmlSignatureProperties.Output properties = getSignatureProperties(input);
-
-                List<? extends XMLObject> objects = getObjects(input, properties);
-                List<? extends Reference> refs = getReferences(input, properties, getKeyInfoId(keyInfo));
-
-                SignedInfo si = createSignedInfo(fac, refs);
-
                 if (parent == null) {
                     // for enveloping signature, create new document 
                     parent = XmlSignatureHelper.newDocumentBuilder(Boolean.TRUE).newDocument();
                 }
                 lastParent = parent;
+
+                XmlSignatureProperties.Input input = new InputBuilder().contentDigestAlgorithm(getDigestAlgorithmUri()).keyInfo(keyInfo)
+                        .message(out).messageBodyNode(node).parent(parent).signatureAlgorithm(getConfiguration().getSignatureAlgorithm())
+                        .signatureFactory(fac).signatureId(signatureId).contentReferenceUri(contentReferenceUri)
+                        .signatureType(signatureType)
+                        .prefixForXmlSignatureNamespace(getConfiguration().getPrefixForXmlSignatureNamespace()).build();
+
+                XmlSignatureProperties.Output properties = getSignatureProperties(input);
+
+                
+                // the signature properties can overwrite the signature Id
+                if (properties != null && properties.getSignatureId() != null && !properties.getSignatureId().isEmpty()) {
+                    signatureId = properties.getSignatureId();
+                }
+
+                List<? extends XMLObject> objects = getObjects(input, properties);
+                List<? extends Reference> refs = getReferences(input, properties, getKeyInfoId(keyInfo));
+
+                SignedInfo si = createSignedInfo(fac, refs);
 
                 DOMSignContext dsc = createAndConfigureSignContext(parent, keySelector);
 
@@ -559,9 +566,10 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     protected List<? extends Reference> getReferences(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties,
             String keyInfoId) throws Exception { //NOPMD
 
+        String referenceId = properties == null ? null : properties.getContentReferenceId();
         // Create Reference with URI="#<objectId>" for enveloping signature, URI="" for enveloped signature, and URI = <value from configuration> for detached signature and the transforms
         Reference ref = createReference(input.getSignatureFactory(), input.getContentReferenceUri(),
-                getContentReferenceType(input.getMessage()), input.getSignatureType());
+                getContentReferenceType(input.getMessage()), input.getSignatureType(), referenceId);
         Reference keyInfoRef = createKeyInfoReference(input.getSignatureFactory(), keyInfoId, input.getContentDigestAlgorithm());
 
         int propsRefsSize = properties == null || properties.getReferences() == null || properties.getReferences().isEmpty() ? 0
@@ -638,11 +646,11 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType)
+    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id)
         throws InvalidAlgorithmParameterException, XmlSignatureException {
         try {
             List<Transform> transforms = getTransforms(fac, sigType);
-            Reference ref = fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, null);
+            Reference ref = fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, id);
             return ref;
         } catch (NoSuchAlgorithmException e) {
             throw new XmlSignatureException("Wrong algorithm specified in the configuration.", e);
@@ -880,6 +888,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
         private SignatureType signatureType;
 
+        private String prefixForXmlSignatureNamespace;
+
         public InputBuilder signatureFactory(XMLSignatureFactory signatureFactory) {
             this.signatureFactory = signatureFactory;
             return this;
@@ -927,6 +937,11 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
         public InputBuilder signatureType(SignatureType signatureType) {
             this.signatureType = signatureType;
+            return this;
+        }
+
+        public InputBuilder prefixForXmlSignatureNamespace(String prefixForXmlSignatureNamespace) {
+            this.prefixForXmlSignatureNamespace = prefixForXmlSignatureNamespace;
             return this;
         }
 
@@ -981,6 +996,11 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 @Override
                 public SignatureType getSignatureType() {
                     return signatureType;
+                }
+
+                @Override
+                public String getPrefixForXmlSignatureNamespace() {
+                    return prefixForXmlSignatureNamespace;
                 }
 
             };

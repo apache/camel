@@ -58,10 +58,10 @@ public interface XmlSignatureProperties {
 
         /**
          * Returns the parent node of the signature element in the case of
-         * enveloped or detached XML signature. <code>null</code> is returned in
+         * enveloped or detached XML signature, or the empty result document in
          * the case of enveloping XML signature.
          * 
-         * @return parent node or <code>null</code>
+         * @return parent node, cannot be <code>null</code>
          */
         Node getParent();
 
@@ -109,9 +109,19 @@ public interface XmlSignatureProperties {
          */
         SignatureType getSignatureType();
 
+        /**
+         * Returns the prefix for the XML Signature namespace
+         * ("http://www.w3.org/2000/09/xmldsig#"). Can be null or empty.
+         */
+        String getPrefixForXmlSignatureNamespace();
+
     }
 
     public static class Output {
+
+        private String contentReferenceId;
+
+        private String signatureId;
 
         private List<? extends XMLObject> objects;
 
@@ -131,6 +141,35 @@ public interface XmlSignatureProperties {
 
         public void setReferences(List<? extends Reference> references) {
             this.references = references;
+        }
+
+        public String getContentReferenceId() {
+            return contentReferenceId;
+        }
+
+        /**
+         * Id value for the reference of the signed content. Currently used by
+         * the XAdES parameter DataObjectFormat. See XAdESSignatureProperties.
+         * */
+        public void setContentReferenceId(String contentReferenceId) {
+            this.contentReferenceId = contentReferenceId;
+        }
+
+        public String getSignatureId() {
+            return signatureId;
+        }
+
+        /**
+         * You can overwrite the value of the Id attribute of the Signature
+         * element that you get from {@link Input#getSignatureId()}. Only if the
+         * provided value is not <code>null</code> and not empty, then the
+         * signature Id will be overwritten.
+         * 
+         * @param signatureId
+         *            Id attribute value of the Signature element
+         */
+        public void setSignatureId(String signatureId) {
+            this.signatureId = signatureId;
         }
 
     }

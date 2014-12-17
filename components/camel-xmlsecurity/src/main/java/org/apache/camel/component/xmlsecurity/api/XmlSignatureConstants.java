@@ -62,6 +62,55 @@ public final class XmlSignatureConstants {
     
     public static final String HEADER_XPATHS_TO_ID_ATTRIBUTES = "CamelXmlSignatureXpathsToIdAttributes";
 
+    /*------------------------- headers for XAdES signer ----------------------------------------------------------*/
+    /**
+     * Header for the 'Id' attribute value of the XAdES element
+     * 'QualifyingProperties'
+     * 
+     */
+    public static final String HEADER_XADES_QUALIFYING_PROPERTIES_ID = "CamelXmlSignatureXAdESQualifyingPropertiesId";
+
+    /**
+     * Header for the 'Id' attribute value of the XAdES element
+     * 'SignedDataObjectProperties'
+     * 
+     */
+    public static final String HEADER_XADES_SIGNED_DATA_OBJECT_PROPERTIES_ID = "CamelXmlSignatureXAdESSignedDataObjectPropertiesId";
+
+    /**
+     * Header for the 'Id' attribute value of the XAdES element
+     * 'SignedSignatureProperties'
+     * 
+     */
+    public static final String HEADER_XADES_SIGNED_SIGNATURE_PROPERTIES_ID = "CamelXmlSignatureXAdESSignedSignaturePropertiesId";
+
+    /**
+     * Header for the "Encoding" element contained in the "DataObjectFormat"
+     * XAdES element.
+     */
+    public static final String HEADER_XADES_DATA_OBJECT_FORMAT_ENCODING = "CamelXmlSignatureXAdESDataObjectFormatEncoding";
+
+    /**
+     * Header for the XAdES namespace. Different namespaces represent different
+     * XAdES specification versions. Currently supported namespaces are:
+     * 
+     * http://uri.etsi.org/01903/v1.1.1#,
+     * 
+     * http://uri.etsi.org/01903/v1.2.2#,
+     * 
+     * http://uri.etsi.org/01903/v1.3.2#.
+     * 
+     */
+    public static final String HEADER_XADES_NAMESPACE = "CamelXmlSignatureXAdESNamespace";
+
+    /**
+     * Header for the XAdES namespace prefix. An empty string means that no
+     * prefix shall be used. A <code>null</code> header value will have no
+     * effect.
+     * 
+     */
+    public static final String HEADER_XADES_PREFIX = "CamelXmlSignatureXAdESPrefix";
+
     private XmlSignatureConstants() {
         // no instance
     }

@@ -103,7 +103,7 @@ import org.junit.Test;
 
 public class XmlSignatureTest extends CamelTestSupport {
 
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    protected static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     private KeyPair keyPair;
 
@@ -1254,7 +1254,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         return result;
     }
 
-    private Message getMessage(MockEndpoint mock) {
+    Message getMessage(MockEndpoint mock) {
         List<Exchange> exs = mock.getExchanges();
         assertNotNull(exs);
         assertEquals(1, exs.size());
@@ -1269,7 +1269,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         checkThrownException(mock, cl, null, expectedCauseClass);
     }
 
-    private void checkThrownException(MockEndpoint mock, Class<? extends Exception> cl, String expectedMessage,
+    static void checkThrownException(MockEndpoint mock, Class<? extends Exception> cl, String expectedMessage,
             Class<? extends Exception> expectedCauseClass) throws Exception {
         Exception e = (Exception) mock.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT);
         assertNotNull("Expected excpetion " + cl.getName() + " missing", e);
@@ -1290,7 +1290,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         }
     }
 
-    private String getStrackTrace(Exception e) throws UnsupportedEncodingException {
+    private static String getStrackTrace(Exception e) throws UnsupportedEncodingException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintWriter w = new PrintWriter(os);
         e.printStackTrace(w);
