@@ -30,6 +30,15 @@ public class JolokiaRemoteTest {
     private JolokiaCamelController controller;
 
     @Test
+    public void testPing() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        boolean pong = controller.ping();
+        System.out.println("Ping responsed: " + pong);
+    }
+
+    @Test
     public void testRemoteCamelContexts() throws Exception {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);

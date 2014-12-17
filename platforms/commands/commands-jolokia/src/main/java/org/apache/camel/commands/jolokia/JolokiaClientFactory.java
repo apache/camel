@@ -16,6 +16,7 @@
  */
 package org.apache.camel.commands.jolokia;
 
+import org.jolokia.client.BasicAuthenticator;
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.J4pClientBuilder;
 import org.slf4j.Logger;
@@ -37,11 +38,17 @@ public final class JolokiaClientFactory {
         LOG.info("Creating jolokia client at URL: {}", jolokiaUrl);
 
         J4pClientBuilder builder = J4pClient.url(jolokiaUrl);
+        boolean auth = false;
         if (isNotEmpty(username)) {
             builder = builder.user(username);
+            auth = true;
         }
         if (isNotEmpty(password)) {
             builder = builder.password(password);
+            auth = true;
+        }
+        if (auth) {
+            builder = builder.authenticator(new BasicAuthenticator(true));
         }
         return builder.build();
     }
