@@ -119,18 +119,17 @@ public class EndpointListCommand extends AbstractContextCommand {
                             } else {
                                 line = "\t" + key + " = " + value;
                             }
-                            out.println(String.format(rowFormat, "", line, ""));
+                            out.println(line);
 
                             if (type != null) {
                                 String displayType = type;
                                 if (javaType != null && !displayType.equals(javaType)) {
                                     displayType = type + " (" + javaType + ")";
                                 }
-                                out.println(String.format(rowFormat, "", "\t" + displayType, ""));
+                                out.println("\t" + displayType);
                             }
                             if (desc != null) {
-                                // TODO: split desc in multi lines so it does not overflow
-                                out.println(String.format(rowFormat, "", "\t" + desc, ""));
+                                out.println("\t" + desc);
                             }
                             out.println();
                         }
@@ -189,13 +188,12 @@ public class EndpointListCommand extends AbstractContextCommand {
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
         int uriLen = java.lang.Math.min(columnWidths.get(URI_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-        int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
         // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
         retval.append(fieldPreamble).append("%-").append(uriLen).append('.').append(uriLen).append('s').append(fieldPostamble).append(' ');
-        retval.append(fieldPreamble).append("%-").append(statusLen).append('.').append(statusLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%s").append(fieldPostamble).append(' ');
 
         return retval.toString();
     }

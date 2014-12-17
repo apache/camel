@@ -469,7 +469,8 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
         ObjectName found = lookupCamelContext(camelContextName);
         if (found != null) {
-            J4pSearchResponse sr = jolokia.execute(new J4pSearchRequest("*:type=endpoints,*"));
+            String pattern = String.format("%s:context=%s,type=endpoints,*", found.getDomain(), found.getKeyProperty("context"));
+            J4pSearchResponse sr = jolokia.execute(new J4pSearchRequest(pattern));
 
             List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
             for (ObjectName on : sr.getObjectNames()) {

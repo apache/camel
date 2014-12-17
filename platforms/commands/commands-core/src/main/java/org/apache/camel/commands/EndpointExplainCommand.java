@@ -66,11 +66,11 @@ public class EndpointExplainCommand extends AbstractContextCommand {
                 continue;
             }
 
-            out.println("Context:\t" + context);
+            out.println("Context:       " + context);
 
             // sanitize and mask uri so we dont see passwords
             String uri = URISupport.sanitizeUri(row.get("uri"));
-            String header = "Uri:            " + uri;
+            String header = "Uri:           " + uri;
             out.println(header);
             for (int i = 0; i < header.length(); i++) {
                 out.print('-');
@@ -94,33 +94,33 @@ public class EndpointExplainCommand extends AbstractContextCommand {
             });
 
             for (Map<String, String> option : options) {
-                out.print("Option:\t\t");
+                out.print("Option:        ");
                 out.println(option.get("name"));
-                out.print("Kind:\t\t");
+                out.print("Kind:          ");
                 out.println(option.get("kind"));
                 String type = option.get("type");
                 if (type != null) {
-                    out.print("Type:\t\t");
+                    out.print("Type:          ");
                     out.println(type);
                 }
                 String javaType = option.get("javaType");
                 if (javaType != null) {
-                    out.print("Java Type:\t");
+                    out.print("Java Type:     ");
                     out.println(javaType);
                 }
                 String value = option.get("value");
                 if (value != null) {
-                    out.print("Value:\t\t");
+                    out.print("Value:         ");
                     out.println(value);
                 }
                 String defaultValue = option.get("defaultValue");
                 if (defaultValue != null) {
-                    out.print("Default Value:\t");
+                    out.print("Default Value: ");
                     out.println(defaultValue);
                 }
                 String description = option.get("description");
                 if (description != null) {
-                    out.print("Description:\t");
+                    out.print("Description:   ");
                     out.println(description);
                 }
                 out.println();
