@@ -72,6 +72,13 @@ public class SnsEndpoint extends DefaultEndpoint {
         super.doStart();
         snsClient = configuration.getAmazonSNSClient() != null
             ? configuration.getAmazonSNSClient() : createSNSClient();
+        
+        // Override the setting Endpoint from url
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
+            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
+            snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
+        }
+        
         // creates a new topic, or returns the URL of an existing one
         CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
         
@@ -89,11 +96,7 @@ public class SnsEndpoint extends DefaultEndpoint {
             
             LOG.trace("Topic policy updated");
         }
-        // Override the setting Endpoint from url
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
-            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
-            snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
-        }
+        
     }
 
     public SnsConfiguration getConfiguration() {
