@@ -353,6 +353,14 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
+    public long getFallbackTimeout() {
+        return fallbackTimeout;
+    }
+
+    public void setFallbackTimeout(long fallbackTimeout) {
+        this.fallbackTimeout = fallbackTimeout;
+    }
+
     public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
