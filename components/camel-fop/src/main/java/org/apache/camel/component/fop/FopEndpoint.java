@@ -16,36 +16,40 @@
  */
 package org.apache.camel.component.fop;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.xml.sax.SAXException;
-
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
  * Represents a Fop endpoint.
  */
+@UriEndpoint(scheme = "fop", label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
-    private String userConfigURL;
-    private FopFactory fopFactory;
-    private String remaining;
 
-    public FopEndpoint(String uri, FopComponent component, String remaining) {
+    @UriPath
+    private String outputFormat;
+    @UriParam
+    private String userConfigURL;
+    @UriParam
+    private FopFactory fopFactory;
+
+    public FopEndpoint(String uri, FopComponent component, String outputFormat) {
         super(uri, component);
-        this.remaining = remaining;
+        this.outputFormat = outputFormat;
     }
 
     public Producer createProducer() throws Exception {
-        return new FopProducer(this, fopFactory, remaining);
+        return new FopProducer(this, fopFactory, outputFormat);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -56,15 +60,31 @@ public class FopEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    FopFactory getFopFactory() {
-        return fopFactory;
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
+
+    public String getUserConfigURL() {
+        return userConfigURL;
     }
 
     public void setUserConfigURL(String userConfigURL) {
         this.userConfigURL = userConfigURL;
     }
 
-    private static void updateConfigurations(InputStream is, FopFactory fopFactory) throws SAXException, IOException, ConfigurationException {
+    public FopFactory getFopFactory() {
+        return fopFactory;
+    }
+
+    public void setFopFactory(FopFactory fopFactory) {
+        this.fopFactory = fopFactory;
+    }
+
+    private static void updateConfigurations(InputStream is, FopFactory fopFactory) throws Exception {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         Configuration cfg = cfgBuilder.build(is);
         fopFactory.setUserConfig(cfg);
