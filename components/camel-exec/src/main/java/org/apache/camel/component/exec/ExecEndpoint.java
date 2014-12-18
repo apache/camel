@@ -23,6 +23,9 @@ import org.apache.camel.component.exec.impl.DefaultExecBinding;
 import org.apache.camel.component.exec.impl.DefaultExecCommandExecutor;
 import org.apache.camel.component.exec.impl.ExecParseUtils;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * @see ExecCommand
  * @see ExecResult
  */
+@UriEndpoint(scheme = "exec", label = "system")
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**
@@ -41,20 +45,28 @@ public class ExecEndpoint extends DefaultEndpoint {
      */
     public static final long NO_TIMEOUT = Long.MAX_VALUE;
 
+    @UriPath
     private String executable;
 
+    @UriParam
     private String args;
 
+    @UriParam
     private String workingDir;
 
+    @UriParam
     private long timeout;
 
+    @UriParam
     private String outFile;
 
+    @UriParam
     private ExecCommandExecutor commandExecutor;
 
+    @UriParam
     private ExecBinding binding;
 
+    @UriParam(defaultValue = "false")
     private boolean useStderrOnEmptyStdout;
 
     public ExecEndpoint(String uri, ExecComponent component) {
