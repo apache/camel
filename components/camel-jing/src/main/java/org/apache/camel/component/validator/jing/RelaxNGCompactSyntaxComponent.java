@@ -18,6 +18,8 @@ package org.apache.camel.component.validator.jing;
 
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
+
 /**
  * A component for validating the XML payload using
  * <a href="http://www.oasis-open.org/committees/relax-ng/compact-20021121.html">RelaxNG Compact Syntax</a> using the
@@ -27,8 +29,10 @@ import java.util.Map;
  */
 public class RelaxNGCompactSyntaxComponent extends JingComponent {
 
-    protected void configureValidator(JingValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        validator.setCompactSyntax(true);
-        super.configureValidator(validator, uri, remaining, parameters);
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        JingEndpoint endpoint = (JingEndpoint) super.createEndpoint(uri, remaining, parameters);
+        endpoint.setCompactSyntax(true);
+        return endpoint;
     }
 }
