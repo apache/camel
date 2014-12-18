@@ -17,6 +17,8 @@
 package org.apache.camel.component.jasypt;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.util.ObjectHelper;
@@ -26,9 +28,9 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
  * <a href="http://www.jasypt.org/">Jasypt</a> to decrypt any encrypted values.
  * <p/>
- * The values must be enclosed in the prefix and suffix token.
+ * The parts of the values which should be decrpted must be enclosed in the prefix and suffix token.
  *
- * @version 
+ * @version
  */
 public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
@@ -38,6 +40,13 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     private StandardPBEStringEncryptor encryptor;
     private String password;
     private String algorithm;
+
+    private Pattern pattern;
+
+    public JasyptPropertiesParser() {
+        String regex = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
+        pattern = Pattern.compile(regex);
+    }
 
     public String getPassword() {
         return password;
@@ -76,19 +85,20 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         return encryptor;
     }
 
+    public void setEncryptor(StandardPBEStringEncryptor encryptor) {
+        this.encryptor = encryptor;
+    }
+
     @Override
     public String parseProperty(String key, String value, Properties properties) {
-        // check if the value is using the tokens
-        String text = ObjectHelper.between(value, JASYPT_PREFIX_TOKEN, JASYPT_SUFFIX_TOKEN);
-        if (text == null) {
-            // not encrypted
-            log.trace("Property is not encrypted {}", text);
-            return value;
-        } else {
-            log.trace("Decrypting property {}", text);
-            // do not log the decrypted text as it could be sensitive information such as a password
-            return getEncryptor().decrypt(text);
+        log.trace(String.format("Parsing property '%s=%s'", key, value));
+        Matcher matcher = pattern.matcher(value);
+        while (matcher.find()) {
+            log.trace(String.format("Decrypting part '%s'", matcher.group(0)));
+            String decrypted = getEncryptor().decrypt(matcher.group(1));
+            value = value.replace(matcher.group(0), decrypted);
         }
+        return value;
     }
 
 }
