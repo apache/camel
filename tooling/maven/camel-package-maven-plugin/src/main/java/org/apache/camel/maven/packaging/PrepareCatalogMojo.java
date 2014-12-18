@@ -294,8 +294,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
-                boolean componentFile = file.isFile() && file.getName().equals("component.properties");
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean componentFile = !rootDir && file.isFile() && file.getName().equals("component.properties");
                 if (jsonFile) {
                     found.add(file);
                 } else if (componentFile) {
