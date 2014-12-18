@@ -28,6 +28,7 @@ import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -35,15 +36,18 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a GoogleMail endpoint.
  */
-@UriEndpoint(scheme = "google-mail", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "google-mail", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer", label = "api,cloud,mail")
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {
 
     // TODO create and manage API proxy
     private Object apiProxy;
 
+    @UriParam
+    private GoogleMailConfiguration configuration;
+
     public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName, GoogleMailConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleMailApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
+        this.configuration = endpointConfiguration;
     }
 
     @Override

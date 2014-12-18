@@ -68,6 +68,8 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
 
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, GoogleMailApiName apiName, GoogleMailConfiguration endpointConfiguration) {
+        endpointConfiguration.setApiName(apiName);
+        endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 }

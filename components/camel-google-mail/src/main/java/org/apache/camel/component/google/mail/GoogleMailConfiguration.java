@@ -20,9 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.services.gmail.GmailScopes;
-
+import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Component configuration for GoogleMail component.
@@ -30,6 +31,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class GoogleMailConfiguration {
     private static final List<String> DEFAULT_SCOPES = Arrays.asList(GmailScopes.GMAIL_COMPOSE, GmailScopes.GMAIL_MODIFY, GmailScopes.MAIL_GOOGLE_COM);
+
+    @UriPath
+    private GoogleMailApiName apiName;
+
+    @UriPath
+    private String methodName;
 
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
@@ -48,6 +55,22 @@ public class GoogleMailConfiguration {
 
     @UriParam
     private String applicationName;
+
+    public GoogleMailApiName getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(GoogleMailApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
     public String getClientId() {
         return clientId;
