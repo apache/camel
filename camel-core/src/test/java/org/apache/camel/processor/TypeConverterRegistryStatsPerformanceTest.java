@@ -64,13 +64,17 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
             public void configure() {
                 from("direct:start")
                     .transform().method(TypeConverterRegistryStatsPerformanceTest.class, "transformMe")
-//                    .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMe")
-                        .to("mock:result");
+                    .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso")
+                    .to("mock:result");
             }
         };
     }
 
     public String transformMe(String in) {
         return "Hello " + in;
+    }
+
+    public String transformMeAlso(String in) {
+        return "Bye " + in;
     }
 }

@@ -93,6 +93,10 @@ public class RegistryBean implements BeanHolder {
         return null;
     }
 
+    public boolean supportProcessor() {
+        return false;
+    }
+
     public BeanInfo getBeanInfo() {
         if (beanInfo == null) {
             Object bean = getBean();

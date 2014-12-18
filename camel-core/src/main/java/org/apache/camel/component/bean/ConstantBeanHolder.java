@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ConstantBeanHolder implements BeanHolder {
     private final Object bean;
     private final BeanInfo beanInfo;
-    private final Processor processor;
+    private Processor processor;
 
     public ConstantBeanHolder(Object bean, BeanInfo beanInfo) {
         ObjectHelper.notNull(bean, "bean");
@@ -37,7 +37,6 @@ public class ConstantBeanHolder implements BeanHolder {
 
         this.bean = bean;
         this.beanInfo = beanInfo;
-        this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
     }
 
     public ConstantBeanHolder(Object bean, CamelContext context) {
@@ -59,7 +58,14 @@ public class ConstantBeanHolder implements BeanHolder {
     }
 
     public Processor getProcessor() {
-        return processor;
+        if (this.processor == null) {
+            this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
+        }
+        return this.processor;
+    }
+
+    public boolean supportProcessor() {
+        return true;
     }
 
     public BeanInfo getBeanInfo() {
