@@ -1001,9 +1001,14 @@ public final class ExpressionBuilder {
                     }
 
                     // if its a bean invocation then if it has no arguments then it should be threaded as null body allowed
-                    BeanInvocation bi = exchange.getIn().getBody(BeanInvocation.class);
-                    if (bi != null && (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null)) {
-                        return null;
+                    if (exchange.getIn().getBody() instanceof BeanInvocation) {
+                        // BeanInvocation would be stored directly as the message body
+                        // do not force any type conversion attempts as it would just be unnecessary and cost a bit performance
+                        // so a regular instanceof check is sufficient
+                        BeanInvocation bi = (BeanInvocation) exchange.getIn().getBody();
+                        if (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null) {
+                            return null;
+                        }
                     }
                 }
 

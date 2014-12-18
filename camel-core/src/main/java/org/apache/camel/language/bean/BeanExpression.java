@@ -130,7 +130,12 @@ public class BeanExpression implements Expression, Predicate {
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);
-        return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
+        if (Object.class == type) {
+            // do not use type converter if type is Object (optimize)
+            return (T) result;
+        } else {
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
+        }
     }
 
     public boolean matches(Exchange exchange) {

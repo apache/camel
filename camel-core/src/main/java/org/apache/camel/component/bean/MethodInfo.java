@@ -594,9 +594,14 @@ public class MethodInfo {
                 // use object first to avoid type conversion so we know if there is a value or not
                 Object result = expression.evaluate(exchange, Object.class);
                 if (result != null) {
-                    // we got a value now try to convert it to the expected type
                     try {
-                        answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
+                        if (parameterType.isInstance(result)) {
+                            // optimize if the value is already the same type
+                            answer = result;
+                        } else {
+                            // we got a value now try to convert it to the expected type
+                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
+                        }
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
                         }
