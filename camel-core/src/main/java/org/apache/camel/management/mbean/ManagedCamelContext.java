@@ -21,7 +21,8 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -374,7 +375,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=routes,*");
             Set<ObjectName> routes = server.queryNames(query, null);
 
-            Set<ManagedProcessorMBean> processors = new LinkedHashSet<ManagedProcessorMBean>();
+            List<ManagedProcessorMBean> processors = new ArrayList<ManagedProcessorMBean>();
             if (includeProcessors) {
                 // gather all the processors for this CamelContext, which requires JMX
                 query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
@@ -384,7 +385,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     processors.add(processor);
                 }
             }
-            
+            Collections.sort(processors, new OrderProcessorMBeans());
+
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");
             for (ObjectName on : routes) {
@@ -513,6 +515,17 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     server.invoke(name, "reset", new Object[]{true}, new String[]{"boolean"});
                 }
             }
+        }
+    }
+
+    /**
+     * Used for sorting the processor mbeans accordingly to their index.
+     */
+    private static final class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
+
+        @Override
+        public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {
+            return o1.getIndex().compareTo(o2.getIndex());
         }
     }
 
