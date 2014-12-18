@@ -755,7 +755,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            Object body = exchange.getIn().getBody();
+            Object body = null;
+            if (exchange.hasOut()) {
+                body = exchange.getOut().getBody();
+            } else {
+                body = exchange.getIn().getBody();
+            }
             if (body != null && body instanceof StreamCache) {
                 // reset so the cache is ready to be reused after processing
                 ((StreamCache) body).reset();
