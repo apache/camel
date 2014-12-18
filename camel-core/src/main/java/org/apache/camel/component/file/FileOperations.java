@@ -259,7 +259,7 @@ public class FileOperations implements GenericFileOperations<File> {
 
             if (charset != null) {
                 // charset configured so we must use a reader so we can write with encoding
-                Reader in = exchange.getIn().getBody(Reader.class);
+                Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, exchange.getIn().getBody());
                 if (in == null) {
                     // okay no direct reader conversion, so use an input stream (which a lot can be converted as)
                     InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);

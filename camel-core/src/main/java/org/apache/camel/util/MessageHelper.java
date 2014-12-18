@@ -67,6 +67,13 @@ public final class MessageHelper {
             return null;
         }
 
+        // optimize if the body is a String type already
+        Object body = message.getBody();
+        if (body instanceof String) {
+            return (String) body;
+        }
+
+        // we need to favor using stream cache so the body can be re-read later
         StreamCache newBody = message.getBody(StreamCache.class);
         if (newBody != null) {
             message.setBody(newBody);
