@@ -149,11 +149,11 @@ public abstract class TestSupport extends Assert {
     }
     
     public static <T extends Throwable> T assertThrowable(Class<T> expectedType, Throwable t) {
-    	assertNotNull("Expected an exinstance of type: " + expectedType.getName() + " but was null", t);
-    	if (!expectedType.isInstance(t)) {
-    		throw new AssertionError("Unexpected throwable", t);
-    	}
-    	return expectedType.cast(t);
+        assertNotNull("Expected an exinstance of type: " + expectedType.getName() + " but was null", t);
+        if (!expectedType.isInstance(t)) {
+            throw new AssertionError("Unexpected throwable", t);
+        }
+        return expectedType.cast(t);
     }
 
     public static void assertEndpointUri(Endpoint endpoint, String uri) {

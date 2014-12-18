@@ -192,7 +192,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     }
 
     Map<String, String> getSimpleMap(Map<String, Collection<String>> headers) {
-        Map<String, String> result = new HashMap<String ,String>();
+        Map<String, String> result = new HashMap<String , String>();
         for (String key : headers.keySet()) {
             Collection<String> valueCol = headers.get(key);
             String value = (valueCol == null) ? null : valueCol.iterator().next();
