@@ -266,7 +266,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         // try to find a suitable type converter
-        TypeConverter converter = getOrFindTypeConverter(type, value);
+        TypeConverter converter = getOrFindTypeConverter(key);
         if (converter != null) {
             log.trace("Using converter: {} to convert {}", converter, key);
             Object rc;
@@ -287,7 +287,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             Class<?> primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
                 Class<?> fromType = value.getClass();
-                TypeConverter tc = getOrFindTypeConverter(primitiveType, value);
+                TypeConverter tc = getOrFindTypeConverter(new TypeMapping(primitiveType, fromType));
                 if (tc != null) {
                     // add the type as a known type converter as we can convert from primitive to object converter
                     addTypeConverter(type, fromType, tc);
@@ -436,16 +436,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return typeMappings;
     }
 
-    protected <T> TypeConverter getOrFindTypeConverter(Class<?> toType, Object value) {
-        Class<?> fromType = null;
-        if (value != null) {
-            fromType = value.getClass();
-        }
-        TypeMapping key = new TypeMapping(toType, fromType);
+    protected <T> TypeConverter getOrFindTypeConverter(TypeMapping key) {
         TypeConverter converter = typeMappings.get(key);
         if (converter == null) {
             // converter not found, try to lookup then
-            converter = lookup(toType, fromType);
+            converter = lookup(key.getToType(), key.getFromType());
             if (converter != null) {
                 typeMappings.putIfAbsent(key, converter);
             }
