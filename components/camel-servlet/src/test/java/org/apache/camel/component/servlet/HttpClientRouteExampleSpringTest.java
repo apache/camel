@@ -32,7 +32,12 @@ public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupp
         WebRequest  req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
         WebResponse response = client.getResponse(req);
         
-        System.out.println(response.getText());
+        assertEquals("Get a wrong response message.", "OK", response.getResponseMessage());
+        assertEquals("Get a wrong response text.", "Add a name parameter to uri, eg ?name=foo", response.getText());
+        
+        req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello?name=Willem");
+        response = client.getResponse(req);
+        assertEquals("Get a wrong response text.", "Hello Willem how are you?", response.getText());
     }
 
     @Before
