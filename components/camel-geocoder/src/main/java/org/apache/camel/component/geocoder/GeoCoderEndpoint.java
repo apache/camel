@@ -20,17 +20,27 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a GeoCoder endpoint.
  */
+@UriEndpoint(scheme = "geocoder", label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
+    @UriPath
     private String address;
+    @UriPath
     private String latlng;
+    @UriParam(defaultValue = "en")
     private String language = "en";
+    @UriParam
     private String clientId;
+    @UriParam
     private String clientKey;
+    @UriParam(defaultValue = "false")
     private boolean headersOnly;
 
     public GeoCoderEndpoint() {

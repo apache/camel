@@ -19,12 +19,16 @@ package org.apache.camel.component.geocoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link GeoCoderEndpoint}.
  */
-public class GeoCoderComponent extends DefaultComponent {
+public class GeoCoderComponent extends UriEndpointComponent {
+
+    public GeoCoderComponent() {
+        super(GeoCoderEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining,
                                       Map<String, Object> parameters) throws Exception {
