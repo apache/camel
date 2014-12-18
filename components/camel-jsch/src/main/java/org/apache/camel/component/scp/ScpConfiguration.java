@@ -14,33 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jsch;
+package org.apache.camel.component.scp;
 
 import java.net.URI;
 
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
 /**
- * Secure FTP configuration
+ * SCP configuration
  */
+@UriParams
 public class ScpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
+    @UriParam
     private String knownHostsFile;
+    @UriParam
     private String privateKeyFile;
+    @UriParam
     private String privateKeyFilePassphrase;
+    @UriParam
     private String strictHostKeyChecking;
+    @UriParam
     private int serverAliveInterval;
+    @UriParam(defaultValue = "1")
     private int serverAliveCountMax = 1;
+    @UriParam(defaultValue = DEFAULT_MOD)
     private String chmod = DEFAULT_MOD;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
+    @UriParam
     private String ciphers;
+    @UriParam
     private int compression;
 
     public ScpConfiguration() {
-        setProtocol("sftp");
+        setProtocol("scp");
     }
 
     public ScpConfiguration(URI uri) {

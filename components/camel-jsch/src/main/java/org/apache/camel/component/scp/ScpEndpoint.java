@@ -14,31 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jsch;
+package org.apache.camel.component.scp;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Secure Copy Endpoint
  */
+@UriEndpoint(scheme = "scp", label = "file")
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
+
+    @UriParam
+    private ScpConfiguration configuration;
 
     public ScpEndpoint() {
     }
 
-    public ScpEndpoint(String uri, JschComponent component, RemoteFileConfiguration configuration) {
+    public ScpEndpoint(String uri, ScpComponent component, ScpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override
     public ScpConfiguration getConfiguration() {
-        return (ScpConfiguration) this.configuration;
+        return configuration;
     }
 
     @Override

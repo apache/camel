@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jsch;
+package org.apache.camel.component.scp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

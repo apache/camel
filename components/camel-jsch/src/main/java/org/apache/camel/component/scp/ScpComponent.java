@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jsch;
+package org.apache.camel.component.scp;
 
 import java.net.URI;
 import java.util.Map;
 
 import com.jcraft.jsch.JSch;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *  Component providing secure messaging using JSch
  */
-public class JschComponent extends RemoteFileComponent<ScpFile> {
-    private static final Logger LOG = LoggerFactory.getLogger(JschComponent.class);
+public class ScpComponent extends RemoteFileComponent<ScpFile> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ScpComponent.class);
+
     static {
         JSch.setConfig("StrictHostKeyChecking",  "yes");
         JSch.setLogger(new com.jcraft.jsch.Logger() {
@@ -57,16 +57,15 @@ public class JschComponent extends RemoteFileComponent<ScpFile> {
         });
     }
 
-    public JschComponent() {
+    public ScpComponent() {
     }
 
-    public JschComponent(CamelContext context) {
+    public ScpComponent(CamelContext context) {
         super(context);
     }
 
     @Override
     protected GenericFileEndpoint<ScpFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // TODO: revisit stripping the query part; should not be needed with valid uris
         int query = uri.indexOf("?");
         return new ScpEndpoint(uri, this, new ScpConfiguration(new URI(query >= 0 ? uri.substring(0, query) : uri)));
     }
@@ -75,10 +74,5 @@ public class JschComponent extends RemoteFileComponent<ScpFile> {
         // noop
     }
 
-    @Override
-    public void doStop() throws Exception {
-        // TODO: close all sessions
-        super.doStop();
-    }
 }
 
