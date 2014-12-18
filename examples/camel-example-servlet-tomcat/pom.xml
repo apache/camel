@@ -63,5 +63,16 @@
         </dependency>
 
     </dependencies>
+    
+    <build>
+        <plugins>
+            <!-- allows running this example with mvn:jetty-run -->
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-version}</version>   
+            </plugin>
+       </plugins>
+    </build>
 
 </project>
