@@ -24,28 +24,45 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriEndpoint(scheme = "stream", consumerClass = StreamConsumer.class, label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
+    @UriPath
     private String url;
-
+    @UriParam
     private String fileName;
+    @UriParam(defaultValue = "false")
     private boolean scanStream;
+    @UriParam(defaultValue = "false")
     private boolean retry;
+    @UriParam(defaultValue = "false")
     private boolean closeOnDone;
+    @UriParam
     private long scanStreamDelay;
+    @UriParam(defaultValue = "false")
     private long delay;
+    @UriParam
     private String encoding;
+    @UriParam
     private String promptMessage;
+    @UriParam
     private long promptDelay;
+    @UriParam(defaultValue = "2000")
     private long initialPromptDelay = 2000;
+    @UriParam
     private int groupLines;
+    @UriParam
     private int autoCloseCount;
-    
+    @UriParam
     private Charset charset;
+    @UriParam
     private GroupStrategy groupStrategy = new DefaultGroupStrategy();
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {

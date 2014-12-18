@@ -19,15 +19,21 @@ package org.apache.camel.component.stream;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Component providing streams connectivity
  */
-public class StreamComponent extends DefaultComponent {
+public class StreamComponent extends UriEndpointComponent {
+
+    public StreamComponent() {
+        super(StreamEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new StreamEndpoint(uri, this);
+        StreamEndpoint answer = new StreamEndpoint(uri, this);
+        setProperties(answer, parameters);
+        return answer;
     }
 }
