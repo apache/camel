@@ -19,25 +19,20 @@ package org.apache.camel.component.nagios;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
-public class NagiosComponent extends DefaultComponent {
+public class NagiosComponent extends UriEndpointComponent {
 
     private NagiosConfiguration configuration;
 
     public NagiosComponent() {
+        super(NagiosEndpoint.class);
         configuration = new NagiosConfiguration();
-    }
-
-    public NagiosComponent(CamelContext context) {
-        super(context);
-        this.configuration = new NagiosConfiguration();
     }
 
     @Override

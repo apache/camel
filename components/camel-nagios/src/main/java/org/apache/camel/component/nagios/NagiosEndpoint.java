@@ -24,15 +24,20 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
+@UriEndpoint(scheme = "nagios", label = "monitoring")
 public class NagiosEndpoint extends DefaultEndpoint {
 
     private INagiosPassiveCheckSender sender;
+    @UriParam
     private NagiosConfiguration configuration;
+    @UriParam(defaultValue = "true")
     private boolean sendSync = true;
 
     public NagiosEndpoint() {

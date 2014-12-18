@@ -21,6 +21,6 @@ package org.apache.camel.component.nagios;
  */
 public enum NagiosEncryptionMethod {
 
-    No, Xor, TripleDes;
+    No, Xor, TripleDes
 
 }
