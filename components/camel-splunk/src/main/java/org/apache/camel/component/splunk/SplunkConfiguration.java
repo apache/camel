@@ -17,20 +17,22 @@
 package org.apache.camel.component.splunk;
 
 import com.splunk.Service;
-
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class SplunkConfiguration {
 
+    @UriPath(description = "Name has no purpose")
+    private String name;
+    @UriParam
+    private String scheme = Service.DEFAULT_SCHEME;
     @UriParam
     private String host = Service.DEFAULT_HOST;
     @UriParam
     private int port = Service.DEFAULT_PORT;
-    @UriParam
-    private String scheme = Service.DEFAULT_SCHEME;
     @UriParam
     private String app;
     @UriParam
@@ -39,9 +41,9 @@ public class SplunkConfiguration {
     private String username;
     @UriParam
     private String password;
-    @UriParam
+    @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean useSunHttpsHandler;
     @UriParam
     private String index;
@@ -72,6 +74,14 @@ public class SplunkConfiguration {
      */
     @UriParam
     private Boolean streaming;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getInitEarliestTime() {
         return initEarliestTime;
