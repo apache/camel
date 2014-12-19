@@ -88,5 +88,15 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
+    public static TabularType listAwaitThreadsTabularType() throws OpenDataException {
+        CompositeType ct = listAwaitThreadsCompositeType();
+        return new TabularType("listAwaitThreads", "Lists blocked threads by the routing engine", ct, new String[]{"name"});
+    }
+
+    public static CompositeType listAwaitThreadsCompositeType() throws OpenDataException {
+        return new CompositeType("threads", "Threads", new String[]{"name", "exchangeId", "duration"},
+                new String[]{"Thread name", "ExchangeId", "Duration"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
 
 }

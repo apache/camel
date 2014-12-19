@@ -30,6 +30,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -1186,6 +1187,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param repository the repository
      */
     void setInflightRepository(InflightRepository repository);
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
+
+    /**
+     * Sets a custom  {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @param manager the manager
+     */
+    void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
      * Gets the the application context class loader which may be helpful for running camel in other containers

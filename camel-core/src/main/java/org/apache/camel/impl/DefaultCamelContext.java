@@ -94,6 +94,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -231,6 +232,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
+    private AsyncProcessorAwaitManager asyncProcessorAwaitManager = new DefaultAsyncProcessorAwaitManager();
     private RuntimeEndpointRegistry runtimeEndpointRegistry = new DefaultRuntimeEndpointRegistry();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     // start auto assigning route ids using numbering 1000 and upwards
@@ -2082,6 +2084,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         doAddService(executorServiceManager, false);
         addService(producerServicePool);
         addService(inflightRepository);
+        addService(asyncProcessorAwaitManager);
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
         addService(restRegistry);
@@ -2970,6 +2973,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setInflightRepository(InflightRepository repository) {
         this.inflightRepository = repository;
+    }
+
+    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
+        return asyncProcessorAwaitManager;
+    }
+
+    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager asyncProcessorAwaitManager) {
+        this.asyncProcessorAwaitManager = asyncProcessorAwaitManager;
     }
 
     public void setAutoStartup(Boolean autoStartup) {
