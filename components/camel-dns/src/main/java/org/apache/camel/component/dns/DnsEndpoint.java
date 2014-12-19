@@ -16,44 +16,54 @@
  */
 package org.apache.camel.component.dns;
 
-import java.net.InetAddress;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriPath;
 
-/**
- * An endpoint to conduct IP address lookup from the host name.
- */
-public class DnsIpEndpoint extends DefaultEndpoint {
+@UriEndpoint(scheme = "dns", label = "networking")
+public class DnsEndpoint extends DefaultEndpoint {
 
-    public DnsIpEndpoint(Component component) {
-        super("dns://ip", component);
+    @UriPath
+    private DnsType dnsType;
+
+    public DnsEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
-        return new DefaultProducer(this) {
-
-            public void process(Exchange exchange) throws Exception {
-                String domain = exchange.getIn().getHeader(DnsConstants.DNS_DOMAIN, String.class);
-                ObjectHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
-
-                InetAddress address = InetAddress.getByName(domain);
-                exchange.getIn().setBody(address);
-            }
-        };
+        if (DnsType.dig == dnsType) {
+            return new DnsDigProducer(this);
+        } else if (DnsType.ip == dnsType) {
+            return new DnsIpProducer(this);
+        } else if (DnsType.lookup == dnsType) {
+            return new DnsLookupProducer(this);
+        } else if (DnsType.wikipedia == dnsType) {
+            return new DnsWikipediaProducer(this);
+        }
+        // should not happen
+        return null;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Creating a consumer is not supported");
+        throw new UnsupportedOperationException("Consumer not supported");
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
+    }
+
+    public DnsType getDnsType() {
+        return dnsType;
+    }
+
+    public void setDnsType(DnsType dnsType) {
+        this.dnsType = dnsType;
     }
 }

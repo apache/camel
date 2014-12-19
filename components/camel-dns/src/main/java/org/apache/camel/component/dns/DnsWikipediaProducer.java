@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.dns;
 
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Message;
@@ -41,36 +37,25 @@ import org.xbill.DNS.Type;
  * This endpoint accepts the following header:
  * term: a simple term to use to query wikipedia.
  */
-public class WikipediaEndpoint extends DefaultEndpoint {
+public class DnsWikipediaProducer extends DefaultProducer {
 
-    public WikipediaEndpoint(Component component) {
-        super("dns:///wikipedia", component);
+    public DnsWikipediaProducer(Endpoint endpoint) {
+        super(endpoint);
     }
 
-    public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException();
-    }
-
-    public Producer createProducer() throws Exception {
-        return new DefaultProducer(this) {
-            public void process(Exchange exchange) throws Exception {
-                SimpleResolver resolver = new SimpleResolver();
-                int type = Type.TXT;
-                Name name = Name.fromString(String.valueOf(exchange.getIn().getHeader(DnsConstants.TERM)) + ".wp.dg.cx", Name.root);
-                Record rec = Record.newRecord(name, type, DClass.IN);
-                Message query = Message.newQuery(rec);
-                Message response = resolver.send(query);
-                Record[] records = response.getSectionArray(Section.ANSWER);
-                if (records.length > 0) {
-                    exchange.getIn().setBody(records[0].rdataToString());
-                } else {
-                    exchange.getIn().setBody(null);
-                }
-            }
-        };
-    }
-
-    public boolean isSingleton() {
-        return false;
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        SimpleResolver resolver = new SimpleResolver();
+        int type = Type.TXT;
+        Name name = Name.fromString(String.valueOf(exchange.getIn().getHeader(DnsConstants.TERM)) + ".wp.dg.cx", Name.root);
+        Record rec = Record.newRecord(name, type, DClass.IN);
+        Message query = Message.newQuery(rec);
+        Message response = resolver.send(query);
+        Record[] records = response.getSectionArray(Section.ANSWER);
+        if (records.length > 0) {
+            exchange.getIn().setBody(records[0].rdataToString());
+        } else {
+            exchange.getIn().setBody(null);
+        }
     }
 }

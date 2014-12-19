@@ -14,26 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns;
 
-public class DnsConstants {
+public enum DnsType {
 
-    public static final String OPERATION_DIG = DnsType.dig.name();
-    public static final String OPERATION_IP = DnsType.ip.name();
-    public static final String OPERATION_LOOKUP = DnsType.lookup.name();
-    public static final String OPERATION_WIKIPEDIA = DnsType.wikipedia.name();
+    dig, ip, lookup, wikipedia
 
-    public static final String DNS_CLASS = "dns.class";
-
-    public static final String DNS_NAME = "dns.name";
-    public static final String DNS_DOMAIN = "dns.domain";
-
-    public static final String DNS_SERVER = "dns.server";
-    public static final String DNS_TYPE = "dns.type";
-    public static final String TERM = "term";
-
-    protected DnsConstants() {
-        //Utility class
-    }
 }

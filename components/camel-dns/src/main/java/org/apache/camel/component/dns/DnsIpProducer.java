@@ -14,26 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns;
 
-public class DnsConstants {
+import java.net.InetAddress;
 
-    public static final String OPERATION_DIG = DnsType.dig.name();
-    public static final String OPERATION_IP = DnsType.ip.name();
-    public static final String OPERATION_LOOKUP = DnsType.lookup.name();
-    public static final String OPERATION_WIKIPEDIA = DnsType.wikipedia.name();
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
-    public static final String DNS_CLASS = "dns.class";
+/**
+ * A producer to conduct IP address lookup from the host name.
+ */
+public class DnsIpProducer extends DefaultProducer {
 
-    public static final String DNS_NAME = "dns.name";
-    public static final String DNS_DOMAIN = "dns.domain";
+    public DnsIpProducer(Endpoint endpoint) {
+        super(endpoint);
+    }
 
-    public static final String DNS_SERVER = "dns.server";
-    public static final String DNS_TYPE = "dns.type";
-    public static final String TERM = "term";
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String domain = exchange.getIn().getHeader(DnsConstants.DNS_DOMAIN, String.class);
+        ObjectHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
 
-    protected DnsConstants() {
-        //Utility class
+        InetAddress address = InetAddress.getByName(domain);
+        exchange.getIn().setBody(address);
     }
 }
