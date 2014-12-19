@@ -24,26 +24,46 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.Sides;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
+@UriParams
 public class PrinterConfiguration {
     private URI uri;
+    @UriPath
     private String hostname;
+    @UriPath
     private int port;
+    @UriPath
     private String printername;
+    @UriParam
     private String printerPrefix;
+    @UriParam(defaultValue = "1")
     private int copies = 1;
+    @UriParam
     private String flavor;
+    @UriParam
     private DocFlavor docFlavor;
+    @UriParam
     private String mimeType;
+    @UriParam(defaultValue = "na-letter")
     private String mediaSize;
+    @UriParam
     private MediaSizeName mediaSizeName;
+    @UriParam(defaultValue = "one-sided")
     private String sides;
+    @UriParam
     private Sides internalSides;
+    @UriParam(defaultValue = "portrait")
     private String orientation;
+    @UriParam
     private OrientationRequested internalOrientation;
+    @UriParam(defaultValue = "true")
     private boolean sendToPrinter = true;
+    @UriParam
     private String mediaTray;
 
     public PrinterConfiguration() {
