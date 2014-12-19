@@ -21,18 +21,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+@UriEndpoint(scheme = "sap-netweaver", label = "sap")
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
-    @UriParam
-    private boolean json = true;
-    @UriParam
-    private boolean jsonAsMap = true;
-    @UriParam
-    private boolean flatternMap = true;
-    @UriParam
+    @UriPath
     private String url;
+    @UriParam(defaultValue = "true")
+    private boolean json = true;
+    @UriParam(defaultValue = "true")
+    private boolean jsonAsMap = true;
+    @UriParam(defaultValue = "true")
+    private boolean flatternMap = true;
     @UriParam
     private String username;
     @UriParam
