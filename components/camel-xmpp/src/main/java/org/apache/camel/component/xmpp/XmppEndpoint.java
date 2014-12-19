@@ -28,6 +28,9 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -43,27 +46,46 @@ import org.slf4j.LoggerFactory;
 /**
  * A XMPP Endpoint
  */
+@UriEndpoint(scheme = "xmpp", consumerClass = XmppConsumer.class, label = "chat,messaging")
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    private XmppBinding binding;
-    private String host;
-    private int port;
-    private String user;
-    private String password;
-    private String resource = "Camel";
-    private boolean login = true;
-    private boolean createAccount;
-    private String room;
-    private String participant;
-    private String nickname;
-    private String serviceName;
+
     private XMPPConnection connection;
+
+    private XmppBinding binding;
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+
+    @UriPath
+    private String host;
+    @UriPath
+    private int port;
+    @UriPath
+    private String participant;
+    @UriParam
+    private String user;
+    @UriParam
+    private String password;
+    @UriParam(defaultValue = "Camel")
+    private String resource = "Camel";
+    @UriParam(defaultValue = "true")
+    private boolean login = true;
+    @UriParam(defaultValue = "false")
+    private boolean createAccount;
+    @UriParam
+    private String room;
+    @UriParam
+    private String nickname;
+    @UriParam
+    private String serviceName;
+    @UriParam(defaultValue = "false")
     private boolean pubsub;
     //Set a doc header on the IN message containing a Document form of the incoming packet; 
     //default is true if pubsub is true, otherwise false
+    @UriParam(defaultValue = "false")
     private boolean doc;
+    @UriParam(defaultValue = "true")
     private boolean testConnectionOnStartup = true;
+    @UriParam(defaultValue = "10")
     private int connectionPollDelay = 10;
 
     public XmppEndpoint() {
