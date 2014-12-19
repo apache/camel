@@ -45,7 +45,7 @@ public class DefaultXAdESSignatureProperties extends XAdESSignatureProperties {
     protected X509Certificate getSigningCertificate() throws Exception { //NOPMD
         X509Certificate cert = (X509Certificate) keystore.getCertificate(alias);
         if (cert == null) {
-            throw new XmlSignatureException("No certificate found in keystore for alias '%s'");
+            throw new XmlSignatureException(String.format("No certificate found in keystore for alias '%s'", alias));
         }
         return cert;
     }
