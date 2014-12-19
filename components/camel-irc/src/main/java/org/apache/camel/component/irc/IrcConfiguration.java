@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -35,30 +38,50 @@ import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
     private List<IrcChannel> channels = new ArrayList<IrcChannel>();
+    @UriPath
     private String hostname;
+    @UriPath
+    private int port;
+    private int[] ports = {6667, 6668, 6669};
+    @UriParam
     private String password;
+    @UriParam
     private String nickname;
+    @UriParam
     private String realname;
+    @UriParam
     private String username;
     private SSLTrustManager trustManager = new SSLDefaultTrustManager();
     private boolean usingSSL;
+    @UriParam(defaultValue = "true")
     private boolean persistent = true;
+    @UriParam(defaultValue = "true")
     private boolean colors = true;
+    @UriParam(defaultValue = "true")
     private boolean onNick = true;
+    @UriParam(defaultValue = "true")
     private boolean onQuit = true;
+    @UriParam(defaultValue = "true")
     private boolean onJoin = true;
+    @UriParam(defaultValue = "true")
     private boolean onKick = true;
+    @UriParam(defaultValue = "true")
     private boolean onMode = true;
+    @UriParam(defaultValue = "true")
     private boolean onPart = true;
+    @UriParam(defaultValue = "false")
     private boolean onReply;
+    @UriParam(defaultValue = "true")
     private boolean onTopic = true;
+    @UriParam(defaultValue = "true")
     private boolean onPrivmsg = true;
+    @UriParam(defaultValue = "true")
     private boolean autoRejoin = true;
-    private int[] ports = {6667, 6668, 6669};
     private SSLContextParameters sslContextParameters;
 
     public IrcConfiguration() {
@@ -135,6 +158,7 @@ public class IrcConfiguration implements Cloneable {
         
         if (uri.getPort() != -1) {
             setPorts(new int[] {uri.getPort()});
+            setPort(uri.getPort());
         }
         
         setNickname(username);
@@ -234,6 +258,14 @@ public class IrcConfiguration implements Cloneable {
 
     public void setPorts(int[] ports) {
         this.ports = ports;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public boolean isPersistent() {
