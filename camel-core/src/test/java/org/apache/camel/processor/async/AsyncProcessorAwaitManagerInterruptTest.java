@@ -60,7 +60,7 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
 
                 from("direct:start").routeId("myRoute")
                         .to("mock:before")
-                        .to("async:bye:camel").id("myAsync")
+                        .to("async:bye:camel?delay=500").id("myAsync")
                         .to("mock:after")
                         .process(new Processor() {
                             @Override
