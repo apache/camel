@@ -478,20 +478,17 @@ public class MethodInfo {
                             // evaluate the parameter value binding
                             value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
                         }
-
                         // use bean parameter binding, if still no value
                         Expression expression = expressions[i];
                         if (value == null && expression != null) {
                             value = evaluateParameterBinding(exchange, expression, i, parameterType);
                         }
                     }
-
                     // remember the value to use
                     if (value != Void.TYPE) {
                         answer[i] = value;
                     }
                 }
-
                 return (T) answer;
             }
 
