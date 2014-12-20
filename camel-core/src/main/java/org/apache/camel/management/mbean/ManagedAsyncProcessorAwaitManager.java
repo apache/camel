@@ -24,7 +24,6 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedAsyncProcessorAwaitManagerMBean;
@@ -70,13 +69,16 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
             Collection<AsyncProcessorAwaitManager.AwaitThread> threads = manager.browse();
             for (AsyncProcessorAwaitManager.AwaitThread entry : threads) {
                 CompositeType ct = CamelOpenMBeanTypes.listAwaitThreadsCompositeType();
+                String id = "" + entry.getBlockedThread().getId();
                 String name = entry.getBlockedThread().getName();
                 String exchangeId = entry.getExchange().getExchangeId();
+                String routeId = entry.getRouteId();
+                String nodeId = entry.getNodeId();
                 String duration = "" + entry.getWaitDuration();
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]
-                        {"name", "exchangeId", "duration"},
-                        new Object[]{name, exchangeId, duration});
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"id", "name", "exchangeId", "routeId", "nodeId", "duration"},
+                        new Object[]{id, name, exchangeId, routeId, nodeId, duration});
                 answer.put(data);
             }
             return answer;
@@ -87,19 +89,7 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
 
     @Override
     public void interrupt(String exchangeId) {
-        // need to find the exchange with the given exchange id
-        Exchange found = null;
-        for (AsyncProcessorAwaitManager.AwaitThread entry : manager.browse()) {
-            Exchange exchange = entry.getExchange();
-            if (exchangeId.equals(exchange.getExchangeId())) {
-                found = exchange;
-                break;
-            }
-        }
-
-        if (found != null) {
-            manager.interrupt(found);
-        }
+        manager.interrupt(exchangeId);
     }
 
 }

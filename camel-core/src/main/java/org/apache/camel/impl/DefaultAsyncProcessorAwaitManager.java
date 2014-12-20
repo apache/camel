@@ -18,28 +18,40 @@ package org.apache.camel.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.MessageHistory;
+import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager {
 
-    // TODO: capture message history of the exchange when it was interrupted
-    // TODO: capture route id, node id where thread is blocked
-    // TODO: rename to AsyncInflightRepository?
-
     private static final Logger LOG = LoggerFactory.getLogger(DefaultAsyncProcessorAwaitManager.class);
 
     private final Map<Exchange, AwaitThread> inflight = new ConcurrentHashMap<Exchange, AwaitThread>();
-
+    private final ExchangeFormatter exchangeFormatter;
     private boolean interruptThreadsWhileStopping = true;
+
+    public DefaultAsyncProcessorAwaitManager() {
+        // setup exchange formatter to be used for message history dump
+        DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
+        formatter.setShowExchangeId(true);
+        formatter.setMultiline(true);
+        formatter.setShowHeaders(true);
+        formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+        this.exchangeFormatter = formatter;
+    }
 
     @Override
     public void await(Exchange exchange, CountDownLatch latch) {
@@ -77,13 +89,47 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     @Override
+    public void interrupt(String exchangeId) {
+        // need to find the exchange with the given exchange id
+        Exchange found = null;
+        for (AsyncProcessorAwaitManager.AwaitThread entry : browse()) {
+            Exchange exchange = entry.getExchange();
+            if (exchangeId.equals(exchange.getExchangeId())) {
+                found = exchange;
+                break;
+            }
+        }
+
+        if (found != null) {
+            interrupt(found);
+        }
+    }
+
+    @Override
     public void interrupt(Exchange exchange) {
-        AwaitThreadEntry latch = (AwaitThreadEntry) inflight.get(exchange);
-        if (latch != null) {
-            LOG.warn("Interrupted while waiting for asynchronous callback, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
-            exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback"));
-            latch.getLatch().countDown();
+        AwaitThreadEntry entry = (AwaitThreadEntry) inflight.get(exchange);
+        if (entry != null) {
+            try {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
+                sb.append(exchange.getExchangeId());
+                sb.append("\n");
+
+                sb.append(dumpBlockedThread(entry));
+
+                // dump a route stack trace of the exchange
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, exchangeFormatter, false);
+                if (routeStackTrace != null) {
+                    sb.append(routeStackTrace);
+                }
+                LOG.warn(sb.toString());
+
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            } finally {
+                exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+                entry.getLatch().countDown();
+            }
         }
     }
 
@@ -109,9 +155,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
             StringBuilder sb = new StringBuilder();
             for (AwaitThread entry : threads) {
-                sb.append("\tBlocked thread: ").append(entry.getBlockedThread().getName())
-                        .append(", exchangeId=").append(entry.getExchange().getExchangeId())
-                        .append(", duration=").append(entry.getWaitDuration()).append(" msec.");
+                sb.append(dumpBlockedThread(entry));
             }
 
             if (isInterruptThreadsWhileStopping()) {
@@ -133,17 +177,50 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         inflight.clear();
     }
 
+    private static String dumpBlockedThread(AwaitThread entry) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append("Blocked Thread\n");
+        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+
+        sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append("\n");
+        sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
+        sb.append(style("RouteId:")).append(safeNull(entry.getRouteId())).append("\n");
+        sb.append(style("NodeId:")).append(safeNull(entry.getNodeId())).append("\n");
+        sb.append(style("Duration:")).append(entry.getWaitDuration()).append(" msec.\n");
+        return sb.toString();
+    }
+
+    private static String style(String label) {
+        return String.format("\t%-20s", label);
+    }
+
+    private static String safeNull(Object value) {
+        return value != null ? value.toString() : "";
+    }
+
     private static final class AwaitThreadEntry implements AwaitThread {
         private final Thread thread;
         private final Exchange exchange;
         private final CountDownLatch latch;
         private final long start;
+        private String routeId;
+        private String nodeId;
 
         private AwaitThreadEntry(Thread thread, Exchange exchange, CountDownLatch latch) {
             this.thread = thread;
             this.exchange = exchange;
             this.latch = latch;
             this.start = System.currentTimeMillis();
+
+            // capture details from message history if enabled
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            if (list != null && !list.isEmpty()) {
+                // grab last part
+                MessageHistory history = list.get(list.size() - 1);
+                routeId = history.getRouteId();
+                nodeId = history.getNode() != null ? history.getNode().getId() : null;
+            }
         }
 
         @Override
@@ -161,8 +238,23 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             return System.currentTimeMillis() - start;
         }
 
+        @Override
+        public String getRouteId() {
+            return routeId;
+        }
+
+        @Override
+        public String getNodeId() {
+            return nodeId;
+        }
+
         public CountDownLatch getLatch() {
             return latch;
+        }
+
+        @Override
+        public String toString() {
+            return "AwaitThreadEntry[name=" + thread.getName() + ", exchangeId=" + exchange.getExchangeId() + "]";
         }
     }
 

@@ -50,6 +50,21 @@ public interface AsyncProcessorAwaitManager extends StaticService {
          * Time in millis the thread has been blocked waiting for the signal.
          */
         long getWaitDuration();
+
+        /**
+         * The id of the route where the exchange was processed when the thread was set to block.
+         * <p/>
+         * Is <tt>null</tt> if message history is disabled.
+         */
+        String getRouteId();
+
+        /**
+         * The id of the node from the route where the exchange was processed when the thread was set to block.
+         * <p/>
+         * Is <tt>null</tt> if message history is disabled.
+         */
+        String getNodeId();
+
     }
 
     /**
@@ -80,6 +95,19 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * A <i>read-only</i> browser of the {@link AwaitThread}s that are currently inflight.
      */
     Collection<AwaitThread> browse();
+
+    /**
+     * To interrupt an exchange which may seem as stuck, to force the exchange to continue,
+     * allowing any blocking thread to be released.
+     * <p/>
+     * <b>Important:</b> Use this with caution as the other thread is still assumed to be process the exchange. Though
+     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to count-down
+     * so the blocked thread can continue. An exception is set on the exchange which allows Camel's error handler to deal
+     * with this malfunctioned exchange.
+     *
+     * @param exchangeId    the exchange id to interrupt.
+     */
+    void interrupt(String exchangeId);
 
     /**
      * To interrupt an exchange which may seem as stuck, to force the exchange to continue,
