@@ -83,6 +83,9 @@ public final class ReflectionHelper {
     /**
      * Perform the given callback operation on all matching methods of the given
      * class and superclasses (or given interface and super-interfaces).
+     * <p/>
+     * <b>Important:</b> This method does not take the
+     * {@link java.lang.reflect.Method#isBridge() bridge methods} into account.
      *
      * @param clazz class to start looking at
      * @param mc the callback to invoke for each method
@@ -91,6 +94,11 @@ public final class ReflectionHelper {
         // Keep backing up the inheritance hierarchy.
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
+            if (method.isBridge()) {
+                // skip the bridge methods which in Java 8 leads to problems with inheritance
+                // see https://bugs.openjdk.java.net/browse/JDK-6695379
+                continue;
+            }
             try {
                 mc.doWith(method);
             } catch (IllegalAccessException ex) {
