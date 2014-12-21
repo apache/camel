@@ -33,6 +33,59 @@ import org.apache.camel.StaticService;
 public interface AsyncProcessorAwaitManager extends StaticService {
 
     /**
+     * Utilization statistics of the this manager.
+     */
+    interface Statistics {
+
+        /**
+         * Total number of threads that has been blocked
+         */
+        long getThreadsBlocked();
+
+        /**
+         * Total number of threads that has been forced interrupted
+         */
+        long getThreadsInterrupted();
+
+        /**
+         * The total duration time in millis.
+         */
+        long getTotalDuration();
+
+        /**
+         * The lowest duration time in millis.
+         */
+        long getMinDuration();
+
+        /**
+         * The highest duration time in millis.
+         */
+        long getMaxDuration();
+
+        /**
+         * The average duration time in millis.
+         */
+        long getMeanDuration();
+
+        /**
+         * Reset the counters
+         */
+        void reset();
+
+        /**
+         * Whether statistics is enabled.
+         */
+        boolean isStatisticsEnabled();
+
+        /**
+         * Sets whether statistics is enabled.
+         *
+         * @param statisticsEnabled <tt>true</tt> to enable
+         */
+        void setStatisticsEnabled(boolean statisticsEnabled);
+    }
+
+    /**
      * Information about the thread and exchange that are inflight.
      */
     interface AwaitThread {
@@ -136,4 +189,12 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * This is enabled by default which allows Camel to release any blocked thread during shutting down Camel itself.
      */
     void setInterruptThreadsWhileStopping(boolean interruptThreadsWhileStopping);
+
+    /**
+     * Gets the utilization statistics of this manager
+     *
+     * @return the utilization statistics
+     */
+    Statistics getStatistics();
+
 }

@@ -92,4 +92,49 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
         manager.interrupt(exchangeId);
     }
 
+    @Override
+    public long getThreadsBlocked() {
+        return manager.getStatistics().getThreadsBlocked();
+    }
+
+    @Override
+    public long getThreadsInterrupted() {
+        return manager.getStatistics().getThreadsInterrupted();
+    }
+
+    @Override
+    public long getTotalDuration() {
+        return manager.getStatistics().getTotalDuration();
+    }
+
+    @Override
+    public long getMinDuration() {
+        return manager.getStatistics().getMinDuration();
+    }
+
+    @Override
+    public long getMaxDuration() {
+        return manager.getStatistics().getMaxDuration();
+    }
+
+    @Override
+    public long getMeanDuration() {
+        return manager.getStatistics().getMeanDuration();
+    }
+
+    @Override
+    public void resetStatistics() {
+        manager.getStatistics().reset();
+    }
+
+    @Override
+    public boolean isStatisticsEnabled() {
+        return manager.getStatistics().isStatisticsEnabled();
+    }
+
+    @Override
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        manager.getStatistics().setStatisticsEnabled(statisticsEnabled);
+    }
+
 }

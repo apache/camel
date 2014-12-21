@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
@@ -38,6 +39,14 @@ import org.slf4j.LoggerFactory;
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultAsyncProcessorAwaitManager.class);
+
+    private final AsyncProcessorAwaitManager.Statistics statistics = new UtilizationStatistics();
+    private final AtomicLong blockedCounter = new AtomicLong();
+    private final AtomicLong interruptedCounter = new AtomicLong();
+    private final AtomicLong totalDuration = new AtomicLong();
+    private final AtomicLong minDuration = new AtomicLong();
+    private final AtomicLong maxDuration = new AtomicLong();
+    private final AtomicLong meanDuration = new AtomicLong();
 
     private final Map<Exchange, AwaitThread> inflight = new ConcurrentHashMap<Exchange, AwaitThread>();
     private final ExchangeFormatter exchangeFormatter;
@@ -58,6 +67,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
                 exchange.getExchangeId(), exchange);
         try {
+            if (statistics.isStatisticsEnabled()) {
+                blockedCounter.incrementAndGet();
+            }
             inflight.put(exchange, new AwaitThreadEntry(Thread.currentThread(), exchange, latch));
             latch.await();
             LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
@@ -68,7 +80,24 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     exchange.getExchangeId(), exchange);
             exchange.setException(e);
         } finally {
-            inflight.remove(exchange);
+            AwaitThread thread = inflight.remove(exchange);
+
+            if (statistics.isStatisticsEnabled() && thread != null) {
+                long time = thread.getWaitDuration();
+                long total = totalDuration.get() + time;
+                totalDuration.set(total);
+
+                if (time < minDuration.get()) {
+                    minDuration.set(time);
+                } else if (time > maxDuration.get()) {
+                    maxDuration.set(time);
+                }
+
+                // update mean
+                long count = blockedCounter.get();
+                long mean = count > 0 ? total / count : 0;
+                meanDuration.set(mean);
+            }
         }
     }
 
@@ -127,6 +156,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             } finally {
+                if (statistics.isStatisticsEnabled()) {
+                    interruptedCounter.incrementAndGet();
+                }
                 exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
                 entry.getLatch().countDown();
             }
@@ -139,6 +171,10 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
     public void setInterruptThreadsWhileStopping(boolean interruptThreadsWhileStopping) {
         this.interruptThreadsWhileStopping = interruptThreadsWhileStopping;
+    }
+
+    public Statistics getStatistics() {
+        return statistics;
     }
 
     @Override
@@ -255,6 +291,70 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         @Override
         public String toString() {
             return "AwaitThreadEntry[name=" + thread.getName() + ", exchangeId=" + exchange.getExchangeId() + "]";
+        }
+    }
+
+    /**
+     * Represents utilization statistics
+     */
+    private final class UtilizationStatistics implements AsyncProcessorAwaitManager.Statistics {
+
+        private boolean statisticsEnabled;
+
+        @Override
+        public long getThreadsBlocked() {
+            return blockedCounter.get();
+        }
+
+        @Override
+        public long getThreadsInterrupted() {
+            return interruptedCounter.get();
+        }
+
+        @Override
+        public long getTotalDuration() {
+            return totalDuration.get();
+        }
+
+        @Override
+        public long getMinDuration() {
+            return minDuration.get();
+        }
+
+        @Override
+        public long getMaxDuration() {
+            return maxDuration.get();
+        }
+
+        @Override
+        public long getMeanDuration() {
+            return meanDuration.get();
+        }
+
+        @Override
+        public void reset() {
+            blockedCounter.set(0);
+            interruptedCounter.set(0);
+            totalDuration.set(0);
+            minDuration.set(0);
+            maxDuration.set(0);
+            meanDuration.set(0);
+        }
+
+        @Override
+        public boolean isStatisticsEnabled() {
+            return statisticsEnabled;
+        }
+
+        @Override
+        public void setStatisticsEnabled(boolean statisticsEnabled) {
+            this.statisticsEnabled = statisticsEnabled;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("AsyncProcessAwaitManager utilization[blocked=%s, interrupted=%s, total=%s min=%s, max=%s, mean=%s]",
+                    getThreadsBlocked(), getThreadsInterrupted(), getTotalDuration(), getMinDuration(), getMaxDuration(), getMeanDuration());
         }
     }
 

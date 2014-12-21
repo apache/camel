@@ -32,6 +32,8 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport {
 
     public void testAsyncAwaitInterrupt() throws Exception {
+        context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
+
         assertEquals(0, context.getAsyncProcessorAwaitManager().size());
 
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
@@ -49,6 +51,8 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
 
         assertEquals(0, context.getAsyncProcessorAwaitManager().size());
+        assertEquals(1, context.getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+        assertEquals(1, context.getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
     }
 
     @Override

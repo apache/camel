@@ -38,4 +38,31 @@ public interface ManagedAsyncProcessorAwaitManagerMBean extends ManagedServiceMB
     @ManagedOperation(description = "To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread to be released.")
     void interrupt(String exchangeId);
 
+    @ManagedAttribute(description = "Number of threads that has been blocked")
+    long getThreadsBlocked();
+
+    @ManagedAttribute(description = "Number of threads that has been interrupted")
+    long getThreadsInterrupted();
+
+    @ManagedAttribute(description = "Total wait time in msec.")
+    long getTotalDuration();
+
+    @ManagedAttribute(description = "The minimum wait time in msec.")
+    long getMinDuration();
+
+    @ManagedAttribute(description = "The maximum wait time in msec.")
+    long getMaxDuration();
+
+    @ManagedAttribute(description = "The average wait time in msec.")
+    long getMeanDuration();
+
+    @ManagedOperation(description = "Resets the statistics")
+    void resetStatistics();
+
+    @ManagedAttribute(description = "Utilization statistics enabled")
+    boolean isStatisticsEnabled();
+
+    @ManagedAttribute(description = "Utilization statistics enabled")
+    void setStatisticsEnabled(boolean statisticsEnabled);
+
 }
