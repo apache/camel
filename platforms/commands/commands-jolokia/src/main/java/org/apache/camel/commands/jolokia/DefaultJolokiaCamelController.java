@@ -88,7 +88,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
 
-        J4pVersionResponse vr = null;
+        J4pVersionResponse vr;
         try {
             vr = jolokia.execute(new J4pVersionRequest());
             return vr != null && vr.getValue() != null;
@@ -111,9 +111,13 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             String pattern = String.format("%s:context=%s,type=services,name=DefaultTypeConverter", found.getDomain(), found.getKeyProperty("context"));
             ObjectName tc = ObjectName.getInstance(pattern);
 
+            String pattern2 = String.format("%s:context=%s,type=services,name=DefaultAsyncProcessorAwaitManager", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName am = ObjectName.getInstance(pattern2);
+
             List<J4pReadRequest> list = new ArrayList<J4pReadRequest>();
             list.add(new J4pReadRequest(found));
             list.add(new J4pReadRequest(tc));
+            list.add(new J4pReadRequest(am));
 
             List<J4pReadResponse> rr = jolokia.execute(list);
             if (rr != null && rr.size() > 0) {
@@ -128,6 +132,14 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
                     J4pReadResponse second = rr.get(1);
                     for (String key : second.getAttributes()) {
                         answer.put("typeConverter." + asKey(key), second.getValue(key));
+                    }
+                }
+
+                // async processor await manager attributes
+                if (rr.size() >= 3) {
+                    J4pReadResponse second = rr.get(2);
+                    for (String key : second.getAttributes()) {
+                        answer.put("asyncProcessorAwaitManager." + asKey(key), second.getValue(key));
                     }
                 }
             }

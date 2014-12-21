@@ -102,6 +102,16 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("typeConverter.missCounter", context.getTypeConverterRegistry().getStatistics().getMissCounter());
             answer.put("typeConverter.failedCounter", context.getTypeConverterRegistry().getStatistics().getFailedCounter());
 
+            // add async processor await manager details
+            answer.put("asyncProcessorAwaitManager.size", context.getAsyncProcessorAwaitManager().size());
+            answer.put("asyncProcessorAwaitManager.statisticsEnabled", context.getAsyncProcessorAwaitManager().getStatistics().isStatisticsEnabled());
+            answer.put("asyncProcessorAwaitManager.threadsBlocked", context.getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
+            answer.put("asyncProcessorAwaitManager.threadsInterrupted", context.getAsyncProcessorAwaitManager().getStatistics().getThreadsInterrupted());
+            answer.put("asyncProcessorAwaitManager.totalDuration", context.getAsyncProcessorAwaitManager().getStatistics().getTotalDuration());
+            answer.put("asyncProcessorAwaitManager.minDuration", context.getAsyncProcessorAwaitManager().getStatistics().getMinDuration());
+            answer.put("asyncProcessorAwaitManager.maxDuration", context.getAsyncProcessorAwaitManager().getStatistics().getMaxDuration());
+            answer.put("asyncProcessorAwaitManager.meanDuration", context.getAsyncProcessorAwaitManager().getStatistics().getMeanDuration());
+
             // add stream caching details if enabled
             if (context.getStreamCachingStrategy().isEnabled()) {
                 answer.put("streamCachingEnabled", true);

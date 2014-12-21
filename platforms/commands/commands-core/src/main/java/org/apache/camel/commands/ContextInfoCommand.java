@@ -112,6 +112,23 @@ public class ContextInfoCommand extends AbstractCamelCommand {
                 out.println(stringEscape.unescapeJava(String.format("\tType converter usage: [noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]", noop, attempt, hit, miss, failed)));
             }
 
+            // add async processor await details
+            out.println(stringEscape.unescapeJava("\tNumber of blocked threads: " + row.get("asyncProcessorAwaitManager.size")));
+            enabled = false;
+            if (row.get("asyncProcessorAwaitManager.statisticsEnabled") != null) {
+                enabled = (boolean) row.get("asyncProcessorAwaitManager.statisticsEnabled");
+            }
+            if (enabled) {
+                long blocked = (long) row.get("asyncProcessorAwaitManager.threadsBlocked");
+                long interrupted = (long) row.get("asyncProcessorAwaitManager.threadsInterrupted");
+                long total = (long) row.get("asyncProcessorAwaitManager.totalDuration");
+                long min = (long) row.get("asyncProcessorAwaitManager.minDuration");
+                long max = (long) row.get("asyncProcessorAwaitManager.maxDuration");
+                long mean = (long) row.get("asyncProcessorAwaitManager.meanDuration");
+                out.println(stringEscape.unescapeJava(String.format("\tAsyncProcessorAwaitManager usage: [blocked=%s, interrupted=%s, total=%s msec, min=%s msec, max=%s msec, mean=%s msec]",
+                        blocked, interrupted, total, min, max, mean)));
+            }
+
             // add stream caching details if enabled
             enabled = (boolean) row.get("streamCachingEnabled");
             if (enabled) {
