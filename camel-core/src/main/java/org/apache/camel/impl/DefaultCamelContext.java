@@ -2167,6 +2167,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
         getRouteStartupOrder().clear();
 
+        // shutdown await manager to trigger interrupt of blocked threads to attempt to free these threads graceful
+        shutdownServices(asyncProcessorAwaitManager);
+
         shutdownServices(routeServices.values());
         // do not clear route services or startup listeners as we can start Camel again and get the route back as before
 

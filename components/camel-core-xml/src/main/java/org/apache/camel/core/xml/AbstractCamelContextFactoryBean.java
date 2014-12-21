@@ -69,6 +69,7 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
@@ -203,6 +204,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (inflightRepository != null) {
             LOG.info("Using custom InflightRepository: {}", inflightRepository);
             getContext().setInflightRepository(inflightRepository);
+        }
+        AsyncProcessorAwaitManager asyncProcessorAwaitManager = getBeanForType(AsyncProcessorAwaitManager.class);
+        if (asyncProcessorAwaitManager != null) {
+            LOG.info("Using custom AsyncProcessorAwaitManager: {}", asyncProcessorAwaitManager);
+            getContext().setAsyncProcessorAwaitManager(asyncProcessorAwaitManager);
         }
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
         if (managementStrategy != null) {
