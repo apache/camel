@@ -96,6 +96,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             // add type converter details
             answer.put("typeConverter.numberOfTypeConverters", context.getTypeConverterRegistry().size());
             answer.put("typeConverter.statisticsEnabled", context.getTypeConverterRegistry().getStatistics().isStatisticsEnabled());
+            answer.put("typeConverter.noopCounter", context.getTypeConverterRegistry().getStatistics().getNoopCounter());
             answer.put("typeConverter.attemptCounter", context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
             answer.put("typeConverter.hitCounter", context.getTypeConverterRegistry().getStatistics().getHitCounter());
             answer.put("typeConverter.missCounter", context.getTypeConverterRegistry().getStatistics().getMissCounter());

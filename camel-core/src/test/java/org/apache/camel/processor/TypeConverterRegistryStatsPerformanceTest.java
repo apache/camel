@@ -35,6 +35,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
     }
 
     public void testTransform() throws Exception {
+        long noop = context.getTypeConverterRegistry().getStatistics().getNoopCounter();
         long attempt = context.getTypeConverterRegistry().getStatistics().getAttemptCounter();
         long failed = context.getTypeConverterRegistry().getStatistics().getFailedCounter();
         long hit = context.getTypeConverterRegistry().getStatistics().getHitCounter();
@@ -48,11 +49,13 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
 
         assertMockEndpointsSatisfied();
 
+        long noop2 = context.getTypeConverterRegistry().getStatistics().getNoopCounter();
         long attempt2 = context.getTypeConverterRegistry().getStatistics().getAttemptCounter();
         long failed2 = context.getTypeConverterRegistry().getStatistics().getFailedCounter();
         long hit2 = context.getTypeConverterRegistry().getStatistics().getHitCounter();
         long miss2 = context.getTypeConverterRegistry().getStatistics().getMissCounter();
 
+        log.info("Noop: before={}, after={}, delta={}", new Object[]{noop, noop2, noop2 - noop});
         log.info("Attempt: before={}, after={}, delta={}", new Object[]{attempt, attempt2, attempt2 - attempt});
         log.info("Failed: before={}, after={}, delta={}", new Object[]{failed, failed2, failed2 - failed});
         log.info("Hit: before={}, after={}, delta={}", new Object[]{hit, hit2, hit2 - hit});

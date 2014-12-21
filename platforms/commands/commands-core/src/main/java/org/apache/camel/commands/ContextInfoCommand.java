@@ -104,11 +104,12 @@ public class ContextInfoCommand extends AbstractCamelCommand {
                 enabled = (boolean) row.get("typeConverter.statisticsEnabled");
             }
             if (enabled) {
+                long noop = (long) row.get("typeConverter.noopCounter");
                 long attempt = (long) row.get("typeConverter.attemptCounter");
                 long hit = (long) row.get("typeConverter.hitCounter");
                 long miss = (long) row.get("typeConverter.missCounter");
                 long failed = (long) row.get("typeConverter.failedCounter");
-                out.println(stringEscape.unescapeJava(String.format("\tType converter usage: [attempts=%s, hits=%s, misses=%s, failures=%s]", attempt, hit, miss, failed)));
+                out.println(stringEscape.unescapeJava(String.format("\tType converter usage: [noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]", noop, attempt, hit, miss, failed)));
             }
 
             // add stream caching details if enabled

@@ -37,7 +37,12 @@ public interface TypeConverterRegistry extends StaticService {
     interface Statistics {
 
         /**
-         * Number of attempts
+         * Number of noop attempts (no type conversion was needed)
+         */
+        long getNoopCounter();
+
+        /**
+         * Number of type conversion attempts
          */
         long getAttemptCounter();
 
