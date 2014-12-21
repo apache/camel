@@ -423,6 +423,17 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         return new LinkedHashSet<String>(suspendedBreakpoints.keySet());
     }
 
+    /**
+     * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
+     *
+     * @param id - node id for the breakpoint
+     * @return The suspended exchange or null if there isn't one suspended at the given breakpoint.
+     */
+    public Exchange getSuspendedExchange(String id) {
+        SuspendedExchange suspendedExchange = suspendedBreakpoints.get(id);
+        return suspendedExchange != null ? suspendedExchange.getExchange() : null;
+    }
+
     public void disableBreakpoint(String nodeId) {
         logger.log("Disable breakpoint " + nodeId);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
