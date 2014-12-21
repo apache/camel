@@ -25,11 +25,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+
 import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -78,7 +81,7 @@ public class CachedOutputStream extends OutputStream {
         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
         if (closedOnCompletion) {
             // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-            exchange.addOnCompletion(new SynchronizationAdapter() {
+            Synchronization onCompletion = new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     try {
@@ -95,12 +98,24 @@ public class CachedOutputStream extends OutputStream {
                         LOG.warn("Error closing streams. This exception will be ignored.", e);
                     }
                 }
-        
+
                 @Override
                 public String toString() {
                     return "OnCompletion[CachedOutputStream]";
                 }
-            });
+            };
+
+            UnitOfWork streamCacheUnitOfWork = exchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
+            if (streamCacheUnitOfWork != null) {
+                // The stream cache must sometimes not be closed when the exchange is deleted. This is for example the
+                // case in the splitter and multi-cast case with AggregationStrategy where the result of the sub-routes
+                // are aggregated later in the main route. Here, the cached streams of the sub-routes must be closed with
+                // the Unit of Work of the main route.
+                streamCacheUnitOfWork.addSynchronization(onCompletion);
+            } else {
+                // add on completion so we can cleanup after the exchange is done such as deleting temporary files
+                exchange.addOnCompletion(onCompletion);
+            }
         }
     }
 
