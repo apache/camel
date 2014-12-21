@@ -34,9 +34,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpHelper;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -49,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version 
  */
-public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor {
+public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
     private HttpClient client;
     private boolean sharedClient;
@@ -81,10 +80,6 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     @Override
     public JettyHttpEndpoint getEndpoint() {
         return (JettyHttpEndpoint) super.getEndpoint();
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
