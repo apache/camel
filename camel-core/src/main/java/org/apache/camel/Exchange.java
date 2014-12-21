@@ -167,6 +167,7 @@ public interface Exchange {
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
+    String STREAM_CACHE_UNIT_OF_WORK = "CamelStreamCacheUnitOfWork";
     
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";

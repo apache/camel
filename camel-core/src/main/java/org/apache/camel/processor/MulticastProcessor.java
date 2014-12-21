@@ -864,6 +864,15 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // copy exchange, and do not share the unit of work
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
+            // If the multi-cast processor has an aggregation strategy
+            // then the StreamCache created by the child routes must not be 
+            // closed by the unit of work of the child route, but by the unit of 
+            // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
+            // Set therefore the unit of work of the  parent route as stream cache unit of work, 
+            // if it is not already set.
+            if (copy.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                copy.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
+            }
             // if we share unit of work, we need to prepare the child exchange
             if (isShareUnitOfWork()) {
                 prepareSharedUnitOfWork(copy, exchange);
