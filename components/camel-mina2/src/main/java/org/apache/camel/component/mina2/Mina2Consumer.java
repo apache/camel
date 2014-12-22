@@ -95,7 +95,15 @@ public class Mina2Consumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
-        acceptor.unbind(address);
+        // need to check if the address is IPV4 TCP all net work address
+        if (address instanceof InetSocketAddress) {
+            if ("0.0.0.0".equals(((InetSocketAddress)address).getAddress().getHostAddress())) {
+                acceptor.unbind(acceptor.getLocalAddresses());
+            }
+        } else {
+            acceptor.unbind(address);
+        }
+        
         super.doStop();
     }
 
