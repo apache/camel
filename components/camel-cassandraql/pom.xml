@@ -17,15 +17,26 @@
   
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel.component.cassandraql.*
+      org.apache.camel.component.cassandra.*,
+      org.apache.camel.processor.aggregate.cassandra,
+      org.apache.camel.processor.idempotent.cassandra,
+      org.apache.camel.utils.cassandra
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=cql</camel.osgi.export.service>
   </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+
+    <!-- cassandra -->
+    <dependency>
+      <groupId>com.datastax.cassandra</groupId>
+      <artifactId>cassandra-driver-core</artifactId>
+      <version>${cassandra-driver-version}</version>
     </dependency>
 
     <!-- logging -->
@@ -51,21 +62,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <!-- cassandra -->
-    <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
-      <version>2.1.2</version>
-    </dependency>
-    <dependency>
       <groupId>org.cassandraunit</groupId>
       <artifactId>cassandra-unit</artifactId>
-      <version>2.0.2.2</version>
+      <version>${cassandra-unit-version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -77,13 +76,18 @@
     <dependency>
       <groupId>org.apache.cassandra</groupId>
       <artifactId>cassandra-all</artifactId>
-      <version>2.1.2</version>
+      <version>${cassandra-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.14</version>
+      <version>${snakeyaml-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
