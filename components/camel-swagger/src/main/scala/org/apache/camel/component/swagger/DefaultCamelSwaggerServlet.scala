@@ -26,7 +26,6 @@ import org.apache.camel.model.rest.{RestDefinition, RestsDefinition}
 import scala.collection.mutable
 
 // to iterate Java list using for loop
-
 import scala.collection.JavaConverters._
 
 /**
@@ -38,7 +37,7 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     var found: ObjectName = null
 
     val server: MBeanServer = ManagementFactory.getPlatformMBeanServer
-    val names = server.queryMBeans(new ObjectName("org.apache.camel,context=*,type=context,name=*"), null)
+    val names = server.queryMBeans(new ObjectName("*:type=context,*"), null)
     for (name <- names.asScala) {
       val on = name.asInstanceOf[ObjectName]
       val id: String = on.getKeyProperty("name")

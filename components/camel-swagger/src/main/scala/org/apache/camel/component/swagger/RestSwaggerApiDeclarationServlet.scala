@@ -29,9 +29,6 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
 
-// to iterate Java list using for loop
-import scala.collection.JavaConverters._
-
 /**
  * A Http Servlet to expose the REST services as Swagger APIs.
  */
