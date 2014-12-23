@@ -363,6 +363,7 @@
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.8.1</pax-logging-version>
     <pdfbox-version>1.6.0</pdfbox-version>
+    <pgjdbc-ng-driver-version>0.4</pgjdbc-ng-driver-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
     <pojosr-version>0.2.1</pojosr-version>
@@ -1161,6 +1162,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-paxlogging</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pgevent</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
