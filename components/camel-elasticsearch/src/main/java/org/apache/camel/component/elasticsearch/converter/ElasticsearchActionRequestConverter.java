@@ -18,6 +18,7 @@ package org.apache.camel.component.elasticsearch.converter;
 
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConfiguration;
@@ -28,80 +29,68 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 @Converter
-public class ElasticsearchActionRequestConverter {
+public final class ElasticsearchActionRequestConverter {
 
-	// Index requests
-	private static IndexRequest createIndexRequest(Object document,
-			Exchange exchange) {
-		IndexRequest indexRequest = new IndexRequest();
-		if (document instanceof byte[]) {
-			indexRequest.source((byte[]) document);
-		} else if (document instanceof Map) {
-			indexRequest.source((Map<String, Object>) document);
-		} else if (document instanceof String) {
-			indexRequest.source((String) document);
-		} else if (document instanceof XContentBuilder) {
-			indexRequest.source((XContentBuilder) document);
-		} else {
-			return null;
-		}
+    private ElasticsearchActionRequestConverter() {
+    }
 
-		return indexRequest.index(
-				exchange.getIn().getHeader(
-						ElasticsearchConfiguration.PARAM_INDEX_NAME,
-						String.class)).type(
-				exchange.getIn().getHeader(
-						ElasticsearchConfiguration.PARAM_INDEX_TYPE,
-						String.class));
-	}
+    // Index requests
+    private static IndexRequest createIndexRequest(Object document, Exchange exchange) {
+        IndexRequest indexRequest = new IndexRequest();
+        if (document instanceof byte[]) {
+            indexRequest.source((byte[]) document);
+        } else if (document instanceof Map) {
+            indexRequest.source((Map<String, Object>) document);
+        } else if (document instanceof String) {
+            indexRequest.source((String) document);
+        } else if (document instanceof XContentBuilder) {
+            indexRequest.source((XContentBuilder) document);
+        } else {
+            return null;
+        }
 
-	@Converter
-	public static IndexRequest toIndexRequest(Object document, Exchange exchange) {
-		if (document == null)
-			return null;
+        return indexRequest.index(
+                exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_NAME,
+                        String.class)).type(
+                exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_TYPE,
+                        String.class));
+    }
 
-		return createIndexRequest(document, exchange).id(
-				exchange.getIn()
-						.getHeader(ElasticsearchConfiguration.PARAM_INDEX_ID,
-								String.class));
-	}
+    @Converter
+    public static IndexRequest toIndexRequest(Object document, Exchange exchange) {
+        return createIndexRequest(document, exchange)
+                .id(exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_ID, String.class));
+    }
 
-	@Converter
-	public static GetRequest toGetRequest(String id, Exchange exchange) {
-		if (id == null)
-			return null;
+    @Converter
+    public static GetRequest toGetRequest(String id, Exchange exchange) {
+        return new GetRequest(exchange.getIn().getHeader(
+                ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class))
+                .type(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_TYPE,
+                        String.class)).id(id);
+    }
 
-		return new GetRequest(exchange.getIn().getHeader(
-				ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class))
-				.type(exchange.getIn().getHeader(
-						ElasticsearchConfiguration.PARAM_INDEX_TYPE,
-						String.class)).id(id);
-	}
+    @Converter
+    public static DeleteRequest toDeleteRequest(String id, Exchange exchange) {
+        return new DeleteRequest()
+                .index(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_NAME,
+                        String.class))
+                .type(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_TYPE,
+                        String.class)).id(id);
+    }
 
-	@Converter
-	public static DeleteRequest toDeleteRequest(String id, Exchange exchange) {
-		if (id == null)
-			return null;
-
-		return new DeleteRequest()
-				.index(exchange.getIn().getHeader(
-						ElasticsearchConfiguration.PARAM_INDEX_NAME,
-						String.class))
-				.type(exchange.getIn().getHeader(
-						ElasticsearchConfiguration.PARAM_INDEX_TYPE,
-						String.class)).id(id);
-	}
-
-	@Converter
-	public static BulkRequest toBulkRequest(List<Object> documents,
-			Exchange exchange) {
-		if (documents == null)
-			return null;
-
-		BulkRequest request = new BulkRequest();
-		for (Object document : documents) {
-			request.add(createIndexRequest(document, exchange));
-		}
-		return request;
-	}
+    @Converter
+    public static BulkRequest toBulkRequest(List<Object> documents,
+                                            Exchange exchange) {
+        BulkRequest request = new BulkRequest();
+        for (Object document : documents) {
+            request.add(createIndexRequest(document, exchange));
+        }
+        return request;
+    }
 }
