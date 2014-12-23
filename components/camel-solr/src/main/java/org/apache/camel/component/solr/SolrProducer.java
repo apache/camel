@@ -17,6 +17,8 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -90,6 +92,7 @@ public class SolrProducer extends DefaultProducer {
 
     private void insert(Exchange exchange, SolrServer solrServer) throws Exception {
         Object body = exchange.getIn().getBody();
+        boolean invalid = false;
         if (body instanceof WrappedFile) {
             body = ((WrappedFile<?>)body).getFile();
         }
@@ -115,6 +118,18 @@ public class SolrProducer extends DefaultProducer {
             updateRequest.add((SolrInputDocument) body);
 
             updateRequest.process(solrServer);
+
+        } else if (body instanceof List<?>) {
+            List<?> list = (List<?>) body;
+
+            if (list.size() > 0 && list.get(0) instanceof SolrInputDocument) {
+                UpdateRequest updateRequest = new UpdateRequest(getRequestHandler());
+                updateRequest.add((List<SolrInputDocument>) list);
+
+                updateRequest.process(solrServer);
+            } else {
+                invalid = true;
+            }
 
         } else {
 
@@ -152,8 +167,12 @@ public class SolrProducer extends DefaultProducer {
 
                 solrServer.request(xmlRequest);                
             } else {
-                throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
+                invalid = true;
             }
+        }
+
+        if (invalid) {
+            throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "unable to find data in Exchange to update Solr");
         }
     }
 

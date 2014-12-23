@@ -17,6 +17,7 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -85,6 +86,35 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         QueryResponse response = executeSolrQuery("id:MA147LL/A");
         assertEquals(0, response.getStatus());
         assertEquals(1, response.getResults().getNumFound());
+    }
+
+    @Test
+    public void testInsertSolrInputDocumentList() throws Exception {
+        List<SolrInputDocument> docList = new ArrayList<SolrInputDocument>(2);
+
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "MA147LL/A", 1.0f);
+        docList.add(doc);
+
+        doc = new SolrInputDocument();
+        doc.addField("id", "KP147LL/A", 1.0f);
+        docList.add(doc);
+
+        template.sendBodyAndHeader("direct:start", docList, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+
+        response = executeSolrQuery("id:KP147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+
+        response = executeSolrQuery("id:KP147LL/ABC");
+        assertEquals(0, response.getStatus());
+        assertEquals(0, response.getResults().getNumFound());
     }
 
     @Test
