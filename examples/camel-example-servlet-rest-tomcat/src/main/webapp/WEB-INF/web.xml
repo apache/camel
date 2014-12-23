@@ -50,16 +50,15 @@
   <!-- START SNIPPET: e1 -->
   <!-- to setup Camel Swagger api servlet -->
   <servlet>
-    <!-- we are using spring so use the spring swagger servlet -->
     <servlet-name>ApiDeclarationServlet</servlet-name>
-    <servlet-class>org.apache.camel.component.swagger.spring.SpringRestSwaggerApiDeclarationServlet</servlet-class>
+    <servlet-class>org.apache.camel.component.swagger.DefaultCamelSwaggerServlet</servlet-class>
     <init-param>
       <param-name>base.path</param-name>
-      <param-value>http://localhost:8080/rest</param-value>
+      <param-value>http://localhost:8080/camel-example-servlet-rest-tomcat/rest</param-value>
     </init-param>
     <init-param>
       <param-name>api.path</param-name>
-      <param-value>http://localhost:8080/api-docs</param-value>
+      <param-value>http://localhost:8080/camel-example-servlet-rest-tomcat/api-docs</param-value>
     </init-param>
     <init-param>
       <param-name>api.version</param-name>

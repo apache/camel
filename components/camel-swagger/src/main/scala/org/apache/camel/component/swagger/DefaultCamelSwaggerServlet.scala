@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.swagger
 
-import java.io.StringReader
 import java.lang.management.ManagementFactory
 import javax.management.{MBeanServer, ObjectName}
-import javax.xml.bind.{JAXBContext, Unmarshaller}
 
+import org.apache.camel.model.ModelHelper
 import org.apache.camel.model.rest.{RestDefinition, RestsDefinition}
 
 import scala.collection.mutable
@@ -37,7 +36,7 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     var found: ObjectName = null
 
     val server: MBeanServer = ManagementFactory.getPlatformMBeanServer
-    val names = server.queryMBeans(new ObjectName("*:type=context,*"), null)
+    val names = server.queryNames(new ObjectName("*:type=context,*"), null)
     for (name <- names.asScala) {
       val on = name.asInstanceOf[ObjectName]
       val id: String = on.getKeyProperty("name")
@@ -49,11 +48,13 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     if (found != null) {
       val result = server.invoke(found, "dumpRestsAsXml", null, null)
       if (result != null) {
-        val context: JAXBContext = JAXBContext.newInstance(classOf[RestsDefinition])
-        val unmarshaller: Unmarshaller = context.createUnmarshaller
         val xml = result.asInstanceOf[String]
-        val rests: RestsDefinition = unmarshaller.unmarshal(new StringReader(xml)).asInstanceOf[RestsDefinition]
-        return rests.getRests.asScala
+        val rests: RestsDefinition = ModelHelper.createModelFromXml(xml, classOf[RestsDefinition])
+        val answer = new scala.collection.mutable.ListBuffer[RestDefinition]
+        for (rest <- rests.getRests.asScala) {
+          answer += rest
+        }
+        return answer
       }
     }
 
