@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.aggregate.cassandra;
 
-import org.apache.camel.processor.aggregate.cassandra.CassandraAggregationRepository;
-import org.apache.camel.processor.aggregate.cassandra.NamedCassandraAggregationRepository;
+import java.util.Set;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.CamelContext;
@@ -28,88 +28,102 @@ import org.apache.camel.impl.DefaultExchange;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
 public class CassandraAggregationRepositoryTest {
+    @Rule
+    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("AggregationDataSet.cql");
+
     private Cluster cluster;
     private Session session;
     private CassandraAggregationRepository aggregationRepository;
     private CamelContext camelContext;
-    @Rule
-    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("AggregationDataSet.cql");
-    
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         CassandraUnitUtils.startEmbeddedCassandra();
     }
+
     @Before
     public void setUp() throws Exception {
-        camelContext =new DefaultCamelContext();
+        camelContext = new DefaultCamelContext();
         cluster = CassandraUnitUtils.cassandraCluster();
         session = cluster.connect(CassandraUnitUtils.KEYSPACE);
         aggregationRepository = new NamedCassandraAggregationRepository(session, "ID");
         aggregationRepository.start();
     }
+
     @After
     public void tearDown() throws Exception {
         aggregationRepository.stop();
         session.close();
         cluster.close();
     }
+
     @AfterClass
     public static void tearDownClass() throws Exception {
         CassandraUnitUtils.cleanEmbeddedCassandra();
     }
+
     private boolean exists(String key) {
         return session.execute(
                 "select KEY from CAMEL_AGGREGATION where NAME=? and KEY=?", "ID", key)
-                .one()!=null;
+                .one() != null;
     }
+
     @Test
     public void testAdd() {
         // Given
-        String key="Add";
+        String key = "Add";
         assertFalse(exists(key));
         Exchange exchange = new DefaultExchange(camelContext);
         // When
         aggregationRepository.add(camelContext, key, exchange);
         // Then
-        assertTrue(exists(key));        
+        assertTrue(exists(key));
     }
+
     @Test
-    public void testGet_Exists() {
+    public void testGetExists() {
         // Given
-        String key="Get_Exists";
+        String key = "Get_Exists";
         Exchange exchange = new DefaultExchange(camelContext);
         aggregationRepository.add(camelContext, key, exchange);
         assertTrue(exists(key));
         // When
-        Exchange exchange2=aggregationRepository.get(camelContext, key);
+        Exchange exchange2 = aggregationRepository.get(camelContext, key);
         // Then
         assertNotNull(exchange2);
-        assertEquals(exchange.getExchangeId(), exchange2.getExchangeId());        
+        assertEquals(exchange.getExchangeId(), exchange2.getExchangeId());
     }
+
     @Test
-    public void testGet_NotExists() {
+    public void testGetNotExists() {
         // Given
-        String key="Get_NotExists";
+        String key = "Get_NotExists";
         assertFalse(exists(key));
         // When
-        Exchange exchange2=aggregationRepository.get(camelContext, key);
+        Exchange exchange2 = aggregationRepository.get(camelContext, key);
         // Then
         assertNull(exchange2);
     }
+
     @Test
-    public void testRemove_Exists() {
+    public void testRemoveExists() {
         // Given
-        String key="Remove_Exists";
+        String key = "Remove_Exists";
         Exchange exchange = new DefaultExchange(camelContext);
         aggregationRepository.add(camelContext, key, exchange);
         assertTrue(exists(key));
@@ -118,10 +132,11 @@ public class CassandraAggregationRepositoryTest {
         // Then
         assertFalse(exists(key));
     }
+
     @Test
-    public void testRemove_NotExists() {
+    public void testRemoveNotExists() {
         // Given
-        String key="Remove_NotExists";
+        String key = "RemoveNotExists";
         Exchange exchange = new DefaultExchange(camelContext);
         assertFalse(exists(key));
         // When
@@ -129,28 +144,30 @@ public class CassandraAggregationRepositoryTest {
         // Then
         assertFalse(exists(key));
     }
+
     @Test
     public void testGetKeys() {
         // Given
-        String[] keys={"GetKeys1", "GetKeys2"};
-        for(String key: keys) {
+        String[] keys = {"GetKeys1", "GetKeys2"};
+        for (String key : keys) {
             Exchange exchange = new DefaultExchange(camelContext);
             aggregationRepository.add(camelContext, key, exchange);
         }
         // When
-        Set<String> keySet=aggregationRepository.getKeys();
+        Set<String> keySet = aggregationRepository.getKeys();
         // Then
-        for(String key: keys) {
+        for (String key : keys) {
             assertTrue(keySet.contains(key));
         }
     }
+
     @Test
-    public void testConfirm_Exist() {
+    public void testConfirmExist() {
         // Given
-        for(int i=1;i<4;i++) {
-            String key="Confirm_"+i;
+        for (int i = 1; i < 4; i++) {
+            String key = "Confirm_" + i;
             Exchange exchange = new DefaultExchange(camelContext);
-            exchange.setExchangeId("Exchange_"+i);
+            exchange.setExchangeId("Exchange_" + i);
             aggregationRepository.add(camelContext, key, exchange);
             assertTrue(exists(key));
         }
@@ -161,21 +178,22 @@ public class CassandraAggregationRepositoryTest {
         assertFalse(exists("Confirm_2"));
         assertTrue(exists("Confirm_3"));
     }
+
     @Test
-    public void testConfirm_NotExist() {
+    public void testConfirmNotExist() {
         // Given
-        for(int i=1;i<4;i++) {
-            String key="Confirm_"+i;
+        for (int i = 1; i < 4; i++) {
+            String key = "Confirm_" + i;
             Exchange exchange = new DefaultExchange(camelContext);
-            exchange.setExchangeId("Exchange_"+i);
+            exchange.setExchangeId("Exchange_" + i);
             aggregationRepository.add(camelContext, key, exchange);
             assertTrue(exists(key));
         }
         // When
         aggregationRepository.confirm(camelContext, "Exchange_5");
         // Then
-        for(int i=1;i<4;i++) {
-            assertTrue(exists("Confirm_"+i));
+        for (int i = 1; i < 4; i++) {
+            assertTrue(exists("Confirm_" + i));
         }
     }
 

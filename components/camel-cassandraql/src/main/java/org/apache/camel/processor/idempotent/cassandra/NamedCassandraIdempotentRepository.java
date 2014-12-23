@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.idempotent.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 /**
- * Concrete implementation of {@link  CassandraIdempotentRepository} using 2 
+ * Concrete implementation of {@link  CassandraIdempotentRepository} using 2
  * columns as primary key: name (partition key) and key (clustering key).
  */
-public class NamedCassandraIdempotentRepository<K> extends CassandraIdempotentRepository<K>{
+public class NamedCassandraIdempotentRepository<K> extends CassandraIdempotentRepository<K> {
     /**
      * Idempotent repository name
      */
@@ -32,17 +32,19 @@ public class NamedCassandraIdempotentRepository<K> extends CassandraIdempotentRe
     public NamedCassandraIdempotentRepository() {
         setPKColumns("NAME", "KEY");
     }
+
     public NamedCassandraIdempotentRepository(Session session, String name) {
         super(session);
         this.name = name;
         setPKColumns("NAME", "KEY");
     }
+
     public NamedCassandraIdempotentRepository(Cluster cluster, String keyspace, String name) {
         super(cluster, keyspace);
         this.name = name;
         setPKColumns("NAME", "KEY");
     }
-    
+
     @Override
     protected Object[] getPKValues(K key) {
         return new Object[]{name, key};

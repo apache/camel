@@ -1,10 +1,26 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.ConsistencyLevel;
+import java.util.Collection;
+
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import java.util.Collection;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -14,16 +30,17 @@ import org.slf4j.LoggerFactory;
 /**
  * Cassandra 2 CQL3 producer.
  * <dl>
- *  <dt>In Message</dt>
- *  <dd>Bound parameters: Collection of Objects, Array of Objects, Simple Object<dd>
- *  <dt>Out Message</dt>
- *  <dd>List of all Rows<dd>
+ * <dt>In Message</dt>
+ * <dd>Bound parameters: Collection of Objects, Array of Objects, Simple Object<dd>
+ * <dt>Out Message</dt>
+ * <dd>List of all Rows<dd>
  * <dl>
  */
 public class CassandraProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CassandraProducer.class);
     private PreparedStatement preparedStatement;
+
     public CassandraProducer(CassandraEndpoint endpoint) {
         super(endpoint);
     }
@@ -47,14 +64,15 @@ public class CassandraProducer extends DefaultProducer {
         }
         return cqlParams;
     }
+
     /**
      * Execute CQL query using incoming message body has statement parameters.
      */
     private ResultSet execute(Message message) {
         String messageCql = message.getHeader(CassandraConstants.CQL_QUERY, String.class);
         Object[] cqlParams = getCqlParams(message);
-        
-        ResultSet resultSet;  
+
+        ResultSet resultSet;
         PreparedStatement lPreparedStatement;
         if (messageCql == null || messageCql.isEmpty()) {
             // URI CQL
@@ -71,7 +89,7 @@ public class CassandraProducer extends DefaultProducer {
             resultSet = session.execute(lPreparedStatement.bind());
         } else {
             resultSet = session.execute(lPreparedStatement.bind(cqlParams));
-        }            
+        }
         return resultSet;
     }
 

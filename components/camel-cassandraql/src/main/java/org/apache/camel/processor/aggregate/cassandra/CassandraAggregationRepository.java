@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.aggregate.cassandra;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AggregationRepository;
@@ -33,14 +34,20 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.apache.camel.utils.cassandra.CassandraUtils.*;
+
+import static org.apache.camel.utils.cassandra.CassandraUtils.append;
+import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
+import static org.apache.camel.utils.cassandra.CassandraUtils.concat;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 
 /**
  * Implementation of {@link AggregationRepository} using Cassandra table to store
  * exchanges.
  * Advice: use LeveledCompaction for this table and tune read/write consistency levels.
  * Warning: Cassandra is not the best tool for queuing use cases
- * @see http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
+ * See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
 public abstract class CassandraAggregationRepository extends ServiceSupport implements AggregationRepository {
     /**
@@ -58,11 +65,11 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     /**
      * Exchange Id column name
      */
-    private String exchangeIdColumn="EXCHANGE_ID";
+    private String exchangeIdColumn = "EXCHANGE_ID";
     /**
      * Exchange column name
      */
-    private String exchangeColumn="EXCHANGE";
+    private String exchangeColumn = "EXCHANGE";
     /**
      * Primary key columns
      */
@@ -83,7 +90,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
      * Read consistency level
      */
     private ConsistencyLevel readConsistencyLevel;
-    
+
     private PreparedStatement insertStatement;
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
@@ -102,31 +109,36 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     public CassandraAggregationRepository(Session session) {
         this.sessionHolder = new CassandraSessionHolder(session);
     }
+
     public CassandraAggregationRepository(Cluster cluster, String keyspace) {
         this.sessionHolder = new CassandraSessionHolder(cluster, keyspace);
     }
+
     /**
      * Get fixed primary key values.
      */
     protected abstract Object[] getPKValues();
+
     /**
      * Generate primary key values: fixed + aggregation key.
      */
     protected Object[] getPKValues(String key) {
         return append(getPKValues(), key);
     }
+
     /**
      * Get aggregation key colum name.
      */
     private String getKeyColumn() {
-        return pkColumns[pkColumns.length-1];
+        return pkColumns[pkColumns.length - 1];
     }
+
     private String[] getAllColumns() {
         return append(pkColumns, exchangeIdColumn, exchangeColumn);
     }
     //--------------------------------------------------------------------------
     // Service support
-    
+
     @Override
     protected void doStart() throws Exception {
         sessionHolder.start();
@@ -146,12 +158,13 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Add exchange to repository
 
     private void initInsertStatement() {
-        String cql = generateInsert(table, 
-                getAllColumns(), 
+        String cql = generateInsert(table,
+                getAllColumns(),
                 false, ttl).toString();
         LOGGER.debug("Generated Insert {}", cql);
         insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
     }
+
     /**
      * Insert or update exchange in aggregation table.
      */
@@ -173,12 +186,13 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Get exchange from repository
 
     protected void initSelectStatement() {
-        String cql = generateSelect(table, 
-                getAllColumns(), 
+        String cql = generateSelect(table,
+                getAllColumns(),
                 pkColumns).toString();
         LOGGER.debug("Generated Select {}", cql);
         selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
+
     /**
      * Get exchange from aggregation table by aggregation key.
      */
@@ -188,7 +202,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
         LOGGER.debug("Selecting key {} ", pkValues);
         Row row = getSession().execute(selectStatement.bind(pkValues)).one();
         Exchange exchange = null;
-        if (row!=null) {
+        if (row != null) {
             try {
                 exchange = exchangeCodec.unmarshallExchange(camelContext, row.getBytes(exchangeColumn));
             } catch (IOException iOException) {
@@ -216,10 +230,10 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         Object[] pkValues = getPKValues();
-        String keyColumn= getKeyColumn();
+        String keyColumn = getKeyColumn();
         LOGGER.debug("Selecting Ids {} ", pkValues);
         List<Row> rows = selectKeyIds();
-        for(Row row:rows) {
+        for (Row row : rows) {
             if (row.getString(exchangeIdColumn).equals(exchangeId)) {
                 String key = row.getString(keyColumn);
                 Object[] cqlParams = append(pkValues, key, exchangeId);
@@ -247,11 +261,12 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
         LOGGER.debug("Deleting key {}", (Object) idValues);
         getSession().execute(deleteStatement.bind(idValues));
     }
+
     // -------------------------------------------------------------------------
-    private void initSelectKeyIdStatement() { 
-        String cql = generateSelect(table, 
+    private void initSelectKeyIdStatement() {
+        String cql = generateSelect(table,
                 new String[]{getKeyColumn(), exchangeIdColumn}, // Key + Exchange Id columns
-                pkColumns, pkColumns.length-1).toString(); // Where fixed PK columns
+                pkColumns, pkColumns.length - 1).toString(); // Where fixed PK columns
         LOGGER.debug("Generated Select keys {}", cql);
         selectKeyIdStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
@@ -270,7 +285,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
         List<Row> rows = selectKeyIds();
         Set<String> keys = new HashSet<String>(rows.size());
         String keyColumnName = getPKColumns()[1];
-        for(Row row:rows) {
+        for (Row row : rows) {
             keys.add(row.getString(keyColumnName));
         }
         return keys;
@@ -295,10 +310,12 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     public void setTable(String table) {
         this.table = table;
     }
+
     public String[] getPKColumns() {
         return pkColumns;
     }
-    public void setPKColumns(String ... pkColumns) {
+
+    public void setPKColumns(String... pkColumns) {
         this.pkColumns = pkColumns;
     }
 
@@ -325,7 +342,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     public void setReadConsistencyLevel(ConsistencyLevel readConsistencyLevel) {
         this.readConsistencyLevel = readConsistencyLevel;
     }
-    
+
     public String getExchangeColumn() {
         return exchangeColumn;
     }
@@ -341,5 +358,5 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     public void setTtl(Integer ttl) {
         this.ttl = ttl;
     }
-    
+
 }

@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.utils.cassandra;
 
 import com.datastax.driver.core.ConsistencyLevel;
@@ -27,41 +27,46 @@ public class CassandraUtils {
      * Apply consistency level if provided, else leave default.
      */
     public static PreparedStatement applyConsistencyLevel(PreparedStatement statement, ConsistencyLevel consistencyLevel) {
-        if (consistencyLevel!=null) {
+        if (consistencyLevel != null) {
             statement.setConsistencyLevel(consistencyLevel);
         }
         return statement;
     }
+
     /**
      * Concatenate 2 arrays.
      */
     public static Object[] concat(Object[] array1, Object[] array2) {
-        Object[] array = new Object[array1.length+array2.length];
+        Object[] array = new Object[array1.length + array2.length];
         System.arraycopy(array1, 0, array, 0, array1.length);
         System.arraycopy(array2, 0, array, array1.length, array2.length);
         return array;
     }
+
     /**
      * Concatenate 2 arrays.
      */
     public static String[] concat(String[] array1, String[] array2) {
-        String[] array = new String[array1.length+array2.length];
+        String[] array = new String[array1.length + array2.length];
         System.arraycopy(array1, 0, array, 0, array1.length);
         System.arraycopy(array2, 0, array, array1.length, array2.length);
         return array;
     }
+
     /**
      * Append values to given array.
      */
-    public static Object[] append(Object[] array1, Object ... array2) {
+    public static Object[] append(Object[] array1, Object... array2) {
         return concat(array1, array2);
     }
+
     /**
      * Append values to given array.
      */
-    public static String[] append(String[] array1, String ... array2) {
+    public static String[] append(String[] array1, String... array2) {
         return concat(array1, array2);
     }
+
     /**
      * Append columns to CQL.
      */
@@ -77,7 +82,7 @@ public class CassandraUtils {
     /**
      * Append columns to CQL.
      */
-    public static  void appendColumns(StringBuilder cqlBuilder, String[] columns, String sep) {
+    public static void appendColumns(StringBuilder cqlBuilder, String[] columns, String sep) {
         appendColumns(cqlBuilder, columns, sep, columns.length);
     }
 
@@ -89,12 +94,14 @@ public class CassandraUtils {
         appendColumns(cqlBuilder, columns, "=? and ", maxColumnIndex);
         cqlBuilder.append("=?");
     }
+
     /**
      * Append where columns = ? to CQL.
      */
     public void appendWhere(StringBuilder cqlBuilder, String[] columns) {
         appendWhere(cqlBuilder, columns, columns.length);
     }
+
     /**
      * Append ?,? to CQL.
      */
@@ -120,11 +127,12 @@ public class CassandraUtils {
         if (ifNotExists) {
             cqlBuilder.append(" if not exists");
         }
-        if (ttl!=null) {
+        if (ttl != null) {
             cqlBuilder.append(" using ttl=").append(ttl);
         }
-        return cqlBuilder;        
+        return cqlBuilder;
     }
+
     /**
      * Generate select where columns = ? CQL.
      */
@@ -142,18 +150,20 @@ public class CassandraUtils {
         appendWhere(cqlBuilder, whereColumns, whereColumnsMaxIndex);
         return cqlBuilder;
     }
+
     /**
      * Generate delete where columns = ? CQL.
      */
     public static StringBuilder generateDelete(String table, String[] whereColumns, boolean ifExists) {
         return generateDelete(table, whereColumns, whereColumns.length, ifExists);
     }
+
     /**
      * Generate delete where columns = ? CQL.
      */
     public static StringBuilder generateDelete(String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
         StringBuilder cqlBuilder = new StringBuilder("delete from ")
-            .append(table);
+                .append(table);
         appendWhere(cqlBuilder, whereColumns, whereColumnsMaxIndex);
         if (ifExists) {
             cqlBuilder.append(" if exists");

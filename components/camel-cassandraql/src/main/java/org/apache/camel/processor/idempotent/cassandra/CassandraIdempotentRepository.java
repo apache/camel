@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -26,14 +27,19 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.apache.camel.utils.cassandra.CassandraUtils.*;
+
+import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 
 /**
  * Implementation of {@link IdempotentRepository} using Cassandra table to store
  * message ids.
  * Advice: use LeveledCompaction for this table and tune read/write consistency levels.
  * Warning: Cassandra is not the best tool for queuing use cases
- * @see http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
+ * See http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
+ *
  * @param <K> Message Id
  */
 public abstract class CassandraIdempotentRepository<K> extends ServiceSupport implements IdempotentRepository<K> {
@@ -75,20 +81,22 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     public CassandraIdempotentRepository(Session session) {
         this.sessionHolder = new CassandraSessionHolder(session);
     }
+
     public CassandraIdempotentRepository(Cluster cluster, String keyspace) {
         this.sessionHolder = new CassandraSessionHolder(cluster, keyspace);
     }
 
     private boolean isKey(ResultSet resultSet) {
-        Row row = resultSet.one(); 
-        if (row==null) {
+        Row row = resultSet.one();
+        if (row == null) {
             LOGGER.debug("No row to check key");
             return false;
         } else {
-            LOGGER.debug("Row with {} columns to check key", row.getColumnDefinitions());            
-            return row.getColumnDefinitions().size()>1;
+            LOGGER.debug("Row with {} columns to check key", row.getColumnDefinitions());
+            return row.getColumnDefinitions().size() > 1;
         }
     }
+
     protected abstract Object[] getPKValues(K key);
     // -------------------------------------------------------------------------
     // Lifecycle methods
@@ -182,7 +190,7 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     }
 
     public void setPKColumns(String... pkColumns) {
-        this.pkColumns=pkColumns;
+        this.pkColumns = pkColumns;
     }
 
     public Integer getTtl() {
@@ -208,5 +216,5 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
     public void setReadConsistencyLevel(ConsistencyLevel readConsistencyLevel) {
         this.readConsistencyLevel = readConsistencyLevel;
     }
-    
+
 }

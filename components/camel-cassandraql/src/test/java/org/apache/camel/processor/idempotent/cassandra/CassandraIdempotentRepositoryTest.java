@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -21,26 +22,30 @@ import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link CassandraIdempotentRepository}
  */
 public class CassandraIdempotentRepositoryTest {
+    @Rule
+    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("IdempotentDataSet.cql");
+
     private Cluster cluster;
     private Session session;
     private CassandraIdempotentRepository<String> idempotentRepository;
-    @Rule
-    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("IdempotentDataSet.cql");
-    
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         CassandraUnitUtils.startEmbeddedCassandra();
     }
+
     @Before
     public void setUp() throws Exception {
         cluster = CassandraUnitUtils.cassandraCluster();
@@ -48,82 +53,91 @@ public class CassandraIdempotentRepositoryTest {
         idempotentRepository = new NamedCassandraIdempotentRepository<String>(session, "ID");
         idempotentRepository.start();
     }
+
     @After
     public void tearDown() throws Exception {
         idempotentRepository.stop();
         session.close();
         cluster.close();
     }
+
     @AfterClass
     public static void tearDownClass() throws Exception {
         CassandraUnitUtils.cleanEmbeddedCassandra();
     }
+
     private boolean exists(String key) {
         return session.execute(
-                "select KEY from CAMEL_IDEMPOTENT where NAME=? and KEY=?","ID", key)
-                .one()!=null;
+                "select KEY from CAMEL_IDEMPOTENT where NAME=? and KEY=?", "ID", key)
+                .one() != null;
     }
+
     @Test
-    public void testAdd_NotExists() {
+    public void testAddNotExists() {
         // Given
-        String key="Add_NotExists";
+        String key = "Add_NotExists";
         assertFalse(exists(key));
         // When
-        boolean result=idempotentRepository.add(key);
+        boolean result = idempotentRepository.add(key);
         // Then
         assertTrue(result);
-        assertTrue(exists(key));        
+        assertTrue(exists(key));
     }
+
     @Test
-    public void testAdd_Exists() {
+    public void testAddExists() {
         // Given
-        String key="Add_Exists";
+        String key = "Add_Exists";
         assertTrue(exists(key));
         // When
-        boolean result=idempotentRepository.add(key);
+        boolean result = idempotentRepository.add(key);
         // Then
         assertFalse(result);
-        assertTrue(exists(key));        
+        assertTrue(exists(key));
     }
+
     @Test
-    public void testContains_NotExists() {
+    public void testContainsNotExists() {
         // Given
-        String key="Contains_NotExists";
+        String key = "Contains_NotExists";
         assertFalse(exists(key));
         // When
-        boolean result=idempotentRepository.contains(key);
+        boolean result = idempotentRepository.contains(key);
         // Then
         assertFalse(result);
     }
+
     @Test
-    public void testContains_Exists() {
+    public void testContainsExists() {
         // Given
-        String key="Contains_Exists";
+        String key = "Contains_Exists";
         assertTrue(exists(key));
         // When
-        boolean result=idempotentRepository.contains(key);
+        boolean result = idempotentRepository.contains(key);
         // Then
         assertTrue(result);
     }
+
     @Test
-    public void testRemove_NotExists() {
+    public void testRemoveNotExists() {
         // Given
-        String key="Remove_NotExists";
+        String key = "Remove_NotExists";
         assertFalse(exists(key));
         // When
-        boolean result=idempotentRepository.contains(key);
+        boolean result = idempotentRepository.contains(key);
         // Then
         // assertFalse(result);
     }
+
     @Test
-    public void testRemove_Exists() {
+    public void testRemoveExists() {
         // Given
-        String key="Remove_Exists";
+        String key = "Remove_Exists";
         assertTrue(exists(key));
         // When
-        boolean result=idempotentRepository.remove(key);
+        boolean result = idempotentRepository.remove(key);
         // Then
         assertTrue(result);
     }
-    
+
 }

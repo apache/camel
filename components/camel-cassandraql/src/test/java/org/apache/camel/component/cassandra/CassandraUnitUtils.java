@@ -1,9 +1,10 @@
-/*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -26,11 +27,15 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 /**
  * Util methods to manage Cassandra in Unit tests
  */
-public class CassandraUnitUtils {
+public final class CassandraUnitUtils {
     public static final String HOST = "127.0.0.1";
     public static final String KEYSPACE = "camel_ks";
 
     private static CassandraCQLUnit cassandraCQLUnit;
+
+    private CassandraUnitUtils() {
+    }
+
     /**
      * Create Cassandra JUnit Rule.
      */
@@ -40,6 +45,7 @@ public class CassandraUnitUtils {
         }
         return cassandraCQLUnit;
     }
+
     public static CassandraCQLUnit cassandraCQLUnit(String dataSetCql) {
         return cassandraCQLUnit(cqlDataSet(dataSetCql));
     }
@@ -47,6 +53,7 @@ public class CassandraUnitUtils {
     public static CQLDataSet cqlDataSet(String dataSetCql) {
         return new ClassPathCQLDataSet(dataSetCql, KEYSPACE);
     }
+
     public static void loadCQLDataSet(Session session, String dataSetCql) {
         CQLDataLoader loader = new CQLDataLoader(session);
         loader.load(cqlDataSet(dataSetCql));
@@ -55,6 +62,7 @@ public class CassandraUnitUtils {
     public static CassandraCQLUnit cassandraCQLUnit(CQLDataSet dataset) {
         return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml", HOST, 9042);
     }
+
     /**
      * Start embedded Cassandra.
      */
@@ -68,6 +76,7 @@ public class CassandraUnitUtils {
     public static void cleanEmbeddedCassandra() throws Exception {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
+
     public static Cluster cassandraCluster() {
         return Cluster.builder()
                 .addContactPoint(HOST)
