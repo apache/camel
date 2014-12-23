@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -672,6 +673,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<RestContextRefDefinition> getRestRefs();
 
     public abstract String getErrorHandlerRef();
+   
+    public abstract String getInflightRepositoryRef();
 
     public abstract DataFormatsDefinition getDataFormats();
 
@@ -714,6 +717,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getErrorHandlerRef() != null) {
             ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
+        }
+        if (getInflightRepositoryRef() != null) {
+            InflightRepository repository = ctx.getRegistry().lookupByNameAndType(getInflightRepositoryRef(), InflightRepository.class);
+            if (repository == null) {
+                throw new IllegalArgumentException("Cannot not find InflightRepository instance from CamelContext registry with " + getInflightRepositoryRef());
+            }
+            ctx.addService(repository);
+            ctx.setInflightRepository(repository);
         }
         if (getAutoStartup() != null) {
             ctx.setAutoStartup(CamelContextHelper.parseBoolean(getContext(), getAutoStartup()));
