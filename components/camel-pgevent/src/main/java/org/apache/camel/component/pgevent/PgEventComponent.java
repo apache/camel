@@ -18,7 +18,6 @@ package org.apache.camel.component.pgevent;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
@@ -27,12 +26,8 @@ import org.apache.camel.impl.UriEndpointComponent;
  */
 public class PgEventComponent extends UriEndpointComponent {
 
-    public PgEventComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
-    }
-
-    public PgEventComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
+    public PgEventComponent() {
+        super(PgEventEndpoint.class);
     }
 
     @Override

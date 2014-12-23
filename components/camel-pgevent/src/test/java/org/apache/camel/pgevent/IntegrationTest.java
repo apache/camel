@@ -18,10 +18,6 @@ package org.apache.camel.pgevent;
 
 import com.impossibl.postgres.jdbc.PGDataSource;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.log.LogComponent;
-import org.apache.camel.component.pgevent.PgEventComponent;
-import org.apache.camel.component.pgevent.PgEventEndpoint;
-import org.apache.camel.component.timer.TimerComponent;
 import org.apache.camel.main.Main;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +37,6 @@ public class IntegrationTest {
         ds.setUser(System.getProperty("pgjdbc.test.user", "dphillips"));
 
         main = new Main();
-        main.bind("pgevent", new PgEventComponent(PgEventEndpoint.class));
-        main.bind("log", new LogComponent());
-        main.bind("timer", new TimerComponent());
         main.enableHangupSupport();
         main.bind("test", ds);
         main.addRouteBuilder(buildConsumer());
