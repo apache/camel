@@ -20,12 +20,11 @@ import com.wordnik.swagger.core.util.ReaderUtil
 import com.wordnik.swagger.config.SwaggerConfig
 import com.wordnik.swagger.model.ApiListing
 
-import org.apache.camel.CamelContext
+import org.apache.camel.model.rest.RestDefinition
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-// to iterate Java list using for loop
-import scala.collection.JavaConverters._
 
 /**
  * To cache the RestSwaggerReader
@@ -35,11 +34,10 @@ object RestApiListingCache extends ReaderUtil {
   var cache: Option[Map[String, ApiListing]] = None
   val reader = new RestSwaggerReader()
 
-  def listing(camel: CamelContext, config: SwaggerConfig): Option[Map[String, ApiListing]] = {
+  def listing(rests: mutable.Buffer[RestDefinition], config: SwaggerConfig): Option[Map[String, ApiListing]] = {
     cache.orElse {
       val listings = new ListBuffer[ApiListing]
 
-      val rests = camel.getRestDefinitions.asScala
       for (rest <- rests) {
         val some = reader.read(rest, config)
         if (!some.isEmpty) {

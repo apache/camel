@@ -30,10 +30,8 @@ import org.slf4j.LoggerFactory
 import scala.collection.mutable.ListBuffer
 import com.wordnik.swagger.model.Parameter
 import com.wordnik.swagger.model.ApiDescription
-import scala.Some
 import com.wordnik.swagger.model.Operation
 import com.wordnik.swagger.model.ApiListing
-import scala.util.Sorting
 
 // to iterate Java list using for loop
 import scala.collection.JavaConverters._

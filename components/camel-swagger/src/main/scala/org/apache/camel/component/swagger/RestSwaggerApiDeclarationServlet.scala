@@ -27,6 +27,9 @@ import com.wordnik.swagger.model.{ApiInfo, ResourceListing, ApiListingReference}
 import org.apache.camel.CamelContext
 import org.slf4j.LoggerFactory
 
+// to iterate Java list using for loop
+import scala.collection.JavaConverters._
+
 /**
  * A Http Servlet to expose the REST services as Swagger APIs.
  */
@@ -116,7 +119,8 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
     if (camel != null) {
       val f = new SpecFilter
-      val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
+      val rests = camel.getRestDefinitions.asScala
+      val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
         (for (spec <- specs.values)
         yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
           ).filter(m => m.apis.size > 0)
@@ -159,7 +163,8 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     }
 
     if (camel != null) {
-      val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
+      val rests = camel.getRestDefinitions.asScala
+      val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
           (for (spec <- specs.values) yield {
           f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
         }).filter(m => m.resourcePath == pathPart)
