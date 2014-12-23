@@ -24,8 +24,10 @@ import com.wordnik.swagger.core.util.JsonSerializer
 import com.wordnik.swagger.config.{SwaggerConfig, ConfigFactory, FilterFactory}
 import com.wordnik.swagger.model.{ApiInfo, ResourceListing, ApiListingReference}
 
-import org.apache.camel.CamelContext
+import org.apache.camel.model.rest.RestDefinition
 import org.slf4j.LoggerFactory
+
+import scala.collection.mutable
 
 // to iterate Java list using for loop
 import scala.collection.JavaConverters._
@@ -38,7 +40,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerApiDeclarationServlet])
 
   val reader = new RestSwaggerReader()
-  var camel: CamelContext = null
+  var camelId: String = null
   val swaggerConfig: SwaggerConfig = ConfigFactory.config
   var cors: Boolean = false
 
@@ -66,6 +68,10 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     if (s != null) {
       cors = "true".equalsIgnoreCase(s)
     }
+    s = config.getInitParameter("camelId")
+    if (s != null) {
+      camelId = s
+    }
 
     val title = config.getInitParameter("api.title")
     val description = config.getInitParameter("api.description")
@@ -76,20 +82,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
     val apiInfo = new ApiInfo(title, description, termsOfServiceUrl, contact, license, licenseUrl)
     swaggerConfig.setApiInfo(apiInfo)
-
-    camel = lookupCamelContext(config)
-    if (camel == null) {
-      LOG.warn("Cannot find CamelContext to be used.")
-    }
   }
 
-  /**
-   * Used for implementations to lookup the CamelContext to be used.
-   *
-   * @param config  the servlet config
-   * @return the CamelContext to use, or <tt>null</tt> if no CamelContext was found
-   */
-  def lookupCamelContext(config: ServletConfig) : CamelContext
+  def getRestDefinitions(camelId: String) : mutable.Buffer[RestDefinition]
 
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
     val route = request.getPathInfo
@@ -117,9 +112,9 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
       response.addHeader("Access-Control-Allow-Origin", "*")
     }
 
-    if (camel != null) {
+    val rests = getRestDefinitions(camelId)
+    if (rests != null) {
       val f = new SpecFilter
-      val rests = camel.getRestDefinitions.asScala
       val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
         (for (spec <- specs.values)
         yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
@@ -162,8 +157,8 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
       response.addHeader("Access-Control-Allow-Origin", "*")
     }
 
-    if (camel != null) {
-      val rests = camel.getRestDefinitions.asScala
+    val rests = getRestDefinitions(camelId)
+    if (rests != null) {
       val listings = RestApiListingCache.listing(rests, swaggerConfig).map(specs => {
           (for (spec <- specs.values) yield {
           f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)

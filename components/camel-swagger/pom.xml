@@ -43,13 +43,6 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- if using spring then the spring-web is assumed to be provided -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-annotations</artifactId>
