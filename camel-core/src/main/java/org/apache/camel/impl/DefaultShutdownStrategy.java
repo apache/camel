@@ -367,7 +367,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private ExecutorService getExecutorService() {
         if (executor == null) {
-            executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
+            // use a thread pool that allow to terminate idle threads so they do not hang around forever
+            executor = camelContext.getExecutorServiceManager().newThreadPool(this, "ShutdownTask", 0, 1);
         }
         return executor;
     }
