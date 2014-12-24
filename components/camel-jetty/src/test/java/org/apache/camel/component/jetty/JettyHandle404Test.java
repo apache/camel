@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -45,12 +46,23 @@ public class JettyHandle404Test extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testCustomerErrorHandler() throws Exception {
+        String response = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
+        // look for the error message which is sent by MyErrorHandler
+        assertTrue("Get a wrong error message", response.indexOf("MyErrorHandler") > 0);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // setup the jetty component with the customx error handler
+                JettyHttpComponent jettyComponent = (JettyHttpComponent)context.getComponent("jetty");
+                jettyComponent.setErrorHandler(new MyErrorHandler());
+                
                 // disable error handling
                 errorHandler(noErrorHandler());
 
