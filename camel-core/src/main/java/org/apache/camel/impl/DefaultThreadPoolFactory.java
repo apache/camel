@@ -58,9 +58,9 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
                                          int maxQueueSize, RejectedExecutionHandler rejectedExecutionHandler,
                                          ThreadFactory threadFactory) throws IllegalArgumentException {
 
-        // the core pool size must be higher than 0
-        if (corePoolSize < 1) {
-            throw new IllegalArgumentException("CorePoolSize must be >= 1, was " + corePoolSize);
+        // the core pool size must be 0 or higher
+        if (corePoolSize < 0) {
+            throw new IllegalArgumentException("CorePoolSize must be >= 0, was " + corePoolSize);
         }
 
         // validate max >= core

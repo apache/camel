@@ -198,7 +198,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         ThreadPoolProfile profile = new ThreadPoolProfile(name);
         profile.setPoolSize(poolSize);
         profile.setMaxPoolSize(maxPoolSize);
-        return  newThreadPool(source, name, profile);
+        return newThreadPool(source, name, profile);
     }
 
     @Override
