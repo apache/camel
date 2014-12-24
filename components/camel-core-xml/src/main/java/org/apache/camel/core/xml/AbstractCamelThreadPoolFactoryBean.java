@@ -49,6 +49,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @XmlAttribute
     private String maxQueueSize;
     @XmlAttribute
+    private String allowCoreThreadTimeOut;
+    @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
     @XmlAttribute(required = true)
     private String threadName;
@@ -76,11 +78,17 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
 
+        boolean allow = false;
+        if (allowCoreThreadTimeOut != null) {
+            allow = CamelContextHelper.parseBoolean(getCamelContext(), allowCoreThreadTimeOut);
+        }
+
         ThreadPoolProfile profile = new ThreadPoolProfileBuilder(getId())
                 .poolSize(size)
                 .maxPoolSize(max)
                 .keepAliveTime(keepAlive, timeUnit)
                 .maxQueueSize(queueSize)
+                .allowCoreThreadTimeOut(allow)
                 .rejectedPolicy(rejectedPolicy)
                 .build();
 
@@ -137,6 +145,14 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.maxQueueSize = maxQueueSize;
     }
 
+    public String getAllowCoreThreadTimeOut() {
+        return allowCoreThreadTimeOut;
+    }
+
+    public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
+    }
+
     public ThreadPoolRejectedPolicy getRejectedPolicy() {
         return rejectedPolicy;
     }
@@ -160,4 +176,5 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     public void setScheduled(Boolean scheduled) {
         this.scheduled = scheduled;
     }
+
 }

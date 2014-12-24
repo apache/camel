@@ -42,6 +42,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     private Long keepAliveTime;
     private TimeUnit timeUnit;
     private Integer maxQueueSize;
+    private Boolean allowCoreThreadTimeOut;
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     /**
@@ -190,6 +191,24 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     }
 
     /**
+     * Gets whether to allow core threads to timeout
+     *
+     * @return the allow core threads to timeout
+     */
+    public Boolean getAllowCoreThreadTimeOut() {
+        return allowCoreThreadTimeOut;
+    }
+
+    /**
+     * Sets whethre to allow core threads to timeout
+     *
+     * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     */
+    public void setAllowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
+    }
+
+    /**
      * Gets the policy for tasks which cannot be executed by the thread pool.
      *
      * @return the policy for the handler
@@ -243,6 +262,9 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
         if (maxQueueSize == null) {
             maxQueueSize = defaultProfile.getMaxQueueSize();
         }
+        if (allowCoreThreadTimeOut == null) {
+            allowCoreThreadTimeOut = defaultProfile.getAllowCoreThreadTimeOut();
+        }
         if (rejectedPolicy == null) {
             rejectedPolicy = defaultProfile.getRejectedPolicy();
         }
@@ -257,6 +279,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
         cloned.setMaxPoolSize(maxPoolSize);
         cloned.setMaxQueueSize(maxQueueSize);
         cloned.setPoolSize(maxPoolSize);
+        cloned.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
         cloned.setRejectedPolicy(rejectedPolicy);
         cloned.setTimeUnit(timeUnit);
         return cloned;
@@ -266,7 +289,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
     public String toString() {
         return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize
                 + ", keepAlive: " + keepAliveTime + " " + timeUnit + ", maxQueue: " + maxQueueSize
-                + ", rejectedPolicy:" + rejectedPolicy + "]";
+                + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
     }
 
 }

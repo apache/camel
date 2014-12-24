@@ -26,7 +26,7 @@
 
         <!-- define the default thread profile settings -->
         <threadPoolProfile id="customDefault" defaultProfile="true"
-                           poolSize="5" maxPoolSize="15" keepAliveTime="25" maxQueueSize="250" rejectedPolicy="Abort"/>
+                           poolSize="5" maxPoolSize="15" keepAliveTime="25" maxQueueSize="250" allowCoreThreadTimeOut="true" rejectedPolicy="Abort"/>
 
         <route>
             <from uri="direct:start"/>

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * Represents an XML &lt;threadPoolProfile/&gt; element
@@ -47,6 +48,8 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     private TimeUnit timeUnit;
     @XmlAttribute
     private String maxQueueSize;
+    @XmlAttribute
+    private String allowCoreThreadTimeOut;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
@@ -104,6 +107,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return this;
     }
 
+    public ThreadPoolProfileDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        setAllowCoreThreadTimeOut("" + allowCoreThreadTimeOut);
+        return this;
+    }
+
     public Boolean getDefaultProfile() {
         return defaultProfile;
     }
@@ -146,6 +154,14 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
 
     public void setMaxQueueSize(String maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
+    }
+
+    public String getAllowCoreThreadTimeOut() {
+        return allowCoreThreadTimeOut;
+    }
+
+    public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 
     public TimeUnit getTimeUnit() {

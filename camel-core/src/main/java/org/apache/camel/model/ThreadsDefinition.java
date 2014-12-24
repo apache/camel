@@ -65,6 +65,8 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     @XmlAttribute
     private Integer maxQueueSize;
     @XmlAttribute
+    private Boolean allowCoreThreadTimeOut;
+    @XmlAttribute
     private String threadName;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
@@ -92,6 +94,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
                     .keepAliveTime(getKeepAliveTime(), getTimeUnit())
                     .maxQueueSize(getMaxQueueSize())
                     .rejectedPolicy(getRejectedPolicy())
+                    .allowCoreThreadTimeOut(getAllowCoreThreadTimeOut())
                     .build();
             threadPool = manager.newThreadPool(this, name, profile);
             shutdownThreadPool = true;
@@ -113,6 +116,9 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
             }
             if (getRejectedPolicy() != null) {
                 throw new IllegalArgumentException("RejectedPolicy and executorServiceRef options cannot be used together.");
+            }
+            if (getAllowCoreThreadTimeOut() != null) {
+                throw new IllegalArgumentException("AllowCoreThreadTimeOut and executorServiceRef options cannot be used together.");
             }
         }
 
@@ -266,6 +272,19 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         return this;
     }
 
+    /**
+     * Whether to allow core threads to timeout
+     * <p/>
+     * Is by default <tt>false</tt>
+     *
+     * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
+     * @return the builder
+     */
+    public ThreadsDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        return this;
+    }
+
     public ExecutorService getExecutorService() {
         return executorService;
     }
@@ -344,5 +363,13 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
 
     public void setCallerRunsWhenRejected(Boolean callerRunsWhenRejected) {
         this.callerRunsWhenRejected = callerRunsWhenRejected;
+    }
+
+    public Boolean getAllowCoreThreadTimeOut() {
+        return allowCoreThreadTimeOut;
+    }
+
+    public void setAllowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 }

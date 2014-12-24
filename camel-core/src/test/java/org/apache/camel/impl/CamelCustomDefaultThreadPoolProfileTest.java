@@ -36,6 +36,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         profile.setMaxPoolSize(15);
         profile.setKeepAliveTime(25L);
         profile.setMaxQueueSize(250);
+        profile.setAllowCoreThreadTimeOut(true);
         profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
 
         camel.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
@@ -49,6 +50,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         assertEquals(15, profile.getMaxPoolSize().intValue());
         assertEquals(25, profile.getKeepAliveTime().longValue());
         assertEquals(250, profile.getMaxQueueSize().intValue());
+        assertEquals(true, profile.getAllowCoreThreadTimeOut().booleanValue());
         assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
     }
 

@@ -817,6 +817,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, definition.getMaxPoolSize()));
         answer.setKeepAliveTime(CamelContextHelper.parseLong(context, definition.getKeepAliveTime()));
         answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, definition.getMaxQueueSize()));
+        answer.setAllowCoreThreadTimeOut(CamelContextHelper.parseBoolean(context, definition.getAllowCoreThreadTimeOut()));
         answer.setRejectedPolicy(definition.getRejectedPolicy());
         answer.setTimeUnit(definition.getTimeUnit());
         return answer;
