@@ -33,6 +33,7 @@
 
     <properties>
         <swagger-ui.version>2.0.24</swagger-ui.version>
+        <logback-version>1.1.2</logback-version>
         <swagger.url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui.version}</swagger.url>
         <destDir>target/swagger-ui</destDir>
     </properties>
@@ -87,12 +88,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <version>${logback-version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.0.13</version>
+            <version>${logback-version}</version>
         </dependency>
     </dependencies>
 
