@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.swagger
 
+import java.net.URL
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 import javax.servlet.ServletConfig
 
@@ -40,6 +41,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   var camelId: String = null
   val swaggerConfig: SwaggerConfig = ConfigFactory.config
   var cors: Boolean = false
+  var initDone: Boolean = false
 
   override def init(config: ServletConfig): Unit = {
     super.init(config)
@@ -84,6 +86,10 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
   def getRestDefinitions(camelId: String) : mutable.Buffer[RestDefinition]
 
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
+    if (!initDone) {
+      initBaseAndApiPaths(request)
+    }
+
     val route = request.getPathInfo
     // render overview if the route is empty or is the root path
     if (route != null && route != "" && route != "/") {
@@ -91,6 +97,56 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
     } else {
       renderResourceListing(request, response)
     }
+  }
+
+  def initBaseAndApiPaths(request: HttpServletRequest) = {
+    var base = swaggerConfig.getBasePath
+    if (base == null || !base.startsWith("http")) {
+      // base path is configured using relative, so lets calculate the absolute url now we have the http request
+      val url = new URL(request.getRequestURL.toString)
+      if (base == null) {
+        base = ""
+      }
+      val path = translateContextPath(request)
+      if (url.getPort != 80) {
+        base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
+      } else {
+        base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
+      }
+      swaggerConfig.setBasePath(base)
+    }
+    base = swaggerConfig.getApiPath
+    if (base == null || !base.startsWith("http")) {
+      // api path is configured using relative, so lets calculate the absolute url now we have the http request
+      val url = new URL(request.getRequestURL.toString)
+      if (base == null) {
+        base = ""
+      }
+      val path = translateContextPath(request)
+      if (url.getPort != 80) {
+        base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
+      } else {
+        base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
+      }
+      swaggerConfig.setApiPath(base)
+    }
+    initDone = true
+  }
+
+  /**
+   * We do only want the base context-path and not sub paths
+   */
+  def translateContextPath(request: HttpServletRequest): String = {
+    var path = request.getContextPath
+    if (path.isEmpty || path.equals("/")) {
+      return ""
+    } else {
+      val idx = path.lastIndexOf("/")
+      if (idx > 0) {
+        return path.substring(0, idx)
+      }
+    }
+    path
   }
 
   /**
