@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class TimeoutInflightRepository extends ServiceSupport implements InflightRepository {
     private static final Logger LOG = LoggerFactory.getLogger(TimeoutInflightRepository.class);
     private static final String INFLIGHT_TIME_STAMP = "CamelInflightTimeStamp";
+    private static final String TIMEOUT_EXCHANGE_PROCESSED = "CamelTimeoutExchangeProcessed";
     private ExchangeFormatter exchangeFormatter;
     private final Map<String, Exchange> inflightExchanges = new ConcurrentHashMap<String, Exchange>();
     private long waitTime = 60 * 1000;
@@ -85,7 +86,7 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void remove(Exchange exchange) {
-        exchange.removeProperties(INFLIGHT_TIME_STAMP);
+        exchange.removeProperty(INFLIGHT_TIME_STAMP);
         inflightExchanges.remove(exchange.getExchangeId());
     }
 
@@ -185,9 +186,11 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
                 for (Exchange exchange : inflightExchanges.values()) {
                     // check if the exchange is timeout
                     long timeStamp = exchange.getProperty(INFLIGHT_TIME_STAMP, Long.class);
+                    Boolean processed = exchange.getProperty(TIMEOUT_EXCHANGE_PROCESSED, Boolean.FALSE, Boolean.class);
                     long processingTime = System.currentTimeMillis() - timeStamp;
-                    if (processingTime > timeout) {
+                    if (!processed && processingTime > timeout) {
                         processTimeoutExchange(exchange, processingTime);
+                        exchange.setProperty(TIMEOUT_EXCHANGE_PROCESSED, Boolean.TRUE);
                     }
                 }
                 try {
