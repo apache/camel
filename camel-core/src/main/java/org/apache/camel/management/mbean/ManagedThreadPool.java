@@ -143,6 +143,14 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
         threadPool.setKeepAliveTime(keepAliveTimeInSeconds, TimeUnit.SECONDS);
     }
 
+    public boolean isAllowCoreThreadTimeout() {
+        return threadPool.allowsCoreThreadTimeOut();
+    }
+
+    public void setAllowCoreThreadTimeout(boolean allowCoreThreadTimeout) {
+        threadPool.allowCoreThreadTimeOut(allowCoreThreadTimeout);
+    }
+
     public boolean isShutdown() {
         return threadPool.isShutdown();
     }

@@ -53,6 +53,9 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
         Long keepAlive = (Long) mbeanServer.getAttribute(on, "KeepAliveTime");
         assertEquals(25, keepAlive.intValue());
 
+        Boolean allow = (Boolean) mbeanServer.getAttribute(on, "AllowCoreThreadTimeout");
+        assertEquals(true, allow.booleanValue());
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
@@ -81,6 +84,7 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
                 profile.setMaxPoolSize(15);
                 profile.setKeepAliveTime(25L);
                 profile.setMaxQueueSize(250);
+                profile.setAllowCoreThreadTimeOut(true);
                 profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
 
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
