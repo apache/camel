@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.jasypt;
 
+import static java.lang.String.format;
+
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.lang.String.format;
 import static org.apache.camel.component.jasypt.JasyptPropertiesParser.JASYPT_PREFIX_TOKEN;
 import static org.apache.camel.component.jasypt.JasyptPropertiesParser.JASYPT_SUFFIX_TOKEN;
 import static org.hamcrest.core.Is.is;
@@ -76,7 +77,7 @@ public class JasyptPropertiesParserTest {
         StringBuilder propertyValue = new StringBuilder();
         StringBuilder expected = new StringBuilder();
 
-        for (int i=0; i<100; i++) {
+        for (int i = 0; i < 100; i++) {
             propertyValue.append(format("param%s=%s%s%s()&", i,
                     JASYPT_PREFIX_TOKEN, encryptor.encrypt("tiger" + i), JASYPT_SUFFIX_TOKEN));
             expected.append(format("param%s=tiger%s()&", i, i));
