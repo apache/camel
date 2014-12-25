@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import kafka.consumer.ConsumerConfig;
+import kafka.consumer.ConsumerIterator;
+import kafka.consumer.ConsumerTimeoutException;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
@@ -73,14 +75,17 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStart();
         log.info("Starting Kafka consumer");
         executor = endpoint.createExecutor();
-
         for (int i = 0; i < endpoint.getConsumersCount(); i++) {
             ConsumerConnector consumer = kafka.consumer.Consumer.createJavaConsumerConnector(new ConsumerConfig(getProps()));
             Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
             topicCountMap.put(endpoint.getTopic(), endpoint.getConsumerStreams());
             Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer.createMessageStreams(topicCountMap);
             List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(endpoint.getTopic());
-            if (endpoint.isAutoCommitEnable() != null && Boolean.FALSE == endpoint.isAutoCommitEnable().booleanValue()) {
+            if (endpoint.isAutoCommitEnable() != null && !endpoint.isAutoCommitEnable()) {
+                if ((endpoint.getConsumerTimeoutMs() == null || endpoint.getConsumerTimeoutMs().intValue() < 0)
+                        && endpoint.getConsumerStreams() > 1) {
+                    LOG.warn("consumerTimeoutMs is set to -1 (infinite) while requested multiple consumer streams.");
+                }
                 CyclicBarrier barrier = new CyclicBarrier(endpoint.getConsumerStreams(), new CommitOffsetTask(consumer));
                 for (final KafkaStream<byte[], byte[]> stream : streams) {
                     executor.submit(new BatchingConsumerTask(stream, barrier));
@@ -126,19 +131,39 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         public void run() {
+
             int processed = 0;
-            for (MessageAndMetadata<byte[], byte[]> mm : stream) {
-                Exchange exchange = endpoint.createKafkaExchange(mm);
+            boolean consumerTimeout;
+            MessageAndMetadata<byte[], byte[]> mm = null;
+            ConsumerIterator<byte[], byte[]> it = stream.iterator();
+
+            while (true) {
+
                 try {
-                    processor.process(exchange);
-                } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    consumerTimeout = false;
+                    if (it.hasNext()) {
+                        mm = it.next();
+                    } else {
+                        break;
+                    }
+                    Exchange exchange = endpoint.createKafkaExchange(mm);
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                    processed++;
+                } catch (ConsumerTimeoutException e) {
+                    LOG.debug(e.getMessage(), e);
+                    consumerTimeout = true;
                 }
-                processed++;
-                if (processed >= endpoint.getBatchSize()) {
+
+                if (processed >= endpoint.getBatchSize() || consumerTimeout) {
                     try {
                         berrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
-                        processed = 0;
+                        if (!consumerTimeout) {
+                            processed = 0;
+                        }
                     } catch (InterruptedException e) {
                         LOG.error(e.getMessage(), e);
                         break;

@@ -286,7 +286,7 @@ public class KafkaEndpoint extends DefaultEndpoint {
         configuration.setZookeeperSessionTimeoutMs(zookeeperSessionTimeoutMs);
     }
 
-    public int getConsumerTimeoutMs() {
+    public Integer getConsumerTimeoutMs() {
         return configuration.getConsumerTimeoutMs();
     }
 

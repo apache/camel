@@ -33,9 +33,18 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC + "&zookeeperHost=localhost&zookeeperPort={{zookeeperPort}}&"
-        + "groupId=group1&autoOffsetReset=smallest&"
-        + "autoCommitEnable=false&batchSize=3&consumerStreams=1")
+    @EndpointInject(uri = "kafka:localhost:{{karfkaPort}}?topic=" + TOPIC
+            + "&zookeeperHost=localhost"
+            + "&zookeeperPort={{zookeeperPort}}"
+            + "&groupId=group1"
+            + "&autoOffsetReset=smallest"
+            + "&autoCommitEnable=false"
+            + "&batchSize=3"
+            + "&consumerStreams=10"
+            // If set the consumerTiemout too small the test will fail in JDK7
+            + "&consumerTimeoutMs=300"
+            + "&barrierAwaitTimeoutMs=1000"
+    )
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -72,8 +81,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     @Test
     public void kafkaMessagesIsConsumedByCamel() throws Exception {
-        //First 5 must not be committed since batch size is 3
-        to.expectedMessageCount(2);
+        //First 2 must not be committed since batch size is 3
         to.expectedBodiesReceivedInAnyOrder("m1", "m2");
         for (int k = 1; k <= 2; k++) {
             String msg = "m" + k;
@@ -81,13 +89,12 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
             producer.send(data);
         }
         to.assertIsSatisfied(3000);
-
+        
+        to.reset();
         //Restart endpoint,
         from.getCamelContext().stop();
         from.getCamelContext().start();
-
-        to.reset();
-        to.expectedMessageCount(10);
+        
         to.expectedBodiesReceivedInAnyOrder("m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
 
         //Second route must wake up and consume all from scratch and commit 9 consumed
@@ -99,14 +106,15 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
+        to.reset();
         //Restart endpoint,
         from.getCamelContext().stop();
         from.getCamelContext().start();
 
-        to.reset();
-
+        
         //Only one message should left to consume by this consumer group
         to.expectedMessageCount(1);
+        to.assertIsSatisfied(3000);
     }
 }
 
