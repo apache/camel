@@ -190,7 +190,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", null, path.getType(), "", path.getDocumentation(), path.isEnumType(), path.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", null, path.getType(), "", path.getDocumentation(),
+                    path.isEnumType(), path.getEnums(), false, null));
         }
 
         // and then regular parameter options
@@ -204,7 +205,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", null, entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", null, entry.getType(), entry.getDefaultValue(), doc,
+                    entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  }");
 
@@ -336,7 +338,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, false);
                     if (isNullOrEmpty(docComment)) {
                         docComment = path.description();
                     }
@@ -388,7 +390,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
-                        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
+                        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, false);
                         if (isNullOrEmpty(docComment)) {
                             docComment = param.description();
                         }

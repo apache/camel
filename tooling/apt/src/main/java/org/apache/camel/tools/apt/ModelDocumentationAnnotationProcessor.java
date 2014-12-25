@@ -16,16 +16,10 @@
  */
 package org.apache.camel.tools.apt;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -37,8 +31,6 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -47,11 +39,15 @@ import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
-// TODO: add support for @XmlElement @XmlElementRef
+// TODO: add support for @XmlElementRef (eg as used by choice)
 
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationProcessor {
+
+    // special when using expression/predicates in the model
+    private final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
+    private final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -79,8 +75,15 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         final XmlRootElement rootElement = classElement.getAnnotation(XmlRootElement.class);
         final String name = rootElement.name();
 
+        // lets use the xsd name as the file name
+        String fileName;
+        if (isNullOrEmpty(name) || "##default".equals(name)) {
+            fileName = classElement.getSimpleName().toString() + ".json";
+        } else {
+            fileName = name + ".json";
+        }
+
         // write json schema
-        String fileName = classElement.getSimpleName().toString() + ".json";
         Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
             @Override
             public Void call(PrintWriter writer) {
@@ -125,7 +128,8 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
+                    entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes()));
         }
         buffer.append("\n  }");
 
@@ -176,7 +180,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
                     boolean required = attribute.required();
 
                     // gather enums
@@ -194,13 +198,14 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                         }
                     }
 
-                    EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", "", docComment, isEnum, enums);
+                    EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", "", docComment, isEnum, enums, false, null);
                     eipOptions.add(ep);
                 }
 
                 XmlElement element = fieldElement.getAnnotation(XmlElement.class);
                 fieldName = fieldElement.getSimpleName().toString();
                 if (element != null) {
+                    String kind = "element";
                     String name = element.name();
                     if (isNullOrEmpty(name) || "##default".equals(name)) {
                         name = fieldName;
@@ -210,7 +215,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
                     boolean required = element.required();
 
                     // gather enums
@@ -228,10 +233,29 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                         }
                     }
 
-                    EipOption ep = new EipOption(name, "element", fieldTypeName, required, "", "", docComment, isEnum, enums);
+                    // gather oneOf expression/predicates which uses language
+                    Set<String> oneOfTypes = new LinkedHashSet<String>();
+                    boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
+                    if (isOneOf) {
+                        TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
+                        String superClassName = canonicalClassName(languages.toString());
+                        // find all classes that has that superClassName
+                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                        findTypeElementChildren(roundEnv, children, superClassName);
+                        for (TypeElement child : children) {
+                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                            if (rootElement != null) {
+                                String childName = rootElement.name();
+                                if (childName != null) {
+                                    oneOfTypes.add(childName);
+                                }
+                            }
+                        }
+                    }
+
+                    EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", "", docComment, isEnum, enums, isOneOf, oneOfTypes);
                     eipOptions.add(ep);
                 }
-
             }
 
             // check super classes which may also have @UriParam fields
@@ -291,9 +315,11 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         private String documentation;
         private boolean enumType;
         private Set<String> enums;
+        private boolean oneOf;
+        private Set<String> oneOfTypes;
 
         private EipOption(String name, String kind, String type, boolean required, String defaultValue, String defaultValueNote,
-                          String documentation, boolean enumType, Set<String> enums) {
+                          String documentation, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes) {
             this.name = name;
             this.kind = kind;
             this.type = type;
@@ -303,6 +329,8 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
             this.documentation = documentation;
             this.enumType = enumType;
             this.enums = enums;
+            this.oneOf = oneOf;
+            this.oneOfTypes = oneOfTypes;
         }
 
         public String getName() {
@@ -356,6 +384,14 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
 
         public Set<String> getEnums() {
             return enums;
+        }
+
+        public boolean isOneOf() {
+            return oneOf;
+        }
+
+        public Set<String> getOneOfTypes() {
+            return oneOfTypes;
         }
 
         @Override

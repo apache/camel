@@ -30,7 +30,8 @@ final class JsonSchemaHelper {
     private JsonSchemaHelper() {
     }
 
-    public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description, boolean enumType, Set<String> enums) {
+    public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
+                                boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
@@ -52,6 +53,16 @@ final class JsonSchemaHelper {
             }
             sb.append(", \"enum\": [ ");
             sb.append(enumValues.toString());
+            sb.append(" ]");
+        } else if (oneOfType) {
+            sb.append(Strings.doubleQuote("object"));
+            sb.append(", \"javaType\": \"" + type + "\"");
+            CollectionStringBuffer oneOfValues = new CollectionStringBuffer();
+            for (Object value : oneOffTypes) {
+                oneOfValues.append(Strings.doubleQuote(value.toString()));
+            }
+            sb.append(", \"oneOf\": [ ");
+            sb.append(oneOfValues.toString());
             sb.append(" ]");
         } else if ("array".equals(typeName)) {
             sb.append(Strings.doubleQuote("array"));

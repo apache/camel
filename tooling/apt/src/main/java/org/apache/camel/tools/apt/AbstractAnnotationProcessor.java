@@ -34,6 +34,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
@@ -49,7 +50,7 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
  */
 public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
 
-    protected String findJavaDoc(Elements elementUtils, VariableElement fieldElement, String fieldName, TypeElement classElement) {
+    protected String findJavaDoc(Elements elementUtils, VariableElement fieldElement, String fieldName, TypeElement classElement, boolean builderPattern) {
         String answer = elementUtils.getDocComment(fieldElement);
         if (isNullOrEmpty(answer)) {
             String setter = "set" + fieldName.substring(0, 1).toUpperCase();
@@ -60,7 +61,7 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
             for (ExecutableElement method : methods) {
                 String methodName = method.getSimpleName().toString();
-                if (setter.equals(methodName) && method.getParameters().size() == 1) {
+                if (setter.equals(methodName) && method.getParameters().size() == 1 && method.getReturnType().getKind().equals(TypeKind.VOID)) {
                     String doc = elementUtils.getDocComment(method);
                     if (!isNullOrEmpty(doc)) {
                         answer = doc;
@@ -84,6 +85,22 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
                 for (ExecutableElement method : methods) {
                     String methodName = method.getSimpleName().toString();
                     if ((getter1.equals(methodName) || getter2.equals(methodName)) && method.getParameters().size() == 0) {
+                        String doc = elementUtils.getDocComment(method);
+                        if (!isNullOrEmpty(doc)) {
+                            answer = doc;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // lets try builder pattern
+            if (answer == null && builderPattern) {
+                // lets find the getter
+                methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+                for (ExecutableElement method : methods) {
+                    String methodName = method.getSimpleName().toString();
+                    if (fieldName.equals(methodName) && method.getParameters().size() == 1) {
                         String doc = elementUtils.getDocComment(method);
                         if (!isNullOrEmpty(doc)) {
                             answer = doc;
@@ -134,6 +151,28 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
         }
 
         return null;
+    }
+
+    protected void findTypeElementChildren(RoundEnvironment roundEnv, Set<TypeElement> found, String superClassName) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        int idx = superClassName.lastIndexOf('.');
+        if (idx > 0) {
+            String packageName = superClassName.substring(0, idx);
+            PackageElement pe = elementUtils.getPackageElement(packageName);
+            if (pe != null) {
+                List<? extends Element> enclosedElements = pe.getEnclosedElements();
+                for (Element rootElement : enclosedElements) {
+                    if (rootElement instanceof TypeElement) {
+                        TypeElement typeElement = (TypeElement) rootElement;
+                        String aSuperClassName = canonicalClassName(typeElement.getSuperclass().toString());
+                        if (superClassName.equals(aSuperClassName)) {
+                            found.add(typeElement);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
