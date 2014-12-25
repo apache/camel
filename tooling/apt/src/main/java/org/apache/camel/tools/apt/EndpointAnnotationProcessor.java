@@ -205,7 +205,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", path.getType(), "", path.getDocumentation(), path.isEnumType(), path.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", null, path.getType(), "", path.getDocumentation(), path.isEnumType(), path.getEnums()));
         }
 
         // and then regular parameter options
@@ -219,7 +219,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", null, entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
         }
         buffer.append("\n  }");
 

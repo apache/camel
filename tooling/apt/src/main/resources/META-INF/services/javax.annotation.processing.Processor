@@ -15,3 +15,4 @@
 # limitations under the License.
 #
 org.apache.camel.tools.apt.EndpointAnnotationProcessor
+org.apache.camel.tools.apt.ModelDocumentationAnnotationProcessor

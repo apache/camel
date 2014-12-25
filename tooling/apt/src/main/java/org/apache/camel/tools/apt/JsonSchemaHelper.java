@@ -30,13 +30,17 @@ final class JsonSchemaHelper {
     private JsonSchemaHelper() {
     }
 
-    public static String toJson(String name, String kind, String type, String defaultValue, String description, boolean enumType, Set<String> enums) {
+    public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description, boolean enumType, Set<String> enums) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
         sb.append(Strings.doubleQuote(name));
         sb.append(": { \"kind\": ");
         sb.append(Strings.doubleQuote(kind));
+        if (required != null) {
+            sb.append(": \"required\": ");
+            sb.append(Strings.doubleQuote(required.toString()));
+        }
 
         sb.append(", \"type\": ");
         if ("enum".equals(typeName)) {
