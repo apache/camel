@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.s3;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.util.Map;
 
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -137,6 +138,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
         assertNull(resultExchange.getIn().getHeader(S3Constants.USER_METADATA));
+        assertEquals(0, resultExchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class).size());
     }
 
     private void assertResponseMessage(Message message) {

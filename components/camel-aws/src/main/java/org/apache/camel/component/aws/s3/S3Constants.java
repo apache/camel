@@ -37,4 +37,5 @@ public interface S3Constants {
     String CANNED_ACL          = "CamelAwsS3CannedAcl";
     String ACL                 = "CamelAwsS3Acl";
     String USER_METADATA       = "CamelAwsS3UserMetadata";
+    String S3_HEADERS          = "CamelAwsS3Headers";
 }
