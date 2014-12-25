@@ -20,13 +20,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -34,29 +32,26 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
-// TODO: reuse common code instead of copy/paste
 // TODO: add support for @XmlElement @XmlElementRef
 
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
-public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
+public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -130,7 +125,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "attribute", entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc, entry.isEnumType(), entry.getEnums()));
         }
         buffer.append("\n  }");
 
@@ -199,9 +194,44 @@ public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
                         }
                     }
 
-                    EipOption ep = new EipOption(name, fieldTypeName, required, "", "", docComment, isEnum, enums);
+                    EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", "", docComment, isEnum, enums);
                     eipOptions.add(ep);
                 }
+
+                XmlElement element = fieldElement.getAnnotation(XmlElement.class);
+                fieldName = fieldElement.getSimpleName().toString();
+                if (element != null) {
+                    String name = element.name();
+                    if (isNullOrEmpty(name) || "##default".equals(name)) {
+                        name = fieldName;
+                    }
+                    name = prefix + name;
+                    TypeMirror fieldType = fieldElement.asType();
+                    String fieldTypeName = fieldType.toString();
+                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement);
+                    boolean required = element.required();
+
+                    // gather enums
+                    Set<String> enums = new LinkedHashSet<String>();
+                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                    if (isEnum) {
+                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                        // find all the enum constants which has the possible enum value that can be used
+                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                        for (VariableElement var : fields) {
+                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                String val = var.toString();
+                                enums.add(val);
+                            }
+                        }
+                    }
+
+                    EipOption ep = new EipOption(name, "element", fieldTypeName, required, "", "", docComment, isEnum, enums);
+                    eipOptions.add(ep);
+                }
+
             }
 
             // check super classes which may also have @UriParam fields
@@ -217,154 +247,6 @@ public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
                 break;
             }
         }
-    }
-
-    protected String findJavaDoc(Elements elementUtils, VariableElement fieldElement, String fieldName, TypeElement classElement) {
-        String answer = elementUtils.getDocComment(fieldElement);
-        if (isNullOrEmpty(answer)) {
-            String setter = "set" + fieldName.substring(0, 1).toUpperCase();
-            if (fieldName.length() > 1) {
-                setter += fieldName.substring(1);
-            }
-            //  lets find the setter
-            List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-            for (ExecutableElement method : methods) {
-                String methodName = method.getSimpleName().toString();
-                if (setter.equals(methodName) && method.getParameters().size() == 1) {
-                    String doc = elementUtils.getDocComment(method);
-                    if (!isNullOrEmpty(doc)) {
-                        answer = doc;
-                        break;
-                    }
-                }
-            }
-
-            // lets find the getter
-            if (answer == null) {
-                String getter1 = "get" + fieldName.substring(0, 1).toUpperCase();
-                if (fieldName.length() > 1) {
-                    getter1 += fieldName.substring(1);
-                }
-                String getter2 = "is" + fieldName.substring(0, 1).toUpperCase();
-                if (fieldName.length() > 1) {
-                    getter2 += fieldName.substring(1);
-                }
-                //  lets find the getter
-                methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-                for (ExecutableElement method : methods) {
-                    String methodName = method.getSimpleName().toString();
-                    if ((getter1.equals(methodName) || getter2.equals(methodName)) && method.getParameters().size() == 0) {
-                        String doc = elementUtils.getDocComment(method);
-                        if (!isNullOrEmpty(doc)) {
-                            answer = doc;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return answer;
-    }
-
-    /**
-     * Helper method to produce class output text file using the given handler
-     */
-    protected void processFile(String packageName, String fileName, Func1<PrintWriter, Void> handler) {
-        PrintWriter writer = null;
-        try {
-            Writer out;
-            Filer filer = processingEnv.getFiler();
-            FileObject resource;
-            try {
-                resource = filer.getResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
-            } catch (Throwable e) {
-                resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
-            }
-            URI uri = resource.toUri();
-            File file = null;
-            if (uri != null) {
-                try {
-                    file = new File(uri.getPath());
-                } catch (Exception e) {
-                    warning("Could not convert output directory resource URI to a file " + e);
-                }
-            }
-            if (file == null) {
-                warning("No class output directory could be found!");
-            } else {
-                file.getParentFile().mkdirs();
-                out = new FileWriter(file);
-                writer = new PrintWriter(out);
-                handler.call(writer);
-            }
-        } catch (IOException e) {
-            log(e);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
-    }
-
-    protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
-        if (isNullOrEmpty(className) || "java.lang.Object".equals(className)) {
-            return null;
-        }
-
-        Set<? extends Element> rootElements = roundEnv.getRootElements();
-        for (Element rootElement : rootElements) {
-            if (rootElement instanceof TypeElement) {
-                TypeElement typeElement = (TypeElement) rootElement;
-                String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
-                if (className.equals(aRootName)) {
-                    return typeElement;
-                }
-            }
-        }
-
-        // fallback using package name
-        Elements elementUtils = processingEnv.getElementUtils();
-
-        int idx = className.lastIndexOf('.');
-        if (idx > 0) {
-            String packageName = className.substring(0, idx);
-            PackageElement pe = elementUtils.getPackageElement(packageName);
-            if (pe != null) {
-                List<? extends Element> enclosedElements = pe.getEnclosedElements();
-                for (Element rootElement : enclosedElements) {
-                    if (rootElement instanceof TypeElement) {
-                        TypeElement typeElement = (TypeElement) rootElement;
-                        String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
-                        if (className.equals(aRootName)) {
-                            return typeElement;
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    protected void log(String message) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
-    }
-
-    protected void warning(String message) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, message);
-    }
-
-    protected void error(String message) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-    }
-
-    protected void log(Throwable e) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-        StringWriter buffer = new StringWriter();
-        PrintWriter writer = new PrintWriter(buffer);
-        e.printStackTrace(writer);
-        writer.close();
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, buffer.toString());
     }
 
     private static final class EipModel {
@@ -401,6 +283,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
     private static final class EipOption {
 
         private String name;
+        private String kind;
         private String type;
         private boolean required;
         private String defaultValue;
@@ -409,9 +292,10 @@ public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
         private boolean enumType;
         private Set<String> enums;
 
-        private EipOption(String name, String type, boolean required, String defaultValue, String defaultValueNote,
+        private EipOption(String name, String kind, String type, boolean required, String defaultValue, String defaultValueNote,
                           String documentation, boolean enumType, Set<String> enums) {
             this.name = name;
+            this.kind = kind;
             this.type = type;
             this.required = required;
             this.defaultValue = defaultValue;
@@ -425,16 +309,16 @@ public class ModelDocumentationAnnotationProcessor extends AbstractProcessor {
             return name;
         }
 
+        public String getKind() {
+            return kind;
+        }
+
         public String getType() {
             return type;
         }
 
         public boolean isRequired() {
             return required;
-        }
-
-        public void setRequired(boolean required) {
-            this.required = required;
         }
 
         public String getDefaultValue() {
