@@ -38,11 +38,9 @@ import org.apache.camel.util.URISupport;
  *
  * @version 
  */
-@XmlRootElement(name = "interceptToEndpoint")
+@XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {
-
-    // TODO: name miss-match: XML=interceptToEndpoint, Java=interceptSendToEndpoint
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
 
