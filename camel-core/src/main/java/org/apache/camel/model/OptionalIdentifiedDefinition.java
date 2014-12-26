@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.NamedNode;
@@ -33,6 +35,8 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode {
+    @XmlTransient
+    private String shortName;
     private String id;
     private Boolean customId;
     private DescriptionDefinition description;
@@ -70,7 +74,19 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      */
     @Override
     public String getShortName() {
-        return "node";
+        if (shortName == null) {
+            XmlRootElement root = getClass().getAnnotation(XmlRootElement.class);
+            if (root != null) {
+                shortName = root.name();
+            }
+            if (shortName == null) {
+                XmlType type = getClass().getAnnotation(XmlType.class);
+                if (type != null) {
+                    shortName = type.name();
+                }
+            }
+        }
+        return shortName;
     }
 
     // Fluent API

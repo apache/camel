@@ -62,11 +62,6 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         }
     }
 
-    @Override
-    public String getShortName() {
-        return "exp";
-    }
-
     public ExpressionDefinition getExpression() {
         return expression;
     }

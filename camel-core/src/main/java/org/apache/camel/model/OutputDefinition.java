@@ -21,8 +21,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -32,10 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
-
-    @XmlTransient
-    private String shortName;
+public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
 
     @XmlElementRef
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -55,23 +50,6 @@ public abstract class OutputDefinition<Type extends ProcessorDefinition<Type>> e
                 configureChild(output);
             }
         }
-    }
-
-    @Override
-    public String getShortName() {
-        if (shortName == null) {
-            XmlRootElement root = getClass().getAnnotation(XmlRootElement.class);
-            if (root != null) {
-                shortName = root.name();
-            }
-            if (shortName == null) {
-                XmlType type = getClass().getAnnotation(XmlType.class);
-                if (type != null) {
-                    shortName = type.name();
-                }
-            }
-        }
-        return shortName;
     }
 
     @Override
