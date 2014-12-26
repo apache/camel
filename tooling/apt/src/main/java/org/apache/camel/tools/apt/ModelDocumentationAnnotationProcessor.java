@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -40,9 +41,7 @@ import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
-// TODO: add support for @XmlElementRef (eg as used by choice)
 // TODO: add support for label so we can categorize the eips
-// TODO: add support for output to indicate what output the model support
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
@@ -54,6 +53,17 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
     // special when using expression/predicates in the model
     private final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
     private final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
+    // special for outputs
+    private final String[] ONE_OF_OUTPUTS = new String[]{
+            "org.apache.camel.model.ProcessorDefinition",
+            "org.apache.camel.model.NoOutputDefinition",
+            "org.apache.camel.model.OutputDefinition",
+            "org.apache.camel.model.ExpressionNode",
+            "org.apache.camel.model.NoOutputExpressionNode",
+            "org.apache.camel.model.SendDefinition",
+            "org.apache.camel.model.InterceptDefinition",
+            "org.apache.camel.model.WhenDefinition",
+    };
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -190,7 +200,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                     boolean required = attribute.required();
 
                     // gather enums
-                    Set<String> enums = new LinkedHashSet<String>();
+                    Set<String> enums = new TreeSet<String>();
                     boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                     if (isEnum) {
                         TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
@@ -240,7 +250,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                     }
 
                     // gather oneOf expression/predicates which uses language
-                    Set<String> oneOfTypes = new LinkedHashSet<String>();
+                    Set<String> oneOfTypes = new TreeSet<String>();
                     boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
                     if (isOneOf) {
                         TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
@@ -261,6 +271,79 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
 
                     EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", "", docComment, isEnum, enums, isOneOf, oneOfTypes);
                     eipOptions.add(ep);
+                }
+
+                // special for eips which has outputs or requires an expressions
+                XmlElementRef elementRef = fieldElement.getAnnotation(XmlElementRef.class);
+                fieldName = fieldElement.getSimpleName().toString();
+                if (elementRef != null) {
+
+                    // special for outputs
+                    if ("outputs".equals(fieldName)) {
+                        String kind = "element";
+                        String name = elementRef.name();
+                        if (isNullOrEmpty(name) || "##default".equals(name)) {
+                            name = fieldName;
+                        }
+                        name = prefix + name;
+                        TypeMirror fieldType = fieldElement.asType();
+                        String fieldTypeName = fieldType.toString();
+
+                        // gather oneOf which extends any of the output base classes
+                        Set<String> oneOfTypes = new TreeSet<String>();
+                        // find all classes that has that superClassName
+                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                        for (String superclass : ONE_OF_OUTPUTS) {
+                            findTypeElementChildren(roundEnv, children, superclass);
+                        }
+                        for (TypeElement child : children) {
+                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                            if (rootElement != null) {
+                                String childName = rootElement.name();
+                                if (childName != null) {
+                                    oneOfTypes.add(childName);
+                                }
+                            }
+                        }
+
+                        // remove some types which are not intended as an output in eips
+                        oneOfTypes.remove("route");
+
+                        EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", "", false, null, true, oneOfTypes);
+                        eipOptions.add(ep);
+                    }
+
+                    // special for expression
+                    if ("expression".equals(fieldName)) {
+                        String kind = "element";
+                        String name = elementRef.name();
+                        if (isNullOrEmpty(name) || "##default".equals(name)) {
+                            name = fieldName;
+                        }
+                        name = prefix + name;
+                        TypeMirror fieldType = fieldElement.asType();
+                        String fieldTypeName = fieldType.toString();
+
+                        // gather oneOf expression/predicates which uses language
+                        Set<String> oneOfTypes = new TreeSet<String>();
+                        TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
+                        String superClassName = canonicalClassName(languages.toString());
+                        // find all classes that has that superClassName
+                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                        findTypeElementChildren(roundEnv, children, superClassName);
+                        for (TypeElement child : children) {
+                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                            if (rootElement != null) {
+                                String childName = rootElement.name();
+                                if (childName != null) {
+                                    oneOfTypes.add(childName);
+                                }
+                            }
+                        }
+
+                        EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", "", false, null, true, oneOfTypes);
+                        eipOptions.add(ep);
+                    }
                 }
             }
 

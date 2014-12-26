@@ -55,7 +55,7 @@ final class JsonSchemaHelper {
             sb.append(enumValues.toString());
             sb.append(" ]");
         } else if (oneOfType) {
-            sb.append(Strings.doubleQuote("object"));
+            sb.append(Strings.doubleQuote(typeName));
             sb.append(", \"javaType\": \"" + type + "\"");
             CollectionStringBuffer oneOfValues = new CollectionStringBuffer();
             for (Object value : oneOffTypes) {
@@ -103,6 +103,8 @@ final class JsonSchemaHelper {
             return "string";
         } else if (type.startsWith("java.lang.Class")) {
             return "string";
+        } else if (type.startsWith("java.util.List") || type.startsWith("java.util.Collection")) {
+            return "array";
         }
 
         String primitive = getPrimitiveType(type);
