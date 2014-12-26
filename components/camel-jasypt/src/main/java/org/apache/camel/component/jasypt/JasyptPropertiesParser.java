@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.jasypt;
 
-import static java.lang.String.format;
-
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.lang.String.format;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.util.ObjectHelper;
@@ -29,11 +29,9 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
- * <a href="http://www.jasypt.org/">Jasypt</a> to decrypt any encrypted values.
+ * &nbsp;<a href="http://www.jasypt.org/">Jasypt</a> to decrypt encrypted values.
  * <p/>
  * The parts of the values which should be decrpted must be enclosed in the prefix and suffix token.
- *
- * @version
  */
 public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
@@ -51,6 +49,19 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         pattern = Pattern.compile(regex);
     }
 
+    @Override
+    public String parseProperty(String key, String value, Properties properties) {
+        log.trace(format("Parsing property '%s=%s'", key, value));
+        initEncryptor();
+        Matcher matcher = pattern.matcher(value);
+        while (matcher.find()) {
+            log.trace(format("Decrypting part '%s'", matcher.group(0)));
+            String decrypted = encryptor.decrypt(matcher.group(1));
+            value = value.replace(matcher.group(0), decrypted);
+        }
+        return value;
+    }
+
     private synchronized void initEncryptor() {
         if (encryptor == null) {
             ObjectHelper.notEmpty("password", password);
@@ -64,19 +75,6 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
             }
             encryptor = pbeStringEncryptor;
         }
-    }
-
-    @Override
-    public String parseProperty(String key, String value, Properties properties) {
-        log.trace(format("Parsing property '%s=%s'", key, value));
-        initEncryptor();
-        Matcher matcher = pattern.matcher(value);
-        while (matcher.find()) {
-            log.trace(format("Decrypting part '%s'", matcher.group(0)));
-            String decrypted = encryptor.decrypt(matcher.group(1));
-            value = value.replace(matcher.group(0), decrypted);
-        }
-        return value;
     }
 
     public void setEncryptor(StringEncryptor encryptor) {
