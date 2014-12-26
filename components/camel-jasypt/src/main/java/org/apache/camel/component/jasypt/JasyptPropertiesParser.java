@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jasypt;
 
+import static java.lang.String.format;
+
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,10 +51,6 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         pattern = Pattern.compile(regex);
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         // lookup password as either environment or JVM system property
         if (password.startsWith("sysenv:")) {
@@ -64,27 +62,23 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         this.password = password;
     }
 
-    public String getAlgorithm() {
-        return algorithm;
-    }
-
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
 
-    public synchronized StringEncryptor getEncryptor() {
+    private synchronized void initEncryptor() {
         if (encryptor == null) {
-            // password is mandatory
-            ObjectHelper.notEmpty("password", getPassword());
-
+            ObjectHelper.notEmpty("password", password);
             StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
-            pbeStringEncryptor.setPassword(getPassword());
+            pbeStringEncryptor.setPassword(password);
             if (algorithm != null) {
-                pbeStringEncryptor.setAlgorithm(getAlgorithm());
+                pbeStringEncryptor.setAlgorithm(algorithm);
+                log.debug(format("Initialized encryptor using %s algorithm and provided password", algorithm));
+            } else {
+                log.debug(format("Initialized encryptor using default algorithm and provided password"));
             }
             encryptor = pbeStringEncryptor;
         }
-        return encryptor;
     }
 
     public void setEncryptor(StringEncryptor encryptor) {
@@ -93,11 +87,12 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     @Override
     public String parseProperty(String key, String value, Properties properties) {
-        log.trace(String.format("Parsing property '%s=%s'", key, value));
+        log.trace(format("Parsing property '%s=%s'", key, value));
+        initEncryptor();
         Matcher matcher = pattern.matcher(value);
         while (matcher.find()) {
-            log.trace(String.format("Decrypting part '%s'", matcher.group(0)));
-            String decrypted = getEncryptor().decrypt(matcher.group(1));
+            log.trace(format("Decrypting part '%s'", matcher.group(0)));
+            String decrypted = encryptor.decrypt(matcher.group(1));
             value = value.replace(matcher.group(0), decrypted);
         }
         return value;
