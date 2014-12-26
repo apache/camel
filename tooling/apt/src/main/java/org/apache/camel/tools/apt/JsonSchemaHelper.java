@@ -175,6 +175,10 @@ final class JsonSchemaHelper {
      * @return the text that is valid as json
      */
     public static String sanitizeDescription(String javadoc, boolean summary) {
+        if (Strings.isNullOrEmpty(javadoc)) {
+            return null;
+        }
+
         // lets just use what java accepts as identifiers
         StringBuilder sb = new StringBuilder();
 
