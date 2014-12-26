@@ -51,21 +51,6 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         pattern = Pattern.compile(regex);
     }
 
-    public void setPassword(String password) {
-        // lookup password as either environment or JVM system property
-        if (password.startsWith("sysenv:")) {
-            password = System.getenv(ObjectHelper.after(password, "sysenv:"));
-        }
-        if (password.startsWith("sys:")) {
-            password = System.getProperty(ObjectHelper.after(password, "sys:"));
-        }
-        this.password = password;
-    }
-
-    public void setAlgorithm(String algorithm) {
-        this.algorithm = algorithm;
-    }
-
     private synchronized void initEncryptor() {
         if (encryptor == null) {
             ObjectHelper.notEmpty("password", password);
@@ -81,10 +66,6 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         }
     }
 
-    public void setEncryptor(StringEncryptor encryptor) {
-        this.encryptor = encryptor;
-    }
-
     @Override
     public String parseProperty(String key, String value, Properties properties) {
         log.trace(format("Parsing property '%s=%s'", key, value));
@@ -98,4 +79,22 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         return value;
     }
 
+    public void setEncryptor(StringEncryptor encryptor) {
+        this.encryptor = encryptor;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public void setPassword(String password) {
+        // lookup password as either environment or JVM system property
+        if (password.startsWith("sysenv:")) {
+            password = System.getenv(ObjectHelper.after(password, "sysenv:"));
+        }
+        if (password.startsWith("sys:")) {
+            password = System.getProperty(ObjectHelper.after(password, "sys:"));
+        }
+        this.password = password;
+    }
 }
