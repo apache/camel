@@ -33,6 +33,7 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
@@ -40,7 +41,12 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
 // TODO: add support for @XmlElementRef (eg as used by choice)
+// TODO: add support for label so we can categorize the eips
+// TODO: add support for output to indicate what output the model support
 
+/**
+ * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
+ */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationProcessor {
@@ -258,7 +264,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                 }
             }
 
-            // check super classes which may also have @UriParam fields
+            // check super classes which may also have fields
             TypeElement baseTypeElement = null;
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
@@ -417,6 +423,5 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
             return name.hashCode();
         }
     }
-
 
 }
