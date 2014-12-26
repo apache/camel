@@ -75,17 +75,24 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
+    @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
+    @XmlTransient
     protected final Logger log = LoggerFactory.getLogger(getClass());
-
+    @XmlAttribute
     protected Boolean inheritErrorHandler;
+    @XmlTransient
     private final LinkedList<Block> blocks = new LinkedList<Block>();
+    @XmlTransient
     private ProcessorDefinition<?> parent;
+    @XmlTransient
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
     private Map<QName, Object> otherAttributes;
+    @XmlTransient
     private final int index;
 
     protected ProcessorDefinition() {
@@ -100,7 +107,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the index number
      */
-    @XmlTransient // do not expose this in the XML DSL
     public int getIndex() {
         return index;
     }
@@ -1600,7 +1606,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression, String)} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
@@ -1622,7 +1627,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression)} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
@@ -1646,7 +1650,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip()} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
@@ -1671,7 +1674,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @deprecated prefer to use {@link #routingSlip()} instead
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
@@ -2074,7 +2076,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param exception the exception to throw
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public Type throwException(Exception exception) {
         ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
         answer.setException(exception);
@@ -2092,7 +2093,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see #rollback(String)
      * @see #markRollbackOnlyLast()
      */
-    @SuppressWarnings("unchecked")
     public Type markRollbackOnly() {
         RollbackDefinition answer = new RollbackDefinition();
         answer.setMarkRollbackOnly(true);
@@ -2113,7 +2113,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see #rollback(String)
      * @see #markRollbackOnly()
      */
-    @SuppressWarnings("unchecked")
     public Type markRollbackOnlyLast() {
         RollbackDefinition answer = new RollbackDefinition();
         answer.setMarkRollbackOnlyLast(true);
@@ -2144,7 +2143,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see #markRollbackOnly()
      */
-    @SuppressWarnings("unchecked")
     public Type rollback(String message) {
         RollbackDefinition answer = new RollbackDefinition(message);
         addOutput(answer);
@@ -2305,6 +2303,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
+    @SuppressWarnings("unchecked")
     public Type startupOrder(int startupOrder) {
         ProcessorDefinition<?> def = this;
 
@@ -2559,6 +2558,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type bean(Class<?> beanType, String method, boolean multiParameterArray, boolean cache) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
@@ -3403,7 +3403,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Properties
     // -------------------------------------------------------------------------
-    @XmlTransient
     public ProcessorDefinition<?> getParent() {
         return parent;
     }
@@ -3412,7 +3411,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.parent = parent;
     }
 
-    @XmlTransient
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
@@ -3425,7 +3423,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return inheritErrorHandler;
     }
 
-    @XmlAttribute
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }
@@ -3434,7 +3431,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return otherAttributes;
     }
 
-    @XmlAnyAttribute
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
     }

@@ -60,29 +60,49 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs"})
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
+    @XmlTransient
     private final AtomicBoolean prepared = new AtomicBoolean(false);
+    @XmlElementRef
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
+    @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    @XmlAttribute
     private String group;
+    @XmlAttribute
     private String streamCache;
+    @XmlAttribute
     private String trace;
+    @XmlAttribute
     private String messageHistory;
+    @XmlAttribute
     private String handleFault;
+    @XmlAttribute
     private String delayer;
+    @XmlAttribute
     private String autoStartup;
+    @XmlAttribute
     private Integer startupOrder;
+    @XmlTransient
     private List<RoutePolicy> routePolicies;
+    @XmlAttribute
     private String routePolicyRef;
+    @XmlAttribute
     private ShutdownRoute shutdownRoute;
+    @XmlAttribute
     private ShutdownRunningTask shutdownRunningTask;
+    @XmlAttribute
     private String errorHandlerRef;
+    @XmlTransient
     private ErrorHandlerFactory errorHandlerBuilder;
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler configured)
+    @XmlTransient
     private boolean contextScopedErrorHandler = true;
+    @XmlAttribute
     private Boolean rest;
+    @XmlTransient
     private RestDefinition restDefinition;
 
     public RouteDefinition() {
@@ -577,7 +597,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return inputs;
     }
 
-    @XmlElementRef
     public void setInputs(List<FromDefinition> inputs) {
         this.inputs = inputs;
     }
@@ -586,7 +605,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return outputs;
     }
 
-    @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
 
@@ -611,7 +629,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return group;
     }
 
-    @XmlAttribute
     public void setGroup(String group) {
         this.group = group;
     }
@@ -620,7 +637,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return streamCache;
     }
 
-    @XmlAttribute
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
@@ -629,7 +645,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return trace;
     }
 
-    @XmlAttribute
     public void setTrace(String trace) {
         this.trace = trace;
     }
@@ -638,7 +653,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return messageHistory;
     }
 
-    @XmlAttribute
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -647,7 +661,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return handleFault;
     }
 
-    @XmlAttribute
     public void setHandleFault(String handleFault) {
         this.handleFault = handleFault;
     }
@@ -656,7 +669,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return delayer;
     }
 
-    @XmlAttribute
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
@@ -674,7 +686,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return isAutoStartup != null && isAutoStartup;
     }
 
-    @XmlAttribute
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -683,7 +694,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return startupOrder;
     }
 
-    @XmlAttribute
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -691,7 +701,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Sets the bean ref name of the error handler builder to use on this route
      */
-    @XmlAttribute
     public void setErrorHandlerRef(String errorHandlerRef) {
         this.errorHandlerRef = errorHandlerRef;
         // we use an specific error handler ref (from Spring DSL) then wrap that
@@ -712,7 +721,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
-    @XmlAttribute
     public void setRoutePolicyRef(String routePolicyRef) {
         this.routePolicyRef = routePolicyRef;
     }
@@ -725,7 +733,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return routePolicies;
     }
 
-    @XmlTransient
     public void setRoutePolicies(List<RoutePolicy> routePolicies) {
         this.routePolicies = routePolicies;
     }
@@ -734,7 +741,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return shutdownRoute;
     }
 
-    @XmlAttribute
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -743,7 +749,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return shutdownRunningTask;
     }
 
-    @XmlAttribute
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
@@ -757,7 +762,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
-    @XmlTransient
     public ErrorHandlerFactory getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
             errorHandlerBuilder = createErrorHandlerBuilder();
@@ -772,7 +776,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
-    @XmlAttribute
     public Boolean isRest() {
         return rest;
     }
@@ -781,7 +784,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return restDefinition;
     }
 
-    @XmlTransient
     public void setRestDefinition(RestDefinition restDefinition) {
         this.restDefinition = restDefinition;
     }
@@ -799,7 +801,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
         }
 
-        return contextScopedErrorHandler;
+        return true;
     }
 
     // Implementation methods
@@ -916,10 +918,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         routeContext.setInterceptStrategies(this.getInterceptStrategies());
         // force endpoint resolution
         routeContext.getEndpoint();
-        if (camelContext != null) {
-            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onRouteContextCreate(routeContext);
-            }
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            strategy.onRouteContextCreate(routeContext);
         }
 
         // validate route has output processors
