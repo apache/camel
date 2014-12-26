@@ -51,18 +51,18 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationProcessor {
 
     // special when using expression/predicates in the model
-    private final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
-    private final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
-    // special for outputs
-    private final String[] ONE_OF_OUTPUTS = new String[]{
-            "org.apache.camel.model.ProcessorDefinition",
-            "org.apache.camel.model.NoOutputDefinition",
-            "org.apache.camel.model.OutputDefinition",
-            "org.apache.camel.model.ExpressionNode",
-            "org.apache.camel.model.NoOutputExpressionNode",
-            "org.apache.camel.model.SendDefinition",
-            "org.apache.camel.model.InterceptDefinition",
-            "org.apache.camel.model.WhenDefinition",
+    private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
+    private static final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
+    // special for outputs (these classes have sub classes, so we use this to find all classes)
+    private static final String[] ONE_OF_OUTPUTS = new String[]{
+        "org.apache.camel.model.ProcessorDefinition",
+        "org.apache.camel.model.NoOutputDefinition",
+        "org.apache.camel.model.OutputDefinition",
+        "org.apache.camel.model.ExpressionNode",
+        "org.apache.camel.model.NoOutputExpressionNode",
+        "org.apache.camel.model.SendDefinition",
+        "org.apache.camel.model.InterceptDefinition",
+        "org.apache.camel.model.WhenDefinition",
     };
 
     @Override
@@ -117,7 +117,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EipOption> eipOptions = new LinkedHashSet<EipOption>();
-        findClassProperties(writer, roundEnv, eipOptions, classElement, "");
+        findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "");
 
         String json = createParameterJsonSchema(eipModel, eipOptions);
         writer.println(json);
@@ -142,7 +142,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
             }
             buffer.append("\n    ");
             // as its json we need to sanitize the docs
-            String doc = entry.getDocumentationWithNotes();
+            String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
                     entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes()));
@@ -178,7 +178,8 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         return model;
     }
 
-    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions, TypeElement classElement, String prefix) {
+    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
+                                       TypeElement originalClassType, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -214,7 +215,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                         }
                     }
 
-                    EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", "", docComment, isEnum, enums, false, null);
+                    EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", docComment, isEnum, enums, false, null);
                     eipOptions.add(ep);
                 }
 
@@ -269,7 +270,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                         }
                     }
 
-                    EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", "", docComment, isEnum, enums, isOneOf, oneOfTypes);
+                    EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", docComment, isEnum, enums, isOneOf, oneOfTypes);
                     eipOptions.add(ep);
                 }
 
@@ -279,71 +280,10 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                 if (elementRef != null) {
 
                     // special for outputs
-                    if ("outputs".equals(fieldName)) {
-                        String kind = "element";
-                        String name = elementRef.name();
-                        if (isNullOrEmpty(name) || "##default".equals(name)) {
-                            name = fieldName;
-                        }
-                        name = prefix + name;
-                        TypeMirror fieldType = fieldElement.asType();
-                        String fieldTypeName = fieldType.toString();
-
-                        // gather oneOf which extends any of the output base classes
-                        Set<String> oneOfTypes = new TreeSet<String>();
-                        // find all classes that has that superClassName
-                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-                        for (String superclass : ONE_OF_OUTPUTS) {
-                            findTypeElementChildren(roundEnv, children, superclass);
-                        }
-                        for (TypeElement child : children) {
-                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                            if (rootElement != null) {
-                                String childName = rootElement.name();
-                                if (childName != null) {
-                                    oneOfTypes.add(childName);
-                                }
-                            }
-                        }
-
-                        // remove some types which are not intended as an output in eips
-                        oneOfTypes.remove("route");
-
-                        EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", "", false, null, true, oneOfTypes);
-                        eipOptions.add(ep);
-                    }
+                    processOutputs(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
 
                     // special for expression
-                    if ("expression".equals(fieldName)) {
-                        String kind = "element";
-                        String name = elementRef.name();
-                        if (isNullOrEmpty(name) || "##default".equals(name)) {
-                            name = fieldName;
-                        }
-                        name = prefix + name;
-                        TypeMirror fieldType = fieldElement.asType();
-                        String fieldTypeName = fieldType.toString();
-
-                        // gather oneOf expression/predicates which uses language
-                        Set<String> oneOfTypes = new TreeSet<String>();
-                        TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-                        String superClassName = canonicalClassName(languages.toString());
-                        // find all classes that has that superClassName
-                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-                        findTypeElementChildren(roundEnv, children, superClassName);
-                        for (TypeElement child : children) {
-                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                            if (rootElement != null) {
-                                String childName = rootElement.name();
-                                if (childName != null) {
-                                    oneOfTypes.add(childName);
-                                }
-                            }
-                        }
-
-                        EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", "", false, null, true, oneOfTypes);
-                        eipOptions.add(ep);
-                    }
+                    processExpression(roundEnv, elementRef, fieldElement, fieldName, eipOptions, prefix);
                 }
             }
 
@@ -360,6 +300,93 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                 break;
             }
         }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef expression field
+     */
+    private void processExpression(RoundEnvironment roundEnv, XmlElementRef elementRef, VariableElement fieldElement,
+                                   String fieldName, Set<EipOption> eipOptions, String prefix) {
+        if ("expression".equals(fieldName)) {
+            String kind = "element";
+            String name = elementRef.name();
+            if (isNullOrEmpty(name) || "##default".equals(name)) {
+                name = fieldName;
+            }
+            name = prefix + name;
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            // gather oneOf expression/predicates which uses language
+            Set<String> oneOfTypes = new TreeSet<String>();
+            TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
+            String superClassName = canonicalClassName(languages.toString());
+            // find all classes that has that superClassName
+            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+            findTypeElementChildren(roundEnv, children, superClassName);
+            for (TypeElement child : children) {
+                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                if (rootElement != null) {
+                    String childName = rootElement.name();
+                    if (childName != null) {
+                        oneOfTypes.add(childName);
+                    }
+                }
+            }
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef outputs field
+     */
+    private void processOutputs(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                                VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+        if ("outputs".equals(fieldName) && supportOutputs(originalClassType)) {
+            String kind = "element";
+            String name = elementRef.name();
+            if (isNullOrEmpty(name) || "##default".equals(name)) {
+                name = fieldName;
+            }
+            name = prefix + name;
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            // gather oneOf which extends any of the output base classes
+            Set<String> oneOfTypes = new TreeSet<String>();
+            // find all classes that has that superClassName
+            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+            for (String superclass : ONE_OF_OUTPUTS) {
+                findTypeElementChildren(roundEnv, children, superclass);
+            }
+            for (TypeElement child : children) {
+                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                if (rootElement != null) {
+                    String childName = rootElement.name();
+                    if (childName != null) {
+                        oneOfTypes.add(childName);
+                    }
+                }
+            }
+
+            // remove some types which are not intended as an output in eips
+            oneOfTypes.remove("route");
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Whether the class supports outputs.
+     * <p/>
+     * There are some classes which does not support outputs, even though they have a outputs element.
+     */
+    private boolean supportOutputs(TypeElement classElement) {
+        String superclass = canonicalClassName(classElement.getSuperclass().toString());
+        return !"org.apache.camel.model.NoOutputExpressionNode".equals(superclass);
     }
 
     private static final class EipModel {
@@ -400,21 +427,19 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         private String type;
         private boolean required;
         private String defaultValue;
-        private String defaultValueNote;
         private String documentation;
         private boolean enumType;
         private Set<String> enums;
         private boolean oneOf;
         private Set<String> oneOfTypes;
 
-        private EipOption(String name, String kind, String type, boolean required, String defaultValue, String defaultValueNote,
-                          String documentation, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes) {
+        private EipOption(String name, String kind, String type, boolean required, String defaultValue, String documentation,
+                          boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes) {
             this.name = name;
             this.kind = kind;
             this.type = type;
             this.required = required;
             this.defaultValue = defaultValue;
-            this.defaultValueNote = defaultValueNote;
             this.documentation = documentation;
             this.enumType = enumType;
             this.enums = enums;
@@ -444,27 +469,6 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
 
         public String getDocumentation() {
             return documentation;
-        }
-
-        public String getEnumValuesAsHtml() {
-            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
-            if (enums != null && enums.size() > 0) {
-                for (String e : enums) {
-                    csb.append(e);
-                }
-            }
-            return csb.toString();
-        }
-
-        public String getDocumentationWithNotes() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(documentation);
-
-            if (!isNullOrEmpty(defaultValueNote)) {
-                sb.append(". Default value notice: ").append(defaultValueNote);
-            }
-
-            return sb.toString();
         }
 
         public boolean isEnumType() {
