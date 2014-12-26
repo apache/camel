@@ -86,11 +86,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
     
     @Override
-    public String getShortName() {
-        return "multicast";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor answer = this.createChildProcessor(routeContext, true);
 

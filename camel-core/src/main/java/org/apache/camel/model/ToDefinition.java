@@ -62,11 +62,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "to";
-    }
-
-    @Override
     public ExchangePattern getPattern() {
         return pattern;
     }

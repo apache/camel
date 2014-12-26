@@ -52,11 +52,6 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "process";
-    }
-
-    @Override
     public String toString() {
         return "process["
                 + ((ref != null) ? "ref:" + ref : processor)

@@ -76,11 +76,6 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     }
 
     @Override
-    public String getShortName() {
-        return "pollEnrich";
-    }
-    
-    @Override
     public String getLabel() {
         return "pollEnrich[" + description() + "]";
     }

@@ -92,11 +92,6 @@ public class LoopDefinition extends ExpressionNode {
     }
     
     @Override
-    public String getShortName() {
-        return "loop";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor output = this.createChildProcessor(routeContext, true);
         return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy());

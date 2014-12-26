@@ -65,11 +65,6 @@ public class SetOutHeaderDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setOutHeader";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getHeaderName(), "headerName", this);
         Expression expr = getExpression().createExpression(routeContext);

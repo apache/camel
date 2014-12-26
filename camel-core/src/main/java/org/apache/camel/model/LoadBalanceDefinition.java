@@ -79,11 +79,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     }
 
     @Override
-    public String getShortName() {
-        return "loadbalance";
-    }
-
-    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

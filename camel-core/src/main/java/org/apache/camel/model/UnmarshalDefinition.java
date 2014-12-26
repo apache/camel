@@ -136,11 +136,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     }
 
     @Override
-    public String getShortName() {
-        return "unmarshal";
-    }
-
-    @Override
     public String getLabel() {
         return "unmarshal[" + description() + "]";
     }

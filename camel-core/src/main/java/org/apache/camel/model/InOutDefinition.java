@@ -54,11 +54,6 @@ public class InOutDefinition extends SendDefinition<InOutDefinition> {
     }
     
     @Override
-    public String getShortName() {
-        return "inOut";
-    }
-
-    @Override
     public ExchangePattern getPattern() {
         return ExchangePattern.InOut;
     }

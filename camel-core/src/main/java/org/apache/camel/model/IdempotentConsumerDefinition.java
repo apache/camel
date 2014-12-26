@@ -64,11 +64,6 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         return "idempotentConsumer[" + getExpression() + "]";
     }
 
-    @Override
-    public String getShortName() {
-        return "idempotentConsumer";
-    }
-
     // Fluent API
     //-------------------------------------------------------------------------
 

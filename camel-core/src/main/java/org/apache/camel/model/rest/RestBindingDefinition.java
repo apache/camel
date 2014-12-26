@@ -63,11 +63,6 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     }
 
     @Override
-    public String getShortName() {
-        return "restBinding";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
 
         CamelContext context = routeContext.getCamelContext();

@@ -77,11 +77,6 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "sample";
-    }
-
-    @Override
     public String getLabel() {
         return "sample[" + description() + "]";
     }

@@ -63,11 +63,6 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setHeader";
-    }
-
-    @Override
     public String getLabel() {
         return "setHeader[" + getHeaderName() + "]";
     }

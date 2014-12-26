@@ -67,11 +67,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     public ResequenceDefinition() {
     }
 
-    @Override
-    public String getShortName() {
-        return "resequence";
-    }
-
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }

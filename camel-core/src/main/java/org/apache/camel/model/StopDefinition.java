@@ -37,11 +37,6 @@ public class StopDefinition extends NoOutputDefinition<StopDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "stop";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return new StopProcessor();
     }

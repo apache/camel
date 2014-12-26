@@ -63,11 +63,6 @@ public class WhenDefinition extends ExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "when";
-    }
-    
-    @Override
     public String getLabel() {
         return "when[" + description() + "]";
     }

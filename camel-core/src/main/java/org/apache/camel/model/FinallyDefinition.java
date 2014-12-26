@@ -44,11 +44,6 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "doFinally";
-    }
-     
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // parent must be a try
         if (!(getParent() instanceof TryDefinition)) {

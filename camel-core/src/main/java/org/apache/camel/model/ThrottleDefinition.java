@@ -71,11 +71,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     @Override
-    public String getShortName() {
-        return "throttle";
-    }
-
-    @Override
     public String getLabel() {
         return "throttle[" + description() + "]";
     }

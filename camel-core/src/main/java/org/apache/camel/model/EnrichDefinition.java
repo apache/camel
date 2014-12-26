@@ -83,11 +83,6 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     }
 
     @Override
-    public String getShortName() {
-        return "enrich";
-    }
-
-    @Override
     public String getEndpointUri() {
         if (resourceUri != null) {
             return resourceUri;

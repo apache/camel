@@ -48,11 +48,6 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     }
 
     @Override
-    public String getShortName() {
-        return "removeHeader";
-    }
-
-    @Override
     public String getLabel() {
         return "removeHeader[" + getHeaderName() + "]";
     }

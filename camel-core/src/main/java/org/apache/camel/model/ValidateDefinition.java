@@ -42,11 +42,6 @@ public class ValidateDefinition extends NoOutputExpressionNode {
     }
     
     @Override
-    public String getShortName() {
-        return "validate";
-    }
-    
-    @Override
     public String getLabel() {
         return "validate[" + getExpression() + "]";
     }

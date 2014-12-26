@@ -124,11 +124,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "choice";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<Processor> filters = new ArrayList<Processor>();
         for (WhenDefinition whenClause : whenClauses) {

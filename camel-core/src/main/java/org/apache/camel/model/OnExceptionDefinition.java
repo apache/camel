@@ -112,11 +112,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     @Override
-    public String getShortName() {
-        return "onException";
-    }
-
-    @Override
     public String toString() {
         return "OnException[" + description() + " -> " + getOutputs() + "]";
     }

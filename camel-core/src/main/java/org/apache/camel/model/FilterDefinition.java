@@ -57,11 +57,6 @@ public class FilterDefinition extends ExpressionNode {
     }
     
     @Override
-    public String getShortName() {
-        return "filter";
-    }
-
-    @Override
     public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
     }

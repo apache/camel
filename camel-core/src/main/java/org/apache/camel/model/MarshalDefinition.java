@@ -136,11 +136,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         return "marshal[" + description() + "]";
     }
     
-    @Override
-    public String getShortName() {
-        return "marshal";
-    }
-
     public String getRef() {
         return ref;
     }

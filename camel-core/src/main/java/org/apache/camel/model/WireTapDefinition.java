@@ -151,11 +151,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
     }
 
     @Override
-    public String getShortName() {
-        return "wireTap";
-    }
-    
-    @Override
     public String getLabel() {
         return "wireTap[" + description() + "]";
     }

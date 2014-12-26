@@ -45,11 +45,6 @@ public class SetFaultBodyDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setFaultBody";
-    }
-
-    @Override
     public String getLabel() {
         return "setFaultBody[" + getExpression() + "]";
     }

@@ -76,11 +76,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "log";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notEmpty(message, "message", this);
 

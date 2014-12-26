@@ -78,11 +78,6 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "aop";
-    }
-
-    @Override
     public String getLabel() {
         return "aop";
     }

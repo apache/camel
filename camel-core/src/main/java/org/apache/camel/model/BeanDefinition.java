@@ -98,11 +98,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return "bean[" + description() + "]";
     }
 
-    @Override
-    public String getShortName() {
-        return "bean";
-    }
-
     public String getRef() {
         return ref;
     }

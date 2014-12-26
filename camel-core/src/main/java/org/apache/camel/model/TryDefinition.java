@@ -59,11 +59,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "doTry";
-    }
-
-    @Override
     public String getLabel() {
         return "doTry";
     }

@@ -54,11 +54,6 @@ public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "inOnly";
-    }
-
-    @Override
     public ExchangePattern getPattern() {
         return ExchangePattern.InOnly;
     }

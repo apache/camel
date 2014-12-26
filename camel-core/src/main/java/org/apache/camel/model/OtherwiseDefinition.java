@@ -48,11 +48,6 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "otherwise";
-    }
-
-    @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer("otherwise[");
         List<ProcessorDefinition<?>> list = getOutputs();
