@@ -16,21 +16,27 @@
  */
 package org.apache.camel.model;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Represents an XML &lt;from/&gt; element
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -39,6 +45,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     private String uri;
     @XmlAttribute
     private String ref;
+    @XmlElementRef
+    private List<UriOption> uriOptions; // Only available through XML unmarshalling
     @XmlTransient
     private Endpoint endpoint;
 
@@ -85,7 +93,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     public String getUri() {
         if (uri != null) {
-            return uri;
+            return ensureUriIsComplete();
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         } else {
@@ -132,8 +140,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     }
 
     public void setEndpoint(Endpoint endpoint) {
+        clear();
         this.endpoint = endpoint;
-        this.uri = null;
         if (endpoint != null) {
             this.uri = endpoint.getEndpointUri();
         }
@@ -144,7 +152,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      */
     public Object getUriOrRef() {
         if (ObjectHelper.isNotEmpty(uri)) {
-            return uri;
+            return ensureUriIsComplete();
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         }
@@ -169,6 +177,21 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         this.endpoint = null;
         this.ref = null;
         this.uri = null;
+        this.uriOptions = null;
     }
 
+    protected String ensureUriIsComplete() {
+        if (this.uri != null && this.uriOptions != null) {
+            try {
+                this.uri = URISupport.appendParametersToURI(this.uri, UriOption.transformOptions(this.uriOptions));
+            } catch (URISyntaxException e) {
+                throw new RuntimeCamelException(String.format("Cannot append uri options to %s", this.uri), e);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeCamelException(String.format("Cannot append uri options to %s", this.uri), e);
+            } finally {
+                this.uriOptions = null;
+            }
+        }
+        return this.uri;
+    }
 }
