@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.util.ObjectHelper;
+import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
@@ -37,7 +38,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     public static final String JASYPT_PREFIX_TOKEN = "ENC(";
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
-    private StandardPBEStringEncryptor encryptor;
+    private StringEncryptor encryptor;
     private String password;
     private String algorithm;
 
@@ -71,21 +72,22 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         this.algorithm = algorithm;
     }
 
-    public synchronized StandardPBEStringEncryptor getEncryptor() {
+    public synchronized StringEncryptor getEncryptor() {
         if (encryptor == null) {
             // password is mandatory
             ObjectHelper.notEmpty("password", getPassword());
 
-            encryptor = new StandardPBEStringEncryptor();
-            encryptor.setPassword(getPassword());
+            StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
+            pbeStringEncryptor.setPassword(getPassword());
             if (algorithm != null) {
-                encryptor.setAlgorithm(getAlgorithm());
+                pbeStringEncryptor.setAlgorithm(getAlgorithm());
             }
+            encryptor = pbeStringEncryptor;
         }
         return encryptor;
     }
 
-    public void setEncryptor(StandardPBEStringEncryptor encryptor) {
+    public void setEncryptor(StringEncryptor encryptor) {
         this.encryptor = encryptor;
     }
 
