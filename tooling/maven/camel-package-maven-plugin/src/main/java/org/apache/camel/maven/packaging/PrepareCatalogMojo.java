@@ -198,6 +198,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoFailureException("Error writing to file " + all);
         }
+
+        printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
     }
 
     protected void executeComponents() throws MojoExecutionException, MojoFailureException {
@@ -326,6 +328,44 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels, usedLabels);
+    }
+
+    private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+        getLog().info("================================================================================");
+
+        getLog().info("");
+        getLog().info("Camel model catalog report");
+        getLog().info("");
+        getLog().info("\tModels found: " + json.size());
+        for (File file : json) {
+            getLog().info("\t\t" + asComponentName(file));
+        }
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate models detected: " + duplicate.size());
+            for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!missingLabels.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing labels detected: " + missingLabels.size());
+            for (File file : missingLabels) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!usedLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tUsed labels: " + usedLabels.size());
+            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                getLog().info("\t\t" + entry.getKey() + ":");
+                for (String name : entry.getValue()) {
+                    getLog().info("\t\t\t" + name);
+                }
+            }
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
     }
 
     private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths,

@@ -30,9 +30,27 @@ public interface CamelComponentCatalog {
     List<String> findComponentNames();
 
     /**
+     * Find all the model names from the Camel catalog
+     */
+    List<String> findModelNames();
+
+    /**
+     * Find all the model names from the Camel catalog that matches the label
+     */
+    List<String> findModelNames(String label);
+
+    /**
      * Find all the component names from the Camel catalog that matches the label
      */
     List<String> findComponentNames(String label);
+
+    /**
+     * Returns the model information as JSon format.
+     *
+     * @param name the model name
+     * @return model details in JSon
+     */
+    String modelJSonSchema(String name);
 
     /**
      * Returns the component information as JSon format.
@@ -43,9 +61,16 @@ public interface CamelComponentCatalog {
     String componentJSonSchema(String name);
 
     /**
+     * Find all the unique label names all the models are using.
+     *
+     * @return a set of all the labels.
+     */
+    Set<String> findModelLabels();
+
+    /**
      * Find all the unique label names all the components are using.
      *
      * @return a set of all the labels.
      */
-    Set<String> findLabels();
+    Set<String> findComponentLabels();
 }

@@ -203,7 +203,17 @@
       </action>
     </command>
     <command name="camel/catalog-label-list">
-      <action class="org.apache.camel.karaf.commands.CatalogLabelList">
+      <action class="org.apache.camel.karaf.commands.CatalogComponentLabelList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-eip-list">
+      <action class="org.apache.camel.karaf.commands.CatalogModelList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-eip-label-list">
+      <action class="org.apache.camel.karaf.commands.CatalogModelLabelList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>

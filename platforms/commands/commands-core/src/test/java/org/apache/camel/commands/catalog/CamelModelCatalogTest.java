@@ -28,97 +28,73 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class CamelComponentCatalogTest {
+public class CamelModelCatalogTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelComponentCatalogTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelModelCatalogTest.class);
 
     @Test
-    public void testFindComponentNames() {
+    public void testFindModelNames() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        List<String> names = catalog.findComponentNames();
+        List<String> names = catalog.findModelNames();
 
         assertNotNull(names);
 
         LOG.info("Found {} names", names.size());
-        assertTrue("Should find some components", names.size() > 0);
+        assertTrue("Should find some models", names.size() > 0);
     }
 
     @Test
-    public void testFindComponentNamesFilter() {
+    public void testFindModelNamesFilter() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        List<String> names = catalog.findComponentNames("testing");
+        List<String> names = catalog.findModelNames("transformation");
 
         assertNotNull(names);
 
         LOG.info("Found {} names", names.size());
-        assertTrue("Should find some testing components", names.size() > 0);
+        assertTrue("Should find some transformation models", names.size() > 0);
     }
 
     @Test
-    public void testFindComponentNamesFilterWildcard() {
+    public void testFindModelNamesFilterWildcard() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        List<String> names = catalog.findComponentNames("t*");
+        List<String> names = catalog.findModelNames("t*");
 
         assertNotNull(names);
 
         LOG.info("Found {} names", names.size());
-        assertTrue("Should find some t* components", names.size() > 0);
-    }
-
-    @Test
-    public void testFindComponentNamesFilterTwo() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        List<String> names = catalog.findComponentNames("transformation");
-
-        assertNotNull(names);
-
-        LOG.info("Found {} names", names.size());
-        assertTrue("Should find some transformation components", names.size() > 0);
+        assertTrue("Should find some t* models", names.size() > 0);
     }
 
     @Test
     public void testFindComponentNamesFilterNoMatch() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        List<String> names = catalog.findComponentNames("cannotmatchme");
+        List<String> names = catalog.findModelNames("cannotmatchme");
 
         assertNotNull(names);
 
-        assertTrue("Should not match any components", names.size() == 0);
+        assertTrue("Should not match any models", names.size() == 0);
     }
 
     @Test
     public void testCoreComponentJson() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        String json = catalog.componentJSonSchema("bean");
+        String json = catalog.modelJSonSchema("split");
 
         assertNotNull(json);
         LOG.info(json);
 
-        assertTrue("Should find bean component", json.contains("bean"));
-    }
-
-    @Test
-    public void testFtpComponentJson() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        String json = catalog.componentJSonSchema("ftp");
-
-        assertNotNull(json);
-        LOG.info(json);
-
-        assertTrue("Should find ftp component", json.contains("ftp"));
+        assertTrue("Should find to split", json.contains("split"));
     }
 
     @Test
     public void testLabels() {
         CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
-        Set<String> labels = catalog.findComponentLabels();
+        Set<String> labels = catalog.findModelLabels();
 
         assertNotNull(labels);
 
         assertTrue("Should find labels", labels.size() > 0);
-        assertTrue("Should find core label", labels.contains("core"));
-        assertTrue("Should find testing label", labels.contains("testing"));
-        assertTrue("Should find rest label", labels.contains("rest"));
+        assertTrue("Should find transformation label", labels.contains("transformation"));
     }
 
 }

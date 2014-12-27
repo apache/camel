@@ -218,6 +218,23 @@ public interface CamelController {
     List<Map<String, String>> listComponents(String camelContextName) throws Exception;
 
     /**
+     * Lists all models from the Camel models catalog
+     *
+     * @param filter optional filter to filter by labels
+     * @return a list of key/value pairs with model information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> listModelsCatalog(String filter) throws Exception;
+
+    /**
+     * Lists all the labels from the Camel models catalog
+     *
+     * @return a map which key is the label, and the set is the models names that has the given label
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Set<String>> listModelsLabelCatalog() throws Exception;
+
+    /**
      * Lists all components from the Camel components catalog
      *
      * @param filter optional filter to filter by labels
@@ -232,6 +249,6 @@ public interface CamelController {
      * @return a map which key is the label, and the set is the component names that has the given label
      * @throws java.lang.Exception can be thrown
      */
-    Map<String, Set<String>> listLabelCatalog() throws Exception;
+    Map<String, Set<String>> listComponentsLabelCatalog() throws Exception;
 
 }

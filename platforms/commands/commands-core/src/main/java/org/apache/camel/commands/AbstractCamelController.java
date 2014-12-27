@@ -37,6 +37,51 @@ public abstract class AbstractCamelController implements CamelController {
     private CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
 
     @Override
+    public List<Map<String, String>> listModelsCatalog(String filter) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (filter != null) {
+            filter = RegexUtil.wildcardAsRegex(filter);
+        }
+
+        List<String> names = filter != null ? catalog.findModelNames(filter) : catalog.findModelNames();
+        for (String name : names) {
+            // load models json data, and parse it to gather the model meta-data
+            String json = catalog.modelJSonSchema(name);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("model", json, false);
+
+            String description = null;
+            String label = null;
+            String type = null;
+            for (Map<String, String> row : rows) {
+                if (row.containsKey("description")) {
+                    description = row.get("description");
+                } else if (row.containsKey("label")) {
+                    label = row.get("label");
+                } else if (row.containsKey("javaType")) {
+                    type = row.get("javaType");
+                }
+            }
+
+            Map<String, String> row = new HashMap<String, String>();
+            row.put("name", name);
+            if (description != null) {
+                row.put("description", description);
+            }
+            if (label != null) {
+                row.put("label", label);
+            }
+            if (type != null) {
+                row.put("type", type);
+            }
+
+            answer.add(row);
+        }
+
+        return answer;
+    }
+
+    @Override
     public List<Map<String, String>> listComponentsCatalog(String filter) throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
@@ -106,10 +151,32 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @Override
-    public Map<String, Set<String>> listLabelCatalog() throws Exception {
+    public Map<String, Set<String>> listModelsLabelCatalog() throws Exception {
         Map<String, Set<String>> answer = new LinkedHashMap<String, Set<String>>();
 
-        Set<String> labels = catalog.findLabels();
+        Set<String> labels = catalog.findModelLabels();
+        for (String label : labels) {
+            List<Map<String, String>> models = listModelsCatalog(label);
+            if (!models.isEmpty()) {
+                Set<String> names = new LinkedHashSet<String>();
+                for (Map<String, String> info : models) {
+                    String name = info.get("name");
+                    if (name != null) {
+                        names.add(name);
+                    }
+                }
+                answer.put(label, names);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Map<String, Set<String>> listComponentsLabelCatalog() throws Exception {
+        Map<String, Set<String>> answer = new LinkedHashMap<String, Set<String>>();
+
+        Set<String> labels = catalog.findComponentLabels();
         for (String label : labels) {
             List<Map<String, String>> components = listComponentsCatalog(label);
             if (!components.isEmpty()) {

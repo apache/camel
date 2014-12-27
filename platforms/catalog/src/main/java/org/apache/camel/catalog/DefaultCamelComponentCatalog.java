@@ -34,7 +34,9 @@ import java.util.regex.PatternSyntaxException;
  */
 public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
 
+    private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
+    private static final String MODEL_JSON = "org/apache/camel/catalog/models";
     private static final String COMPONENTS_JSON = "org/apache/camel/catalog/components";
 
     @Override
@@ -50,6 +52,51 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
             }
         }
         return names;
+    }
+
+    @Override
+    public List<String> findModelNames() {
+        List<String> names = new ArrayList<String>();
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
+        if (is != null) {
+            try {
+                loadLines(is, names);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return names;
+    }
+
+    @Override
+    public List<String> findModelNames(String filter) {
+        List<String> answer = new ArrayList<String>();
+
+        List<String> names = findModelNames();
+        for (String name : names) {
+            String json = modelJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            try {
+                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                    answer.add(name);
+                                }
+                            } catch (PatternSyntaxException e) {
+                                // ignore as filter is maybe not a pattern
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
     }
 
     @Override
@@ -83,6 +130,22 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     }
 
     @Override
+    public String modelJSonSchema(String name) {
+        String file = MODEL_JSON + "/" + name + ".json";
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        if (is != null) {
+            try {
+                return loadText(is);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public String componentJSonSchema(String name) {
         String file = COMPONENTS_JSON + "/" + name + ".json";
 
@@ -99,7 +162,31 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     }
 
     @Override
-    public Set<String> findLabels() {
+    public Set<String> findModelLabels() {
+        SortedSet<String> answer = new TreeSet<String>();
+
+        List<String> names = findModelNames();
+        for (String name : names) {
+            String json = modelJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            answer.add(part);
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Set<String> findComponentLabels() {
         SortedSet<String> answer = new TreeSet<String>();
 
         List<String> names = findComponentNames();

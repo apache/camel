@@ -24,9 +24,9 @@ import java.util.Set;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * From the Camel catalog lists all the components.
+ * From the Camel catalog lists all the model labels.
  */
-public class CatalogLabelListCommand extends AbstractCamelCommand {
+public class CatalogModelLabelListCommand extends AbstractCamelCommand {
 
     private static final String LABEL_COLUMN_LABEL = "Label";
     private static final String NUMBER_COLUMN_LABEL = "#";
@@ -45,13 +45,13 @@ public class CatalogLabelListCommand extends AbstractCamelCommand {
 
     private boolean verbose;
 
-    public CatalogLabelListCommand(boolean verbose) {
+    public CatalogModelLabelListCommand(boolean verbose) {
         this.verbose = verbose;
     }
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        Map<String, Set<String>> labels = camelController.listLabelCatalog();
+        Map<String, Set<String>> labels = camelController.listModelsLabelCatalog();
 
         if (labels.isEmpty()) {
             return null;
