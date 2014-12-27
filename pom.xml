@@ -34,7 +34,7 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>3.1.1</maven>
+    <maven>3.0.4</maven>
   </prerequisites>
 
   <properties>
@@ -51,7 +51,7 @@
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <jaxb-version>2.2.11</jaxb-version>
+    <jaxb-version>2.2.7</jaxb-version>
   </properties>
 
   <mailingLists>
