@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Defines the configuration parameters for the batch-processing
  * {@link org.apache.camel.processor.Resequencer}. Usage example:
  */
-@XmlRootElement
+@XmlRootElement(name = "batch-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {
     @XmlAttribute
