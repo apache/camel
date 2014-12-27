@@ -58,6 +58,7 @@ import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -65,6 +66,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
+@Label("transformation")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {

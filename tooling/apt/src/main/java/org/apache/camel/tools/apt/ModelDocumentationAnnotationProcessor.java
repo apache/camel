@@ -37,16 +37,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
-
-// TODO: add support for label so we can categorize the eips
+import static org.apache.camel.tools.apt.Strings.safeNull;
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
  */
-@SupportedAnnotationTypes({"javax.xml.bind.annotation.*"})
+@SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationProcessor {
 
@@ -113,7 +114,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, XmlRootElement rootElement,
                                                 String javaTypeName, String name) {
         // gather eip information
-        EipModel eipModel = findEipModelProperties(roundEnv, javaTypeName, name);
+        EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, name);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EipOption> eipOptions = new LinkedHashSet<EipOption>();
@@ -128,8 +129,9 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         // eip model
         buffer.append("\n \"model\": {");
         buffer.append("\n    \"name\": \"").append(eipModel.getName()).append("\",");
-        buffer.append("\n    \"description\": \"").append(eipModel.getDescription()).append("\",");
+        buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
+        buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");
@@ -153,10 +155,15 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         return buffer.toString();
     }
 
-    protected EipModel findEipModelProperties(RoundEnvironment roundEnv, String javaTypeName, String name) {
+    protected EipModel findEipModelProperties(RoundEnvironment roundEnv, TypeElement classElement, String javaTypeName, String name) {
         EipModel model = new EipModel();
         model.setJavaType(javaTypeName);
         model.setName(name);
+
+        Label label = classElement.getAnnotation(Label.class);
+        if (label != null) {
+            model.setLabel(label.value());
+        }
 
         // favor to use class javadoc of component as description
         if (model.getJavaType() != null) {
@@ -528,6 +535,7 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
 
         private String name;
         private String javaType;
+        private String label;
         private String description;
 
         public String getName() {
@@ -544,6 +552,14 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
 
         public void setJavaType(String javaType) {
             this.javaType = javaType;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
         }
 
         public String getDescription() {

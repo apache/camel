@@ -32,6 +32,14 @@ final class Strings {
         return text == null || text.length() == 0 || "null".equals(text);
     }
 
+    public static String safeNull(String text) {
+        if (isNullOrEmpty(text)) {
+            return "";
+        } else {
+            return text;
+        }
+    }
+
     /**
      * Returns the value or the defaultValue if it is null
      */

@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,12 +26,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;convertBodyTo/&gt; element
  */
+@Label("transformation")
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {
