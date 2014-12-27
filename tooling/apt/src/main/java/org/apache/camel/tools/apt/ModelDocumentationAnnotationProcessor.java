@@ -42,7 +42,6 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
 // TODO: add support for label so we can categorize the eips
-// TODO: add support for id/description which uses @XmlAttribute on methods
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
@@ -288,6 +287,13 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                 }
             }
 
+            // special when we process these nodes as they do not use JAXB annotations on fields, but on methods
+            if ("OptionalIdentifiedDefinition".equals(classElement.getSimpleName().toString())) {
+                processIdentified(roundEnv, originalClassType, classElement, eipOptions, prefix);
+            } else if ("RouteDefinition".equals(classElement.getSimpleName().toString())) {
+                processRoute(roundEnv, originalClassType, classElement, eipOptions, prefix);
+            }
+
             // check super classes which may also have fields
             TypeElement baseTypeElement = null;
             TypeMirror superclass = classElement.getSuperclass();
@@ -301,6 +307,134 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                 break;
             }
         }
+    }
+
+    private void processRoute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
+                              Set<EipOption> eipOptions, String prefix) {
+
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        // group
+        String docComment = findJavaDoc(elementUtils, null, "group", classElement, true);
+        EipOption ep = new EipOption("group", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // group
+        docComment = findJavaDoc(elementUtils, null, "streamCache", classElement, true);
+        ep = new EipOption("streamCache", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // trace
+        docComment = findJavaDoc(elementUtils, null, "trace", classElement, true);
+        ep = new EipOption("trace", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // trace
+        docComment = findJavaDoc(elementUtils, null, "messageHistory", classElement, true);
+        ep = new EipOption("messageHistory", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // trace
+        docComment = findJavaDoc(elementUtils, null, "handleFault", classElement, true);
+        ep = new EipOption("handleFault", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // delayer
+        docComment = findJavaDoc(elementUtils, null, "delayer", classElement, true);
+        ep = new EipOption("delayer", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // autoStartup
+        docComment = findJavaDoc(elementUtils, null, "autoStartup", classElement, true);
+        ep = new EipOption("autoStartup", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // startupOrder
+        docComment = findJavaDoc(elementUtils, null, "startupOrder", classElement, true);
+        ep = new EipOption("startupOrder", "attribute", "java.lang.Integer", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // errorHandlerRef
+        docComment = findJavaDoc(elementUtils, null, "errorHandlerRef", classElement, true);
+        ep = new EipOption("errorHandlerRef", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // routePolicyRef
+        docComment = findJavaDoc(elementUtils, null, "routePolicyRef", classElement, true);
+        ep = new EipOption("routePolicyRef", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // shutdownRoute
+        Set<String> enums = new LinkedHashSet<String>();
+        enums.add("Default");
+        enums.add("Defer");
+        docComment = findJavaDoc(elementUtils, null, "shutdownRoute", classElement, true);
+        ep = new EipOption("shutdownRoute", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, true, enums, false, null);
+        eipOptions.add(ep);
+
+        // shutdownRunningTask
+        enums = new LinkedHashSet<String>();
+        enums.add("CompleteCurrentTaskOnly");
+        enums.add("CompleteAllTasks");
+        docComment = findJavaDoc(elementUtils, null, "shutdownRunningTask", classElement, true);
+        ep = new EipOption("shutdownRunningTask", "attribute", "org.apache.camel.ShutdownRunningTask", false, "", docComment, true, enums, false, null);
+        eipOptions.add(ep);
+
+        // inputs
+        Set<String> oneOfTypes = new TreeSet<String>();
+        oneOfTypes.add("from");
+        docComment = findJavaDoc(elementUtils, null, "inputs", classElement, true);
+        ep = new EipOption("inputs", "element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment, false, null, true, oneOfTypes);
+        eipOptions.add(ep);
+
+        // outputs
+        // gather oneOf which extends any of the output base classes
+        oneOfTypes = new TreeSet<String>();
+        // find all classes that has that superClassName
+        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+        for (String superclass : ONE_OF_OUTPUTS) {
+            findTypeElementChildren(roundEnv, children, superclass);
+        }
+        for (TypeElement child : children) {
+            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+            if (rootElement != null) {
+                String childName = rootElement.name();
+                if (childName != null) {
+                    oneOfTypes.add(childName);
+                }
+            }
+        }
+
+        // remove some types which are not intended as an output in eips
+        oneOfTypes.remove("route");
+
+        docComment = findJavaDoc(elementUtils, null, "outputs", classElement, true);
+        ep = new EipOption("outputs", "element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", true, "", docComment, false, null, true, oneOfTypes);
+        eipOptions.add(ep);
+    }
+
+    /**
+     * Special for process the OptionalIdentifiedDefinition
+     */
+    private void processIdentified(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
+                                   Set<EipOption> eipOptions, String prefix) {
+
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        // id
+        String docComment = findJavaDoc(elementUtils, classElement, "id", classElement, true);
+        EipOption ep = new EipOption("id", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // description
+        docComment = findJavaDoc(elementUtils, classElement, "description", classElement, true);
+        ep = new EipOption("description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
+
+        // custom id
+        docComment = findJavaDoc(elementUtils, classElement, "customId", classElement, true);
+        ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+        eipOptions.add(ep);
     }
 
     /**

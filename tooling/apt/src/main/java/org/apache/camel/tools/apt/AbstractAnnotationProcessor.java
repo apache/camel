@@ -33,7 +33,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
@@ -51,7 +50,10 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
 
     protected String findJavaDoc(Elements elementUtils, Element element, String fieldName, TypeElement classElement, boolean builderPattern) {
-        String answer = elementUtils.getDocComment(element);
+        String answer = null;
+        if (element != null) {
+            answer = elementUtils.getDocComment(element);
+        }
         if (isNullOrEmpty(answer)) {
             String setter = "set" + fieldName.substring(0, 1).toUpperCase();
             if (fieldName.length() > 1) {
@@ -172,6 +174,26 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
                     }
                 }
             }
+        }
+    }
+
+    protected boolean hasSuperClass(RoundEnvironment roundEnv, TypeElement classElement, String superClassName) {
+        String aRootName = canonicalClassName(classElement.getQualifiedName().toString());
+
+        if (isNullOrEmpty(aRootName) || "java.lang.Object".equals(aRootName)) {
+            return false;
+        }
+
+        String aSuperClassName = canonicalClassName(classElement.getSuperclass().toString());
+        if (superClassName.equals(aSuperClassName)) {
+            return true;
+        }
+
+        TypeElement aSuperClass = findTypeElement(roundEnv, aSuperClassName);
+        if (aSuperClass != null) {
+            return hasSuperClass(roundEnv, aSuperClass, superClassName);
+        } else {
+            return false;
         }
     }
 

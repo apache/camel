@@ -56,53 +56,34 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;route/&gt; element
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs"})
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
+// must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
-    @XmlTransient
     private final AtomicBoolean prepared = new AtomicBoolean(false);
-    @XmlElementRef
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
-    @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
-    @XmlAttribute
     private String group;
-    @XmlAttribute
     private String streamCache;
-    @XmlAttribute
     private String trace;
-    @XmlAttribute
     private String messageHistory;
-    @XmlAttribute
     private String handleFault;
-    @XmlAttribute
     private String delayer;
-    @XmlAttribute
     private String autoStartup;
-    @XmlAttribute
     private Integer startupOrder;
-    @XmlTransient
     private List<RoutePolicy> routePolicies;
-    @XmlAttribute
     private String routePolicyRef;
-    @XmlAttribute
     private ShutdownRoute shutdownRoute;
-    @XmlAttribute
     private ShutdownRunningTask shutdownRunningTask;
-    @XmlAttribute
     private String errorHandlerRef;
-    @XmlTransient
     private ErrorHandlerFactory errorHandlerBuilder;
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler configured)
-    @XmlTransient
     private boolean contextScopedErrorHandler = true;
-    @XmlAttribute
     private Boolean rest;
-    @XmlTransient
     private RestDefinition restDefinition;
 
     public RouteDefinition() {
@@ -216,7 +197,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         ObjectHelper.notNull(camelContext, "CamelContext");
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
-    
+
     @Deprecated
     public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
         return adviceWith((ModelCamelContext)camelContext, builder);
@@ -597,6 +578,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return inputs;
     }
 
+    /**
+     * Input to the route.
+     */
+    @XmlElementRef
     public void setInputs(List<FromDefinition> inputs) {
         this.inputs = inputs;
     }
@@ -605,6 +590,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return outputs;
     }
 
+    /**
+     * Outputs are processors that determines how messages are processed by this route.
+     */
+    @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
 
@@ -629,50 +618,95 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return group;
     }
 
+    /**
+     * The group that this route belongs to; could be the name of the RouteBuilder class
+     * or be explicitly configured in the XML.
+     * <p/>
+     * May be null.
+     */
+    @XmlAttribute
     public void setGroup(String group) {
         this.group = group;
     }
 
+    /**
+     * Whether stream caching is enabled on this route.
+     */
     public String getStreamCache() {
         return streamCache;
     }
 
+    /**
+     * Whether stream caching is enabled on this route.
+     */
+    @XmlAttribute
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
 
+    /**
+     * Whether tracing is enabled on this route.
+     */
     public String getTrace() {
         return trace;
     }
 
+    /**
+     * Whether tracing is enabled on this route.
+     */
+    @XmlAttribute
     public void setTrace(String trace) {
         this.trace = trace;
     }
 
+    /**
+     * Whether message history is enabled on this route.
+     */
     public String getMessageHistory() {
         return messageHistory;
     }
 
+    /**
+     * Whether message history is enabled on this route.
+     */
+    @XmlAttribute
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
 
+    /**
+     * Whether handle fault is enabled on this route.
+     */
     public String getHandleFault() {
         return handleFault;
     }
 
+    /**
+     * Whether handle fault is enabled on this route.
+     */
+    @XmlAttribute
     public void setHandleFault(String handleFault) {
         this.handleFault = handleFault;
     }
 
+    /**
+     * Whether to slow down processing messages by a given delay in msec.
+     */
     public String getDelayer() {
         return delayer;
     }
 
+    /**
+     * Whether to slow down processing messages by a given delay in msec.
+     */
+    @XmlAttribute
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
 
+    /**
+     * Whether to auto start this route
+     */
     public String getAutoStartup() {
         return autoStartup;
     }
@@ -686,14 +720,25 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return isAutoStartup != null && isAutoStartup;
     }
 
+    /**
+     * Whether to auto start this route
+     */
+    @XmlAttribute
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
 
+    /**
+     * To configure the ordering of the routes being started
+     */
     public Integer getStartupOrder() {
         return startupOrder;
     }
 
+    /**
+     * To configure the ordering of the routes being started
+     */
+    @XmlAttribute
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -701,6 +746,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Sets the bean ref name of the error handler builder to use on this route
      */
+    @XmlAttribute
     public void setErrorHandlerRef(String errorHandlerRef) {
         this.errorHandlerRef = errorHandlerRef;
         // we use an specific error handler ref (from Spring DSL) then wrap that
@@ -708,6 +754,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
     }
 
+    /**
+     * Sets the bean ref name of the error handler builder to use on this route
+     */
     public String getErrorHandlerRef() {
         return errorHandlerRef;
     }
@@ -721,10 +770,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
+    /**
+     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route.
+     * Multiple policies can be configured by separating values using comma.
+     */
+    @XmlAttribute
     public void setRoutePolicyRef(String routePolicyRef) {
         this.routePolicyRef = routePolicyRef;
     }
 
+    /**
+     * Reference to custom {@link org.apache.camel.spi.RoutePolicy} to use by the route.
+     * Multiple policies can be configured by separating values using comma.
+     */
     public String getRoutePolicyRef() {
         return routePolicyRef;
     }
@@ -733,6 +791,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return routePolicies;
     }
 
+    @XmlTransient
     public void setRoutePolicies(List<RoutePolicy> routePolicies) {
         this.routePolicies = routePolicies;
     }
@@ -741,18 +800,29 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return shutdownRoute;
     }
 
+    /**
+     * To control how to shutdown the route.
+     */
+    @XmlAttribute
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
 
+    /**
+     * To control how to shutdown the route.
+     */
     public ShutdownRunningTask getShutdownRunningTask() {
         return shutdownRunningTask;
     }
 
+    /**
+     * To control how to shutdown the route.
+     */
+    @XmlAttribute
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
-    
+
     private ErrorHandlerFactory createErrorHandlerBuilder() {
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
@@ -762,6 +832,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
+    @XmlTransient
     public ErrorHandlerFactory getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
             errorHandlerBuilder = createErrorHandlerBuilder();
@@ -776,6 +847,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    @XmlAttribute
     public Boolean isRest() {
         return rest;
     }
@@ -784,6 +856,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return restDefinition;
     }
 
+    @XmlTransient
     public void setRestDefinition(RestDefinition restDefinition) {
         this.restDefinition = restDefinition;
     }
