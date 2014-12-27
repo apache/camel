@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Label;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a wellformed HTML document (XML well Formed) {@link DataFormat}
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {

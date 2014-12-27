@@ -24,12 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents the BeanIO {@link org.apache.camel.spi.DataFormat}
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "beanio")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanioDataFormat extends DataFormatDefinition {

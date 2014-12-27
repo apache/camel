@@ -20,9 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * For expressions and predicates using a constant
  */
+@Label("language")
 @XmlRootElement(name = "constant")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConstantExpression extends ExpressionDefinition {

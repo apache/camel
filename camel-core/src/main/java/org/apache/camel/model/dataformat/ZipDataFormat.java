@@ -24,11 +24,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents the ZIP XML {@link org.apache.camel.spi.DataFormat}
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "zip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDataFormat extends DataFormatDefinition {
@@ -36,6 +38,7 @@ public class ZipDataFormat extends DataFormatDefinition {
     private Integer compressionLevel;
     
     public ZipDataFormat() {
+        super("zip");
     }
 
     public ZipDataFormat(int compressionLevel) {

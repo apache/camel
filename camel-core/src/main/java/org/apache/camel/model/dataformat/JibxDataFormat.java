@@ -25,12 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the JiBX XML {@link org.apache.camel.spi.DataFormat}
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "jibx")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JibxDataFormat extends DataFormatDefinition {

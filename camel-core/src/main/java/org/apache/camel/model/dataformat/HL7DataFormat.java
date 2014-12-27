@@ -25,12 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents a <a href="http://camel.apache.org/hl7.html">HL7</a> {@link org.apache.camel.spi.DataFormat}.
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {

@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -45,6 +46,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)
 public class XStreamDataFormat extends DataFormatDefinition {
@@ -69,7 +71,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlJavaTypeAdapter(ImplicitCollectionsAdapter.class)
     @XmlElement(name = "implicitCollections")
     private Map<String, String[]> implicitCollections;
-    
 
     public XStreamDataFormat() {
         super("xstream");

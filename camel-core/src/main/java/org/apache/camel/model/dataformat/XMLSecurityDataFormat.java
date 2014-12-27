@@ -28,12 +28,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
  * Represents as XML Security Encrypter/Decrypter {@link DataFormat}
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
@@ -68,8 +70,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     
     @XmlTransient
     private Map<String, String> namespaces;
-    
-    
+
     public XMLSecurityDataFormat() {
         super("secureXML");
     }

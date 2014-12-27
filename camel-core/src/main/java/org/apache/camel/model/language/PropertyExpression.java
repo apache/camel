@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * An expression which extracts the named exchange property
  *
  * @version 
  */
+@Label("language")
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyExpression extends ExpressionDefinition {

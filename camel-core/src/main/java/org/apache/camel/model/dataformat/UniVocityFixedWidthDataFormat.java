@@ -23,11 +23,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
-
+import org.apache.camel.spi.Label;
 
 /**
  * Represents the uniVocity fixed-width {@link org.apache.camel.spi.DataFormat}
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "univocity-fixed")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {

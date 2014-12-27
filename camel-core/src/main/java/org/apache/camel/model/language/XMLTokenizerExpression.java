@@ -25,12 +25,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
+import org.apache.camel.spi.Label;
 
 /**
  * For expressions and predicates using a body or header tokenizer.
  *
  * @see XMLTokenizeLanguage
  */
+@Label("language")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {

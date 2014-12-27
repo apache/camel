@@ -24,17 +24,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.RouteContext;
-
+import org.apache.camel.spi.Label;
 
 /**
  * Represents a Barcode DataFormat {@link org.apache.camel.spi.DataFormat}
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "barcode")
 @XmlAccessorType(XmlAccessType.FIELD)
-
 public class BarcodeDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Integer width;
@@ -49,13 +48,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         super("barcode");
     }
     
-    @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
-        DataFormat barcodeFormat = super.createDataFormat(routeContext);
-
-        return barcodeFormat;
-    }
-
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (width != null) {
@@ -73,7 +65,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         if (barcodeFormat != null) {
             setProperty(camelContext, dataFormat, "barcodeFormat", barcodeFormat);
         }
-       
     }
     
     public Integer getWidth() {

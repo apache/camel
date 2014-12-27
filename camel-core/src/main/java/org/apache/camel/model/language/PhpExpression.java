@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * For PHP expressions and predicates
  *
  * @version 
  */
+@Label("language")
 @XmlRootElement(name = "php")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PhpExpression extends ExpressionDefinition {

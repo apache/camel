@@ -23,11 +23,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
-
+import org.apache.camel.spi.Label;
 
 /**
  * Represents the uniVocity CSV {@link org.apache.camel.spi.DataFormat}
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "univocity-csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {

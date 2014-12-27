@@ -22,9 +22,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
+import org.apache.camel.spi.Label;
+
 /**
  * Represents a header for the uniVocity data formats.
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "univocity-header")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityHeader {

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -27,8 +28,13 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "serialization")
 public class SerializationDataFormat extends DataFormatDefinition {
+
+    public SerializationDataFormat() {
+        super("serialization");
+    }
 
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {

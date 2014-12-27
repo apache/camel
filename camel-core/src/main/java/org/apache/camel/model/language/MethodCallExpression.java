@@ -33,6 +33,7 @@ import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.spi.Label;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
@@ -42,6 +43,7 @@ import org.apache.camel.util.OgnlHelper;
  *
  * @version
  */
+@Label("language")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {

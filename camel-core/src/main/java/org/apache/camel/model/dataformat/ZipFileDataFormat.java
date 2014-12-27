@@ -24,10 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents the ZIP file XML {@link org.apache.camel.spi.DataFormat}.
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {

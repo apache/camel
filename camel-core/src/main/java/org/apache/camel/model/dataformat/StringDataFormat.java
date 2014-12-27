@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -30,11 +31,16 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "string")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StringDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String charset;
+
+    public StringDataFormat() {
+        super("string");
+    }
 
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {

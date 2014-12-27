@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition {
@@ -60,6 +62,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Boolean enableJaxbAnnotationModule;
 
     public JsonDataFormat() {
+        super("json");
     }
 
     public JsonDataFormat(JsonLibrary library) {

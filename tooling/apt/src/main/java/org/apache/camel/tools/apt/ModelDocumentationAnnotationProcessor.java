@@ -44,6 +44,8 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 import static org.apache.camel.tools.apt.Strings.safeNull;
 
+// TODO: skip abstract model classes
+
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
  */

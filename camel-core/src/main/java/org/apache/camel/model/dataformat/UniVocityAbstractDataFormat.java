@@ -27,10 +27,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
+@Label("dataformat,transformation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 

@@ -27,10 +27,12 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents the XML type for a collection of DataFormats.
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "dataFormats")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatsDefinition {

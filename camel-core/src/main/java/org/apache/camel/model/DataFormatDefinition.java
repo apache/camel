@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,6 +33,7 @@ import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 /**
  * Represents the base XML type for DataFormat.
  */
+@Label("dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatDefinition extends IdentifiedType {

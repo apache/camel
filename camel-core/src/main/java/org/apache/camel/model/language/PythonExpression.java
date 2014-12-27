@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * For Python expressions and predicates
  *
  * @version 
  */
+@Label("language")
 @XmlRootElement(name = "python")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PythonExpression extends ExpressionDefinition {

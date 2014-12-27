@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * For expressions and predicates using a reference to an existing
  * {@link org.apache.camel.Expression} or {@link org.apache.camel.Predicate}
  * to lookup from the {@link org.apache.camel.spi.Registry}.
  */
+@Label("language")
 @XmlRootElement(name = "ref")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RefExpression extends ExpressionDefinition {

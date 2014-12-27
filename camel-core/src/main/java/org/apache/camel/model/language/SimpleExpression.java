@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.SimpleBuilder;
+import org.apache.camel.spi.Label;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("language")
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -31,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a <a href="http://camel.apache.org/flatpack.html">Flatpack</a> {@link org.apache.camel.spi.DataFormat}.
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FlatpackDataFormat extends DataFormatDefinition {

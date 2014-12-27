@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,12 +21,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents a <a href="http://camel.apache.org/syslog.html">Syslog</a> {@link org.apache.camel.spi.DataFormat}.
  *
  * @version 
  */
+@Label("dataformat,transformation")
 @XmlRootElement(name = "syslog")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyslogDataFormat extends DataFormatDefinition {
