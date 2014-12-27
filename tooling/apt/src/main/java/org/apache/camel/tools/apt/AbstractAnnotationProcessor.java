@@ -50,8 +50,8 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
  */
 public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
 
-    protected String findJavaDoc(Elements elementUtils, VariableElement fieldElement, String fieldName, TypeElement classElement, boolean builderPattern) {
-        String answer = elementUtils.getDocComment(fieldElement);
+    protected String findJavaDoc(Elements elementUtils, Element element, String fieldName, TypeElement classElement, boolean builderPattern) {
+        String answer = elementUtils.getDocComment(element);
         if (isNullOrEmpty(answer)) {
             String setter = "set" + fieldName.substring(0, 1).toUpperCase();
             if (fieldName.length() > 1) {

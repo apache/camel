@@ -42,6 +42,7 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
 // TODO: add support for label so we can categorize the eips
+// TODO: add support for id/description which uses @XmlAttribute on methods
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
