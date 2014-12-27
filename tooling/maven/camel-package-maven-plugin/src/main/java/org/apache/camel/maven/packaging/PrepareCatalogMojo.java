@@ -69,7 +69,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
      *
      * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
      */
-    protected File outDir;
+    protected File componentsOutDir;
+
+    /**
+     * The output directory for models catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/models"
+     */
+    protected File modelsOutDir;
 
     /**
      * The components directory where all the Apache Camel components are
@@ -101,6 +108,99 @@ public class PrepareCatalogMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        executeModel();
+        executeComponents();
+    }
+
+    protected void executeModel() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying all Camel model json descriptors");
+
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> duplicateJsonFiles = new TreeSet<File>();
+        Set<File> missingLabels = new TreeSet<File>();
+        Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+
+        // find all json files in camel-core
+        if (coreDir != null && coreDir.isDirectory()) {
+            File target = new File(coreDir, "target/classes/org/apache/camel/model");
+            findModelFilesRecursive(target, jsonFiles, new CamelComponentsModelFilter());
+        }
+
+        getLog().info("Found " + jsonFiles.size() + " model json files");
+
+        // make sure to create out dir
+        modelsOutDir.mkdirs();
+
+        for (File file : jsonFiles) {
+            File to = new File(modelsOutDir, file.getName());
+            if (to.exists()) {
+                duplicateJsonFiles.add(to);
+                getLog().warn("Duplicate model name detected: " + to);
+            }
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+
+            // check if we have a label as we want the eip to include labels
+            try {
+                String text = loadText(new FileInputStream(file));
+                // just do a basic label check
+                if (text.contains("\"label\": \"\"")) {
+                    missingLabels.add(file);
+                } else {
+                    String name = asComponentName(file);
+                    Matcher matcher = LABEL_PATTERN.matcher(text);
+                    // grab the label, and remember it in the used labels
+                    if (matcher.find()) {
+                        String label = matcher.group(1);
+                        String[] labels = label.split(",");
+                        for (String s : labels) {
+                            Set<String> models = usedLabels.get(s);
+                            if (models == null) {
+                                models = new TreeSet<String>();
+                                usedLabels.put(s, models);
+                            }
+                            models.add(name);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        File all = new File(modelsOutDir, "../models.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = modelsOutDir.list();
+            List<String> models = new ArrayList<String>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".json")) {
+                    // strip out .json from the name
+                    String modelName = name.substring(0, name.length() - 5);
+                    models.add(modelName);
+                }
+            }
+
+            Collections.sort(models);
+            for (String name : models) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+    }
+
+    protected void executeComponents() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel component json descriptors");
 
         // lets use sorted set/maps
@@ -123,7 +223,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         int before = componentFiles.size();
                         int before2 = jsonFiles.size();
 
-                        findFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
+                        findComponentFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
 
                         int after = componentFiles.size();
                         int after2 = jsonFiles.size();
@@ -141,7 +241,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             int before = componentFiles.size();
             int before2 = jsonFiles.size();
 
-            findFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
+            findComponentFilesRecursive(target, jsonFiles, componentFiles, new CamelComponentsFileFilter());
 
             int after = componentFiles.size();
             int after2 = jsonFiles.size();
@@ -153,10 +253,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("Found " + jsonFiles.size() + " component json files");
 
         // make sure to create out dir
-        outDir.mkdirs();
+        componentsOutDir.mkdirs();
 
         for (File file : jsonFiles) {
-            File to = new File(outDir, file.getName());
+            File to = new File(componentsOutDir, file.getName());
             if (to.exists()) {
                 duplicateJsonFiles.add(to);
                 getLog().warn("Duplicate component name detected: " + to);
@@ -196,15 +296,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
             } catch (IOException e) {
                 // ignore
             }
-
-
         }
 
-        File all = new File(outDir, "../components.properties");
+        File all = new File(componentsOutDir, "../components.properties");
         try {
             FileOutputStream fos = new FileOutputStream(all, false);
 
-            String[] names = outDir.list();
+            String[] names = componentsOutDir.list();
             List<String> components = new ArrayList<String>();
             // sort the names
             for (String name : names) {
@@ -227,11 +325,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels, usedLabels);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels, usedLabels);
     }
 
-    private void printReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths,
-                             Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths,
+                                       Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -290,7 +388,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return name;
     }
 
-    private void findFilesRecursive(File dir, Set<File> found, Set<File> components, FileFilter filter) {
+    private void findModelFilesRecursive(File dir, Set<File> found, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
+                if (jsonFile) {
+                    found.add(file);
+                } else if (file.isDirectory()) {
+                    findModelFilesRecursive(file, found, filter);
+                }
+            }
+        }
+    }
+
+    private void findComponentFilesRecursive(File dir, Set<File> found, Set<File> components, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
@@ -303,9 +416,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 } else if (componentFile) {
                     components.add(file);
                 } else if (file.isDirectory()) {
-                    findFilesRecursive(file, found, components, filter);
+                    findComponentFilesRecursive(file, found, components, filter);
                 }
             }
+        }
+    }
+
+    private class CamelComponentsModelFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.isDirectory() || pathname.getName().endsWith(".json");
         }
     }
 
@@ -313,6 +434,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         @Override
         public boolean accept(File pathname) {
+            if (pathname.isDirectory() && pathname.getName().equals("model")) {
+                // do not check the camel-core model packages as there is no components there
+                return false;
+            }
             return pathname.isDirectory() || pathname.getName().endsWith(".json")
                     || (pathname.isFile() && pathname.getName().equals("component.properties"));
         }
