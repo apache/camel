@@ -1179,6 +1179,25 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
+    public String explainEipJson(String eipName, String id, boolean includeAllOptions) {
+        try {
+            String json = getEipParameterJsonSchema(eipName);
+            if (json == null) {
+                return null;
+            }
+
+            return json;
+
+            // TODO: overlay with runtime parameters that id uses at runtime
+
+            //List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        } catch (Exception e) {
+            // ignore and return empty response
+            return null;
+        }
+    }
+
     /**
      * Sanitizes the component name by removing dash (-) in the name, when using the component name to load
      * resources from the classpath.

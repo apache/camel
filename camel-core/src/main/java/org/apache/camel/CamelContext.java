@@ -1408,6 +1408,16 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getEipParameterJsonSchema(String eipName) throws IOException;
 
     /**
+     * Returns a JSON schema representation of the EIP parameters for the given EIP by its id.
+     *
+     * @param eipName the name of the EIP ({@link NamedNode#getShortName()}
+     * @param id optional id of an EIP in use from any of the routes to explain
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if the eipName or the id was not found
+     */
+    String explainEipJson(String eipName, String id, boolean includeAllOptions);
+
+    /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.
      *
      * @param uri the endpoint uri

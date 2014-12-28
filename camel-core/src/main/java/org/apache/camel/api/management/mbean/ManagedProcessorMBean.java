@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -44,5 +46,8 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Stop Processor")
     void stop() throws Exception;
+
+    @ManagedOperation(description = "Explain how this processor is configured")
+    TabularData explain(boolean allOptions);
 
 }
