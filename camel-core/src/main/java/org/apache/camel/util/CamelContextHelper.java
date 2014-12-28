@@ -54,6 +54,7 @@ public final class CamelContextHelper {
     public static final String COMPONENT_BASE = "META-INF/services/org/apache/camel/component/";
     public static final String COMPONENT_DESCRIPTOR = "META-INF/services/org/apache/camel/component.properties";
     public static final String COMPONENT_DOCUMENTATION_PREFIX = "org/apache/camel/component/";
+    public static final String MODEL_DOCUMENTATION_PREFIX = "org/apache/camel/model/";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 

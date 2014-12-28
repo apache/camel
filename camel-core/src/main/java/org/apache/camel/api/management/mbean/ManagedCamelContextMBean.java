@@ -242,6 +242,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
+     * Returns the JSON schema representation with information about the EIP and the parameters it supports
+     *
+     * @param eipName the name of the EIP to lookup
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Returns the JSON schema representation of the EIP parameters for the given EIP name")
+    String eipParameterJsonSchema(String eipName) throws Exception;
+
+    /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri
      *
      * @param uri the endpoint uri
