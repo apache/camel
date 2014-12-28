@@ -179,6 +179,9 @@ public interface Exchange {
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";
+
+    String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
+    String COMPILE_SCRIPT = "CamelCompileScript";
     
     String SAXPARSER_FACTORY   = "CamelSAXParserFactory";
 

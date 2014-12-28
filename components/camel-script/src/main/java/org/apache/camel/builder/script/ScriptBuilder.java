@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
  *
- * @version 
+ * @version
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
 
@@ -64,6 +64,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     private Map<String, Object> attributes;
     private final CamelContext camelContext;
     private final ScriptEngineFactory scriptEngineFactory;
+    private final ScriptEngine scriptEngine;
     private final String scriptLanguage;
     private final String scriptResource;
     private final String scriptText;
@@ -107,9 +108,11 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             this.scriptText = scriptText;
         }
         if (scriptEngineFactory == null) {
+            this.scriptEngine = createScriptEngine(scriptLanguage);
             this.scriptEngineFactory = lookupScriptEngineFactory(scriptLanguage);
         } else {
             this.scriptEngineFactory = scriptEngineFactory;
+            this.scriptEngine = scriptEngineFactory.getScriptEngine();
         }
 
         if (this.scriptEngineFactory == null) {
@@ -133,10 +136,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
 
             // pre-compile script if we have it as text
             if (reader != null) {
-                ScriptEngine engine = this.scriptEngineFactory.getScriptEngine();
-                if (engine instanceof Compilable) {
-                    Compilable compilable = (Compilable) engine;
-                    this.compiledScript = compilable.compile(scriptText);
+                if (compileScripte(camelContext) && scriptEngine instanceof Compilable) {
+                    Compilable compilable = (Compilable) scriptEngine;
+                    this.compiledScript = compilable.compile(reader);
                     LOG.debug("Using compiled script: {}", this.compiledScript);
                 }
             }
@@ -373,17 +375,22 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
 
     protected Object evaluateScript(Exchange exchange) {
         try {
-            // get a new engine which we must for each exchange
-            ScriptEngine engine = scriptEngineFactory.getScriptEngine();
-            ScriptContext context = populateBindings(engine, exchange, attributes);
-            addScriptEngineArguments(engine, exchange);
-            Object result = runScript(engine, exchange, context);
-            LOG.debug("The script evaluation result is: {}", result);
-            return result;
+            if (reuseScriptEngine(exchange)) {
+                // It's not safe to do the evaluation with a single scriptEngine
+                synchronized (this) {
+                    LOG.debug("Calling doEvaluateScript without creating a new scriptEngine");
+                    return doEvaluateScript(exchange, scriptEngine);
+                }
+            } else {
+                LOG.debug("Calling doEvaluateScript with a new scriptEngine");
+                // get a new engine which we must for each exchange
+                ScriptEngine engine = scriptEngineFactory.getScriptEngine();
+                return doEvaluateScript(exchange, engine);
+            }
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Script evaluation failed: " + e.getMessage(), e);
-            } 
+            }
             if (e.getCause() != null) {
                 throw createScriptEvaluationException(e.getCause());
             } else {
@@ -391,6 +398,42 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             }
         } catch (IOException e) {
             throw createScriptEvaluationException(e);
+        }
+    }
+
+    protected Object doEvaluateScript(Exchange exchange, ScriptEngine scriptEngine) throws ScriptException, IOException {
+        ScriptContext context = populateBindings(scriptEngine, exchange, attributes);
+        addScriptEngineArguments(scriptEngine, exchange);
+        Object result = runScript(scriptEngine, exchange, context);
+        LOG.debug("The script evaluation result is: {}", result);
+        return result;
+    }
+
+    // To check the camel context property to decide if we need to reuse the ScriptEngine
+    private boolean reuseScriptEngine(Exchange exchange) {
+        CamelContext camelContext = exchange.getContext();
+        if (camelContext != null) {
+            return getCamelContextProperty(camelContext, Exchange.REUSE_SCRIPT_ENGINE);
+        } else {
+            // default value is false
+            return false;
+        }
+    }
+
+    private boolean compileScripte(CamelContext camelContext) {
+        if (camelContext != null) {
+            return getCamelContextProperty(camelContext, Exchange.COMPILE_SCRIPT);
+        } else {
+            return false;
+        }
+    }
+
+    private boolean getCamelContextProperty(CamelContext camelContext, String propertyKey) {
+        String propertyValue =  camelContext.getProperty(propertyKey);
+        if (propertyValue != null) {
+            return camelContext.getTypeConverter().convertTo(boolean.class, propertyValue);
+        } else {
+            return false;
         }
     }
 
