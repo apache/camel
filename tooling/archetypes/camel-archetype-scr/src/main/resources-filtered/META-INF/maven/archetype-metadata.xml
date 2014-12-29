@@ -21,17 +21,46 @@
                       xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <requiredProperties>
-        <requiredProperty key="archetypeGroupId">
-            <defaultValue>${project.groupId}</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="archetypeArtifactId">
-            <defaultValue>${project.artifactId}</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="archetypeVersion">
-            <defaultValue>${project.version}</defaultValue>
-        </requiredProperty>
-        <requiredProperty key="groupId"/>
         <requiredProperty key="className"/>
+        <requiredProperty key="camel-version">
+          <defaultValue>${project.version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="commons-lang-version">
+          <defaultValue>2.6</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="slf4j-version">
+          <defaultValue>${slf4j-version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="log4j-version">
+          <defaultValue>${log4j-version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-scm-provider-gitexe-version">
+          <defaultValue>1.9</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-bundle-plugin-version">
+          <defaultValue>${maven-bundle-version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-compiler-plugin-version">
+          <defaultValue>${maven-compiler-plugin-version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-resources-plugin-version">
+          <defaultValue>${maven-resources-plugin-version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-javadoc-plugin-version">
+          <defaultValue>${maven-javadoc-plugin-version}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-source-plugin-version">
+          <defaultValue>2.3</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-release-plugin-version">
+          <defaultValue>2.5</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="versions-maven-plugin-version">
+          <defaultValue>2.1</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="maven-scr-plugin-version">
+          <defaultValue>1.19.0</defaultValue>
+        </requiredProperty>
     </requiredProperties>
     <fileSets>
         <fileSet filtered="true" packaged="true" encoding="UTF-8">
