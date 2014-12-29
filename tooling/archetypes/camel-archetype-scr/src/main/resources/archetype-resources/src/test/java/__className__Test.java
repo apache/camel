@@ -17,8 +17,7 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-// This file was generated from ${archetypeGroupId}/${archetypeArtifactId}/${archetypeVersion}
-package ${groupId};
+package ${package};
 
 import java.util.List;
 

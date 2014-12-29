@@ -17,14 +17,13 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-// This file was generated from ${archetypeGroupId}/${archetypeArtifactId}/${archetypeVersion}
-package ${groupId};
+package ${package};
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.scr.AbstractCamelRunner;
-import ${groupId}.internal.${className}Route;
+import ${package}.internal.${className}Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.felix.scr.annotations.*;
@@ -50,7 +49,7 @@ import org.apache.felix.scr.annotations.*;
 })
 public class ${className} extends AbstractCamelRunner {
 
-    public static final String COMPONENT_LABEL = "${groupId}.${className}";
+    public static final String COMPONENT_LABEL = "${package}.${className}";
     public static final String COMPONENT_DESCRIPTION = "This is the description for ${artifactId}.";
 
     @Override

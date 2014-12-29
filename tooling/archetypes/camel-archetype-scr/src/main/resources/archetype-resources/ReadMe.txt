@@ -10,13 +10,13 @@ To deploy this project in Apache Karaf (2.4.0)
     On Karaf command line:
 
     # Add Camel feature repository
-    features:chooseurl camel ${archetypeVersion}
+    features:chooseurl camel ${version}
 
     # Install camel-scr feature
     features:install camel-scr
 
     # Install commons-lang, used in the example route to validate parameters
-    osgi:install mvn:commons-lang/commons-lang/2.6
+    osgi:install mvn:commons-lang/commons-lang/${commons-lang-version}
 
     # Install and start your bundle
     osgi:install -s mvn:${groupId}/${artifactId}/${version}
