@@ -139,7 +139,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     public TabularData explain(boolean allOptions) {
         try {
-            String json = context.explainEipJson(definition.getShortName(), id, allOptions);
+            String json = context.explainEipJson(id, allOptions);
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEipTabularType());

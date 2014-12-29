@@ -51,6 +51,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.PollingConsumer;
@@ -82,7 +83,10 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
@@ -1180,21 +1184,132 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
-    public String explainEipJson(String eipName, String id, boolean includeAllOptions) {
+    public String explainEipJson(String nameOrId, boolean includeAllOptions) {
         try {
-            // TODO: if eipName is null, then we can find it from the id if its found
-            // and use the getShortName to find the eipName
+            // try to find the id within all known routes and their eips
+            String eipName = nameOrId;
+            NamedNode target = null;
+            for (RouteDefinition route : getRouteDefinitions()) {
+                if (route.getId().equals(nameOrId)) {
+                    target = route;
+                    break;
+                }
+                for (FromDefinition from : route.getInputs()) {
+                    if (nameOrId.equals(from.getId())) {
+                        target = route;
+                        break;
+                    }
+                }
+                Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+                while (it.hasNext()) {
+                    ProcessorDefinition def = it.next();
+                    if (nameOrId.equals(def.getId())) {
+                        target = def;
+                        break;
+                    }
+                }
+                if (target != null) {
+                    break;
+                }
+            }
+
+            if (target != null) {
+                eipName = target.getShortName();
+            }
+
             String json = getEipParameterJsonSchema(eipName);
             if (json == null) {
                 return null;
             }
 
+            // overlay with runtime parameters that id uses at runtime
+            if (target != null) {
+                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+
+                // selected rows to use for answer
+                Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+
+                // extract options from the node
+                Map<String, Object> options = new LinkedHashMap<String, Object>();
+                IntrospectionSupport.getProperties(target, options, "", false);
+
+                // include other rows
+                for (Map<String, String> row : rows) {
+                    String name = row.get("name");
+                    String kind = row.get("kind");
+                    String value = row.get("value");
+                    String defaultValue = row.get("defaultValue");
+                    String type = row.get("type");
+                    String javaType = row.get("javaType");
+                    String description = row.get("description");
+
+                    // find the configured option
+                    Object o = options.get(name);
+                    if (o != null) {
+                        value = o.toString();
+                    }
+
+                    value = URISupport.sanitizePath(value);
+
+                    if (includeAllOptions || o != null) {
+                        // add as selected row
+                        if (!selected.containsKey(name)) {
+                            selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
+                        }
+                    }
+                }
+
+                StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
+
+                boolean first = true;
+                for (String[] row : selected.values()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        buffer.append(",");
+                    }
+                    buffer.append("\n    ");
+
+                    String name = row[0];
+                    String kind = row[1];
+                    String type = row[2];
+                    String javaType = row[3];
+                    String value = row[4];
+                    String defaultValue = row[5];
+                    String description = row[6];
+
+                    // add json of the option
+                    buffer.append(doubleQuote(name)).append(": { ");
+                    CollectionStringBuffer csb = new CollectionStringBuffer();
+                    if (kind != null) {
+                        csb.append("\"kind\": \"" + kind + "\"");
+                    }
+                    if (type != null) {
+                        csb.append("\"type\": \"" + type + "\"");
+                    }
+                    if (javaType != null) {
+                        csb.append("\"javaType\": \"" + javaType + "\"");
+                    }
+                    if (value != null) {
+                        csb.append("\"value\": \"" + value + "\"");
+                    }
+                    if (defaultValue != null) {
+                        csb.append("\"defaultValue\": \"" + defaultValue + "\"");
+                    }
+                    if (description != null) {
+                        csb.append("\"description\": \"" + description + "\"");
+                    }
+                    if (!csb.isEmpty()) {
+                        buffer.append(csb.toString());
+                    }
+                    buffer.append(" }");
+                }
+
+                buffer.append("\n  }\n}\n");
+                return buffer.toString();
+            }
+
             return json;
-
-            // TODO: overlay with runtime parameters that id uses at runtime
-
-            //List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
-
         } catch (Exception e) {
             // ignore and return empty response
             return null;
