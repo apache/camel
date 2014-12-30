@@ -265,7 +265,7 @@
                   <artifactId>maven-antrun-plugin</artifactId>
                   <inherited>true</inherited>
                   <dependencies>
-                    <!-- need JAXB on the classpath to use the jxc SchemaGenTask -->
+                    <!-- need JAXB on the classpath to use the xjc SchemaGenTask -->
                     <dependency>
                       <groupId>com.sun.xml.bind</groupId>
                       <artifactId>jaxb-core</artifactId>
