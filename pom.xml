@@ -51,7 +51,7 @@
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <jaxb-version>2.2.7</jaxb-version>
+    <jaxb-version>2.2.11</jaxb-version>
   </properties>
 
   <mailingLists>

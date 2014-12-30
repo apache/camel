@@ -2607,7 +2607,7 @@
               <nature>org.eclipse.jdt.core.javanature</nature>
               <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
             </projectnatures>
-            <!-- exclude the old JSR173 1.0 transitive dependency through com.sun.xml.bind:jaxb-impl:jar:2.2.7 -->
+            <!-- exclude the old JSR173 1.0 transitive dependency through com.sun.xml.bind:jaxb-impl:jar:2.2.11 -->
             <excludes>
               <exclude>javax.xml.bind:jsr173_api</exclude>
             </excludes>
@@ -3073,10 +3073,14 @@
       </activation>
 
       <properties>
-        <jaxb-version>2.2.7</jaxb-version>
+        <jaxb-version>2.2.11</jaxb-version>
       </properties>
 
       <dependencies>
+        <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-core</artifactId>
+        </dependency>
         <dependency>
           <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-impl</artifactId>
