@@ -26,9 +26,7 @@ import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 
 /**
- * Defines the configuration parameters for the {@link org.apache.camel.processor.StreamResequencer}.
- *
- * @version 
+ * Configures stream-processing resequence eip.
  */
 @XmlRootElement(name = "stream-config")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -91,7 +89,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
      *
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
-     * @param rejectOld  if true, throws an error when messages older than the last delivered message are processed
+     * @param rejectOld  if true, throws an exception when messages older than the last delivered message are processed
      */
     public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld) {
         this(capacity, timeout, rejectOld, new DefaultExchangeComparator());
@@ -104,7 +102,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
      *
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
-     * @param rejectOld  if true, throws an error when messages older than the last delivered message are processed
+     * @param rejectOld  if true, throws an exception when messages older than the last delivered message are processed
      * @param comparator comparator for sequence comparision
      */
     public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld, ExpressionResultComparator comparator) {
@@ -130,6 +128,9 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return capacity;
     }
 
+    /**
+     * Sets the capacity of the resequencer's inbound queue.
+     */
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
@@ -138,6 +139,9 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return timeout;
     }
 
+    /**
+     * Sets minimum time to wait for missing elements (messages).
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -146,6 +150,9 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return ignoreInvalidExchanges;
     }
 
+    /**
+     * Whether to ignore invalid exchanges
+     */
     public void setIgnoreInvalidExchanges(Boolean ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
@@ -154,6 +161,9 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return comparator;
     }
 
+    /**
+     * To use a custom comparator
+     */
     public void setComparator(ExpressionResultComparator comparator) {
         this.comparator = comparator;
     }
@@ -162,10 +172,16 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return comparatorRef;
     }
 
+    /**
+     * To use a custom comparator
+     */
     public void setComparatorRef(String comparatorRef) {
         this.comparatorRef = comparatorRef;
     }
 
+    /**
+     * If true, throws an exception when messages older than the last delivered message are processed
+     */
     public void setRejectOld(boolean value) {
         this.rejectOld = value;
     }

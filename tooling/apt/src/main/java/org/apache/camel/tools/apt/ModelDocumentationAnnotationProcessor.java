@@ -46,6 +46,15 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 import static org.apache.camel.tools.apt.Strings.safeNull;
 
+// TODO: figure out a way to specify default value in the model classes which this APT can read
+
+// TODO: add support for @XmlElements which a few EIPs uses such as resequence
+//@XmlElements({
+//        @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
+//        @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
+//)
+
+
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
  */
