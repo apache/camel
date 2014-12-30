@@ -37,7 +37,7 @@ public abstract class AbstractCamelController implements CamelController {
     private CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
 
     @Override
-    public List<Map<String, String>> listModelsCatalog(String filter) throws Exception {
+    public List<Map<String, String>> listEipsCatalog(String filter) throws Exception {
         List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
         if (filter != null) {
@@ -151,12 +151,12 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @Override
-    public Map<String, Set<String>> listModelsLabelCatalog() throws Exception {
+    public Map<String, Set<String>> listEipsLabelCatalog() throws Exception {
         Map<String, Set<String>> answer = new LinkedHashMap<String, Set<String>>();
 
         Set<String> labels = catalog.findModelLabels();
         for (String label : labels) {
-            List<Map<String, String>> models = listModelsCatalog(label);
+            List<Map<String, String>> models = listEipsCatalog(label);
             if (!models.isEmpty()) {
                 Set<String> names = new LinkedHashSet<String>();
                 for (Map<String, String> info : models) {

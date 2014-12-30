@@ -20,7 +20,7 @@ import org.apache.camel.commands.CatalogComponentLabelListCommand;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "catalog-component-label-list", description = "Lists all Camel component labels from the Camel catalog.")
+@Command(scope = "camel", name = "catalog-component-label-list", description = "Lists all Camel component labels from the Camel catalog")
 public class CatalogComponentLabelList extends CamelCommandSupport {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",

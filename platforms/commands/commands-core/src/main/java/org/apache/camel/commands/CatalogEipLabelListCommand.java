@@ -24,9 +24,9 @@ import java.util.Set;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * From the Camel catalog lists all the model labels.
+ * From the Camel catalog lists all the EIP labels.
  */
-public class CatalogModelLabelListCommand extends AbstractCamelCommand {
+public class CatalogEipLabelListCommand extends AbstractCamelCommand {
 
     private static final String LABEL_COLUMN_LABEL = "Label";
     private static final String NUMBER_COLUMN_LABEL = "#";
@@ -45,13 +45,13 @@ public class CatalogModelLabelListCommand extends AbstractCamelCommand {
 
     private boolean verbose;
 
-    public CatalogModelLabelListCommand(boolean verbose) {
+    public CatalogEipLabelListCommand(boolean verbose) {
         this.verbose = verbose;
     }
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        Map<String, Set<String>> labels = camelController.listModelsLabelCatalog();
+        Map<String, Set<String>> labels = camelController.listEipsLabelCatalog();
 
         if (labels.isEmpty()) {
             return null;

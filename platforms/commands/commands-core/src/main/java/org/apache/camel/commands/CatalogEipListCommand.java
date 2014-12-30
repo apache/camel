@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * From the Camel catalog lists all the models.
+ * From the Camel catalog lists all the EIPs.
  */
-public class CatalogModelListCommand extends AbstractCamelCommand {
+public class CatalogEipListCommand extends AbstractCamelCommand {
 
     private static final String NAME_COLUMN_LABEL = "Name";
     private static final String LABEL_COLUMN_LABEL = "Label";
@@ -43,14 +43,14 @@ public class CatalogModelListCommand extends AbstractCamelCommand {
     private boolean verbose;
     private String label;
 
-    public CatalogModelListCommand(boolean verbose, String label) {
+    public CatalogEipListCommand(boolean verbose, String label) {
         this.verbose = verbose;
         this.label = label;
     }
 
     @Override
     public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> models = camelController.listModelsCatalog(label);
+        List<Map<String, String>> models = camelController.listEipsCatalog(label);
 
         if (models == null || models.isEmpty()) {
             return null;

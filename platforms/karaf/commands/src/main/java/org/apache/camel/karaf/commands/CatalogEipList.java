@@ -16,12 +16,12 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.commands.CatalogModelListCommand;
+import org.apache.camel.commands.CatalogEipListCommand;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "catalog-eip-list", description = "Lists all Camel EIPs from the Camel catalog.")
-public class CatalogModelList extends CamelCommandSupport {
+@Command(scope = "camel", name = "catalog-eip-list", description = "Lists all Camel EIPs from the Camel catalog")
+public class CatalogEipList extends CamelCommandSupport {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
@@ -32,7 +32,7 @@ public class CatalogModelList extends CamelCommandSupport {
     String label;
 
     protected Object doExecute() throws Exception {
-        CatalogModelListCommand command = new CatalogModelListCommand(verbose, label);
+        CatalogEipListCommand command = new CatalogEipListCommand(verbose, label);
         return command.execute(camelController, System.out, System.err);
     }
 

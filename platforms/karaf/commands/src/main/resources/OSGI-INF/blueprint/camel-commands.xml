@@ -208,12 +208,12 @@
       </action>
     </command>
     <command name="camel/catalog-eip-list">
-      <action class="org.apache.camel.karaf.commands.CatalogModelList">
+      <action class="org.apache.camel.karaf.commands.CatalogEipList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
     <command name="camel/catalog-eip-label-list">
-      <action class="org.apache.camel.karaf.commands.CatalogModelLabelList">
+      <action class="org.apache.camel.karaf.commands.CatalogEipLabelList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
