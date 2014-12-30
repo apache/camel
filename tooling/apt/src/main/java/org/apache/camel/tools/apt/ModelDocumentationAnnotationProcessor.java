@@ -431,17 +431,17 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         Elements elementUtils = processingEnv.getElementUtils();
 
         // id
-        String docComment = findJavaDoc(elementUtils, classElement, "id", classElement, true);
+        String docComment = findJavaDoc(elementUtils, null, "id", classElement, true);
         EipOption ep = new EipOption("id", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
         eipOptions.add(ep);
 
         // description
-        docComment = findJavaDoc(elementUtils, classElement, "description", classElement, true);
+        docComment = findJavaDoc(elementUtils, null, "description", classElement, true);
         ep = new EipOption("description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, null, false, null);
         eipOptions.add(ep);
 
         // custom id
-        docComment = findJavaDoc(elementUtils, classElement, "customId", classElement, true);
+        docComment = findJavaDoc(elementUtils, null, "customId", classElement, true);
         ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
         eipOptions.add(ep);
     }

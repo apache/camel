@@ -66,7 +66,11 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
         String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
         assertNull(pattern);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
+        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(3, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(7, data.size());
     }

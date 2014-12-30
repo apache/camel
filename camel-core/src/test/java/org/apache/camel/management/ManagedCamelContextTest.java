@@ -251,6 +251,23 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
     }
 
+    public void testManagedCamelContextExplainEip() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"transform", false}, new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"label\": \"transformation\""));
+        assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\""));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -78,6 +78,11 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return ref;
     }
 
+    /**
+     * Sets the reference of the endpoint to send to.
+     *
+     * @param ref the reference of the endpoint
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -86,6 +91,11 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return uri;
     }
 
+    /**
+     * Sets the uri of the endpoint to send to.
+     *
+     * @param uri the uri of the endpoint
+     */
     @Required
     public void setUri(String uri) {
         this.uri = uri;
