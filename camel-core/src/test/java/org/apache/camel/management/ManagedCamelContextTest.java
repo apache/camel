@@ -265,7 +265,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(json);
 
         assertTrue(json.contains("\"label\": \"transformation\""));
-        assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\""));
+        assertTrue(json.contains("\"expression\": { \"kind\": \"element\": \"required\": \"true\""));
     }
 
     @Override

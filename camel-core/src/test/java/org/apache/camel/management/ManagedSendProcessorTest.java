@@ -68,11 +68,11 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(3, data.size());
+        assertEquals(2, data.size());
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(7, data.size());
+        assertEquals(5, data.size());
     }
 
     @Override

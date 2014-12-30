@@ -68,6 +68,8 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         "org.apache.camel.model.WhenDefinition",
     };
 
+    private boolean skipUnwanted = true;
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
@@ -201,6 +203,16 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
                     if (isNullOrEmpty(name) || "##default".equals(name)) {
                         name = fieldName;
                     }
+
+                    // lets skip some unwanted attributes
+                    if (skipUnwanted) {
+                        // we want to skip inheritErrorHandler which is only applicable for the load-balancer
+                        boolean loadBalancer = "LoadBalanceDefinition".equals(originalClassType.getSimpleName().toString());
+                        if (!loadBalancer && "inheritErrorHandler".equals(name)) {
+                            continue;
+                        }
+                    }
+
                     name = prefix + name;
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
@@ -440,10 +452,13 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
         ep = new EipOption("description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, null, false, null);
         eipOptions.add(ep);
 
-        // custom id
-        docComment = findJavaDoc(elementUtils, null, "customId", classElement, true);
-        ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
-        eipOptions.add(ep);
+        // lets skip custom id as it has no value for end users to configure
+        if (!skipUnwanted) {
+            // custom id
+            docComment = findJavaDoc(elementUtils, null, "customId", classElement, true);
+            ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, null, false, null);
+            eipOptions.add(ep);
+        }
     }
 
     /**
