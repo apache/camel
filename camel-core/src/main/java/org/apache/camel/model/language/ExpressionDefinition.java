@@ -49,7 +49,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Label("language")
 @XmlRootElement
-@XmlType(name = "expression")
+@XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionDefinition implements Expression, Predicate {
     @XmlAttribute

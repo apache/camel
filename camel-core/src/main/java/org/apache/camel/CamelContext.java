@@ -1365,7 +1365,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
 
-
     /**
      * Resolves a component's default name from its java type.
      * <p/>

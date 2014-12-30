@@ -27,6 +27,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
@@ -36,6 +37,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Label;
 
@@ -43,8 +45,6 @@ import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 import static org.apache.camel.tools.apt.Strings.safeNull;
-
-// TODO: skip abstract model classes
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
@@ -93,8 +93,25 @@ public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationPro
             return;
         }
 
+        // skip abstract classes
+        if (classElement.getModifiers().contains(Modifier.ABSTRACT)) {
+            return;
+        }
+
+        // skip unwanted classes which are "abstract" holders
+        if (skipUnwanted) {
+            if (classElement.getQualifiedName().toString().equals(ONE_OF_TYPE_NAME)) {
+                return;
+            }
+        }
+
         final XmlRootElement rootElement = classElement.getAnnotation(XmlRootElement.class);
-        final String name = rootElement.name();
+        String aName = rootElement.name();
+        if (isNullOrEmpty(aName) || "##default".equals(aName)) {
+            XmlType typeElement = classElement.getAnnotation(XmlType.class);
+            aName = typeElement.name();
+        }
+        final String name = aName;
 
         // lets use the xsd name as the file name
         String fileName;
