@@ -21,7 +21,7 @@ limitations under the License.
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <bean id="RestletComponent" class="org.restlet.Component"/>
 
