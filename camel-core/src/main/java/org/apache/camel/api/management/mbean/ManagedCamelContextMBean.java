@@ -252,7 +252,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     /**
      * Returns a JSON schema representation of the EIP parameters for the given EIP by its id.
      *
-     * @param nameOrId the name of the EIP ({@link org.apache.camel.NamedNode#getShortName()} or a node id to refer to a specific node in the routes.
+     * @param nameOrId the name of the EIP ({@link org.apache.camel.NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
      * @param includeAllOptions whether to include non configured options also (eg default options)
      * @return the json or <tt>null</tt> if the eipName or the id was not found
      */

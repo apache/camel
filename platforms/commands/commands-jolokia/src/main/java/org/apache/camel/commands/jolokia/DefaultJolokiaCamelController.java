@@ -572,6 +572,24 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
+    public String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(found, "explainEipJson(java.lang.String,boolean)", nameOrId, allOptions));
+            if (response != null) {
+                String json = response.getValue();
+                return json;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public List<Map<String, String>> listComponents(String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");

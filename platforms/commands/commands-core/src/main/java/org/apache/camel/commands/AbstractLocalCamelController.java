@@ -413,6 +413,14 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return context.explainEndpointJson(uri, allOptions);
     }
 
+    public String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+        return context.explainEipJson(nameOrId, allOptions);
+    }
+
     public List<Map<String, String>> listComponents(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {

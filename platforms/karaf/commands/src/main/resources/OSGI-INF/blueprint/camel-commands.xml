@@ -152,6 +152,15 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/eip-explain">
+      <action class="org.apache.camel.karaf.commands.EipExplain">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel/endpoint-list">
       <action class="org.apache.camel.karaf.commands.EndpointList">
         <property name="camelController" ref="camelController"/>

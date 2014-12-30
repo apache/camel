@@ -18,6 +18,7 @@ package org.apache.camel.commands.jolokia;
 
 import org.apache.camel.commands.ContextInfoCommand;
 import org.apache.camel.commands.ContextListCommand;
+import org.apache.camel.commands.EipExplainCommand;
 import org.apache.camel.commands.EndpointExplainCommand;
 import org.apache.camel.commands.EndpointListCommand;
 import org.junit.Ignore;
@@ -80,6 +81,19 @@ public class JolokiaCommandsTest {
         }
 
         EndpointExplainCommand cmd = new EndpointExplainCommand("myCamel", true, "rest*");
+        cmd.execute(controller, System.out, System.err);
+    }
+
+    @Test
+    public void testEipExplain() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        if (!controller.ping()) {
+            throw new IllegalArgumentException("Error connecting to " + url);
+        }
+
+        EipExplainCommand cmd = new EipExplainCommand("myCamel", "transform", true);
         cmd.execute(controller, System.out, System.err);
     }
 

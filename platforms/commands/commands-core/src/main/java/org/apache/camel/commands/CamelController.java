@@ -209,6 +209,17 @@ public interface CamelController {
     String explainEndpointAsJSon(String camelContextName, String uri, boolean allOptions) throws Exception;
 
     /**
+     * Explains an EIP
+     *
+     * @param camelContextName the Camel context.
+     * @param nameOrId         the name of the EIP ({@link org.apache.camel.NamedNode#getShortName()} or a node id to refer to a specific node from the routes.
+     * @param allOptions       whether to explain all options, or only the explicit configured options from the uri
+     * @return a JSON schema with explanation of the options
+     * @throws java.lang.Exception can be thrown
+     */
+    String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception;
+
+    /**
      * Lists Components which are in use or available on the classpath and include information
      *
      * @param camelContextName the Camel context.

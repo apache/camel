@@ -187,6 +187,15 @@ public class JolokiaRemoteTest {
     }
 
     @Test
+    public void testExplainEipJson() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.explainEipAsJSon("myCamel", "transform", true);
+        System.out.println(data);
+    }
+
+    @Test
     public void testListComponents() throws Exception {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
