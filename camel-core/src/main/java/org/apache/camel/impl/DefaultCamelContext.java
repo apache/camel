@@ -1241,6 +1241,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     String defaultValue = row.get("defaultValue");
                     String type = row.get("type");
                     String javaType = row.get("javaType");
+                    String deprecated = row.get("javaType");
                     String description = row.get("description");
 
                     // find the configured option
@@ -1254,7 +1255,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (includeAllOptions || o != null) {
                         // add as selected row
                         if (!selected.containsKey(name)) {
-                            selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, type, javaType, deprecated, value, defaultValue, description});
                         }
                     }
                 }
@@ -1274,9 +1275,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     String kind = row[1];
                     String type = row[2];
                     String javaType = row[3];
-                    String value = row[4];
-                    String defaultValue = row[5];
-                    String description = row[6];
+                    String deprecated = row[4];
+                    String value = row[5];
+                    String defaultValue = row[6];
+                    String description = row[7];
 
                     // add json of the option
                     buffer.append(doubleQuote(name)).append(": { ");
@@ -1289,6 +1291,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                     if (javaType != null) {
                         csb.append("\"javaType\": \"" + javaType + "\"");
+                    }
+                    if (deprecated != null) {
+                        csb.append("\"deprecated\": \"" + deprecated + "\"");
                     }
                     if (value != null) {
                         csb.append("\"value\": \"" + value + "\"");
@@ -1381,6 +1386,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String type = null;
                 String kind = null;
                 String javaType = null;
+                String deprecated = null;
                 String defaultValue = null;
                 String description = null;
                 for (Map<String, String> row : rows) {
@@ -1388,6 +1394,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         type = row.get("type");
                         kind = row.get("kind");
                         javaType = row.get("javaType");
+                        deprecated = row.get("deprecated");
                         defaultValue = row.get("defaultValue");
                         description = row.get("description");
                         break;
@@ -1395,7 +1402,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
@@ -1406,6 +1413,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String defaultValue = row.get("defaultValue");
                 String type = row.get("type");
                 String javaType = row.get("javaType");
+                String deprecated = row.get("deprecated");
                 value = URISupport.sanitizePath(value);
                 String description = row.get("description");
 
@@ -1419,7 +1427,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (includeAllOptions || "path".equals(kind)) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, type, javaType, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, type, javaType, deprecated, value, defaultValue, description});
                     }
                 }
             }
@@ -1439,9 +1447,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String kind = row[1];
                 String type = row[2];
                 String javaType = row[3];
-                String value = row[4];
-                String defaultValue = row[5];
-                String description = row[6];
+                String deprecated = row[4];
+                String value = row[5];
+                String defaultValue = row[6];
+                String description = row[7];
 
                 // add json of the option
                 buffer.append(doubleQuote(name)).append(": { ");
@@ -1454,6 +1463,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
                 if (javaType != null) {
                     csb.append("\"javaType\": \"" + javaType + "\"");
+                }
+                if (deprecated != null) {
+                    csb.append("\"deprecated\": \"" + deprecated + "\"");
                 }
                 if (value != null) {
                     csb.append("\"value\": \"" + value + "\"");

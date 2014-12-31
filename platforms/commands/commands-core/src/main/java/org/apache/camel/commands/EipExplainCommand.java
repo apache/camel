@@ -86,6 +86,11 @@ public class EipExplainCommand extends AbstractContextCommand {
                 out.print("Java Type:     ");
                 out.println(javaType);
             }
+            String deprecated = option.get("deprecated");
+            if (deprecated != null) {
+                out.print("Deprecated:    ");
+                out.println(deprecated);
+            }
             String value = option.get("value");
             if (value != null) {
                 out.print("Value:         ");

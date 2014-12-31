@@ -149,14 +149,15 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
                 String kind = row.get("kind");
                 String type = row.get("type");
                 String javaType = row.get("javaType");
+                String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
                 String value = row.get("value") != null ? row.get("value") : "";
                 String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
                 String description = row.get("description") != null ? row.get("description") : "";
 
                 CompositeType ct = CamelOpenMBeanTypes.explainEipsCompositeType();
                 CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"option", "kind", "type", "java type", "value", "default value", "description"},
-                        new Object[]{name, kind, type, javaType, value, defaultValue, description});
+                        new String[]{"option", "kind", "type", "java type", "deprecated", "value", "default value", "description"},
+                        new Object[]{name, kind, type, javaType, deprecated, value, defaultValue, description});
                 answer.put(data);
             }
 
