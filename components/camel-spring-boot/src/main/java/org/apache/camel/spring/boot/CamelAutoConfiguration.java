@@ -104,18 +104,13 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
 public class CamelAutoConfiguration {
 
-    @Autowired
-    private CamelConfigurationProperties configurationProperties;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
     /**
      * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring
      * context.
      */
     @Bean
-    CamelContext camelContext() throws Exception {
+    CamelContext camelContext(ApplicationContext applicationContext,
+                              CamelConfigurationProperties configurationProperties) {
         CamelContext camelContext = new SpringCamelContext(applicationContext);
 
         if (!configurationProperties.isJmxEnabled()) {
@@ -134,21 +129,23 @@ public class CamelAutoConfiguration {
      * Default producer template for the bootstrapped Camel context.
      */
     @Bean
-    ProducerTemplate producerTemplate() throws Exception {
-        return camelContext().createProducerTemplate(configurationProperties.getProducerTemplateCacheSize());
+    ProducerTemplate producerTemplate(CamelContext camelContext,
+                                      CamelConfigurationProperties configurationProperties) {
+        return camelContext.createProducerTemplate(configurationProperties.getProducerTemplateCacheSize());
     }
 
     /**
      * Default consumer template for the bootstrapped Camel context.
      */
     @Bean
-    ConsumerTemplate consumerTemplate() throws Exception {
-        return camelContext().createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
+    ConsumerTemplate consumerTemplate(CamelContext camelContext,
+                                      CamelConfigurationProperties configurationProperties) {
+        return camelContext.createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
     }
 
     @Bean
-    TypeConverter typeConverter() throws Exception {
-        return camelContext().getTypeConverter();
+    TypeConverter typeConverter(CamelContext camelContext) {
+        return camelContext.getTypeConverter();
     }
 
     @Bean
