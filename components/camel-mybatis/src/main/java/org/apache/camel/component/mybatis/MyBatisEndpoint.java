@@ -149,7 +149,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
      * By default, outputHeader == null and the query result is stored in the message body,
      * any existing content in the message body is discarded.
      * If outputHeader is set, the value is used as the name of the header to store the
-     * query result and the original message body is preserved.
+     * query result and the original message body is preserved. Setting outputHeader will
+     * also omit populating the default CamelMyBatisResult header since it would be the same
+     * as outputHeader all the time.
      */
 	public void setOutputHeader(String outputHeader) {
 		this.outputHeader = outputHeader;
