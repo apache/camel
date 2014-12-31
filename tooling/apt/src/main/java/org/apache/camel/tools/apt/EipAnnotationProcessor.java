@@ -60,7 +60,7 @@ import static org.apache.camel.tools.apt.Strings.safeNull;
  */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
-public class ModelDocumentationAnnotationProcessor extends AbstractAnnotationProcessor {
+public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
