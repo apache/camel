@@ -31,15 +31,16 @@ final class JsonSchemaHelper {
     }
 
     public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
-                                boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
+                                Boolean deprecated, boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
         sb.append(Strings.doubleQuote(name));
         sb.append(": { \"kind\": ");
         sb.append(Strings.doubleQuote(kind));
+
         if (required != null) {
-            sb.append(": \"required\": ");
+            sb.append(", \"required\": ");
             sb.append(Strings.doubleQuote(required.toString()));
         }
 
@@ -70,6 +71,11 @@ final class JsonSchemaHelper {
         } else {
             sb.append(Strings.doubleQuote(typeName));
             sb.append(", \"javaType\": \"" + type + "\"");
+        }
+
+        if (deprecated != null) {
+            sb.append(", \"deprecated\": ");
+            sb.append(Strings.doubleQuote(deprecated.toString()));
         }
 
         if (!Strings.isNullOrEmpty(defaultValue)) {

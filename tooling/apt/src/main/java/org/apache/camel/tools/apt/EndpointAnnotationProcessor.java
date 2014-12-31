@@ -45,6 +45,8 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.getOrElse;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
+// TODO: add support for @Label
+
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
  */
@@ -190,7 +192,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", null, path.getType(), "", path.getDocumentation(),
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", null, path.getType(), "", path.getDocumentation(), path.isDeprecated(),
                     path.isEnumType(), path.getEnums(), false, null));
         }
 
@@ -205,7 +207,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", null, entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", null, entry.getType(), entry.getDefaultValue(), doc, entry.isDeprecated(),
                     entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  }");
@@ -233,6 +235,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             writer.println("    <th>Name</th>");
             writer.println("    <th>Kind</th>");
             writer.println("    <th>Type</th>");
+            writer.println("    <th>Deprecated</th>");
             writer.println("    <th>Default Value</th>");
             writer.println("    <th>Enum Values</th>");
             writer.println("    <th>Description</th>");
@@ -241,8 +244,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             for (EndpointPath path : endpointPaths) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + path.getName() + "</td>");
-                writer.println("    <td>" + path.getType() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
+                writer.println("    <td>" + path.getType() + "</td>");
+                writer.println("    <td>" + path.isDeprecated() + "</td>");
                 writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
                 writer.println("  </tr>");
@@ -251,8 +255,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             for (EndpointOption option : endpointOptions) {
                 writer.println("  <tr>");
                 writer.println("    <td>" + option.getName() + "</td>");
-                writer.println("    <td>" + option.getType() + "</td>");
                 writer.println("    <td>" + "parameter" + "</td>");
+                writer.println("    <td>" + option.getType() + "</td>");
+                writer.println("    <td>" + option.isDeprecated() + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
                 writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
@@ -326,6 +331,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
 
+                boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
                 String fieldName = fieldElement.getSimpleName().toString();
                 if (path != null) {
@@ -358,7 +365,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment, isEnum, enums);
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment, deprecated, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -410,7 +417,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             }
                         }
 
-                        EndpointOption option = new EndpointOption(name, fieldTypeName, defaultValue, defaultValueNote,  docComment.trim(), isEnum, enums);
+                        EndpointOption option = new EndpointOption(name, fieldTypeName, defaultValue, defaultValueNote,  docComment.trim(), deprecated, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
@@ -519,16 +526,18 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private String defaultValue;
         private String defaultValueNote;
         private String documentation;
+        private boolean deprecated;
         private boolean enumType;
         private Set<String> enums;
 
         private EndpointOption(String name, String type, String defaultValue, String defaultValueNote,
-                               String documentation, boolean enumType, Set<String> enums) {
+                               String documentation, boolean deprecated, boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
             this.defaultValue = defaultValue;
             this.defaultValueNote = defaultValueNote;
             this.documentation = documentation;
+            this.deprecated = deprecated;
             this.enumType = enumType;
             this.enums = enums;
         }
@@ -547,6 +556,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getDocumentation() {
             return documentation;
+        }
+
+        public boolean isDeprecated() {
+            return deprecated;
         }
 
         public String getEnumValuesAsHtml() {
@@ -607,14 +620,16 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private String name;
         private String type;
         private String documentation;
+        private boolean deprecated;
         private boolean enumType;
         private Set<String> enums;
 
-        private EndpointPath(String name, String type, String documentation,
+        private EndpointPath(String name, String type, String documentation, boolean deprecated,
                              boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
             this.documentation = documentation;
+            this.deprecated = deprecated;
             this.enumType = enumType;
             this.enums = enums;
         }
@@ -629,6 +644,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getDocumentation() {
             return documentation;
+        }
+
+        public boolean isDeprecated() {
+            return deprecated;
         }
 
         public String getEnumValuesAsHtml() {
