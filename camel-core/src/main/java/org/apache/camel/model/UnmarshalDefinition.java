@@ -71,11 +71,8 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> {
 
-    // TODO: Camel 3.0, ref attribute should be removed as RefDataFormat is to be used instead
+    // TODO: Camel 3.0, ref attribute should be removed as UnmarshalDataFormat is to be used instead
 
-    @XmlAttribute
-    @Deprecated
-    private String ref;
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
     @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
@@ -112,6 +109,10 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
     )
     private DataFormatDefinition dataFormatType;
+
+    @XmlAttribute
+    @Deprecated
+    private String ref;
 
     public UnmarshalDefinition() {
     }

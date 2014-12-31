@@ -36,6 +36,7 @@ import javax.lang.model.util.Elements;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -48,12 +49,7 @@ import static org.apache.camel.tools.apt.Strings.safeNull;
 
 // TODO: figure out a way to specify default value in the model classes which this APT can read
 
-// TODO: add support for @XmlElements which a few EIPs uses such as resequence
-//@XmlElements({
-//        @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
-//        @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
-//)
-
+// TODO: add support for @deprecated
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
@@ -217,113 +213,32 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
                                        TypeElement originalClassType, TypeElement classElement, String prefix) {
-        Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
 
-                XmlAttribute attribute = fieldElement.getAnnotation(XmlAttribute.class);
                 String fieldName = fieldElement.getSimpleName().toString();
+
+                XmlAttribute attribute = fieldElement.getAnnotation(XmlAttribute.class);
                 if (attribute != null) {
-                    String name = attribute.name();
-                    if (isNullOrEmpty(name) || "##default".equals(name)) {
-                        name = fieldName;
+                    boolean skip = processAttribute(roundEnv, originalClassType, classElement, fieldElement, fieldName, attribute, eipOptions, prefix);
+                    if (skip) {
+                        continue;
                     }
+                }
 
-                    // lets skip some unwanted attributes
-                    if (skipUnwanted) {
-                        // we want to skip inheritErrorHandler which is only applicable for the load-balancer
-                        boolean loadBalancer = "LoadBalanceDefinition".equals(originalClassType.getSimpleName().toString());
-                        if (!loadBalancer && "inheritErrorHandler".equals(name)) {
-                            continue;
-                        }
-                    }
-
-                    name = prefix + name;
-                    TypeMirror fieldType = fieldElement.asType();
-                    String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
-
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
-                    boolean required = attribute.required();
-
-                    // gather enums
-                    Set<String> enums = new TreeSet<String>();
-                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                    if (isEnum) {
-                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
-                        // find all the enum constants which has the possible enum value that can be used
-                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                        for (VariableElement var : fields) {
-                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                String val = var.toString();
-                                enums.add(val);
-                            }
-                        }
-                    }
-
-                    EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", docComment, isEnum, enums, false, null);
-                    eipOptions.add(ep);
+                XmlElements elements = fieldElement.getAnnotation(XmlElements.class);
+                if (elements != null) {
+                    processElements(roundEnv, classElement, elements, fieldElement, eipOptions, prefix);
                 }
 
                 XmlElement element = fieldElement.getAnnotation(XmlElement.class);
-                fieldName = fieldElement.getSimpleName().toString();
                 if (element != null) {
-                    String kind = "element";
-                    String name = element.name();
-                    if (isNullOrEmpty(name) || "##default".equals(name)) {
-                        name = fieldName;
-                    }
-                    name = prefix + name;
-                    TypeMirror fieldType = fieldElement.asType();
-                    String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
-
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
-                    boolean required = element.required();
-
-                    // gather enums
-                    Set<String> enums = new LinkedHashSet<String>();
-                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                    if (isEnum) {
-                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
-                        // find all the enum constants which has the possible enum value that can be used
-                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                        for (VariableElement var : fields) {
-                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                String val = var.toString();
-                                enums.add(val);
-                            }
-                        }
-                    }
-
-                    // gather oneOf expression/predicates which uses language
-                    Set<String> oneOfTypes = new TreeSet<String>();
-                    boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
-                    if (isOneOf) {
-                        TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-                        String superClassName = canonicalClassName(languages.toString());
-                        // find all classes that has that superClassName
-                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-                        findTypeElementChildren(roundEnv, children, superClassName);
-                        for (TypeElement child : children) {
-                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                            if (rootElement != null) {
-                                String childName = rootElement.name();
-                                if (childName != null) {
-                                    oneOfTypes.add(childName);
-                                }
-                            }
-                        }
-                    }
-
-                    EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", docComment, isEnum, enums, isOneOf, oneOfTypes);
-                    eipOptions.add(ep);
+                    processElement(roundEnv, classElement, element, fieldElement, eipOptions, prefix);
                 }
 
                 // special for eips which has outputs or requires an expressions
                 XmlElementRef elementRef = fieldElement.getAnnotation(XmlElementRef.class);
-                fieldName = fieldElement.getSimpleName().toString();
                 if (elementRef != null) {
 
                     // special for outputs
@@ -353,6 +268,141 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             } else {
                 break;
             }
+        }
+    }
+
+    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        String name = attribute.name();
+        if (isNullOrEmpty(name) || "##default".equals(name)) {
+            name = fieldName;
+        }
+
+        // lets skip some unwanted attributes
+        if (skipUnwanted) {
+            // we want to skip inheritErrorHandler which is only applicable for the load-balancer
+            boolean loadBalancer = "LoadBalanceDefinition".equals(originalClassType.getSimpleName().toString());
+            if (!loadBalancer && "inheritErrorHandler".equals(name)) {
+                return true;
+            }
+        }
+
+        name = prefix + name;
+        TypeMirror fieldType = fieldElement.asType();
+        String fieldTypeName = fieldType.toString();
+        TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+
+        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
+        boolean required = attribute.required();
+
+        // gather enums
+        Set<String> enums = new TreeSet<String>();
+        boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+        if (isEnum) {
+            TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+            // find all the enum constants which has the possible enum value that can be used
+            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+            for (VariableElement var : fields) {
+                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                    String val = var.toString();
+                    enums.add(val);
+                }
+            }
+        }
+
+        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", docComment, isEnum, enums, false, null);
+        eipOptions.add(ep);
+
+        return false;
+    }
+
+    private void processElement(RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, VariableElement fieldElement,
+                                Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        String fieldName;
+        fieldName = fieldElement.getSimpleName().toString();
+        if (element != null) {
+            String kind = "element";
+            String name = element.name();
+            if (isNullOrEmpty(name) || "##default".equals(name)) {
+                name = fieldName;
+            }
+            name = prefix + name;
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+            TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
+            boolean required = element.required();
+
+            // gather enums
+            Set<String> enums = new LinkedHashSet<String>();
+            boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+            if (isEnum) {
+                TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                // find all the enum constants which has the possible enum value that can be used
+                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                for (VariableElement var : fields) {
+                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                        String val = var.toString();
+                        enums.add(val);
+                    }
+                }
+            }
+
+            // gather oneOf expression/predicates which uses language
+            Set<String> oneOfTypes = new TreeSet<String>();
+            boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
+            if (isOneOf) {
+                TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
+                String superClassName = canonicalClassName(languages.toString());
+                // find all classes that has that superClassName
+                Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                findTypeElementChildren(roundEnv, children, superClassName);
+                for (TypeElement child : children) {
+                    XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                    if (rootElement != null) {
+                        String childName = rootElement.name();
+                        if (childName != null) {
+                            oneOfTypes.add(childName);
+                        }
+                    }
+                }
+            }
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", docComment, isEnum, enums, isOneOf, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    private void processElements(RoundEnvironment roundEnv, TypeElement classElement, XmlElements elements, VariableElement fieldElement,
+                                 Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        String fieldName;
+        fieldName = fieldElement.getSimpleName().toString();
+        if (elements != null) {
+            String kind = "element";
+            String name = fieldName;
+            name = prefix + name;
+
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, true);
+            boolean required = true;
+
+            // gather oneOf of the elements
+            Set<String> oneOfTypes = new TreeSet<String>();
+            for (XmlElement element : elements.value()) {
+                String child = element.name();
+                oneOfTypes.add(child);
+            }
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", docComment, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
         }
     }
 
