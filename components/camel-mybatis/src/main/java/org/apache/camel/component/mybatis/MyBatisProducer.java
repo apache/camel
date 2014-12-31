@@ -236,22 +236,35 @@ public class MyBatisProducer extends DefaultProducer {
 
             // we should not set the body if its a stored procedure as the result is already in its OUT parameter
             MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
+            final String outputHeader = getEndpoint().getOutputHeader();
             if (ms != null && ms.getStatementType() == org.apache.ibatis.mapping.StatementType.CALLABLE) {
                 if (result == null) {
                     LOG.trace("Setting result as existing body as MyBatis statement type is Callable, and there was no result.");
                     answer.setBody(exchange.getIn().getBody());
                 } else {
-                    // set the result as body for insert
-                    LOG.trace("Setting result as body: {}", result);
-                    answer.setBody(result);
+                	if(outputHeader != null) {
+                		// set the result as header for insert
+    	                LOG.trace("Setting result as header [{}]: {}", outputHeader, result);
+                		answer.setHeader(outputHeader, result);
+                	} else {
+	                    // set the result as body for insert
+	                    LOG.trace("Setting result as body: {}", result);
+	                    answer.setBody(result);
+	                    answer.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
+                	}
                 }
             } else {
-                // set the result as body for insert
-                LOG.trace("Setting result as body: {}", result);
-                answer.setBody(result);
+            	if(outputHeader != null) {
+	                LOG.trace("Setting result as header [{}]: {}", outputHeader, result);
+            		answer.setHeader(outputHeader, result);
+            	} else {
+	            	// set the result as body for insert
+	                LOG.trace("Setting result as body: {}", result);
+	                answer.setBody(result);
+	                answer.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
+            	}
             }
 
-            answer.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
             answer.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
         } else {
             Message msg = exchange.getIn();
@@ -260,4 +273,9 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
+    @Override
+    public MyBatisEndpoint getEndpoint() {
+        return (MyBatisEndpoint) super.getEndpoint();
+    }
+    
 }
