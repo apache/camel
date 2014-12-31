@@ -156,9 +156,14 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     private Exchange createExchange(Object data) {
         final MyBatisEndpoint endpoint = getEndpoint();
         final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+        final String outputHeader = getEndpoint().getOutputHeader();
 
         Message msg = exchange.getIn();
-        msg.setBody(data);
+        if(outputHeader != null) {
+        	msg.setHeader(outputHeader, data);
+        } else {
+        	msg.setBody(data);
+        }
         msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, endpoint.getStatement());
 
         return exchange;
