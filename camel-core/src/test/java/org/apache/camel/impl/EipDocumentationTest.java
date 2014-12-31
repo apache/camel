@@ -47,7 +47,7 @@ public class EipDocumentationTest extends ContextTestSupport {
         // there should be javadoc included
         assertTrue(json.contains("Whether to aggregate using a sequential single thread or allow parallel aggregation"));
         // and it support outputs
-        assertTrue(json.contains("\"outputs\": { \"kind\": \"element\": \"required\": \"true\", \"type\": \"array\","));
+        assertTrue(json.contains("\"outputs\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"array\", \"javaType\""));
     }
 
     public void testSimpleDocumentation() throws Exception {
@@ -67,7 +67,8 @@ public class EipDocumentationTest extends ContextTestSupport {
         assertNotNull("Should have found json for failover", json);
 
         assertTrue(json.contains("\"name\": \"failover\""));
-        assertTrue(json.contains("\"exception\": { \"kind\": \"element\": \"required\": \"false\", \"type\": \"array\", \"javaType\": \"java.util.List<java.lang.String>\""));
+        assertTrue(json.contains("\"exception\": { \"kind\": \"element\", \"required\": \"false\", \"type\": \"array\""
+                + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": \"false\""));
     }
 
     public void testNotFound() throws Exception {

@@ -61,7 +61,7 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
 
         // should include javadoc
         assertTrue("Should include javadoc", json.contains("\"timeout\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"long\","
-                + " \"defaultValue\": \"30000\","
+                + " \"deprecated\": \"false\", \"defaultValue\": \"30000\","
                 + " \"description\": \"The timeout value to use if block is enabled. Is by default 30000.\""));
     }
 
