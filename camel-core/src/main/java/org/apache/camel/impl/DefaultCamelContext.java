@@ -1133,6 +1133,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return CamelContextHelper.findComponents(this);
     }
 
+    public Map<String, Properties> findEips() throws LoadPropertiesException, IOException {
+        return CamelContextHelper.findEips(this);
+    }
+
     public String getComponentDocumentation(String componentName) throws IOException {
         String packageName = sanitizeComponentName(componentName);
         String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".html";

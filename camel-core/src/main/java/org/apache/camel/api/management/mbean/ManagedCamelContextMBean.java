@@ -214,6 +214,24 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     Map<String, Properties> findComponents() throws Exception;
 
     /**
+     * Find information about all the EIPs from camel-core.
+     *
+     * @return a map with node id, and value with EIP details.
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Find all Camel EIPs from camel-core")
+    Map<String, Properties> findEips() throws Exception;
+
+    /**
+     * Find the names of all the EIPs from camel-core.
+     *
+     * @return a list with the names of the camel EIPs
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Find all Camel EIP names from camel-core")
+    List<String> findEipNames() throws Exception;
+
+    /**
      * Find the names of all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
      *
      * @return a list with the names of the camel components
@@ -230,6 +248,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "List all Camel components available in the classpath")
     TabularData listComponents() throws Exception;
+
+    /**
+     * Find information about all the EIPs from camel-core.
+     *
+     * @return a list with the data
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "List all Camel EIPs from camel-core")
+    TabularData listEips() throws Exception;
 
     /**
      * Returns the JSON schema representation with information about the component and the endpoint parameters it supports
