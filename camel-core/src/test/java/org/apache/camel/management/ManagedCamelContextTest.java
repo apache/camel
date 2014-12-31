@@ -204,78 +204,12 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findComponents", null, null);
         assertNotNull(info);
 
-        assertEquals(23, info.size());
+        assertTrue(info.size() > 20);
         Properties prop = info.get("seda");
         assertNotNull(prop);
         assertEquals("seda", prop.get("name"));
         assertEquals("org.apache.camel", prop.get("groupId"));
         assertEquals("camel-core", prop.get("artifactId"));
-    }
-
-    @Ignore("need to be tested outside camel-core")
-    public void testFindEipNames() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
-
-        @SuppressWarnings("unchecked")
-        List<String> info = (List<String>) mbeanServer.invoke(on, "findEipNames", null, null);
-        assertNotNull(info);
-
-        assertEquals(152, info.size());
-        assertTrue(info.contains("transform"));
-        assertTrue(info.contains("split"));
-        assertTrue(info.contains("from"));
-    }
-
-    @Ignore("need to be tested outside camel-core")
-    public void testFindEips() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
-
-        @SuppressWarnings("unchecked")
-        Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findEips", null, null);
-        assertNotNull(info);
-
-        assertEquals(152, info.size());
-        Properties prop = info.get("transform");
-        assertNotNull(prop);
-        assertEquals("transform", prop.get("name"));
-        assertEquals("org.apache.camel.model.TransformDefinition", prop.get("class"));
-    }
-
-    @Ignore("need to be tested outside camel-core")
-    public void testListEips() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
-
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
-
-        @SuppressWarnings("unchecked")
-        TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);
-        assertNotNull(data);
-        assertEquals(152, data.size());
     }
 
     public void testManagedCamelContextCreateRouteStaticEndpointJson() throws Exception {
