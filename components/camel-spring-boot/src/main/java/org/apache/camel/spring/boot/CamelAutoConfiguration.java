@@ -125,7 +125,7 @@ public class CamelAutoConfiguration {
     }
 
     @Bean
-    RoutesCollector camelRoutesInjector() {
+    RoutesCollector routesCollector() {
         return new RoutesCollector();
     }
 
