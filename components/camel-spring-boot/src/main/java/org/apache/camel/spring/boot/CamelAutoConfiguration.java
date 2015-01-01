@@ -23,11 +23,11 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * <p>
@@ -102,6 +102,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
+@Import(SpringConversionServiceConfiguration.class)
 public class CamelAutoConfiguration {
 
     /**
@@ -110,8 +111,11 @@ public class CamelAutoConfiguration {
      */
     @Bean
     CamelContext camelContext(ApplicationContext applicationContext,
-                              CamelConfigurationProperties configurationProperties) {
+                              CamelConfigurationProperties configurationProperties,
+                              SpringTypeConverter springTypeConverter) {
         CamelContext camelContext = new SpringCamelContext(applicationContext);
+
+        camelContext.getTypeConverterRegistry().addFallbackTypeConverter(springTypeConverter, true);
 
         if (!configurationProperties.isJmxEnabled()) {
             camelContext.disableJMX();
