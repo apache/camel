@@ -269,7 +269,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix) {
+    private boolean processAttribute(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlAttribute attribute,
+        Set<EipOption> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String name = attribute.name();
