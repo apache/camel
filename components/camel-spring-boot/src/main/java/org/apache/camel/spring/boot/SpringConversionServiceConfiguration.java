@@ -27,7 +27,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 @Configuration
 public class SpringConversionServiceConfiguration {
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(ConversionService.class)
     @Bean
     ConversionService conversionService(ApplicationContext applicationContext) {
         DefaultConversionService service = new DefaultConversionService();
