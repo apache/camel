@@ -20,9 +20,13 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class SipComponent extends DefaultComponent {
+public class SipComponent extends UriEndpointComponent {
+
+    public SipComponent() {
+        super(SipEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
