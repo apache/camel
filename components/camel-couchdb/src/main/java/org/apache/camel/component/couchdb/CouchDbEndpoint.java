@@ -24,8 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.lightcouch.CouchDbClient;
 
+@UriEndpoint(scheme = "couchdb", consumerClass = CouchDbConsumer.class, label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -34,16 +38,27 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
     private static final String URI_ERROR = "Invalid URI. Format must be of the form couchdb:http[s]://hostname[:port]/database?[options...]";
 
+    @UriPath
     private String protocol;
+    @UriPath
     private String hostname;
-    private String style = DEFAULT_STYLE;
-    private String username;
-    private String database;
-    private String password;
+    @UriPath
     private int port;
+    @UriPath
+    private String database;
+    @UriParam(defaultValue = DEFAULT_STYLE)
+    private String style = DEFAULT_STYLE;
+    @UriParam
+    private String username;
+    @UriParam
+    private String password;
+    @UriParam(defaultValue = "" + DEFAULT_HEARTBEAT)
     private long heartbeat = DEFAULT_HEARTBEAT;
+    @UriParam(defaultValue = "false")
     private boolean createDatabase;
+    @UriParam(defaultValue = "true")
     private boolean deletes = true;
+    @UriParam(defaultValue = "true")
     private boolean updates = true;
 
     public CouchDbEndpoint() {
