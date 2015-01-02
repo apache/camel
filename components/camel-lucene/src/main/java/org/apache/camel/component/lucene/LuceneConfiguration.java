@@ -21,19 +21,30 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.util.Version;
 
+@UriParams
 public class LuceneConfiguration {
     private URI uri;
+    @UriPath
+    private String host;
+    @UriPath
+    private String operation;
+    @UriParam
     private String protocolType;
     private String authority;
-    private String host;
-    private String operation;
+    @UriParam(name = "srcDir")
     private File sourceDirectory;
+    @UriParam(name = "indexDir")
     private File indexDirectory;
+    @UriParam
     private Analyzer analyzer;
+    @UriParam
     private int maxHits;
     private Version luceneVersion = Version.LUCENE_4_10_2; 
 
