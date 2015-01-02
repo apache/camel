@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.EndpointHelper;
 
 /**
@@ -31,25 +31,28 @@ import org.apache.camel.util.EndpointHelper;
  * an ObjectName to listen to and any JMX Notifications received from
  * that object will flow into the route.
  */
-public class JMXComponent extends DefaultComponent {
+public class JMXComponent extends UriEndpointComponent {
+
+    public JMXComponent() {
+        super(JMXEndpoint.class);
+    }
 
     @Override
-    protected Endpoint createEndpoint(String aUri, String aRemaining,
-                                      Map<String, Object> aParameters) throws Exception {
-        JMXEndpoint endpoint = new JMXEndpoint(aUri, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        JMXEndpoint endpoint = new JMXEndpoint(uri, this);
         // use the helper class to set all of the properties
-        EndpointHelper.setReferenceProperties(getCamelContext(), endpoint, aParameters);
-        EndpointHelper.setProperties(getCamelContext(), endpoint, aParameters);
+        EndpointHelper.setReferenceProperties(getCamelContext(), endpoint, parameters);
+        EndpointHelper.setProperties(getCamelContext(), endpoint, parameters);
 
-        endpoint.setServerURL(aRemaining);
+        endpoint.setServerURL(remaining);
 
         // we may have some extra params left over for the object properties hashtable
         // these properties need to be consumed or the framework will throw an exception
         // for unused params
-        if (!aParameters.isEmpty()) {
+        if (!parameters.isEmpty()) {
             Hashtable<String, String> objectProperties = new Hashtable<String, String>();
 
-            for (Iterator<Entry<String, Object>> it = aParameters.entrySet().iterator(); it.hasNext();) {
+            for (Iterator<Entry<String, Object>> it = parameters.entrySet().iterator(); it.hasNext();) {
                 Entry<String, Object> entry = it.next();
                 if (entry.getKey().startsWith("key.")) {
                     objectProperties.put(entry.getKey().substring("key.".length()), entry.getValue().toString());
