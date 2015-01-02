@@ -26,10 +26,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents a collection of {@link org.apache.camel.model.rest.RestDefinition REST's}
  */
+@Label("rest")
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer {

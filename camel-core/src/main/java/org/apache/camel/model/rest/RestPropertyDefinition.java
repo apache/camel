@@ -21,9 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * Represents the XML type for &lt;restProperty&gt;.
  */
+@Label("rest")
 @XmlRootElement(name = "restProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestPropertyDefinition {

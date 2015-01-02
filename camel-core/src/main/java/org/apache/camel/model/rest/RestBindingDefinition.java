@@ -29,9 +29,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 
+@Label("rest")
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinition> {

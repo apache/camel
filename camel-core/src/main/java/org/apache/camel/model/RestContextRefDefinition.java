@@ -24,12 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents an XML &lt;restContextRef/&gt; element
  *
  * @version 
  */
+@Label("rest")
 @XmlRootElement(name = "restContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestContextRefDefinition {

@@ -27,12 +27,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Represents an XML &lt;restConfiguration/&gt; element
  */
+@Label("rest")
 @XmlRootElement(name = "restConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestConfigurationDefinition {
