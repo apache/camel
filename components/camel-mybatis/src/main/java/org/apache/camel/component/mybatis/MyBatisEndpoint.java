@@ -140,9 +140,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-	public String getOutputHeader() {
-		return outputHeader;
-	}
+    public String getOutputHeader() {
+        return outputHeader;
+    }
 
     /**
      * Store the query result in a header instead of the message body.
@@ -153,8 +153,8 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
      * also omit populating the default CamelMyBatisResult header since it would be the same
      * as outputHeader all the time.
      */
-	public void setOutputHeader(String outputHeader) {
-		this.outputHeader = outputHeader;
-	}
-    
+    public void setOutputHeader(String outputHeader) {
+        this.outputHeader = outputHeader;
+    }
+
 }

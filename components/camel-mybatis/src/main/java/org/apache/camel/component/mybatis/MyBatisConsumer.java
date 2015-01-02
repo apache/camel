@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to read data from a database.
- *
- * @version 
  */
 public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
@@ -159,10 +157,10 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         final String outputHeader = getEndpoint().getOutputHeader();
 
         Message msg = exchange.getIn();
-        if(outputHeader != null) {
-        	msg.setHeader(outputHeader, data);
+        if (outputHeader != null) {
+            msg.setHeader(outputHeader, data);
         } else {
-        	msg.setBody(data);
+            msg.setBody(data);
         }
         msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, endpoint.getStatement());
 
