@@ -22,9 +22,9 @@ import org.junit.Test;
 
 public class MyBatisInsertWithOutputHeaderTest extends MyBatisTestSupport {
 
-	private static final String TEST_CASE_HEADER_NAME = "testCaseHeader";
-	private static final int TEST_ACCOUNT_ID = 444;
-	
+    private static final String TEST_CASE_HEADER_NAME = "testCaseHeader";
+    private static final int TEST_ACCOUNT_ID = 444;
+
     @Test
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -32,7 +32,7 @@ public class MyBatisInsertWithOutputHeaderTest extends MyBatisTestSupport {
         mock.message(0).body().isInstanceOf(Account.class);
         mock.message(0).header(TEST_CASE_HEADER_NAME).isEqualTo(1);
         mock.message(0).header(MyBatisConstants.MYBATIS_RESULT).isNull();
-        
+
         Account account = new Account();
         account.setId(TEST_ACCOUNT_ID);
         account.setFirstName("Willem");

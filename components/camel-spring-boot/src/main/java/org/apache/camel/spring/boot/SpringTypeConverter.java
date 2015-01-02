@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.snmp;
+package org.apache.camel.spring.boot;
 
-import java.util.Map;
+import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
+import org.apache.camel.support.TypeConverterSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+public class SpringTypeConverter extends TypeConverterSupport {
 
-/**
- * Represents the component that manages {@link SnmpEndpoint}. It holds the list
- * of named direct endpoints.
- */
-public class SnmpComponent extends UriEndpointComponent {
+    private final ConversionService conversionService;
 
-    public SnmpComponent() {
-        super(SnmpEndpoint.class);
+    @Autowired
+    public SpringTypeConverter(ConversionService conversionService) {
+        this.conversionService = conversionService;
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SnmpEndpoint endpoint = new SnmpEndpoint(uri, this);
-        setProperties(endpoint, parameters);
-        return endpoint;
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+        if (conversionService.canConvert(value.getClass(), type)) {
+            return conversionService.convert(value, type);
+        }
+        return null;
     }
+
 }

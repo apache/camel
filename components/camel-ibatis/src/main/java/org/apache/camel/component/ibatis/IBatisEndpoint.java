@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibatis;
 
 import java.io.IOException;
+
 import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,18 +25,29 @@ import org.apache.camel.component.ibatis.strategy.DefaultIBatisProcessingStategy
 import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
 import org.apache.camel.component.ibatis.strategy.TransactionIsolationLevel;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  */
+@UriEndpoint(scheme = "ibatis", consumerClass = IBatisConsumer.class, label = "database")
 public class IBatisEndpoint extends DefaultPollingEndpoint {
-    private IBatisProcessingStrategy strategy;
-    private boolean useTransactions;
+    @UriPath
     private String statement;
+    @UriParam(defaultValue = "false")
+    private boolean useTransactions;
+    @UriParam
     private StatementType statementType;
+    @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
+    private IBatisProcessingStrategy strategy;
+    @UriParam
+    private String isolation;
 
     public IBatisEndpoint() {
     }
@@ -79,9 +91,6 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
      * Gets the IbatisProcessingStrategy to to use when consuming messages from the database
      */
     public IBatisProcessingStrategy getProcessingStrategy() throws Exception {
-        if (strategy == null) {
-            strategy = new DefaultIBatisProcessingStategy();
-        }
         return strategy;
     }
 
@@ -134,12 +143,23 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-
     public String getIsolation() throws Exception {
-        return TransactionIsolationLevel.nameOf(strategy.getIsolation());
+        return isolation;
     }
 
     public void setIsolation(String isolation) throws Exception {
-        strategy.setIsolation(TransactionIsolationLevel.intValueOf(isolation));
+        this.isolation = isolation;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (strategy == null) {
+            strategy = new DefaultIBatisProcessingStategy();
+        }
+        if (isolation != null) {
+            strategy.setIsolation(TransactionIsolationLevel.intValueOf(isolation));
+        }
     }
 }

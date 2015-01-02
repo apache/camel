@@ -20,6 +20,9 @@ import java.net.URI;
 import java.nio.charset.Charset;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
@@ -34,42 +37,77 @@ import org.slf4j.LoggerFactory;
  * 
  * @version 
  */
+@UriParams
 public class SmppConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(SmppConfiguration.class);
 
+    @UriPath
     private String host = "localhost";
-    private Integer port = Integer.valueOf(2775);
+    @UriPath
+    private Integer port = 2775;
+    @UriParam(defaultValue = "smppclient")
     private String systemId = "smppclient";
+    @UriParam
     private String password = "password";
+    @UriParam(defaultValue = "cp")
     private String systemType = "cp";
+    @UriParam
     private byte dataCoding = (byte) 0;
+    @UriParam
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
+    @UriParam(defaultValue = "ISO-8859-1")
     private String encoding = "ISO-8859-1";
+    @UriParam(defaultValue = "5000")
     private Integer enquireLinkTimer = 5000;
+    @UriParam(defaultValue = "10000")
     private Integer transactionTimer = 10000;
+    @UriParam
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
+    @UriParam(defaultValue = "CMT")
     private String serviceType = "CMT";
+    @UriParam(defaultValue = "1616")
     private String sourceAddr = "1616";
+    @UriParam(defaultValue = "1717")
     private String destAddr = "1717";
+    @UriParam
     private byte sourceAddrTon = TypeOfNumber.UNKNOWN.value();
+    @UriParam
     private byte destAddrTon = TypeOfNumber.UNKNOWN.value();
+    @UriParam
     private byte sourceAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
+    @UriParam
     private byte destAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
+    @UriParam
     private String addressRange = "";
+    @UriParam
     private byte protocolId = (byte) 0;
+    @UriParam
     private byte priorityFlag = (byte) 1;
+    @UriParam
     private byte replaceIfPresentFlag = ReplaceIfPresentFlag.DEFAULT.value();
+    @UriParam
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
+    @UriParam
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
+    @UriParam(defaultValue = "false")
     private boolean usingSSL;
+    @UriParam(defaultValue = "5000")
     private long initialReconnectDelay = 5000;
+    @UriParam(defaultValue = "5000")
     private long reconnectDelay = 5000;
+    @UriParam(defaultValue = "false")
     private boolean lazySessionCreation;
+    @UriParam
     private String httpProxyHost;
-    private Integer httpProxyPort = Integer.valueOf(3128);
+    @UriParam(defaultValue = "3128")
+    private Integer httpProxyPort = 3128;
+    @UriParam
     private String httpProxyUsername;
+    @UriParam
     private String httpProxyPassword;
+    @UriParam
     private SessionStateListener sessionStateListener;
+    @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
 
     
