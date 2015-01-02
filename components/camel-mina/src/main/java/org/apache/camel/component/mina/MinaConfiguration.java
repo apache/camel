@@ -21,31 +21,54 @@ import java.util.List;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.mina.common.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 
 /**
  * Mina configuration
  */
+@UriParams
 public class MinaConfiguration implements Cloneable {
+    @UriPath
     private String protocol;
+    @UriPath
     private String host;
+    @UriPath
     private int port;
+    @UriParam(defaultValue = "true")
     private boolean sync = true;
+    @UriParam(defaultValue = "false")
     private boolean textline;
+    @UriParam
     private TextLineDelimiter textlineDelimiter;
+    @UriParam
     private ProtocolCodecFactory codec;
+    @UriParam
     private String encoding;
+    @UriParam(defaultValue = "30000")
     private long timeout = 30000;
+    @UriParam(defaultValue = "true")
     private boolean lazySessionCreation = true;
+    @UriParam(defaultValue = "false")
     private boolean transferExchange;
+    @UriParam(defaultValue = "false")
     private boolean minaLogger;
+    @UriParam(defaultValue = "-1")
     private int encoderMaxLineLength = -1;
+    @UriParam(defaultValue = "-1")
     private int decoderMaxLineLength = -1;
+    @UriParam
     private List<IoFilter> filters;
+    @UriParam(defaultValue = "true")
     private boolean allowDefaultCodec = true;
+    @UriParam(defaultValue = "false")
     private boolean disconnect;
+    @UriParam(defaultValue = "true")
     private boolean disconnectOnNoReply = true;
+    @UriParam(defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
 
     /**
