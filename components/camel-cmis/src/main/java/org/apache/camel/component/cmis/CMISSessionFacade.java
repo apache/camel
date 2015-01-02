@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
@@ -39,17 +42,28 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class CMISSessionFacade {
     private static final Logger LOG = LoggerFactory.getLogger(CMISSessionFacade.class);
+
+    private transient Session session;
+
+    @UriPath
     private final String url;
+    @UriParam(defaultValue = "100")
     private int pageSize = 100;
+    @UriParam
     private int readCount;
+    @UriParam(defaultValue = "false")
     private boolean readContent;
+    @UriParam
     private String username;
+    @UriParam
     private String password;
+    @UriParam
     private String repositoryId;
+    @UriParam
     private String query;
-    private Session session;
 
     public CMISSessionFacade(String url) {
         this.url = url;

@@ -20,12 +20,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a CMIS endpoint.
  */
+@UriEndpoint(scheme = "cmis", consumerClass = CMISConsumer.class, label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private CMISSessionFacade sessionFacade;
     private boolean queryMode;
 
