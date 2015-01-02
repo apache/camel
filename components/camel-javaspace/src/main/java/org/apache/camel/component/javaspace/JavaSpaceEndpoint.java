@@ -23,25 +23,36 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * @version 
  */
+@UriEndpoint(scheme = "javaspace", consumerClass = JavaSpaceConsumer.class, label = "messaging")
 public class JavaSpaceEndpoint extends DefaultEndpoint {
 
-    private final String remaining;
     private final Map<?, ?> parameters;
 
+    @UriPath
+    private final String url;
+    @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
+    @UriParam
     private String spaceName;
+    @UriParam(defaultValue = "false")
     private boolean transactional;
+    @UriParam
     private long transactionTimeout = Long.MAX_VALUE;
+    @UriParam(defaultValue = "take")
     private String verb = "take";
+    @UriParam
     private String templateId;
 
     public JavaSpaceEndpoint(String endpointUri, String remaining, Map<?, ?> parameters, JavaSpaceComponent component) {
         super(endpointUri, component);
-        this.remaining = remaining;
+        this.url = remaining;
         this.parameters = parameters;
     }
     
@@ -74,8 +85,16 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    /**
+     * @deprecated use {@link #getUrl()}
+     */
+    @Deprecated
     public String getRemaining() {
-        return remaining;
+        return url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public Map<?, ?> getParameters() {

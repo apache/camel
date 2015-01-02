@@ -21,20 +21,21 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * The component for using the JavaSpaces library
  * 
  * @version 
  */
-public class JavaSpaceComponent extends DefaultComponent {
+public class JavaSpaceComponent extends UriEndpointComponent {
 
     public JavaSpaceComponent() {
+        super(JavaSpaceEndpoint.class);
     }
 
     public JavaSpaceComponent(CamelContext context) {
-        super(context);
+        super(context, JavaSpaceEndpoint.class);
     }
 
     @Override
