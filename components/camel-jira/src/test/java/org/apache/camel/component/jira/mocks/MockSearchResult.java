@@ -43,7 +43,7 @@ public class MockSearchResult extends SearchResult {
     @Override
     public Iterable<? extends BasicIssue> getIssues() {
         Collections.sort(issues, basicIssueComparator);
-        ArrayList<? extends BasicIssue> copy = new ArrayList<>(issues);
+        ArrayList<? extends BasicIssue> copy = new ArrayList<BasicIssue>(issues);
         if (!issues.isEmpty()) {
             issues.remove(0);
         }

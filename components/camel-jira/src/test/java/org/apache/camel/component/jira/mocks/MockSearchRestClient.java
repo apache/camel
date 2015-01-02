@@ -33,11 +33,11 @@ import org.joda.time.DateTime;
 
 
 public class MockSearchRestClient implements SearchRestClient {
+
     private static final String KEY_BASE = "CAMELJIRA-";
-    private final List<BasicIssue> issues = new ArrayList<>();
-    private final Map<Long, List<Comment>> comments = new HashMap<>();
+    private final List<BasicIssue> issues = new ArrayList<BasicIssue>();
+    private final Map<Long, List<Comment>> comments = new HashMap<Long, List<Comment>>();
     private AtomicLong basicIssueId = new AtomicLong(0);
-    
 
     @Override
     public SearchResult searchJql(String s, ProgressMonitor progressMonitor) {
@@ -51,7 +51,7 @@ public class MockSearchRestClient implements SearchRestClient {
 
     @Override
     public SearchResult searchJqlWithFullIssues(String jql, int maxPerQuery, int start, ProgressMonitor progressMonitor) {
-        List<BasicIssue> result = new ArrayList<>();
+        List<BasicIssue> result = new ArrayList<BasicIssue>();
         for (BasicIssue issue : issues) {
             if (issue.getId() >= start) {
                 result.add(issue);
