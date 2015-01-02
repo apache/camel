@@ -42,9 +42,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.ReflectionHelper;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,12 +221,12 @@ public abstract class AbstractCamelRunner implements Runnable {
         return context;
     }
 
-    protected void gotCamelComponent(final ComponentResolver componentResolver) {
+    protected void gotCamelComponent(final ServiceReference serviceReference) {
         log.trace("Got a new Camel Component.");
         runWithDelay(this);
     }
 
-    protected void lostCamelComponent(final ComponentResolver componentResolver) {
+    protected void lostCamelComponent(final ServiceReference serviceReference) {
         log.trace("Lost a Camel Component.");
     }
 
