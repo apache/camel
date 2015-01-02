@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -31,22 +34,36 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 /**
  * Represents a Solr endpoint.
  */
+@UriEndpoint(scheme = "solr", label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
-    private String requestHandler;
+    @UriPath
     private String url;
-    private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
-    private int streamingThreadCount = SolrConstants.DEFAULT_STREAMING_THREAD_COUNT;
-    private Integer maxRetries;
-    private Integer soTimeout;
-    private Integer connectionTimeout;
-    private Integer defaultMaxConnectionsPerHost;
-    private Integer maxTotalConnections;
-    private Boolean followRedirects;
-    private Boolean allowCompression;
     private String scheme = "http://";
+    @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
+    private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
+    @UriParam(defaultValue = "" + SolrConstants.DEFAULT_STREAMING_THREAD_COUNT)
+    private int streamingThreadCount = SolrConstants.DEFAULT_STREAMING_THREAD_COUNT;
+    @UriParam
+    private Integer maxRetries;
+    @UriParam
+    private Integer soTimeout;
+    @UriParam
+    private Integer connectionTimeout;
+    @UriParam
+    private Integer defaultMaxConnectionsPerHost;
+    @UriParam
+    private Integer maxTotalConnections;
+    @UriParam(defaultValue = "false")
+    private Boolean followRedirects;
+    @UriParam(defaultValue = "false")
+    private Boolean allowCompression;
+    @UriParam
     private String zkHost;
+    @UriParam
     private String collection;
+    @UriParam
+    private String requestHandler;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
