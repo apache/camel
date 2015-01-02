@@ -20,27 +20,28 @@ import java.util.Map;
 
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Camel component for Guava EventBus
  * (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html). Supports both
  * producer and consumer endpoints.
  */
-public class GuavaEventBusComponent extends DefaultComponent {
+public class GuavaEventBusComponent extends UriEndpointComponent {
 
     private EventBus eventBus;
     private Class<?> listenerInterface;
 
+    public GuavaEventBusComponent() {
+        super(GuavaEventBusEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EventBus resolvedEventBus = eventBus;
-        if (resolvedEventBus == null) {
-            resolvedEventBus = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, EventBus.class);
-        }
-
-        return new GuavaEventBusEndpoint(uri, this, resolvedEventBus, listenerInterface);
+        GuavaEventBusEndpoint answer = new GuavaEventBusEndpoint(uri, this, eventBus, listenerInterface);
+        answer.setEventBusRef(remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
 
     public EventBus getEventBus() {

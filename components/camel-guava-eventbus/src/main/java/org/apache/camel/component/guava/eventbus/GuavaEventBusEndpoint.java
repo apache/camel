@@ -24,15 +24,25 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Guava EventBus (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html)
  * endpoint. Can create both producer and consumer ends of the route.
  */
+@UriEndpoint(scheme = "guava-eventbus", consumerClass = GuavaEventBusConsumer.class, label = "eventbus")
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;
+
+    @UriPath
+    private String eventBusRef;
+    @UriParam
     private Class<?> eventClass;
+    @UriParam
     private Class<?> listenerInterface;
 
     public GuavaEventBusEndpoint(String endpointUri, Component component, EventBus eventBus, Class<?> listenerInterface) {
@@ -69,6 +79,14 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
         return exchange;
     }
 
+    public String getEventBusRef() {
+        return eventBusRef;
+    }
+
+    public void setEventBusRef(String eventBusRef) {
+        this.eventBusRef = eventBusRef;
+    }
+
     public EventBus getEventBus() {
         return eventBus;
     }
@@ -93,4 +111,12 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
         this.listenerInterface = listenerInterface;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (eventBusRef != null && eventBus == null) {
+            eventBus = CamelContextHelper.mandatoryLookup(getCamelContext(), eventBusRef, EventBus.class);
+        }
+    }
 }
