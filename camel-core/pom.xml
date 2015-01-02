@@ -278,10 +278,18 @@
         <version>${project.version}</version>
         <executions>
           <execution>
+            <id>components</id>
             <goals>
               <goal>generate-components-list</goal>
             </goals>
             <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>eips</id>
+            <goals>
+              <goal>generate-eips-list</goal>
+            </goals>
+            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>

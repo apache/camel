@@ -1386,6 +1386,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
     /**
+     * Find information about all the EIPs from camel-core.
+     *
+     * @return a map with node id, and value with EIP details.
+     * @throws LoadPropertiesException is thrown if error during classpath discovery of the EIPs
+     * @throws IOException is thrown if error during classpath discovery of the EIPs
+     */
+    Map<String, Properties> findEips() throws LoadPropertiesException, IOException;
+
+    /**
      * Returns the HTML documentation for the given Camel component
      *
      * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.

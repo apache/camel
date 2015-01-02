@@ -124,7 +124,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // find all json files in camel-core
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes/org/apache/camel/model");
-            findModelFilesRecursive(target, jsonFiles, new CamelComponentsModelFilter());
+            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
         }
 
         getLog().info("Found " + jsonFiles.size() + " model json files");
@@ -428,21 +428,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return name;
     }
 
-    private void findModelFilesRecursive(File dir, Set<File> found, FileFilter filter) {
-        File[] files = dir.listFiles(filter);
-        if (files != null) {
-            for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
-                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
-                if (jsonFile) {
-                    found.add(file);
-                } else if (file.isDirectory()) {
-                    findModelFilesRecursive(file, found, filter);
-                }
-            }
-        }
-    }
-
     private void findComponentFilesRecursive(File dir, Set<File> found, Set<File> components, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
@@ -459,14 +444,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     findComponentFilesRecursive(file, found, components, filter);
                 }
             }
-        }
-    }
-
-    private class CamelComponentsModelFilter implements FileFilter {
-
-        @Override
-        public boolean accept(File pathname) {
-            return pathname.isDirectory() || pathname.getName().endsWith(".json");
         }
     }
 

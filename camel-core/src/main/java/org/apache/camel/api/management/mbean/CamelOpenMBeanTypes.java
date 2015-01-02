@@ -110,4 +110,15 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
+    public static TabularType listEipsTabularType() throws OpenDataException {
+        CompositeType ct = listEipsCompositeType();
+        return new TabularType("listEips", "Lists all the EIPs", ct, new String[]{"name"});
+    }
+
+    public static CompositeType listEipsCompositeType() throws OpenDataException {
+        return new CompositeType("eips", "EIPs", new String[]{"name", "description", "label", "status", "type"},
+                new String[]{"Name", "Description", "Label", "Status", "Type"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
 }
