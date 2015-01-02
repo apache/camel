@@ -25,12 +25,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 
+@UriEndpoint(scheme = "snmp", label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -41,13 +45,26 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
 
     private OIDList oids = new OIDList();
-    private String address;
+
+    private transient String address;
+
+    @UriPath
     private String protocol = "udp";
+    @UriPath
+    private String host;
+    @UriPath
+    private Integer port;
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_RETRIES)
     private int retries = DEFAULT_SNMP_RETRIES;
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_TIMEOUT)
     private int timeout = DEFAULT_SNMP_TIMEOUT;
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_VERSION)
     private int snmpVersion = DEFAULT_SNMP_VERSION;
+    @UriParam(defaultValue = DEFAULT_COMMUNITY)
     private String snmpCommunity = DEFAULT_COMMUNITY;
+    @UriParam
     private SnmpActionType type;
+    @UriParam(defaultValue = "60")
     private int delay = 60;
 
     /**
@@ -134,27 +151,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      * creates and configures the endpoint
      *
      * @throws Exception if unable to setup connection
+     * @deprecated use {@link #start()} instead
      */
+    @Deprecated
     public void initiate() throws Exception {
-        URI uri = URI.create(getEndpointUri());
-        String host = uri.getHost();
-        int port = uri.getPort();
-        if (host == null || host.trim().length() < 1) {
-            host = "127.0.0.1";
-        }
-        if (port == -1) {
-            if (getType() == SnmpActionType.POLL) {
-                port = 161; // default snmp poll port
-            } else {
-                port = 162; // default trap port
-            }
-        }
-
-
-        // set the address
-        String address = String.format("%s:%s/%d", getProtocol(), host, port);
-        LOG.debug("Using snmp address {}", address);
-        setAddress(address);
+        // noop
     }
 
     public int getDelay() {
@@ -232,6 +233,31 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        URI uri = URI.create(getEndpointUri());
+        String host = uri.getHost();
+        int port = uri.getPort();
+        if (host == null || host.trim().length() < 1) {
+            host = "127.0.0.1";
+        }
+        if (port == -1) {
+            if (getType() == SnmpActionType.POLL) {
+                port = 161; // default snmp poll port
+            } else {
+                port = 162; // default trap port
+            }
+        }
+
+
+        // set the address
+        String address = String.format("%s:%s/%d", getProtocol(), host, port);
+        LOG.debug("Using snmp address {}", address);
+        setAddress(address);
     }
 
     @Override
