@@ -71,6 +71,11 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         if (config.getIp() != null) {
             LOG.info("REMOTE ELASTICSEARCH: {}", config.getIp());
             Settings settings = ImmutableSettings.settingsBuilder()
+                    // setting the classloader here will allow the underlying elasticsearch-java
+                    // class to find its names.txt in an OSGi environment (otherwise the thread
+                    // classloader is used, which won't be able to see the file causing a startup
+                    // exception).
+                    .classLoader(Settings.class.getClassLoader())
                     .put("cluster.name", config.getClusterName())
                     .put("client.transport.ignore_cluster_name", false)
                     .put("node.client", true)
