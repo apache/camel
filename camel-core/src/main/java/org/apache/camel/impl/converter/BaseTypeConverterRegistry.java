@@ -226,13 +226,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
-                return Boolean.FALSE;
-            }
             // no type conversion was needed
             if (statistics.isStatisticsEnabled()) {
                 noopCounter.incrementAndGet();
+            }
+            // lets avoid NullPointerException when converting to boolean for null values
+            if (boolean.class.isAssignableFrom(type)) {
+                return Boolean.FALSE;
             }
             return null;
         }
