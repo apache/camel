@@ -25,6 +25,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.hawtdispatch.Task;
 import org.fusesource.stomp.client.Callback;
@@ -41,11 +44,14 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
+@UriEndpoint(scheme = "stomp", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint {
 
-    private CallbackConnection connection;
-    private StompConfiguration configuration;
+    @UriPath
     private String destination;
+    @UriParam
+    private StompConfiguration configuration;
+    private CallbackConnection connection;
     private Stomp stomp;
 
     private final List<StompConsumer> consumers = new CopyOnWriteArrayList<StompConsumer>();

@@ -20,10 +20,15 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class StompComponent extends DefaultComponent {
+public class StompComponent extends UriEndpointComponent {
 
     private StompConfiguration configuration = new StompConfiguration();
+
+    public StompComponent() {
+        super(StompEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

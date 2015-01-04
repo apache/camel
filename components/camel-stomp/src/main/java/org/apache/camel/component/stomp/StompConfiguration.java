@@ -17,11 +17,17 @@
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
+@UriParams
 public class StompConfiguration implements Cloneable {
 
+    @UriParam(defaultValue = "tcp://localhost:61613")
     private String brokerURL = "tcp://localhost:61613";
+    @UriParam
     private String login;
+    @UriParam
     private String passcode;
 
     /**
