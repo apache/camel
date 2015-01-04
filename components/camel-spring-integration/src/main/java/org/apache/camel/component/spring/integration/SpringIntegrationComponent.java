@@ -18,14 +18,18 @@ package org.apache.camel.component.spring.integration;
 
 import java.util.Map;
 
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link SpringIntegrationEndpoint}.
  *
  * @version 
  */
-public class SpringIntegrationComponent extends DefaultComponent {
+public class SpringIntegrationComponent extends UriEndpointComponent {
+
+    public SpringIntegrationComponent() {
+        super(SpringIntegrationEndpoint.class);
+    }
 
     protected SpringIntegrationEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringIntegrationEndpoint endpoint = new SpringIntegrationEndpoint(uri, remaining, this);

@@ -21,6 +21,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.integration.MessageChannel;
 
@@ -29,11 +32,16 @@ import org.springframework.integration.MessageChannel;
  *
  * @version 
  */
+@UriEndpoint(scheme = "spring-integration", consumerClass = SpringIntegrationConsumer.class, label = "spring,eventbus")
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
-    private String inputChannel;
-    private String outputChannel;
+    @UriPath
     private String defaultChannel;
+    @UriParam
+    private String inputChannel;
+    @UriParam
+    private String outputChannel;
     private MessageChannel messageChannel;
+    @UriParam(defaultValue = "false")
     private boolean inOut;
 
     public SpringIntegrationEndpoint(String uri, String channel, SpringIntegrationComponent component) {
@@ -83,6 +91,7 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
         return defaultChannel;
     }
 
+    @Deprecated
     public MessageChannel getMessageChannel() {
         return messageChannel;
     }
