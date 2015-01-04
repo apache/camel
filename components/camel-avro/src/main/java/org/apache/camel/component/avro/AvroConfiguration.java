@@ -20,22 +20,36 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.avro.Protocol;
-
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.commons.lang.StringUtils;
-import static org.apache.camel.component.avro.AvroConstants.*;
 
+import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SEPARATOR;
+
+@UriParams
 public class AvroConfiguration implements Cloneable {
 
+    @UriPath
+    private AvroTransport transport;
+    @UriPath
     private String host;
+    @UriPath
     private int port;
-    private Protocol protocol;
+    @UriParam
     private String protocolLocation;
+    @UriParam
+    private Protocol protocol;
+    @UriParam
     private String protocolClassName;
-    private String transport;
+    @UriParam
     private String messageName;
+    @UriParam
     private String uriAuthority;
+    @UriParam(defaultValue = "false")
     private boolean reflectionProtocol;
+    @UriParam(defaultValue = "false")
     private boolean singleParameter;
 
     public AvroConfiguration copy() {
@@ -48,11 +62,7 @@ public class AvroConfiguration implements Cloneable {
     }
 
     public void parseURI(URI uri, Map<String, Object> parameters, AvroComponent component) throws Exception {
-        transport = uri.getScheme();
-
-        if ((!AVRO_HTTP_TRANSPORT.equalsIgnoreCase(transport)) && (!AVRO_NETTY_TRANSPORT.equalsIgnoreCase(transport))) {
-            throw new IllegalArgumentException("Unrecognized Avro IPC transport: " + protocol + " for uri: " + uri);
-        }
+        transport = AvroTransport.valueOf(uri.getScheme());
 
         setHost(uri.getHost());
         setPort(uri.getPort());
@@ -94,11 +104,15 @@ public class AvroConfiguration implements Cloneable {
         this.protocol = protocol;
     }
 
-    public String getTransport() {
+    public AvroTransport getTransport() {
         return transport;
     }
 
     public void setTransport(String transport) {
+        this.transport = AvroTransport.valueOf(transport);
+    }
+
+    public void setTransport(AvroTransport transport) {
         this.transport = transport;
     }
 

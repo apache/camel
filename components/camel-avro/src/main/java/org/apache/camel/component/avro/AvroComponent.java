@@ -25,22 +25,22 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.avro.Protocol;
 import org.apache.avro.reflect.ReflectData;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.URISupport;
 
-public class AvroComponent extends DefaultComponent {
+public class AvroComponent extends UriEndpointComponent {
 
     private AvroConfiguration configuration;
     private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<String, AvroListener>();
 
     public AvroComponent() {
+        super(AvroEndpoint.class);
     }
 
     public AvroComponent(CamelContext context) {
-        super(context);
+        super(context, AvroEndpoint.class);
     }
 
 
