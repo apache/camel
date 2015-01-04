@@ -17,10 +17,11 @@
 package org.apache.camel.component.hbase;
 
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseRow;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.HTablePool;
@@ -28,11 +29,15 @@ import org.apache.hadoop.hbase.client.HTablePool;
 /**
  * Represents the component that manages {@link HBaseEndpoint}.
  */
-public class HBaseComponent extends DefaultComponent {
+public class HBaseComponent extends UriEndpointComponent {
 
     private Configuration configuration;
     private HTablePool tablePool;
     private int poolMaxSize = 10;
+
+    public HBaseComponent() {
+        super(HBaseEndpoint.class);
+    }
 
     @Override
     protected void doStart() throws Exception {

@@ -17,12 +17,16 @@
 package org.apache.camel.component.hbase;
 
 import java.util.List;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTablePool;
@@ -31,23 +35,35 @@ import org.apache.hadoop.hbase.filter.Filter;
 /**
  * Represents an HBase endpoint.
  */
+@UriEndpoint(scheme = "hbase", consumerClass = HBaseConsumer.class, label = "hadoop")
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
+    @UriPath
     private final String tableName;
     private final HTablePool tablePool;
     private HBaseAdmin admin;
 
     //Operation properties.
+    @UriParam(defaultValue = "100")
     private int maxResults = 100;
+    @UriParam
     private List<Filter> filters;
+    @UriParam
     private String operation;
+    @UriParam(defaultValue = "true")
     private boolean remove = true;
+    @UriParam
     private String mappingStrategyName;
+    @UriParam
     private String mappingStrategyClassName;
+    @UriParam
     private CellMappingStrategyFactory cellMappingStrategyFactory = new CellMappingStrategyFactory();
+    @UriParam
     private HBaseRemoveHandler removeHandler = new HBaseDeleteHandler();
+    @UriParam
     private HBaseRow rowModel;
+    @UriParam
     private int maxMessagesPerPoll;
 
     public HBaseEndpoint(String uri, HBaseComponent component, HTablePool tablePool, String tableName) {
