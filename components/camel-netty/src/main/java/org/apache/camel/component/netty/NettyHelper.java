@@ -111,7 +111,11 @@ public final class NettyHelper {
     public static void close(Channel channel) {
         if (channel != null) {
             LOG.trace("Closing channel: {}", channel);
-            channel.close().syncUninterruptibly();
+            channel.close().addListener(new ChannelFutureListener() {
+                public void operationComplete(ChannelFuture future) {
+                    LOG.trace("Channel closed: {}", future.getChannel());
+                }
+            });
         }
     }
 
