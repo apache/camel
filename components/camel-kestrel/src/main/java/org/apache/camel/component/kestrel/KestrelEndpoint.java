@@ -21,20 +21,26 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Camel endpoint for communication with a kestrel based queue.
  */
+@UriEndpoint(scheme = "kestrel", consumerClass = KestrelConsumer.class, label = "messaging")
 public class KestrelEndpoint extends DefaultEndpoint {
 
     /**
      * The configuration of this endpoint
      */
+    @UriParam
     private KestrelConfiguration configuration;
 
     /**
      * The queue we are polling
      */
+    @UriPath
     private String queue;
 
     /**
