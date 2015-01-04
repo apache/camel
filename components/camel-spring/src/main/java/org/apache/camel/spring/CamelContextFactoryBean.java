@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -71,6 +70,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
@@ -117,8 +117,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String managementNamePattern;
     @XmlAttribute(required = false)
     private String threadNamePattern;
-    @XmlAttribute(required = false)
-    private String inflightRepositoryRef;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
@@ -630,14 +628,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
-    }
-
-    public String getInflightRepositoryRef() {
-        return inflightRepositoryRef;
-    }
-
-    public void setInflightRepositoryRef(String inflightRepositoryRef) {
-        this.inflightRepositoryRef = inflightRepositoryRef;
     }
 
     @Deprecated

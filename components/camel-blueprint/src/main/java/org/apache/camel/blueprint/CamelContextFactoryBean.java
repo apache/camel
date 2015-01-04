@@ -107,8 +107,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String threadNamePattern;
     @XmlAttribute(required = false)
-    private String inflightRepositoryRef;
-    @XmlAttribute(required = false)
     private Boolean useBlueprintPropertyResolver;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
@@ -377,14 +375,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
-    }
-
-    public String getInflightRepositoryRef() {
-        return inflightRepositoryRef;
-    }
-
-    public void setInflightRepositoryRef(String inflightRepositoryRef) {
-        this.inflightRepositoryRef = inflightRepositoryRef;
     }
 
     @Deprecated
