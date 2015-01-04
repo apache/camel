@@ -20,11 +20,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a Redis endpoint.
  */
+@UriEndpoint(scheme = "spring-redis", consumerClass = RedisConsumer.class, label = "spring,nosql")
 public class RedisEndpoint extends DirectEndpoint {
+
+    @UriParam
     private RedisConfiguration configuration;
 
     public RedisEndpoint(String uri, RedisComponent component, RedisConfiguration configuration) {
