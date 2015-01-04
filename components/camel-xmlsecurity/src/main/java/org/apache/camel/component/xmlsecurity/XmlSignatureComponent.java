@@ -24,21 +24,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 
-
-public class XmlSignatureComponent extends DefaultComponent {
+public class XmlSignatureComponent extends UriEndpointComponent {
 
     private XmlSignerConfiguration signerConfiguration;
 
     private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlSignatureComponent() {
+        super(XmlSignatureEndpoint.class);
     }
 
     public XmlSignatureComponent(CamelContext context) {
-        super(context);
+        super(context, XmlSignatureEndpoint.class);
     }
 
     @Override
@@ -47,8 +47,11 @@ public class XmlSignatureComponent extends DefaultComponent {
         ObjectHelper.notNull(getCamelContext(), "CamelContext");
 
         String scheme;
+        String name;
         try {
-            scheme = new URI(remaining).getScheme();
+            URI u = new URI(remaining);
+            scheme = u.getScheme();
+            name = u.getPath();
         } catch (Exception e) {
             throw new MalformedURLException(
                 String.format(
@@ -76,6 +79,8 @@ public class XmlSignatureComponent extends DefaultComponent {
         }
         setProperties(endpoint.getConfiguration(), parameters);
         endpoint.getConfiguration().setCamelContext(getCamelContext());
+        endpoint.setCommand(XmlCommand.valueOf(scheme));
+        endpoint.setName(name);
         return endpoint;
     }
 
