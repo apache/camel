@@ -238,9 +238,6 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         doSend(true, destinationName, destination, messageCreator, messageSentCallback);
 
-        // after sending then set the OUT message id to the JMSMessageID so its identical
-        setMessageId(exchange);
-
         // continue routing asynchronously (reply will be processed async when its received)
         return false;
     }
