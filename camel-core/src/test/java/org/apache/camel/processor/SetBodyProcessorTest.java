@@ -61,6 +61,15 @@ public class SetBodyProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testSetBodyWithHeader() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:test");
+        result.expectedBodiesReceived("bbb");
+        result.expectedHeaderReceived("text", "aab");
+        template.sendBodyAndHeader("direct:start2", "aab", "text", "aab");
+        
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -71,6 +80,9 @@ public class SetBodyProcessorTest extends ContextTestSupport {
                     .to("mock:foo")
                     .setBody(simple("Bye ${body}"))
                     .to("mock:result");
+                
+                from("direct:start2")
+                    .setBody(simple("header.text.replace('a','b')")).to("mock:test");
             }
         };
     }
