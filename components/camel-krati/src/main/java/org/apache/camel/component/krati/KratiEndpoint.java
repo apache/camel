@@ -32,28 +32,41 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.krati.serializer.KratiDefaultSerializer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a Krati endpoint.
  */
+@UriEndpoint(scheme = "krati", consumerClass = KratiConsumer.class, label = "database,nosql")
 public class KratiEndpoint extends ScheduledPollEndpoint {
 
     protected static Map<String, KratiDataStoreRegistration> dataStoreRegistry = new HashMap<String, KratiDataStoreRegistration>();
 
+    @UriPath
+    protected String path;
+    @UriParam
     protected String key;
+    @UriParam
     protected String value;
+    @UriParam
     protected String operation;
-
+    @UriParam(defaultValue = "100")
     protected int initialCapacity = 100;
+    @UriParam(defaultValue = "64")
     protected int segmentFileSize = 64;
+    @UriParam
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Serializer<Object> keySerializer = new KratiDefaultSerializer();
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @UriParam
     protected Serializer<Object> valueSerializer = new KratiDefaultSerializer();
+    @UriParam
     protected SegmentFactory segmentFactory = new ChannelSegmentFactory();
+    @UriParam
     protected HashFunction<byte[]> hashFunction = new FnvHashFunction();
-
-    protected String path;
+    @UriParam
     protected int maxMessagesPerPoll;
 
     public KratiEndpoint(String uri, KratiComponent component) throws URISyntaxException {

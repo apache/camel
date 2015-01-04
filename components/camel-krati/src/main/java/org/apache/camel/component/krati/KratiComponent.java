@@ -17,13 +17,18 @@
 package org.apache.camel.component.krati;
 
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link KratiEndpoint}.
  */
-public class KratiComponent extends DefaultComponent {
+public class KratiComponent extends UriEndpointComponent {
+
+    public KratiComponent() {
+        super(KratiEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new KratiEndpoint(uri, this);
