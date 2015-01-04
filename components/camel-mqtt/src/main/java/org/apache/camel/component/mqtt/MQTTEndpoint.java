@@ -25,6 +25,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.hawtdispatch.Task;
@@ -40,10 +43,14 @@ import org.slf4j.LoggerFactory;
 /**
  * MQTT endpoint
  */
+@UriEndpoint(scheme = "mqtt", consumerClass = MQTTConsumer.class, label = "messaging")
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private CallbackConnection connection;
+    @UriPath
+    private String name;
+    @UriParam
     private final MQTTConfiguration configuration;
     private volatile boolean connected;
     private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
@@ -67,6 +74,14 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
     public MQTTConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
