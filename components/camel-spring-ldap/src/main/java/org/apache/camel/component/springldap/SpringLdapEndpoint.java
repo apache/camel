@@ -19,15 +19,18 @@ package org.apache.camel.component.springldap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.naming.directory.SearchControls;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.springframework.ldap.core.LdapTemplate;
 
+@UriEndpoint(scheme = "spring-ldap", label = "spring,ldap")
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";
@@ -38,9 +41,12 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     private static Map<String, Integer> scopeMap;
 
     private LdapTemplate ldapTemplate;
-    private LdapOperation operation;
-    private int scope = SearchControls.SUBTREE_SCOPE;
+    @UriPath
     private String templateName;
+    @UriParam
+    private LdapOperation operation;
+    @UriParam(defaultValue = "2")
+    private int scope = SearchControls.SUBTREE_SCOPE;
 
     /**
      * Initializes the SpringLdapEndpoint using the provided template
@@ -107,8 +113,7 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * sets the scope of the LDAP operation. The scope string must be one of "object", "onelevel", or "subtree"
-     * @param scope
+     * sets the scope of the LDAP operation. The scope string must be one of "object = 0", "onelevel = 1", or "subtree = 2"
      */
     public void setScope(String scope) {
         for (Entry<String, Integer> allowedScope : scopeMap.entrySet()) {
