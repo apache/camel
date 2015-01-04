@@ -24,10 +24,9 @@
 
   <bean id="async" class="org.apache.camel.processor.async.MyAsyncComponent" />
   
-  <bean id="injector" class="org.apache.camel.test.blueprint.CamelContextSetter" >
-     <property name="camelContext">
-           <ref component-id="myCamelContext"/>
-      </property>
+  <bean id="myInflightRepository" class="org.apache.camel.test.blueprint.MyInflightRepository">
+     <property name="waitTime" value="100" />
+     <property name="timeout" value="100" />
   </bean>
 
   <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/blueprint">
