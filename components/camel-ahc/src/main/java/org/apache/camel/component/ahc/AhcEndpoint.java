@@ -17,7 +17,6 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URI;
-
 import javax.net.ssl.SSLContext;
 
 import com.ning.http.client.AsyncHttpClient;
@@ -28,24 +27,34 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
-/**
- *
- */
+@UriEndpoint(scheme = "ahc", label = "http")
 public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
+    @UriParam
     private AsyncHttpClientConfig clientConfig;
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private AhcBinding binding;
+    @UriPath
     private URI httpUri;
+    @UriParam(defaultValue = "false")
     private boolean bridgeEndpoint;
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+    @UriParam(defaultValue = "false")
     private boolean transferException;
+    @UriParam
     private SSLContextParameters sslContextParameters;
+    @UriParam(defaultValue = "" + 4 * 1024)
     private int bufferSize = 4 * 1024;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    @UriParam
+    private AhcBinding binding;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
