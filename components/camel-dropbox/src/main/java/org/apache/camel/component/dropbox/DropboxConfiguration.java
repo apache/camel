@@ -23,31 +23,39 @@ import com.dropbox.core.DbxRequestConfig;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-
+@UriParams
 public class DropboxConfiguration {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxConfiguration.class);
-
+    //specific dropbox operation for the component
+    @UriPath
+    private DropboxOperation operation;
     //dropbox auth options
+    @UriParam
     private String accessToken;
     //local path to put files
+    @UriParam
     private String localPath;
     //where to put files on dropbox
+    @UriParam
     private String remotePath;
     //new path on dropbox when moving files
+    @UriParam
     private String newRemotePath;
     //search query on dropbox
+    @UriParam
     private String query;
     //in case of uploading if force or add existing file
+    @UriParam
     private DropboxUploadMode uploadMode;
     //id of the app
+    @UriParam
     private String clientIdentifier;
-    //specific dropbox operation for the component
-    private DropboxOperation operation;
     //reference to dropboxclient
+    @UriParam
     private DbxClient client;
 
     public void setClient(DbxClient client) {
@@ -60,17 +68,11 @@ public class DropboxConfiguration {
 
     /**
      * Obtain a new instance of DbxClient and store it in configuration.
-     * @throws DropboxException
      */
     public void createClient() throws DropboxException {
-        DbxRequestConfig config =
-                new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
+        DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
         DbxClient client = new DbxClient(config, accessToken);
-        if (client == null) {
-            throw new DropboxException("can't establish a Dropbox conenction!");
-        }
         this.client = client;
-
     }
 
     public String getAccessToken() {
