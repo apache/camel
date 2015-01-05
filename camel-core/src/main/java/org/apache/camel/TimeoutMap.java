@@ -52,8 +52,10 @@ public interface TimeoutMap<K, V> extends Runnable {
      * @param key   the key
      * @param value the value
      * @param timeoutMillis  timeout in millis
+     * @return the previous value associated with <tt>key</tt>, or
+     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
-    void put(K key, V value, long timeoutMillis);
+    V put(K key, V value, long timeoutMillis);
 
     /**
      * Callback when the value has been evicted
