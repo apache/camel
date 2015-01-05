@@ -16,30 +16,7 @@
  */
 package org.apache.camel.component.jclouds;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.jclouds.blobstore.BlobStore;
+public enum JcloudsCommand {
 
-public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
-
-    private BlobStore blobStore;
-
-    public JcloudsBlobStoreEndpoint(String uri, JcloudsComponent component, BlobStore blobStore) {
-        super(uri, component);
-        this.blobStore = blobStore;
-    }
-
-    @Override
-    public Producer createProducer() throws Exception {
-        return new JcloudsBlobStoreProducer(this, blobStore);
-    }
-
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        JcloudsBlobStoreConsumer answer = new JcloudsBlobStoreConsumer(this, processor, blobStore);
-        configureConsumer(answer);
-        return answer;
-    }
-
+    blobstore, compute
 }

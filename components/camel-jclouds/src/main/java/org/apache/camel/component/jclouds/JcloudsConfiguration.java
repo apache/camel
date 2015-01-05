@@ -16,133 +16,145 @@
  */
 package org.apache.camel.component.jclouds;
 
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "jclouds", consumerClass = JcloudsConsumer.class, label = "api,cloud")
-public abstract class JcloudsEndpoint extends DefaultEndpoint {
+@UriParams
+public class JcloudsConfiguration {
 
+    @UriPath
+    private JcloudsCommand command;
+    @UriPath
+    private String providerId;
+
+    // compute options
     @UriParam
-    private JcloudsConfiguration configuration = new JcloudsConfiguration();
+    private String imageId;
+    @UriParam
+    private String locationId;
+    @UriParam
+    private String hardwareId;
+    @UriParam
+    private String operation;
+    @UriParam
+    private String nodeState;
+    @UriParam
+    private String nodeId;
+    @UriParam
+    private String group;
+    @UriParam
+    private String user;
 
-    public JcloudsEndpoint(String uri, JcloudsComponent component) {
-        super(uri, component);
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public JcloudsConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(JcloudsConfiguration configuration) {
-        this.configuration = configuration;
-    }
+    // blob options
+    @UriParam
+    private String container;
+    @UriParam
+    private String directory;
+    @UriParam
+    private String blobName;
 
     public JcloudsCommand getCommand() {
-        return configuration.getCommand();
+        return command;
     }
 
     public void setCommand(JcloudsCommand command) {
-        configuration.setCommand(command);
+        this.command = command;
     }
 
     public String getProviderId() {
-        return configuration.getProviderId();
+        return providerId;
     }
 
     public void setProviderId(String providerId) {
-        configuration.setProviderId(providerId);
+        this.providerId = providerId;
     }
 
     public String getImageId() {
-        return configuration.getImageId();
+        return imageId;
     }
 
     public void setImageId(String imageId) {
-        configuration.setImageId(imageId);
+        this.imageId = imageId;
     }
 
     public String getLocationId() {
-        return configuration.getLocationId();
+        return locationId;
     }
 
     public void setLocationId(String locationId) {
-        configuration.setLocationId(locationId);
+        this.locationId = locationId;
     }
 
     public String getHardwareId() {
-        return configuration.getHardwareId();
+        return hardwareId;
     }
 
     public void setHardwareId(String hardwareId) {
-        configuration.setHardwareId(hardwareId);
+        this.hardwareId = hardwareId;
     }
 
     public String getOperation() {
-        return configuration.getOperation();
+        return operation;
     }
 
     public void setOperation(String operation) {
-        configuration.setOperation(operation);
+        this.operation = operation;
     }
 
     public String getNodeState() {
-        return configuration.getNodeState();
+        return nodeState;
     }
 
     public void setNodeState(String nodeState) {
-        configuration.setNodeState(nodeState);
+        this.nodeState = nodeState;
     }
 
     public String getNodeId() {
-        return configuration.getNodeId();
+        return nodeId;
     }
 
     public void setNodeId(String nodeId) {
-        configuration.setNodeId(nodeId);
+        this.nodeId = nodeId;
     }
 
     public String getGroup() {
-        return configuration.getGroup();
+        return group;
     }
 
     public void setGroup(String group) {
-        configuration.setGroup(group);
+        this.group = group;
     }
 
     public String getUser() {
-        return configuration.getUser();
+        return user;
     }
 
     public void setUser(String user) {
-        configuration.setUser(user);
+        this.user = user;
     }
 
     public String getContainer() {
-        return configuration.getContainer();
+        return container;
     }
 
     public void setContainer(String container) {
-        configuration.setContainer(container);
+        this.container = container;
     }
 
     public String getDirectory() {
-        return configuration.getDirectory();
+        return directory;
     }
 
     public void setDirectory(String directory) {
-        configuration.setDirectory(directory);
+        this.directory = directory;
     }
 
     public String getBlobName() {
-        return configuration.getBlobName();
+        return blobName;
     }
 
     public void setBlobName(String blobName) {
-        configuration.setBlobName(blobName);
+        this.blobName = blobName;
     }
 }

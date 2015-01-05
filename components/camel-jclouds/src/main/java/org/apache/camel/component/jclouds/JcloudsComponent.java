@@ -18,6 +18,7 @@ package org.apache.camel.component.jclouds;
 
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.jclouds.Context;
@@ -33,36 +34,27 @@ public class JcloudsComponent extends DefaultComponent {
     private List<ComputeService> computeServices;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = null;
-
-        String[] uriParts = null;
-        String endpointType = null;
-
-        if (remaining != null) {
-            uriParts = remaining.split(JcloudsConstants.DELIMETER);
-            if (uriParts != null && uriParts.length > 0) {
-                endpointType = uriParts[0];
-            }
+        String[] uriParts = remaining.split(JcloudsConstants.DELIMETER);
+        if (uriParts.length != 2) {
+            throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid command and providerId");
         }
+        String endpointType = uriParts[0];
+        String providerId = uriParts[1];
 
-        if (JcloudsConstants.BLOBSTORE.endsWith(endpointType)) {
-            if (uriParts != null && uriParts.length >= 2) {
-                String provider = uriParts[1];
-                BlobStore blobStore = getBlobStore(provider);
-                endpoint = new JcloudsBlobStoreEndpoint(uri, this, blobStore);
-            } else {
-                throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid provider name");
-            }
-        } else if (JcloudsConstants.COMPUTE.endsWith(endpointType)) {
-            if (uriParts != null && uriParts.length >= 2) {
-                String provider = uriParts[1];
-                ComputeService computeService = getComputeService(provider);
-                endpoint = new JcloudsComputeEndpoint(uri, this, computeService);
-            } else {
-                throw new IllegalArgumentException("Invalid Endpoint URI: \" + uri + \". It should contains a valid provider name");
-            }
+        JcloudsCommand command = JcloudsCommand.valueOf(endpointType);
+
+        JcloudsConfiguration configuration = new JcloudsConfiguration();
+        configuration.setCommand(command);
+        configuration.setProviderId(providerId);
+        setProperties(configuration, parameters);
+
+        JcloudsEndpoint endpoint;
+        if (JcloudsCommand.blobstore == command) {
+            endpoint = new JcloudsBlobStoreEndpoint(uri, this, getBlobStore(providerId));
+        } else {
+            endpoint = new JcloudsComputeEndpoint(uri, this, getComputeService(providerId));
         }
-
+        endpoint.setConfiguration(configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -101,7 +93,6 @@ public class JcloudsComponent extends DefaultComponent {
      * @return The matching {@link ComputeService}
      */
     protected ComputeService getComputeService(String predicate) throws IllegalArgumentException {
-
         if (computeServices != null && !computeServices.isEmpty()) {
             //First try using name and then fallback to the provider or api.
             if (isNameSupportedByContext()) {
