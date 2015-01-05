@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
+import static java.util.Arrays.asList;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +40,8 @@ public class SpringConversionServiceConfiguration {
     }
 
     @Bean
-    SpringTypeConverter springTypeConverter(ConversionService conversionService) {
-        return new SpringTypeConverter(conversionService);
+    SpringTypeConverter springTypeConverter(ConversionService[] conversionServices) {
+        return new SpringTypeConverter(asList(conversionServices));
     }
 
 }

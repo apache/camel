@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
@@ -24,17 +26,19 @@ import org.springframework.core.convert.ConversionService;
 
 public class SpringTypeConverter extends TypeConverterSupport {
 
-    private final ConversionService conversionService;
+    private final List<ConversionService> conversionServices;
 
     @Autowired
-    public SpringTypeConverter(ConversionService conversionService) {
-        this.conversionService = conversionService;
+    public SpringTypeConverter(List<ConversionService> conversionServices) {
+        this.conversionServices = conversionServices;
     }
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
-        if (conversionService.canConvert(value.getClass(), type)) {
-            return conversionService.convert(value, type);
+        for (ConversionService conversionService : conversionServices) {
+            if (conversionService.canConvert(value.getClass(), type)) {
+                return conversionService.convert(value, type);
+            }
         }
         return null;
     }
