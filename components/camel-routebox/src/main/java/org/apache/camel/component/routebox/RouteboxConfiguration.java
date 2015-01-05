@@ -28,29 +28,46 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class RouteboxConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
     private URI uri;
     private String authority;
-    private String endpointName;
+    @UriPath
+    private String routeboxName;
+    @UriParam
     private URI consumerUri;
+    @UriParam
     private URI producerUri;
+    @UriParam
     private RouteboxDispatchStrategy dispatchStrategy;
+    @UriParam
     private Map<String, String> dispatchMap;
     private CamelContext innerContext;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     private Registry innerRegistry;
+    @UriParam(defaultValue = "true")
     private boolean forkContext = true;
+    @UriParam(defaultValue = "true")
     private boolean local = true;
+    @UriParam(defaultValue = "20000")
     private long connectionTimeout = 20000;
+    @UriParam(defaultValue = "1000")
     private long pollInterval = 1000;
-    private String innerProtocol;
+    @UriParam(defaultValue = "direct")
+    private String innerProtocol = "direct";
+    @UriParam(defaultValue = "20")
     private int threads = 20;
+    @UriParam
     private int queueSize;
     private ProducerTemplate innerProducerTemplate;
+    @UriParam(defaultValue = "true")
     private boolean sendToConsumer = true;
 
     public RouteboxConfiguration() {
@@ -75,7 +92,7 @@ public class RouteboxConfiguration {
             LOG.trace("Authority: {}", uri.getAuthority());
         }
         
-        setEndpointName(getAuthority());
+        setRouteboxName(getAuthority());
         
         if (parameters.containsKey("threads")) {
             setThreads(Integer.valueOf((String) parameters.get("threads")));
@@ -130,8 +147,8 @@ public class RouteboxConfiguration {
         
         innerProducerTemplate = innerContext.createProducerTemplate();
         setQueueSize(component.getAndRemoveParameter(parameters, "size", Integer.class, 0));
-        consumerUri = component.resolveAndRemoveReferenceParameter(parameters, "consumerUri", URI.class, new URI("routebox:" + getEndpointName()));
-        producerUri = component.resolveAndRemoveReferenceParameter(parameters, "producerUri", URI.class, new URI("routebox:" + getEndpointName()));        
+        consumerUri = component.resolveAndRemoveReferenceParameter(parameters, "consumerUri", URI.class, new URI("routebox:" + getRouteboxName()));
+        producerUri = component.resolveAndRemoveReferenceParameter(parameters, "producerUri", URI.class, new URI("routebox:" + getRouteboxName()));
         
         dispatchStrategy = component.resolveAndRemoveReferenceParameter(parameters, "dispatchStrategy", RouteboxDispatchStrategy.class, null);
         dispatchMap = component.resolveAndRemoveReferenceParameter(parameters, "dispatchMap", HashMap.class, new HashMap<String, String>());
@@ -188,12 +205,12 @@ public class RouteboxConfiguration {
         return threads;
     }
 
-    public void setEndpointName(String endpointName) {
-        this.endpointName = endpointName;
+    public void setRouteboxName(String routeboxName) {
+        this.routeboxName = routeboxName;
     }
 
-    public String getEndpointName() {
-        return endpointName;
+    public String getRouteboxName() {
+        return routeboxName;
     }
 
     public void setLocal(boolean local) {
