@@ -18,7 +18,10 @@ package org.apache.camel.spring.boot;
 
 import static java.util.Arrays.asList;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.TypeConverter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +30,13 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 @Configuration
+@ConditionalOnProperty(value = "camel.springboot.typeConversion", matchIfMissing = true)
 public class SpringConversionServiceConfiguration {
+
+    @Bean
+    TypeConverter typeConverter(CamelContext camelContext) {
+        return camelContext.getTypeConverter();
+    }
 
     @ConditionalOnMissingBean
     @Bean

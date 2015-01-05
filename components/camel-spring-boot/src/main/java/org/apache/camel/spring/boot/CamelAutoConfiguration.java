@@ -19,7 +19,6 @@ package org.apache.camel.spring.boot;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.spring.SpringCamelContext;
@@ -74,11 +73,6 @@ public class CamelAutoConfiguration {
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties configurationProperties) {
         return camelContext.createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
-    }
-
-    @Bean
-    TypeConverter typeConverter(CamelContext camelContext) {
-        return camelContext.getTypeConverter();
     }
 
     @Bean

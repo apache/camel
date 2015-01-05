@@ -36,6 +36,11 @@ public class CamelConfigurationProperties {
      */
     private int consumerTemplateCacheSize = 1000;
 
+    /**
+     *
+     */
+    private boolean typeConversion;
+
     public boolean isJmxEnabled() {
         return jmxEnabled;
     }
@@ -58,6 +63,14 @@ public class CamelConfigurationProperties {
 
     public void setConsumerTemplateCacheSize(int consumerTemplateCacheSize) {
         this.consumerTemplateCacheSize = consumerTemplateCacheSize;
+    }
+
+    public boolean isTypeConversion() {
+        return typeConversion;
+    }
+
+    public void setTypeConversion(boolean typeConversion) {
+        this.typeConversion = typeConversion;
     }
 
 }
