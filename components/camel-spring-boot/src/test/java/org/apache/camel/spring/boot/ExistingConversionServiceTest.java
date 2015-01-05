@@ -53,7 +53,7 @@ class ConversionServiceConfig {
     static ConversionService providedConversionService = new DefaultConversionService();
 
     @Bean
-    ConversionService conversionService() {
+    ConversionService providedConversionService() {
         return providedConversionService;
     }
 
