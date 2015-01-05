@@ -264,7 +264,7 @@ public class S3Producer extends DefaultProducer {
 
         Map<String, String> s3Headers = CastUtils.cast(exchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class));
         if (s3Headers != null) {
-            for(Map.Entry<String, String> entry : s3Headers.entrySet()) {
+            for (Map.Entry<String, String> entry : s3Headers.entrySet()) {
                 objectMetadata.setHeader(entry.getKey(), entry.getValue());
             }
         }
