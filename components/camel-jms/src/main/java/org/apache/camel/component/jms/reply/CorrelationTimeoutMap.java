@@ -70,7 +70,7 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
     }
 
     @Override
-    public void put(String key, ReplyHandler value, long timeoutMillis) {
+    public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
         try {
             if (listener != null) {
                 listener.onPut(key);
@@ -79,13 +79,15 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
             // ignore
         }
 
+        ReplyHandler result;
         if (timeoutMillis <= 0) {
             // no timeout (must use Integer.MAX_VALUE)
-            super.put(key, value, Integer.MAX_VALUE);
+            result = super.put(key, value, Integer.MAX_VALUE);
         } else {
-            super.put(key, value, timeoutMillis);
+            result = super.put(key, value, timeoutMillis);
         }
         log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
+        return result;
     }
 
     @Override
