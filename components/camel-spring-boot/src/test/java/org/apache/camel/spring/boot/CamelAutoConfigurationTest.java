@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verify;
 @EnableAutoConfiguration
 @SpringApplicationConfiguration(classes = {TestConfig.class, CamelAutoConfigurationTest.class, RouteConfigWithCamelContextInjected.class})
 @IntegrationTest({
-        "camel.springboot.consumerTemplateCacheSize:100",
+        "camel.springboot.consumerTemplateCacheSize=100",
         "camel.springboot.jmxEnabled=false"})
 public class CamelAutoConfigurationTest extends Assert {
 

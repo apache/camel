@@ -39,11 +39,8 @@ public class CamelAutoConfiguration {
      */
     @Bean
     CamelContext camelContext(ApplicationContext applicationContext,
-                              CamelConfigurationProperties configurationProperties,
-                              SpringTypeConverter springTypeConverter) {
+                              CamelConfigurationProperties configurationProperties) {
         CamelContext camelContext = new SpringCamelContext(applicationContext);
-
-        camelContext.getTypeConverterRegistry().addFallbackTypeConverter(springTypeConverter, true);
 
         if (!configurationProperties.isJmxEnabled()) {
             camelContext.disableJMX();

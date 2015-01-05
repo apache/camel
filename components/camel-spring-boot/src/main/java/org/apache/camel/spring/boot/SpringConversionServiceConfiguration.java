@@ -49,8 +49,10 @@ public class SpringConversionServiceConfiguration {
     }
 
     @Bean
-    SpringTypeConverter springTypeConverter(ConversionService[] conversionServices) {
-        return new SpringTypeConverter(asList(conversionServices));
+    SpringTypeConverter springTypeConverter(CamelContext camelContext, ConversionService[] conversionServices) {
+        SpringTypeConverter springTypeConverter = new SpringTypeConverter(asList(conversionServices));
+        camelContext.getTypeConverterRegistry().addFallbackTypeConverter(springTypeConverter, true);
+        return springTypeConverter;
     }
 
 }
