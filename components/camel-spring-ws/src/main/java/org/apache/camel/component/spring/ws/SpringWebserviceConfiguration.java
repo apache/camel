@@ -25,6 +25,8 @@ import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -32,24 +34,40 @@ import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.annotation.Action;
 import org.springframework.ws.transport.WebServiceMessageSender;
 
+@UriParams
 public class SpringWebserviceConfiguration {
 
+    @UriParam
+    private EndpointMappingKey endpointMappingKey;
+
     /* Producer configuration */
+    @UriParam
     private WebServiceTemplate webServiceTemplate;
+    @UriParam
     private String soapAction;
+    @UriParam
     private URI wsAddressingAction;
+    @UriParam
     private URI outputAction;
+    @UriParam
     private URI faultAction;
+    @UriParam
     private URI faultTo;
+    @UriParam
     private URI replyTo;
+    @UriParam
     private WebServiceMessageSender replyToMessageSender;
+    @UriParam
     private MessageIdStrategy messageIdStrategy;
+    @UriParam
     private int timeout = -1;
 
     /* Consumer configuration */
+    @UriParam
     private CamelSpringWSEndpointMapping endpointMapping;
+    @UriParam
     private CamelEndpointDispatcher endpointDispatcher;
-    private EndpointMappingKey endpointMappingKey;
+    @UriParam
     private SSLContextParameters sslContextParameters;
 
     private XmlConverter xmlConverter;
@@ -264,7 +282,7 @@ public class SpringWebserviceConfiguration {
     }
 
     /**
-     * @param replyToMessageSender The replyToMessageSender for wsa:replyTo to set.
+     * @param messageSender The replyToMessageSender for wsa:replyTo to set.
      */
     public void setMessageSender(WebServiceMessageSender messageSender) {
         this.replyToMessageSender = messageSender;

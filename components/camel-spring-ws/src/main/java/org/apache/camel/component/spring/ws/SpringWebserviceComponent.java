@@ -32,6 +32,7 @@ import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -46,14 +47,15 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
-public class SpringWebserviceComponent extends DefaultComponent {
+public class SpringWebserviceComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     public SpringWebserviceComponent() {
+        super(SpringWebserviceEndpoint.class);
     }
 
     public SpringWebserviceComponent(CamelContext context) {
-        super(context);
+        super(context, SpringWebserviceEndpoint.class);
     }
 
     @Deprecated

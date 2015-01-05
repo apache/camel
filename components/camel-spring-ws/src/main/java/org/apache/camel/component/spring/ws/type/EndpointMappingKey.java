@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.spring.ws.type;
 
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.springframework.xml.xpath.XPathExpression;
 
+@UriParams
 public class EndpointMappingKey {
+    @UriPath
     private EndpointMappingType type;
+    @UriPath
     private String lookupKey;
 
     /* expression in case type is 'xpath' */
