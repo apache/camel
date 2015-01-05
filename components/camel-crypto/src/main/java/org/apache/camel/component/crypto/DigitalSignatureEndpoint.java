@@ -28,11 +28,15 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.crypto.processor.SigningProcessor;
 import org.apache.camel.component.crypto.processor.VerifyingProcessor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * <code>DigitalSignatureEndpoint</code>
  */
+@UriEndpoint(scheme = "crypto", label = "security,transformation")
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
+    @UriParam
     private DigitalSignatureConfiguration configuration;
 
     public DigitalSignatureEndpoint(String uri, DigitalSignatureComponent component, DigitalSignatureConfiguration configuration) {
@@ -41,8 +45,11 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return "sign".equals(configuration.getCryptoOperation())
-            ? new DigitalSignatureProducer(this, new SigningProcessor(configuration)) : new DigitalSignatureProducer(this, new VerifyingProcessor(configuration));
+        if (CryptoOperation.sign == configuration.getCryptoOperation()) {
+            return new DigitalSignatureProducer(this, new SigningProcessor(configuration));
+        } else {
+            return new DigitalSignatureProducer(this, new VerifyingProcessor(configuration));
+        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -74,7 +81,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
     }
 
     public void setPublicKey(String publicKeyName) {
-        getConfiguration().setPublicKey(publicKeyName);
+        getConfiguration().setPublicKeyName(publicKeyName);
     }
 
     public Certificate getCertificate() throws Exception {
@@ -138,11 +145,11 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
     }
 
     public String getSignatureHeader() {
-        return getConfiguration().getSignatureHeader();
+        return getConfiguration().getSignatureHeaderName();
     }
 
     public void setSignatureHeader(String signatureHeaderName) {
-        getConfiguration().setSignatureHeader(signatureHeaderName);
+        getConfiguration().setSignatureHeaderName(signatureHeaderName);
     }
 
     public String getAlias() {
@@ -153,8 +160,8 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         getConfiguration().setAlias(alias);
     }
 
-    public boolean getClearHeaders() {
-        return getConfiguration().getClearHeaders();
+    public boolean isClearHeaders() {
+        return getConfiguration().isClearHeaders();
     }
 
     public void setClearHeaders(boolean clearHeaders) {

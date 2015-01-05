@@ -44,7 +44,7 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         clearMessageHeaders(in);
         Message out = exchange.getOut();
         out.copyFrom(in);
-        out.setHeader(config.getSignatureHeader(), new Base64().encode(signature));
+        out.setHeader(config.getSignatureHeaderName(), new Base64().encode(signature));
     }
 
     protected Signature initSignatureService(Exchange exchange) throws Exception {

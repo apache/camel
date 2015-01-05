@@ -87,7 +87,7 @@ public abstract class DigitalSignatureProcessor implements Processor {
     }
 
     protected void clearMessageHeaders(Message in) {
-        if (config.getClearHeaders()) {
+        if (config.isClearHeaders()) {
             Map<String, Object> headers = in.getHeaders();
             for (Field f : DigitalSignatureConstants.class.getFields()) {
                 headers.remove(ObjectHelper.lookupConstantFieldValue(DigitalSignatureConstants.class, f.getName()));
