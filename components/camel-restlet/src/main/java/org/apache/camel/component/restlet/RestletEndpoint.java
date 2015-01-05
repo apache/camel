@@ -27,6 +27,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
@@ -36,6 +39,7 @@ import org.restlet.data.Method;
  *
  * @version 
  */
+@UriEndpoint(scheme = "restlet", consumerClass = RestletConsumer.class, label = "http,rest")
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final int DEFAULT_PORT = 80;
@@ -44,29 +48,40 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
+    @UriPath
+    private String protocol = DEFAULT_PROTOCOL;
+    @UriPath
+    private String host = DEFAULT_HOST;
+    @UriPath
+    private int port = DEFAULT_PORT;
+    @UriPath
+    private String uriPattern;
+    @UriParam(defaultValue = "" + DEFAULT_SOCKET_TIMEOUT)
+    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    @UriParam(defaultValue = "" + DEFAULT_CONNECT_TIMEOUT)
+    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+    @UriParam(defaultValue = "GET")
     private Method restletMethod = Method.GET;
-
     // Optional and for consumer only. This allows a single route to service multiple methods.
     // If it is non-null then restletMethod is ignored.
+    @UriParam
     private Method[] restletMethods;
-
-    private String protocol = DEFAULT_PROTOCOL;
-    private String host = DEFAULT_HOST;
-    private int port = DEFAULT_PORT;
-    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-    private String uriPattern;
-
     // Optional and for consumer only. This allows a single route to service multiple URI patterns.
     // The URI pattern defined in the endpoint will still be honored.
+    @UriParam
     private List<String> restletUriPatterns;
-
+    @UriParam
     private Map<String, String> restletRealm;
+    @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam
     private RestletBinding restletBinding;
+    @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+    @UriParam(defaultValue = "false")
     private boolean disableStreamCache;
-    private SSLContextParameters scp;
+    @UriParam
+    private SSLContextParameters sslContextParameters;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -231,11 +246,11 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     }
     
     public SSLContextParameters getSslContextParameters() {
-        return scp;
+        return sslContextParameters;
     }
     
     public void setSslContextParameters(SSLContextParameters scp) {
-        this.scp = scp;
+        this.sslContextParameters = scp;
     }
 
     // Update the endpointUri with the restlet method information
