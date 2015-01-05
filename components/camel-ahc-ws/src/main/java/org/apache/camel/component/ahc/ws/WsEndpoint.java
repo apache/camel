@@ -32,31 +32,32 @@ import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketByteListener;
 import com.ning.http.client.websocket.WebSocketTextListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ahc.AhcEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
+@UriEndpoint(scheme = "ahc-ws,ahc-wss", consumerClass = WsConsumer.class, label = "http,websocket")
 public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
     // for using websocket streaming/fragments
     private static final boolean GRIZZLY_AVAILABLE = 
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
-    
+
+    private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
+
+    @UriParam
     private WebSocket websocket;
-    private Set<WsConsumer> consumers;
+    @UriParam
     private boolean useStreaming;
     
     public WsEndpoint(String endpointUri, WsComponent component) {
         super(endpointUri, component, null);
-        this.consumers = new HashSet<WsConsumer>();
     }
 
     private static boolean probeClass(String name) {
@@ -114,9 +115,6 @@ public class WsEndpoint extends AhcEndpoint {
         this.useStreaming = useStreaming;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.ahc.AhcEndpoint#createClient(com.ning.http.client.AsyncHttpClientConfig)
-     */
     @Override
     protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
         AsyncHttpClient client;

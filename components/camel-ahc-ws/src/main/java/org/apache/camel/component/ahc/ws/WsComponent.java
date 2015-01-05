@@ -26,18 +26,12 @@ import org.apache.camel.component.ahc.AhcEndpoint;
  */
 public class WsComponent extends AhcComponent {
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.ahc.AhcComponent#createAddressUri(java.lang.String, java.lang.String)
-     */
     @Override
     protected String createAddressUri(String uri, String remaining) {
         // remove "ahc-"
         return uri.substring(4);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.ahc.AhcComponent#createAhcEndpoint(java.lang.String, org.apache.camel.component.ahc.AhcComponent, java.net.URI)
-     */
     @Override
     protected AhcEndpoint createAhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         return new WsEndpoint(endpointUri, (WsComponent)component);
