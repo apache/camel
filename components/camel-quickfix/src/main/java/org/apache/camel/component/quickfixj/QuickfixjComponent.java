@@ -23,16 +23,15 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.SessionSettings;
 
-public class QuickfixjComponent extends DefaultComponent implements StartupListener {
+public class QuickfixjComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
@@ -46,6 +45,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private MessageFactory messageFactory;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
     private boolean lazyCreateEngines;
+
+    public QuickfixjComponent() {
+        super(QuickfixjEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -86,6 +89,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                 }
 
                 endpoint = new QuickfixjEndpoint(engine, uri, this);
+                endpoint.setConfigurationName(remaining);
                 engine.addEventListener(endpoint);
                 endpoints.put(uri, endpoint);
             }
