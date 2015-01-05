@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
@@ -35,7 +34,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -44,60 +42,100 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+@UriEndpoint(scheme = "rabbitmq", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
 
-    private String username = ConnectionFactory.DEFAULT_USER;
-    private String password = ConnectionFactory.DEFAULT_PASS;
-    private String vhost = ConnectionFactory.DEFAULT_VHOST;
+    @UriPath
     private String hostname;
-    private int threadPoolSize = 10;
+    @UriPath
     private int portNumber;
+    @UriPath
+    private String exchangeName;
+    @UriParam(defaultValue = ConnectionFactory.DEFAULT_USER)
+    private String username = ConnectionFactory.DEFAULT_USER;
+    @UriParam(defaultValue = ConnectionFactory.DEFAULT_PASS)
+    private String password = ConnectionFactory.DEFAULT_PASS;
+    @UriParam(defaultValue = ConnectionFactory.DEFAULT_VHOST)
+    private String vhost = ConnectionFactory.DEFAULT_VHOST;
+    @UriParam(defaultValue = "10")
+    private int threadPoolSize = 10;
+    @UriParam(defaultValue = "true")
     private boolean autoAck = true;
+    @UriParam(defaultValue = "true")
     private boolean autoDelete = true;
+    @UriParam(defaultValue = "true")
     private boolean durable = true;
+    @UriParam(defaultValue = "false")
     private boolean bridgeEndpoint;
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
-    private String exchangeName;
+    @UriParam(defaultValue = "direct")
     private String exchangeType = "direct";
+    @UriParam
     private String routingKey;
+    @UriParam
     private Address[] addresses;
+    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
+    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
     private int requestedChannelMax = ConnectionFactory.DEFAULT_CHANNEL_MAX;
+    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_FRAME_MAX)
     private int requestedFrameMax = ConnectionFactory.DEFAULT_FRAME_MAX;
+    @UriParam(defaultValue = "" + ConnectionFactory.DEFAULT_HEARTBEAT)
     private int requestedHeartbeat = ConnectionFactory.DEFAULT_HEARTBEAT;
+    @UriParam
     private String sslProtocol;
+    @UriParam
     private TrustManager trustManager;
+    @UriParam
     private Map<String, Object> clientProperties;
+    @UriParam
     private ConnectionFactory connectionFactory;
+    @UriParam(defaultValue = "false")
     private Boolean automaticRecoveryEnabled;
+    @UriParam
     private Integer networkRecoveryInterval;
+    @UriParam(defaultValue = "false")
     private Boolean topologyRecoveryEnabled;
     //If it is true, prefetchSize, prefetchCount, prefetchGlobal will be used for basicOqs before starting RabbitMQConsumer
+    @UriParam(defaultValue = "false")
     private boolean prefetchEnabled;
     //Default in RabbitMq is 0.
+    @UriParam
     private int prefetchSize;
+    @UriParam
     private int prefetchCount;
     //Default value in RabbitMQ is false.
+    @UriParam(defaultValue = "false")
     private boolean prefetchGlobal;
     /**
      * Number of concurrent consumer threads
      */
+    @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
-    
     //Declares a queue and exchange in RabbitMQ, then binds both.
-    private boolean declare = true;    
+    @UriParam(defaultValue = "true")
+    private boolean declare = true;
     //Declare dead letter exchange.
+    @UriParam
     private String deadLetterExchange;
-    //Declare dead letter routhing key.
+    //Declare dead letter routing key.
+    @UriParam
     private String deadLetterRoutingKey;
     //Declare dead letter queue to declare.
+    @UriParam
     private String deadLetterQueue;
     //Dead letter exchange type.
+    @UriParam(defaultValue = "direct")
     private String deadLetterExchangeType = "direct";
     //Maximum number of opened channel in pool
+    @UriParam(defaultValue = "10")
     private int channelPoolMaxSize = 10;
     //Maximum time (in milliseconds) waiting for channel
+    @UriParam(defaultValue = "1000")
     private long channelPoolMaxWait = 1000;
 
     public RabbitMQEndpoint() {

@@ -18,25 +18,24 @@ package org.apache.camel.component.rabbitmq;
 
 import java.net.URI;
 import java.util.Map;
-
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RabbitMQComponent extends DefaultComponent {
+public class RabbitMQComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
     public RabbitMQComponent() {
+        super(RabbitMQEndpoint.class);
     }
 
     public RabbitMQComponent(CamelContext context) {
-        super(context);
+        super(context, RabbitMQEndpoint.class);
     }
 
     @Override
