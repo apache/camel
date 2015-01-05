@@ -19,18 +19,16 @@ package org.apache.camel.component.kafka;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- *
- */
-public class KafkaComponent extends DefaultComponent {
+public class KafkaComponent extends UriEndpointComponent {
 
     public KafkaComponent() {
+        super(KafkaEndpoint.class);
     }
 
     public KafkaComponent(CamelContext context) {
-        super(context);
+        super(context, KafkaEndpoint.class);
     }
 
     @Override

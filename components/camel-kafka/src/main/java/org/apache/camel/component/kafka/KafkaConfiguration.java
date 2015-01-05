@@ -19,62 +19,109 @@ package org.apache.camel.component.kafka;
 import java.util.Properties;
 
 import kafka.producer.DefaultPartitioner;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
+@UriParams
 public class KafkaConfiguration {
+
+    @UriParam
     private String zookeeperConnect;
+    @UriParam
     private String zookeeperHost;
+    @UriParam(defaultValue = "2181")
     private int zookeeperPort = 2181;
+    @UriParam
     private String topic;
+    @UriParam
     private String groupId;
+    @UriParam(defaultValue = "DefaultPartitioner")
     private String partitioner = DefaultPartitioner.class.getCanonicalName();
+    @UriParam(defaultValue = "10")
     private int consumerStreams = 10;
+    @UriParam(defaultValue = "1")
     private int consumersCount = 1;
+    @UriParam(defaultValue = "100")
     private int batchSize = 100;
+    @UriParam(defaultValue = "10000")
     private int barrierAwaitTimeoutMs = 10000;
 
     //Common configuration properties
+    @UriParam
     private String clientId;
 
     //Consumer configuration properties
+    @UriParam
     private String consumerId;
+    @UriParam
     private Integer socketTimeoutMs;
+    @UriParam
     private Integer socketReceiveBufferBytes;
+    @UriParam
     private Integer fetchMessageMaxBytes;
+    @UriParam
     private Boolean autoCommitEnable;
+    @UriParam
     private Integer autoCommitIntervalMs;
+    @UriParam
     private Integer queuedMaxMessages;
+    @UriParam
     private Integer rebalanceMaxRetries;
+    @UriParam
     private Integer fetchMinBytes;
+    @UriParam
     private Integer fetchWaitMaxMs;
+    @UriParam
     private Integer rebalanceBackoffMs;
+    @UriParam
     private Integer refreshLeaderBackoffMs;
+    @UriParam
     private String autoOffsetReset;
+    @UriParam
     private Integer consumerTimeoutMs;
 
     //Zookeepr configuration properties
+    @UriParam
     private Integer zookeeperSessionTimeoutMs;
+    @UriParam
     private Integer zookeeperConnectionTimeoutMs;
+    @UriParam
     private Integer zookeeperSyncTimeMs;
 
     //Producer configuration properties
+    @UriParam
     private String producerType;
+    @UriParam
     private String compressionCodec;
+    @UriParam
     private String compressedTopics;
+    @UriParam
     private Integer messageSendMaxRetries;
+    @UriParam
     private Integer retryBackoffMs;
+    @UriParam
     private Integer topicMetadataRefreshIntervalMs;
 
     //Sync producer config
+    @UriParam
     private Integer sendBufferBytes;
+    @UriParam
     private short requestRequiredAcks;
+    @UriParam
     private Integer requestTimeoutMs;
 
     //Async producer config
+    @UriParam
     private Integer queueBufferingMaxMs;
+    @UriParam
     private Integer queueBufferingMaxMessages;
+    @UriParam
     private Integer queueEnqueueTimeoutMs;
+    @UriParam
     private Integer batchNumMessages;
+    @UriParam
     private String serializerClass;
+    @UriParam
     private String keySerializerClass;
 
     public KafkaConfiguration() {
