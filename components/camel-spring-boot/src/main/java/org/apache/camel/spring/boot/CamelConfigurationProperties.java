@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.springboot")
 public class CamelConfigurationProperties {
 
+    // Properties
+
     /**
      * Enable JMX support for the CamelContext.
      */
@@ -37,9 +39,11 @@ public class CamelConfigurationProperties {
     private int consumerTemplateCacheSize = 1000;
 
     /**
-     *
+     * Enables enhanced Camel/Spring type conversion.
      */
-    private boolean typeConversion;
+    private boolean typeConversion = true;
+
+    // Getters & setters
 
     public boolean isJmxEnabled() {
         return jmxEnabled;
