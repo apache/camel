@@ -16,21 +16,27 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.Map;
-
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+@UriEndpoint(scheme = "hazelcast", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
-    protected final String cacheName;
+    @UriPath
+    protected HazelcastCommand command;
+    @UriPath
+    protected String cacheName;
+    @UriParam
     protected HazelcastInstance hazelcastInstance;
+    @UriParam
     private int defaultOperation = -1;
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);
@@ -50,14 +56,24 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    public HazelcastCommand getCommand() {
+        return command;
+    }
+
+    public void setCommand(HazelcastCommand command) {
+        this.command = command;
+    }
+
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
 
-    @Override
-    public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
-        defaultOperation = helper.extractOperationNumber(options.remove(HazelcastConstants.OPERATION_PARAM), -1);
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.hazelcastInstance = hazelcastInstance;
+    }
+
+    public void setDefaultOperation(int defaultOperation) {
+        this.defaultOperation = defaultOperation;
     }
 
     public int getDefaultOperation() {
