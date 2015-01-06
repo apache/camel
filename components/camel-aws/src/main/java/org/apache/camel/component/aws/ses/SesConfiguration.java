@@ -20,21 +20,30 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-/**
- * The AWS SES component configuration properties
- * 
- */
+@UriParams
 public class SesConfiguration {
-    
-    private AmazonSimpleEmailService amazonSESClient;
-    private String accessKey;
-    private String secretKey;
-    private String amazonSESEndpoint;
-    private String subject;
+
+    @UriPath
     private String from;
+    @UriParam
+    private AmazonSimpleEmailService amazonSESClient;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private String amazonSESEndpoint;
+    @UriParam
+    private String subject;
+    @UriParam
     private List<String> to;
+    @UriParam
     private String returnPath;
+    @UriParam
     private List<String> replyToAddresses;
 
     public String getAccessKey() {

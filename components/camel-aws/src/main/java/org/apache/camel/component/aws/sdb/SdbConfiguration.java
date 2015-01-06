@@ -17,20 +17,28 @@
 package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-/**
- * The AWS SDB component configuration properties
- * 
- */
+@UriParams
 public class SdbConfiguration {
-    
-    private String accessKey;
-    private String secretKey;
-    private AmazonSimpleDB amazonSDBClient;
-    private String amazonSdbEndpoint;
+
+    @UriPath
     private String domainName;
+    @UriParam
+    private AmazonSimpleDB amazonSDBClient;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private String amazonSdbEndpoint;
+    @UriParam
     private Integer maxNumberOfDomains;
+    @UriParam(defaultValue = "false")
     private Boolean consistentRead;
+    @UriParam(defaultValue = "PutAttributes")
     private SdbOperations operation = SdbOperations.PutAttributes;
 
     public void setAmazonSdbEndpoint(String amazonSdbEndpoint) {
