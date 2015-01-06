@@ -1521,7 +1521,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
 
             String id = route.getId();
-            buffer.append("\n    \"" + id + "\": {");
+            buffer.append("\n    \"").append(id).append("\": {");
             buffer.append("\n      \"inputs\": [");
             // for inputs we do not need to check dynamic as we have the data from the route definition
             Set<String> inputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(this, route, true, false);
