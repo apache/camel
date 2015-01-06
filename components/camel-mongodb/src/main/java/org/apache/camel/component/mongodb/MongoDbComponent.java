@@ -22,18 +22,16 @@ import java.util.Map;
 import java.util.Set;
 
 import com.mongodb.Mongo;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link MongoDbEndpoint}.
  */
-public class MongoDbComponent extends DefaultComponent {
+public class MongoDbComponent extends UriEndpointComponent {
     
     public static final Set<MongoDbOperation> WRITE_OPERATIONS = 
             new HashSet<MongoDbOperation>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, 
@@ -41,17 +39,23 @@ public class MongoDbComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
     private volatile Mongo db;
 
+    public MongoDbComponent() {
+        super(MongoDbEndpoint.class);
+    }
+
     /**
      * Should access a singleton of type Mongo
      */
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // TODO: this only supports one mongodb
         if (db == null) {
             db = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, Mongo.class);
             LOG.debug("Resolved the connection with the name {} as {}", remaining, db);
         }
 
-        Endpoint endpoint = new MongoDbEndpoint(uri, this);
-        parameters.put("mongoConnection", db);
+        MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
+        endpoint.setConnectionBean(remaining);
+        endpoint.setMongoConnection(db);
         setProperties(endpoint, parameters);
         
         return endpoint;
@@ -75,6 +79,5 @@ public class MongoDbComponent extends DefaultComponent {
             return new CamelMongoDbException(t);
         }
     }
-    
-    
+
 }
