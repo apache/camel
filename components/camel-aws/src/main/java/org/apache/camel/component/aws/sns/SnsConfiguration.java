@@ -16,24 +16,32 @@
  */
 package org.apache.camel.component.aws.sns;
 
-/**
- * The AWS SNS component configuration properties
- * 
- */
 import com.amazonaws.services.sns.AmazonSNS;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
+@UriParams
 public class SnsConfiguration implements Cloneable {
 
     // Common properties
+    @UriPath
     private String topicName;
+    @UriParam
     private AmazonSNS amazonSNSClient;
+    @UriParam
     private String accessKey;
+    @UriParam
     private String secretKey;
+    @UriParam
     private String amazonSNSEndpoint;
 
     // Producer only properties
+    @UriParam
     private String subject;
+    @UriParam
     private String topicArn;
+    @UriParam
     private String policy;
 
     public void setAmazonSNSEndpoint(String awsSNSEndpoint) {

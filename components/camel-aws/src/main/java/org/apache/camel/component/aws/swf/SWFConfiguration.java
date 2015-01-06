@@ -24,31 +24,56 @@ import com.amazonaws.services.simpleworkflow.flow.DataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-
+@UriParams
 public class SWFConfiguration {
-    private String accessKey;
-    private String secretKey;
-    private AmazonSimpleWorkflowClient amazonSWClient;
+
     private Map<String, Object> clientConfigurationParameters;
     private Map<String, Object> sWClientParameters;
     private Map<String, Object> startWorkflowOptionsParameters;
-    private String operation;
-    private String domainName;
-    private String activityList;
-    private String workflowList;
-    private String eventName;
-    private String version;
+
+    @UriPath
     private String type;
+    @UriParam
+    private AmazonSimpleWorkflowClient amazonSWClient;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private String operation;
+    @UriParam
+    private String domainName;
+    @UriParam
+    private String activityList;
+    @UriParam
+    private String workflowList;
+    @UriParam
+    private String eventName;
+    @UriParam
+    private String version;
+    @UriParam
     private String signalName;
+    @UriParam
     private String childPolicy;
+    @UriParam
     private String terminationReason;
+    @UriParam
     private String stateResultType;
+    @UriParam
     private String terminationDetails;
+    @UriParam
     private DataConverter dataConverter;
+    @UriParam
     private ActivitySchedulingOptions activitySchedulingOptions;
+    @UriParam
     private ActivityTypeExecutionOptions activityTypeExecutionOptions;
+    @UriParam
     private ActivityTypeRegistrationOptions activityTypeRegistrationOptions;
+    @UriParam
     private WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions;
 
     public String getAccessKey() {
@@ -138,6 +163,7 @@ public class SWFConfiguration {
     public void setAmazonSWClient(AmazonSimpleWorkflowClient amazonSWClient) {
         this.amazonSWClient = amazonSWClient;
     }
+
     public Map<String, Object> getStartWorkflowOptionsParameters() {
         return startWorkflowOptionsParameters;
     }
