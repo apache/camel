@@ -1138,35 +1138,65 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        String packageName = sanitizeComponentName(componentName);
-        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".html";
-        ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
-        if (inputStream != null) {
-            try {
-                return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
+        // use the component factory finder to find the package name of the component class, which is the location
+        // where the documentation exists as well
+        FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
+        try {
+            Class<?> clazz = finder.findClass(componentName);
+            if (clazz == null) {
+                return null;
             }
+
+            String packageName = clazz.getPackage().getName();
+            packageName = packageName.replace('.', '/');
+            String path = packageName + "/" + componentName + ".html";
+
+            ClassResolver resolver = getClassResolver();
+            InputStream inputStream = resolver.loadResourceAsStream(path);
+            log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
+            if (inputStream != null) {
+                try {
+                    return IOHelper.loadText(inputStream);
+                } finally {
+                    IOHelper.close(inputStream);
+                }
+            }
+            return null;
+
+        } catch (ClassNotFoundException e) {
+            return null;
         }
-        return null;
     }
 
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
-        String packageName = sanitizeComponentName(componentName);
-        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".json";
-        ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
-        if (inputStream != null) {
-            try {
-                return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
+        // use the component factory finder to find the package name of the component class, which is the location
+        // where the documentation exists as well
+        FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
+        try {
+            Class<?> clazz = finder.findClass(componentName);
+            if (clazz == null) {
+                return null;
             }
+
+            String packageName = clazz.getPackage().getName();
+            packageName = packageName.replace('.', '/');
+            String path = packageName + "/" + componentName + ".json";
+
+            ClassResolver resolver = getClassResolver();
+            InputStream inputStream = resolver.loadResourceAsStream(path);
+            log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
+            if (inputStream != null) {
+                try {
+                    return IOHelper.loadText(inputStream);
+                } finally {
+                    IOHelper.close(inputStream);
+                }
+            }
+            return null;
+
+        } catch (ClassNotFoundException e) {
+            return null;
         }
-        return null;
     }
 
     public String getEipParameterJsonSchema(String eipName) throws IOException {
@@ -1323,39 +1353,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // ignore and return empty response
             return null;
         }
-    }
-
-    /**
-     * Sanitizes the component name by removing dash (-) in the name, when using the component name to load
-     * resources from the classpath.
-     */
-    private static String sanitizeComponentName(String componentName) {
-        // the ftp components are in a special package
-        if ("ftp".equals(componentName) || "ftps".equals(componentName) || "sftp".equals(componentName)) {
-            return "file/remote";
-        } else if ("cxfrs".equals(componentName)) {
-            return "cxf/jaxrs";
-        } else if ("gauth".equals(componentName) || "ghttp".equals(componentName) || "glogin".equals(componentName)
-                || "gmail".equals(componentName) || "gtask".equals(componentName)) {
-            return "gae/" + componentName.substring(1);
-        } else if ("guava-eventbus".equals(componentName)) {
-            return "guava/eventbus";
-        } else if ("atmosphere-websocket".equals(componentName)) {
-            return "atmosphere/websocket";
-        } else if ("netty-http".equals(componentName)) {
-            return "netty/http";
-        } else if ("netty4-http".equals(componentName)) {
-            return "netty4/http";
-        } else if ("spring-event".equals(componentName)) {
-            return "event";
-        } else if ("class".equals(componentName)) {
-            return "beanclass";
-        } else if ("smtp".equals(componentName) || "smtps".equals(componentName)
-                || "imap".equals(componentName) || "imaps".equals(componentName)
-                || "pop3".equals(componentName) || "pop3s".equals(componentName)) {
-            return "mail";
-        }
-        return componentName.replaceAll("-", "");
     }
 
     public String explainEndpointJson(String uri, boolean includeAllOptions) {
