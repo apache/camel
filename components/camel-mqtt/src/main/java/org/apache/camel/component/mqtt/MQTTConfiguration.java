@@ -32,6 +32,42 @@ import org.fusesource.mqtt.client.Tracer;
 public class MQTTConfiguration extends MQTT {
     public static final String MQTT_SUBSCRIBE_TOPIC = "CamelMQTTSubscribeTopic";
     public static final String MQTT_PUBLISH_TOPIC = "CamelMQTTPublishTopic";
+    
+    // inherited options from MQTT
+    @UriParam
+    URI host;
+    @UriParam
+    URI localAddress;
+    @UriParam
+    SSLContext sslContext;
+    @UriParam
+    DispatchQueue dispatchQueue;
+    @UriParam
+    Executor blockingExecutor;
+    @UriParam
+    int maxReadRate;
+    @UriParam
+    int maxWriteRate;
+    @UriParam(defaultValue = "" + TcpTransport.IPTOS_THROUGHPUT)
+    int trafficClass = TcpTransport.IPTOS_THROUGHPUT;
+    @UriParam(defaultValue = "" + 1024 * 64)
+    int receiveBufferSize = 1024 * 64;
+    @UriParam(defaultValue = "" + 1024 * 64)
+    int sendBufferSize = 1024 * 64;
+    @UriParam(defaultValue = "true")
+    boolean useLocalHost = true;
+    @UriParam(defaultValue = "10")
+    long reconnectDelay = 10;
+    @UriParam(defaultValue = "" + 30 * 1000)
+    long reconnectDelayMax = 30 * 1000;
+    @UriParam(defaultValue =  "2.0")
+    double reconnectBackOffMultiplier = 2.0f;
+    @UriParam(defaultValue = "-1")
+    long reconnectAttemptsMax = -1;
+    @UriParam(defaultValue = "-1")
+    long connectAttemptsMax = -1;
+    @UriParam
+    Tracer tracer;
 
     /**
      * These a properties that are looked for in an Exchange - to publish to
@@ -58,42 +94,6 @@ public class MQTTConfiguration extends MQTT {
     @UriParam
     private QoS qos = QoS.AT_LEAST_ONCE;
     private String qualityOfService = QoS.AT_LEAST_ONCE.name();
-
-    // inherited options from MQTT
-    @UriParam
-    URI host;
-    @UriParam
-    URI localAddress;
-    @UriParam
-    SSLContext sslContext;
-    @UriParam
-    DispatchQueue dispatchQueue;
-    @UriParam
-    Executor blockingExecutor;
-    @UriParam
-    int maxReadRate;
-    @UriParam
-    int maxWriteRate;
-    @UriParam(defaultValue = "" + TcpTransport.IPTOS_THROUGHPUT)
-    int trafficClass = TcpTransport.IPTOS_THROUGHPUT;
-    @UriParam(defaultValue = "" + 1024*64)
-    int receiveBufferSize = 1024*64;
-    @UriParam(defaultValue = "" + 1024*64)
-    int sendBufferSize = 1024*64;
-    @UriParam(defaultValue = "true")
-    boolean useLocalHost = true;
-    @UriParam(defaultValue = "10")
-    long reconnectDelay = 10;
-    @UriParam(defaultValue = "" + 30*1000)
-    long reconnectDelayMax = 30*1000;
-    @UriParam(defaultValue =  "2.0")
-    double reconnectBackOffMultiplier = 2.0f;
-    @UriParam(defaultValue = "-1")
-    long reconnectAttemptsMax = -1;
-    @UriParam(defaultValue = "-1")
-    long connectAttemptsMax = -1;
-    @UriParam
-    Tracer tracer;
 
     public String getQualityOfService() {
         return qualityOfService;

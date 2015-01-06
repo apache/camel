@@ -25,14 +25,13 @@ import org.apache.camel.impl.UriEndpointComponent;
  * MQTT Component
  */
 public class MQTTComponent extends UriEndpointComponent {
+    private String host;
+    private String userName;
+    private String password;
 
     public MQTTComponent() {
         super(MQTTEndpoint.class);
     }
-
-    private String host;
-    private String userName;
-    private String password;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MQTTConfiguration configuration = new MQTTConfiguration();
