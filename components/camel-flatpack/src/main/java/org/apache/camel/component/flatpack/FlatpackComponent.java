@@ -19,7 +19,7 @@ package org.apache.camel.component.flatpack;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
@@ -27,13 +27,18 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version 
  */
-public class FlatpackComponent extends DefaultComponent {
+public class FlatpackComponent extends UriEndpointComponent {
 
     public static final String HEADER_ID = "header";
     public static final String TRAILER_ID = "trailer";
 
+    public FlatpackComponent() {
+        super(FlatpackEndpoint.class);
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean fixed = false;
+
         if (remaining.startsWith("fixed:")) {
             fixed = true;
             remaining = remaining.substring("fixed:".length());
@@ -46,13 +51,10 @@ public class FlatpackComponent extends DefaultComponent {
         }
 
         String resourceUri = remaining;
-        FixedLengthEndpoint answer;
-        if (fixed) {
-            answer = new FixedLengthEndpoint(uri, this, resourceUri);
-        } else {
-            answer = new DelimitedEndpoint(uri, this, resourceUri);
-        }
-        answer.setCamelContext(getCamelContext());
+        FlatpackType type = fixed ? FlatpackType.fixed : FlatpackType.delim;
+
+        FlatpackEndpoint answer = new FlatpackEndpoint(uri, this, resourceUri);
+        answer.setType(type);
         setProperties(answer, parameters);
         return answer;
     }

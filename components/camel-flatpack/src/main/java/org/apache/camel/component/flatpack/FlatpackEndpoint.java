@@ -25,7 +25,6 @@ import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
 import net.sf.flatpack.Parser;
 import net.sf.flatpack.ParserFactory;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -35,30 +34,51 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
- * A <a href="http://flatpack.sourceforge.net/">Flatpack Endpoint</a>
- * for working with fixed width and delimited files
+ * Processing fixed width or delimited files or messages using the FlatPack library.
  *
  * @version 
  */
-public class FixedLengthEndpoint extends DefaultPollingEndpoint {
-    protected String definition;
+@UriEndpoint(scheme = "flatpack", consumerClass = FlatpackConsumer.class, label = "transformation")
+public class FlatpackEndpoint extends DefaultPollingEndpoint {
+
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
+
+    @UriPath
+    private FlatpackType type;
+    @UriPath
+    protected String resourceUri;
+
+    @UriParam(defaultValue = "true")
     private boolean splitRows = true;
+    @UriParam(defaultValue = "false")
     private boolean allowShortLines;
+    @UriParam(defaultValue = "false")
     private boolean ignoreExtraColumns;
 
-    public FixedLengthEndpoint() {
+    // delimited
+    @UriParam(defaultValue = ",")
+    private char delimiter = ',';
+    @UriParam
+    private char textQualifier = '"';
+    @UriParam(defaultValue = "true")
+    private boolean ignoreFirstRecord = true;
+
+    public FlatpackEndpoint() {
     }
 
-    public FixedLengthEndpoint(String endpointUri, Component component, String definition) {
+    public FlatpackEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component);
-        this.definition = definition;
+        this.resourceUri = resourceUri;
     }
 
     public boolean isSingleton() {
@@ -70,7 +90,7 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new LoadBalancerConsumer(this, processor, loadBalancer);
+        return new FlatpackConsumer(this, processor, loadBalancer);
     }
 
     public void processDataSet(Exchange originalExchange, DataSet dataSet, int counter) throws Exception {
@@ -83,10 +103,14 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
         Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
-        return createParser(getDefinition(), bodyReader);
+        if (FlatpackType.fixed == type) {
+            return createFixedParser(resourceUri, bodyReader);
+        } else {
+            return createDelimitedParser(exchange);
+        }
     }
 
-    protected Parser createParser(String resourceUri, Reader bodyReader) throws IOException {
+    protected Parser createFixedParser(String resourceUri, Reader bodyReader) throws IOException {
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
         InputStreamReader reader = new InputStreamReader(is);
         Parser parser = getParserFactory().newFixedLengthParser(reader, bodyReader);
@@ -101,11 +125,32 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
         return parser;
     }
 
+    public Parser createDelimitedParser(Exchange exchange) throws InvalidPayloadException, IOException {
+        Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
+        if (ObjectHelper.isEmpty(getResourceUri())) {
+            return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
+        } else {
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+            InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
+            Parser parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+            if (isAllowShortLines()) {
+                parser.setHandlingShortLines(true);
+                parser.setIgnoreParseWarnings(true);
+            }
+            if (isIgnoreExtraColumns()) {
+                parser.setIgnoreExtraColumns(true);
+                parser.setIgnoreParseWarnings(true);
+            }
+            return parser;
+        }
+    }
+
+
     // Properties
     //-------------------------------------------------------------------------
 
-    public String getDefinition() {
-        return definition;
+    public String getResourceUri() {
+        return resourceUri;
     }
 
     public ParserFactory getParserFactory() {
@@ -155,5 +200,41 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
 
     public boolean isIgnoreExtraColumns() {
         return ignoreExtraColumns;
+    }
+
+    public FlatpackType getType() {
+        return type;
+    }
+
+    public void setType(FlatpackType type) {
+        this.type = type;
+    }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
+    }
+
+    public char getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(char delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public char getTextQualifier() {
+        return textQualifier;
+    }
+
+    public void setTextQualifier(char textQualifier) {
+        this.textQualifier = textQualifier;
+    }
+
+    public boolean isIgnoreFirstRecord() {
+        return ignoreFirstRecord;
+    }
+
+    public void setIgnoreFirstRecord(boolean ignoreFirstRecord) {
+        this.ignoreFirstRecord = ignoreFirstRecord;
     }
 }
