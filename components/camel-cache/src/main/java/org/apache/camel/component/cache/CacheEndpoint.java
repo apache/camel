@@ -30,17 +30,23 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriEndpoint(scheme = "cache", consumerClass = CacheConsumer.class, label = "cache")
 public class CacheEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
+    @UriParam
     private CacheConfiguration config;
+    @UriParam
     private CacheManagerFactory cacheManagerFactory;
-
-    private String operation;
+    @UriParam
     private String key;
+    @UriParam
+    private String operation;
 
     public CacheEndpoint() {
     }

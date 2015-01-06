@@ -20,22 +20,37 @@ import java.net.URI;
 import java.util.Map;
 
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
-
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.URISupport;
 
+@UriParams
 public class CacheConfiguration implements Cloneable {
+    @UriPath
     private String cacheName;
+    @UriParam(defaultValue = "1000")
     private int maxElementsInMemory = 1000;
+    @UriParam(defaultValue = "LFU")
     private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy = MemoryStoreEvictionPolicy.LFU;
+    @UriParam(defaultValue = "true")
     private boolean overflowToDisk = true;
+    @UriParam
     private String diskStorePath;
+    @UriParam(defaultValue = "false")
     private boolean eternal;
+    @UriParam(defaultValue = "300")
     private long timeToLiveSeconds = 300;
+    @UriParam(defaultValue = "300")
     private long timeToIdleSeconds = 300;
+    @UriParam(defaultValue = "false")
     private boolean diskPersistent;
+    @UriParam(defaultValue = "false")
     private long diskExpiryThreadIntervalSeconds;
+    @UriParam
     private CacheEventListenerRegistry eventListenerRegistry = new CacheEventListenerRegistry();
+    @UriParam
     private CacheLoaderRegistry cacheLoaderRegistry = new CacheLoaderRegistry();
 
     public CacheConfiguration() {
