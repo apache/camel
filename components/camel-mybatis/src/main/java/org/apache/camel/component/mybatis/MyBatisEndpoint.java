@@ -46,6 +46,8 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
     private int maxMessagesPerPoll;
     @UriParam
     private String outputHeader;
+    @UriParam
+    private String inputHeader;
 
     public MyBatisEndpoint() {
     }
@@ -157,4 +159,20 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         this.outputHeader = outputHeader;
     }
 
+	public String getInputHeader() {
+		return inputHeader;
+	}
+
+    /**
+     * User the header value for input parameters instead of the message body.
+     * By default, inputHeader == null and the input parameters are taken from the message body.
+     * If outputHeader is set, the value is used and query parameters will be taken from the
+     * header instead of the body.
+     */
+	public void setInputHeader(String inputHeader) {
+		this.inputHeader = inputHeader;
+	}
+
+    
+    
 }

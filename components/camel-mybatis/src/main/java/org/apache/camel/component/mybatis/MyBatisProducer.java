@@ -97,7 +97,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doSelectOne(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             LOG.trace("SelectOne: {} using statement: {}", in, statement);
             result = session.selectOne(statement, in);
@@ -111,7 +111,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doSelectList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             LOG.trace("SelectList: {} using statement: {}", in, statement);
             result = session.selectList(statement, in);
@@ -125,7 +125,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doInsert(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // lets handle arrays or collections of objects
             Iterator<?> iter = ObjectHelper.createIterator(in);
@@ -144,7 +144,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doInsertList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
             LOG.trace("Inserting: {} using statement: {}", in, statement);
@@ -159,7 +159,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doUpdate(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // lets handle arrays or collections of objects
             Iterator<?> iter = ObjectHelper.createIterator(in);
@@ -178,7 +178,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doUpdateList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
             LOG.trace("Updating: {} using statement: {}", in, statement);
@@ -193,7 +193,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doDelete(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // lets handle arrays or collections of objects
             Iterator<?> iter = ObjectHelper.createIterator(in);
@@ -212,7 +212,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doDeleteList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
             LOG.trace("Deleting: {} using statement: {}", in, statement);
@@ -282,4 +282,13 @@ public class MyBatisProducer extends DefaultProducer {
         return (MyBatisEndpoint) super.getEndpoint();
     }
 
+    private Object getInput(final Exchange exchange) {
+    	final String inputHeader = getEndpoint().getInputHeader();
+    	if(inputHeader != null) {
+    		return exchange.getIn().getHeader(inputHeader);
+    	} else {
+    		return exchange.getIn().getBody();
+    	}
+    }
+    
 }
