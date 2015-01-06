@@ -56,6 +56,7 @@ public class DisruptorReference {
             .newSetFromMap(new WeakHashMap<DisruptorEndpoint, Boolean>(4));
     private final DisruptorComponent component;
     private final String uri;
+    private final String name;
 
     //The mark on the reference indicates if we are in the process of reconfiguring the Disruptor:
     //(ref,   mark) : Description
@@ -82,10 +83,11 @@ public class DisruptorReference {
 
     private int uniqueConsumerCount;
 
-    DisruptorReference(final DisruptorComponent component, final String uri, final int size,
+    DisruptorReference(final DisruptorComponent component, final String uri, final String name, final int size,
                        final DisruptorProducerType producerType, final DisruptorWaitStrategy waitStrategy) throws Exception {
         this.component = component;
         this.uri = uri;
+        this.name = name;
         this.size = size;
         this.producerType = producerType;
         this.waitStrategy = waitStrategy;
@@ -316,6 +318,10 @@ public class DisruptorReference {
 
     private synchronized void shutdownExecutor() {
         resizeThreadPoolExecutor(0);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public long getRemainingCapacity() throws DisruptorNotStartedException {

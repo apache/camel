@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.lmax.disruptor.InsufficientCapacityException;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -36,6 +35,9 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,15 +47,24 @@ import org.slf4j.LoggerFactory;
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
+@UriEndpoint(scheme = "disruptor,disruptor-vm", consumerClass = DisruptorConsumer.class, label = "endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
 
+    @UriPath(description = "Name of queue")
+    private String name;
+    @UriParam(defaultValue = "1")
     private final int concurrentConsumers;
+    @UriParam(defaultValue = "false")
     private final boolean multipleConsumers;
+    @UriParam(defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
+    @UriParam(defaultValue = "30000")
     private long timeout = 30000;
+    @UriParam(defaultValue = "false")
     private boolean blockWhenFull;
+
     private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
 
@@ -64,6 +75,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
                              final boolean multipleConsumers, boolean blockWhenFull) throws Exception {
         super(endpointUri, component);
         this.disruptorReference = disruptorReference;
+        this.name = disruptorReference.getName();
         this.concurrentConsumers = concurrentConsumers;
         this.multipleConsumers = multipleConsumers;
         this.blockWhenFull = blockWhenFull;
@@ -92,6 +104,11 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
             status = ServiceStatus.Stopped;
         }
         return status.name();
+    }
+
+    @ManagedAttribute(description = "Queue name")
+    public String getName() {
+        return name;
     }
 
     @ManagedAttribute(description = "Buffer max capacity")
