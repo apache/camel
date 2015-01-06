@@ -46,10 +46,7 @@ public class CassandraConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         // Execute CQL Query
-        Session session = getEndpoint().getSession();
-        if (preparedStatement == null) {
-            preparedStatement = getEndpoint().prepareStatement();
-        }
+        Session session = getEndpoint().getSessionHolder().getSession();
         ResultSet resultSet = session.execute(preparedStatement.bind());
 
         // Create message from ResultSet
@@ -66,6 +63,15 @@ public class CassandraConsumer extends ScheduledPollConsumer {
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (preparedStatement == null) {
+            preparedStatement = getEndpoint().prepareStatement();
         }
     }
 }

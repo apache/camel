@@ -84,7 +84,7 @@ public class CassandraProducer extends DefaultProducer {
             // Message CQL
             lPreparedStatement = getEndpoint().prepareStatement(messageCql);
         }
-        Session session = getEndpoint().getSession();
+        Session session = getEndpoint().getSessionHolder().getSession();
         if (cqlParams == null) {
             resultSet = session.execute(lPreparedStatement.bind());
         } else {

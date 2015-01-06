@@ -21,64 +21,68 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
  * Cassandra 2 CQL3 endpoint
  */
+@UriEndpoint(scheme = "cql", consumerClass = CassandraConsumer.class, label = "database,nosql")
 public class CassandraEndpoint extends DefaultEndpoint {
-    /**
-     * Session holder
-     */
-    private CassandraSessionHolder sessionHolder;
-    /**
-     * CQL query
-     */
+
+    private volatile CassandraSessionHolder sessionHolder;
+
+    @UriPath
+    private String beanRef;
+    @UriPath
+    private String hosts;
+    @UriPath
+    private Integer port;
+    @UriPath
+    private String keyspace;
+    @UriParam
     private String cql;
+    @UriParam
+    private String clusterName;
+    @UriParam
+    private String username;
+    @UriParam
+    private String password;
+    @UriParam
+    private Cluster cluster;
+    @UriParam
+    private Session session;
+
     /**
      * Consistency level: ONE, TWO, QUORUM, LOCAL_QUORUM, ALL...
      */
     @UriParam
     private ConsistencyLevel consistencyLevel;
+
     /**
      * How many rows should be retrieved in message body
      */
+    @UriParam
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
 
-    /**
-     * Cassandra URI
-     *
-     * @param uri
-     * @param component Parent component
-     * @param cluster   Cluster (required)
-     * @param session   Session (optional)
-     * @param keyspace  Keyspace (optional)
-     */
+    public CassandraEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
+
     public CassandraEndpoint(String uri, CassandraComponent component, Cluster cluster, Session session, String keyspace) {
         super(uri, component);
-        if (session == null) {
-            sessionHolder = new CassandraSessionHolder(cluster, keyspace);
-        } else {
-            sessionHolder = new CassandraSessionHolder(session);
-        }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        sessionHolder.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        sessionHolder.stop();
-        super.doStop();
+        this.cluster = cluster;
+        this.session = session;
+        this.keyspace = keyspace;
     }
 
     public Producer createProducer() throws Exception {
@@ -93,47 +97,72 @@ public class CassandraEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public Session getSession() {
-        return sessionHolder.getSession();
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // we can get the cluster using various ways
+
+        if (cluster == null && beanRef != null) {
+            Object bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanRef);
+            if (bean instanceof Session) {
+                session = (Session) bean;
+                cluster = session.getCluster();
+                keyspace = session.getLoggedKeyspace();
+            } else if (bean instanceof Cluster) {
+                cluster = (Cluster) bean;
+                session = null;
+            } else {
+                throw new IllegalArgumentException("CQL Bean type should be of type Session or Cluster but was " + bean);
+            }
+        }
+
+        if (cluster == null && hosts != null) {
+            // use the cluster builder to create the cluster
+            cluster = createClusterBuilder().build();
+        }
+
+        if (cluster != null) {
+            sessionHolder = new CassandraSessionHolder(cluster, keyspace);
+        } else {
+            sessionHolder = new CassandraSessionHolder(session);
+        }
+
+        sessionHolder.start();
     }
 
-    public String getCql() {
-        return cql;
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        sessionHolder.stop();
     }
 
-    public void setCql(String cql) {
-        this.cql = cql;
+    protected CassandraSessionHolder getSessionHolder() {
+        return sessionHolder;
     }
 
-    public String getKeyspace() {
-        return sessionHolder.getKeyspace();
-    }
-
-    public ConsistencyLevel getConsistencyLevel() {
-        return consistencyLevel;
-    }
-
-    public void setConsistencyLevel(ConsistencyLevel consistencyLevel) {
-        this.consistencyLevel = consistencyLevel;
-    }
-
-    public ResultSetConversionStrategy getResultSetConversionStrategy() {
-        return resultSetConversionStrategy;
-    }
-
-    public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
-        this.resultSetConversionStrategy = resultSetConversionStrategy;
-    }
-
-    public void setResultSetConversionStrategy(String converter) {
-        this.resultSetConversionStrategy = ResultSetConversionStrategies.fromName(converter);
+    protected Cluster.Builder createClusterBuilder() throws Exception {
+        Cluster.Builder clusterBuilder = Cluster.builder();
+        for (String host : hosts.split(",")) {
+            clusterBuilder = clusterBuilder.addContactPoint(host);
+        }
+        if (port != null) {
+            clusterBuilder = clusterBuilder.withPort(port);
+        }
+        if (clusterName != null) {
+            clusterBuilder = clusterBuilder.withClusterName(clusterName);
+        }
+        if (username != null && !username.isEmpty() && password != null) {
+            clusterBuilder.withCredentials(username, password);
+        }
+        return clusterBuilder;
     }
 
     /**
      * Create and configure a Prepared CQL statement
      */
     protected PreparedStatement prepareStatement(String cql) {
-        PreparedStatement preparedStatement = getSession().prepare(cql);
+        PreparedStatement preparedStatement = getSessionHolder().getSession().prepare(cql);
         if (consistencyLevel != null) {
             preparedStatement.setConsistencyLevel(consistencyLevel);
         }
@@ -154,4 +183,103 @@ public class CassandraEndpoint extends DefaultEndpoint {
         message.setBody(resultSetConversionStrategy.getBody(resultSet));
     }
 
+    public String getBeanRef() {
+        return beanRef;
+    }
+
+    public void setBeanRef(String beanRef) {
+        this.beanRef = beanRef;
+    }
+
+    public String getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(String hosts) {
+        this.hosts = hosts;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getKeyspace() {
+        return keyspace;
+    }
+
+    public void setKeyspace(String keyspace) {
+        this.keyspace = keyspace;
+    }
+
+    public String getCql() {
+        return cql;
+    }
+
+    public void setCql(String cql) {
+        this.cql = cql;
+    }
+
+    public Cluster getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
+    public Session getSession() {
+        if (session == null) {
+            return sessionHolder.getSession();
+        } else {
+            return session;
+        }
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ConsistencyLevel getConsistencyLevel() {
+        return consistencyLevel;
+    }
+
+    public void setConsistencyLevel(ConsistencyLevel consistencyLevel) {
+        this.consistencyLevel = consistencyLevel;
+    }
+
+    public ResultSetConversionStrategy getResultSetConversionStrategy() {
+        return resultSetConversionStrategy;
+    }
+
+    public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
+        this.resultSetConversionStrategy = resultSetConversionStrategy;
+    }
 }
