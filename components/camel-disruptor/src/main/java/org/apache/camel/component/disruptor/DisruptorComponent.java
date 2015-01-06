@@ -92,6 +92,8 @@ public class DisruptorComponent extends UriEndpointComponent {
 
         final DisruptorReference disruptorReference = getOrCreateDisruptor(uri, remaining, size, producerType, waitStrategy);
         final DisruptorEndpoint disruptorEndpoint = new DisruptorEndpoint(uri, this, disruptorReference, concurrentConsumers, multipleConsumers, blockWhenFull);
+        disruptorEndpoint.setWaitStrategy(waitStrategy);
+        disruptorEndpoint.setProducerType(producerType);
         disruptorEndpoint.configureProperties(parameters);
 
         return disruptorEndpoint;

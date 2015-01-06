@@ -64,6 +64,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     private long timeout = 30000;
     @UriParam(defaultValue = "false")
     private boolean blockWhenFull;
+    @UriParam(defaultValue = "Blocking")
+    private DisruptorWaitStrategy waitStrategy;
+    @UriParam(defaultValue = "Multi")
+    private DisruptorProducerType producerType;
 
     private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
@@ -180,6 +184,22 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
 
     public void setBlockWhenFull(boolean blockWhenFull) {
         this.blockWhenFull = blockWhenFull;
+    }
+
+    public DisruptorWaitStrategy getWaitStrategy() {
+        return waitStrategy;
+    }
+
+    public void setWaitStrategy(DisruptorWaitStrategy waitStrategy) {
+        this.waitStrategy = waitStrategy;
+    }
+
+    public DisruptorProducerType getProducerType() {
+        return producerType;
+    }
+
+    public void setProducerType(DisruptorProducerType producerType) {
+        this.producerType = producerType;
     }
 
     @Override
