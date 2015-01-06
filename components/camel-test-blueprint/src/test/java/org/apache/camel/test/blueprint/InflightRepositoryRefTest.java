@@ -29,6 +29,5 @@ public class InflightRepositoryRefTest extends CamelBlueprintTestSupport {
     public void testEndpointConfiguration() throws Exception {
         assertTrue("Get a wrong inflight repository", context.getInflightRepository() instanceof MyInflightRepository);
     }
-    
-    
+
 }
