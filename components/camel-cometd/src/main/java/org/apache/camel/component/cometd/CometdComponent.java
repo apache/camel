@@ -22,13 +22,12 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.net.ssl.SSLContext;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
@@ -54,7 +53,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for Jetty Cometd
  */
-public class CometdComponent extends DefaultComponent {
+public class CometdComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
     private final Map<String, ConnectorRef> connectors = new LinkedHashMap<String, ConnectorRef>();
@@ -90,12 +89,14 @@ public class CometdComponent extends DefaultComponent {
     }
 
     public CometdComponent() {
+        super(CometdEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        setProperties(this, parameters);
-        return new CometdEndpoint(this, uri, remaining, parameters);
+        CometdEndpoint endpoint = new CometdEndpoint(this, uri, remaining, parameters);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     /**
