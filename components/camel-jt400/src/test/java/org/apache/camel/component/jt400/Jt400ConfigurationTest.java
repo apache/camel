@@ -16,51 +16,52 @@
  */
 package org.apache.camel.component.jt400;
 
-import com.ibm.as400.access.AS400;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Jt400EndpointConnectionTest extends Jt400TestSupport {
+public class Jt400ConfigurationTest extends Jt400TestSupport {
 
-    private Jt400Endpoint jt400Endpoint;
-    private AS400 connection;
+    private Jt400Configuration jt400Configuration;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        jt400Endpoint = new Jt400Endpoint("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
-        jt400Endpoint.setCcsid(37);
-        connection = jt400Endpoint.getConnection();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (connection != null) {
-            jt400Endpoint.releaseConnection(connection);
-        }
-        super.tearDown();
+        jt400Configuration = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
     }
 
     @Test
     public void testSystemName() {
-        assertEquals("host", connection.getSystemName());
+        assertEquals("host", jt400Configuration.getSystemName());
     }
 
     @Test
-    public void testUserId() {
-        assertEquals("USER", connection.getUserId());
+    public void testUserID() {
+        assertEquals("USER", jt400Configuration.getUserID());
     }
 
     @Test
-    public void testCssid() {
-        assertEquals(37, connection.getCcsid());
+    public void testPassword() {
+        assertEquals("password", jt400Configuration.getPassword());
     }
 
     @Test
-    public void testGuiAvailable() {
-        assertFalse(connection.isGuiAvailable());
+    public void testObjectPath() {
+        assertEquals("/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", jt400Configuration.getObjectPath());
+    }
+
+    @Test
+    public void testDefaultCcsid() {
+        assertEquals(-1, jt400Configuration.getCssid());
+    }
+
+    @Test
+    public void testDefaultFormat() {
+        assertEquals(Jt400Configuration.Format.text, jt400Configuration.getFormat());
+    }
+
+    @Test
+    public void testDefaultGuiAvailable() {
+        assertEquals(false, jt400Configuration.isGuiAvailable());
     }
 
 }

@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test case for {@link Jt400DataQueueEndpoint}
+ * Test case for {@link Jt400Endpoint}
  */
 public class Jt400PgmEndpointTest extends Jt400TestSupport {
 
@@ -30,13 +29,13 @@ public class Jt400PgmEndpointTest extends Jt400TestSupport {
     private static final String PASSWORD = "password";
     private static final String PGM = "/qsys.lib/library.lib/prog.pgm";
 
-    private Jt400PgmEndpoint endpoint;
+    private Jt400Endpoint endpoint;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        endpoint = (Jt400PgmEndpoint) resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
+        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
                 + "@" + HOST + PGM
                 + "?connectionPool=#mockPool&guiAvailable=true&format=binary&outputFieldsIdx=1,2&fieldsLength=10,512,255");
     }
@@ -46,11 +45,11 @@ public class Jt400PgmEndpointTest extends Jt400TestSupport {
      */
     @Test
     public void testSystemConfiguration() {
-        assertEquals(USER, endpoint.getiSeries().getUserId());
-        assertEquals(HOST, endpoint.getiSeries().getSystemName());
-        assertEquals(PGM, endpoint.getProgramToExecute());
-        assertTrue(endpoint.getiSeries().isGuiAvailable());
-        assertEquals(Format.binary, endpoint.getFormat());
+        assertEquals(USER, endpoint.getUserID());
+        assertEquals(HOST, endpoint.getSystemName());
+        assertEquals(PGM, endpoint.getObjectPath());
+        assertTrue(endpoint.isGuiAvailable());
+        assertEquals(Jt400Configuration.Format.binary, endpoint.getFormat());
         assertEquals(10, endpoint.getOutputFieldLength(0));
         assertEquals(512, endpoint.getOutputFieldLength(1));
         assertEquals(255, endpoint.getOutputFieldLength(2));

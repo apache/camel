@@ -16,28 +16,7 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.junit.Before;
-import org.junit.Test;
+public enum Jt400Type {
 
-public class Jt400DataQueueProducerTest extends Jt400TestSupport {
-
-    private static final String PASSWORD = "p4ssw0rd";
-
-    private Jt400DataQueueProducer producer;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        Jt400Endpoint endpoint = resolveMandatoryEndpoint(
-                "jt400://user:" + PASSWORD + "@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool",
-                Jt400Endpoint.class);
-        producer = new Jt400DataQueueProducer(endpoint);
-    }
-
-    @Test
-    public void testToStringHidesPassword() {
-        assertFalse(producer.toString().contains(PASSWORD));
-    }
-
+    DTAQ, PGM
 }

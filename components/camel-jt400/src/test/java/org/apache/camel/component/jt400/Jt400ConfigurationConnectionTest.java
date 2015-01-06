@@ -16,47 +16,51 @@
  */
 package org.apache.camel.component.jt400;
 
-import com.ibm.as400.access.AS400ConnectionPool;
+import com.ibm.as400.access.AS400;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
-    private Jt400Component component;
+public class Jt400ConfigurationConnectionTest extends Jt400TestSupport {
+
+    private Jt400Configuration jt400Configuration;
+    private AS400 connection;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        component = new Jt400Component();
-        component.setCamelContext(context);
-        try {
-            // Use an invalid object type so that endpoints are never created
-            // and actual connections are never requested
-            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
-            Assert.fail("Should have thrown exception");
-        } catch (Exception e) {
-            /* Expected */
-        }
+
+        jt400Configuration = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
+        jt400Configuration.setCcsid(37);
+        connection = jt400Configuration.getConnection();
     }
 
     @After
     public void tearDown() throws Exception {
-        if (component != null) {
-            component.stop();
+        if (connection != null) {
+            jt400Configuration.releaseConnection(connection);
         }
+        super.tearDown();
     }
 
     @Test
-    public void testDefaultConnectionPoolIsCreated() {
-        assertNotNull(component.getConnectionPool());
+    public void testSystemName() {
+        assertEquals("host", connection.getSystemName());
     }
 
-    /**
-     * Note: white-box testing.
-     */
     @Test
-    public void testDefaultConnectionPoolIsOfExpectedType() {
-        assertEquals(AS400ConnectionPool.class, component.getConnectionPool().getClass());
+    public void testUserId() {
+        assertEquals("USER", connection.getUserId());
     }
+
+    @Test
+    public void testCssid() {
+        assertEquals(37, connection.getCcsid());
+    }
+
+    @Test
+    public void testGuiAvailable() {
+        assertFalse(connection.isGuiAvailable());
+    }
+
 }

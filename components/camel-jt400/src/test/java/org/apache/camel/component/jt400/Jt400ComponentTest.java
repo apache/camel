@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jt400;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +26,6 @@ import org.junit.Test;
 public class Jt400ComponentTest extends Jt400TestSupport {
 
     private Jt400Component component;
-    private Map<String, Object> properties;
 
     @Override
     @Before
@@ -39,33 +34,28 @@ public class Jt400ComponentTest extends Jt400TestSupport {
 
         component = new Jt400Component();
         component.setCamelContext(context());
-
-        properties = new HashMap<String, Object>();
-        properties.put("connectionPool", "#mockPool");
     }
 
     /**
-     * Test creation of a {@link Jt400DataQueueEndpoint} for Datq
+     * Test creation of a {@link Jt400Endpoint} for Datq
      */
     @Test
     public void testCreateDatqEndpoint() throws Exception {
         Endpoint endpoint = component
-                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq",
-                        "/user:password@host/qsys.lib/library.lib/queue.dtaq", properties);
+                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool");
         assertNotNull(endpoint);
-        assertTrue(endpoint instanceof Jt400DataQueueEndpoint);
+        assertTrue(endpoint instanceof Jt400Endpoint);
     }
 
     /**
-     * Test creation of a {@link Jt400DataQueueEndpoint} for pgm calls
+     * Test creation of a {@link Jt400Endpoint} for pgm calls
      */
     @Test
     public void testCreatePgmEndpoint() throws Exception {
         Endpoint endpoint = component
-                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm",
-                        "/user:password@host/qsys.lib/library.lib/queue.pgm", properties);
+                .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm?connectionPool=#mockPool");
         assertNotNull(endpoint);
-        assertTrue(endpoint instanceof Jt400PgmEndpoint);
+        assertTrue(endpoint instanceof Jt400Endpoint);
     }
 
     /**
@@ -74,10 +64,9 @@ public class Jt400ComponentTest extends Jt400TestSupport {
     @Test
     public void testCreateEndpointForOtherObjectType() throws Exception {
         try {
-            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx",
-                    "/user:password@host/qsys.lib/library.lib/program.xxx", new HashMap<String, Object>());
+            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
             fail("Exception should been thrown when trying to create an endpoint for an unsupported object type");
-        } catch (CamelException e) {
+        } catch (Exception e) {
             // this is just what we expected
         }
     }

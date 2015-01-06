@@ -42,9 +42,9 @@ public class Jt400CustomPollStrategyTest extends Jt400TestSupport {
 
     @Test
     public void testCustomPollStrategy() throws Exception {
-        Jt400DataQueueEndpoint endpoint = resolveMandatoryEndpoint(
+        Jt400Endpoint endpoint = resolveMandatoryEndpoint(
                 "jt400://user:" + PASSWORD + "@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool&pollStrategy=#jt400PollStrategy",
-                Jt400DataQueueEndpoint.class);
+                Jt400Endpoint.class);
         assertNotNull(endpoint);
 
         PollingConsumer consumer = endpoint.createPollingConsumer();

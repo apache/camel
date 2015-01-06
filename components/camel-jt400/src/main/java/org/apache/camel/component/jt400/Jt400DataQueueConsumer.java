@@ -23,7 +23,6 @@ import com.ibm.as400.access.KeyedDataQueue;
 import com.ibm.as400.access.KeyedDataQueueEntry;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.PollingConsumerSupport;
 
@@ -32,7 +31,7 @@ import org.apache.camel.impl.PollingConsumerSupport;
  */
 public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
-    private final Jt400DataQueueEndpoint endpoint;
+    private final Jt400Endpoint endpoint;
     
     /**
      * Performs the lifecycle logic of this consumer.
@@ -42,7 +41,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     /**
      * Creates a new consumer instance
      */
-    protected Jt400DataQueueConsumer(Jt400DataQueueEndpoint endpoint) {
+    protected Jt400DataQueueConsumer(Jt400Endpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.queueService = new Jt400DataQueueService(endpoint);
@@ -69,10 +68,10 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
     /**
      * Receives an entry from a data queue and returns an {@link Exchange} to
-     * send this data If the endpoint's format is set to {@link Format#binary},
+     * send this data If the endpoint's format is set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary},
      * the data queue entry's data will be received/sent as a
      * <code>byte[]</code>. If the endpoint's format is set to
-     * {@link Format#text}, the data queue entry's data will be received/sent as
+     * {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be received/sent as
      * a <code>String</code>.
      * <p/>
      * The following message headers may be set by the receiver
@@ -110,8 +109,8 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
         Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
         if (entry != null) {
-            exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
-            if (endpoint.getFormat() == Format.binary) {
+            exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
+            if (endpoint.getFormat() == Jt400Configuration.Format.binary) {
                 exchange.getIn().setBody(entry.getData());
             } else {
                 exchange.getIn().setBody(entry.getString());
@@ -136,17 +135,17 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
         Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
         if (entry != null) {
-            exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
-            if (endpoint.getFormat() == Format.binary) {
+            exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
+            if (endpoint.getFormat() == Jt400Configuration.Format.binary) {
                 exchange.getIn().setBody(entry.getData());
-                exchange.getIn().setHeader(Jt400DataQueueEndpoint.KEY, entry.getKey());
+                exchange.getIn().setHeader(Jt400Endpoint.KEY, entry.getKey());
             } else {
                 exchange.getIn().setBody(entry.getString());
-                exchange.getIn().setHeader(Jt400DataQueueEndpoint.KEY, entry.getKeyString());
+                exchange.getIn().setHeader(Jt400Endpoint.KEY, entry.getKeyString());
             }
-
             return exchange;
         }
         return null;
     }
+
 }

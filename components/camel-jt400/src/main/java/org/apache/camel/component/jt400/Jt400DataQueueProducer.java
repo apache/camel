@@ -21,7 +21,6 @@ import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.KeyedDataQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -29,14 +28,14 @@ import org.apache.camel.impl.DefaultProducer;
  */
 public class Jt400DataQueueProducer extends DefaultProducer {
 
-    private final Jt400DataQueueEndpoint endpoint;
+    private final Jt400Endpoint endpoint;
     
     /**
      * Performs the lifecycle logic of this producer.
      */
     private final Jt400DataQueueService queueService;
 
-    protected Jt400DataQueueProducer(Jt400DataQueueEndpoint endpoint) {
+    protected Jt400DataQueueProducer(Jt400Endpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.queueService = new Jt400DataQueueService(endpoint);
@@ -44,9 +43,9 @@ public class Jt400DataQueueProducer extends DefaultProducer {
 
     /**
      * Sends the {@link Exchange}'s in body to the AS/400 data queue. If the
-     * endpoint's format is set to {@link Format#binary}, the data queue entry's
+     * endpoint's format is set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary}, the data queue entry's
      * data will be sent as a <code>byte[]</code>. If the endpoint's format is
-     * set to {@link Format#text}, the data queue entry's data will be sent as a
+     * set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be sent as a
      * <code>String</code>.
      * <p/>
      * If the endpoint is configured to publish to a {@link KeyedDataQueue},
@@ -62,7 +61,7 @@ public class Jt400DataQueueProducer extends DefaultProducer {
     }
 
     private void process(DataQueue queue, Exchange exchange) throws Exception {
-        if (endpoint.getFormat() == Format.binary) {
+        if (endpoint.getFormat() == Jt400Configuration.Format.binary) {
             queue.write(exchange.getIn().getBody(byte[].class));
         } else {
             queue.write(exchange.getIn().getBody(String.class));
@@ -70,10 +69,10 @@ public class Jt400DataQueueProducer extends DefaultProducer {
     }
 
     private void process(KeyedDataQueue queue, Exchange exchange) throws Exception {
-        if (endpoint.getFormat() == Format.binary) {
-            queue.write(exchange.getIn().getHeader(Jt400DataQueueEndpoint.KEY, byte[].class), exchange.getIn().getBody(byte[].class));
+        if (endpoint.getFormat() == Jt400Configuration.Format.binary) {
+            queue.write(exchange.getIn().getHeader(Jt400Endpoint.KEY, byte[].class), exchange.getIn().getBody(byte[].class));
         } else {
-            queue.write(exchange.getIn().getHeader(Jt400DataQueueEndpoint.KEY, String.class), exchange.getIn().getBody(String.class));
+            queue.write(exchange.getIn().getHeader(Jt400Endpoint.KEY, String.class), exchange.getIn().getBody(String.class));
         }
     }
 
