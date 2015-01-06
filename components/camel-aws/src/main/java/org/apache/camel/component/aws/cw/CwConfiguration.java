@@ -16,24 +16,33 @@
  */
 package org.apache.camel.component.aws.cw;
 
-/**
- * The AWS CW component configuration properties
- * 
- */
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
+@UriParams
 public class CwConfiguration implements Cloneable {
 
-    private AmazonCloudWatch amazonCwClient;
-    private String amazonCwEndpoint;
-    private String accessKey;
-    private String secretKey;
-    private String name;
-    private Double value;
-    private String unit;
+    @UriPath
     private String namespace;
+    @UriParam
+    private AmazonCloudWatch amazonCwClient;
+    @UriParam
+    private String amazonCwEndpoint;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private String name;
+    @UriParam
+    private Double value;
+    @UriParam
+    private String unit;
+    @UriParam
     private Date timestamp;
 
     public void setAmazonCwEndpoint(String amazonCwEndpoint) {

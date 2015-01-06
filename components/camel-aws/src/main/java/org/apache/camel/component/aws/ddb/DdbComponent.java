@@ -20,18 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB component</a>
  */
-public class DdbComponent extends DefaultComponent {
+public class DdbComponent extends UriEndpointComponent {
 
     public DdbComponent() {
+        super(DdbEndpoint.class);
     }
 
     public DdbComponent(CamelContext context) {
-        super(context);
+        super(context, DdbEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

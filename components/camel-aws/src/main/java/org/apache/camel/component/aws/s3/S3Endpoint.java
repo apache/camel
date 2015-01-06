@@ -25,7 +25,6 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -36,20 +35,25 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS S3 Endpoint</a>.  
- *
  */
+@UriEndpoint(scheme = "aws-s3", consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
 
     private AmazonS3 s3Client;
+
+    @UriParam
     private S3Configuration configuration;
+    @UriParam(defaultValue = "10")
     private int maxMessagesPerPoll = 10;
 
     @Deprecated

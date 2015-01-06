@@ -29,13 +29,14 @@ import com.amazonaws.services.dynamodb.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodb.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodb.model.TableDescription;
 import com.amazonaws.services.dynamodb.model.TableStatus;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +44,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB endpoint</a>
  */
+@UriEndpoint(scheme = "aws-ddb", label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
+
+    @UriParam
     private DdbConfiguration configuration;
+
     private AmazonDynamoDB ddbClient;
 
     @Deprecated

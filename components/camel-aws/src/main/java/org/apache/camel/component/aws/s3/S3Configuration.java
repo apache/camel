@@ -17,26 +17,40 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-/**
- * The AWS S3 component configuration properties
- */
+@UriParams
 public class S3Configuration implements Cloneable {
 
-    private String accessKey;
-    private String secretKey;
-    private AmazonS3 amazonS3Client;
-
+    @UriPath
     private String bucketName;
+    @UriParam
+    private AmazonS3 amazonS3Client;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
     private String fileName;
+    @UriParam
     private String prefix;
+    @UriParam
     private String region;
+    @UriParam(defaultValue = "true")
     private boolean deleteAfterRead = true;
+    @UriParam(defaultValue = "false")
     private boolean deleteAfterWrite;
+    @UriParam(defaultValue = "false")
     private boolean multiPartUpload;
+    @UriParam(defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;
+    @UriParam
     private String amazonS3Endpoint;
+    @UriParam
     private String policy;
+    @UriParam
     private String storageClass;
 
     public long getPartSize() {
@@ -102,7 +116,6 @@ public class S3Configuration implements Cloneable {
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
     }
-
 
     public String getFileName() {
         return fileName;

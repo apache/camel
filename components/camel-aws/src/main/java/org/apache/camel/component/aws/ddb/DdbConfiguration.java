@@ -17,23 +17,34 @@
 package org.apache.camel.component.aws.ddb;
 
 import com.amazonaws.services.dynamodb.AmazonDynamoDB;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
-/**
- * The AWS SDB component configuration properties
- * 
- */
+@UriParams
 public class DdbConfiguration {
-    
-    private String accessKey;
-    private String secretKey;
-    private AmazonDynamoDB amazonDDBClient;
-    private String amazonDdbEndpoint;
+
+    @UriPath
     private String tableName;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private AmazonDynamoDB amazonDDBClient;
+    @UriParam
+    private String amazonDdbEndpoint;
+    @UriParam(defaultValue = "false")
     private Boolean consistentRead;
+    @UriParam(defaultValue = "PutItem")
     private DdbOperations operation = DdbOperations.PutItem;
+    @UriParam
     private Long readCapacity;
+    @UriParam
     private Long writeCapacity;
+    @UriParam
     private String keyAttributeName;
+    @UriParam
     private String keyAttributeType;
 
     public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
