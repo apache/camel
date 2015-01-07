@@ -58,7 +58,8 @@ public class JRubyScriptThreadSafeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getProperties().put(Exchange.REUSE_SCRIPT_ENGINE, "true");
-                context.getProperties().put(Exchange.COMPILE_SCRIPT, "true");
+                // Now the default the value is not use the compiled script, as it could introduce some concurrent issue
+                context.getProperties().put(Exchange.COMPILE_SCRIPT, "false");
 
 
                 from("seda:parallel?concurrentConsumers=5")
