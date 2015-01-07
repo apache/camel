@@ -1,0 +1,5 @@
+# See http://java.sun.com/products/javamail/javadocs/javax/mail/Session.html
+
+protocol=smtp; type=transport; class=org.jvnet.mock_javamail.MockTransport; vendor=java.net mock-javamail project;
+protocol=pop3; type=store; class=org.jvnet.mock_javamail.MockStore; vendor=java.net mock-javamail project;
+protocol=imap; type=store; class=org.apache.camel.component.mail.mock.MyMockStore; vendor=java.net mock-javamail project;
