@@ -29,6 +29,7 @@ import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.bean.RawDataCoding;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
@@ -85,7 +86,7 @@ public class SmppDataSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
         expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 1)), eq(DataCoding.newInstance((byte) 0))))
+                eq(new RegisteredDelivery((byte) 1)), eq(new RawDataCoding((byte) 0))))
             .andReturn(new DataSmResult(new MessageId("1"), null));
 
         replay(session);
@@ -112,7 +113,7 @@ public class SmppDataSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
         expect(session.dataShortMessage(eq("XXX"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 2)), eq(DataCoding.newInstance((byte) 0))))
+                eq(new RegisteredDelivery((byte) 2)), eq(new RawDataCoding((byte) 0))))
             .andReturn(new DataSmResult(new MessageId("1"), null));
 
         replay(session);
@@ -147,7 +148,7 @@ public class SmppDataSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
         expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 1)), eq(DataCoding.newInstance((byte) 0)),
+                eq(new RegisteredDelivery((byte) 1)), eq(new RawDataCoding((byte) 0)),
                 eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
                 eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
                 eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),
@@ -212,7 +213,7 @@ public class SmppDataSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
         expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 1)), eq(DataCoding.newInstance((byte) 0)),
+                eq(new RegisteredDelivery((byte) 1)), eq(new RawDataCoding((byte) 0)),
                 eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
                 eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
                 eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),

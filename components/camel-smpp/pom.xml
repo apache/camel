@@ -43,8 +43,8 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jsmpp</artifactId>
+            <groupId>org.jsmpp</groupId>
+            <artifactId>jsmpp</artifactId>
             <version>${jsmpp-version}</version>
         </dependency>
         <dependency>

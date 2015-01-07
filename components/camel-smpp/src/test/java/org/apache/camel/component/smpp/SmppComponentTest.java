@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
@@ -180,7 +181,8 @@ public class SmppComponentTest {
     public void createEndpointWithSessionStateListener() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("sessionStateListener", new SessionStateListener() {
-            public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
+            @Override
+            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }
         });
         context.setRegistry(registry);

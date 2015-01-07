@@ -107,7 +107,7 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.SUBMITTED, smscDeliveryReceipt.getSubmitted());
             smppMessage.setHeader(SmppConstants.FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
 
-            if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
+            if (deliverSm.getOptionalParameters() != null && deliverSm.getOptionalParameters().length > 0) {
                 // the deprecated way
                 Map<String, Object> optionalParameters = createOptionalParameterByName(deliverSm);
                 smppMessage.setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
@@ -125,8 +125,8 @@ public class SmppBinding {
                 } else {
                     smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(), configuration.getEncoding())));
                 }
-            } else if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
-                List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+            } else if (deliverSm.getOptionalParameters() != null && deliverSm.getOptionalParameters().length > 0) {
+                List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
                 for (OptionalParameter optPara : oplist) {
                     if (OptionalParameter.Tag.MESSAGE_PAYLOAD.code() == optPara.tag && OctetString.class.isInstance(optPara)) {
@@ -153,7 +153,7 @@ public class SmppBinding {
     }
 
     private Map<String, Object> createOptionalParameterByName(DeliverSm deliverSm) {
-        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
         Map<String, Object> optParams = new HashMap<String, Object>();
         for (OptionalParameter optPara : oplist) {
@@ -176,7 +176,7 @@ public class SmppBinding {
     }
 
     private Map<Short, Object> createOptionalParameterByCode(DeliverSm deliverSm) {
-        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
         Map<Short, Object> optParams = new HashMap<Short, Object>();
         for (OptionalParameter optPara : oplist) {

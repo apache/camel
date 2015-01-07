@@ -107,7 +107,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             throw pre;
         }
 
-        return new DataSmResult(newMessageId, dataSm.getOptionalParametes());
+        return new DataSmResult(newMessageId, dataSm.getOptionalParameters());
     }
 
     public void setMessageIDGenerator(MessageIDGenerator messageIDGenerator) {
