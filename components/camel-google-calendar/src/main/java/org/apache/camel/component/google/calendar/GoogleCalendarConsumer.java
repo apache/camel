@@ -17,11 +17,13 @@
 package org.apache.camel.component.google.calendar;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiConsumer;
@@ -39,19 +41,14 @@ public class GoogleCalendarConsumer extends AbstractApiConsumer<GoogleCalendarAp
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
         try {
-            setProperty(properties, request, "q");
-            setProperty(properties, request, "maxResults");
-            setProperty(properties, request, "pageToken");
-            setProperty(properties, request, "fields");
+            TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
+            for (Entry<String, Object> p : properties.entrySet()) {
+                IntrospectionSupport.setProperty(typeConverter, request, p.getKey(), p.getValue());
+            }
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }    
     
-    private void setProperty(Map<String, Object> properties, AbstractGoogleClientRequest request, String key) throws Exception {
-        if (properties.containsKey(key)) {
-            IntrospectionSupport.setProperty(getEndpoint().getCamelContext().getTypeConverter(), request, key, properties.get(key));
-        }
-    }
 }

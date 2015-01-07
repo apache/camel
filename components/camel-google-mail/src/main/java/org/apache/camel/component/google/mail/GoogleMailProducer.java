@@ -17,10 +17,12 @@
 package org.apache.camel.component.google.mail;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -40,20 +42,14 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            setProperty(properties, request, "q");
-            setProperty(properties, request, "maxResults");
-            setProperty(properties, request, "pageToken");
-            setProperty(properties, request, "format");
-            setProperty(properties, request, "fields");
+            TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
+            for (Entry<String, Object> p : properties.entrySet()) {
+                IntrospectionSupport.setProperty(typeConverter, request, p.getKey(), p.getValue());
+            }
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
 
-    private void setProperty(Map<String, Object> properties, AbstractGoogleClientRequest request, String key) throws Exception {
-        if (properties.containsKey(key)) {
-            IntrospectionSupport.setProperty(getEndpoint().getCamelContext().getTypeConverter(), request, key, properties.get(key));
-        }
-    }
 }
