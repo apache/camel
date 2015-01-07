@@ -44,6 +44,10 @@ public class PGPDataFormat extends DataFormatDefinition {
     private Boolean integrity;
     @XmlAttribute
     private String provider;
+    @XmlAttribute
+    private Integer algorithm;
+    @XmlAttribute
+    private Integer compressionAlgorithm;
 
     public PGPDataFormat() {
         super("pgp");
@@ -68,6 +72,12 @@ public class PGPDataFormat extends DataFormatDefinition {
         }
         if (provider != null) {
             setProperty(camelContext, dataFormat, "provider", provider);
+        }
+        if (algorithm != null) {
+            setProperty(camelContext, dataFormat, "algorithm", algorithm);
+        }
+        if (compressionAlgorithm != null) {
+            setProperty(camelContext, dataFormat, "compressionAlgorithm", compressionAlgorithm);
         }
     }
 
@@ -105,6 +115,22 @@ public class PGPDataFormat extends DataFormatDefinition {
 
     public String getPassword() {
         return password;
+    }
+
+    public Integer getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(Integer algorithm) {
+        this.algorithm = algorithm;
+    }
+    
+    public Integer getCompressionAlgorithm() {
+        return compressionAlgorithm;
+    }
+
+    public void setCompressionAlgorithm(Integer compressionAlgorithm) {
+        this.compressionAlgorithm = compressionAlgorithm;
     }
 
     public void setPassword(String password) {

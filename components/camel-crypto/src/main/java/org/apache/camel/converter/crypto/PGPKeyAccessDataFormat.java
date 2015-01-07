@@ -158,7 +158,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private boolean armored; // for encryption
     private boolean integrity = true; // for encryption
 
-    private int hashAlgorithm = HashAlgorithmTags.SHA1; // for encryption
+    private int hashAlgorithm = HashAlgorithmTags.SHA1; // for signature
 
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
 
