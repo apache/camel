@@ -44,6 +44,7 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
             setProperty(properties, request, "maxResults");
             setProperty(properties, request, "pageToken");
             setProperty(properties, request, "format");
+            setProperty(properties, request, "fields");
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);

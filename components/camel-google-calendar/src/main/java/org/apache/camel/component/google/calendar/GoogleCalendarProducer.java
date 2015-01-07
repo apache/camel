@@ -43,6 +43,7 @@ public class GoogleCalendarProducer extends AbstractApiProducer<GoogleCalendarAp
             setProperty(properties, request, "q");
             setProperty(properties, request, "maxResults");
             setProperty(properties, request, "pageToken");
+            setProperty(properties, request, "fields");
             return request.execute();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
