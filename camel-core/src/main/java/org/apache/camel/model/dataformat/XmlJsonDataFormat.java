@@ -169,7 +169,7 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
 
         // will end up calling the setTypeHints(String s) which does the parsing from the Enum String key to the Enum value
         if (typeHints != null) {
-            setProperty(camelContext, typeHints, TYPE_HINTS, typeHints);
+            setProperty(camelContext, dataFormat, TYPE_HINTS, typeHints);
         }
 
         //TODO: xmljson: element-namespace mapping is not implemented in the XML DSL
