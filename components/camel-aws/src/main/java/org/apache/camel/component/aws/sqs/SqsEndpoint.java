@@ -38,6 +38,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -89,6 +90,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         SqsConsumer sqsConsumer = new SqsConsumer(this, processor);
         configureConsumer(sqsConsumer);
         sqsConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
+        scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
+        sqsConsumer.setScheduler(scheduler);
         return sqsConsumer;
     }
 

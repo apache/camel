@@ -58,6 +58,7 @@ public class SqsConfiguration {
     private Integer defaultVisibilityTimeout;
     @UriParam(defaultValue = "false")
     private Boolean extendMessageVisibility = Boolean.FALSE;
+    private Integer concurrentConsumers = 1;
 
     // producer properties
     @UriParam
@@ -245,6 +246,14 @@ public class SqsConfiguration {
         this.region = region;
     }
 
+    public Integer getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
@@ -266,6 +275,7 @@ public class SqsConfiguration {
             + ", redrivePolicy=" + redrivePolicy
             + ", extendMessageVisibility=" + extendMessageVisibility
             + ", queueOwnerAWSAccountId=" + queueOwnerAWSAccountId
+            + ", concurrentConsumers=" + concurrentConsumers
             + ", region=" + region
             + "]";
     }
