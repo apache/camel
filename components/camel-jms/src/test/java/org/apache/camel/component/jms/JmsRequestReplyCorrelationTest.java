@@ -62,6 +62,41 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
         assertEquals("a", out.getOut().getHeader("JMSCorrelationID"));
     }
+    
+    /**
+     * As the correlationID should be unique when receiving the reply message, 
+     * now we just expect to get an exception here.
+     */
+    @Test
+    public void testRequestReplyCorrelationWithDuplicateId() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+
+        // just send out the request to fill the correlation id first
+        template.asyncSend("jms:queue:helloDelay", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message in = exchange.getIn();
+                in.setBody("Hello World");
+                in.setHeader("JMSCorrelationID", "b");
+            }
+        });
+        
+        Exchange out = template.send("jms:queue:helloDelay", ExchangePattern.InOut, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Message in = exchange.getIn();
+                in.setBody("Hello World");
+                in.setHeader("JMSCorrelationID", "b");
+            }
+        });
+
+        result.assertIsSatisfied();
+
+        assertNotNull("We are expecting the exception here!", out.getException());
+        assertTrue("Get a wrong exception", out.getException() instanceof IllegalArgumentException);
+        
+    }
+
 
     /**
      * When the setting useMessageIdAsCorrelationid is false and
@@ -206,6 +241,13 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
                 }).to("mock:result");
 
                 from("jms2:queue:hello2").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody(REPLY_BODY);
+                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
+                    }
+                }).to("mock:result");
+                
+                from("jms:queue:helloDelay").delay().constant(2000).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody(REPLY_BODY);
                         assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
