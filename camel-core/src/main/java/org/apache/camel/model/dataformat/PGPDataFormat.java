@@ -35,9 +35,15 @@ public class PGPDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String keyUserid;
     @XmlAttribute
+    private String signatureKeyUserid;
+    @XmlAttribute
     private String password;
     @XmlAttribute
+    private String signaturePassword;
+    @XmlAttribute
     private String keyFileName;
+    @XmlAttribute
+    private String signatureKeyFileName;
     @XmlAttribute
     private Boolean armored;
     @XmlAttribute
@@ -48,6 +54,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     private Integer algorithm;
     @XmlAttribute
     private Integer compressionAlgorithm;
+    @XmlAttribute
+    private Integer hashAlgorithm;
 
     public PGPDataFormat() {
         super("pgp");
@@ -58,11 +66,20 @@ public class PGPDataFormat extends DataFormatDefinition {
         if (keyUserid != null) {
             setProperty(camelContext, dataFormat, "keyUserid", keyUserid);
         }
+        if (signatureKeyUserid != null) {
+            setProperty(camelContext, dataFormat, "signatureKeyUserid", signatureKeyUserid);
+        }
         if (password != null) {
             setProperty(camelContext, dataFormat, "password", password);
         }
+        if (signaturePassword != null) {
+            setProperty(camelContext, dataFormat, "signaturePassword", signaturePassword);
+        }
         if (keyFileName != null) {
             setProperty(camelContext, dataFormat, "keyFileName", keyFileName);
+        }
+        if (signatureKeyFileName != null) {
+            setProperty(camelContext, dataFormat, "signatureKeyFileName", signatureKeyFileName);
         }
         if (armored != null) {
             setProperty(camelContext, dataFormat, "armored", armored);
@@ -79,6 +96,41 @@ public class PGPDataFormat extends DataFormatDefinition {
         if (compressionAlgorithm != null) {
             setProperty(camelContext, dataFormat, "compressionAlgorithm", compressionAlgorithm);
         }
+        if (hashAlgorithm != null) {
+            setProperty(camelContext, dataFormat, "hashAlgorithm", hashAlgorithm);
+        }
+    }
+
+    public String getSignatureKeyUserid() {
+        return signatureKeyUserid;
+    }
+
+    public void setSignatureKeyUserid(String signatureKeyUserid) {
+        this.signatureKeyUserid = signatureKeyUserid;
+    }
+
+    public String getSignaturePassword() {
+        return signaturePassword;
+    }
+
+    public void setSignaturePassword(String signaturePassword) {
+        this.signaturePassword = signaturePassword;
+    }
+
+    public String getSignatureKeyFileName() {
+        return signatureKeyFileName;
+    }
+
+    public void setSignatureKeyFileName(String signatureKeyFileName) {
+        this.signatureKeyFileName = signatureKeyFileName;
+    }
+
+    public Integer getHashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    public void setHashAlgorithm(Integer hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
     }
 
     public Boolean getArmored() {
