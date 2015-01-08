@@ -608,7 +608,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String scheme = "http";
         String host = "";
-        int port = 0;
+        // use the component's port as the default value
+        int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = getCamelContext().getRestConfiguration();
@@ -645,15 +646,22 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String query = URISupport.createQueryString(map);
 
-        String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+        String url;
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
+
+        if (port > 0) {
+            url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+            url = String.format(url, scheme, host, port, path, restrict);
+        } else {
+            // It could use the restlet servlet transport
+            url = "restlet:/%s?restletMethod=%s";
+            url = String.format(url, path, restrict);
+        }
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }
-        
+        // get the endpoint
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 
