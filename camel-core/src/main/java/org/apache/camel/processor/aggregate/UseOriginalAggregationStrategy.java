@@ -44,7 +44,11 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
         if (propagateException) {
             Exception exception = checkException(oldExchange, newExchange);
             if (exception != null) {
-                original.setException(exception);
+                if (original != null) {
+                    original.setException(exception);
+                } else {
+                    oldExchange.setException(exception);
+                }
             }
         }
         return original != null ? original : oldExchange;
