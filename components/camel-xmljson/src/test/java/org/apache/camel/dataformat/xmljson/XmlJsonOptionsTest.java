@@ -139,9 +139,9 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
         assertEquals("Root element must have namespace attributes", 2, document.getDocumentElement().getAttributes().getLength());
         mockXML.assertIsSatisfied();
     }
-	
-	@Test
-	public void testTypeHintsToJSON() throws Exception {
+    
+    @Test
+    public void testTypeHintsToJSON() throws Exception {
         InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage5-typeHints.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
@@ -156,10 +156,10 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
         assertEquals("root.b must be boolean", Boolean.TRUE, obj.getJSONObject("root").get("b"));
 
         mockJSON.assertIsSatisfied();
-	}
-	
-	@Test
-	public void testTypeHintsToXML() throws Exception {
+    }
+    
+    @Test
+    public void testTypeHintsToXML() throws Exception {
         InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage5-typeHints.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
@@ -171,13 +171,15 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
         Document document = context.getTypeConverter().convertTo(Document.class, marshalled);
         assertEquals("Element a should exists", 1, document.getDocumentElement().getElementsByTagName("a").getLength());
         assertNotNull("Element a should have attribute type", document.getDocumentElement().getElementsByTagName("a").item(0).getAttributes().getNamedItem("type"));
-        assertEquals("Element a should have attribute type with value number", "number", document.getDocumentElement().getElementsByTagName("a").item(0).getAttributes().getNamedItem("type").getTextContent());
-        assertEquals("Element b should have attribute type with value boolean", "boolean", document.getDocumentElement().getElementsByTagName("b").item(0).getAttributes().getNamedItem("type").getTextContent());
+        assertEquals("Element a should have attribute type with value number", "number",
+                     document.getDocumentElement().getElementsByTagName("a").item(0).getAttributes().getNamedItem("type").getTextContent());
+        assertEquals("Element b should have attribute type with value boolean", 
+                     "boolean", document.getDocumentElement().getElementsByTagName("b").item(0).getAttributes().getNamedItem("type").getTextContent());
         mockXML.assertIsSatisfied();
-	}
-	
-	@Test
-	public void testPrefixedTypeHintsToJSON() throws Exception {
+    }
+    
+    @Test
+    public void testPrefixedTypeHintsToJSON() throws Exception {
         InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage6-prefixedTypeHints.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
@@ -192,7 +194,7 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
         assertEquals("root.b must be boolean", Boolean.TRUE, obj.getJSONObject("root").get("b"));
 
         mockJSON.assertIsSatisfied();
-	}
+    }
 
 
     @Override
@@ -225,18 +227,18 @@ public class XmlJsonOptionsTest extends CamelTestSupport {
                 // from JSON to XML
                 from("direct:unmarshalNS").unmarshal(namespacesFormat).to("mock:xmlNS");
 
-				XmlJsonDataFormat typeHintsFormat = new XmlJsonDataFormat();
+                XmlJsonDataFormat typeHintsFormat = new XmlJsonDataFormat();
                 typeHintsFormat.setForceTopLevelObject(true);
-				typeHintsFormat.setTypeHints("YES");
-				// from XML to JSON
+                typeHintsFormat.setTypeHints("YES");
+                // from XML to JSON
                 from("direct:marshalTypeHints").marshal(typeHintsFormat).to("mock:jsonTypeHints");
                 // from JSON to XML
                 from("direct:unmarshalTypeHints").unmarshal(typeHintsFormat).to("mock:xmlTypeHints");
-				
-				XmlJsonDataFormat prefixedTypeHintsFormat = new XmlJsonDataFormat();
+                
+                XmlJsonDataFormat prefixedTypeHintsFormat = new XmlJsonDataFormat();
                 prefixedTypeHintsFormat.setForceTopLevelObject(true);
-				prefixedTypeHintsFormat.setTypeHints("WITH_PREFIX");
-				// from XML to JSON
+                prefixedTypeHintsFormat.setTypeHints("WITH_PREFIX");
+                // from XML to JSON
                 from("direct:marshalPrefixedTypeHints").marshal(prefixedTypeHintsFormat).to("mock:jsonPrefixedTypeHints");
 
             }
