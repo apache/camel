@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.reply;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -94,6 +95,24 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
         return replyTo;
     }
+    
+    public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                String originalCorrelationId, String correlationId, long requestTimeout) {
+        // add to correlation map
+        QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback,
+                originalCorrelationId, correlationId, requestTimeout);
+        ReplyHandler result = correlation.put(correlationId, handler, requestTimeout);
+        if (result != null) {
+            String logMessage = String.format("The correlationId [%s] is not unique.", correlationId);
+            log.warn("{}, some reply message would be ignored and the request thread could be blocked.",  logMessage);
+            throw new IllegalArgumentException(logMessage);
+        }
+        return correlationId;
+    }
+    
+    
+    protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                String originalCorrelationId, String correlationId, long requestTimeout);
 
     public void onMessage(Message message) {
         String correlationID = null;

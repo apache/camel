@@ -57,15 +57,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         return super.getReplyTo();
     }
     
-    public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                String originalCorrelationId, String correlationId, long requestTimeout) {
-        // add to correlation map
-        TemporaryQueueReplyHandler handler = new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
-        ReplyHandler result = correlation.put(correlationId, handler, requestTimeout);
-        if (result != null) {
-            log.error("The correlationId [{}] is not unique, some reply message would be ignored and the request thread could be blocked.", correlationId);
-        }
-        return correlationId;
+    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+        return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {

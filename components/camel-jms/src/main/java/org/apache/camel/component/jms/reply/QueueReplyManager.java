@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.reply;
 
 import java.math.BigInteger;
 import java.util.Random;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -46,17 +47,11 @@ public class QueueReplyManager extends ReplyManagerSupport {
         super(camelContext);
     }
 
-    public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                String originalCorrelationId, String correlationId, long requestTimeout) {
-        // add to correlation map
-        QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback,
+    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+        return new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
-        ReplyHandler result = correlation.put(correlationId, handler, requestTimeout);
-        if (result != null) {
-            log.warn("The correlationId [{}] is not unique, some reply message would be ignored and the request thread could be blocked.", correlationId);
-        }
-        return correlationId;
-    }
+    }  
 
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
         log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
