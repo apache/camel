@@ -9,6 +9,8 @@ Run the application using XML-DSL: mvn jetty:run
 
 To run with Java-DSL use: mvn jetty:run -Dimpl=java-dsl
 
+To run with XML-REST-DSL use: mvn jetty:run -Dimpl=xml-rest-dsl
+
 To create an person, make a http POST request with firstName and lastName parameters:
 curl -d "firstName=test&lastName=person" http://localhost:8080/rs/persons/
 
