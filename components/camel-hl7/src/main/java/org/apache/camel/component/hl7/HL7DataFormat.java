@@ -140,8 +140,6 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
         this.parser = parser;
     }
 
-
-
     @Override
     protected void doStart() throws Exception {
         if (hapiContext == null) {
@@ -160,7 +158,6 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
         // noop
     }
 
-
     /**
      * In HL7 the charset of the message can be set in MSH-18,
      * but you need to decode the input stream in order to be able to read MSH-18.
@@ -174,7 +171,7 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
      * calling {@link org.apache.camel.util.IOHelper#getCharsetName(org.apache.camel.Exchange)}.
      *
      * @param b byte array
-     * @param exchange
+     * @param exchange the exchange
      * @return charset name
      */
     protected String guessCharsetName(byte[] b, Exchange exchange) {

@@ -22,7 +22,7 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.parser.Parser;
 
-class HL7MLLPConfig {
+public class HL7MLLPConfig {
 
     private Charset charset = Charset.defaultCharset();
 
