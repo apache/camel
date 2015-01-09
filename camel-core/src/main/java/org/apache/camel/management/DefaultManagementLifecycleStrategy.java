@@ -58,6 +58,7 @@ import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
+import org.apache.camel.management.mbean.ManagedInflightRepository;
 import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
@@ -81,6 +82,7 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementAware;
@@ -468,6 +470,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
         } else if (service instanceof RestRegistry) {
             answer = new ManagedRestRegistry(context, (RestRegistry) service);
+        } else if (service instanceof InflightRepository) {
+            answer = new ManagedInflightRepository(context, (InflightRepository) service);
         } else if (service instanceof AsyncProcessorAwaitManager) {
             answer = new ManagedAsyncProcessorAwaitManager(context, (AsyncProcessorAwaitManager) service);
         } else if (service instanceof RuntimeEndpointRegistry) {
