@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,6 +36,9 @@ import org.slf4j.LoggerFactory;
  * Please use CamelContext.startService(repository) to start the service before set it to the CamelContext; 
  */
 public class TimeoutInflightRepository extends ServiceSupport implements InflightRepository {
+
+    // TODO: rework this a bit and likely add support for this to the default inflight repository
+
     private static final Logger LOG = LoggerFactory.getLogger(TimeoutInflightRepository.class);
     private static final String INFLIGHT_TIME_STAMP = "CamelInflightTimeStamp";
     private static final String TIMEOUT_EXCHANGE_PROCESSED = "CamelTimeoutExchangeProcessed";
@@ -124,7 +128,12 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
         // do nothing here
         return 0;
     }
-    
+
+    @Override
+    public Collection<InflightExchange> browse() {
+        return null;
+    }
+
     public long getWaitTime() {
         return waitTime;
     }

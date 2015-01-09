@@ -16,34 +16,40 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implement which just uses a counter
+ * Default {@link org.apache.camel.spi.InflightRepository}.
  *
  * @version 
  */
-public class DefaultInflightRepository extends ServiceSupport implements InflightRepository  {
+public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
-    private final AtomicInteger totalCount = new AtomicInteger();
+    private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<String, Exchange>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {
-        totalCount.incrementAndGet();
+        inflight.put(exchange.getExchangeId(), exchange);
     }
 
     public void remove(Exchange exchange) {
-        totalCount.decrementAndGet();
+        inflight.remove(exchange.getExchangeId());
     }
 
     public void add(Exchange exchange, String routeId) {
@@ -61,7 +67,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     public int size() {
-        return totalCount.get();
+        return inflight.size();
     }
 
     @Deprecated
@@ -77,7 +83,16 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     @Override
     public int size(String routeId) {
         AtomicInteger existing = routeCount.get(routeId);
-        return existing != null ? existing.get() : 0; 
+        return existing != null ? existing.get() : 0;
+    }
+
+    @Override
+    public Collection<InflightExchange> browse() {
+        List<InflightExchange> answer = new ArrayList<InflightExchange>();
+        for (Exchange exchange : inflight.values()) {
+            answer.add(new InflightExchangeEntry(exchange));
+        }
+        return Collections.unmodifiableCollection(answer);
     }
 
     @Override
@@ -94,4 +109,85 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
         routeCount.clear();
     }
+
+    private static final class InflightExchangeEntry implements InflightExchange {
+
+        private final Exchange exchange;
+
+        private InflightExchangeEntry(Exchange exchange) {
+            this.exchange = exchange;
+        }
+
+        @Override
+        public Exchange getExchange() {
+            return exchange;
+        }
+
+        @Override
+        public long getDuration() {
+            long duration = 0;
+            Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+            if (created != null) {
+                duration = System.currentTimeMillis() - created.getTime();
+            }
+            return duration;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public long getElapsed() {
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            if (list == null || list.isEmpty()) {
+                return 0;
+            }
+
+            // get latest entry
+            MessageHistory history = list.get(list.size() - 1);
+            if (history != null) {
+                return history.getElapsed();
+            } else {
+                return 0;
+            }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getNodeId() {
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+
+            // get latest entry
+            MessageHistory history = list.get(list.size() - 1);
+            if (history != null) {
+                return history.getNode().getId();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getRouteId() {
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+
+            // get latest entry
+            MessageHistory history = list.get(list.size() - 1);
+            if (history != null) {
+                return history.getRouteId();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "InflightExchangeEntry[exchangeId=" + exchange.getExchangeId() + "]";
+        }
+    }
+
 }
