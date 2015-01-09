@@ -204,4 +204,13 @@ public class JolokiaRemoteTest {
         System.out.println(data);
     }
 
+    @Test
+    public void testInflight() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        List<Map<String, Object>> data = controller.browseInflightExchanges("myCamel", 500, false);
+        System.out.println(data);
+    }
+
 }

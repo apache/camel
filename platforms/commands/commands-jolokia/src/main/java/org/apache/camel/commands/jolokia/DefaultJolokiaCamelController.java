@@ -235,22 +235,23 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
         ObjectName found = lookupCamelContext(camelContextName);
         if (found != null) {
-            String pattern = String.format("%s:context=%s,type=services,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), "DefaultInflightRepository");
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultInflightRepository", found.getDomain(), found.getKeyProperty("context"));
             ObjectName on = ObjectName.getInstance(pattern);
             J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(int,boolean)", limit, sortByLongestDuration));
             if (er != null) {
                 JSONObject data = er.getValue();
-                for (Object obj : data.values()) {
-                    JSONObject data2 = (JSONObject) obj;
-                    JSONObject inflight = (JSONObject) data2.values().iterator().next();
+                if (data != null) {
+                    for (Object obj : data.values()) {
+                        JSONObject inflight = (JSONObject) obj;
 
-                    Map<String, Object> row = new LinkedHashMap<String, Object>();
-                    row.put("exchangeId", asString(inflight.get("exchangeId")));
-                    row.put("routeId", asString(inflight.get("routeIdId")));
-                    row.put("nodeId", asString(inflight.get("nodeId")));
-                    row.put("duration", asString(inflight.get("duration")));
-                    row.put("elapsed", asString(inflight.get("elapsed")));
-                    answer.add(row);
+                        Map<String, Object> row = new LinkedHashMap<String, Object>();
+                        row.put("exchangeId", asString(inflight.get("exchangeId")));
+                        row.put("routeId", asString(inflight.get("routeId")));
+                        row.put("nodeId", asString(inflight.get("nodeId")));
+                        row.put("duration", asString(inflight.get("duration")));
+                        row.put("elapsed", asString(inflight.get("elapsed")));
+                        answer.add(row);
+                    }
                 }
             }
         }
