@@ -101,10 +101,10 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // add to correlation map
         QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
-        ReplyHandler result = correlation.put(correlationId, handler, requestTimeout);
+        // Just make sure we don't override the old value of the correlationId
+        ReplyHandler result = correlation.putIfAbsent(correlationId, handler, requestTimeout);
         if (result != null) {
             String logMessage = String.format("The correlationId [%s] is not unique.", correlationId);
-            log.warn("{}, some reply message would be ignored and the request thread could be blocked.",  logMessage);
             throw new IllegalArgumentException(logMessage);
         }
         return correlationId;
