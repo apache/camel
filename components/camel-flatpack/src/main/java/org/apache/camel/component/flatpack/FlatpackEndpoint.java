@@ -49,14 +49,14 @@ import org.apache.camel.util.ResourceHelper;
  */
 @UriEndpoint(scheme = "flatpack", consumerClass = FlatpackConsumer.class, label = "transformation")
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
+    @UriPath
+    protected String resourceUri;
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
-
+   
     @UriPath
     private FlatpackType type;
-    @UriPath
-    protected String resourceUri;
 
     @UriParam(defaultValue = "true")
     private boolean splitRows = true;
