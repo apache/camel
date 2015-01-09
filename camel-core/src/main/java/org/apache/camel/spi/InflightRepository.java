@@ -140,7 +140,7 @@ public interface InflightRepository extends StaticService {
      *
      * @param limit maximum number of entries to return
      * @param sortByLongestDuration to sort by the longest duration. Set to <tt>true</tt> to include the exchanges that has been inflight the longest time,
-     *                              set to <tt>false</tt> to include the exchanges in unspecified order.
+     *                              set to <tt>false</tt> to sort by exchange id
      */
     Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration);
 

@@ -69,6 +69,15 @@
         <null/>
       </completers>
     </command>
+    <command name="camel/context-inflight">
+      <action class="org.apache.camel.karaf.commands.ContextInflight">
+        <property name="camelController" ref="camelController"/>
+      </action>
+      <completers>
+        <ref component-id="camelContextCompleter"/>
+        <null/>
+      </completers>
+    </command>
     <command name="camel/route-list">
       <action class="org.apache.camel.karaf.commands.RouteList">
         <property name="camelController" ref="camelController"/>

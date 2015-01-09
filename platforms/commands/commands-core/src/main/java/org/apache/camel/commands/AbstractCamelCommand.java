@@ -31,4 +31,12 @@ public abstract class AbstractCamelCommand implements CamelCommand {
         }
     }
 
+    public String safeNull(Object s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return "";
+        } else {
+            return s.toString();
+        }
+    }
+
 }

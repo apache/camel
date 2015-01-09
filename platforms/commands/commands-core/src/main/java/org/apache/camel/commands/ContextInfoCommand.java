@@ -228,12 +228,4 @@ public class ContextInfoCommand extends AbstractCamelCommand {
 
     }
 
-    private static String safeNull(Object value) {
-        if (value == null) {
-            return "";
-        } else {
-            return value.toString();
-        }
-    }
-
 }

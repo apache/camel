@@ -226,6 +226,39 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
+    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=\"%s\"", found.getDomain(), found.getKeyProperty("context"), "DefaultInflightRepository");
+            ObjectName on = ObjectName.getInstance(pattern);
+            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(int,boolean)", limit, sortByLongestDuration));
+            if (er != null) {
+                JSONObject data = er.getValue();
+                for (Object obj : data.values()) {
+                    JSONObject data2 = (JSONObject) obj;
+                    JSONObject inflight = (JSONObject) data2.values().iterator().next();
+
+                    Map<String, Object> row = new LinkedHashMap<String, Object>();
+                    row.put("exchangeId", asString(inflight.get("exchangeId")));
+                    row.put("routeId", asString(inflight.get("routeIdId")));
+                    row.put("nodeId", asString(inflight.get("nodeId")));
+                    row.put("duration", asString(inflight.get("duration")));
+                    row.put("elapsed", asString(inflight.get("elapsed")));
+                    answer.add(row);
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     public void startContext(String camelContextName) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");

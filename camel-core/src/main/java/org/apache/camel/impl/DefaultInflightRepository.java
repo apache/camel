@@ -106,6 +106,14 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
                     return Long.compare(d1, d2);
                 }
             });
+        } else {
+            // else sort by exchange id
+            Collections.sort(values, new Comparator<Exchange>() {
+                @Override
+                public int compare(Exchange e1, Exchange e2) {
+                    return e1.getExchangeId().compareTo(e2.getExchangeId());
+                }
+            });
         }
 
         for (Exchange exchange : values) {

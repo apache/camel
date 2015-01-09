@@ -17,6 +17,7 @@
 package org.apache.camel.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ import java.util.Properties;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -161,6 +164,56 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
+
+        ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+        if (agent != null) {
+            MBeanServer mBeanServer = agent.getMBeanServer();
+            ObjectName on = null;
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=services,name=DefaultInflightRepository,*"), null);
+            if (set.size() == 1) {
+                on = set.iterator().next();
+            }
+            if (mBeanServer.isRegistered(on)) {
+                TabularData list = (TabularData) mBeanServer.invoke(on, "browse", new Object[]{limit, sortByLongestDuration}, new String[]{"int", "boolean"});
+                Collection<CompositeData> values = (Collection<CompositeData>) list.values();
+                for (CompositeData data : values) {
+                    Map<String, Object> row = new LinkedHashMap<String, Object>();
+                    Object exchangeId = data.get("exchangeId");
+                    if (exchangeId != null) {
+                        row.put("exchangeId", exchangeId);
+                    }
+                    Object routeId = data.get("routeId");
+                    if (routeId != null) {
+                        row.put("routeId", routeId);
+                    }
+                    Object nodeId = data.get("nodeId");
+                    if (nodeId != null) {
+                        row.put("nodeId", nodeId);
+                    }
+                    Object duration = data.get("duration");
+                    if (duration != null) {
+                        row.put("duration", duration);
+                    }
+                    Object elapsed = data.get("elapsed");
+                    if (elapsed != null) {
+                        row.put("elapsed", elapsed);
+                    }
+                    answer.add(row);
+                }
+            }
+        }
+
+        return answer;
     }
 
     public void startContext(String camelContextName) throws Exception {
