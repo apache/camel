@@ -59,9 +59,15 @@ public class ManagedInflightRepository extends ManagedService implements Managed
 
     @Override
     public TabularData browse() {
+        return browse(-1, false);
+    }
+
+    @Override
+    public TabularData browse(int limit, boolean sortByLongestDuration) {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listInflightExchangesTabularType());
-            Collection<InflightRepository.InflightExchange> exchanges = inflightRepository.browse();
+            Collection<InflightRepository.InflightExchange> exchanges = inflightRepository.browse(limit, sortByLongestDuration);
+
             for (InflightRepository.InflightExchange entry : exchanges) {
                 CompositeType ct = CamelOpenMBeanTypes.listInflightExchangesCompositeType();
                 String exchangeId = entry.getExchange().getExchangeId();
@@ -80,5 +86,4 @@ public class ManagedInflightRepository extends ManagedService implements Managed
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
-
 }

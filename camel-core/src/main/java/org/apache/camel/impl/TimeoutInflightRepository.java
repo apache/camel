@@ -52,7 +52,6 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
     
     @Override
     protected void doStart() throws Exception {
-    
         if (exchangeFormatter == null) {
             // setup exchange formatter to be used for message history dump
             DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
@@ -69,7 +68,6 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
             exchangeWatchDog = new Thread(woker);
         }
         exchangeWatchDog.start();
-
     }
 
     @Override
@@ -78,7 +76,6 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
             woker.stop();
             exchangeWatchDog = null;
         }
-
     }
 
     @Override
@@ -97,13 +94,11 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
     @Override
     public void add(Exchange exchange, String routeId) {
         // do nothing here
-        
     }
 
     @Override
     public void remove(Exchange exchange, String routeId) {
         // do nothing here
-        
     }
 
     @Override
@@ -120,7 +115,6 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
     @Override
     public void removeRoute(String routeId) {
         // We don't support this interface yet
-        
     }
 
     @Override
@@ -134,6 +128,11 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
         return null;
     }
 
+    @Override
+    public Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration) {
+        return null;
+    }
+
     public long getWaitTime() {
         return waitTime;
     }
@@ -141,7 +140,6 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
     public void setWaitTime(long waitTime) {
         this.waitTime = waitTime;
     }
-    
 
     public long getTimeout() {
         return timeout;
@@ -159,7 +157,6 @@ public class TimeoutInflightRepository extends ServiceSupport implements Infligh
         this.exchangeFormatter = exchangeFormatter;
     }
 
-    
     protected void processTimeoutExchange(Exchange exchange, long processingTime) {
         // print out exchange history or send an alarm
         // dump a route stack trace of the exchange

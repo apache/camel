@@ -32,4 +32,7 @@ public interface ManagedInflightRepositoryMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Lists all the exchanges which are currently inflight")
     TabularData browse();
 
+    @ManagedOperation(description = "Lists all the exchanges which are currently inflight, limited and sorted")
+    TabularData browse(int limit, boolean sortByLongestDuration);
+
 }

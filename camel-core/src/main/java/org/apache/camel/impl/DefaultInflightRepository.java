@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,9 +89,30 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse() {
+        return browse(-1, false);
+    }
+
+    @Override
+    public Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration) {
         List<InflightExchange> answer = new ArrayList<InflightExchange>();
-        for (Exchange exchange : inflight.values()) {
+
+        List<Exchange> values = new ArrayList<Exchange>(inflight.values());
+        if (sortByLongestDuration) {
+            Collections.sort(values, new Comparator<Exchange>() {
+                @Override
+                public int compare(Exchange e1, Exchange e2) {
+                    long d1 = getExchangeDuration(e1);
+                    long d2 = getExchangeDuration(e2);
+                    return Long.compare(d1, d2);
+                }
+            });
+        }
+
+        for (Exchange exchange : values) {
             answer.add(new InflightExchangeEntry(exchange));
+            if (limit > 0 && answer.size() >= limit) {
+                break;
+            }
         }
         return Collections.unmodifiableCollection(answer);
     }
@@ -110,6 +132,15 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         routeCount.clear();
     }
 
+    private static long getExchangeDuration(Exchange exchange) {
+        long duration = 0;
+        Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        if (created != null) {
+            duration = System.currentTimeMillis() - created.getTime();
+        }
+        return duration;
+    }
+
     private static final class InflightExchangeEntry implements InflightExchange {
 
         private final Exchange exchange;
@@ -125,12 +156,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
         @Override
         public long getDuration() {
-            long duration = 0;
-            Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
-            if (created != null) {
-                duration = System.currentTimeMillis() - created.getTime();
-            }
-            return duration;
+            return DefaultInflightRepository.getExchangeDuration(exchange);
         }
 
         @Override
