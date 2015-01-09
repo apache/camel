@@ -22,10 +22,10 @@ import org.junit.Test;
 
 public class MyBatisInsertWithInputAndOutputHeaderTest extends MyBatisTestSupport {
 
-	private static final String TEST_CASE_INPUT_HEADER_NAME = "testCaseInputHeader";
-	private static final String TEST_CASE_OUTPUT_HEADER_NAME = "testCaseOutputHeader";
-	private static final String RETAINED_BODY = "not an account";
-	
+    private static final String TEST_CASE_INPUT_HEADER_NAME = "testCaseInputHeader";
+    private static final String TEST_CASE_OUTPUT_HEADER_NAME = "testCaseOutputHeader";
+    private static final String RETAINED_BODY = "not an account";
+
     @Test
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

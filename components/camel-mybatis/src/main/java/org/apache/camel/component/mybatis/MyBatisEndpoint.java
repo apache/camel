@@ -159,9 +159,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         this.outputHeader = outputHeader;
     }
 
-	public String getInputHeader() {
-		return inputHeader;
-	}
+    public String getInputHeader() {
+        return inputHeader;
+    }
 
     /**
      * User the header value for input parameters instead of the message body.
@@ -169,9 +169,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
      * If outputHeader is set, the value is used and query parameters will be taken from the
      * header instead of the body.
      */
-	public void setInputHeader(String inputHeader) {
-		this.inputHeader = inputHeader;
-	}
+    public void setInputHeader(String inputHeader) {
+        this.inputHeader = inputHeader;
+    }
 
     
     

@@ -25,7 +25,7 @@ public class MyBatisSelectOneWithInputHeaderTest extends MyBatisTestSupport {
     private static final String TEST_CASE_HEADER_NAME = "testCaseHeader";
     private static final int TEST_ACCOUNT_ID = 456;
     private static final int TEST_ACCOUNT_ID_BAD = 999;
-	
+
     @Test
     public void testSelectOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

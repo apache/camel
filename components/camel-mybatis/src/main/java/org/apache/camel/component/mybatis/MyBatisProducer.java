@@ -283,12 +283,12 @@ public class MyBatisProducer extends DefaultProducer {
     }
 
     private Object getInput(final Exchange exchange) {
-    	final String inputHeader = getEndpoint().getInputHeader();
-    	if(inputHeader != null) {
-    		return exchange.getIn().getHeader(inputHeader);
-    	} else {
-    		return exchange.getIn().getBody();
-    	}
+        final String inputHeader = getEndpoint().getInputHeader();
+        if (inputHeader != null) {
+            return exchange.getIn().getHeader(inputHeader);
+        } else {
+            return exchange.getIn().getBody();
+        }
     }
     
 }

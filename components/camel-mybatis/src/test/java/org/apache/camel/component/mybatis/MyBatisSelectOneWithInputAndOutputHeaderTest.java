@@ -22,11 +22,11 @@ import org.junit.Test;
 
 public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSupport {
 
-	private static final String TEST_CASE_INPUT_HEADER_NAME = "testCaseInputHeader";
-	private static final String TEST_CASE_OUTPUT_HEADER_NAME = "testCaseOutputHeader";
-	private static final int TEST_ACCOUNT_ID = 456;
+    private static final String TEST_CASE_INPUT_HEADER_NAME = "testCaseInputHeader";
+    private static final String TEST_CASE_OUTPUT_HEADER_NAME = "testCaseOutputHeader";
+    private static final int TEST_ACCOUNT_ID = 456;
     private static final int TEST_ACCOUNT_ID_BAD = 999;
-	
+
     @Test
     public void testSelectOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

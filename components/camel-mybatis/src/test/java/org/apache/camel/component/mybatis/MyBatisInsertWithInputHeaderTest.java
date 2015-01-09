@@ -22,8 +22,8 @@ import org.junit.Test;
 
 public class MyBatisInsertWithInputHeaderTest extends MyBatisTestSupport {
 
-	private static final String TEST_CASE_HEADER_NAME = "testCaseHeader";
-	
+    private static final String TEST_CASE_HEADER_NAME = "testCaseHeader";
+
     @Test
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
