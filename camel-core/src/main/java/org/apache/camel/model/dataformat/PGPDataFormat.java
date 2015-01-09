@@ -56,6 +56,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     private Integer compressionAlgorithm;
     @XmlAttribute
     private Integer hashAlgorithm;
+    @XmlAttribute
+    private String signatureVerificationOption;
 
     public PGPDataFormat() {
         super("pgp");
@@ -98,6 +100,9 @@ public class PGPDataFormat extends DataFormatDefinition {
         }
         if (hashAlgorithm != null) {
             setProperty(camelContext, dataFormat, "hashAlgorithm", hashAlgorithm);
+        }
+        if (signatureVerificationOption != null) {
+            setProperty(camelContext, dataFormat, "signatureVerificationOption", signatureVerificationOption);
         }
     }
 
@@ -195,5 +200,13 @@ public class PGPDataFormat extends DataFormatDefinition {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+    
+    public String getSignatureVerificationOption() {
+        return signatureVerificationOption;
+    }
+
+    public void setSignatureVerificationOption(String signatureVerificationOption) {
+        this.signatureVerificationOption = signatureVerificationOption;
     }
 }
