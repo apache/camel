@@ -142,13 +142,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 if (timeout) {
                     // timeout occurred do a WARN log so its easier to spot in the logs
                     if (log.isWarnEnabled()) {
-                        log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}]."
+                        log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), ExchangeHelper.logIds(exchange)});
+                                new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), replyTo, ExchangeHelper.logIds(exchange)});
                     }
 
                     // no response, so lets set a timed out exception
-                    String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received";
+                    String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
                     JmsMessage response = new JmsMessage(message, endpoint.getBinding());
