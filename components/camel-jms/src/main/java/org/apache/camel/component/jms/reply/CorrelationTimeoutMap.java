@@ -91,6 +91,31 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
     }
 
     @Override
+    public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
+        try {
+            if (listener != null) {
+                listener.onPut(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        ReplyHandler result;
+        if (timeoutMillis <= 0) {
+            // no timeout (must use Integer.MAX_VALUE)
+            result = super.putIfAbsent(key, value, Integer.MAX_VALUE);
+        } else {
+            result = super.putIfAbsent(key, value, timeoutMillis);
+        }
+        if (result == null) {
+            log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
+        } else {
+            log.trace("Duplicate correlationID: {} detected", key);
+        }
+        return result;
+    }
+
+    @Override
     public ReplyHandler remove(String key) {
         try {
             if (listener != null) {
