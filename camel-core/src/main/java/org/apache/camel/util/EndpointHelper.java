@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -486,5 +489,22 @@ public final class EndpointHelper {
         sb.append("\n</messages>");
         return sb.toString();
     }
-    
+
+    /**
+     * Attempts to resolve if the url has an <tt>exchangePattern</tt> option configured
+     *
+     * @param url the url
+     * @return the exchange pattern, or <tt>null</tt> if the url has no <tt>exchangePattern</tt> configured.
+     * @throws URISyntaxException is thrown if uri is invalid
+     */
+    public static ExchangePattern resolveExchangePatternFromUrl(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        String pattern = (String) parameters.get("exchangePattern");
+        if (pattern != null) {
+            return ExchangePattern.asEnum(pattern);
+        }
+        return null;
+    }
+
 }
