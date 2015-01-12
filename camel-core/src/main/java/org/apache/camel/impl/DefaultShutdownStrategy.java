@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -37,6 +38,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
@@ -97,6 +99,13 @@ import org.slf4j.LoggerFactory;
  * still inflight which may be rejected continued being routed. By default this can cause WARN and ERRORs
  * to be logged. The option {@link #setSuppressLoggingOnTimeout(boolean)} can be used to suppress these
  * logs, so they are logged at TRACE level instead.
+ * <p/>
+ * Also when a timeout occurred then information about the inflight exchanges is logged, if {@link #isLogInflightExchangesOnTimeout()}
+ * is enabled (is by default). This allows end users to known where these inflight exchanges currently are in the route(s),
+ * and how long time they have been inflight.
+ * <p/>
+ * This information can also be obtained from the {@link org.apache.camel.spi.InflightRepository}
+ * at all time during runtime.
  *
  * @version
  */
@@ -110,6 +119,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean suppressLoggingOnTimeout;
+    private boolean logInflightExchangesOnTimeout = true;
+
     private volatile boolean forceShutdown;
     private final AtomicBoolean timeoutOccurred = new AtomicBoolean();
     private volatile Future<?> currentShutdownTaskFuture;
@@ -196,11 +207,19 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             if (!forceShutdown && abortAfterTimeout) {
                 LOG.warn("Timeout occurred during graceful shutdown. Aborting the shutdown now."
                         + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+
+                // we attempt to force shutdown so lets log the current inflight exchanges which are affected
+                logInflightExchanges(context, isLogInflightExchangesOnTimeout());
+
                 return false;
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
                     LOG.warn("Timeout occurred during graceful shutdown. Forcing the routes to be shutdown now."
                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+
+                    // we attempt to force shutdown so lets log the current inflight exchanges which are affected
+                    logInflightExchanges(context, isLogInflightExchangesOnTimeout());
+
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
 
@@ -213,6 +232,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 } else {
                     LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+
+                    logInflightExchanges(context, isLogInflightExchangesOnTimeout());
                 }
             }
         } finally {
@@ -277,6 +298,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     public void setSuppressLoggingOnTimeout(boolean suppressLoggingOnTimeout) {
         this.suppressLoggingOnTimeout = suppressLoggingOnTimeout;
+    }
+
+    public boolean isLogInflightExchangesOnTimeout() {
+        return logInflightExchangesOnTimeout;
+    }
+
+    public void setLogInflightExchangesOnTimeout(boolean logInflightExchangesOnTimeout) {
+        this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
     }
 
     public CamelContext getCamelContext() {
@@ -575,6 +604,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     try {
                         LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
                              + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.");
+
+                        // log verbose if DEBUG logging is enabled
+                        logInflightExchanges(context, false);
+
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         if (abortAfterTimeout) {
@@ -624,6 +657,41 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             }
         }
 
+    }
+
+    /**
+     * Logs information about the inflight exchanges
+     *
+     * @param infoLevel <tt>true</tt> to log at INFO level, <tt>false</tt> to log at DEBUG level
+     */
+    protected static void logInflightExchanges(CamelContext camelContext, boolean infoLevel) {
+        // check if we need to log
+        if (!infoLevel && !LOG.isDebugEnabled()) {
+            return;
+        }
+
+        Collection<InflightRepository.InflightExchange> inflights = camelContext.getInflightRepository().browse();
+        int size = inflights.size();
+        if (size == 0) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder("There are " + size + " inflight exchanges:");
+        for (InflightRepository.InflightExchange inflight : inflights) {
+            sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
+                    .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())
+                    .append(", routeId=").append(inflight.getRouteId())
+                    .append(", nodeId=").append(inflight.getNodeId())
+                    .append(", elapsed=").append(inflight.getElapsed())
+                    .append(", duration=").append(inflight.getDuration())
+                    .append("]");
+        }
+
+        if (infoLevel) {
+            LOG.info(sb.toString());
+        } else {
+            LOG.debug(sb.toString());
+        }
     }
 
 }
