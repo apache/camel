@@ -93,6 +93,7 @@ public class MailConfiguration implements Cloneable {
     private boolean closeFolder = true;
     @UriParam(defaultValue = "true")
     private boolean peek = true;
+    @UriParam
     private SSLContextParameters sslContextParameters;
 
     public MailConfiguration() {
