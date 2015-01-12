@@ -246,10 +246,11 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
                         Map<String, Object> row = new LinkedHashMap<String, Object>();
                         row.put("exchangeId", asString(inflight.get("exchangeId")));
+                        row.put("fromRouteId", asString(inflight.get("fromRouteId")));
                         row.put("routeId", asString(inflight.get("routeId")));
                         row.put("nodeId", asString(inflight.get("nodeId")));
-                        row.put("duration", asString(inflight.get("duration")));
                         row.put("elapsed", asString(inflight.get("elapsed")));
+                        row.put("duration", asString(inflight.get("duration")));
                         answer.add(row);
                     }
                 }

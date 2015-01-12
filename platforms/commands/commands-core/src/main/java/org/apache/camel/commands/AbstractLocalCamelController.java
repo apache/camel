@@ -192,6 +192,10 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     if (exchangeId != null) {
                         row.put("exchangeId", exchangeId);
                     }
+                    Object fromRouteId = data.get("fromRouteId");
+                    if (fromRouteId != null) {
+                        row.put("fromRouteId", fromRouteId);
+                    }
                     Object routeId = data.get("routeId");
                     if (routeId != null) {
                         row.put("routeId", routeId);
@@ -200,13 +204,13 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     if (nodeId != null) {
                         row.put("nodeId", nodeId);
                     }
-                    Object duration = data.get("duration");
-                    if (duration != null) {
-                        row.put("duration", duration);
-                    }
                     Object elapsed = data.get("elapsed");
                     if (elapsed != null) {
                         row.put("elapsed", elapsed);
+                    }
+                    Object duration = data.get("duration");
+                    if (duration != null) {
+                        row.put("duration", duration);
                     }
                     answer.add(row);
                 }

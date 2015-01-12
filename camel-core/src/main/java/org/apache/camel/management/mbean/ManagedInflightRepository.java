@@ -71,14 +71,15 @@ public class ManagedInflightRepository extends ManagedService implements Managed
             for (InflightRepository.InflightExchange entry : exchanges) {
                 CompositeType ct = CamelOpenMBeanTypes.listInflightExchangesCompositeType();
                 String exchangeId = entry.getExchange().getExchangeId();
+                String fromRouteId = entry.getExchange().getFromRouteId();
                 String routeId = entry.getRouteId();
                 String nodeId = entry.getNodeId();
-                String duration = "" + entry.getDuration();
                 String elapsed = "" + entry.getElapsed();
+                String duration = "" + entry.getDuration();
 
                 CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"exchangeId", "routeId", "nodeId", "duration", "elapsed"},
-                        new Object[]{exchangeId, routeId, nodeId, duration, elapsed});
+                        new String[]{"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
+                        new Object[]{exchangeId, fromRouteId, routeId, nodeId, elapsed, duration});
                 answer.put(data);
             }
             return answer;

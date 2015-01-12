@@ -27,10 +27,11 @@ import java.util.Map;
 public class ContextInflightCommand extends AbstractContextCommand {
 
     private static final String EXCHANGE_COLUMN_LABEL = "ExchangeId";
+    private static final String FROM_ROUTE_COLUMN_LABEL = "From Route";
     private static final String ROUTE_COLUMN_LABEL = "Route";
     private static final String NODE_COLUMN_LABEL = "Node";
-    private static final String DURATION_COLUMN_LABEL = "Duration (ms)";
     private static final String ELAPSED_COLUMN_LABEL = "Elapsed (ms)";
+    private static final String DURATION_COLUMN_LABEL = "Duration (ms)";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final String DEFAULT_FIELD_PREAMBLE = " ";
@@ -59,15 +60,16 @@ public class ContextInflightCommand extends AbstractContextCommand {
         final String rowFormat = buildFormatString(columnWidths, false);
 
         if (inflight.size() > 0) {
-            out.println(String.format(headerFormat, EXCHANGE_COLUMN_LABEL, ROUTE_COLUMN_LABEL, NODE_COLUMN_LABEL, DURATION_COLUMN_LABEL, ELAPSED_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "----------", "-----", "----", "-------------", "------------"));
+            out.println(String.format(headerFormat, EXCHANGE_COLUMN_LABEL, FROM_ROUTE_COLUMN_LABEL, ROUTE_COLUMN_LABEL, NODE_COLUMN_LABEL, ELAPSED_COLUMN_LABEL, DURATION_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "----------", "----------", "-----", "----", "------------", "-------------"));
             for (Map<String, Object> row : inflight) {
                 Object exchangeId = row.get("exchangeId");
+                Object fromRouteId = row.get("fromRouteId");
                 Object routeId = row.get("routeId");
-                Object state = row.get("nodeId");
-                Object duration = row.get("duration");
+                Object nodeId = row.get("nodeId");
                 Object elapsed = row.get("elapsed");
-                out.println(String.format(rowFormat, exchangeId, routeId, state, safeNull(duration), safeNull(elapsed)));
+                Object duration = row.get("duration");
+                out.println(String.format(rowFormat, exchangeId, fromRouteId, routeId, nodeId, safeNull(elapsed), safeNull(duration)));
             }
         }
 
@@ -79,14 +81,18 @@ public class ContextInflightCommand extends AbstractContextCommand {
             throw new IllegalArgumentException("Unable to determine column widths from null Iterable<Inflight>");
         } else {
             int maxExchangeLen = 0;
+            int maxFromRouteLen = 0;
             int maxRouteLen = 0;
             int maxNodeLen = 0;
-            int maxDurationLen = 0;
             int maxElapsedLen = 0;
+            int maxDurationLen = 0;
 
             for (Map<String, Object> row : inflight) {
                 final String exchangeId = safeNull(row.get("exchangeId"));
                 maxExchangeLen = java.lang.Math.max(maxExchangeLen, exchangeId == null ? 0 : exchangeId.length());
+
+                final String fromRouteId = safeNull(row.get("fromRouteId"));
+                maxFromRouteLen = java.lang.Math.max(maxFromRouteLen, fromRouteId == null ? 0 : fromRouteId.length());
 
                 final String routeId = safeNull(row.get("routeId"));
                 maxRouteLen = java.lang.Math.max(maxRouteLen, routeId == null ? 0 : routeId.length());
@@ -94,19 +100,20 @@ public class ContextInflightCommand extends AbstractContextCommand {
                 final String nodeId = safeNull(row.get("nodeId"));
                 maxNodeLen = java.lang.Math.max(maxNodeLen, nodeId == null ? 0 : nodeId.length());
 
-                final String duration = safeNull(row.get("duration"));
-                maxDurationLen = java.lang.Math.max(maxDurationLen, duration == null ? 0 : duration.length());
-
                 final String elapsed = safeNull(row.get("elapsed"));
                 maxElapsedLen = java.lang.Math.max(maxElapsedLen, elapsed == null ? 0 : elapsed.length());
+
+                final String duration = safeNull(row.get("duration"));
+                maxDurationLen = java.lang.Math.max(maxDurationLen, duration == null ? 0 : duration.length());
             }
 
             final Map<String, Integer> retval = new Hashtable<String, Integer>(5);
             retval.put(EXCHANGE_COLUMN_LABEL, maxExchangeLen);
+            retval.put(FROM_ROUTE_COLUMN_LABEL, maxFromRouteLen);
             retval.put(ROUTE_COLUMN_LABEL, maxRouteLen);
             retval.put(NODE_COLUMN_LABEL, maxNodeLen);
-            retval.put(DURATION_COLUMN_LABEL, maxDurationLen);
             retval.put(ELAPSED_COLUMN_LABEL, maxElapsedLen);
+            retval.put(DURATION_COLUMN_LABEL, maxDurationLen);
 
             return retval;
         }
@@ -127,22 +134,25 @@ public class ContextInflightCommand extends AbstractContextCommand {
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
         int exchangeLen = Math.min(columnWidths.get(EXCHANGE_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int fromRouteLen = Math.min(columnWidths.get(FROM_ROUTE_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         int routeLen = Math.min(columnWidths.get(ROUTE_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         int nodeLen = Math.min(columnWidths.get(NODE_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
-        int durationLen = Math.min(columnWidths.get(DURATION_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         int elapsedLen = Math.min(columnWidths.get(ELAPSED_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int durationLen = Math.min(columnWidths.get(DURATION_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         exchangeLen = Math.max(MIN_COLUMN_WIDTH, exchangeLen);
+        fromRouteLen = Math.max(MIN_COLUMN_WIDTH, fromRouteLen);
         routeLen = Math.max(MIN_COLUMN_WIDTH, routeLen);
         nodeLen = Math.max(MIN_COLUMN_WIDTH, nodeLen);
-        durationLen = Math.max(13, durationLen);
         elapsedLen = Math.max(MIN_COLUMN_WIDTH, elapsedLen);
+        durationLen = Math.max(13, durationLen);
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
         retval.append(fieldPreamble).append("%-").append(exchangeLen).append('.').append(exchangeLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%-").append(fromRouteLen).append('.').append(fromRouteLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(routeLen).append('.').append(routeLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(nodeLen).append('.').append(nodeLen).append('s').append(fieldPostamble).append(' ');
-        retval.append(fieldPreamble).append("%").append(durationLen).append('.').append(durationLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%").append(elapsedLen).append('.').append(elapsedLen).append('s').append(fieldPostamble).append(' ');
+        retval.append(fieldPreamble).append("%").append(durationLen).append('.').append(durationLen).append('s').append(fieldPostamble).append(' ');
 
         return retval.toString();
     }
