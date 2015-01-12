@@ -25,7 +25,6 @@ import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
 import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
