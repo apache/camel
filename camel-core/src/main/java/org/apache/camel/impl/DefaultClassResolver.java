@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -29,12 +30,27 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultClassResolver implements ClassResolver {
 
+    private final ClassLoader loader;
+
+    public DefaultClassResolver(CamelContext camelContext) {
+        this.loader = camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
+    }
+
     public Class<?> resolveClass(String name) {
-        return loadClass(name, DefaultClassResolver.class.getClassLoader());
+        Class<?> answer = loadClass(name, DefaultClassResolver.class.getClassLoader());
+        if (answer == null && loader != null) {
+            // fallback and use application context class loader
+            answer = loadClass(name, loader);
+        }
+        return answer;
     }
 
     public <T> Class<T> resolveClass(String name, Class<T> type) {
         Class<T> answer = CastUtils.cast(loadClass(name, DefaultClassResolver.class.getClassLoader()));
+        if (answer == null && loader != null) {
+            // fallback and use application context class loader
+            answer = CastUtils.cast(loadClass(name, loader));
+        }
         return answer;
     }
 
@@ -81,12 +97,12 @@ public class DefaultClassResolver implements ClassResolver {
 
     public InputStream loadResourceAsStream(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return ObjectHelper.loadResourceAsStream(uri);
+        return ObjectHelper.loadResourceAsStream(uri, loader);
     }
 
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return ObjectHelper.loadResourceAsURL(uri);
+        return ObjectHelper.loadResourceAsURL(uri, loader);
     }
 
     public Enumeration<URL> loadResourcesAsURL(String uri) {

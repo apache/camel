@@ -40,6 +40,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
     private final BundleContext bundleContext;
 
     public OsgiClassResolver(CamelContext camelContext, BundleContext context) {
+        super(camelContext);
         this.camelContext = camelContext;
         this.bundleContext = context;
     }

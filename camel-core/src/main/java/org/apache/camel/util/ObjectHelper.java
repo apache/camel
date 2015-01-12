@@ -981,12 +981,29 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static InputStream loadResourceAsStream(String name) {
+        return loadResourceAsStream(name, null);
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @param loader optional classloader to attempt first
+     * @return the stream or null if it could not be loaded
+     */
+    public static InputStream loadResourceAsStream(String name, ClassLoader loader) {
         InputStream in = null;
 
         String resolvedName = resolveUriPath(name);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            in = contextClassLoader.getResourceAsStream(resolvedName);
+        if (loader != null) {
+            in = loader.getResourceAsStream(resolvedName);
+        }
+        if (in == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                in = contextClassLoader.getResourceAsStream(resolvedName);
+            }
         }
         if (in == null) {
             in = ObjectHelper.class.getClassLoader().getResourceAsStream(resolvedName);
@@ -1006,12 +1023,29 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static URL loadResourceAsURL(String name) {
+        return loadResourceAsURL(name, null);
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @param loader optional classloader to attempt first
+     * @return the stream or null if it could not be loaded
+     */
+    public static URL loadResourceAsURL(String name, ClassLoader loader) {
         URL url = null;
 
         String resolvedName = resolveUriPath(name);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            url = contextClassLoader.getResource(resolvedName);
+        if (loader != null) {
+            url = loader.getResource(resolvedName);
+        }
+        if (url == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                url = contextClassLoader.getResource(resolvedName);
+            }
         }
         if (url == null) {
             url = ObjectHelper.class.getClassLoader().getResource(resolvedName);
@@ -1031,14 +1065,36 @@ public final class ObjectHelper {
      * @return the URLs for the resources or null if it could not be loaded
      */
     public static Enumeration<URL> loadResourcesAsURL(String packageName) {
+        return loadResourcesAsURL(packageName, null);
+    }
+
+    /**
+     * Attempts to load the given resources from the given package name using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param packageName the name of the package to load its resources
+     * @param loader optional classloader to attempt first
+     * @return the URLs for the resources or null if it could not be loaded
+     */
+    public static Enumeration<URL> loadResourcesAsURL(String packageName, ClassLoader loader) {
         Enumeration<URL> url = null;
 
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
+        if (loader != null) {
             try {
-                url = contextClassLoader.getResources(packageName);
+                url = loader.getResources(packageName);
             } catch (IOException e) {
                 // ignore
+            }
+        }
+
+        if (url == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                try {
+                    url = contextClassLoader.getResources(packageName);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
         if (url == null) {
@@ -1051,7 +1107,7 @@ public final class ObjectHelper {
 
         return url;
     }
-    
+
     /**
      * Helper operation used to remove relative path notation from 
      * resources.  Most critical for resources on the Classpath

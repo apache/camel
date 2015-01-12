@@ -44,7 +44,7 @@ public class OgnlTest extends LanguageTestSupport {
             assertTrue("We should get the ClassNotFoundException", ex.getMessage().indexOf("ClassNotFoundException") > 0);
         }
         // setup the class resolver to load the right class for us
-        exchange.getContext().setClassResolver(new MyClassResolver());
+        exchange.getContext().setClassResolver(new MyClassResolver(context));
         assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");
     }
     @Test

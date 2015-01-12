@@ -29,7 +29,7 @@ public final class CamelToDozerClassResolverAdapter implements DozerClassLoader 
 
     public CamelToDozerClassResolverAdapter() {
         // must have a default nor-arg constructor to allow Dozer to work with OSGi
-        classResolver = new DefaultClassResolver();
+        classResolver = new DefaultClassResolver(null);
     }
 
     public CamelToDozerClassResolverAdapter(CamelContext camelContext) {

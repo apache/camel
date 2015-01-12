@@ -224,7 +224,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
-    private ClassResolver classResolver = new DefaultClassResolver();
+    private ClassResolver classResolver = new DefaultClassResolver(this);
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
