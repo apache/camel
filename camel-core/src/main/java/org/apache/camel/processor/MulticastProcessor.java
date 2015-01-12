@@ -482,8 +482,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     }
 
                     // we got a result so aggregate it
-                    AggregationStrategy strategy = getAggregationStrategy(subExchange);
-                    doAggregate(strategy, result, subExchange);
+                    if (parallelAggregate) {
+                        doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                    } else {
+                        doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                    }
                 }
 
                 aggregated++;
@@ -814,11 +817,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     /**
-     * Aggregate the {@link Exchange} with the current result
+     * Aggregate the {@link Exchange} with the current result.
+     * This method is synchronized and is called directly when parallelAggregate is disabled (by default).
      *
      * @param strategy the aggregation strategy to use
      * @param result   the current result
      * @param exchange the exchange to be added to the result
+     * @see #doAggregateInternal(org.apache.camel.processor.aggregate.AggregationStrategy, org.apache.camel.util.concurrent.AtomicExchange, org.apache.camel.Exchange)
      */
     protected synchronized void doAggregate(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
         doAggregateInternal(strategy, result, exchange);
@@ -829,9 +834,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * This method is unsynchronized and is called directly when parallelAggregate is enabled.
      * In all other cases, this method is called from the doAggregate which is a synchronized method
      *
-     * @param strategy
-     * @param result
-     * @param exchange
+     * @param strategy the aggregation strategy to use
+     * @param result   the current result
+     * @param exchange the exchange to be added to the result
+     * @see #doAggregate(org.apache.camel.processor.aggregate.AggregationStrategy, org.apache.camel.util.concurrent.AtomicExchange, org.apache.camel.Exchange)
      */
     protected void doAggregateInternal(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
         if (strategy != null) {
