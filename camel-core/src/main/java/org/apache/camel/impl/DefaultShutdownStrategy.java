@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -209,7 +210,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                 // we attempt to force shutdown so lets log the current inflight exchanges which are affected
-                logInflightExchanges(context, isLogInflightExchangesOnTimeout());
+                logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
 
                 return false;
             } else {
@@ -218,7 +219,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     // we attempt to force shutdown so lets log the current inflight exchanges which are affected
-                    logInflightExchanges(context, isLogInflightExchangesOnTimeout());
+                    logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
 
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
@@ -233,7 +234,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
-                    logInflightExchanges(context, isLogInflightExchangesOnTimeout());
+                    logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
                 }
             }
         } finally {
@@ -606,7 +607,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                              + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.");
 
                         // log verbose if DEBUG logging is enabled
-                        logInflightExchanges(context, false);
+                        logInflightExchanges(context, routes, false);
 
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
@@ -664,7 +665,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      *
      * @param infoLevel <tt>true</tt> to log at INFO level, <tt>false</tt> to log at DEBUG level
      */
-    protected static void logInflightExchanges(CamelContext camelContext, boolean infoLevel) {
+    protected static void logInflightExchanges(CamelContext camelContext, List<RouteStartupOrder> routes, boolean infoLevel) {
         // check if we need to log
         if (!infoLevel && !LOG.isDebugEnabled()) {
             return;
@@ -676,8 +677,26 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             return;
         }
 
-        StringBuilder sb = new StringBuilder("There are " + size + " inflight exchanges:");
+        // filter so inflight must start from any of the routes
+        Set<String> routeIds = new HashSet<String>();
+        for (RouteStartupOrder route : routes) {
+            routeIds.add(route.getRoute().getId());
+        }
+        Collection<InflightRepository.InflightExchange> filtered = new ArrayList<InflightRepository.InflightExchange>();
         for (InflightRepository.InflightExchange inflight : inflights) {
+            String routeId = inflight.getExchange().getFromRouteId();
+            if (routeIds.contains(routeId)) {
+                filtered.add(inflight);
+            }
+        }
+
+        size = filtered.size();
+        if (size == 0) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder("There are " + size + " inflight exchanges:");
+        for (InflightRepository.InflightExchange inflight : filtered) {
             sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
                     .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())
                     .append(", routeId=").append(inflight.getRouteId())
