@@ -688,7 +688,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             answer.setResponseBufferSize(responseBufferSize);
         }
         if (responseHeaderSize != null) {
-            answer.setResponseBufferSize(responseHeaderSize);
+            answer.setResponseHeaderSize(responseHeaderSize);
         }
         return answer;
     }
@@ -701,7 +701,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
      * Creates a new {@link HttpClient} and configures its proxy/thread pool and SSL based on this
      * component settings.
      *
-     * @Param endpoint   the instance of JettyHttpEndpoint
+     * @param endpoint   the instance of JettyHttpEndpoint
      * @param minThreads optional minimum number of threads in client thread pool
      * @param maxThreads optional maximum number of threads in client thread pool
      * @param ssl        option SSL parameters
