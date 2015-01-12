@@ -205,6 +205,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         formatter.setMultiline(true);
         formatter.setShowHeaders(true);
         formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+        try {
+            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+            if (maxChars != null) {
+                formatter.setMaxChars(maxChars);
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         this.exchangeFormatter = formatter;
     }
 
