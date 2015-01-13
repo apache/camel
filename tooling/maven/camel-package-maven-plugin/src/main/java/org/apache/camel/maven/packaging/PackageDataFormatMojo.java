@@ -18,14 +18,20 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,6 +39,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
+import static org.apache.camel.maven.packaging.PackageHelper.after;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
 
@@ -61,6 +68,13 @@ public class PackageDataFormatMojo extends AbstractMojo {
     protected File outDir;
 
     /**
+     * The output directory for generated dataformats file
+     *
+     * @parameter default-value="${project.build.directory}/classes"
+     */
+    protected File schemaOutDir;
+
+    /**
      * Maven ProjectHelper.
      *
      * @component
@@ -72,12 +86,11 @@ public class PackageDataFormatMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                 threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
+     *                                                        threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         File camelMetaDir = new File(outDir, "META-INF/services/org/apache/camel/");
-
 
         Map<String, String> javaTypes = new HashMap<String, String>();
 
@@ -89,7 +102,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                 f = new File(project.getBasedir(), r.getDirectory());
             }
             f = new File(f, "META-INF/services/org/apache/camel/dataformat");
-            
+
             if (f.exists() && f.isDirectory()) {
                 File[] files = f.listFiles();
                 if (files != null) {
@@ -119,10 +132,60 @@ public class PackageDataFormatMojo extends AbstractMojo {
             }
         }
 
-        getLog().debug("Java types found " + javaTypes);
+        // find camel-core and grab the data format model from there, and enrich this model with information from this artifact
+        // and create json schema model file for this data format
+        try {
+            Artifact camelCore = findCamelCoreArtifact(project);
+            if (camelCore != null) {
+                File core = camelCore.getFile();
+                URL url = new URL("file", null, core.getAbsolutePath());
+                URLClassLoader loader = new URLClassLoader(new URL[]{url});
 
-        // TODO: find model from camel-core and enrich to generate a .json
+                for (String name : javaTypes.keySet()) {
+                    InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + name + ".json");
+                    if (is != null) {
+                        String json = loadText(is);
+                        if (json != null) {
+                            DataFormatModel dataFormatModel = new DataFormatModel();
+                            dataFormatModel.setName(name);
+                            dataFormatModel.setDescription(project.getDescription());
+                            dataFormatModel.setJavaType(javaTypes.get(name));
+                            dataFormatModel.setGroupId(project.getGroupId());
+                            dataFormatModel.setArtifactId(project.getArtifactId());
+                            dataFormatModel.setVersion(project.getVersion());
 
+                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                            for (Map<String, String> row : rows) {
+                                if (row.containsKey("label")) {
+                                    dataFormatModel.setLabel(row.get("label"));
+                                } else {
+                                    dataFormatModel.setLabel("");
+                                }
+                            }
+                            getLog().debug("Model " + dataFormatModel);
+
+                            // build json schema for the data format
+                            String properties = after(json, "  \"properties\": {");
+                            String schema = createParameterJsonSchema(dataFormatModel, properties);
+                            getLog().debug("JSon schema\n" + schema);
+
+                            // write this to the directory
+                            File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
+                            dir.mkdirs();
+
+                            File out = new File(dir, name + ".json");
+                            FileOutputStream fos = new FileOutputStream(out, false);
+                            fos.write(schema.getBytes());
+                            fos.close();
+
+                            getLog().info("Generated " + out + " containing JSon schema for " + name + " data format");
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error loading data formation model from camel-core. Reason: " + e, e);
+        }
 
         if (count > 0) {
             Properties properties = new Properties();
@@ -151,6 +214,127 @@ public class PackageDataFormatMojo extends AbstractMojo {
             }
         } else {
             getLog().debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
+        }
+    }
+
+    private Artifact findCamelCoreArtifact(MavenProject project) {
+        Iterator it = project.getArtifacts().iterator();
+        while (it.hasNext()) {
+            Artifact artifact = (Artifact) it.next();
+            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
+                return artifact;
+            }
+        }
+        it = project.getDependencyArtifacts().iterator();
+        while (it.hasNext()) {
+            Artifact artifact = (Artifact) it.next();
+            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
+                return artifact;
+            }
+        }
+        return null;
+    }
+
+    private String schemaSubDirectory(String javaType) {
+        int idx = javaType.lastIndexOf('.');
+        String pckName = javaType.substring(0, idx);
+        return pckName.replace('.', '/');
+    }
+
+    private String createParameterJsonSchema(DataFormatModel dataFormatModel, String schema) {
+        StringBuilder buffer = new StringBuilder("{");
+        // component model
+        buffer.append("\n \"dataformat\": {");
+        buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
+        buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
+        buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");
+        buffer.append("\n    \"javaType\": \"").append(dataFormatModel.getJavaType()).append("\",");
+        buffer.append("\n    \"groupId\": \"").append(dataFormatModel.getGroupId()).append("\",");
+        buffer.append("\n    \"artifactId\": \"").append(dataFormatModel.getArtifactId()).append("\",");
+        buffer.append("\n    \"version\": \"").append(dataFormatModel.getVersion()).append("\"");
+        buffer.append("\n  },");
+
+        buffer.append("\n  \"properties\": {");
+        buffer.append(schema);
+        return buffer.toString();
+    }
+
+    private class DataFormatModel {
+        private String name;
+        private String description;
+        private String label;
+        private String javaType;
+        private String groupId;
+        private String artifactId;
+        private String version;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public String getJavaType() {
+            return javaType;
+        }
+
+        public void setJavaType(String javaType) {
+            this.javaType = javaType;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public String toString() {
+            return "DataFormatModel["
+                    + "name='" + name + '\''
+                    + ", description='" + description + '\''
+                    + ", label='" + label + '\''
+                    + ", javaType='" + javaType + '\''
+                    + ", groupId='" + groupId + '\''
+                    + ", artifactId='" + artifactId + '\''
+                    + ", version='" + version + '\''
+                    + ']';
         }
     }
 

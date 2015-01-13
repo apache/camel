@@ -61,6 +61,13 @@ public final class PackageHelper {
         }
     }
 
+    public static String after(String text, String after) {
+        if (!text.contains(after)) {
+            return null;
+        }
+        return text.substring(text.indexOf(after) + after.length());
+    }
+
     /**
      * Parses the text as a map (eg key=value)
      * @param data the data
