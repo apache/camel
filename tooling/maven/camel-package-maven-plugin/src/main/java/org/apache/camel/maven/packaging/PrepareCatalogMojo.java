@@ -43,6 +43,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
+import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
+
 /**
  * Prepares the camel catalog to include component, data format, and eip descriptors,
  * and generates a report.
@@ -377,6 +380,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         dataFormatsOutDir.mkdirs();
+
+        // TODO: much of this is no longer needed when we fix PackageDataFormatMojo to do the grunt work for us!
 
         // need to capture which maven projects we have data formats within, so we can enrich the .json files with that data
         Map<String, DataFormatModel> models = new HashMap<String, DataFormatModel>();
@@ -736,51 +741,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 out.close();
             }
         }
-    }
-
-    /**
-     * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
-     * <p/>
-     * Warning, don't use for crazy big streams :)
-     */
-    public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    builder.append(line);
-                    builder.append("\n");
-                } else {
-                    break;
-                }
-            }
-            return builder.toString();
-        } finally {
-            isr.close();
-            in.close();
-        }
-    }
-
-    protected Map<String, String> parseAsMap(String data) {
-        Map<String, String> answer = new HashMap<String, String>();
-        String[] lines = data.split("\n");
-        for (String line : lines) {
-            int idx = line.indexOf('=');
-            if (idx != -1) {
-                String key = line.substring(0, idx);
-                String value = line.substring(idx + 1);
-                // remove ending line break for the values
-                value = value.trim().replaceAll("\n", "");
-                answer.put(key.trim(), value);
-            }
-        }
-        return answer;
     }
 
     private static class DataFormatModel {
