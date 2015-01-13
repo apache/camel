@@ -54,7 +54,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
     @Override
     public Promise<String> execute(final String input) throws WorkflowException {
         final Settable<String> result = new Settable<String>();
-        final AtomicReference<Promise> methodResult = new AtomicReference<Promise>();
+        final AtomicReference<Promise<?>> methodResult = new AtomicReference<Promise<?>>();
         new TryCatchFinally() {
 
             @Override
@@ -66,9 +66,9 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
                 Object r = swfWorkflowConsumer.processWorkflow(parameters, startTime, replaying);
                 if (r instanceof Promise) {
-                    methodResult.set((Promise) r);
+                    methodResult.set((Promise<?>) r);
                 } else if (r != null) {
-                    methodResult.set(new Settable(r));
+                    methodResult.set(new Settable<Object>(r));
                 }
             }
 
@@ -81,7 +81,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
             @Override
             protected void doFinally() throws Throwable {
-                Promise r = methodResult.get();
+                Promise<?> r = methodResult.get();
                 if (r == null || r.isReady()) {
                     Object workflowResult = r == null ? null : r.get();
                     String convertedResult = dataConverter.toData(workflowResult);
