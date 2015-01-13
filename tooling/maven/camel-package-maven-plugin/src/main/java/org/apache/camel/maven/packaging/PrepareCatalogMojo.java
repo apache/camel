@@ -28,6 +28,7 @@ import java.io.LineNumberReader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,13 +92,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
      * @parameter default-value="${project.build.directory}/../../..//components"
      */
     protected File componentsDir;
-
-    /**
-     * The dataformats directory where all the Apache Camel components are
-     *
-     * @parameter default-value="${project.build.directory}/../../..//dataformats"
-     */
-    protected File dataFormatsDir;
 
     /**
      * The camel-core directory where camel-core components are
@@ -353,16 +347,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> dataFormatFiles = new TreeSet<File>();
         Set<File> missingLabels = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Map<String, String> javaTypes = new HashMap<String, String>();
 
-        // find all dataformats and camel-core
-        if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
-            File[] dataFormats = dataFormatsDir.listFiles();
+        // find all data formats from the components directory
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] dataFormats = componentsDir.listFiles();
             if (dataFormats != null) {
                 for (File dir : dataFormats) {
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
                         findDataFormatFilesRecursive(target, dataFormatFiles, new CamelDataFormatsFileFilter());
                     }
+                    File javaTypesDir = new File(dir, "target/classes/META-INF/services/org/apache/camel/dataformat");
+                    findDataFormatJavaTypes(javaTypesDir, javaTypes);
                 }
             }
         }
@@ -375,12 +372,65 @@ public class PrepareCatalogMojo extends AbstractMojo {
             findDataFormatJsonFiles(target, jsonFiles);
         }
 
+        getLog().info("Found " + dataFormatFiles.size() + " dataformat.properties json files");
         getLog().info("Found " + jsonFiles.size() + " dataformat json files");
 
         // make sure to create out dir
         dataFormatsOutDir.mkdirs();
 
+        // need to capture which maven projects we have data formats within, so we can enrich the .json files with that data
+        Map<String, DataFormatModel> models = new HashMap<String, DataFormatModel>();
+
+        for (File file : dataFormatFiles) {
+            try {
+                String text = loadText(new FileInputStream(file));
+                Map<String, String> map = parseAsMap(text);
+
+                String[] names = map.get("dataFormats").split(" ");
+                for (String name : names) {
+                    DataFormatModel model = new DataFormatModel();
+                    model.setName(name);
+
+                    // TODO: we should likely use the description from the json files as-is
+                    String doc = map.get("projectDescription");
+                    if (doc != null) {
+                        model.setDescription(doc);
+                    } else {
+                        model.setDescription("");
+                    }
+                    if (map.containsKey("groupId")) {
+                        model.setGroupId(map.get("groupId"));
+                    } else {
+                        model.setGroupId("");
+                    }
+                    if (map.containsKey("artifactId")) {
+                        model.setArtifactId(map.get("artifactId"));
+                    } else {
+                        model.setArtifactId("");
+                    }
+                    if (map.containsKey("version")) {
+                        model.setVersionId(map.get("version"));
+                    } else {
+                        model.setVersionId("");
+                    }
+                    if (javaTypes.containsKey(name)) {
+                        model.setJavaType(javaTypes.get(name));
+                    } else {
+                        model.setJavaType("");
+                    }
+
+                    models.put(name, model);
+                    getLog().debug("Dataformat model: " + model);
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+
         for (File file : jsonFiles) {
+            // TODO: enrich json file with model data from above
+
             File to = new File(dataFormatsOutDir, file.getName());
             try {
                 copyFile(file, to);
@@ -609,6 +659,26 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    private void findDataFormatJavaTypes(File dir, Map<String, String> javaTypes) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                // name of file is the key
+                String name = file.getName();
+                try {
+                    String data = loadText(new FileInputStream(file));
+                    Map<String, String> map = parseAsMap(data);
+                    String javaType = map.get("class");
+                    if (name != null && javaType != null) {
+                        javaTypes.put(name, javaType);
+                    }
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
     private void findDataFormatJsonFiles(File dir, Set<File> jsonFiles) {
         File[] files = dir.listFiles();
         if (files != null) {
@@ -642,8 +712,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // do not check the camel-core model packages as there is no components there
                 return false;
             }
-            return pathname.isDirectory() || pathname.getName().endsWith(".json")
-                    || (pathname.isFile() && pathname.getName().equals("dataformat.properties"));
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("dataformat.properties"));
         }
     }
 
@@ -695,6 +764,91 @@ public class PrepareCatalogMojo extends AbstractMojo {
         } finally {
             isr.close();
             in.close();
+        }
+    }
+
+    protected Map<String, String> parseAsMap(String data) {
+        Map<String, String> answer = new HashMap<String, String>();
+        String[] lines = data.split("\n");
+        for (String line : lines) {
+            int idx = line.indexOf('=');
+            if (idx != -1) {
+                String key = line.substring(0, idx);
+                String value = line.substring(idx + 1);
+                // remove ending line break for the values
+                value = value.trim().replaceAll("\n", "");
+                answer.put(key.trim(), value);
+            }
+        }
+        return answer;
+    }
+
+    private static class DataFormatModel {
+        private String name;
+        private String description;
+        private String javaType;
+        private String groupId;
+        private String artifactId;
+        private String versionId;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getJavaType() {
+            return javaType;
+        }
+
+        public void setJavaType(String javaType) {
+            this.javaType = javaType;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public String getVersionId() {
+            return versionId;
+        }
+
+        public void setVersionId(String versionId) {
+            this.versionId = versionId;
+        }
+
+        @Override
+        public String toString() {
+            return "DataFormatModel["
+                    + "name='" + name + '\''
+                    + ", description='" + description + '\''
+                    + ", javaType='" + javaType + '\''
+                    + ", groupId='" + groupId + '\''
+                    + ", artifactId='" + artifactId + '\''
+                    + ", versionId='" + versionId + '\''
+                    + ']';
         }
     }
 
