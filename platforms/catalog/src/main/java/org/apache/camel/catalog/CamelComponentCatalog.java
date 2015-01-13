@@ -30,27 +30,29 @@ public interface CamelComponentCatalog {
     List<String> findComponentNames();
 
     /**
+     * Find all the data format names from the Camel catalog
+     */
+    List<String> findDataFormatNames();
+
+    /**
      * Find all the model names from the Camel catalog
      */
     List<String> findModelNames();
 
     /**
-     * Find all the model names from the Camel catalog that matches the label
-     */
-    List<String> findModelNames(String label);
-
-    /**
      * Find all the component names from the Camel catalog that matches the label
      */
-    List<String> findComponentNames(String label);
+    List<String> findComponentNames(String filter);
 
     /**
-     * Returns the model information as JSon format.
-     *
-     * @param name the model name
-     * @return model details in JSon
+     * Find all the data format names from the Camel catalog that matches the label
      */
-    String modelJSonSchema(String name);
+    List<String> findDataFormatNames(String filter);
+
+    /**
+     * Find all the model names from the Camel catalog that matches the label
+     */
+    List<String> findModelNames(String filter);
 
     /**
      * Returns the component information as JSon format.
@@ -61,11 +63,20 @@ public interface CamelComponentCatalog {
     String componentJSonSchema(String name);
 
     /**
-     * Find all the unique label names all the models are using.
+     * Returns the data format information as JSon format.
      *
-     * @return a set of all the labels.
+     * @param name the data format name
+     * @return data format details in JSon
      */
-    Set<String> findModelLabels();
+    String dataFormatJSonSchema(String name);
+
+    /**
+     * Returns the model information as JSon format.
+     *
+     * @param name the model name
+     * @return model details in JSon
+     */
+    String modelJSonSchema(String name);
 
     /**
      * Find all the unique label names all the components are using.
@@ -73,4 +84,18 @@ public interface CamelComponentCatalog {
      * @return a set of all the labels.
      */
     Set<String> findComponentLabels();
+
+    /**
+     * Find all the unique label names all the data formats are using.
+     *
+     * @return a set of all the labels.
+     */
+    Set<String> findDataFormatLabels();
+
+    /**
+     * Find all the unique label names all the models are using.
+     *
+     * @return a set of all the labels.
+     */
+    Set<String> findModelLabels();
 }

@@ -43,8 +43,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
- * Prepares the camel catalog to include component descriptors, and generates a report with components which have not been migrated
- * to include component json descriptors.
+ * Prepares the camel catalog to include component, data format, and eip descriptors,
+ * and generates a report.
  *
  * @goal prepare-catalog
  * @execute phase="process-resources"
@@ -72,6 +72,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File componentsOutDir;
 
     /**
+     * The output directory for dataformats catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
+     */
+    protected File dataFormatsOutDir;
+
+    /**
      * The output directory for models catalog
      *
      * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/models"
@@ -84,6 +91,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
      * @parameter default-value="${project.build.directory}/../../..//components"
      */
     protected File componentsDir;
+
+    /**
+     * The dataformats directory where all the Apache Camel components are
+     *
+     * @parameter default-value="${project.build.directory}/../../..//dataformats"
+     */
+    protected File dataFormatsDir;
 
     /**
      * The camel-core directory where camel-core components are
@@ -110,6 +124,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeModel();
         executeComponents();
+        executeDataFormats();
     }
 
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
@@ -330,6 +345,107 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels, usedLabels);
     }
 
+    protected void executeDataFormats() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying all Camel dataformat json descriptors");
+
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> dataFormatFiles = new TreeSet<File>();
+        Set<File> missingLabels = new TreeSet<File>();
+        Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+
+        // find all dataformats and camel-core
+        if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
+            File[] dataFormats = dataFormatsDir.listFiles();
+            if (dataFormats != null) {
+                for (File dir : dataFormats) {
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
+                        File target = new File(dir, "target/classes");
+                        findDataFormatFilesRecursive(target, dataFormatFiles, new CamelDataFormatsFileFilter());
+                    }
+                }
+            }
+        }
+        if (coreDir != null && coreDir.isDirectory()) {
+            File target = new File(coreDir, "target/classes");
+            findDataFormatFilesRecursive(target, dataFormatFiles, new CamelDataFormatsFileFilter());
+        }
+        if (coreDir != null && coreDir.isDirectory()) {
+            File target = new File(coreDir, "target/classes/org/apache/camel/model/dataformat");
+            findDataFormatJsonFiles(target, jsonFiles);
+        }
+
+        getLog().info("Found " + jsonFiles.size() + " dataformat json files");
+
+        // make sure to create out dir
+        dataFormatsOutDir.mkdirs();
+
+        for (File file : jsonFiles) {
+            File to = new File(dataFormatsOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+
+            // check if we have a label as we want the data format to include labels
+            try {
+                String text = loadText(new FileInputStream(file));
+                // just do a basic label check
+                if (text.contains("\"label\": \"\"")) {
+                    missingLabels.add(file);
+                } else {
+                    String name = asComponentName(file);
+                    Matcher matcher = LABEL_PATTERN.matcher(text);
+                    // grab the label, and remember it in the used labels
+                    if (matcher.find()) {
+                        String label = matcher.group(1);
+                        String[] labels = label.split(",");
+                        for (String s : labels) {
+                            Set<String> dataFormats = usedLabels.get(s);
+                            if (dataFormats == null) {
+                                dataFormats = new TreeSet<String>();
+                                usedLabels.put(s, dataFormats);
+                            }
+                            dataFormats.add(name);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        File all = new File(dataFormatsOutDir, "../dataformats.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = dataFormatsOutDir.list();
+            List<String> dataFormats = new ArrayList<String>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".json")) {
+                    // strip out .json from the name
+                    String dataFormatName = name.substring(0, name.length() - 5);
+                    dataFormats.add(dataFormatName);
+                }
+            }
+
+            Collections.sort(dataFormats);
+            for (String name : dataFormats) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+
+        printDataFormatsReport(jsonFiles, missingLabels, usedLabels);
+    }
+
     private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
 
@@ -420,6 +536,36 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
+    private void printDataFormatsReport(Set<File> json, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+        getLog().info("================================================================================");
+        getLog().info("");
+        getLog().info("Camel data format catalog report");
+        getLog().info("");
+        getLog().info("\tDataFormats found: " + json.size());
+        for (File file : json) {
+            getLog().info("\t\t" + asComponentName(file));
+        }
+        if (!missingLabels.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing labels detected: " + missingLabels.size());
+            for (File file : missingLabels) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!usedLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tUsed labels: " + usedLabels.size());
+            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                getLog().info("\t\t" + entry.getKey() + ":");
+                for (String name : entry.getValue()) {
+                    getLog().info("\t\t\t" + name);
+                }
+            }
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
+    }
+
     private static String asComponentName(File file) {
         String name = file.getName();
         if (name.endsWith(".json")) {
@@ -447,6 +593,34 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    private void findDataFormatFilesRecursive(File dir, Set<File> dataFormats, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
+                if (dataFormatFile) {
+                    dataFormats.add(file);
+                } else if (file.isDirectory()) {
+                    findDataFormatFilesRecursive(file, dataFormats, filter);
+                }
+            }
+        }
+    }
+
+    private void findDataFormatJsonFiles(File dir, Set<File> jsonFiles) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
+                if (jsonFile) {
+                    jsonFiles.add(file);
+                }
+            }
+        }
+    }
+
     private class CamelComponentsFileFilter implements FileFilter {
 
         @Override
@@ -457,6 +631,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
             return pathname.isDirectory() || pathname.getName().endsWith(".json")
                     || (pathname.isFile() && pathname.getName().equals("component.properties"));
+        }
+    }
+
+    private class CamelDataFormatsFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.isDirectory() && pathname.getName().equals("model")) {
+                // do not check the camel-core model packages as there is no components there
+                return false;
+            }
+            return pathname.isDirectory() || pathname.getName().endsWith(".json")
+                    || (pathname.isFile() && pathname.getName().equals("dataformat.properties"));
         }
     }
 
