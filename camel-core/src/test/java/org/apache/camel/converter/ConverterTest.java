@@ -52,7 +52,7 @@ public class ConverterTest extends TestCase {
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver(null)));
+            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         public void setAsText(String text) throws IllegalArgumentException {

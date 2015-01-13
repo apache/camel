@@ -53,7 +53,7 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
         this.configuration = configuration;
         this.channelFactory = channelFactory;
         // fallback and use default resolver
-        this.classResolver = classResolver != null ? classResolver : new DefaultClassResolver(null);
+        this.classResolver = classResolver != null ? classResolver : new DefaultClassResolver();
 
         try {
             this.sslContext = createSSLContext();

@@ -32,7 +32,7 @@ public class XStreamDataFormatDriverConfigTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setXstreamDriver(new JsonHierarchicalStreamDriver());
 
-        XStream xStream = xStreamDataFormat.createXStream(new DefaultClassResolver(context));
+        XStream xStream = xStreamDataFormat.createXStream(new DefaultClassResolver());
         String marshalledOrder = xStream.toXML(purchaseOrder);
 
         assertEquals("{", marshalledOrder.substring(0, 1));

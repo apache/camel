@@ -45,7 +45,7 @@ public class JcrConverterTest extends Assert {
     @Before
     public void init() throws Exception {
         converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-                new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver(null)));
+                new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
         ServiceHelper.startService(converter);
     }
 

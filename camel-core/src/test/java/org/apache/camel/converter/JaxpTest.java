@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class JaxpTest extends TestCase {
     private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver(null)));
+            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 
     @Override
     protected void setUp() throws Exception {

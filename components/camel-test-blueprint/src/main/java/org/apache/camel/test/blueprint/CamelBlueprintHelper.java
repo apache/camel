@@ -76,7 +76,7 @@ public final class CamelBlueprintHelper {
     public static final String BUNDLE_FILTER = "(Bundle-SymbolicName=*)";
     public static final String BUNDLE_VERSION = "1.0.0";
     private static final Logger LOG = LoggerFactory.getLogger(CamelBlueprintHelper.class);
-    private static final ClassResolver RESOLVER = new DefaultClassResolver(null);
+    private static final ClassResolver RESOLVER = new DefaultClassResolver();
 
     private CamelBlueprintHelper() {
     }

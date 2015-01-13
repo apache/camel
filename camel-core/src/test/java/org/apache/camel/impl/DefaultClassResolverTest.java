@@ -27,43 +27,43 @@ import junit.framework.TestCase;
 public class DefaultClassResolverTest extends TestCase {
 
     public void testResolveClass() {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<?> clazz = resolver.resolveClass("java.lang.Integer");
         assertNotNull(clazz);
     }
 
     public void testResolveClassType() {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<Integer> clazz = resolver.resolveClass("java.lang.Integer", Integer.class);
         assertNotNull(clazz);
     }
 
     public void testResolveClassClassLoader() {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<?> clazz = resolver.resolveClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
     public void testResolveClassClassLoaderType() {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<Integer> clazz = resolver.resolveClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
     public void testResolveMandatoryClass() throws Exception {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<?> clazz = resolver.resolveMandatoryClass("java.lang.Integer");
         assertNotNull(clazz);
     }
 
     public void testResolveMandatoryClassType()throws Exception {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class);
         assertNotNull(clazz);
     }
 
     public void testResolveMandatorySimpleClassType()throws Exception {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
 
         Class<Byte> clazz = resolver.resolveMandatoryClass("Byte", Byte.class);
         assertNotNull(clazz);
@@ -97,19 +97,19 @@ public class DefaultClassResolverTest extends TestCase {
     }
 
     public void testResolveMandatoryClassClassLoader() throws Exception {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<?> clazz = resolver.resolveMandatoryClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
     public void testResolveMandatoryClassClassLoaderType() throws Exception {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class, DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
     public void testResolveMandatoryClassNotFound()  {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         try {
             resolver.resolveMandatoryClass("com.FooBar");
             fail("Should thrown an exception");
@@ -119,13 +119,13 @@ public class DefaultClassResolverTest extends TestCase {
     }
 
     public void testLoadResourceAsUri() {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         URL url = resolver.loadResourceAsURL("log4j.properties");
         assertNotNull(url);
     }
 
     public void testLoadResourceAsStream() {
-        DefaultClassResolver resolver = new DefaultClassResolver(null);
+        DefaultClassResolver resolver = new DefaultClassResolver();
         InputStream is = resolver.loadResourceAsStream("log4j.properties");
         assertNotNull(is);
     }
