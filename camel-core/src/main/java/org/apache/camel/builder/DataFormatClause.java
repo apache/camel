@@ -19,6 +19,8 @@ package org.apache.camel.builder;
 import java.util.Map;
 import java.util.zip.Deflater;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
@@ -51,7 +53,6 @@ import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.w3c.dom.Node;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
@@ -262,7 +263,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the iCal data format
      */
-    public T iCal(boolean validating) {
+    public T ical(boolean validating) {
         IcalDataFormat ical = new IcalDataFormat();
         ical.setValidating(validating);
         return dataFormat(ical);
