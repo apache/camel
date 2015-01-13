@@ -16,15 +16,11 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -347,10 +343,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // lets use sorted set/maps
         Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> dataFormatFiles = new TreeSet<File>();
         Set<File> missingLabels = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
-        Map<String, String> javaTypes = new HashMap<String, String>();
 
         // find all data formats from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -359,20 +355,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (File dir : dataFormats) {
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findDataFormatFilesRecursive(target, dataFormatFiles, new CamelDataFormatsFileFilter());
+                        findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
                     }
-                    File javaTypesDir = new File(dir, "target/classes/META-INF/services/org/apache/camel/dataformat");
-                    findDataFormatJavaTypes(javaTypesDir, javaTypes);
                 }
             }
         }
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes");
-            findDataFormatFilesRecursive(target, dataFormatFiles, new CamelDataFormatsFileFilter());
-        }
-        if (coreDir != null && coreDir.isDirectory()) {
-            File target = new File(coreDir, "target/classes/org/apache/camel/model/dataformat");
-            findDataFormatJsonFiles(target, jsonFiles);
+            findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
         }
 
         getLog().info("Found " + dataFormatFiles.size() + " dataformat.properties json files");
@@ -381,62 +371,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // make sure to create out dir
         dataFormatsOutDir.mkdirs();
 
-        // TODO: much of this is no longer needed when we fix PackageDataFormatMojo to do the grunt work for us!
-
-        // need to capture which maven projects we have data formats within, so we can enrich the .json files with that data
-        Map<String, DataFormatModel> models = new HashMap<String, DataFormatModel>();
-
-        for (File file : dataFormatFiles) {
-            try {
-                String text = loadText(new FileInputStream(file));
-                Map<String, String> map = parseAsMap(text);
-
-                String[] names = map.get("dataFormats").split(" ");
-                for (String name : names) {
-                    DataFormatModel model = new DataFormatModel();
-                    model.setName(name);
-
-                    // TODO: we should likely use the description from the json files as-is
-                    String doc = map.get("projectDescription");
-                    if (doc != null) {
-                        model.setDescription(doc);
-                    } else {
-                        model.setDescription("");
-                    }
-                    if (map.containsKey("groupId")) {
-                        model.setGroupId(map.get("groupId"));
-                    } else {
-                        model.setGroupId("");
-                    }
-                    if (map.containsKey("artifactId")) {
-                        model.setArtifactId(map.get("artifactId"));
-                    } else {
-                        model.setArtifactId("");
-                    }
-                    if (map.containsKey("version")) {
-                        model.setVersionId(map.get("version"));
-                    } else {
-                        model.setVersionId("");
-                    }
-                    if (javaTypes.containsKey(name)) {
-                        model.setJavaType(javaTypes.get(name));
-                    } else {
-                        model.setJavaType("");
-                    }
-
-                    models.put(name, model);
-                    getLog().debug("Dataformat model: " + model);
-                }
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-
         for (File file : jsonFiles) {
-            // TODO: enrich json file with model data from above
-
             File to = new File(dataFormatsOutDir, file.getName());
+            if (to.exists()) {
+                duplicateJsonFiles.add(to);
+                getLog().warn("Duplicate dataformat name detected: " + to);
+            }
             try {
                 copyFile(file, to);
             } catch (IOException e) {
@@ -498,7 +438,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printDataFormatsReport(jsonFiles, missingLabels, usedLabels);
+        printDataFormatsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
     }
 
     private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
@@ -591,7 +531,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printDataFormatsReport(Set<File> json, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+    private void printDataFormatsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel data format catalog report");
@@ -599,6 +539,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("\tDataFormats found: " + json.size());
         for (File file : json) {
             getLog().info("\t\t" + asComponentName(file));
+        }
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate dataformat detected: " + duplicate.size());
+            for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
         }
         if (!missingLabels.isEmpty()) {
             getLog().info("");
@@ -648,49 +595,20 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    private void findDataFormatFilesRecursive(File dir, Set<File> dataFormats, FileFilter filter) {
+    private void findDataFormatFilesRecursive(File dir, Set<File> found, Set<File> dataFormats, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
                 // skip files in root dirs as Camel does not store information there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
-                if (dataFormatFile) {
+                if (jsonFile) {
+                    found.add(file);
+                } else if (dataFormatFile) {
                     dataFormats.add(file);
                 } else if (file.isDirectory()) {
-                    findDataFormatFilesRecursive(file, dataFormats, filter);
-                }
-            }
-        }
-    }
-
-    private void findDataFormatJavaTypes(File dir, Map<String, String> javaTypes) {
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                // name of file is the key
-                String name = file.getName();
-                try {
-                    String data = loadText(new FileInputStream(file));
-                    Map<String, String> map = parseAsMap(data);
-                    String javaType = map.get("class");
-                    if (name != null && javaType != null) {
-                        javaTypes.put(name, javaType);
-                    }
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-    }
-
-    private void findDataFormatJsonFiles(File dir, Set<File> jsonFiles) {
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
-                if (jsonFile) {
-                    jsonFiles.add(file);
+                    findDataFormatFilesRecursive(file, found, dataFormats, filter);
                 }
             }
         }
@@ -704,8 +622,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // do not check the camel-core model packages as there is no components there
                 return false;
             }
-            return pathname.isDirectory() || pathname.getName().endsWith(".json")
-                    || (pathname.isFile() && pathname.getName().equals("component.properties"));
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a components json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"component\":");
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("component.properties"));
         }
     }
 
@@ -716,6 +642,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
                 // do not check the camel-core model packages as there is no components there
                 return false;
+            }
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a dataformat json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"dataformat\":");
+                } catch (IOException e) {
+                    // ignore
+                }
             }
             return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("dataformat.properties"));
         }
