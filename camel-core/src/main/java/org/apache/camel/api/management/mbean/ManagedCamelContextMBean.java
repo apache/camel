@@ -268,6 +268,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
+     * Returns the JSON schema representation with information about the data format and the parameters it supports
+     *
+     * @param dataFormatName the name of the data format to lookup
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Returns the JSON schema representation of the data format parameters for the given data format name")
+    String dataFormatParameterJsonSchema(String dataFormatName) throws Exception;
+
+    /**
      * Returns the JSON schema representation with information about the EIP and the parameters it supports
      *
      * @param eipName the name of the EIP to lookup

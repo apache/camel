@@ -1199,6 +1199,21 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException {
+        String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + "/dataformat" + "/" + dataFormatName + ".json";
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        if (inputStream != null) {
+            log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", new Object[]{dataFormatName, resolver, inputStream});
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
+    }
+
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until we find it
         String[] subPackages = new String[]{"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest"};
@@ -1207,7 +1222,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
             if (inputStream != null) {
-                log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", new Object[]{eipName, resolver, inputStream});
+                log.debug("Loading eip JSON Schema for: {} using class resolver: {} -> {}", new Object[]{eipName, resolver, inputStream});
                 try {
                     return IOHelper.loadText(inputStream);
                 } finally {
