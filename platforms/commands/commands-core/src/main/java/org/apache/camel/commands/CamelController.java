@@ -273,4 +273,21 @@ public interface CamelController {
      */
     Map<String, Set<String>> listComponentsLabelCatalog() throws Exception;
 
+    /**
+     * Lists all data formats from the Camel components catalog
+     *
+     * @param filter optional filter to filter by labels
+     * @return a list of key/value pairs with data format information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> listDataFormatsCatalog(String filter) throws Exception;
+
+    /**
+     * Lists all the labels from the Camel data formats catalog
+     *
+     * @return a map which key is the label, and the set is the data format names that has the given label
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Set<String>> listDataFormatsLabelCatalog() throws Exception;
+
 }

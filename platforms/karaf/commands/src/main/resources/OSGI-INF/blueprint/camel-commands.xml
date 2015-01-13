@@ -220,8 +220,18 @@
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
-    <command name="camel/catalog-label-list">
+    <command name="camel/catalog-component-label-list">
       <action class="org.apache.camel.karaf.commands.CatalogComponentLabelList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-dataformat-list">
+      <action class="org.apache.camel.karaf.commands.CatalogDataFormatList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-dataformat-label-list">
+      <action class="org.apache.camel.karaf.commands.CatalogDataFormatLabelList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
