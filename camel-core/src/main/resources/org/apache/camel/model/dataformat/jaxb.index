@@ -27,6 +27,7 @@ DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat
 HL7DataFormat
+IcalDataFormat
 JaxbDataFormat
 JibxDataFormat
 JsonDataFormat
