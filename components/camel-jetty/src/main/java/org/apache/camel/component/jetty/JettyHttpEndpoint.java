@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.Filter;
 
 import org.apache.camel.Consumer;
@@ -97,6 +98,8 @@ public class JettyHttpEndpoint extends HttpEndpoint {
             if (httpClientParameters != null) {
                 // copy parameters as we need to re-use them again if creating a new producer later
                 Map<String, Object> params = new HashMap<String, Object>(httpClientParameters);
+                // Can not be set on httpClient for jetty 9
+                params.remove("timeout");
                 IntrospectionSupport.setProperties(httpClient, params);
                 // validate we could set all parameters
                 if (params.size() > 0) {

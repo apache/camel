@@ -53,7 +53,7 @@ public class JettyHttpProducerRedirectTest extends BaseJettyTest {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
-                            exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
+                            exchange.getOut().setHeader("Location", "http://localhost:" + getPort() + "/newtest");
                         }
                     });
             }

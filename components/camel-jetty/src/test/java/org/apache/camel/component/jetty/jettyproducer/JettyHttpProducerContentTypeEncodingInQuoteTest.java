@@ -44,7 +44,7 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
         Exchange out = template.send("jetty:http://localhost:{{port}}/myapp/myservice", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
+                exchange.getIn().setHeader("Content-Type", "text/plain;charset=\"UTF-8\"");
             }
         });
 
@@ -73,7 +73,7 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
         Exchange out = template.send("jetty:http://localhost:{{port}}/myapp/myservice", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader("Content-Type", "text/plain;charset=\"utf-8\";action=\"http://somewhere.com/foo\"");
+                exchange.getIn().setHeader("Content-Type", "text/plain;charset=\"UTF-8\";action=\"http://somewhere.com/foo\"");
             }
         });
 
@@ -82,8 +82,8 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
         assertEquals("OK", out.getOut().getBody(String.class));
         // camel-jetty may remove quotes from charset
         String res = out.getOut().getHeader("Content-Type").toString();
-        res = res.replace("\"utf-8\"", "utf-8");
-        assertEquals("text/plain;charset=utf-8;action=\"http://somewhere.com/foo\"", res);
+        res = res.replace("\"UTF-8\"", "UTF-8");
+        assertEquals("text/plain;charset=UTF-8;action=\"http://somewhere.com/foo\"", res);
     }
 
     @Override

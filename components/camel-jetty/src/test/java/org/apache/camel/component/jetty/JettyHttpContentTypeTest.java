@@ -19,38 +19,47 @@ package org.apache.camel.component.jetty;
 import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class JettyHttpContentTypeTest extends BaseJettyTest {
 
+    private static final String CHARSET = "ISO-8859-1";
+
     @Test
     public void testContentType() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=\"iso-8859-1\"");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                                                             "text/plain; charset=\"" + CHARSET + "\"");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, CHARSET);
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL,
+                                                             "http://0.0.0.0:" + getPort() + "/foo");
+        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, CHARSET);
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
+        byte[] data = "Hello World".getBytes(Charset.forName(CHARSET));
         String out = template.requestBodyAndHeader("jetty:http://0.0.0.0:{{port}}/foo", data,
-                "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
+                "content-type", "text/plain; charset=\"" + CHARSET + "\"", String.class);
         assertEquals("Bye World", out);
 
+        Exchange exchange = getMockEndpoint("mock:input").getExchanges().get(0);
+        Message in = exchange.getIn();
+        System.out.println(in.getHeaders());
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testContentTypeWithAction() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                                                             "text/plain;charset=\"" + CHARSET + "\";action=\"http://somewhere.com/foo\"");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, CHARSET);
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
-        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, CHARSET);
 
-        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
+        byte[] data = "Hello World".getBytes(Charset.forName(CHARSET));
         String out = template.requestBodyAndHeader("jetty:http://0.0.0.0:{{port}}/foo", data,
-                "content-type", "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"", String.class);
+                "content-type", "text/plain;charset=\"" + CHARSET + "\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

@@ -20,10 +20,13 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.http.DefaultHttpBinding;
+import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.eclipse.jetty.server.Server;
 import org.junit.BeforeClass;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
@@ -98,4 +101,19 @@ public abstract class BaseJettyTest extends CamelTestSupport {
             return 9;
         }
     }
+
+    protected void allowNullHeaders() {
+        JettyHttpComponent jetty = (JettyHttpComponent)context.getComponent("jetty");
+        HttpHeaderFilterStrategy filterStrat = new HttpHeaderFilterStrategy();
+        filterStrat.setAllowNullValues(true);
+        @SuppressWarnings("deprecation")
+        DefaultHttpBinding httpBinding = new DefaultHttpBinding(filterStrat);
+        jetty.setHttpBinding(httpBinding);
+    }
+
+    protected boolean isJetty8() {
+        String majorVersion = Server.getVersion().split("\\.")[0];
+        return "8".equals(majorVersion);
+    }
+
 }

@@ -30,6 +30,7 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest 
     }
 
     @Test
+    //@Ignore for jetty 9
     public void testUnknownProperty() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,7 +52,7 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest 
             context.start();
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"));
+            assertTrue("Actual message: " + e.getMessage(), e.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"));
         }
     }
 

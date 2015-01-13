@@ -30,6 +30,7 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
     }
 
     @Test
+    //@Ignore SocketConnector props do not work for jetty 9
     public void testUnknownProperty() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

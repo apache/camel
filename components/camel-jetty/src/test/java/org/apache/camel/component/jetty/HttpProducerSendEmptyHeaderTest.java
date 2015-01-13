@@ -29,7 +29,10 @@ public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
     public void testHttpProducerSendEmptyHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("foo", "");
+        
+        // Jetty 8 treats an empty header as "" while Jetty 9 treats it as null
+        String expectedValue = isJetty8() ? "" : null; 
+        mock.expectedHeaderReceived("foo", expectedValue);
 
         template.sendBodyAndHeader("http://localhost:{{port}}/myapp/mytest", "Hello World", "foo", "");
 
@@ -38,6 +41,7 @@ public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        allowNullHeaders();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

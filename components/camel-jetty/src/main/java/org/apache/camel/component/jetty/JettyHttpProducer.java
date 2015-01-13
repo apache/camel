@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.component.jetty8.JettyContentExchange8;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -115,9 +116,20 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
         HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
         String method = methodToUse.createMethod(url).getName();
 
-        JettyContentExchange httpExchange = new JettyContentExchange(exchange, getBinding(), client);
+        JettyContentExchange httpExchange = new JettyContentExchange8(exchange, getBinding(), client);
+        httpExchange.setURL(url); // Url has to be set first
         httpExchange.setMethod(method);
-        httpExchange.setURL(url);
+        
+        if (getEndpoint().getHttpClientParameters() != null) {
+            String timeout = (String)getEndpoint().getHttpClientParameters().get("timeout");
+            if (timeout != null) {
+                httpExchange.setTimeout(new Long(timeout));
+            }
+            String supportRedirect = (String)getEndpoint().getHttpClientParameters().get("supportRedirect");
+            if (supportRedirect != null) {
+                httpExchange.setSupportRedirect(new Boolean(supportRedirect));
+            }
+        }
 
         LOG.trace("Using URL: {} with method: {}", url, method);
 
