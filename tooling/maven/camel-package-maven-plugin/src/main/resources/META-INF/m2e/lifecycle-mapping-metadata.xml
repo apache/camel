@@ -20,6 +20,7 @@
       <pluginExecutionFilter>
         <goals>
           <goal>generate-components-list</goal>
+          <goal>generate-dataformats-list</goal>
         </goals>
       </pluginExecutionFilter>
       <action>

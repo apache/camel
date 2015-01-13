@@ -193,6 +193,7 @@
                                     <versionRange>${project.version}</versionRange>
                                     <goals>
                                         <goal>generate-components-list</goal>
+                                        <goal>generate-dataformats-list</goal>
                                     </goals>
                                 </pluginExecutionFilter>
                                 <action>
@@ -281,6 +282,7 @@
             <id>components</id>
             <goals>
               <goal>generate-components-list</goal>
+              <goal>generate-dataformats-list</goal>
             </goals>
             <phase>generate-resources</phase>
           </execution>
