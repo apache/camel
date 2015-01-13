@@ -2162,6 +2162,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             setApplicationContextClassLoader(cl);
         }
+        if (classResolver instanceof CamelContextAware) {
+            ((CamelContextAware) classResolver).setCamelContext(this);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
