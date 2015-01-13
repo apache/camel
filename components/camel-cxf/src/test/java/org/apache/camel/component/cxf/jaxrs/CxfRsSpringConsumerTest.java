@@ -37,15 +37,17 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     
     
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final Processor testProcessor = new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // just throw the CustomException here
+                throw new CustomException("Here is the exception");
+            }  
+        };
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(new NoErrorHandlerBuilder());
-                from("cxfrs://bean://rsServer").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // just throw the CustomException here
-                        throw new CustomException("Here is the exception");
-                    }  
-                });
+                from("cxfrs://bean://rsServer").process(testProcessor);
+                from("cxfrs://bean://rsServer2").process(testProcessor);
             }
         };
     }
@@ -58,7 +60,17 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     
     @Test
     public void testMappingException() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126");
+        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126";
+        doTestMappingException(address);
+    }
+    @Test
+    public void testMappingException2() throws Exception {
+        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest2/customerservice/customers/126";
+        doTestMappingException(address);
+    }
+    
+    private void doTestMappingException(String address) throws Exception {
+        HttpGet get = new HttpGet(address);
         get.addHeader("Accept" , "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 

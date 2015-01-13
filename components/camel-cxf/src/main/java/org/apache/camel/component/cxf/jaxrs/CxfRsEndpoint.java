@@ -47,6 +47,7 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.logging.FaultListener;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
@@ -207,12 +208,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             sfb.setAddress(getAddress());
         }
         if (getResourceClasses() != null) {
-            List<Class<?>> res = getResourceClasses();
-            // setup the resource providers
-            for (Class<?> clazz : res) {
-                sfb.setResourceProvider(clazz, new CamelResourceProvider(clazz));
+            sfb.setResourceClasses(getResourceClasses());
+        }
+        
+        // setup the resource providers for interfaces
+        List<ClassResourceInfo> cris = sfb.getServiceFactory().getClassResourceInfo();
+        for (ClassResourceInfo cri : cris) {
+            final Class<?> serviceClass = cri.getServiceClass(); 
+            if (serviceClass.isInterface()) {
+                cri.setResourceProvider(new CamelResourceProvider(serviceClass)); 
             }
-            sfb.setResourceClasses(res);
         }
         setupCommonFactoryProperties(sfb);
         sfb.setStart(false);
