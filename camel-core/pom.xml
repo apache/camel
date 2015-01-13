@@ -282,7 +282,6 @@
             <id>components</id>
             <goals>
               <goal>generate-components-list</goal>
-              <goal>generate-dataformats-list</goal>
             </goals>
             <phase>generate-resources</phase>
           </execution>
@@ -290,6 +289,14 @@
             <id>eips</id>
             <goals>
               <goal>generate-eips-list</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+          <!-- camel-core needs to generate dataformats after compilation -->
+          <execution>
+            <id>dataformats</id>
+            <goals>
+              <goal>generate-dataformats-list</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>

@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class StringDataFormatConfigurationAndDocumentationTest extends ContextTestSupport {
@@ -29,14 +28,14 @@ public class StringDataFormatConfigurationAndDocumentationTest extends ContextTe
     }
 
     @Test
-    @Ignore
     public void testDataFormatJsonSchema() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getDataFormatParameterJsonSchema("string");
         assertNotNull("Should have found some auto-generated JSON", json);
         log.info(json);
 
-        assertTrue(json.contains("\"description\": \"Represents the String (text based) DataFormat\""));
+        assertTrue(json.contains("\"name\": \"string\""));
+        assertTrue(json.contains("\"modelName\": \"string\""));
         assertTrue(json.contains("\"charset\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\" }"));
     }
 
