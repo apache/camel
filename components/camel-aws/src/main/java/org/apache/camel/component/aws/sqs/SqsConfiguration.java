@@ -58,6 +58,7 @@ public class SqsConfiguration {
     private Integer defaultVisibilityTimeout;
     @UriParam(defaultValue = "false")
     private Boolean extendMessageVisibility = Boolean.FALSE;
+    @UriParam(defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
     // producer properties
