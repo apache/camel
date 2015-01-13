@@ -1200,18 +1200,34 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException {
-        String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + "/dataformat" + "/" + dataFormatName + ".json";
-        ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        if (inputStream != null) {
-            log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", new Object[]{dataFormatName, resolver, inputStream});
-            try {
-                return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
+        // use the dataformat factory finder to find the package name of the dataformat class, which is the location
+        // where the documentation exists as well
+        FactoryFinder finder = getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH);
+        try {
+            Class<?> clazz = finder.findClass(dataFormatName);
+            if (clazz == null) {
+                return null;
             }
+
+            String packageName = clazz.getPackage().getName();
+            packageName = packageName.replace('.', '/');
+            String path = packageName + "/" + dataFormatName + ".json";
+
+            ClassResolver resolver = getClassResolver();
+            InputStream inputStream = resolver.loadResourceAsStream(path);
+            log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", new Object[]{dataFormatName, resolver, inputStream});
+            if (inputStream != null) {
+                try {
+                    return IOHelper.loadText(inputStream);
+                } finally {
+                    IOHelper.close(inputStream);
+                }
+            }
+            return null;
+
+        } catch (ClassNotFoundException e) {
+            return null;
         }
-        return null;
     }
 
     public String getEipParameterJsonSchema(String eipName) throws IOException {

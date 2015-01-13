@@ -138,47 +138,48 @@ public class PackageDataFormatMojo extends AbstractMojo {
             Artifact camelCore = findCamelCoreArtifact(project);
             if (camelCore != null) {
                 File core = camelCore.getFile();
-                URL url = new URL("file", null, core.getAbsolutePath());
-                URLClassLoader loader = new URLClassLoader(new URL[]{url});
+                if (core != null) {
+                    URL url = new URL("file", null, core.getAbsolutePath());
+                    URLClassLoader loader = new URLClassLoader(new URL[]{url});
+                    for (String name : javaTypes.keySet()) {
+                        InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + name + ".json");
+                        if (is != null) {
+                            String json = loadText(is);
+                            if (json != null) {
+                                DataFormatModel dataFormatModel = new DataFormatModel();
+                                dataFormatModel.setName(name);
+                                dataFormatModel.setDescription(project.getDescription());
+                                dataFormatModel.setJavaType(javaTypes.get(name));
+                                dataFormatModel.setGroupId(project.getGroupId());
+                                dataFormatModel.setArtifactId(project.getArtifactId());
+                                dataFormatModel.setVersion(project.getVersion());
 
-                for (String name : javaTypes.keySet()) {
-                    InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + name + ".json");
-                    if (is != null) {
-                        String json = loadText(is);
-                        if (json != null) {
-                            DataFormatModel dataFormatModel = new DataFormatModel();
-                            dataFormatModel.setName(name);
-                            dataFormatModel.setDescription(project.getDescription());
-                            dataFormatModel.setJavaType(javaTypes.get(name));
-                            dataFormatModel.setGroupId(project.getGroupId());
-                            dataFormatModel.setArtifactId(project.getArtifactId());
-                            dataFormatModel.setVersion(project.getVersion());
-
-                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                            for (Map<String, String> row : rows) {
-                                if (row.containsKey("label")) {
-                                    dataFormatModel.setLabel(row.get("label"));
-                                } else {
-                                    dataFormatModel.setLabel("");
+                                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                                for (Map<String, String> row : rows) {
+                                    if (row.containsKey("label")) {
+                                        dataFormatModel.setLabel(row.get("label"));
+                                    } else {
+                                        dataFormatModel.setLabel("");
+                                    }
                                 }
+                                getLog().debug("Model " + dataFormatModel);
+
+                                // build json schema for the data format
+                                String properties = after(json, "  \"properties\": {");
+                                String schema = createParameterJsonSchema(dataFormatModel, properties);
+                                getLog().debug("JSon schema\n" + schema);
+
+                                // write this to the directory
+                                File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
+                                dir.mkdirs();
+
+                                File out = new File(dir, name + ".json");
+                                FileOutputStream fos = new FileOutputStream(out, false);
+                                fos.write(schema.getBytes());
+                                fos.close();
+
+                                getLog().info("Generated " + out + " containing JSon schema for " + name + " data format");
                             }
-                            getLog().debug("Model " + dataFormatModel);
-
-                            // build json schema for the data format
-                            String properties = after(json, "  \"properties\": {");
-                            String schema = createParameterJsonSchema(dataFormatModel, properties);
-                            getLog().debug("JSon schema\n" + schema);
-
-                            // write this to the directory
-                            File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
-                            dir.mkdirs();
-
-                            File out = new File(dir, name + ".json");
-                            FileOutputStream fos = new FileOutputStream(out, false);
-                            fos.write(schema.getBytes());
-                            fos.close();
-
-                            getLog().info("Generated " + out + " containing JSon schema for " + name + " data format");
                         }
                     }
                 }
@@ -218,16 +219,16 @@ public class PackageDataFormatMojo extends AbstractMojo {
     }
 
     private Artifact findCamelCoreArtifact(MavenProject project) {
-        Iterator it = project.getArtifacts().iterator();
-        while (it.hasNext()) {
-            Artifact artifact = (Artifact) it.next();
-            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
-                return artifact;
-            }
+        // maybe this project is camel-core itself
+        Artifact artifact = project.getArtifact();
+        if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
+            return artifact;
         }
-        it = project.getDependencyArtifacts().iterator();
+
+        // or its a component which has a dependency to camel-core
+        Iterator it = project.getDependencyArtifacts().iterator();
         while (it.hasNext()) {
-            Artifact artifact = (Artifact) it.next();
+            artifact = (Artifact) it.next();
             if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
                 return artifact;
             }
