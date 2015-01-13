@@ -260,6 +260,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
+        getLog().info("Found " + componentFiles.size() + " component.properties files");
         getLog().info("Found " + jsonFiles.size() + " component json files");
 
         // make sure to create out dir
@@ -365,7 +366,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
         }
 
-        getLog().info("Found " + dataFormatFiles.size() + " dataformat.properties json files");
+        getLog().info("Found " + dataFormatFiles.size() + " dataformat.properties files");
         getLog().info("Found " + jsonFiles.size() + " dataformat json files");
 
         // make sure to create out dir

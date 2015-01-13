@@ -162,10 +162,11 @@ public abstract class AbstractCamelController implements CamelController {
         for (String name : names) {
             // load dataformat json data, and parse it to gather the dataformat meta-data
             String json = catalog.dataFormatJSonSchema(name);
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("model", json, false);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("dataformat", json, false);
 
             String description = null;
             String label = null;
+            String modelName = name;
             // the status can be:
             // - loaded = in use
             // - classpath = on the classpath
@@ -176,7 +177,9 @@ public abstract class AbstractCamelController implements CamelController {
             String artifactId = null;
             String version = null;
             for (Map<String, String> row : rows) {
-                if (row.containsKey("description")) {
+                if (row.containsKey("modelName")) {
+                    modelName = row.get("modelName");
+                } else if (row.containsKey("description")) {
                     description = row.get("description");
                 } else if (row.containsKey("label")) {
                     label = row.get("label");
@@ -193,6 +196,7 @@ public abstract class AbstractCamelController implements CamelController {
 
             Map<String, String> row = new HashMap<String, String>();
             row.put("name", name);
+            row.put("modelName", modelName);
             row.put("status", status);
             if (description != null) {
                 row.put("description", description);

@@ -30,6 +30,7 @@ import org.apache.camel.spi.Label;
  * Represents the ZIP file XML {@link org.apache.camel.spi.DataFormat}.
  */
 @Label("dataformat,transformation")
+// TODO: use zipfile as name in Camel 3.0
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
