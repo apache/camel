@@ -20,11 +20,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a ${name} endpoint.
  */
+@UriEndpoint(scheme = "${scheme}", consumerClass = ${name}Consumer.class, label = "${name}")
 public class ${name}Endpoint extends DefaultEndpoint {
+    @UriParam(defaultValue = "10")
+    private int option1 = 10;
 
     public ${name}Endpoint() {
     }
