@@ -149,10 +149,7 @@ public class CassandraAggregationRepositoryTest {
     public void testGetKeys() {
         // Given
         String[] keys = {"GetKeys1", "GetKeys2"};
-        for (String key : keys) {
-            Exchange exchange = new DefaultExchange(camelContext);
-            aggregationRepository.add(camelContext, key, exchange);
-        }
+        addExchanges(keys);
         // When
         Set<String> keySet = aggregationRepository.getKeys();
         // Then
@@ -182,19 +179,53 @@ public class CassandraAggregationRepositoryTest {
     @Test
     public void testConfirmNotExist() {
         // Given
+        String[] keys=new String[3];
         for (int i = 1; i < 4; i++) {
-            String key = "Confirm_" + i;
-            Exchange exchange = new DefaultExchange(camelContext);
-            exchange.setExchangeId("Exchange_" + i);
-            aggregationRepository.add(camelContext, key, exchange);
+            keys[i-1] = "Confirm" + i; 
+        }
+        addExchanges(keys);
+        for(String key:keys) {
             assertTrue(exists(key));
         }
         // When
-        aggregationRepository.confirm(camelContext, "Exchange_5");
+        aggregationRepository.confirm(camelContext, "Exchange-Confirm5");
         // Then
-        for (int i = 1; i < 4; i++) {
-            assertTrue(exists("Confirm_" + i));
+        for (String key: keys) {
+            assertTrue(exists(key));
         }
+    }
+    private void addExchanges(String ... keys) {
+        for (String key : keys) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.setExchangeId("Exchange-"+key);
+            aggregationRepository.add(camelContext, key, exchange);
+        }
+    }
+
+    @Test
+    public void testScan() {
+        // Given
+        String[] keys = {"Scan1", "Scan2"};
+        addExchanges(keys);
+        // When
+        Set<String> exchangeIdSet = aggregationRepository.scan(camelContext);
+        // Then
+        for (String key : keys) {
+            assertTrue(exchangeIdSet.contains("Exchange-"+key));
+        }
+    }
+
+    @Test
+    public void testRecover() {
+        // Given
+        String[] keys = {"Recover1", "Recover2"};
+        addExchanges(keys);
+        // When
+        Exchange exchange2 = aggregationRepository.recover(camelContext, "Exchange-Recover2");
+        Exchange exchange3 = aggregationRepository.recover(camelContext, "Exchange-Recover3");
+        // Then
+        assertNotNull(exchange2);
+        assertNull(exchange3);
     }
 
 }
