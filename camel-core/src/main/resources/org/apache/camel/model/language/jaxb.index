@@ -34,6 +34,7 @@ RubyExpression
 SimpleExpression
 SpELExpression
 SqlExpression
+TerserExpression
 TokenizerExpression
 VtdXmlExpression
 XMLTokenizerExpression

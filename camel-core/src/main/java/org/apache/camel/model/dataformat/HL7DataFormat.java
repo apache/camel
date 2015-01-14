@@ -32,7 +32,7 @@ import org.apache.camel.spi.Label;
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Label("dataformat,transformation,hl7")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {

@@ -41,6 +41,7 @@ import org.apache.camel.model.language.RubyExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.SqlExpression;
+import org.apache.camel.model.language.TerserExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VtdXmlExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
@@ -475,6 +476,17 @@ public class ExpressionClauseSupport<T> {
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;
+    }
+
+    /**
+     * Evaluates an <a href="http://camel.apache.org/hl7.html">HL7 Terser
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T terser(String text) {
+        return expression(new TerserExpression(text));
     }
 
     /**
