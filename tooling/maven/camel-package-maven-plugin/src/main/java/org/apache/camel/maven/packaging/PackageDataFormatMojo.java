@@ -142,8 +142,11 @@ public class PackageDataFormatMojo extends AbstractMojo {
                 if (core != null) {
                     URL url = new URL("file", null, core.getAbsolutePath());
                     URLClassLoader loader = new URLClassLoader(new URL[]{url});
-                    for (String name : javaTypes.keySet()) {
+                    for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
+                        String name = entry.getKey();
+                        String javaType = entry.getValue();
                         String modelName = asModelName(name);
+
                         InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
                         if (is == null) {
                             // use file input stream if we build camel-core itself, and thus do not have a JAR which can be loaded by URLClassLoader
@@ -154,8 +157,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             DataFormatModel dataFormatModel = new DataFormatModel();
                             dataFormatModel.setName(name);
                             dataFormatModel.setModelName(modelName);
+                            dataFormatModel.setLabel("");
                             dataFormatModel.setDescription(project.getDescription());
-                            dataFormatModel.setJavaType(javaTypes.get(name));
+                            dataFormatModel.setJavaType(javaType);
                             dataFormatModel.setGroupId(project.getGroupId());
                             dataFormatModel.setArtifactId(project.getArtifactId());
                             dataFormatModel.setVersion(project.getVersion());
@@ -164,8 +168,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             for (Map<String, String> row : rows) {
                                 if (row.containsKey("label")) {
                                     dataFormatModel.setLabel(row.get("label"));
-                                } else {
-                                    dataFormatModel.setLabel("");
+                                }
+                                if (row.containsKey("javaType")) {
+                                    dataFormatModel.setModelJavaType(row.get("javaType"));
                                 }
                                 // override description for camel-core, as otherwise its too generic
                                 if ("camel-core".equals(project.getArtifactId())) {
@@ -275,6 +280,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");
         buffer.append("\n    \"javaType\": \"").append(dataFormatModel.getJavaType()).append("\",");
+        if (dataFormatModel.getModelJavaType() != null) {
+            buffer.append("\n    \"modelJavaType\": \"").append(dataFormatModel.getModelJavaType()).append("\",");
+        }
         buffer.append("\n    \"groupId\": \"").append(dataFormatModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(dataFormatModel.getArtifactId()).append("\",");
         buffer.append("\n    \"version\": \"").append(dataFormatModel.getVersion()).append("\"");
@@ -291,6 +299,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         private String description;
         private String label;
         private String javaType;
+        private String modelJavaType;
         private String groupId;
         private String artifactId;
         private String version;
@@ -309,6 +318,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         public void setModelName(String modelName) {
             this.modelName = modelName;
+        }
+
+        public String getModelJavaType() {
+            return modelJavaType;
+        }
+
+        public void setModelJavaType(String modelJavaType) {
+            this.modelJavaType = modelJavaType;
         }
 
         public String getDescription() {
@@ -367,6 +384,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''
                     + ", javaType='" + javaType + '\''
+                    + ", modelJavaType='" + modelJavaType + '\''
                     + ", groupId='" + groupId + '\''
                     + ", artifactId='" + artifactId + '\''
                     + ", version='" + version + '\''

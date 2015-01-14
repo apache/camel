@@ -173,6 +173,7 @@ public abstract class AbstractCamelController implements CamelController {
             // - release = available from the Apache Camel release
             String status = "release";
             String type = null;
+            String modelJavaType = null;
             String groupId = null;
             String artifactId = null;
             String version = null;
@@ -185,6 +186,8 @@ public abstract class AbstractCamelController implements CamelController {
                     label = row.get("label");
                 } else if (row.containsKey("javaType")) {
                     type = row.get("javaType");
+                } else if (row.containsKey("modelJavaType")) {
+                    modelJavaType = row.get("modelJavaType");
                 } else if (row.containsKey("groupId")) {
                     groupId = row.get("groupId");
                 } else if (row.containsKey("artifactId")) {
@@ -206,6 +209,9 @@ public abstract class AbstractCamelController implements CamelController {
             }
             if (type != null) {
                 row.put("type", type);
+            }
+            if (modelJavaType != null) {
+                row.put("modelJavaType", modelJavaType);
             }
             if (groupId != null) {
                 row.put("groupId", groupId);
