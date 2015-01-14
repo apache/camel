@@ -27,9 +27,11 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
  * Warning: Cassandra is not the best tool for queuing use cases
  * See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
-public abstract class CassandraAggregationRepository extends ServiceSupport implements AggregationRepository {
+public abstract class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
     /**
      * Logger
      */
@@ -95,13 +97,21 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
     /**
-     * Prepared statement used to get keys and exchange ids
+     * Prepared statement used to get exchangeIds and exchange ids
      */
     private PreparedStatement selectKeyIdStatement;
     /**
      * Prepared statement used to delete with key and exchange id
      */
     private PreparedStatement deleteIfIdStatement;
+    
+    private long recoveryIntervalInMillis = 5000;
+
+    private boolean useRecovery = true;
+
+    private String deadLetterUri;
+
+    private int maximumRedeliveries;
 
     public CassandraAggregationRepository() {
     }
@@ -278,7 +288,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     }
 
     /**
-     * Get aggregation keys from aggregation table.
+     * Get aggregation exchangeIds from aggregation table.
      */
     @Override
     public Set<String> getKeys() {
@@ -291,6 +301,41 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
         return keys;
     }
 
+
+    /**
+     * Get exchange IDs to be recovered
+     * @return Exchange IDs
+     */
+    @Override
+    public Set<String> scan(CamelContext camelContext) {
+        List<Row> rows = selectKeyIds();
+        Set<String> exchangeIds = new HashSet<String>(rows.size());
+        for (Row row : rows) {
+            exchangeIds.add(row.getString(exchangeIdColumn));
+        }
+        return exchangeIds;
+    }
+
+    /**
+     * Get exchange by exchange ID.
+     * This is far from optimal.
+     */
+    @Override
+    public Exchange recover(CamelContext camelContext, String exchangeId) {
+        List<Row> rows = selectKeyIds();
+        String keyColumnName = getPKColumns()[1];
+        String lKey = null;
+        for (Row row : rows) {
+            String lExchangeId = row.getString(exchangeIdColumn);
+            if (lExchangeId.equals(exchangeId)) {
+                lKey = row.getString(keyColumnName);
+                break;
+            }            
+        }
+        return lKey == null ? null : get(camelContext, lKey);
+    }
+    
+    
 
     // -------------------------------------------------------------------------
     // Getters and Setters
@@ -357,6 +402,55 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
 
     public void setTtl(Integer ttl) {
         this.ttl = ttl;
+    }
+
+    @Override
+    public long getRecoveryIntervalInMillis() {
+        return recoveryIntervalInMillis;
+    }
+
+    public void setRecoveryIntervalInMillis(long recoveryIntervalInMillis) {
+        this.recoveryIntervalInMillis = recoveryIntervalInMillis;
+    }
+
+    @Override
+    public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
+        this.recoveryIntervalInMillis = timeUnit.toMillis(interval);
+    }
+
+    @Override
+    public void setRecoveryInterval(long recoveryIntervalInMillis) {
+        this.recoveryIntervalInMillis = recoveryIntervalInMillis;
+    }
+
+    @Override
+    public boolean isUseRecovery() {
+        return useRecovery;
+    }
+
+    @Override
+    public void setUseRecovery(boolean useRecovery) {
+        this.useRecovery = useRecovery;
+    }
+
+    @Override
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
+
+    @Override
+    public void setDeadLetterUri(String deadLetterUri) {
+        this.deadLetterUri = deadLetterUri;
+    }
+
+    @Override
+    public int getMaximumRedeliveries() {
+        return maximumRedeliveries;
+    }
+
+    @Override
+    public void setMaximumRedeliveries(int maximumRedeliveries) {
+        this.maximumRedeliveries = maximumRedeliveries;
     }
 
 }
