@@ -1416,6 +1416,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException;
 
     /**
+     * Returns the JSON schema representation of the {@link Language} parameters for the given language name.
+     *
+     * @return the json or <tt>null</tt> if the language does not exist
+     */
+    String getLanguageParameterJsonSchema(String languageName) throws IOException;
+
+    /**
      * Returns the JSON schema representation of the EIP parameters for the given EIP name.
      *
      * @return the json or <tt>null</tt> if the EIP does not exist

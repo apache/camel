@@ -1230,6 +1230,37 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public String getLanguageParameterJsonSchema(String languageName) throws IOException {
+        // use the language factory finder to find the package name of the language class, which is the location
+        // where the documentation exists as well
+        FactoryFinder finder = getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH);
+        try {
+            Class<?> clazz = finder.findClass(languageName);
+            if (clazz == null) {
+                return null;
+            }
+
+            String packageName = clazz.getPackage().getName();
+            packageName = packageName.replace('.', '/');
+            String path = packageName + "/" + languageName + ".json";
+
+            ClassResolver resolver = getClassResolver();
+            InputStream inputStream = resolver.loadResourceAsStream(path);
+            log.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", new Object[]{languageName, resolver, inputStream});
+            if (inputStream != null) {
+                try {
+                    return IOHelper.loadText(inputStream);
+                } finally {
+                    IOHelper.close(inputStream);
+                }
+            }
+            return null;
+
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until we find it
         String[] subPackages = new String[]{"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest"};
