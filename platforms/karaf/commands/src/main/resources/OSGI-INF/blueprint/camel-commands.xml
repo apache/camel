@@ -235,6 +235,16 @@
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
+    <command name="camel/catalog-language-list">
+      <action class="org.apache.camel.karaf.commands.CatalogLanguageList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
+    <command name="camel/catalog-language-label-list">
+      <action class="org.apache.camel.karaf.commands.CatalogLanguageLabelList">
+        <property name="camelController" ref="camelController"/>
+      </action>
+    </command>
     <command name="camel/catalog-eip-list">
       <action class="org.apache.camel.karaf.commands.CatalogEipList">
         <property name="camelController" ref="camelController"/>
