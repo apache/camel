@@ -40,7 +40,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
 
 /**
  * Prepares the camel catalog to include component, data format, and eip descriptors,
@@ -77,6 +76,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
      * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
      */
     protected File dataFormatsOutDir;
+
+    /**
+     * The output directory for languages catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/languages"
+     */
+    protected File languagesOutDir;
 
     /**
      * The output directory for models catalog
@@ -118,6 +124,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeModel();
         executeComponents();
         executeDataFormats();
+        executeLanguages();
     }
 
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
@@ -442,6 +449,109 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printDataFormatsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
     }
 
+    protected void executeLanguages() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying all Camel language json descriptors");
+
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> duplicateJsonFiles = new TreeSet<File>();
+        Set<File> languageFiles = new TreeSet<File>();
+        Set<File> missingLabels = new TreeSet<File>();
+        Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+
+        // find all languages from the components directory
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] languages = componentsDir.listFiles();
+            if (languages != null) {
+                for (File dir : languages) {
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
+                        File target = new File(dir, "target/classes");
+                        findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+                    }
+                }
+            }
+        }
+        if (coreDir != null && coreDir.isDirectory()) {
+            File target = new File(coreDir, "target/classes");
+            findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+        }
+
+        getLog().info("Found " + languageFiles.size() + " language.properties files");
+        getLog().info("Found " + jsonFiles.size() + " language json files");
+
+        // make sure to create out dir
+        languagesOutDir.mkdirs();
+
+        for (File file : jsonFiles) {
+            File to = new File(languagesOutDir, file.getName());
+            if (to.exists()) {
+                duplicateJsonFiles.add(to);
+                getLog().warn("Duplicate language name detected: " + to);
+            }
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+
+            // check if we have a label as we want the data format to include labels
+            try {
+                String text = loadText(new FileInputStream(file));
+                // just do a basic label check
+                if (text.contains("\"label\": \"\"")) {
+                    missingLabels.add(file);
+                } else {
+                    String name = asComponentName(file);
+                    Matcher matcher = LABEL_PATTERN.matcher(text);
+                    // grab the label, and remember it in the used labels
+                    if (matcher.find()) {
+                        String label = matcher.group(1);
+                        String[] labels = label.split(",");
+                        for (String s : labels) {
+                            Set<String> languages = usedLabels.get(s);
+                            if (languages == null) {
+                                languages = new TreeSet<String>();
+                                usedLabels.put(s, languages);
+                            }
+                            languages.add(name);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        File all = new File(languagesOutDir, "../languages.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = languagesOutDir.list();
+            List<String> languages = new ArrayList<String>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".json")) {
+                    // strip out .json from the name
+                    String languageName = name.substring(0, name.length() - 5);
+                    languages.add(languageName);
+                }
+            }
+
+            Collections.sort(languages);
+            for (String name : languages) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+
+        printLanguagesReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
+    }
+
     private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
 
@@ -569,6 +679,43 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
+    private void printLanguagesReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+        getLog().info("================================================================================");
+        getLog().info("");
+        getLog().info("Camel language catalog report");
+        getLog().info("");
+        getLog().info("\tLanguages found: " + json.size());
+        for (File file : json) {
+            getLog().info("\t\t" + asComponentName(file));
+        }
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate language detected: " + duplicate.size());
+            for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!missingLabels.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing labels detected: " + missingLabels.size());
+            for (File file : missingLabels) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!usedLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tUsed labels: " + usedLabels.size());
+            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                getLog().info("\t\t" + entry.getKey() + ":");
+                for (String name : entry.getValue()) {
+                    getLog().info("\t\t\t" + name);
+                }
+            }
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
+    }
+
     private static String asComponentName(File file) {
         String name = file.getName();
         if (name.endsWith(".json")) {
@@ -610,6 +757,25 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     dataFormats.add(file);
                 } else if (file.isDirectory()) {
                     findDataFormatFilesRecursive(file, found, dataFormats, filter);
+                }
+            }
+        }
+    }
+
+    private void findLanguageFilesRecursive(File dir, Set<File> found, Set<File> languages, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean languageFile = !rootDir && file.isFile() && file.getName().equals("language.properties");
+                if (jsonFile) {
+                    found.add(file);
+                } else if (languageFile) {
+                    languages.add(file);
+                } else if (file.isDirectory()) {
+                    findLanguageFilesRecursive(file, found, languages, filter);
                 }
             }
         }
@@ -657,6 +823,27 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    private class CamelLanguagesFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.isDirectory() && pathname.getName().equals("model")) {
+                // do not check the camel-core model packages as there is no components there
+                return false;
+            }
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a language json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"language\":");
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("language.properties"));
+        }
+    }
+
     public static void copyFile(File from, File to) throws IOException {
         FileChannel in = null;
         FileChannel out = null;
@@ -676,75 +863,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             if (out != null) {
                 out.close();
             }
-        }
-    }
-
-    private static class DataFormatModel {
-        private String name;
-        private String description;
-        private String javaType;
-        private String groupId;
-        private String artifactId;
-        private String versionId;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getJavaType() {
-            return javaType;
-        }
-
-        public void setJavaType(String javaType) {
-            this.javaType = javaType;
-        }
-
-        public String getGroupId() {
-            return groupId;
-        }
-
-        public void setGroupId(String groupId) {
-            this.groupId = groupId;
-        }
-
-        public String getArtifactId() {
-            return artifactId;
-        }
-
-        public void setArtifactId(String artifactId) {
-            this.artifactId = artifactId;
-        }
-
-        public String getVersionId() {
-            return versionId;
-        }
-
-        public void setVersionId(String versionId) {
-            this.versionId = versionId;
-        }
-
-        @Override
-        public String toString() {
-            return "DataFormatModel["
-                    + "name='" + name + '\''
-                    + ", description='" + description + '\''
-                    + ", javaType='" + javaType + '\''
-                    + ", groupId='" + groupId + '\''
-                    + ", artifactId='" + artifactId + '\''
-                    + ", versionId='" + versionId + '\''
-                    + ']';
         }
     }
 

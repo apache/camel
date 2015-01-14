@@ -140,66 +140,68 @@ public class PackageDataFormatMojo extends AbstractMojo {
         // find camel-core and grab the data format model from there, and enrich this model with information from this artifact
         // and create json schema model file for this data format
         try {
-            Artifact camelCore = findCamelCoreArtifact(project);
-            if (camelCore != null) {
-                File core = camelCore.getFile();
-                if (core != null) {
-                    URL url = new URL("file", null, core.getAbsolutePath());
-                    URLClassLoader loader = new URLClassLoader(new URL[]{url});
-                    for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
-                        String name = entry.getKey();
-                        String javaType = entry.getValue();
-                        String modelName = asModelName(name);
+            if (count > 0) {
+                Artifact camelCore = findCamelCoreArtifact(project);
+                if (camelCore != null) {
+                    File core = camelCore.getFile();
+                    if (core != null) {
+                        URL url = new URL("file", null, core.getAbsolutePath());
+                        URLClassLoader loader = new URLClassLoader(new URL[]{url});
+                        for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
+                            String name = entry.getKey();
+                            String javaType = entry.getValue();
+                            String modelName = asModelName(name);
 
-                        InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
-                        if (is == null) {
-                            // use file input stream if we build camel-core itself, and thus do not have a JAR which can be loaded by URLClassLoader
-                            is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
-                        }
-                        String json = loadText(is);
-                        if (json != null) {
-                            DataFormatModel dataFormatModel = new DataFormatModel();
-                            dataFormatModel.setName(name);
-                            dataFormatModel.setModelName(modelName);
-                            dataFormatModel.setLabel("");
-                            dataFormatModel.setDescription(project.getDescription());
-                            dataFormatModel.setJavaType(javaType);
-                            dataFormatModel.setGroupId(project.getGroupId());
-                            dataFormatModel.setArtifactId(project.getArtifactId());
-                            dataFormatModel.setVersion(project.getVersion());
+                            InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
+                            if (is == null) {
+                                // use file input stream if we build camel-core itself, and thus do not have a JAR which can be loaded by URLClassLoader
+                                is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
+                            }
+                            String json = loadText(is);
+                            if (json != null) {
+                                DataFormatModel dataFormatModel = new DataFormatModel();
+                                dataFormatModel.setName(name);
+                                dataFormatModel.setModelName(modelName);
+                                dataFormatModel.setLabel("");
+                                dataFormatModel.setDescription(project.getDescription());
+                                dataFormatModel.setJavaType(javaType);
+                                dataFormatModel.setGroupId(project.getGroupId());
+                                dataFormatModel.setArtifactId(project.getArtifactId());
+                                dataFormatModel.setVersion(project.getVersion());
 
-                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                            for (Map<String, String> row : rows) {
-                                if (row.containsKey("label")) {
-                                    dataFormatModel.setLabel(row.get("label"));
-                                }
-                                if (row.containsKey("javaType")) {
-                                    dataFormatModel.setModelJavaType(row.get("javaType"));
-                                }
-                                // override description for camel-core, as otherwise its too generic
-                                if ("camel-core".equals(project.getArtifactId())) {
-                                    if (row.containsKey("description")) {
-                                        dataFormatModel.setLabel(row.get("description"));
+                                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+                                for (Map<String, String> row : rows) {
+                                    if (row.containsKey("label")) {
+                                        dataFormatModel.setLabel(row.get("label"));
+                                    }
+                                    if (row.containsKey("javaType")) {
+                                        dataFormatModel.setModelJavaType(row.get("javaType"));
+                                    }
+                                    // override description for camel-core, as otherwise its too generic
+                                    if ("camel-core".equals(project.getArtifactId())) {
+                                        if (row.containsKey("description")) {
+                                            dataFormatModel.setLabel(row.get("description"));
+                                        }
                                     }
                                 }
+                                getLog().debug("Model " + dataFormatModel);
+
+                                // build json schema for the data format
+                                String properties = after(json, "  \"properties\": {");
+                                String schema = createParameterJsonSchema(dataFormatModel, properties);
+                                getLog().debug("JSon schema\n" + schema);
+
+                                // write this to the directory
+                                File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
+                                dir.mkdirs();
+
+                                File out = new File(dir, name + ".json");
+                                FileOutputStream fos = new FileOutputStream(out, false);
+                                fos.write(schema.getBytes());
+                                fos.close();
+
+                                getLog().info("Generated " + out + " containing JSon schema for " + name + " data format");
                             }
-                            getLog().debug("Model " + dataFormatModel);
-
-                            // build json schema for the data format
-                            String properties = after(json, "  \"properties\": {");
-                            String schema = createParameterJsonSchema(dataFormatModel, properties);
-                            getLog().debug("JSon schema\n" + schema);
-
-                            // write this to the directory
-                            File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
-                            dir.mkdirs();
-
-                            File out = new File(dir, name + ".json");
-                            FileOutputStream fos = new FileOutputStream(out, false);
-                            fos.write(schema.getBytes());
-                            fos.close();
-
-                            getLog().info("Generated " + out + " containing JSon schema for " + name + " data format");
                         }
                     }
                 }
