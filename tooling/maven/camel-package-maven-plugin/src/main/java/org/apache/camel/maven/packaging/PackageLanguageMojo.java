@@ -279,6 +279,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         // component model
         buffer.append("\n \"language\": {");
         buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
+        buffer.append("\n    \"kind\": \"").append("language").append("\",");
         buffer.append("\n    \"modelName\": \"").append(languageModel.getModelName()).append("\",");
         buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(languageModel.getLabel()).append("\",");

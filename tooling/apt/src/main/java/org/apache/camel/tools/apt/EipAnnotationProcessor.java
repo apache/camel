@@ -152,6 +152,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         StringBuilder buffer = new StringBuilder("{");
         // eip model
         buffer.append("\n \"model\": {");
+        buffer.append("\n    \"kind\": \"").append("model").append("\",");
         buffer.append("\n    \"name\": \"").append(eipModel.getName()).append("\",");
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");

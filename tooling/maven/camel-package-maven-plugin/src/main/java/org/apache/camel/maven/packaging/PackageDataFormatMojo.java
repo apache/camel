@@ -282,6 +282,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         // component model
         buffer.append("\n \"dataformat\": {");
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
+        buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");
         buffer.append("\n    \"modelName\": \"").append(dataFormatModel.getModelName()).append("\",");
         buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");

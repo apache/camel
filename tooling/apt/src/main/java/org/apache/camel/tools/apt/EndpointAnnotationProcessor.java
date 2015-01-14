@@ -169,6 +169,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         StringBuilder buffer = new StringBuilder("{");
         // component model
         buffer.append("\n \"component\": {");
+        buffer.append("\n    \"kind\": \"").append("component").append("\",");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");

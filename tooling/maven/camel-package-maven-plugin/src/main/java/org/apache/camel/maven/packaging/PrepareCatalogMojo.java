@@ -793,7 +793,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // must be a components json file
                 try {
                     String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"component\":");
+                    return json != null && json.contains("\"kind\": \"component\"");
                 } catch (IOException e) {
                     // ignore
                 }
@@ -814,7 +814,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // must be a dataformat json file
                 try {
                     String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"dataformat\":");
+                    return json != null && json.contains("\"kind\": \"dataformat\"");
                 } catch (IOException e) {
                     // ignore
                 }
@@ -835,7 +835,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // must be a language json file
                 try {
                     String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"language\":");
+                    return json != null && json.contains("\"kind\": \"language\"");
                 } catch (IOException e) {
                     // ignore
                 }
