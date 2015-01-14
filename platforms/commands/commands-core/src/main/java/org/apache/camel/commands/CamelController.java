@@ -290,4 +290,21 @@ public interface CamelController {
      */
     Map<String, Set<String>> listDataFormatsLabelCatalog() throws Exception;
 
+    /**
+     * Lists all languages from the Camel components catalog
+     *
+     * @param filter optional filter to filter by labels
+     * @return a list of key/value pairs with language information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> listLanguagesCatalog(String filter) throws Exception;
+
+    /**
+     * Lists all the labels from the Camel languages catalog
+     *
+     * @return a map which key is the label, and the set is the language names that has the given label
+     * @throws java.lang.Exception can be thrown
+     */
+    Map<String, Set<String>> listLanguagesLabelCatalog() throws Exception;
+
 }

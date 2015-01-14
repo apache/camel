@@ -37,9 +37,11 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
+    private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
     private static final String MODEL_JSON = "org/apache/camel/catalog/models";
     private static final String COMPONENTS_JSON = "org/apache/camel/catalog/components";
     private static final String DATA_FORMATS_JSON = "org/apache/camel/catalog/dataformats";
+    private static final String LANGUAGE_JSON = "org/apache/camel/catalog/languages";
 
     @Override
     public List<String> findComponentNames() {
@@ -61,6 +63,21 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
         List<String> names = new ArrayList<String>();
 
         InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
+        if (is != null) {
+            try {
+                loadLines(is, names);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return names;
+    }
+
+    @Override
+    public List<String> findLanguageNames() {
+        List<String> names = new ArrayList<String>();
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
         if (is != null) {
             try {
                 loadLines(is, names);
@@ -177,6 +194,36 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     }
 
     @Override
+    public List<String> findLanguageNames(String filter) {
+        List<String> answer = new ArrayList<String>();
+
+        List<String> names = findLanguageNames();
+        for (String name : names) {
+            String json = languageJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            try {
+                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                    answer.add(name);
+                                }
+                            } catch (PatternSyntaxException e) {
+                                // ignore as filter is maybe not a pattern
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     public String modelJSonSchema(String name) {
         String file = MODEL_JSON + "/" + name + ".json";
 
@@ -211,6 +258,22 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     @Override
     public String dataFormatJSonSchema(String name) {
         String file = DATA_FORMATS_JSON + "/" + name + ".json";
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        if (is != null) {
+            try {
+                return loadText(is);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String languageJSonSchema(String name) {
+        String file = LANGUAGE_JSON + "/" + name + ".json";
 
         InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
@@ -281,6 +344,30 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
             String json = dataFormatJSonSchema(name);
             if (json != null) {
                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            answer.add(part);
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Set<String> findLanguageLabels() {
+        SortedSet<String> answer = new TreeSet<String>();
+
+        List<String> names = findLanguageNames();
+        for (String name : names) {
+            String json = languageJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("label")) {
                         String label = row.get("label");

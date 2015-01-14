@@ -35,6 +35,11 @@ public interface CamelComponentCatalog {
     List<String> findDataFormatNames();
 
     /**
+     * Find all the language names from the Camel catalog
+     */
+    List<String> findLanguageNames();
+
+    /**
      * Find all the model names from the Camel catalog
      */
     List<String> findModelNames();
@@ -48,6 +53,11 @@ public interface CamelComponentCatalog {
      * Find all the data format names from the Camel catalog that matches the label
      */
     List<String> findDataFormatNames(String filter);
+
+    /**
+     * Find all the language names from the Camel catalog that matches the label
+     */
+    List<String> findLanguageNames(String filter);
 
     /**
      * Find all the model names from the Camel catalog that matches the label
@@ -71,6 +81,14 @@ public interface CamelComponentCatalog {
     String dataFormatJSonSchema(String name);
 
     /**
+     * Returns the language information as JSon format.
+     *
+     * @param name the language name
+     * @return language details in JSon
+     */
+    String languageJSonSchema(String name);
+
+    /**
      * Returns the model information as JSon format.
      *
      * @param name the model name
@@ -91,6 +109,13 @@ public interface CamelComponentCatalog {
      * @return a set of all the labels.
      */
     Set<String> findDataFormatLabels();
+
+    /**
+     * Find all the unique label names all the data formats are using.
+     *
+     * @return a set of all the labels.
+     */
+    Set<String> findLanguageLabels();
 
     /**
      * Find all the unique label names all the models are using.

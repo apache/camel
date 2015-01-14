@@ -230,6 +230,85 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     @Override
+    public List<Map<String, String>> listLanguagesCatalog(String filter) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (filter != null) {
+            filter = RegexUtil.wildcardAsRegex(filter);
+        }
+
+        List<String> names = filter != null ? catalog.findLanguageNames(filter) : catalog.findLanguageNames();
+        for (String name : names) {
+            // load language json data, and parse it to gather the language meta-data
+            String json = catalog.languageJSonSchema(name);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("language", json, false);
+
+            String description = null;
+            String label = null;
+            String modelName = name;
+            // the status can be:
+            // - loaded = in use
+            // - classpath = on the classpath
+            // - release = available from the Apache Camel release
+            String status = "release";
+            String type = null;
+            String modelJavaType = null;
+            String groupId = null;
+            String artifactId = null;
+            String version = null;
+            for (Map<String, String> row : rows) {
+                if (row.containsKey("modelName")) {
+                    modelName = row.get("modelName");
+                } else if (row.containsKey("description")) {
+                    description = row.get("description");
+                } else if (row.containsKey("label")) {
+                    label = row.get("label");
+                } else if (row.containsKey("javaType")) {
+                    type = row.get("javaType");
+                } else if (row.containsKey("modelJavaType")) {
+                    modelJavaType = row.get("modelJavaType");
+                } else if (row.containsKey("groupId")) {
+                    groupId = row.get("groupId");
+                } else if (row.containsKey("artifactId")) {
+                    artifactId = row.get("artifactId");
+                } else if (row.containsKey("version")) {
+                    version = row.get("version");
+                }
+            }
+
+            Map<String, String> row = new HashMap<String, String>();
+            row.put("name", name);
+            row.put("modelName", modelName);
+            row.put("status", status);
+            if (description != null) {
+                row.put("description", description);
+            }
+            if (label != null) {
+                row.put("label", label);
+            }
+            if (type != null) {
+                row.put("type", type);
+            }
+            if (modelJavaType != null) {
+                row.put("modelJavaType", modelJavaType);
+            }
+            if (groupId != null) {
+                row.put("groupId", groupId);
+            }
+            if (artifactId != null) {
+                row.put("artifactId", artifactId);
+            }
+            if (version != null) {
+                row.put("version", version);
+            }
+
+            answer.add(row);
+        }
+
+        return answer;
+    }
+
+    @Override
     public Map<String, Set<String>> listEipsLabelCatalog() throws Exception {
         Map<String, Set<String>> answer = new LinkedHashMap<String, Set<String>>();
 
@@ -294,4 +373,27 @@ public abstract class AbstractCamelController implements CamelController {
 
         return answer;
     }
+
+    @Override
+    public Map<String, Set<String>> listLanguagesLabelCatalog() throws Exception {
+        Map<String, Set<String>> answer = new LinkedHashMap<String, Set<String>>();
+
+        Set<String> labels = catalog.findLanguageLabels();
+        for (String label : labels) {
+            List<Map<String, String>> languages = listLanguagesCatalog(label);
+            if (!languages.isEmpty()) {
+                Set<String> names = new LinkedHashSet<String>();
+                for (Map<String, String> info : languages) {
+                    String name = info.get("name");
+                    if (name != null) {
+                        names.add(name);
+                    }
+                }
+                answer.put(label, names);
+            }
+        }
+
+        return answer;
+    }
+
 }
