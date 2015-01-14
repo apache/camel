@@ -52,7 +52,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
         List<String> info = (List<String>) mbeanServer.invoke(on, "findEipNames", null, null);
         assertNotNull(info);
 
-        assertEquals(152, info.size());
+        assertEquals(154, info.size());
         assertTrue(info.contains("transform"));
         assertTrue(info.contains("split"));
         assertTrue(info.contains("from"));
@@ -75,7 +75,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
         Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findEips", null, null);
         assertNotNull(info);
 
-        assertEquals(152, info.size());
+        assertEquals(154, info.size());
         Properties prop = info.get("transform");
         assertNotNull(prop);
         assertEquals("transform", prop.get("name"));
@@ -98,7 +98,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
         @SuppressWarnings("unchecked")
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);
         assertNotNull(data);
-        assertEquals(152, data.size());
+        assertEquals(154, data.size());
     }
 
 }
