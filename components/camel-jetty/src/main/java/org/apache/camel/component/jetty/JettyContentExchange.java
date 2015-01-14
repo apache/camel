@@ -23,19 +23,15 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.eclipse.jetty.client.HttpClient;
 
 public interface JettyContentExchange {
+    void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+              final HttpClient client, AsyncCallback callback);
 
-    void setCallback(AsyncCallback callback);
-
-    byte[] getBody();
-
-    String getUrl();
-
+    // Methods to prepare the request
     void setRequestContentType(String contentType);
-
-    int getResponseStatus();
 
     void setMethod(String method);
 
@@ -51,12 +47,24 @@ public interface JettyContentExchange {
 
     void addRequestHeader(String key, String s);
 
+    void setSupportRedirect(boolean supportRedirect);
+
+    /*
+     * Send using jetty HttpClient and return. The callback will be called when the response 
+     * arrives  
+     */
     void send(HttpClient client) throws IOException;
+
+    // Methods to retrieve the response
+    
+    byte[] getBody();
+
+    String getUrl();
+
+    int getResponseStatus();
 
     byte[] getResponseContentBytes();
 
     Map<String, Collection<String>> getResponseHeaders();
-
-    void setSupportRedirect(boolean supportRedirect);
 
 }

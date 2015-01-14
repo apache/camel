@@ -302,9 +302,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         return endpoint;
     }
 
-    protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
-        return new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
-    }
+    protected abstract JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -1201,6 +1199,5 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
             throw new RuntimeException(t);
         }
     }
-    
     
 }

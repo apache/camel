@@ -42,7 +42,7 @@ import org.eclipse.jetty.server.Handler;
  * @version 
  */
 @UriEndpoint(scheme = "jetty", consumerClass = HttpConsumer.class, label = "http")
-public class JettyHttpEndpoint extends HttpEndpoint {
+public abstract class JettyHttpEndpoint extends HttpEndpoint {
 
     @UriParam
     private boolean sessionSupport;
@@ -88,27 +88,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
             answer.setSharedClient(client);
             answer.setBinding(getJettyBinding(client));
         } else {
-            // create a new client
-            // thread pool min/max from endpoint take precedence over from component
-            Integer min = httpClientMinThreads != null ? httpClientMinThreads : getComponent().getHttpClientMinThreads();
-            Integer max = httpClientMaxThreads != null ? httpClientMaxThreads : getComponent().getHttpClientMaxThreads();
-            HttpClient httpClient = getComponent().createHttpClient(this, min, max, sslContextParameters);
-
-            // set optional http client parameters
-            if (httpClientParameters != null) {
-                // copy parameters as we need to re-use them again if creating a new producer later
-                Map<String, Object> params = new HashMap<String, Object>(httpClientParameters);
-                // Can not be set on httpClient for jetty 9
-                params.remove("timeout");
-                IntrospectionSupport.setProperties(httpClient, params);
-                // validate we could set all parameters
-                if (params.size() > 0) {
-                    throw new ResolveEndpointFailedException(getEndpointUri(), "There are " + params.size()
-                            + " parameters that couldn't be set on the endpoint."
-                            + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                            + " Unknown parameters=[" + params + "]");
-                }
-            }
+            HttpClient httpClient = createJettyHttpClient();
             answer.setClient(httpClient);
             answer.setBinding(getJettyBinding(httpClient));
         }
@@ -118,6 +98,31 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         } else {
             return answer;
         }
+    }
+
+    protected HttpClient createJettyHttpClient() throws Exception {
+        // create a new client
+        // thread pool min/max from endpoint take precedence over from component
+        Integer min = httpClientMinThreads != null ? httpClientMinThreads : getComponent().getHttpClientMinThreads();
+        Integer max = httpClientMaxThreads != null ? httpClientMaxThreads : getComponent().getHttpClientMaxThreads();
+        HttpClient httpClient = getComponent().createHttpClient(this, min, max, sslContextParameters);
+
+        // set optional http client parameters
+        if (httpClientParameters != null) {
+            // copy parameters as we need to re-use them again if creating a new producer later
+            Map<String, Object> params = new HashMap<String, Object>(httpClientParameters);
+            // Can not be set on httpClient for jetty 9
+            params.remove("timeout");
+            IntrospectionSupport.setProperties(httpClient, params);
+            // validate we could set all parameters
+            if (params.size() > 0) {
+                throw new ResolveEndpointFailedException(getEndpointUri(), "There are " + params.size()
+                        + " parameters that couldn't be set on the endpoint."
+                        + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                        + " Unknown parameters=[" + params + "]");
+            }
+        }
+        return httpClient;
     }
 
     @Override
@@ -169,9 +174,6 @@ public class JettyHttpEndpoint extends HttpEndpoint {
             jettyBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             jettyBinding.setThrowExceptionOnFailure(isThrowExceptionOnFailure());
             jettyBinding.setTransferException(isTransferException());
-            if (httpClient instanceof CamelHttpClient) {
-                jettyBinding.setSupportRedirect(((CamelHttpClient)httpClient).isSupportRedirect());
-            }
         }
         return jettyBinding;
     }
@@ -275,5 +277,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public void setHttpClientParameters(Map<String, Object> httpClientParameters) {
         this.httpClientParameters = httpClientParameters;
     }
+
+    public abstract JettyContentExchange createContentExchange();
 
 }

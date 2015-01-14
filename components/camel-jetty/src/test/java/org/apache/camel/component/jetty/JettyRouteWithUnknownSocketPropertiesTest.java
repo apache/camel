@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.jetty.server.Server;
 import org.junit.Test;
 
 public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
@@ -30,8 +31,11 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
     }
 
     @Test
-    //@Ignore SocketConnector props do not work for jetty 9
     public void testUnknownProperty() throws Exception {
+        if (!Server.getVersion().startsWith("8")) {
+            // SocketConnector props do not work for jetty 9
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

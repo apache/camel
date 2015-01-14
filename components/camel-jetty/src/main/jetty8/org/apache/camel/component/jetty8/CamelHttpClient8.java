@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty8;
 import java.util.concurrent.Executor;
 
 import org.apache.camel.component.jetty.CamelHttpClient;
-import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
@@ -33,53 +32,37 @@ public class CamelHttpClient8 extends CamelHttpClient {
     
     @Override
     protected void doStart() throws Exception {
-        if (isSupportRedirect()) {
-            setupRedirectListener();
-        }
         super.doStart();
     }
 
     private void setConnectorType() {
-        try {
-            HttpClient.class.getMethod("setConnectorType", Integer.TYPE).invoke(this, 2);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+        setConnectorType(2);
     }
     
     protected boolean hasThreadPool() {
-        try {
-            return getClass().getMethod("getThreadPool").invoke(this) != null;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        return getThreadPool() != null;
     }
 
     protected void setThreadPoolOrExecutor(Executor pool) {
-        try {
-            getClass().getMethod("setThreadPool", ThreadPool.class).invoke(this, pool);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        setThreadPool((ThreadPool)pool);
     }
     
     public void setProxy(String host, int port) {
-        try {
-            // setProxy(new org.eclipse.jetty.client.Address(host, port));
-            Class<?> c = Class.forName("org.eclipse.jetty.client.Address");
-            Object o = c.getConstructor(String.class, Integer.TYPE).newInstance(host, port);
-            this.getClass().getMethod("setProxy", c).invoke(this, o);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+        setProxy(new org.eclipse.jetty.client.Address(host, port));
     }
 
     private void setupRedirectListener() {
-        // setup the listener for it
-        try {
-            getClass().getMethod("registerListener", String.class).invoke(this, CamelRedirectListener.class.getName());
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+        registerListener(CamelRedirectListener.class.getName());
     }
+
+    @Override
+    public String getProxyHost() {
+        return getProxy().getHost();
+    }
+
+    @Override
+    public int getProxyPort() {
+        return getProxy().getPort();
+    }
+    
 }

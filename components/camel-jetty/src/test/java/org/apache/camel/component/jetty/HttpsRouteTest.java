@@ -33,6 +33,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -169,7 +170,19 @@ public class HttpsRouteTest extends BaseJettyTest {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
     }
-
+    
+    protected void configureSslContextFactory(SslContextFactory sslContextFactory) {
+        sslContextFactory.setKeyManagerPassword(pwd);
+        sslContextFactory.setKeyStorePassword(pwd);
+        URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+        try {
+            sslContextFactory.setKeyStorePath(keyStoreUrl.toURI().getPath());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        sslContextFactory.setTrustStoreType("JKS");
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

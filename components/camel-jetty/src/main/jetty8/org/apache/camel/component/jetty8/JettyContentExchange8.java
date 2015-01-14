@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
@@ -28,7 +29,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.component.jetty.CamelHttpClient;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpBinding;
 import org.apache.camel.util.IOHelper;
@@ -57,14 +57,17 @@ public class JettyContentExchange8 implements JettyContentExchange {
     private volatile HttpClient client;
     private final CountDownLatch done = new CountDownLatch(1);
     private final ContentExchange ce;
+    
+    public JettyContentExchange8() {
+        this.ce = new ContentExchange(true);
+    }
 
-    public JettyContentExchange8(Exchange exchange, JettyHttpBinding jettyBinding, 
-                                final HttpClient client) {
-        super(); // keep headers by default
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+                     final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
-        this.ce = new ContentExchange(true);
+        this.callback = callback;
         HttpEventListener old = ce.getEventListener();
         ce.setEventListener(new HttpEventListenerWrapper(old, true) {
             public void onRequestComplete() throws IOException {
@@ -106,10 +109,6 @@ public class JettyContentExchange8 implements JettyContentExchange {
             }
             
         });
-    }
-
-    public void setCallback(AsyncCallback callback) {
-        this.callback = callback;
     }
 
     protected void onRequestComplete() throws IOException {
@@ -279,8 +278,9 @@ public class JettyContentExchange8 implements JettyContentExchange {
 
     @Override
     public void setSupportRedirect(boolean supportRedirect) {
-        if (client instanceof CamelHttpClient) {
-            ((CamelHttpClient)client).setSupportRedirect(supportRedirect);
+        LinkedList<String> listeners = client.getRegisteredListeners();
+        if (listeners == null || !listeners.contains(CamelRedirectListener.class.getName())) {
+            client.registerListener(CamelRedirectListener.class.getName());
         }
     }
 

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
@@ -34,7 +33,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpHelper;
-import org.apache.camel.component.jetty8.JettyContentExchange8;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -85,8 +83,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         try {
-            JettyContentExchange httpExchange = createHttpExchange(exchange, callback);
-            doSendExchange(client, httpExchange);
+            processInternal(exchange, callback);
         } catch (Exception e) {
             // error occurred before we had a chance to go async
             // so set exception and invoke callback true
@@ -99,7 +96,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
         return false;
     }
 
-    protected JettyContentExchange createHttpExchange(Exchange exchange, AsyncCallback callback) throws Exception {
+    private void processInternal(Exchange exchange, AsyncCallback callback) throws Exception {
         // creating the url to use takes 2-steps
         String url = HttpHelper.createURL(exchange, getEndpoint());
         URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
@@ -116,11 +113,14 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
         HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
         String method = methodToUse.createMethod(url).getName();
 
-        JettyContentExchange httpExchange = new JettyContentExchange8(exchange, getBinding(), client);
+        JettyContentExchange httpExchange = getEndpoint().createContentExchange();
+        httpExchange.init(exchange, getBinding(), client, callback);
         httpExchange.setURL(url); // Url has to be set first
         httpExchange.setMethod(method);
         
         if (getEndpoint().getHttpClientParameters() != null) {
+            // For jetty 9 these parameters can not be set on the client
+            // so we need to set them on the httpExchange
             String timeout = (String)getEndpoint().getHttpClientParameters().get("timeout");
             if (timeout != null) {
                 httpExchange.setTimeout(new Long(timeout));
@@ -228,11 +228,6 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
         }
 
         // set the callback, which will handle all the response logic
-        httpExchange.setCallback(callback);
-        return httpExchange;
-    }
-
-    protected static void doSendExchange(HttpClient client, JettyContentExchange httpExchange) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending HTTP request to: {}", httpExchange.getUrl());
         }

@@ -38,5 +38,15 @@ public class CamelHttpClient9 extends CamelHttpClient {
     public void setProxy(String host, int port) {
         getProxyConfiguration().getProxies().add(new org.eclipse.jetty.client.HttpProxy(host, port));
     }
+
+    @Override
+    public String getProxyHost() {
+        return getProxyConfiguration().getProxies().get(0).getAddress().getHost();
+    }
+
+    @Override
+    public int getProxyPort() {
+        return getProxyConfiguration().getProxies().get(0).getAddress().getPort();
+    }
     
 }

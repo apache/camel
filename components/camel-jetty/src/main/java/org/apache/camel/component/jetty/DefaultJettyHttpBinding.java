@@ -44,7 +44,6 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
-    private boolean supportRedirect;
     public DefaultJettyHttpBinding() {
         
     }
@@ -149,9 +148,6 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         }
 
         if (responseCode >= 300 && responseCode < 400) {
-            if (this.supportRedirect) {
-                return null;
-            }
             Collection<String> loc = httpExchange.getResponseHeaders().get("location");
             if (loc != null && !loc.isEmpty()) {
                 String locationHeader = loc.iterator().next();
@@ -184,11 +180,6 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
             // just grab the raw content body
             return httpExchange.getBody();
         }
-    }
-
-    @Override
-    public void setSupportRedirect(boolean supportRedirect) {
-        this.supportRedirect = supportRedirect;
     }
 
     Map<String, String> getSimpleMap(Map<String, Collection<String>> headers) {

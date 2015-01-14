@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jetty8;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,5 +123,10 @@ public class JettyHttpComponent8 extends JettyHttpComponent {
             throw new RuntimeException(ex);
         }
         return result;
-    }  
+    }
+
+    @Override
+    protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
+        return new JettyHttpEndpoint8(this, endpointUri.toString(), httpUri);
+    }
 }

@@ -69,10 +69,9 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
     }
     
     private void assertProxyAddress(HttpClient client, String expectedHost, int expectedPort) {
-        //org.eclipse.jetty.client.Origin.Address address = client.getProxyConfiguration().getProxies().get(0).getAddress();
-        org.eclipse.jetty.client.Address address = client.getProxy();
-        assertEquals("Got the wrong http proxy host parameter", expectedHost, address.getHost());
-        assertEquals("Got the wrong http proxy port paramerter", expectedPort, address.getPort());
+        CamelHttpClient camelHttpClient = (CamelHttpClient)client;
+        assertEquals("Got the wrong http proxy host parameter", expectedHost, camelHttpClient.getProxyHost());
+        assertEquals("Got the wrong http proxy port paramerter", expectedPort, camelHttpClient.getProxyPort());
     }
 
 }

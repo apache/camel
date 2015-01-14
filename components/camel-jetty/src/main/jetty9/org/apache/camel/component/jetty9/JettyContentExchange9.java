@@ -68,21 +68,14 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private boolean supportRedirect;
 
-    public JettyContentExchange9(Exchange exchange, JettyHttpBinding jettyBinding, 
-                                final HttpClient client) {
-        super(); // keep headers by default
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+                     final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setCallback(org.apache.camel.AsyncCallback)
-     */
-    public void setCallback(AsyncCallback callback) {
         this.callback = callback;
     }
-
+    
     protected void onRequestComplete() {
         LOG.trace("onRequestComplete");
         closeRequestContentSource();
@@ -294,9 +287,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
         return ret;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.jetty.JettyContentExchangeI#setSupportRedirect(boolean)
-     */
+    @Override
     public void setSupportRedirect(boolean supportRedirect) {
         this.supportRedirect = supportRedirect;
     }

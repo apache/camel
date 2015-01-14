@@ -70,5 +70,9 @@ public abstract class CamelHttpClient extends HttpClient {
     public void setSupportRedirect(boolean supportRedirect) {
         this.supportRedirect = supportRedirect;
     }
+    
+    public abstract String getProxyHost();
+
+    public abstract int getProxyPort();
 
 }
