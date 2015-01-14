@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cassandra;
 
-import java.util.Collection;
-
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
@@ -26,6 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 /**
  * Cassandra 2 CQL3 producer.
@@ -51,10 +51,12 @@ public class CassandraProducer extends DefaultProducer {
     }
 
     private Object[] getCqlParams(Message message) {
-        Object cqlParamsObj = message.getBody(Object.class);
+        Object cqlParamsObj = message.getBody();
         Object[] cqlParams;
         final Class<Object[]> objectArrayClazz = Object[].class;
-        if (objectArrayClazz.isInstance(cqlParamsObj)) {
+        if (cqlParamsObj == null) {
+            cqlParams = null;
+        } else if (objectArrayClazz.isInstance(cqlParamsObj)) {
             cqlParams = objectArrayClazz.cast(cqlParamsObj);
         } else if (cqlParamsObj instanceof Collection) {
             final Collection cqlParamsColl = (Collection) cqlParamsObj;
@@ -85,7 +87,7 @@ public class CassandraProducer extends DefaultProducer {
             lPreparedStatement = getEndpoint().prepareStatement(messageCql);
         }
         Session session = getEndpoint().getSessionHolder().getSession();
-        if (cqlParams == null) {
+        if (cqlParams == null || cqlParams.length==0) {
             resultSet = session.execute(lPreparedStatement.bind());
         } else {
             resultSet = session.execute(lPreparedStatement.bind(cqlParams));
