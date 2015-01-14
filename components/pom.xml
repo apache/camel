@@ -246,9 +246,7 @@
                    <artifactId>camel-package-maven-plugin</artifactId>
                    <versionRange>${project.version}</versionRange>
                    <goals>
-                     <goal>generate-components-list</goal>
-                     <goal>generate-dataformats-list</goal>
-                     <goal>generate-languages-list</goal>
+                     <goal>prepare-components</goal>
                    </goals>
                  </pluginExecutionFilter>
                  <action>
@@ -269,9 +267,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>generate-components-list</goal>
-              <goal>generate-dataformats-list</goal>
-              <goal>generate-languages-list</goal>
+              <goal>prepare-components</goal>
             </goals>
             <phase>generate-resources</phase>
           </execution>
