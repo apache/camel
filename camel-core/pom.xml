@@ -194,6 +194,7 @@
                                     <goals>
                                         <goal>generate-components-list</goal>
                                         <goal>generate-dataformats-list</goal>
+                                        <goal>generate-languages-list</goal>
                                     </goals>
                                 </pluginExecutionFilter>
                                 <action>
@@ -297,6 +298,14 @@
             <id>dataformats</id>
             <goals>
               <goal>generate-dataformats-list</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+          <!-- camel-core needs to generate languages after compilation -->
+          <execution>
+            <id>languages</id>
+            <goals>
+              <goal>generate-languages-list</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>

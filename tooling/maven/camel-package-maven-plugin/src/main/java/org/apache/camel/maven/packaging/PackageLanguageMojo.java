@@ -46,11 +46,11 @@ import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
- * @goal generate-dataformats-list
+ * @goal generate-languages-list
  * @execute phase="generate-resources"
  * @execute phase="process-classes"
  */
-public class PackageDataFormatMojo extends AbstractMojo {
+public class PackageLanguageMojo extends AbstractMojo {
 
     /**
      * The maven project.
@@ -62,14 +62,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * The output directory for generated dataformats file
+     * The output directory for generated languages file
      *
-     * @parameter default-value="${project.build.directory}/generated/camel/dataformats"
+     * @parameter default-value="${project.build.directory}/generated/camel/languages"
      */
     protected File outDir;
 
     /**
-     * The output directory for generated dataformats file
+     * The output directory for generated languages file
      *
      * @parameter default-value="${project.build.directory}/classes"
      */
@@ -102,7 +102,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
             if (!f.exists()) {
                 f = new File(project.getBasedir(), r.getDirectory());
             }
-            f = new File(f, "META-INF/services/org/apache/camel/dataformat");
+            f = new File(f, "META-INF/services/org/apache/camel/language");
 
             if (f.exists() && f.isDirectory()) {
                 File[] files = f.listFiles();
@@ -147,47 +147,47 @@ public class PackageDataFormatMojo extends AbstractMojo {
                         String javaType = entry.getValue();
                         String modelName = asModelName(name);
 
-                        InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
+                        InputStream is = loader.getResourceAsStream("org/apache/camel/model/language/" + modelName + ".json");
                         if (is == null) {
                             // use file input stream if we build camel-core itself, and thus do not have a JAR which can be loaded by URLClassLoader
-                            is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
+                            is = new FileInputStream(new File(core, "org/apache/camel/model/language/" + modelName + ".json"));
                         }
                         String json = loadText(is);
                         if (json != null) {
-                            DataFormatModel dataFormatModel = new DataFormatModel();
-                            dataFormatModel.setName(name);
-                            dataFormatModel.setModelName(modelName);
-                            dataFormatModel.setLabel("");
-                            dataFormatModel.setDescription(project.getDescription());
-                            dataFormatModel.setJavaType(javaType);
-                            dataFormatModel.setGroupId(project.getGroupId());
-                            dataFormatModel.setArtifactId(project.getArtifactId());
-                            dataFormatModel.setVersion(project.getVersion());
+                            LanguageModel languageModel = new LanguageModel();
+                            languageModel.setName(name);
+                            languageModel.setModelName(modelName);
+                            languageModel.setLabel("");
+                            languageModel.setDescription(project.getDescription());
+                            languageModel.setJavaType(javaType);
+                            languageModel.setGroupId(project.getGroupId());
+                            languageModel.setArtifactId(project.getArtifactId());
+                            languageModel.setVersion(project.getVersion());
 
                             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                             for (Map<String, String> row : rows) {
                                 if (row.containsKey("label")) {
-                                    dataFormatModel.setLabel(row.get("label"));
+                                    languageModel.setLabel(row.get("label"));
                                 }
                                 if (row.containsKey("javaType")) {
-                                    dataFormatModel.setModelJavaType(row.get("javaType"));
+                                    languageModel.setModelJavaType(row.get("javaType"));
                                 }
                                 // override description for camel-core, as otherwise its too generic
                                 if ("camel-core".equals(project.getArtifactId())) {
                                     if (row.containsKey("description")) {
-                                        dataFormatModel.setLabel(row.get("description"));
+                                        languageModel.setLabel(row.get("description"));
                                     }
                                 }
                             }
-                            getLog().debug("Model " + dataFormatModel);
+                            getLog().debug("Model " + languageModel);
 
                             // build json schema for the data format
                             String properties = after(json, "  \"properties\": {");
-                            String schema = createParameterJsonSchema(dataFormatModel, properties);
+                            String schema = createParameterJsonSchema(languageModel, properties);
                             getLog().debug("JSon schema\n" + schema);
 
                             // write this to the directory
-                            File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
+                            File dir = new File(schemaOutDir, schemaSubDirectory(languageModel.getJavaType()));
                             dir.mkdirs();
 
                             File out = new File(dir, name + ".json");
@@ -195,19 +195,19 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             fos.write(schema.getBytes());
                             fos.close();
 
-                            getLog().info("Generated " + out + " containing JSon schema for " + name + " data format");
+                            getLog().info("Generated " + out + " containing JSon schema for " + name + " language");
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            throw new MojoExecutionException("Error loading dataformat model from camel-core. Reason: " + e, e);
+            throw new MojoExecutionException("Error loading language model from camel-core. Reason: " + e, e);
         }
 
         if (count > 0) {
             Properties properties = new Properties();
             String names = buffer.toString();
-            properties.put("dataFormats", names);
+            properties.put("languages", names);
             properties.put("groupId", project.getGroupId());
             properties.put("artifactId", project.getArtifactId());
             properties.put("version", project.getVersion());
@@ -215,34 +215,31 @@ public class PackageDataFormatMojo extends AbstractMojo {
             properties.put("projectDescription", project.getDescription());
 
             camelMetaDir.mkdirs();
-            File outFile = new File(camelMetaDir, "dataformat.properties");
+            File outFile = new File(camelMetaDir, "language.properties");
             try {
                 properties.store(new FileWriter(outFile), "Generated by camel-package-maven-plugin");
-                getLog().info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
+                getLog().info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
 
                 if (projectHelper != null) {
                     List<String> includes = new ArrayList<String>();
-                    includes.add("**/dataformat.properties");
+                    includes.add("**/language.properties");
                     projectHelper.addResource(this.project, outDir.getPath(), includes, new ArrayList<String>());
-                    projectHelper.attachArtifact(this.project, "properties", "camelDataFormat", outFile);
+                    projectHelper.attachArtifact(this.project, "properties", "camelLanguage", outFile);
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
         } else {
-            getLog().debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
+            getLog().debug("No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
         }
     }
 
     private String asModelName(String name) {
-        // special for some data formats
-        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-xstream".equals(name)) {
-            return "json";
-        } else if ("bindy-csv".equals(name) || "bindy-fixed".equals(name) || "bindy-kvp".equals(name)) {
-            return "bindy";
-        } else if ("zipfile".equals(name)) {
-            // darn should have been lower case
-            return "zipFile";
+        // special for some languages
+        if ("bean".equals(name)) {
+            return "method";
+        } else if ("file".equals(name)) {
+            return "simple";
         }
         return name;
     }
@@ -271,21 +268,21 @@ public class PackageDataFormatMojo extends AbstractMojo {
         return pckName.replace('.', '/');
     }
 
-    private String createParameterJsonSchema(DataFormatModel dataFormatModel, String schema) {
+    private String createParameterJsonSchema(LanguageModel languageModel, String schema) {
         StringBuilder buffer = new StringBuilder("{");
         // component model
-        buffer.append("\n \"dataformat\": {");
-        buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
-        buffer.append("\n    \"modelName\": \"").append(dataFormatModel.getModelName()).append("\",");
-        buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
-        buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");
-        buffer.append("\n    \"javaType\": \"").append(dataFormatModel.getJavaType()).append("\",");
-        if (dataFormatModel.getModelJavaType() != null) {
-            buffer.append("\n    \"modelJavaType\": \"").append(dataFormatModel.getModelJavaType()).append("\",");
+        buffer.append("\n \"language\": {");
+        buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
+        buffer.append("\n    \"modelName\": \"").append(languageModel.getModelName()).append("\",");
+        buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
+        buffer.append("\n    \"label\": \"").append(languageModel.getLabel()).append("\",");
+        buffer.append("\n    \"javaType\": \"").append(languageModel.getJavaType()).append("\",");
+        if (languageModel.getModelJavaType() != null) {
+            buffer.append("\n    \"modelJavaType\": \"").append(languageModel.getModelJavaType()).append("\",");
         }
-        buffer.append("\n    \"groupId\": \"").append(dataFormatModel.getGroupId()).append("\",");
-        buffer.append("\n    \"artifactId\": \"").append(dataFormatModel.getArtifactId()).append("\",");
-        buffer.append("\n    \"version\": \"").append(dataFormatModel.getVersion()).append("\"");
+        buffer.append("\n    \"groupId\": \"").append(languageModel.getGroupId()).append("\",");
+        buffer.append("\n    \"artifactId\": \"").append(languageModel.getArtifactId()).append("\",");
+        buffer.append("\n    \"version\": \"").append(languageModel.getVersion()).append("\"");
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");
@@ -293,7 +290,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         return buffer.toString();
     }
 
-    private class DataFormatModel {
+    private class LanguageModel {
         private String name;
         private String modelName;
         private String description;
@@ -378,7 +375,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         @Override
         public String toString() {
-            return "DataFormatModel["
+            return "LanguageModel["
                     + "name='" + name + '\''
                     + ", modelName='" + modelName + '\''
                     + ", description='" + description + '\''

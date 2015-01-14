@@ -248,6 +248,7 @@
                    <goals>
                      <goal>generate-components-list</goal>
                      <goal>generate-dataformats-list</goal>
+                     <goal>generate-languages-list</goal>
                    </goals>
                  </pluginExecutionFilter>
                  <action>
@@ -270,6 +271,7 @@
             <goals>
               <goal>generate-components-list</goal>
               <goal>generate-dataformats-list</goal>
+              <goal>generate-languages-list</goal>
             </goals>
             <phase>generate-resources</phase>
           </execution>
