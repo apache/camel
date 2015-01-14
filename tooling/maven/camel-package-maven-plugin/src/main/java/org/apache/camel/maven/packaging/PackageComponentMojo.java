@@ -85,6 +85,10 @@ public class PackageComponentMojo extends AbstractMojo {
                 File[] files = f.listFiles();
                 if (files != null) {
                     for (File file : files) {
+                        // skip directories as there may be a sub .resolver directory
+                        if (file.isDirectory()) {
+                            continue;
+                        }
                         String name = file.getName();
                         if (name.charAt(0) != '.') {
                             count++;

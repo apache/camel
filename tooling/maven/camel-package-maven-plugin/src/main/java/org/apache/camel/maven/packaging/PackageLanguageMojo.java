@@ -108,6 +108,10 @@ public class PackageLanguageMojo extends AbstractMojo {
                 File[] files = f.listFiles();
                 if (files != null) {
                     for (File file : files) {
+                        // skip directories as there may be a sub .resolver directory such as in camel-script
+                        if (file.isDirectory()) {
+                            continue;
+                        }
                         String name = file.getName();
                         if (name.charAt(0) != '.') {
                             count++;
