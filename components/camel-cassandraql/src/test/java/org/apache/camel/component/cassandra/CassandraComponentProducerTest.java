@@ -16,13 +16,7 @@
  */
 package org.apache.camel.component.cassandra;
 
-import java.util.Arrays;
-
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,9 +27,14 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class CassandraComponentProducerTest extends CamelTestSupport {
 
     private static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
+    private static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
     private static final String NOT_CONSISTENT_URI = "cql://localhost/camel_ks?cql=" + CQL + "&consistencyLevel=ANY";
 
     @Rule
@@ -43,6 +42,9 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
 
     @Produce(uri = "direct:input")
     ProducerTemplate producerTemplate;
+
+    @Produce(uri = "direct:inputNoParameter")
+    ProducerTemplate noParameterProducerTemplate;
 
     @Produce(uri = "direct:inputNotConsistent")
     ProducerTemplate notConsistentProducerTemplate;
@@ -64,6 +66,8 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
 
                 from("direct:input")
                         .to("cql://localhost/camel_ks?cql=" + CQL);
+                from("direct:inputNoParameter")
+                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL);
                 from("direct:inputNotConsistent")
                         .to(NOT_CONSISTENT_URI);
             }
@@ -83,6 +87,24 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
         assertEquals("Jiang", row.getString("last_name"));
         session.close();
         cluster.close();
+    }
+
+    @Test
+    public void testRequestNoParameter_Null() throws Exception {
+        Object response = noParameterProducerTemplate.requestBody(null);
+
+        assertNotNull(response);
+        assertIsInstanceOf(List.class, response);
+        List<Row> rows = (List<Row>) response;
+    }
+
+    @Test
+    public void testRequestNoParameter_Empty() throws Exception {
+        Object response = noParameterProducerTemplate.requestBody(Collections.emptyList());
+
+        assertNotNull(response);
+        assertIsInstanceOf(List.class, response);
+        List<Row> rows = (List<Row>) response;
     }
 
     @Test
