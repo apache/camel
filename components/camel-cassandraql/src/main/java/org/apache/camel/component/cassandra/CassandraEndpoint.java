@@ -51,6 +51,11 @@ public class CassandraEndpoint extends DefaultEndpoint {
     private String keyspace;
     @UriParam
     private String cql;
+    /**
+     * Use PreparedStatements or normal Statements
+     */
+    @UriParam
+    private boolean prepareStatements=true;
     @UriParam
     private String clusterName;
     @UriParam
@@ -281,5 +286,13 @@ public class CassandraEndpoint extends DefaultEndpoint {
 
     public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
         this.resultSetConversionStrategy = resultSetConversionStrategy;
+    }
+
+    public boolean isPrepareStatements() {
+        return prepareStatements;
+    }
+
+    public void setPrepareStatements(boolean prepareStatements) {
+        this.prepareStatements = prepareStatements;
     }
 }

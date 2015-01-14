@@ -47,7 +47,12 @@ public class CassandraConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         // Execute CQL Query
         Session session = getEndpoint().getSessionHolder().getSession();
-        ResultSet resultSet = session.execute(preparedStatement.bind());
+        ResultSet resultSet;
+        if (isPrepareStatements()) {
+            resultSet = session.execute(preparedStatement.bind());
+        } else {
+            resultSet = session.execute(getEndpoint().getCql());
+        }
 
         // Create message from ResultSet
         Exchange exchange = getEndpoint().createExchange();
@@ -69,9 +74,19 @@ public class CassandraConsumer extends ScheduledPollConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        if (preparedStatement == null) {
+        if (isPrepareStatements()) {
             preparedStatement = getEndpoint().prepareStatement();
         }
     }
+
+    @Override
+    protected void doStop() throws Exception {
+        this.preparedStatement = null;
+        super.doStop();
+    }
+
+    public boolean isPrepareStatements() {
+        return getEndpoint().isPrepareStatements();
+    }
+
 }

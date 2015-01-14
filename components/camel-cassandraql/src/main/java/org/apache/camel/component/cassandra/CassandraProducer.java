@@ -46,10 +46,26 @@ public class CassandraProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (isPrepareStatements()) {
+            this.preparedStatement = getEndpoint().prepareStatement();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        this.preparedStatement = null;
+        super.doStop();
+    }
+
+    @Override
     public CassandraEndpoint getEndpoint() {
         return (CassandraEndpoint) super.getEndpoint();
     }
-
+    public boolean isPrepareStatements() {
+        return getEndpoint().isPrepareStatements();
+    }
     private Object[] getCqlParams(Message message) {
         Object cqlParamsObj = message.getBody();
         Object[] cqlParams;
@@ -75,22 +91,53 @@ public class CassandraProducer extends DefaultProducer {
         Object[] cqlParams = getCqlParams(message);
 
         ResultSet resultSet;
+        Session session = getEndpoint().getSessionHolder().getSession();
+        if (isPrepareStatements()) {
+            resultSet = executePreparedStatement(session, messageCql, cqlParams);
+        } else {
+            resultSet = executeStatement(session, messageCql, cqlParams);
+        }
+        return resultSet;
+    }
+
+    /**
+     * Execute CQL as PreparedStatement
+     */
+    private ResultSet executePreparedStatement(Session session, String messageCql, Object[] cqlParams) {
+        ResultSet resultSet;
         PreparedStatement lPreparedStatement;
         if (messageCql == null || messageCql.isEmpty()) {
             // URI CQL
-            if (preparedStatement == null) {
-                this.preparedStatement = getEndpoint().prepareStatement();
-            }
             lPreparedStatement = this.preparedStatement;
         } else {
             // Message CQL
             lPreparedStatement = getEndpoint().prepareStatement(messageCql);
         }
-        Session session = getEndpoint().getSessionHolder().getSession();
-        if (cqlParams == null || cqlParams.length==0) {
+        if (cqlParams == null || cqlParams.length == 0) {
             resultSet = session.execute(lPreparedStatement.bind());
         } else {
             resultSet = session.execute(lPreparedStatement.bind(cqlParams));
+        }
+        return resultSet;
+    }
+
+    /**
+     * Execute CQL as is
+     */
+    private ResultSet executeStatement(Session session, String messageCql, Object[] cqlParams) {
+        ResultSet resultSet;
+        String cql;
+        if (messageCql == null || messageCql.isEmpty()) {
+            // URI CQL
+            cql = getEndpoint().getCql();
+        } else {
+            // Message CQL
+            cql = messageCql;
+        }
+        if (cqlParams == null || cqlParams.length == 0) {
+            resultSet = session.execute(cql);
+        } else {
+            resultSet = session.execute(cql, cqlParams);
         }
         return resultSet;
     }
