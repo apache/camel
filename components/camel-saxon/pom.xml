@@ -26,11 +26,14 @@
 
   <artifactId>camel-saxon</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: SAXON</name>
-  <description>Camel SAXON support</description>
+  <name>Camel :: Saxon</name>
+  <description>Camel Saxon (XQuery/XPath) support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.xquery.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.xquery.*,
+      org.apache.camel.language.xquery.*
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=xquery,
       org.apache.camel.spi.LanguageResolver;language=xquery

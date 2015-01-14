@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xquery;
+package org.apache.camel.language.xquery;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.support.LanguageSupport;
 
 /**
