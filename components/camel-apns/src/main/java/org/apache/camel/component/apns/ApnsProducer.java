@@ -19,6 +19,7 @@ package org.apache.camel.component.apns;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.notnoop.apns.APNS;
@@ -84,8 +85,12 @@ public class ApnsProducer extends DefaultProducer {
         } else {
             payload = message;
         }
-
-        getEndpoint().getApnsService().push(tokens, payload);
+        Date expiry = exchange.getIn().getHeader(ApnsConstants.HEADER_EXPIRY, Date.class);
+        if (expiry != null) {
+            getEndpoint().getApnsService().push(tokens, payload, expiry);
+        } else {
+            getEndpoint().getApnsService().push(tokens, payload);
+        }
     }
 
     public String getHeaderTokens(Exchange exchange) {
