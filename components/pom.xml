@@ -47,7 +47,9 @@
     <module>camel-scala</module>
     <module>camel-http</module>
     <module>camel-http4</module>
-    <module>camel-jetty</module>
+    <module>camel-jetty-common</module>
+    <module>camel-jetty8</module>
+    <module>camel-jetty9</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
     <module>camel-web-standalone</module>
