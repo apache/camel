@@ -179,6 +179,7 @@ public class S3Producer extends DefaultProducer {
         if (obj instanceof File) {
             filePayload = (File) obj;
             putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), filePayload);
+            putObjectRequest.setMetadata(objectMetadata);
         } else {
             putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
                 determineKey(exchange), exchange.getIn().getMandatoryBody(InputStream.class), objectMetadata);
