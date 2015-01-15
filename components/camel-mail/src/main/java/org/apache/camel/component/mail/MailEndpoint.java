@@ -25,7 +25,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
@@ -37,7 +36,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
     private MailConfiguration configuration;
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
     private ContentTypeResolver contentTypeResolver;
     private int maxMessagesPerPoll;
     private SearchTerm searchTerm;
