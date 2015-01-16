@@ -47,7 +47,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
- * Represents an XML &lt;aggregate/&gt; element
+ * Aggregates many messages into a single message
  *
  * @version 
  */

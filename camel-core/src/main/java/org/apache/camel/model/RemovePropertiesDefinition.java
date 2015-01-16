@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;removeProperties/&gt; element
+ * Removes message exchange properties whose name matches a specified pattern
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "removeProperties")

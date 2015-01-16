@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setProperty/&gt; element
+ * Sets a named property on the message exchange
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "setProperty")

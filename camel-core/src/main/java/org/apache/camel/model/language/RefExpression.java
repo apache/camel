@@ -23,9 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Label;
 
 /**
- * For expressions and predicates using a reference to an existing
- * {@link org.apache.camel.Expression} or {@link org.apache.camel.Predicate}
- * to lookup from the {@link org.apache.camel.spi.Registry}.
+ * For using a custom expression
  */
 @Label("language")
 @XmlRootElement(name = "ref")

@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;removeHeader/&gt; element
+ * Removes a named header from the message
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "removeHeader")

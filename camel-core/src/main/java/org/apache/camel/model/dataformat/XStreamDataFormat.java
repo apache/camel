@@ -42,7 +42,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the XStream XML {@link org.apache.camel.spi.DataFormat}
+ * xstream data format
  *
  * @version 
  */

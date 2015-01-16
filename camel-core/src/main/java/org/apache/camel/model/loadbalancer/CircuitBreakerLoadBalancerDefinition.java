@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;circuitBreaker/&gt; element
+ * Circuit break load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "circuitBreaker")

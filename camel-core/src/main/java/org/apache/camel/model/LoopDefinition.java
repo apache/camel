@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;loop/&gt; element
+ * Processes a message multiple times
  *
  * @version 
  */

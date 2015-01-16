@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Base class for sending to an endpoint with an optional {@link ExchangePattern}
+ * Sends the message to an endpoint
  *
  * @version 
  */

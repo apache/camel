@@ -33,7 +33,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;loadBalancer/&gt; element
+ * Balances message processing among a number of nodes
  */
 @Label("EIP,routing")
 @XmlType(name = "loadBalancer")

@@ -31,7 +31,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;dynamicRouter/&gt; element
+ * Routes messages based on dynamic rules
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "dynamicRouter")

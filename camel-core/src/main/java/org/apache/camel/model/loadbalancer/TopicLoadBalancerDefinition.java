@@ -26,8 +26,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;topic/&gt; element
- * 
+ * Topic load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "topic")

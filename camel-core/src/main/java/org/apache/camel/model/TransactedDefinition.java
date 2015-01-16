@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents an XML &lt;transacted/&gt; element
+ * Enables transaction on the route
  *
  * @version 
  */

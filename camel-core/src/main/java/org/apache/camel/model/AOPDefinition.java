@@ -30,7 +30,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;aop/&gt; element
+ * Does processing before and/or after the route is completed
  *
  * @deprecated will be removed in the future. You can for example use {@link Processor} and
  * {@link org.apache.camel.spi.InterceptStrategy} to do AOP in Camel.

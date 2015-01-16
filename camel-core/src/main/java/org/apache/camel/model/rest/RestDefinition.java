@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Represents an XML &lt;rest/&gt; element
+ * Defines a rest service using the rest-dsl
  */
 @Label("rest")
 @XmlRootElement(name = "rest")

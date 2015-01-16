@@ -44,7 +44,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;resequence/&gt; element
+ * Resequences (re-order) messages based on an expression
  *
  * @version 
  */

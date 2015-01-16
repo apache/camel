@@ -25,7 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents an XML &lt;inOnly/&gt; element
+ * Marks the exchange pattern for the route to one way
  *
  * @version 
  */

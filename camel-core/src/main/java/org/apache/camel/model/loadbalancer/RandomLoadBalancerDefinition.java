@@ -26,7 +26,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;random/&gt; element
+ * Random load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "random")

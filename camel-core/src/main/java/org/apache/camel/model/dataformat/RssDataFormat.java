@@ -24,7 +24,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the <a href="http://camel.apache.org/rss.html">RSS</a> {@link org.apache.camel.spi.DataFormat}.
+ * RSS data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "rss")

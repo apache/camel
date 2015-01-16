@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 
 /**
- * Represents an XML &lt;interceptFrom/&gt; element
+ * Intercepts incoming messages
  *
  * @version 
  */

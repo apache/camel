@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Label;
 
+/**
+ * Rest HEAD command
+ */
 @Label("rest")
 @XmlRootElement(name = "head")
 @XmlAccessorType(XmlAccessType.FIELD)

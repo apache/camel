@@ -41,7 +41,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;recipientList/&gt; element
+ * Routes messages to a number of dynamically specified recipients (dynamic to)
  *
  * @version 
  */

@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents an XML &lt;log/&gt; element
+ * Logs the defined message to the logger
  *
  * @version 
  */

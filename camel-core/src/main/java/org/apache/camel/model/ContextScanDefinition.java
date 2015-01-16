@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Label;
 
 /**
- * <code>ContextScanDefinition</code> represents a &lt;contextScan/&gt element.
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the context {@link org.apache.camel.spi.Registry}.
  */
 @Label("configuration")
 @XmlRootElement(name = "contextScan")

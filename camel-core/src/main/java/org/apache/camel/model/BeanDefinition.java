@@ -37,7 +37,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;bean/&gt; element
+ * Calls a java bean
  *
  * @version 
  */

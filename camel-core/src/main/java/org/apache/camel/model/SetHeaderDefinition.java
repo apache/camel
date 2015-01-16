@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setHeader/&gt; element
+ * Sets the value of a message header
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "setHeader")

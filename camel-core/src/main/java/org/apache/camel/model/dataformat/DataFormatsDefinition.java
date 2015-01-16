@@ -30,7 +30,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the XML type for a collection of DataFormats.
+ * To configure data formats
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "dataFormats")

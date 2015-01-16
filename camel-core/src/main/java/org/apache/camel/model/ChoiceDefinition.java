@@ -36,7 +36,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;choice/&gt; element
+ * Routes messages based on a series of predicates
  *
  * @version
  */

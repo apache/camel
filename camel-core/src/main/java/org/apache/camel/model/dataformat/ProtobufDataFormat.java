@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a protobuf DataFormat {@link org.apache.camel.spi.DataFormat}
+ * Google protobuf data format
  *
  * @version 
  */

@@ -30,7 +30,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a <a href="http://camel.apache.org/flatpack.html">Flatpack</a> {@link org.apache.camel.spi.DataFormat}.
+ * Flatpack data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "flatpack")

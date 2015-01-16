@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;removeProperty/&gt; element
+ * Removes a named property from the message exchange
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "removeProperty")

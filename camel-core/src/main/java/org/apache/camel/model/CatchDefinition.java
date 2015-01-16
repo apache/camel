@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * Represents an XML &lt;catch/&gt; element
+ * Catches exceptions as part of a try, catch, finally block
  *
  * @version 
  */

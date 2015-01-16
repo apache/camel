@@ -29,7 +29,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;routeBuilderRef/&gt; element
+ * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to use.
  *
  * @version 
  */

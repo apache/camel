@@ -27,7 +27,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the custom {@link org.apache.camel.spi.DataFormat} to lookup using a reference
+ * Custom data format
  *
  * @version
  */

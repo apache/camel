@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the XMLBeans XML {@link org.apache.camel.spi.DataFormat}
+ * XMLBeans data format
  *
  * @version 
  */

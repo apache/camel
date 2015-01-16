@@ -28,7 +28,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the ZIP XML {@link org.apache.camel.spi.DataFormat}
+ * zip data format (not for zip files)
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "zip")

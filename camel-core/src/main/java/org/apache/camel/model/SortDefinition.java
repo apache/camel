@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 
 /**
- * Represents an XML &lt;sort/&gt; element
+ * Sorts the contents of the message
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "sort")

@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Label;
 
+/**
+ * To configure the rest hostname resolver
+ */
 @Label("rest")
 @XmlType
 @XmlEnum(String.class)

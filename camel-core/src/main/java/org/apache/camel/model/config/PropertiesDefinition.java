@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the XML type for &lt;properties&gt;.
+ * A series of key value pair
  */
 @Label("configuration")
 @XmlRootElement(name = "properties")

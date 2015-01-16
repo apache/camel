@@ -32,7 +32,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;restConfiguration/&gt; element
+ * To configure rest
  */
 @Label("rest")
 @XmlRootElement(name = "restConfiguration")

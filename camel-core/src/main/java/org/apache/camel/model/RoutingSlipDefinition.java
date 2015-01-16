@@ -32,7 +32,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;routingSlip/&gt; element
+ * Routes a message through a series of steps that are pre-determined (the slip)
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "routingSlip")

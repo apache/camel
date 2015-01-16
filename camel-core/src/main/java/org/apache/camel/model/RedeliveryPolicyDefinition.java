@@ -29,7 +29,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;redeliveryPolicy/&gt; element
+ * To configure re-delivery for error handling
  *
  * @version 
  */

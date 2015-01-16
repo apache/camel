@@ -38,8 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
 /**
- * For expressions and predicates using the
- * <a href="http://camel.apache.org/bean-language.html">bean language</a>
+ * For expressions and predicates using a java bean (aka method call)
  *
  * @version
  */

@@ -29,9 +29,8 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.spi.Label;
 
-
 /**
- * Represents an XML &lt;threadPoolProfile/&gt; element
+ * To configure thread pools
  *
  * @version 
  */

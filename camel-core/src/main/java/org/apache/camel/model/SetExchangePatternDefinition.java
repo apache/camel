@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;setExchangePattern/&gt; element
+ * Sets the exchange pattern on the message exchange
  *
  * @version 
  */

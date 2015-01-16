@@ -31,7 +31,7 @@ import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;convertBodyTo/&gt; element
+ * Converts the message body to another type
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "convertBodyTo")

@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the Base64 {@link org.apache.camel.spi.DataFormat}
+ * Base64 data format
  *
  * @version 
  */

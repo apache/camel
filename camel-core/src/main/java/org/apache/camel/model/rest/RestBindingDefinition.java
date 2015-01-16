@@ -33,6 +33,9 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 
+/**
+ * To configure rest binding
+ */
 @Label("rest")
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)

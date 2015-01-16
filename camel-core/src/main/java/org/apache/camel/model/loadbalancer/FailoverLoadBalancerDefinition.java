@@ -32,7 +32,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;failover/&gt; element
+ * Failover load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "failover")

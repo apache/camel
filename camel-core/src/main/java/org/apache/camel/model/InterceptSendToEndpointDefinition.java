@@ -36,7 +36,7 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Represents an XML &lt;interceptToEndpoint/&gt; element
+ * Intercepts messages being sent to an endpoint
  *
  * @version 
  */

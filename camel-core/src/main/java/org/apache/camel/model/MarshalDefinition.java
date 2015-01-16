@@ -63,7 +63,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Marshals to a binary payload using the given {@link DataFormatDefinition}
+ * Marshals data into a specified format for transmission over a transport or component
  *
  * @version 
  */

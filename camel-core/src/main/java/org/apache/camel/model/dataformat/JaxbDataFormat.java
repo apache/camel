@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the JAXB2 XML {@link DataFormat}
+ * JAXB data format
  *
  * @version 
  */

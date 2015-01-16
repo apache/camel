@@ -27,7 +27,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Label;
 
 /**
- * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
+ * For JXPath expressions and predicates
  *
  * @version 
  */

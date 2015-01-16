@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * <code>PackageScanDefinition</code> represents a &lt;packageScan/&gt element.
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} classes in java packages
  */
 @XmlRootElement(name = "packageScan")
 @XmlAccessorType(XmlAccessType.FIELD)

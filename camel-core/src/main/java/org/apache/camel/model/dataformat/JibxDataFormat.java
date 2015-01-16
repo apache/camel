@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the JiBX XML {@link org.apache.camel.spi.DataFormat}
+ * JiBX data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "jibx")

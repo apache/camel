@@ -38,7 +38,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Represents an XML &lt;multicast/&gt; element
+ *  Routes the same message to multiple paths either sequentially or in parallel.
  *
  * @version 
  */

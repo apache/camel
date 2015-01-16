@@ -26,7 +26,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the uniVocity fixed-width {@link org.apache.camel.spi.DataFormat}
+ * UniVocity fixed-width data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "univocity-fixed")

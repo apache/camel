@@ -32,7 +32,7 @@ import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;policy/&gt; element
+ * Defines a policy the route will use
  *
  * @version 
  */

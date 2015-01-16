@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a wellformed HTML document (XML well Formed) {@link DataFormat}
+ * Tidymark (wellformed HTML) data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "tidyMarkup")

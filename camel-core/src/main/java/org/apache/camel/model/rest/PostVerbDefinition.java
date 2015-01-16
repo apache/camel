@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Label;
 
+/**
+ * Rest POST command
+ */
 @Label("rest")
 @XmlRootElement(name = "post")
 @XmlAccessorType(XmlAccessType.FIELD)

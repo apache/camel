@@ -27,7 +27,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents an XML &lt;restContextRef/&gt; element
+ * To refer to an XML file with rest services defined using the rest-dsl
  *
  * @version 
  */

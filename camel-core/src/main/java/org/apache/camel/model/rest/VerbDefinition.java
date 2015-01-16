@@ -29,6 +29,9 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Label;
 
+/**
+ * Rest command
+ */
 @Label("rest")
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)

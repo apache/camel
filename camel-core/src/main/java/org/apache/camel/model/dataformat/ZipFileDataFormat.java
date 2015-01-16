@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the ZIP file XML {@link org.apache.camel.spi.DataFormat}.
+ * zip-file data format
  */
 @Label("dataformat,transformation")
 // TODO: use zipfile as name in Camel 3.0

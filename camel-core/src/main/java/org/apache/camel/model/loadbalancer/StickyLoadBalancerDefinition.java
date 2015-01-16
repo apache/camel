@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;sticky/&gt; element
+ * Sticky load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "sticky")

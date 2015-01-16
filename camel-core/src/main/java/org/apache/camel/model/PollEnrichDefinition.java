@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;pollEnrich/&gt; element
+ * Enriches messages with data polled from a secondary resource
  *
  * @see org.apache.camel.processor.Enricher
  */

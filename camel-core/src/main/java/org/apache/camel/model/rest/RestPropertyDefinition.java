@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the XML type for &lt;restProperty&gt;.
+ * A key value pair
  */
 @Label("rest")
 @XmlRootElement(name = "restProperty")

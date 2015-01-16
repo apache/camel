@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents an XML &lt;routeContextRef/&gt; element
+ * To refer to an XML file with routes defined using the xml-dsl
  *
  * @version 
  */

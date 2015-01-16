@@ -26,7 +26,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;finally/&gt; element
+ * Path traversed when a try, catch, finally block exits
  *
  * @version 
  */

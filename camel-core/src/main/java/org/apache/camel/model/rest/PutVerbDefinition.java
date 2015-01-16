@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Label;
 
+/**
+ * Rest PUT command
+ */
 @Label("rest")
 @XmlRootElement(name = "put")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -27,7 +27,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;setBody/&gt; element.
+ * Sets the contents of the message body
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "setBody")

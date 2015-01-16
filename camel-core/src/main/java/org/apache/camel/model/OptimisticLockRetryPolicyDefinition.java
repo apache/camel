@@ -25,7 +25,7 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents an XML &lt;optimisticLockRetryPolicy/&gt; element
+ * To configure optimistic locking
  *
  * @version
  */

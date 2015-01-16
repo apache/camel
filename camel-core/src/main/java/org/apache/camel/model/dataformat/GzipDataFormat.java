@@ -24,7 +24,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the GZip {@link DataFormat}
+ * GZip data format
  *
  * @version 
  */

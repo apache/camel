@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Label;
 
+/**
+ * Rest GET command
+ */
 @Label("rest")
 @XmlRootElement(name = "get")
 @XmlAccessorType(XmlAccessType.FIELD)

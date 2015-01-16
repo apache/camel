@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a <a href="http://camel.apache.org/ical">iCal</a> {@link org.apache.camel.spi.DataFormat}.
+ * iCal data format
  *
  * @version 
  */

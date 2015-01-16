@@ -33,7 +33,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
- * Represents as XML Security Encrypter/Decrypter {@link DataFormat}
+ * xml-security data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "secureXML")

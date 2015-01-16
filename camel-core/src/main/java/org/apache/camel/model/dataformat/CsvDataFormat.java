@@ -31,7 +31,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a CSV (Comma Separated Values) {@link org.apache.camel.spi.DataFormat}
+ * CSV data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "csv")

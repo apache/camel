@@ -24,7 +24,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a <a href="http://camel.apache.org/syslog.html">Syslog</a> {@link org.apache.camel.spi.DataFormat}.
+ * Syslog data format
  *
  * @version 
  */

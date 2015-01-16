@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the Bindy {@link org.apache.camel.spi.DataFormat}
+ * Bindy data format
  *
  * @version 
  */

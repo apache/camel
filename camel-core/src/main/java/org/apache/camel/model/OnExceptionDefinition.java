@@ -49,7 +49,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;onException/&gt; element
+ * Route to be executed when an exception is thrown
  *
  * @version 
  */

@@ -27,7 +27,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;setFaultBody/&gt; element.
+ *  Sets the contents of a fault message's body
  */
 @Label("EIP,transformation")
 @XmlRootElement(name = "setFaultBody")

@@ -49,13 +49,11 @@ public class XPathExpression extends NamespaceAwareExpression {
     private Boolean logNamespaces;
     @XmlAttribute(name = "headerName")
     private String headerName;
-    
     @XmlTransient
     private Class<?> resultType;
     @XmlTransient
     private XPathFactory xpathFactory;
     
-
     public XPathExpression() {
     }
 

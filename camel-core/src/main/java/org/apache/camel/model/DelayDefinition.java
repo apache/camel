@@ -34,7 +34,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;delay/&gt; element
+ * Delays processing for a specified length of time
  *
  * @version 
  */

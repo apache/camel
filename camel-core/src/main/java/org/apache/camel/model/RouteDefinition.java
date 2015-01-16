@@ -56,7 +56,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;route/&gt; element
+ * A Camel route
  *
  * @version
  */

@@ -32,7 +32,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;sample/&gt; element
+ * Extract a sample of the messages passing through a route
  *
  * @version 
  */

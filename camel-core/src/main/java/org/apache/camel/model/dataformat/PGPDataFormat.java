@@ -27,8 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a <a href="http://camel.apache.org/crypto.html">pgp</a>
- * {@link org.apache.camel.spi.DataFormat}.
+ * PGP data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "pgp")

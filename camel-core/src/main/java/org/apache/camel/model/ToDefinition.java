@@ -26,7 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents an XML &lt;to/&gt; element
+ * Sends the message to an endpoint
  *
  * @version 
  */

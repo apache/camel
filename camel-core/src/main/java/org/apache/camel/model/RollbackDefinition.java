@@ -27,7 +27,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;rollback/&gt; element
+ * Forces a rollback by stopping routing the message
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "rollback")

@@ -40,7 +40,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;onCompletion/&gt; element
+ * Route to be executed when normal route processing completes
  *
  * @version 
  */

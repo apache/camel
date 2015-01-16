@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;throttle/&gt; element
+ * Controls the rate at which messages are passed to the next node in the route
  *
  * @version 
  */

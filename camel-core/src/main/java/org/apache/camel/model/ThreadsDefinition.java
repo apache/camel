@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
- * Represents an XML &lt;threads/&gt; element
+ * Specifies that all steps after this node are processed asynchronously
  *
  * @version 
  */

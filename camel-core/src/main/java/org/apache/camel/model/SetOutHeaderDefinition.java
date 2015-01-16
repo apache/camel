@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setOutHeader/&gt; element
+ * Sets the value of a header on the outbound message
  *
  * @deprecated not really needed, will be removed in the future
  */

@@ -30,7 +30,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a collection of routes
+ * A series of Camel routes
  *
  * @version 
  */

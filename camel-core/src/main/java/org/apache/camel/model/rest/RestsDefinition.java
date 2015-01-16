@@ -29,7 +29,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a collection of {@link org.apache.camel.model.rest.RestDefinition REST's}
+ * A series of rest services defined using the rest-dsl
  */
 @Label("rest")
 @XmlRootElement(name = "rests")

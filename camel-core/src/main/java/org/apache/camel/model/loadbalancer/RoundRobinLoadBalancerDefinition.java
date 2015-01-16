@@ -26,7 +26,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;roundRobin/&gt; element
+ * Round robin load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "roundRobin")

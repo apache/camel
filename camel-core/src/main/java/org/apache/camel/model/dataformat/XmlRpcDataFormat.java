@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the XmlRpc XML {@link org.apache.camel.spi.DataFormat}
+ * xml-rpc data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "xmlrpc")

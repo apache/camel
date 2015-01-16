@@ -30,8 +30,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For expressions and predicates using the
- * <a href="http://camel.apache.org/simple.html">simple language</a>
+ * For expressions and predicates using the simple language
  *
  * @version 
  */

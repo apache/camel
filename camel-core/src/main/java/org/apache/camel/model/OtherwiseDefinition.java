@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * Represents an XML &lt;otherwise/&gt; element
+ * Route to be executed when all other choices evaluate to <tt>false</tt>
  *
  * @version 
  */

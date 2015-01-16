@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Label;
 
+/**
+ * Rest DELETE command
+ */
 @Label("rest")
 @XmlRootElement(name = "delete")
 @XmlAccessorType(XmlAccessType.FIELD)

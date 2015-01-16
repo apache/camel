@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;from/&gt; element
+ * Act as a message source as input to a route
  *
  * @version 
  */

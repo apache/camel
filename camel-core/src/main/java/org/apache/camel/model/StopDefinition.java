@@ -26,7 +26,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;stop/&gt; element
+ * Stops the processing of the current message
  *
  * @version 
  */

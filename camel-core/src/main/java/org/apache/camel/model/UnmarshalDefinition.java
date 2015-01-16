@@ -63,7 +63,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Unmarshals the binary payload using the given {@link DataFormatDefinition}
+ * Converts the message data received from the wire into a format that Apache Camel processors can consume
  *
  * @version 
  */

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlValue;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a header for the uniVocity data formats.
+ * To configure headers for UniVocity data formats.
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "univocity-header")

@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 
 /**
- * Represents the base XML type for DataFormat.
+ * Represents a Camel data format
  */
 @Label("dataformat,transformation")
 @XmlType(name = "dataFormat")

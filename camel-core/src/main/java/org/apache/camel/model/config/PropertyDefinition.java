@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Represents the XML type for &lt;property&gt;.
+ * A key value pair
  */
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)

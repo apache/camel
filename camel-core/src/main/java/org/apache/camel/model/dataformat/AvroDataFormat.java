@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a avro DataFormat {@link org.apache.camel.spi.DataFormat}
+ * Avro data format
  *
  * @version 
  */

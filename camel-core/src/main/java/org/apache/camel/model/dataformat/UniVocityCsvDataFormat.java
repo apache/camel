@@ -26,7 +26,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the uniVocity CSV {@link org.apache.camel.spi.DataFormat}
+ * UniVocity CSV data format
  */
 @Label("dataformat,transformation")
 @XmlRootElement(name = "univocity-csv")

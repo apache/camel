@@ -54,7 +54,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * Represents an XML &lt;loadBalance/&gt; element
+ * Balances message processing among a number of nodes
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "loadBalance")

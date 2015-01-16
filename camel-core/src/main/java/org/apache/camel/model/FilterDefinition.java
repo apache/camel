@@ -28,7 +28,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;filter/&gt; element
+ * Filter out messages based using a predicate
  *
  * @version 
  */

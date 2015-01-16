@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;idempotentConsumer/&gt; element
+ * Filters out duplicate messages
  */
 @Label("EIP,endpoints")
 @XmlRootElement(name = "idempotentConsumer")

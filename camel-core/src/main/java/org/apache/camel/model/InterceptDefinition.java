@@ -33,7 +33,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;intercept/&gt; element
+ * Intercepts a message at each step in the route
  *
  * @version 
  */

@@ -25,7 +25,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;when/&gt; element
+ * Triggers a route when an expression evaluates to <tt>true</tt>
  * 
  * @version 
  */

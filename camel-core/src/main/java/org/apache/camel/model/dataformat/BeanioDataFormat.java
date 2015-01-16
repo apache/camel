@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents the BeanIO {@link org.apache.camel.spi.DataFormat}
+ * BeanIO data format
  *
  * @version 
  */

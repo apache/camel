@@ -24,7 +24,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the Java Serialization {@link DataFormat}
+ * Java Object Serialization data format
  *
  * @version 
  */

@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a Barcode DataFormat {@link org.apache.camel.spi.DataFormat}
+ * Barcode data format
  *
  * @version 
  */

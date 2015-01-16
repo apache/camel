@@ -29,7 +29,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;customLoadBalancer/&gt; element
+ * Custom load balancer
  */
 @Label("EIP,routing")
 @XmlRootElement(name = "customLoadBalancer")

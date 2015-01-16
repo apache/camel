@@ -26,7 +26,7 @@ import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;validate/&gt; element
+ * Validates a message based on an expression
  *
  * @version 
  */

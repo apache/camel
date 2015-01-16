@@ -32,7 +32,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
 
 /**
- * Represents a <a href="http://camel.apache.org/xmljson.html">XML-JSON</a> {@link org.apache.camel.spi.DataFormat}.
+ * xml-json data format
  *
  * @version 
  */
