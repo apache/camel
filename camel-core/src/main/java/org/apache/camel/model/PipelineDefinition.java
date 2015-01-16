@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "pipeline")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {

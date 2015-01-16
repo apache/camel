@@ -56,7 +56,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 /**
  * Balances message processing among a number of nodes
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {

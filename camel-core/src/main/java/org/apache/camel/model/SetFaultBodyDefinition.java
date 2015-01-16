@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  *  Sets the contents of a fault message's body
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "setFaultBody")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetFaultBodyDefinition extends NoOutputExpressionNode {

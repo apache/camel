@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("EIP,policy")
+@Label("eip,policy")
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {

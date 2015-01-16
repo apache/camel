@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Forces a rollback by stopping routing the message
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {

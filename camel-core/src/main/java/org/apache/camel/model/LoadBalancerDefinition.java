@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Balances message processing among a number of nodes
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalancerDefinition extends IdentifiedType implements LoadBalancer {

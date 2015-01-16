@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @deprecated not really needed, will be removed in the future
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "setOutHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated

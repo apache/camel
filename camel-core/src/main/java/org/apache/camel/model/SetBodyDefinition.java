@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Sets the contents of the message body
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "setBody")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetBodyDefinition extends NoOutputExpressionNode {

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
  *
  * @version 
  */
-@Label("MEP")
+@Label("mep")
 @XmlRootElement(name = "inOnly")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {

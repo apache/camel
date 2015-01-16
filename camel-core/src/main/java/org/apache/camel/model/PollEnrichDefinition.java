@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @see org.apache.camel.processor.Enricher
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> implements EndpointRequiredDefinition {

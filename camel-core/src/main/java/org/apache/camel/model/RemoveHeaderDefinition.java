@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Removes a named header from the message
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {

@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("EIP,errorHandler")
+@Label("eip,errorHandler")
 @XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {

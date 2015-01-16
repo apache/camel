@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends NoOutputExpressionNode {

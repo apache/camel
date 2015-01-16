@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @see Enricher
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> implements EndpointRequiredDefinition {

@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Topic load balancer
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "topic")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {

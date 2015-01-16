@@ -40,7 +40,7 @@ import org.apache.camel.util.URISupport;
  *
  * @version 
  */
-@Label("EIP,intercepting")
+@Label("eip,intercepting")
 @XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {

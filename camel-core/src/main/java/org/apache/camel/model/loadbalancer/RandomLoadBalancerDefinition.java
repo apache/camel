@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Random load balancer
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "random")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {

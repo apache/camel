@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Converts the message body to another type
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {

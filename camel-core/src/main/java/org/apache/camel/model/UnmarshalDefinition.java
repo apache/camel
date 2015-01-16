@@ -67,7 +67,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> {

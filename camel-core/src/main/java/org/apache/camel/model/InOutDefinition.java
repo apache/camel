@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
  *
  * @version 
  */
-@Label("MEP")
+@Label("mep")
 @XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOutDefinition extends SendDefinition<InOutDefinition> {

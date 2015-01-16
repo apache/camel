@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Label("EIP,management")
+@Label("eip,management")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {

@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Throws an exception
  */
-@Label("EIP,errorHandler")
+@Label("eip,errorHandler")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {

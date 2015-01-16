@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Sets a named property on the message exchange
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetPropertyDefinition extends NoOutputExpressionNode {

@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Removes message exchange properties whose name matches a specified pattern
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "removeProperties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropertiesDefinition> {

@@ -44,7 +44,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
  *
  * @version 
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {

@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Failover load balancer
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {

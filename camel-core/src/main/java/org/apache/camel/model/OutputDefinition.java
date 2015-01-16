@@ -31,7 +31,7 @@ import org.apache.camel.spi.Label;
  *
  * @version 
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {

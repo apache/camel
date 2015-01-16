@@ -36,7 +36,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("EIP,management")
+@Label("eip,management")
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {

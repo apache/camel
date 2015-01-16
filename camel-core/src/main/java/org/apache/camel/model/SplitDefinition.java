@@ -40,7 +40,7 @@ import org.apache.camel.util.CamelContextHelper;
  *
  * @version 
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {

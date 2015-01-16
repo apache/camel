@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Removes message headers whose name matches a specified pattern
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "removeHeaders")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDefinition> {

@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Sets the value of a message header
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends NoOutputExpressionNode {

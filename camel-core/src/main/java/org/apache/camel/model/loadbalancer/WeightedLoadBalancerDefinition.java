@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Weighted load balancer
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {

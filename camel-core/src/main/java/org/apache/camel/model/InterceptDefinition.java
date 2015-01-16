@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("EIP,intercepting")
+@Label("eip,intercepting")
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {

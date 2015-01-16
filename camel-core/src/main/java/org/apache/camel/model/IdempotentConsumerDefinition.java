@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Filters out duplicate messages
  */
-@Label("EIP,endpoints")
+@Label("eip,endpoints")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {

@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Removes a named property from the message exchange
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {

@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Transforms the message body based on an expression
  */
-@Label("EIP,transformation")
+@Label("eip,transformation")
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformDefinition extends NoOutputExpressionNode {

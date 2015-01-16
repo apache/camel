@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {

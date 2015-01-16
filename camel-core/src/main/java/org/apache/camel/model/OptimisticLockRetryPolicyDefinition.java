@@ -29,7 +29,7 @@ import org.apache.camel.spi.Label;
  *
  * @version
  */
-@Label("EIP,policy")
+@Label("eip,policy")
 @XmlRootElement(name = "optimisticLockRetryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {

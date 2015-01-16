@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Circuit break load balancer
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition {

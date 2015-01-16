@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("MEP")
+@Label("mep")
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {

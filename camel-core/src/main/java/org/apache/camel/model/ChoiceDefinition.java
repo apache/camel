@@ -40,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {

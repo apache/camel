@@ -32,7 +32,7 @@ import org.apache.camel.util.CollectionStringBuffer;
  *
  * @version 
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {

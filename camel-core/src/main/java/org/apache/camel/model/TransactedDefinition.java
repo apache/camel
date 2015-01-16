@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {

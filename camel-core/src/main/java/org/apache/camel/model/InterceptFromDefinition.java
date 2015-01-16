@@ -32,7 +32,7 @@ import org.apache.camel.support.ExpressionAdapter;
  *
  * @version 
  */
-@Label("EIP,intercepting")
+@Label("eip,intercepting")
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {

@@ -35,7 +35,7 @@ import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 /**
  * Sorts the contents of the message
  */
-@Label("EIP,routing")
+@Label("eip,routing")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends NoOutputExpressionNode {

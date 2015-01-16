@@ -36,7 +36,7 @@ import org.apache.camel.spi.RouteContext;
  * {@link org.apache.camel.spi.InterceptStrategy} to do AOP in Camel.
  * @version 
  */
-@Label("EIP,intercepting")
+@Label("eip,intercepting")
 @XmlRootElement(name = "aop")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated
