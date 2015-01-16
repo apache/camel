@@ -154,6 +154,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n \"model\": {");
         buffer.append("\n    \"kind\": \"").append("model").append("\",");
         buffer.append("\n    \"name\": \"").append(eipModel.getName()).append("\",");
+        buffer.append("\n    \"title\": \"").append(asTitle(eipModel.getName())).append("\",");
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
@@ -628,6 +629,29 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     private boolean supportOutputs(TypeElement classElement) {
         String superclass = canonicalClassName(classElement.getSuperclass().toString());
         return !"org.apache.camel.model.NoOutputExpressionNode".equals(superclass);
+    }
+
+    /**
+     * Capitializes the name as a title
+     *
+     * @param name  the name
+     * @return as a title
+     */
+    private static String asTitle(String name) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : name.toCharArray()) {
+            boolean upper = Character.isUpperCase(c);
+            boolean first = sb.length() == 0;
+            if (first) {
+                sb.append(Character.toUpperCase(c));
+            } else if (upper) {
+                sb.append(' ');
+                sb.append(c);
+            } else {
+                sb.append(Character.toLowerCase(c));
+            }
+        }
+        return sb.toString().trim();
     }
 
     private static final class EipModel {
