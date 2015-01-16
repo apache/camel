@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.TryProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
@@ -38,6 +40,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @version 
  */
+@Label("EIP,errorHandler")
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {

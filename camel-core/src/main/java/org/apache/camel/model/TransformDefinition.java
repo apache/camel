@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;transform/&gt; element
  */
-@Label("transformation")
+@Label("EIP,transformation")
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformDefinition extends NoOutputExpressionNode {

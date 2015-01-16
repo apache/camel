@@ -26,12 +26,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;idempotentConsumer/&gt; element
  */
+@Label("EIP,endpoints")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {

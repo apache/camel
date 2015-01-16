@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +29,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.Throttler;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -36,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {

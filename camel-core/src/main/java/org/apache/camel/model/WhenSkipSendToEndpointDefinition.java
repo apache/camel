@@ -16,13 +16,15 @@
  */
 package org.apache.camel.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
-/**
- *
- */
+@Label("EIP,routing")
+@XmlRootElement(name = "whenSkipSendToEndpoint")
 public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
 
     @Override

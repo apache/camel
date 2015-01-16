@@ -22,12 +22,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents an XML &lt;inOut/&gt; element
  *
  * @version 
  */
+@Label("MEP")
 @XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOutDefinition extends SendDefinition<InOutDefinition> {

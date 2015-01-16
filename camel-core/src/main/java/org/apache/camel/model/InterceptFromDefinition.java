@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 
@@ -31,6 +32,7 @@ import org.apache.camel.support.ExpressionAdapter;
  *
  * @version 
  */
+@Label("EIP,intercepting")
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {

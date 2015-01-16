@@ -23,11 +23,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RollbackProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;rollback/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Label;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -32,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("EIP,configuration")
 @XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteBuilderDefinition extends IdentifiedType {

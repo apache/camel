@@ -49,12 +49,14 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Represents an XML &lt;loadBalance/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {

@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.processor.WrapProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {

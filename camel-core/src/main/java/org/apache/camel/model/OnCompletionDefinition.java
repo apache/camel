@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,6 +36,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -42,6 +44,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {

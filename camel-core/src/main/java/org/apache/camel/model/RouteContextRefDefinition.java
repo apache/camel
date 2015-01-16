@@ -17,18 +17,21 @@
 package org.apache.camel.model;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Label;
 
 /**
  * Represents an XML &lt;routeContextRef/&gt; element
  *
  * @version 
  */
+@Label("configuration")
 @XmlRootElement(name = "routeContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteContextRefDefinition {

@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.URISupport;
@@ -38,6 +40,7 @@ import org.apache.camel.util.URISupport;
  *
  * @version 
  */
+@Label("EIP,intercepting")
 @XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {

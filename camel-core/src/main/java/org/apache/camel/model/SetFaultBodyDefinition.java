@@ -23,11 +23,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;setFaultBody/&gt; element.
  */
+@Label("EIP,transformation")
 @XmlRootElement(name = "setFaultBody")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetFaultBodyDefinition extends NoOutputExpressionNode {

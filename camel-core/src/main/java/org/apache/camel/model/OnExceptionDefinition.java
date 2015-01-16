@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -41,6 +42,7 @@ import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
@@ -51,6 +53,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("EIP, errorHandler")
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {

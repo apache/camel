@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,6 +29,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -35,6 +37,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
+@Label("EIP,intercepting")
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {

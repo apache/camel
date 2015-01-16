@@ -35,6 +35,7 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -43,6 +44,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
  *
  * @version 
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {

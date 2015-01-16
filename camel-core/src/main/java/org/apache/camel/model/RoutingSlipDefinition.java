@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,11 +28,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;routingSlip/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {

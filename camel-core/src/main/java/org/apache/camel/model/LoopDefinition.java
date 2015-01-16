@@ -25,6 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.LoopProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -32,6 +33,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends ExpressionNode {

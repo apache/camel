@@ -67,7 +67,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("transformation")
+@Label("EIP,transformation")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {

@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
@@ -38,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {

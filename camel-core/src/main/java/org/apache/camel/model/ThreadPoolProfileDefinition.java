@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,13 +27,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.Label;
+
 
 /**
  * Represents an XML &lt;threadPoolProfile/&gt; element
  *
  * @version 
  */
+@Label("configuration")
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<ThreadPoolProfileDefinition> {

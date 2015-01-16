@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -32,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {

@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Comparator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,14 +27,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.SortProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
-
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 
 /**
  * Represents an XML &lt;sort/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends NoOutputExpressionNode {

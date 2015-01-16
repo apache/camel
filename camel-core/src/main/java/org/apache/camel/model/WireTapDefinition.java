@@ -35,12 +35,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Represents an XML &lt;wireTap/&gt; element
  */
+@Label("EIP,management")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<WireTapDefinition<Type>>
