@@ -267,7 +267,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"transform", false}, new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertTrue(json.contains("\"label\": \"transformation\""));
+        assertTrue(json.contains("\"label\": \"eip,transformation\""));
         assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
     }
 
