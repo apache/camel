@@ -133,6 +133,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> jsonFiles = new TreeSet<File>();
         Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> missingLabels = new TreeSet<File>();
+        Set<File> missingJavaDoc = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
 
         // find all json files in camel-core
@@ -158,8 +159,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
 
-            // check if we have a label as we want the eip to include labels
             try {
+                // check if we have a label as we want the eip to include labels
                 String text = loadText(new FileInputStream(file));
                 // just do a basic label check
                 if (text.contains("\"label\": \"\"")) {
@@ -179,6 +180,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             }
                             models.add(name);
                         }
+                    }
+                }
+
+                // check all the properties if they have description
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
+                for (Map<String, String> row : rows) {
+                    String name = row.get("name");
+                    // skip checking these as they have no documentation
+                    if ("expression".equals(name) || "outputs".equals(name)) {
+                        continue;
+                    }
+
+                    String doc = row.get("description");
+                    if (doc == null || doc.isEmpty()) {
+                        missingJavaDoc.add(file);
+                        break;
                     }
                 }
             } catch (IOException e) {
@@ -213,7 +230,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
+        printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
     }
 
     protected void executeComponents() throws MojoExecutionException, MojoFailureException {
@@ -551,7 +568,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printLanguagesReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
     }
 
-    private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+    private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels, Set<File> missingJavaDoc) {
         getLog().info("================================================================================");
 
         getLog().info("");
@@ -583,6 +600,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (String name : entry.getValue()) {
                     getLog().info("\t\t\t" + name);
                 }
+            }
+        }
+        if (!missingJavaDoc.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing javadoc on models: " + missingJavaDoc.size());
+            for (File file : missingJavaDoc) {
+                getLog().warn("\t\t" + asComponentName(file));
             }
         }
         getLog().info("");
