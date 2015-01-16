@@ -344,6 +344,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
         }
 
+        protected void beginTime(Exchange exchange) {
+            counter.processExchange(exchange);
+        }
+
         protected void recordTime(Exchange exchange, long duration) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("{}Recording duration: {} millis for exchange: {}", new Object[]{type != null ? type + ": " : "", duration, exchange});
@@ -367,7 +371,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
             // only record time if stats is enabled
-            return (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
+            StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
+            if (answer != null) {
+                beginTime(exchange);
+            }
+            return answer;
         }
 
         @Override

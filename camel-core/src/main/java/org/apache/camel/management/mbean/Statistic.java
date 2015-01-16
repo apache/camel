@@ -101,6 +101,10 @@ public class Statistic {
         updateValue(1);
     }
 
+    public synchronized void decrement() {
+        updateValue(-1);
+    }
+
     public synchronized long getValue() {
         if (updateMode == UpdateMode.DELTA) {
             if (updateCount == 0) {

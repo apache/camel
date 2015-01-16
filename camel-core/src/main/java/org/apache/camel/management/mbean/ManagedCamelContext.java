@@ -57,7 +57,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -140,7 +139,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Integer getInflightExchanges() {
-        return context.getInflightRepository().size();
+        return (int) super.getExchangesInflight();
     }
 
     public Integer getTotalRoutes() {
@@ -398,11 +397,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             }
             Collections.sort(processors, new OrderProcessorMBeans());
 
-            Collection<InflightRepository.InflightExchange> inflights = null;
-            if (fullStats) {
-                inflights = context.getInflightRepository().browse();
-            }
-
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");
             for (ObjectName on : routes) {
@@ -410,7 +404,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
-                sb.append(" exchangesInflight=\"").append(context.getInflightRepository().size(route.getRouteId())).append("\"");
+                sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
                 sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
                 // add processor details if needed
@@ -422,10 +416,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                             sb.append("        <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
                             // use substring as we only want the attributes
                             stat = processor.dumpStatsAsXml(fullStats);
-                            if (fullStats) {
-                                // only include this in full stats as it may be more expensive to compute
-                                sb.append(" exchangesInflight=\"").append(inflightSizeAtProcessor(inflights, processor.getProcessorId())).append("\"");
-                            }
+                            sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
                             sb.append(" ").append(stat.substring(7)).append("\n");
                         }
                     }
@@ -438,23 +429,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
         sb.append("</camelContextStat>");
         return sb.toString();
-    }
-
-    /**
-     * Number of inflight exchanges at the given processor
-     *
-     * @param inflights   all inflight exchanges
-     * @param processorId the processor id
-     * @return the number
-     */
-    private String inflightSizeAtProcessor(Collection<InflightRepository.InflightExchange> inflights, String processorId) {
-        int count = 0;
-        for (InflightRepository.InflightExchange inflight : inflights) {
-            if (processorId.equals(inflight.getNodeId())) {
-                count++;
-            }
-        }
-        return String.valueOf(count);
     }
 
     public boolean createEndpoint(String uri) throws Exception {

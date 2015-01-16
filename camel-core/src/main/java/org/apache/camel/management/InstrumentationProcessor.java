@@ -69,6 +69,11 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
         // only record time if stats is enabled
         final StopWatch watch = (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
 
+        // mark beginning to process the exchange
+        if (watch != null) {
+            beginTime(exchange);
+        }
+
         return processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
@@ -87,6 +92,10 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
                 return InstrumentationProcessor.this.toString();
             }
         });
+    }
+
+    protected void beginTime(Exchange exchange) {
+        counter.processExchange(exchange);
     }
 
     protected void recordTime(Exchange exchange, long duration) {

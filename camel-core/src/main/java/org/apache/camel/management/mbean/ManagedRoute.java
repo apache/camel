@@ -101,7 +101,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public Integer getInflightExchanges() {
-        return context.getInflightRepository().size(route.getId());
+        return (int) super.getExchangesInflight();
     }
 
     public String getCamelId() {
