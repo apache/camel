@@ -11,7 +11,7 @@
 
   <artifactId>camel-google-calendar</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel GoogleCalendar Component</name>
+  <name>Camel :: GoogleCalendar Component</name>
   <description>Camel Component for GoogleCalendar</description>
 
   <properties>
