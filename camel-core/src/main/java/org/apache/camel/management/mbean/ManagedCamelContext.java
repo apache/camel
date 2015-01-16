@@ -458,14 +458,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findEips() throws Exception {
-        Map<String, Properties> answer = context.findEips();
-        for (Map.Entry<String, Properties> entry : answer.entrySet()) {
-            if (entry.getValue() != null) {
-                // remove model as its not serializable over JMX
-                entry.getValue().remove("model");
-            }
-        }
-        return answer;
+        return context.findEips();
     }
 
     public List<String> findEipNames() throws Exception {
@@ -483,13 +476,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             // gather EIP detail for each eip
             for (Map.Entry<String, Properties> entry : eips.entrySet()) {
                 String name = entry.getKey();
+                String title = (String) entry.getValue().get("title");
                 String description = (String) entry.getValue().get("description");
                 String label = (String) entry.getValue().get("label");
                 String type = (String) entry.getValue().get("class");
                 String status = CamelContextHelper.isEipInUse(context, name) ? "in use" : "on classpath";
                 CompositeType ct = CamelOpenMBeanTypes.listEipsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "description", "label", "status", "type"},
-                        new Object[]{name, description, label, status, type});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "description", "label", "status", "type"},
+                        new Object[]{name, title, description, label, status, type});
                 answer.put(data);
             }
             return answer;

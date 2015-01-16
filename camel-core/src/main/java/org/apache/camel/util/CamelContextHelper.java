@@ -495,6 +495,7 @@ public final class CamelContextHelper {
                     String description = null;
                     String label = null;
                     String javaType = null;
+                    String title = null;
 
                     // enrich with more meta-data
                     String json = camelContext.explainEipJson(line, false);
@@ -502,6 +503,9 @@ public final class CamelContextHelper {
                         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("model", json, false);
 
                         for (Map<String, String> row : rows) {
+                            if (row.get("title") != null) {
+                                title = row.get("title");
+                            }
                             if (row.get("description") != null) {
                                 description = row.get("description");
                             }
@@ -514,6 +518,9 @@ public final class CamelContextHelper {
                         }
                     }
 
+                    if (title != null) {
+                        prop.put("title", title);
+                    }
                     if (description != null) {
                         prop.put("description", description);
                     }
