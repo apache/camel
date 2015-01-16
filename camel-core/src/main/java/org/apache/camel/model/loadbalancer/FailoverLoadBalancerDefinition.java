@@ -18,6 +18,7 @@ package org.apache.camel.model.loadbalancer;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,11 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;failover/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {

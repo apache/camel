@@ -24,10 +24,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
+import org.apache.camel.spi.Label;
 
 /**
  * Configures stream-processing resequence eip.
  */
+@Label("configuration")
 @XmlRootElement(name = "stream-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig extends ResequencerConfig {

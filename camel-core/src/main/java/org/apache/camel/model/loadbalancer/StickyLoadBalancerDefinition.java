@@ -25,11 +25,13 @@ import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;sticky/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {

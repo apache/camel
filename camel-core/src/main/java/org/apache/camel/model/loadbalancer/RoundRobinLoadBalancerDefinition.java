@@ -22,11 +22,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;roundRobin/&gt; element
  */
+@Label("EIP,routing")
 @XmlRootElement(name = "roundRobin")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {

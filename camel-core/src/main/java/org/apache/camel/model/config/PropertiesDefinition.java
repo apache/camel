@@ -25,9 +25,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Label;
+
 /**
  * Represents the XML type for &lt;properties&gt;.
  */
+@Label("configuration")
 @XmlRootElement(name = "properties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertiesDefinition {
