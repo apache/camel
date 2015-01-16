@@ -54,6 +54,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @XmlAttribute
     private Boolean cache;
     @XmlAttribute
+    @Deprecated
     private Boolean multiParameterArray;
     @XmlTransient
     private Class<?> beanClass;
@@ -104,6 +105,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return ref;
     }
 
+    /**
+     * Sets a reference to a bean to use
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -112,10 +116,16 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return method;
     }
 
+    /**
+     * Sets the method name on the bean to use
+     */
     public void setMethod(String method) {
         this.method = method;
     }
 
+    /**
+     * Sets an instance of the bean to use
+     */
     public void setBean(Object bean) {
         this.bean = bean;
     }
@@ -124,10 +134,16 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return beanType;
     }
 
+    /**
+     * Sets the Class of the bean
+     */
     public void setBeanType(String beanType) {
         this.beanType = beanType;
     }
 
+    /**
+     * Sets the Class of the bean
+     */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
     }
@@ -136,6 +152,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return cache;
     }
 
+    /**
+     * Caches the bean lookup, to avoid lookup up bean on every usage.
+     */
     public void setCache(Boolean cache) {
         this.cache = cache;
     }
@@ -143,7 +162,13 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public Boolean getMultiParameterArray() {
         return multiParameterArray;
     }
-    
+
+    /**
+     * Whether the message body is an array type.
+     *
+     * @deprecated is to be replaced with a better solution in Camel 3.0
+     */
+    @Deprecated
     public void setMultiParameterArray(Boolean multiParameterArray) {
         this.multiParameterArray = multiParameterArray;
     }
@@ -151,7 +176,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     // Fluent API
     //-------------------------------------------------------------------------
     /**
-     * Sets the ref String on camel bean
+     * Sets a reference to a bean to use
      *
      * @param ref  the bean's id in the registry
      * @return the builder
@@ -164,7 +189,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
     
     /**
-     * Sets the calling method name of camel bean
+     * Sets the method name on the bean to use
      *
      * @param method  the bean's method name which wants camel to call
      * @return the builder
@@ -177,7 +202,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
     
     /**
-     * Sets the bean's instance that camel to call
+     * Sets an instance of the bean to use
      *
      * @param bean the instance of the bean
      * @return the builder
