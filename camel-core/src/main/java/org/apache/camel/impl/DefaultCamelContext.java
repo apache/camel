@@ -710,8 +710,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
         log.debug("Adding routes from builder: {}", builder);
-        // lets now add the routes from the builder
-        builder.addRoutesToCamelContext(this);
+
+        // check if we are already setting up routes
+        boolean setup = isSetupRoutes();
+        if (!setup) {
+            // no we are not, so mark that around the call to add the routes
+            setupRoutes(false);
+            builder.addRoutesToCamelContext(this);
+            setupRoutes(true);
+        } else {
+            // we are already setting up routes so just add the routes
+            builder.addRoutesToCamelContext(this);
+        }
     }
 
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {

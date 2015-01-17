@@ -16,27 +16,34 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StaticService;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUSoftCache}.
- * <p/>
- * We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
+ * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}.
  */
-public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implements StaticService {
+public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements StaticService {
     private static final long serialVersionUID = 1L;
+    private ConcurrentMap<EndpointKey, Endpoint> staticMap;
     private final CamelContext context;
 
     public EndpointRegistry(CamelContext context) {
         // do not stop on eviction, as the endpoint may still be in use
         super(CamelContextHelper.getMaximumEndpointCacheSize(context), CamelContextHelper.getMaximumEndpointCacheSize(context), false);
+        // static map to hold endpoints we do not want to be evicted
+        this.staticMap = new ConcurrentHashMap<EndpointKey, Endpoint>();
         this.context = context;
     }
 
@@ -51,10 +58,102 @@ public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implem
     }
 
     @Override
-    public void stop() throws Exception {
-        if (!isEmpty()) {
-            ServiceHelper.stopServices(values());
+    public Endpoint get(Object o) {
+        // try static map first
+        Endpoint answer = staticMap.get(o);
+        if (answer == null) {
+            return super.get(o);
+        } else {
+            hits.incrementAndGet();
+            return answer;
         }
+    }
+
+    @Override
+    public Endpoint put(EndpointKey key, Endpoint endpoint) {
+        // we want endpoints to be static if they are part of setting up or starting routes
+        if (context.isSetupRoutes() || context.isStartingRoutes()) {
+            return staticMap.put(key, endpoint);
+        } else {
+            return super.put(key, endpoint);
+        }
+    }
+
+    @Override
+    public void putAll(Map<? extends EndpointKey, ? extends Endpoint> map) {
+        // need to use put instead of putAll to ensure the entries gets added to either static or dynamic map
+        for (Map.Entry<? extends EndpointKey, ? extends Endpoint> entry : map.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public boolean containsKey(Object o) {
+        return staticMap.containsKey(o) || super.containsKey(o);
+    }
+
+    @Override
+    public boolean containsValue(Object o) {
+        return staticMap.containsValue(o) || super.containsValue(o);
+    }
+
+    @Override
+    public int size() {
+        return staticMap.size() + super.size();
+    }
+
+    public int staticSize() {
+        return staticMap.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return staticMap.isEmpty() && super.isEmpty();
+    }
+
+    @Override
+    public Endpoint remove(Object o) {
+        Endpoint answer = staticMap.remove(o);
+        if (answer == null) {
+            answer = super.remove(o);
+        }
+        return answer;
+    }
+
+    @Override
+    public void clear() {
+        staticMap.clear();
+        super.clear();
+    }
+
+    @Override
+    public Set<EndpointKey> keySet() {
+        Set<EndpointKey> answer = new LinkedHashSet<EndpointKey>();
+        answer.addAll(staticMap.keySet());
+        answer.addAll(super.keySet());
+        return answer;
+    }
+
+    @Override
+    public Collection<Endpoint> values() {
+        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        answer.addAll(staticMap.values());
+        answer.addAll(super.values());
+        return answer;
+    }
+
+    @Override
+    public Set<Entry<EndpointKey, Endpoint>> entrySet() {
+        Set<Entry<EndpointKey, Endpoint>> answer = new LinkedHashSet<Entry<EndpointKey, Endpoint>>();
+        answer.addAll(staticMap.entrySet());
+        answer.addAll(super.entrySet());
+        return answer;
+    }
+
+    @Override
+    public void stop() throws Exception {
+        ServiceHelper.stopServices(staticMap.values());
+        ServiceHelper.stopServices(values());
         purge();
     }
 
@@ -62,7 +161,8 @@ public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implem
      * Purges the cache
      */
     public void purge() {
-        clear();
+        // only purge the dynamic part
+        super.clear();
     }
 
     @Override

@@ -51,6 +51,10 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         return endpointRegistry.toString();
     }
 
+    public Integer getStaticSize() {
+        return endpointRegistry.staticSize();
+    }
+
     public Integer getSize() {
         return endpointRegistry.size();
     }
@@ -80,6 +84,5 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
-
 
 }
