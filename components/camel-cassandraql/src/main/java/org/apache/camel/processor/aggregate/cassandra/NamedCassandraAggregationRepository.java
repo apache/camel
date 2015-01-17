@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate.cassandra;
 
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
@@ -24,38 +25,29 @@ import com.datastax.driver.core.Session;
  * columns as primary key: name (partition key) and key (clustering key).
  */
 public class NamedCassandraAggregationRepository extends CassandraAggregationRepository {
-    /**
-     * Aggregation repository name
-     */
-    private String name;
-
     public NamedCassandraAggregationRepository() {
         setPKColumns("NAME", "KEY");
+        setName("DEFAULT");
     }
 
     public NamedCassandraAggregationRepository(Session session, String name) {
         super(session);
-        this.name = name;
         setPKColumns("NAME", "KEY");
+        setName(name);
     }
 
     public NamedCassandraAggregationRepository(Cluster cluster, String keyspace, String name) {
         super(cluster, keyspace);
-        this.name = name;
         setPKColumns("NAME", "KEY");
-    }
-
-    @Override
-    protected Object[] getPKValues() {
-        return new Object[]{name};
+        setName(name);
     }
 
     public String getName() {
-        return name;
+        return (String) getPrefixPKValues()[0];
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public final void setName(String name) {
+        setPrefixPKValues(name);
     }
 
 }

@@ -51,7 +51,7 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
  * Warning: Cassandra is not the best tool for queuing use cases
  * See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
-public abstract class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
     /**
      * Logger
      */
@@ -73,9 +73,13 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
      */
     private String exchangeColumn = "EXCHANGE";
     /**
+     * Values used as primary key prefix
+     */
+    private Object[] prefixPKValues = new Object[0];
+    /**
      * Primary key columns
      */
-    private String[] pkColumns;
+    private String[] pkColumns = {"KEY"};
     /**
      * Exchange marshaller/unmarshaller
      */
@@ -125,15 +129,10 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     }
 
     /**
-     * Get fixed primary key values.
-     */
-    protected abstract Object[] getPKValues();
-
-    /**
-     * Generate primary key values: fixed + aggregation key.
+     * Generate primary key values from aggregation key.
      */
     protected Object[] getPKValues(String key) {
-        return append(getPKValues(), key);
+        return append(prefixPKValues, key);
     }
 
     /**
@@ -239,14 +238,13 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
      */
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        Object[] pkValues = getPKValues();
         String keyColumn = getKeyColumn();
-        LOGGER.debug("Selecting Ids {} ", pkValues);
+        LOGGER.debug("Selecting Ids");
         List<Row> rows = selectKeyIds();
         for (Row row : rows) {
             if (row.getString(exchangeIdColumn).equals(exchangeId)) {
                 String key = row.getString(keyColumn);
-                Object[] cqlParams = append(pkValues, key, exchangeId);
+                Object[] cqlParams = append(getPKValues(key), exchangeId);
                 LOGGER.debug("Deleting If Id {} ", cqlParams);
                 getSession().execute(deleteIfIdStatement.bind(cqlParams));
             }
@@ -281,10 +279,9 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
         selectKeyIdStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
     }
 
-    private List<Row> selectKeyIds() {
-        Object[] pkValues = getPKValues();
-        LOGGER.debug("Selecting keys {}", pkValues);
-        return getSession().execute(selectKeyIdStatement.bind(pkValues)).all();
+    protected List<Row> selectKeyIds() {
+        LOGGER.debug("Selecting keys {}", getPrefixPKValues());
+        return getSession().execute(selectKeyIdStatement.bind(getPrefixPKValues())).all();
     }
 
     /**
@@ -294,7 +291,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     public Set<String> getKeys() {
         List<Row> rows = selectKeyIds();
         Set<String> keys = new HashSet<String>(rows.size());
-        String keyColumnName = getPKColumns()[1];
+        String keyColumnName = getKeyColumn();
         for (Row row : rows) {
             keys.add(row.getString(keyColumnName));
         }
@@ -323,7 +320,7 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         List<Row> rows = selectKeyIds();
-        String keyColumnName = getPKColumns()[1];
+        String keyColumnName = getKeyColumn();
         String lKey = null;
         for (Row row : rows) {
             String lExchangeId = row.getString(exchangeIdColumn);
@@ -354,6 +351,14 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+    public Object[] getPrefixPKValues() {
+        return prefixPKValues;
+    }
+
+    public void setPrefixPKValues(Object ... prefixPKValues) {
+        this.prefixPKValues = prefixPKValues;
     }
 
     public String[] getPKColumns() {
