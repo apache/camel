@@ -56,8 +56,25 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://unknown48") != null);
         assertTrue(context.hasEndpoint("mock://unknown49") != null);
 
-        // we should have 24
+        // we should have 4 static, 20 dynamic and 24 in total
+        assertEquals(4, context.getEndpointRegistry().staticSize());
+        assertEquals(20, context.getEndpointRegistry().dynamicSize());
+        assertEquals(24, context.getEndpointRegistry().size());
+
+        // and we can browse all 24
         assertEquals(24, context.getEndpoints().size());
+
+        // and if we purge only the dynamic is removed
+        context.getEndpointRegistry().purge();
+        assertEquals(4, context.getEndpointRegistry().staticSize());
+        assertEquals(0, context.getEndpointRegistry().dynamicSize());
+        assertEquals(4, context.getEndpointRegistry().size());
+
+        // endpoints from routes is always kept in the cache
+        assertTrue(context.hasEndpoint("direct://start") != null);
+        assertTrue(context.hasEndpoint("log://foo") != null);
+        assertTrue(context.hasEndpoint("log://bar") != null);
+        assertTrue(context.hasEndpoint("mock://result") != null);
     }
 
     @Override

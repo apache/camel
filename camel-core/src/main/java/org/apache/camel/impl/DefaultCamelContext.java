@@ -106,6 +106,7 @@ import org.apache.camel.spi.Container;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -169,7 +170,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);
     private String managementName;
     private ClassLoader applicationContextClassLoader;
-    private Map<EndpointKey, Endpoint> endpoints;
+    private EndpointRegistry<EndpointKey> endpoints;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
@@ -261,7 +262,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.executorServiceManager = new DefaultExecutorServiceManager(this);
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
-        this.endpoints = new EndpointRegistry(this);
+        this.endpoints = new DefaultEndpointRegistry(this);
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -436,6 +437,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     // Endpoint Management Methods
     // -----------------------------------------------------------------------
+
+    public EndpointRegistry getEndpointRegistry() {
+        return endpoints;
+    }
 
     public Collection<Endpoint> getEndpoints() {
         return new ArrayList<Endpoint>(endpoints.values());
@@ -639,7 +644,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link EndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
      *
      * @param uri the endpoint uri
      * @return the key
@@ -649,7 +654,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link EndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
      *
      * @param uri      the endpoint uri
      * @param endpoint the endpoint
@@ -710,18 +715,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
         log.debug("Adding routes from builder: {}", builder);
-
-        // check if we are already setting up routes
-        boolean setup = isSetupRoutes();
-        if (!setup) {
-            // no we are not, so mark that around the call to add the routes
-            setupRoutes(false);
-            builder.addRoutesToCamelContext(this);
-            setupRoutes(true);
-        } else {
-            // we are already setting up routes so just add the routes
-            builder.addRoutesToCamelContext(this);
-        }
+        builder.addRoutesToCamelContext(this);
     }
 
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
@@ -2323,7 +2317,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
         // and we needed to create endpoints up-front as it may be accessed before this context is started
-        endpoints = new EndpointRegistry(this, endpoints);
+        endpoints = new DefaultEndpointRegistry(this, endpoints);
         addService(endpoints);
         // special for executorServiceManager as want to stop it manually
         doAddService(executorServiceManager, false);

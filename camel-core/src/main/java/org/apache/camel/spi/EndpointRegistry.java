@@ -14,26 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.spi;
 
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ValueHolder;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.StaticService;
 
 /**
- * Key used in {@link DefaultEndpointRegistry} in {@link DefaultCamelContext},
- * to ensure a consistent lookup.
+ * Registry to store endpoints in a map like cache.
+ *
+ * @param <K> endpoint key
  */
-final class EndpointKey extends ValueHolder<String> {
+public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
 
-    EndpointKey(String uri) {
-        // must normalize key
-        super(DefaultCamelContext.normalizeEndpointUri(uri));
-        ObjectHelper.notEmpty(uri, "uri");
-    }
+    /**
+     * Number of static endpoints in the registry.
+     */
+    int staticSize();
 
-    @Override
-    public String toString() {
-        return get();
-    }
+    /**
+     * Number of dynamic endpoints in the registry
+     */
+    int dynamicSize();
+
+    /**
+     * Maximum number of entries to store in the dynamic cache
+     */
+    public int getMaximumCacheSize();
+
+    /**
+     * Purges the cache (removes dynamic endpoints)
+     */
+    void purge();
 
 }

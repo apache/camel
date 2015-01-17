@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
@@ -34,12 +35,12 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}.
  */
-public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements StaticService {
+public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey>, StaticService {
     private static final long serialVersionUID = 1L;
     private ConcurrentMap<EndpointKey, Endpoint> staticMap;
     private final CamelContext context;
 
-    public EndpointRegistry(CamelContext context) {
+    public DefaultEndpointRegistry(CamelContext context) {
         // do not stop on eviction, as the endpoint may still be in use
         super(CamelContextHelper.getMaximumEndpointCacheSize(context), CamelContextHelper.getMaximumEndpointCacheSize(context), false);
         // static map to hold endpoints we do not want to be evicted
@@ -47,7 +48,7 @@ public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements
         this.context = context;
     }
 
-    public EndpointRegistry(CamelContext context, Map<EndpointKey, Endpoint> endpoints) {
+    public DefaultEndpointRegistry(CamelContext context, Map<EndpointKey, Endpoint> endpoints) {
         this(context);
         putAll(endpoints);
     }
@@ -62,21 +63,38 @@ public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements
         // try static map first
         Endpoint answer = staticMap.get(o);
         if (answer == null) {
-            return super.get(o);
+            answer = super.get(o);
         } else {
             hits.incrementAndGet();
-            return answer;
         }
+        return answer;
     }
 
     @Override
     public Endpoint put(EndpointKey key, Endpoint endpoint) {
+        // at first we must see if the key already exists and then replace it back, so it stays the same spot
+        Endpoint answer = staticMap.remove(key);
+        if (answer != null) {
+            // replace existing
+            staticMap.put(key, endpoint);
+            return answer;
+        }
+
+        answer = super.remove(key);
+        if (answer != null) {
+            // replace existing
+            super.put(key, endpoint);
+            return answer;
+        }
+
         // we want endpoints to be static if they are part of setting up or starting routes
         if (context.isSetupRoutes() || context.isStartingRoutes()) {
-            return staticMap.put(key, endpoint);
+            answer = staticMap.put(key, endpoint);
         } else {
-            return super.put(key, endpoint);
+            answer = super.put(key, endpoint);
         }
+
+        return answer;
     }
 
     @Override
@@ -104,6 +122,11 @@ public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements
 
     public int staticSize() {
         return staticMap.size();
+    }
+
+    @Override
+    public int dynamicSize() {
+        return super.size();
     }
 
     @Override
@@ -151,18 +174,24 @@ public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements
     }
 
     @Override
-    public void stop() throws Exception {
-        ServiceHelper.stopServices(staticMap.values());
-        ServiceHelper.stopServices(values());
-        purge();
+    public int getMaximumCacheSize() {
+        return super.getMaxCacheSize();
     }
 
     /**
      * Purges the cache
      */
+    @Override
     public void purge() {
         // only purge the dynamic part
         super.clear();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        ServiceHelper.stopServices(staticMap.values());
+        ServiceHelper.stopServices(values());
+        purge();
     }
 
     @Override

@@ -26,7 +26,13 @@ public interface ManagedEndpointRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Source")
     String getSource();
 
-    @ManagedAttribute(description = "Number of endpoints cached")
+    @ManagedAttribute(description = "Number of dynamic endpoints cached")
+    Integer getDynamicSize();
+
+    @ManagedAttribute(description = "Number of static endpoints cached")
+    Integer getStaticSize();
+
+    @ManagedAttribute(description = "Number of total endpoints cached")
     Integer getSize();
 
     @ManagedAttribute(description = "Maximum cache size (capacity)")

@@ -36,6 +36,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
@@ -317,6 +318,8 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
+
+    EndpointRegistry getEndpointRegistry();
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.

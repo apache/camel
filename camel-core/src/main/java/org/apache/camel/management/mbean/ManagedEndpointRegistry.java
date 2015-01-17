@@ -28,7 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointRegistryMBean;
-import org.apache.camel.impl.EndpointRegistry;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -51,6 +51,10 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         return endpointRegistry.toString();
     }
 
+    public Integer getDynamicSize() {
+        return endpointRegistry.dynamicSize();
+    }
+
     public Integer getStaticSize() {
         return endpointRegistry.staticSize();
     }
@@ -60,14 +64,14 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
     }
 
     public Integer getMaximumCacheSize() {
-        return endpointRegistry.getMaxCacheSize();
+        return endpointRegistry.getMaximumCacheSize();
     }
 
     public void purge() {
         endpointRegistry.purge();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
     public TabularData listEndpoints() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEndpointsTabularType());
