@@ -28,6 +28,7 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.utils.cassandra.CassandraUtils.append;
 import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
@@ -42,7 +43,7 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
  *
  * @param <K> Message Id
  */
-public abstract class CassandraIdempotentRepository<K> extends ServiceSupport implements IdempotentRepository<K> {
+public class CassandraIdempotentRepository<K> extends ServiceSupport implements IdempotentRepository<K> {
     /**
      * Logger
      */
@@ -56,9 +57,13 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
      */
     private String table = "CAMEL_IDEMPOTENT";
     /**
+     * Values used as primary key prefix
+     */
+    private Object[] prefixPKValues = new Object[0];
+    /**
      * Primary key columns
      */
-    private String[] pkColumns;
+    private String[] pkColumns = {"KEY"};
     /**
      * Time to live in seconds used for inserts
      */
@@ -97,7 +102,9 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
         }
     }
 
-    protected abstract Object[] getPKValues(K key);
+    protected Object[] getPKValues(K key) {
+        return append(prefixPKValues, key);
+    }
     // -------------------------------------------------------------------------
     // Lifecycle methods
 
@@ -215,6 +222,14 @@ public abstract class CassandraIdempotentRepository<K> extends ServiceSupport im
 
     public void setReadConsistencyLevel(ConsistencyLevel readConsistencyLevel) {
         this.readConsistencyLevel = readConsistencyLevel;
+    }
+
+    public Object[] getPrefixPKValues() {
+        return prefixPKValues;
+    }
+
+    public void setPrefixPKValues(Object[] prefixPKValues) {
+        this.prefixPKValues = prefixPKValues;
     }
 
 }

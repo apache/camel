@@ -32,21 +32,42 @@ public class CassandraUtils {
         }
         return statement;
     }
-
+    private static boolean isEmpty(Object[] array) {
+        return array == null || array.length == 0;
+    }
     /**
      * Concatenate 2 arrays.
      */
     public static Object[] concat(Object[] array1, Object[] array2) {
+        if (isEmpty(array1)) {
+            return array2;
+        }
+        if (isEmpty(array2)) {
+            return array1;
+        }
         Object[] array = new Object[array1.length + array2.length];
         System.arraycopy(array1, 0, array, 0, array1.length);
         System.arraycopy(array2, 0, array, array1.length, array2.length);
         return array;
     }
 
+    private static int size(String[] array) {
+        return array == null ? 0 : array.length;
+    }
+
+    private static boolean isEmpty(String[] array) {
+        return size(array) == 0;
+    }
     /**
      * Concatenate 2 arrays.
      */
     public static String[] concat(String[] array1, String[] array2) {
+        if (isEmpty(array1)) {
+            return array2;
+        }
+        if (isEmpty(array2)) {
+            return array1;
+        }
         String[] array = new String[array1.length + array2.length];
         System.arraycopy(array1, 0, array, 0, array1.length);
         System.arraycopy(array2, 0, array, array1.length, array2.length);
@@ -90,6 +111,9 @@ public class CassandraUtils {
      * Append where columns = ? to CQL.
      */
     public static void appendWhere(StringBuilder cqlBuilder, String[] columns, int maxColumnIndex) {
+        if (isEmpty(columns) || maxColumnIndex<= 0) {
+            return;
+        }
         cqlBuilder.append(" where ");
         appendColumns(cqlBuilder, columns, "=? and ", maxColumnIndex);
         cqlBuilder.append("=?");
@@ -132,12 +156,11 @@ public class CassandraUtils {
         }
         return cqlBuilder;
     }
-
     /**
      * Generate select where columns = ? CQL.
      */
     public static StringBuilder generateSelect(String table, String[] selectColumns, String[] whereColumns) {
-        return generateSelect(table, selectColumns, whereColumns, whereColumns.length);
+        return generateSelect(table, selectColumns, whereColumns, size(whereColumns));
     }
 
     /**
@@ -155,7 +178,7 @@ public class CassandraUtils {
      * Generate delete where columns = ? CQL.
      */
     public static StringBuilder generateDelete(String table, String[] whereColumns, boolean ifExists) {
-        return generateDelete(table, whereColumns, whereColumns.length, ifExists);
+        return generateDelete(table, whereColumns, size(whereColumns), ifExists);
     }
 
     /**

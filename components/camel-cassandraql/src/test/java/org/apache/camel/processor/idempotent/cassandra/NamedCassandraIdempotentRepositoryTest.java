@@ -33,9 +33,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unit test for {@link CassandraIdempotentRepository}
  */
-public class CassandraIdempotentRepositoryTest {
+public class NamedCassandraIdempotentRepositoryTest {
     @Rule
-    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("IdempotentDataSet.cql");
+    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("NamedIdempotentDataSet.cql");
 
     private Cluster cluster;
     private Session session;
@@ -50,7 +50,8 @@ public class CassandraIdempotentRepositoryTest {
     public void setUp() throws Exception {
         cluster = CassandraUnitUtils.cassandraCluster();
         session = cluster.connect(CassandraUnitUtils.KEYSPACE);
-        idempotentRepository = new CassandraIdempotentRepository<String>(session);
+        idempotentRepository = new NamedCassandraIdempotentRepository<String>(session, "ID");
+        idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
     }
 
@@ -68,7 +69,7 @@ public class CassandraIdempotentRepositoryTest {
 
     private boolean exists(String key) {
         return session.execute(
-                "select KEY from CAMEL_IDEMPOTENT where KEY=?", key)
+                "select KEY from NAMED_CAMEL_IDEMPOTENT where NAME=? and KEY=?", "ID", key)
                 .one() != null;
     }
 

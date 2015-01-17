@@ -24,38 +24,29 @@ import com.datastax.driver.core.Session;
  * columns as primary key: name (partition key) and key (clustering key).
  */
 public class NamedCassandraIdempotentRepository<K> extends CassandraIdempotentRepository<K> {
-    /**
-     * Idempotent repository name
-     */
-    private String name;
-
     public NamedCassandraIdempotentRepository() {
         setPKColumns("NAME", "KEY");
+        setName("DEFAULT");
     }
 
     public NamedCassandraIdempotentRepository(Session session, String name) {
         super(session);
-        this.name = name;
         setPKColumns("NAME", "KEY");
+        setName(name);
     }
 
     public NamedCassandraIdempotentRepository(Cluster cluster, String keyspace, String name) {
         super(cluster, keyspace);
-        this.name = name;
         setPKColumns("NAME", "KEY");
-    }
-
-    @Override
-    protected Object[] getPKValues(K key) {
-        return new Object[]{name, key};
+        setName(name);
     }
 
     public String getName() {
-        return name;
+        return (String) getPrefixPKValues()[0];
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public final void setName(String name) {
+        setPrefixPKValues(new String[]{name});
     }
 
 }
