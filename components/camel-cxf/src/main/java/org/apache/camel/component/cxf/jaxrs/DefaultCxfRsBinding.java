@@ -282,7 +282,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         for (Map.Entry<String, List<String>>entry : headers.entrySet()) {
             // just make sure the first String element is not null
             if (headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), camelExchange) 
-                || entry.getValue().get(0) == null) {
+                || entry.getValue().isEmpty()) {
                 LOG.trace("Drop CXF message protocol header: {}={}", entry.getKey(), entry.getValue());
             } else {
                 // just put the first String element, as the complex one is filtered
