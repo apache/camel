@@ -27,15 +27,13 @@ import org.junit.Test;
 public class DisruptorRemoveRouteThenAddAgainTest extends CamelTestSupport {
     @Test
     public void testRemoveRouteAndThenAddAgain() throws Exception {
-        final MockEndpoint out = getMockEndpoint("mock:out");
+        MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("before removing the route");
 
         template.sendBody("disruptor:in", "before removing the route");
 
         out.assertIsSatisfied();
-
-        out.reset();
 
         // now stop & remove the route
         context.stopRoute("disruptorToMock");
@@ -44,6 +42,8 @@ public class DisruptorRemoveRouteThenAddAgainTest extends CamelTestSupport {
         // and then add it back again
         context.addRoutes(createRouteBuilder());
 
+        // get mock endpoint again as we removed the route which removes the endpoint
+        out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("after removing the route");
 
