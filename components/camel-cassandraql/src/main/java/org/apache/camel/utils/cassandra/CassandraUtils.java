@@ -27,7 +27,10 @@ import com.datastax.driver.core.querybuilder.Select;
  *
  */
 public class CassandraUtils {
-    private static boolean isEmpty(Object[] array) {
+    /**
+     * Test if the array is null or empty.
+     */
+    public static boolean isEmpty(Object[] array) {
         return array == null || array.length == 0;
     }
     /**

@@ -17,6 +17,8 @@
 package org.apache.camel.component.cassandra;
 
 import com.datastax.driver.core.*;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -111,6 +113,29 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
     public void testRequestMessageCql() throws Exception {
         Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
                 CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
+
+        Cluster cluster = CassandraUnitUtils.cassandraCluster();
+        Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
+        ResultSet resultSet = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
+        Row row = resultSet.one();
+        assertNotNull(row);
+        assertEquals("Claus 2", row.getString("first_name"));
+        assertEquals("Ibsen 2", row.getString("last_name"));
+        session.close();
+        cluster.close();
+    }
+
+    /**
+     * Test with incoming message containing a header with RegularStatement.
+     */
+    @Test
+    public void testRequestMessageStatement() throws Exception {
+        Update.Where update = update("camel_user")
+                .with(set("first_name", bindMarker()))
+                .and(set("last_name", bindMarker()))
+                .where(eq("login", bindMarker()));
+        Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
+                CassandraConstants.CQL_QUERY, update);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
