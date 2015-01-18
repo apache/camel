@@ -106,6 +106,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertEquals("should be DLC", true, e.isDeadLetterChannel());
         SendProcessor send = assertIsInstanceOf(SendProcessor.class, e.getFailureHandler());
         assertEquals("mock://dead", send.getDestination().getEndpointUri());
+        assertEquals("mock://dead", e.getDeadLetterUri());
 
         // dead letter channel will mark the exchange as completed
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(9));

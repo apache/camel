@@ -479,7 +479,7 @@ public final class EventHelper {
     }
 
     public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
-                                                    boolean deadLetterChannel) {
+                                                    boolean deadLetterChannel, String deadLetterUri) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
             return;
@@ -504,7 +504,7 @@ public final class EventHelper {
             if (factory == null) {
                 return;
             }
-            EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
+            EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
             if (event == null) {
                 return;
             }

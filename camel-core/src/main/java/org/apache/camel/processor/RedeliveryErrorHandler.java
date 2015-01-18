@@ -896,7 +896,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         prepareExchangeAfterFailure(exchange, data, isDeadLetterChannel, shouldHandle, shouldContinue);
                         // fire event as we had a failure processor to handle it, which there is a event for
                         boolean deadLetterChannel = processor == data.deadLetterProcessor;
-                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel);
+                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
                         data.sync &= sync;
