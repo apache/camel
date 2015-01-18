@@ -22,29 +22,40 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.StaticService;
 
 /**
- * Registry to store endpoints in a map like cache.
+ * Registry to cache endpoints in memory.
+ * <p/>
+ * The registry contains two caches:
+ * <ul>
+ *     <li>static - which keeps all the endpoints in the cache for the entire lifecycle</li>
+ *     <li>dynamic - which keeps the endpoints in a {@link org.apache.camel.util.LRUCache} and may evict endpoints which hasn't been requested recently</li>
+ * </ul>
+ * The static cache stores all the endpoints that are created as part of setting up and starting routes.
+ * The static cache has no upper limit.
+ * <p/>
+ * The dynamic cache stores the endpoints that are created and used ad-hoc, such as from custom Java code that creates new endpoints etc.
+ * The dynamic cache has an upper limit, that by default is 1000 entries.
  *
  * @param <K> endpoint key
  */
 public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
 
     /**
-     * Number of static endpoints in the registry.
+     * Number of endpoints in the static registry.
      */
     int staticSize();
 
     /**
-     * Number of dynamic endpoints in the registry
+     * Number of endpoints in the dynamic registry
      */
     int dynamicSize();
 
     /**
-     * Maximum number of entries to store in the dynamic cache
+     * Maximum number of entries to store in the dynamic registry
      */
     public int getMaximumCacheSize();
 
     /**
-     * Purges the cache (removes dynamic endpoints)
+     * Purges the cache (removes endpoints from the dynamic cache)
      */
     void purge();
 

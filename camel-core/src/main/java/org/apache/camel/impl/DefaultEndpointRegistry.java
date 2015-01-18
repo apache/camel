@@ -26,16 +26,15 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.StaticService;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}.
+ * Default implementation of {@link org.apache.camel.spi.EndpointRegistry}
  */
-public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey>, StaticService {
+public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey> {
     private static final long serialVersionUID = 1L;
     private ConcurrentMap<EndpointKey, Endpoint> staticMap;
     private final CamelContext context;
