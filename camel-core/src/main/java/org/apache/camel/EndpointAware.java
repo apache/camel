@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import org.apache.camel.Endpoint;
+package org.apache.camel;
 
 /**
- * An interface to represent a {@link org.apache.camel.Processor} that uses an {@link Endpoint}
+ * An interface to represent an object such as a {@link org.apache.camel.Processor} that uses an {@link Endpoint}
  */
 public interface EndpointAware {
 

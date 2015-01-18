@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.processor.EndpointAware;
-
 /**
  * Provides a channel on which clients can create and invoke message exchanges
  * on an {@link Endpoint}

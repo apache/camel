@@ -660,10 +660,19 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Removes the given route (the route <b>must</b> be stopped before it can be removed).
      * <p/>
-     * <br/>A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route
+     * A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route
      * definition etc. will also be removed. All the resources related to the route will be stopped and cleared.
      * <p/>
-     * <br/>End users can use this method to remove unwanted routes or temporary routes which no longer is in demand.
+     * <b>Important:</b> When removing a route, the {@link Endpoint}s which are in the static cache of
+     * {@link org.apache.camel.spi.EndpointRegistry} and are <b>only</b> used by the route (not used by other routes)
+     * will also be removed. But {@link Endpoint}s which may have been created as part of routing messages by the route,
+     * and those endpoints are enlisted in the dynamic cache of {@link org.apache.camel.spi.EndpointRegistry} are
+     * <b>not</b> removed. To remove those dynamic kind of endpoints, use the {@link #removeEndpoints(String)} method.
+     * If not removing those endpoints, they will be kept in the dynamic cache of {@link org.apache.camel.spi.EndpointRegistry},
+     * but my eventually be removed (evicted) when they have not been in use for a longer period of time; and the
+     * dynamic cache upper limit is hit, and it evicts the least used endpoints.
+     * <p/>
+     * End users can use this method to remove unwanted routes or temporary routes which no longer is in demand.
      *
      * @param routeId the route id
      * @return <tt>true</tt> if the route was removed, <tt>false</tt> if the route could not be removed because its not stopped

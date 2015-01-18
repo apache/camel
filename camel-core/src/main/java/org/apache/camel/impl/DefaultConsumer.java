@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
-import org.apache.camel.processor.EndpointAware;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;

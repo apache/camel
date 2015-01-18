@@ -37,7 +37,7 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.EndpointAware;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -98,6 +98,9 @@ public class RouteService extends ChildServiceSupport {
 
     /**
      * Gather all the endpoints this route service uses
+     * <p/>
+     * This implementation finds the endpoints by searching all the child services
+     * for {@link org.apache.camel.EndpointAware} processors which uses an endpoint.
      */
     public Set<Endpoint> gatherEndpoints() {
         Set<Endpoint> answer = new LinkedHashSet<Endpoint>();

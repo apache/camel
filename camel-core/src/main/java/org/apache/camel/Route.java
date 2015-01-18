@@ -19,7 +19,6 @@ package org.apache.camel;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.processor.EndpointAware;
 import org.apache.camel.spi.RouteContext;
 
 /**

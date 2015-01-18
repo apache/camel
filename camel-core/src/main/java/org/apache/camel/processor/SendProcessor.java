@@ -24,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducerCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
