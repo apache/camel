@@ -191,6 +191,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DefaultErrorHandlerBuilder logNewException(boolean logNewException) {
+        getRedeliveryPolicy().setLogNewException(logNewException);
+        return this;
+    }
+
     public DefaultErrorHandlerBuilder logExhausted(boolean logExhausted) {
         getRedeliveryPolicy().setLogExhausted(logExhausted);
         return this;

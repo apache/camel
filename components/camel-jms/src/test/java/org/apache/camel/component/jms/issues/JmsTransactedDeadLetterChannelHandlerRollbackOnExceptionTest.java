@@ -52,7 +52,8 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
                 // we use DLC to handle the exception but if it throw a new exception
                 // then the DLC handles that too (the transaction will always commit)
                 errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName())
-                        .deadLetterHandleNewException(isHandleNew()));
+                        .deadLetterHandleNewException(isHandleNew())
+                        .logNewException(true));
 
                 from(testingEndpoint)
                     .log("Incoming JMS message ${body}")

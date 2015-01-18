@@ -928,6 +928,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                                                final boolean isDeadLetterChannel, final boolean shouldHandle, final boolean shouldContinue) {
 
         Exception newException = exchange.getException();
+        if (newException != null && data.currentRedeliveryPolicy.isLogNewException()) {
+            logFailedDelivery(false, true, false, false, exchange, null, data, newException);
+        }
 
         // we could not process the exchange so we let the failure processor handled it
         ExchangeHelper.setFailureHandled(exchange);
@@ -935,9 +938,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (isDeadLetterChannel && shouldHandle) {
             if (data.handleNewException) {
                 // if there is a new exception then log a warning about that
-                String msg = "DeadLetterChannel failed processing exchange due new exception: " + newException.getMessage()
-                        + ". This new exception is handled and ignored. The option deadLetterChannelHandleNewException can be turned off to not handle new exceptions";
-                logFailedDelivery(false, true, false, false, exchange, msg, data, newException);
+                log.trace("This exchange is handled so its marked as not failed: {}", exchange);
             } else {
                 // exception not handled, put exception back in the exchange
                 exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
@@ -1033,8 +1034,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         if (newException) {
+            // log at most WARN level
+            if (newLogLevel == LoggingLevel.ERROR) {
+                newLogLevel = LoggingLevel.WARN;
+            }
             // special for logging the new exception
-            String msg = message + " " + ExchangeHelper.logIds(exchange);
+            String msg = "New exception " + ExchangeHelper.logIds(exchange);
+            Throwable cause = exchange.getException() != null ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+            if (cause != null) {
+                msg = msg + " due: " + cause.getMessage();
+            }
+
             if (e != null && logStackTrace) {
                 logger.log(msg, e, newLogLevel);
             } else {
@@ -1046,6 +1056,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (cause != null) {
                 msg = msg + " due: " + cause.getMessage();
             }
+
 
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
