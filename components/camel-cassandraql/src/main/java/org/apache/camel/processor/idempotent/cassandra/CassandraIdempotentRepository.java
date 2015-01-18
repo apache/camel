@@ -22,6 +22,9 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.Select;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
@@ -124,9 +127,10 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     // Add key to repository
 
     protected void initInsertStatement() {
-        String cql = generateInsert(table, pkColumns, true, ttl).toString();
-        LOGGER.debug("Generated Insert {}", cql);
-        insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+        Insert insert = generateInsert(table, pkColumns, true, ttl);
+        insert = applyConsistencyLevel(insert, writeConsistencyLevel);
+        LOGGER.debug("Generated Insert {}", insert);
+        insertStatement = getSession().prepare(insert);
     }
 
     @Override
@@ -140,9 +144,10 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     // Check if key is in repository
 
     protected void initSelectStatement() {
-        String cql = generateSelect(table, pkColumns, pkColumns).toString();
-        LOGGER.debug("Generated Select {}", cql);
-        selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
+        Select select = generateSelect(table, pkColumns, pkColumns);
+        select = applyConsistencyLevel(select, readConsistencyLevel);
+        LOGGER.debug("Generated Select {}", select);
+        selectStatement = getSession().prepare(select);
     }
 
     @Override
@@ -161,9 +166,10 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     // Remove key from repository
 
     protected void initDeleteStatement() {
-        String cql = generateDelete(table, pkColumns, true).toString();
-        LOGGER.debug("Generated Delete {}", cql);
-        deleteStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+        Delete delete = generateDelete(table, pkColumns, true);
+        delete = applyConsistencyLevel(delete, writeConsistencyLevel);
+        LOGGER.debug("Generated Delete {}", delete);
+        deleteStatement = getSession().prepare(delete);
     }
 
     @Override

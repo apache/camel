@@ -27,6 +27,10 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.Insert;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import com.datastax.driver.core.querybuilder.Select;
 import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -167,11 +171,12 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     // Add exchange to repository
 
     private void initInsertStatement() {
-        String cql = generateInsert(table,
+        Insert insert = generateInsert(table,
                 getAllColumns(),
-                false, ttl).toString();
-        LOGGER.debug("Generated Insert {}", cql);
-        insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+                false, ttl);
+        insert = applyConsistencyLevel(insert, writeConsistencyLevel);
+        LOGGER.debug("Generated Insert {}", insert);
+        insertStatement = getSession().prepare(insert);
     }
 
     /**
@@ -195,11 +200,12 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     // Get exchange from repository
 
     protected void initSelectStatement() {
-        String cql = generateSelect(table,
+        Select select = generateSelect(table,
                 getAllColumns(),
-                pkColumns).toString();
-        LOGGER.debug("Generated Select {}", cql);
-        selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
+                pkColumns);
+        select = (Select) applyConsistencyLevel(select, readConsistencyLevel);
+        LOGGER.debug("Generated Select {}", select);
+        selectStatement = getSession().prepare(select);
     }
 
     /**
@@ -226,11 +232,11 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     // -------------------------------------------------------------------------
     // Confirm exchange in repository
     private void initDeleteIfIdStatement() {
-        StringBuilder cqlBuilder = generateDelete(table, pkColumns, false);
-        cqlBuilder.append(" if ").append(exchangeIdColumn).append("=?");
-        String cql = cqlBuilder.toString();
-        LOGGER.debug("Generated Delete If Id {}", cql);
-        deleteIfIdStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+        Delete delete = generateDelete(table, pkColumns, false);
+        Delete.Conditions deleteIf = delete.onlyIf(eq(exchangeIdColumn, bindMarker()));
+        deleteIf = applyConsistencyLevel(deleteIf, writeConsistencyLevel);
+        LOGGER.debug("Generated Delete If Id {}", deleteIf);
+        deleteIfIdStatement = getSession().prepare(deleteIf);
     }
 
     /**
@@ -255,9 +261,10 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     // Remove exchange from repository
 
     private void initDeleteStatement() {
-        String cql = generateDelete(table, pkColumns, false).toString();
-        LOGGER.debug("Generated Delete {}", cql);
-        deleteStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+        Delete delete = generateDelete(table, pkColumns, false);
+        delete = applyConsistencyLevel(delete, writeConsistencyLevel);
+        LOGGER.debug("Generated Delete {}", delete);
+        deleteStatement = getSession().prepare(delete);
     }
 
     /**
@@ -272,11 +279,12 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     // -------------------------------------------------------------------------
     private void initSelectKeyIdStatement() {
-        String cql = generateSelect(table,
+        Select select = generateSelect(table,
                 new String[]{getKeyColumn(), exchangeIdColumn}, // Key + Exchange Id columns
-                pkColumns, pkColumns.length - 1).toString(); // Where fixed PK columns
-        LOGGER.debug("Generated Select keys {}", cql);
-        selectKeyIdStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
+                pkColumns, pkColumns.length - 1); // Where fixed PK columns
+        select = applyConsistencyLevel(select, readConsistencyLevel);
+        LOGGER.debug("Generated Select keys {}", select);
+        selectKeyIdStatement = getSession().prepare(select);
     }
 
     protected List<Row> selectKeyIds() {
