@@ -114,6 +114,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             throw new IllegalArgumentException("Attribute deadLetterUri can only be used if type is "
                     + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: " + id);
         }
+        String deadLetterHandleNewException = element.getAttribute("deadLetterHandleNewException");
+        if (ObjectHelper.isNotEmpty(deadLetterHandleNewException) && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+            throw new IllegalArgumentException("Attribute deadLetterHandleNewException can only be used if type is "
+                    + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: " + id);
+        }
         String transactionTemplateRef = element.getAttribute("transactionTemplateRef");
         if (ObjectHelper.isNotEmpty(transactionTemplateRef) && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             throw new IllegalArgumentException("Attribute transactionTemplateRef can only be used if type is "

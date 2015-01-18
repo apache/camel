@@ -44,6 +44,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
+    private Boolean deadLetterHandleNewException;
+    @XmlAttribute
     private LoggingLevel level;
     @XmlAttribute
     private String logName;
@@ -69,6 +71,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             DefaultErrorHandlerBuilder handler = (DefaultErrorHandlerBuilder) errorHandler;
             if (deadLetterUri != null) {
                 handler.setDeadLetterUri(deadLetterUri);
+            }
+            if (deadLetterHandleNewException != null) {
+                handler.setDeadLetterHandleNewException(deadLetterHandleNewException);
             }
             if (useOriginalMessage != null) {
                 handler.setUseOriginalMessage(useOriginalMessage);

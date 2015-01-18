@@ -38,6 +38,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
+    private String deadLetterHandleNewException;
+    @XmlAttribute
     private LoggingLevel level;
     @XmlAttribute
     private LoggingLevel rollbackLoggingLevel;
