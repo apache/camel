@@ -42,6 +42,9 @@
     </cxf:providers>
   </cxf:rsServer>
   
+  <cxf:rsServer id="rsServerInvoke" address="http://localhost:${CXFTestSupport.port1}/CxfRsSpringConsumerInvokeService/"
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+  
   <bean id="exceptionMapper" class="org.apache.camel.component.cxf.jaxrs.CustomExceptionMapper"/>
   <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
 

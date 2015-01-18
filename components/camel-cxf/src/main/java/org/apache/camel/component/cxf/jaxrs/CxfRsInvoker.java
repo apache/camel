@@ -44,6 +44,10 @@ public class CxfRsInvoker extends JAXRSInvoker {
         
     protected Object performInvocation(Exchange cxfExchange, final Object serviceObject, Method method,
                                        Object[] paramArray) throws Exception {
+        Object response = null;
+        if (endpoint.isPerformInvocation()) {
+            response = super.performInvocation(cxfExchange, serviceObject, method, paramArray);
+        }
         paramArray = insertExchange(method, paramArray, cxfExchange);
         OperationResourceInfo ori = cxfExchange.get(OperationResourceInfo.class);        
         if (ori.isSubResourceLocator()) {
@@ -53,10 +57,10 @@ public class CxfRsInvoker extends JAXRSInvoker {
         Continuation continuation;
         if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
             LOG.trace("Calling the Camel async processors.");
-            return asyncInvoke(cxfExchange, serviceObject, method, paramArray, continuation);
+            return asyncInvoke(cxfExchange, serviceObject, method, paramArray, continuation, response);
         } else {
             LOG.trace("Calling the Camel sync processors.");
-            return syncInvoke(cxfExchange, serviceObject, method, paramArray);
+            return syncInvoke(cxfExchange, serviceObject, method, paramArray, response);
         }
     }
     
@@ -67,7 +71,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
     }
     
     private Object asyncInvoke(Exchange cxfExchange, final Object serviceObject, Method method,
-                              Object[] paramArray, final Continuation continuation) throws Exception {
+                              Object[] paramArray, final Continuation continuation, Object response) throws Exception {
         synchronized (continuation) {
             if (continuation.isNew()) {
                 ExchangePattern ep = ExchangePattern.InOut;
@@ -75,7 +79,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     ep = ExchangePattern.InOnly;
                 } 
                 final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
-
+                if (response != null) {
+                    camelExchange.getOut().setBody(response);
+                }
                 CxfRsBinding binding = endpoint.getBinding();
                 binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
                 // we want to handle the UoW
@@ -112,13 +118,17 @@ public class CxfRsInvoker extends JAXRSInvoker {
     }
     
     private Object syncInvoke(Exchange cxfExchange, final Object serviceObject, Method method,
-                              Object[] paramArray) throws Exception {
+                              Object[] paramArray,
+                              Object response) throws Exception {
         ExchangePattern ep = ExchangePattern.InOut;
         
         if (method.getReturnType() == Void.class) {
             ep = ExchangePattern.InOnly;
         } 
         org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
+        if (response != null) {
+            camelExchange.getOut().setBody(response);
+        }
         CxfRsBinding binding = endpoint.getBinding();
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
         // we want to handle the UoW

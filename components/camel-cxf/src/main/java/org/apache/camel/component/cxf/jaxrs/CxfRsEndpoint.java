@@ -65,7 +65,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
          * It also also adds more flexibility and simplicity to the response mapping.
          */
         SimpleConsumer,
-        
+
         /**
          * This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
          * onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
@@ -81,9 +81,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 
     protected Bus bus;
-    
+
     protected List<Object> entityProviders = new LinkedList<Object>();
-    
+
     protected List<String> schemaLocations;
 
     @UriPath(description = "To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.")
@@ -116,12 +116,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private long continuationTimeout = 30000;
     @UriParam(defaultValue = "false")
     private boolean isSetDefaultBus;
+    @UriParam(defaultValue = "false")
+    private boolean performInvocation;
     @UriParam
-    private String modelRef;    
+    private String modelRef;
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     private InterceptorHolder interceptorHolder = new InterceptorHolder();
     private Map<String, Object> properties;
-   
+
     public CxfRsEndpoint() {
     }
 
@@ -194,7 +196,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public CxfRsBinding getBinding() {
         return binding;
     }
-    
+
     public boolean isSkipFaultLogging() {
         return skipFaultLogging;
     }
@@ -202,7 +204,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
     }
-    
+
     protected void checkBeanType(Object object, Class<?> clazz) {
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new IllegalArgumentException("The configure bean is not the instance of " + clazz.getName());
@@ -220,13 +222,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
         }
-        
+
         // setup the resource providers for interfaces
         List<ClassResourceInfo> cris = sfb.getServiceFactory().getClassResourceInfo();
         for (ClassResourceInfo cri : cris) {
-            final Class<?> serviceClass = cri.getServiceClass(); 
+            final Class<?> serviceClass = cri.getServiceClass();
             if (serviceClass.isInterface()) {
-                cri.setResourceProvider(new CamelResourceProvider(serviceClass)); 
+                cri.setResourceProvider(new CamelResourceProvider(serviceClass));
             }
         }
         setupCommonFactoryProperties(sfb);
@@ -248,7 +250,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
     }
-    
+
     protected void setupCommonFactoryProperties(AbstractJAXRSFactoryBean factory) {
         // let customer to override the default setting of provider
         if (!getProviders().isEmpty()) {
@@ -258,11 +260,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (!getFeatures().isEmpty()) {
             factory.getFeatures().addAll(getFeatures());
         }
-        
+
         // we need to avoid flushing the setting from spring or blueprint
         if (!interceptorHolder.getInInterceptors().isEmpty()) {
             factory.setInInterceptors(interceptorHolder.getInInterceptors());
-        } 
+        }
         if (!interceptorHolder.getOutInterceptors().isEmpty()) {
             factory.setOutInterceptors(interceptorHolder.getOutInterceptors());
         }
@@ -270,9 +272,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             factory.setOutFaultInterceptors(interceptorHolder.getOutFaultInterceptors());
         }
         if (!interceptorHolder.getInFaultInterceptors().isEmpty()) {
-            factory.setInFaultInterceptors(interceptorHolder.getInFaultInterceptors()); 
+            factory.setInFaultInterceptors(interceptorHolder.getInFaultInterceptors());
         }
-        
+
         if (getProperties() != null) {
             if (factory.getProperties() != null) {
                 // add to existing properties
@@ -282,7 +284,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             }
             LOG.debug("JAXRS FactoryBean: {} added properties: {}", factory, getProperties());
         }
-        
+
         if (isLoggingFeatureEnabled()) {
             if (getLoggingSizeLimit() > 0) {
                 factory.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
@@ -297,15 +299,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             factory.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
     }
-    
+
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         return new JAXRSServerFactoryBean();
     }
-    
+
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         return new JAXRSClientFactoryBean();
     }
-    
+
     protected String resolvePropertyPlaceholders(String str) {
         try {
             if (getCamelContext() != null) {
@@ -324,12 +326,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setupJAXRSServerFactoryBean(answer);
         return answer;
     }
-    
+
 
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean() {
         return createJAXRSClientFactoryBean(getAddress());
     }
-    
+
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean(String address) {
         JAXRSClientFactoryBean answer = newJAXRSClientFactoryBean();
         setupJAXRSClientFactoryBean(answer, address);
@@ -354,14 +356,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
     }
-    
+
     public void setAddress(String address) {
         this.address = address;
     }
     public void setModelRef(String ref) {
         this.modelRef = ref;
     }
-
     public String getAddress() {
         return resolvePropertyPlaceholders(address);
     }
@@ -403,7 +404,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public int getMaxClientCacheSize() {
         return maxClientCacheSize;
     }
-    
+
     public void setBus(Bus bus) {
         this.bus = bus;
         if (isSetDefaultBus) {
@@ -415,7 +416,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public Bus getBus() {
         return bus;
     }
-    
+
     public void setSetDefaultBus(boolean isSetDefaultBus) {
         this.isSetDefaultBus = isSetDefaultBus;
     }
@@ -423,7 +424,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public boolean isSetDefaultBus() {
         return isSetDefaultBus;
     }
-    
+
     public boolean isIgnoreDeleteMethodMessageBody() {
         return ignoreDeleteMethodMessageBody;
     }
@@ -435,27 +436,27 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public BindingStyle getBindingStyle() {
         return bindingStyle;
     }
-    
+
     public List<?> getProviders() {
         return entityProviders;
     }
-    
+
     public void setProviders(List<?> providers) {
         this.entityProviders.addAll(providers);
     }
-    
+
     public void setProvider(Object provider) {
         entityProviders.add(provider);
     }
-    
+
     public void setSchemaLocation(String schema) {
-        setSchemaLocations(Collections.singletonList(schema));    
+        setSchemaLocations(Collections.singletonList(schema));
     }
-    
+
     public void setSchemaLocations(List<String> schemas) {
-        this.schemaLocations = schemas;    
+        this.schemaLocations = schemas;
     }
-    
+
     public List<String> getSchemaLocations() {
         return schemaLocations;
     }
@@ -491,7 +492,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setOutFaultInterceptors(List<Interceptor<? extends Message>> interceptors) {
         interceptorHolder.setOutFaultInterceptors(interceptors);
     }
-    
+
     public List<Feature> getFeatures() {
         return features;
     }
@@ -503,7 +504,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public Map<String, Object> getProperties() {
         return properties;
     }
-    
+
     public void setProperties(Map<String, Object> properties) {
         if (this.properties == null) {
             this.properties = properties;
@@ -511,7 +512,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             this.properties.putAll(properties);
         }
     }
-    
+
     /**
      * See documentation of {@link BindingStyle}.
      */
@@ -541,7 +542,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // if the user has set a binding, do nothing, just make sure that BindingStyle = Custom for coherency purposes
         if (binding != null) {
             bindingStyle = BindingStyle.Custom;
-        } 
+        }
 
         // set the right binding based on the binding style
         if (bindingStyle == BindingStyle.SimpleConsumer) {
@@ -551,7 +552,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         } else {
             binding = new DefaultCxfRsBinding();
         }
-        
+
         if (binding instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
@@ -573,5 +574,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
 
     private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
+    }
+
+
+    public boolean isPerformInvocation() {
+        return performInvocation;
+    }
+
+    public void setPerformInvocation(boolean performInvocation) {
+        this.performInvocation = performInvocation;
     }
 }
