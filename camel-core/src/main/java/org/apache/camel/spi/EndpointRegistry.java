@@ -65,7 +65,7 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
      * @param key  the endpoint key
      * @return <tt>true</tt> if in static cache, <tt>false</tt> if not
      */
-    boolean isStatic(K key);
+    boolean isStatic(String key);
 
     /**
      * Whether the given endpoint is stored in the dynamic cache
@@ -73,6 +73,6 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
      * @param key  the endpoint key
      * @return <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
      */
-    boolean isDynamic(K key);
+    boolean isDynamic(String key);
 
 }

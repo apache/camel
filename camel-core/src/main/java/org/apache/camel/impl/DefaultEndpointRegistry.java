@@ -187,13 +187,13 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
     }
 
     @Override
-    public boolean isStatic(EndpointKey key) {
-        return staticMap.containsKey(key);
+    public boolean isStatic(String key) {
+        return staticMap.containsKey(new EndpointKey(key));
     }
 
     @Override
-    public boolean isDynamic(EndpointKey key) {
-        return super.containsKey(key);
+    public boolean isDynamic(String key) {
+        return super.containsKey(new EndpointKey(key));
     }
 
     @Override
