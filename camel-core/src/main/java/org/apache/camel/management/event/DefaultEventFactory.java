@@ -19,6 +19,7 @@ package org.apache.camel.management.event;
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -93,7 +94,12 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel) {
-        return new ExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
+        // unwrap delegate processor
+        Processor handler = failureHandler;
+        if (handler instanceof DelegateProcessor) {
+            handler = ((DelegateProcessor) handler).getProcessor();
+        }
+        return new ExchangeFailureHandledEvent(exchange, handler, deadLetterChannel);
     }
 
     public EventObject createExchangeRedeliveryEvent(Exchange exchange, int attempt) {

@@ -32,15 +32,15 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
 
     private static final Logger LOG = LoggerFactory.getLogger(FatalFallbackErrorHandler.class);
 
-    private boolean logWarn;
+    private boolean deadLetterChannel;
 
     public FatalFallbackErrorHandler(Processor processor) {
         this(processor, false);
     }
 
-    public FatalFallbackErrorHandler(Processor processor, boolean logWarn) {
+    public FatalFallbackErrorHandler(Processor processor, boolean isDeadLetterChannel) {
         super(processor);
-        this.logWarn = logWarn;
+        this.deadLetterChannel = isDeadLetterChannel;
     }
 
     @Override
@@ -70,10 +70,16 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     // to be visible in the error handler
                     exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
 
-                    // mark this exchange as already been error handler handled (just by having this property)
-                    // the false value mean the caught exception will be kept on the exchange, causing the
-                    // exception to be propagated back to the caller, and to break out routing
-                    exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+                    if (deadLetterChannel) {
+                        // special for dead letter channel as we want to let it determine what to do, depending how
+                        // it has been configured
+                        exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+                    } else {
+                        // mark this exchange as already been error handler handled (just by having this property)
+                        // the false value mean the caught exception will be kept on the exchange, causing the
+                        // exception to be propagated back to the caller, and to break out routing
+                        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+                    }
                 }
                 callback.done(doneSync);
             }
@@ -87,7 +93,8 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
     }
 
     private void log(String message, Throwable t) {
-        if (logWarn) {
+        // when using dead letter channel we only want to log at WARN level
+        if (deadLetterChannel) {
             if (t != null) {
                 LOG.warn(message, t);
             } else {
