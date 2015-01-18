@@ -187,6 +187,16 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
     }
 
     @Override
+    public boolean isStatic(EndpointKey key) {
+        return staticMap.containsKey(key);
+    }
+
+    @Override
+    public boolean isDynamic(EndpointKey key) {
+        return super.containsKey(key);
+    }
+
+    @Override
     public void stop() throws Exception {
         ServiceHelper.stopServices(staticMap.values());
         ServiceHelper.stopServices(values());

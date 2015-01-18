@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.processor;
+
+import org.apache.camel.Endpoint;
 
 /**
- * An interface to represent an {@link org.apache.camel.Endpoint} which are delegated.
+ * An interface to represent a {@link org.apache.camel.Processor} that uses an {@link Endpoint}
  */
-public interface DelegateEndpoint extends Endpoint {
+public interface EndpointAware {
 
     /**
-     * Gets the delegated {@link Endpoint}.
+     * Gets the endpoint
      *
-     * @return the Endpoint we delegate to
+     * @return the endpoint
      */
     Endpoint getEndpoint();
-
 }

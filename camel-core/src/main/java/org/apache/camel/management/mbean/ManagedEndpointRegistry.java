@@ -80,7 +80,10 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
                 CompositeType ct = CamelOpenMBeanTypes.listEndpointsCompositeType();
                 String url = endpoint.getEndpointUri();
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"url"}, new Object[]{url});
+                boolean fromStatic = endpointRegistry.isStatic(url);
+                boolean fromDynamic = endpointRegistry.isDynamic(url);
+
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "static", "dynamic"}, new Object[]{url, fromStatic, fromDynamic});
                 answer.put(data);
             }
             return answer;

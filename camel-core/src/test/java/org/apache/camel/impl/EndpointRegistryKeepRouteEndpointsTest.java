@@ -58,6 +58,9 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
 
         // we should have 4 static, 20 dynamic and 24 in total
         assertEquals(4, context.getEndpointRegistry().staticSize());
+        assertTrue(context.getEndpointRegistry().isStatic("direct://start"));
+        assertTrue(context.getEndpointRegistry().isDynamic("mock://unknown49"));
+
         assertEquals(20, context.getEndpointRegistry().dynamicSize());
         assertEquals(24, context.getEndpointRegistry().size());
 

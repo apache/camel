@@ -48,7 +48,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see PollEnricher
  */
-public class Enricher extends ServiceSupport implements AsyncProcessor {
+public class Enricher extends ServiceSupport implements AsyncProcessor, EndpointAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
     private AggregationStrategy aggregationStrategy;
@@ -108,6 +108,10 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
      */
     public void setDefaultAggregationStrategy() {
         this.aggregationStrategy = defaultAggregationStrategy();
+    }
+
+    public Endpoint getEndpoint() {
+        return producer.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {

@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware {
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
     private final Endpoint destination;
     private final Processor processor;
@@ -76,6 +76,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     @Override
     public String getTraceLabel() {
         return "wireTap(" + destination + ")";
+    }
+
+    public Endpoint getEndpoint() {
+        return destination;
     }
 
     public void process(Exchange exchange) throws Exception {

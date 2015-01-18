@@ -23,8 +23,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Ensures a {@link Producer} is executed within an {@link org.apache.camel.spi.UnitOfWork}.
@@ -33,7 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class UnitOfWorkProducer implements Producer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UnitOfWorkProducer.class);
     private final Producer producer;
     private final AsyncProcessor processor;
 

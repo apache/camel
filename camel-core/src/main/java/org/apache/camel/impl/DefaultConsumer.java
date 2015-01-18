@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
+import org.apache.camel.processor.EndpointAware;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
+public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, EndpointAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Endpoint endpoint;
     private final Processor processor;

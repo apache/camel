@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
@@ -96,7 +96,12 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     public String getTraceLabel() {
         return URISupport.sanitizeUri(destination.getEndpointUri());
     }
-    
+
+    @Override
+    public Endpoint getEndpoint() {
+        return destination;
+    }
+
     public void process(final Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }

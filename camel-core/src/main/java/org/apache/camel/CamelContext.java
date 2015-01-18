@@ -319,12 +319,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
 
-    EndpointRegistry getEndpointRegistry();
+    /**
+     * Gets the {@link org.apache.camel.spi.EndpointRegistry}
+     */
+    EndpointRegistry<String> getEndpointRegistry();
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
      * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and registered.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
      *
      * @param uri the URI of the endpoint
      * @return the endpoint
@@ -334,7 +337,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
      * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and registered.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
      *
      * @param name         the name of the endpoint
      * @param endpointType the expected type
@@ -343,22 +346,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
-     * Returns the collection of all registered endpoints.
+     * Returns a new {@link Collection} of all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @return all endpoints
      */
     Collection<Endpoint> getEndpoints();
 
     /**
-     * Returns a new Map containing all of the active endpoints with the key of the map being their
-     * unique key.
+     * Returns a new {@link Map} containing all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
      *
-     * @return map of active endpoints
+     * @return map of endpoints
      */
     Map<String, Endpoint> getEndpointMap();
 
     /**
-     * Is the given endpoint already registered?
+     * Is the given endpoint already registered in the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @param uri the URI of the endpoint
      * @return the registered endpoint or <tt>null</tt> if not registered
@@ -366,30 +368,40 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Endpoint hasEndpoint(String uri);
 
     /**
-     * Adds the endpoint to the context using the given URI.
+     * Adds the endpoint to the {@link org.apache.camel.spi.EndpointRegistry} using the given URI.
      *
      * @param uri      the URI to be used to resolve this endpoint
-     * @param endpoint the endpoint to be added to the context
+     * @param endpoint the endpoint to be added to the registry
      * @return the old endpoint that was previously registered or <tt>null</tt> if none was registered
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
     Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
 
     /**
-     * Removes all endpoints with the given URI.
+     * Removes the endpoint from the {@link org.apache.camel.spi.EndpointRegistry}.
+     * <p/>
+     * The endpoint being removed will be stopped first.
+     *
+     * @param endpoint  the endpoint
+     * @throws Exception if the endpoint could not be stopped
+     */
+    void removeEndpoint(Endpoint endpoint) throws Exception;
+
+    /**
+     * Removes all endpoints with the given URI from the {@link org.apache.camel.spi.EndpointRegistry}.
      * <p/>
      * The endpoints being removed will be stopped first.
      *
      * @param pattern an uri or pattern to match
      * @return a collection of endpoints removed which could be empty if there are no endpoints found for the given <tt>pattern</tt>
      * @throws Exception if at least one endpoint could not be stopped
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String)  for pattern
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String) for pattern
      */
     Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
-     * logic when an {@link Endpoint} is about to be registered to the {@link CamelContext} endpoint registry.
+     * logic when an {@link Endpoint} is about to be registered to the {@link org.apache.camel.spi.EndpointRegistry}.
      * <p/>
      * When a callback is added it will be executed on the already registered endpoints allowing you to catch-up
      *

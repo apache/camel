@@ -474,6 +474,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return oldEndpoint;
     }
 
+    public void removeEndpoint(Endpoint endpoint) throws Exception {
+        removeEndpoints(endpoint.getEndpointUri());
+    }
+
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
         Collection<Endpoint> answer = new ArrayList<Endpoint>();
         Endpoint oldEndpoint = endpoints.remove(getEndpointKey(uri));
@@ -945,6 +949,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerBuilder();
             builder.removeOnExceptionList(routeId);
         }
+
+        // gather a map of all the endpoints in use by the routes, so we can known if a given endpoints is in use
+        // by one or more routes, when we remove the route
+        Map<String, Set<Endpoint>> endpointsInUse = new HashMap<String, Set<Endpoint>>();
+        for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
+            endpointsInUse.put(entry.getKey(), entry.getValue().gatherEndpoints());
+        }
+
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             if (getRouteStatus(routeId).isStopped()) {
@@ -959,6 +971,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (order.getRoute().getId().equals(routeId)) {
                         it.remove();
                     }
+                }
+
+                // from the route which we have removed, then remove all its private endpoints
+                // (eg the endpoints which are not in use by other routes)
+                Set<Endpoint> toRemove = new LinkedHashSet<Endpoint>();
+                for (Endpoint endpoint : endpointsInUse.get(routeId)) {
+                    // how many times is the endpoint in use
+                    int count = 0;
+                    for (Set<Endpoint> endpoints : endpointsInUse.values()) {
+                        if (endpoints.contains(endpoint)) {
+                            count++;
+                        }
+                    }
+                    // notice we will count ourselves so if there is only 1 then its safe to remove
+                    if (count <= 1) {
+                        toRemove.add(endpoint);
+                    }
+                }
+                for (Endpoint endpoint : toRemove) {
+                    log.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
+                    removeEndpoint(endpoint);
                 }
                 return true;
             } else {
@@ -1056,16 +1089,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public boolean removeService(Object object) throws Exception {
+        if (object instanceof Endpoint) {
+            removeEndpoint((Endpoint) object);
+            return true;
+        }
         if (object instanceof Service) {
             Service service = (Service) object;
-
             for (LifecycleStrategy strategy : lifecycleStrategies) {
-                if (service instanceof Endpoint) {
-                    // use specialized endpoint remove
-                    strategy.onEndpointRemove((Endpoint) service);
-                } else {
-                    strategy.onServiceRemove(this, service, null);
-                }
+                strategy.onServiceRemove(this, service, null);
             }
             return servicesToClose.remove(service);
         }

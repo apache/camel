@@ -16,13 +16,15 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.processor.EndpointAware;
+
 /**
  * Provides a channel on which clients can create and invoke message exchanges
  * on an {@link Endpoint}
  * 
  * @version 
  */
-public interface Producer extends Processor, Service, IsSingleton {
+public interface Producer extends Processor, Service, IsSingleton, EndpointAware {
 
     /**
      * Gets the endpoint this producer sends to.

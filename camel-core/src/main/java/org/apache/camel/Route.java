@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.processor.EndpointAware;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
  * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  */
-public interface Route {
+public interface Route extends EndpointAware {
 
     String ID_PROPERTY = "id";
     String PARENT_PROPERTY = "parent";

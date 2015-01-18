@@ -59,4 +59,20 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
      */
     void purge();
 
+    /**
+     * Whether the given endpoint is stored in the static cache
+     *
+     * @param key  the endpoint key
+     * @return <tt>true</tt> if in static cache, <tt>false</tt> if not
+     */
+    boolean isStatic(K key);
+
+    /**
+     * Whether the given endpoint is stored in the dynamic cache
+     *
+     * @param key  the endpoint key
+     * @return <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     */
+    boolean isDynamic(K key);
+
 }

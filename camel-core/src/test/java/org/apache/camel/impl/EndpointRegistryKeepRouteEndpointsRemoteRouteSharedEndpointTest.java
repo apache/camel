@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
-public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTestSupport {
+public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -30,15 +30,16 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTe
         return context;
     }
 
-    public void testEndpointRegistryKeepRouteEndpointsRemoveRoute() throws Exception {
+    public void testEndpointRegistryKeepRouteEndpointsRemoveRouteSharedEndpoint() throws Exception {
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://start") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
+        assertTrue(context.hasEndpoint("log://bar") != null);
         assertTrue(context.hasEndpoint("mock://result") != null);
         assertTrue(context.hasEndpoint("direct://bar") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
+        assertTrue(context.hasEndpoint("log://private") != null);
 
-        assertEquals(6, context.getEndpointRegistry().staticSize());
+        assertEquals(7, context.getEndpointRegistry().staticSize());
 
         // we dont have this endpoint yet
         assertFalse(context.hasEndpoint("mock://unknown0") != null);
@@ -47,25 +48,28 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTe
             template.sendBody("mock:unknown" + i, "Hello " + i);
         }
 
-        assertEquals(6, context.getEndpointRegistry().staticSize());
+        assertEquals(7, context.getEndpointRegistry().staticSize());
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://start") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
+        assertTrue(context.hasEndpoint("log://bar") != null);
         assertTrue(context.hasEndpoint("mock://result") != null);
         assertTrue(context.hasEndpoint("direct://bar") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
+        assertTrue(context.hasEndpoint("log://private") != null);
 
         // now stop and remove the bar route
         context.stopRoute("bar");
         context.removeRoute("bar");
 
-        assertEquals(4, context.getEndpointRegistry().staticSize());
+        assertEquals(5, context.getEndpointRegistry().staticSize());
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://start") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
+        // log:bar is still in use, so should still be here
+        assertTrue(context.hasEndpoint("log://bar") != null);
         assertTrue(context.hasEndpoint("mock://result") != null);
         assertFalse(context.hasEndpoint("direct://bar") != null);
-        assertFalse(context.hasEndpoint("log://bar") != null);
+        assertFalse(context.hasEndpoint("log://private") != null);
     }
 
     @Override
@@ -73,9 +77,9 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo").to("log:start").to("log:foo").to("mock:result");
+                from("direct:start").routeId("foo").to("log:start").to("log:foo").to("log:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar").to("log:bar");
+                from("direct:bar").routeId("bar").to("log:private").to("log:bar");
             }
         };
     }
