@@ -66,6 +66,8 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private String logHandled;
     @XmlAttribute
+    private String logNewException;
+    @XmlAttribute
     private String logContinued;
     @XmlAttribute
     private String logExhausted;
@@ -132,6 +134,9 @@ public class RedeliveryPolicyDefinition {
             }
             if (logHandled != null) {
                 answer.setLogHandled(CamelContextHelper.parseBoolean(context, logHandled));
+            }
+            if (logNewException != null) {
+                answer.setLogNewException(CamelContextHelper.parseBoolean(context, logNewException));
             }
             if (logContinued != null) {
                 answer.setLogContinued(CamelContextHelper.parseBoolean(context, logContinued));
@@ -390,6 +395,33 @@ public class RedeliveryPolicyDefinition {
      */
     public RedeliveryPolicyDefinition logHandled(String logHandled) {
         setLogHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether new exceptions should be logged or not.
+     * Can be used to include or reduce verbose.
+     * <p/>
+     * A new exception is an exception that was thrown while handling a previous exception.
+     *
+     * @param logNewException  whether new exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logNewException(boolean logNewException) {
+        return logNewException(Boolean.toString(logNewException));
+    }
+
+    /**
+     * Sets whether new exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     * <p/>
+     * A new exception is an exception that was thrown while handling a previous exception.
+     *
+     * @param logNewException  whether new exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logNewException(String logNewException) {
+        logNewException(logNewException);
         return this;
     }
 
@@ -682,6 +714,14 @@ public class RedeliveryPolicyDefinition {
 
     public void setLogHandled(String logHandled) {
         this.logHandled = logHandled;
+    }
+
+    public String getLogNewException() {
+        return logNewException;
+    }
+
+    public void setLogNewException(String logNewException) {
+        this.logNewException = logNewException;
     }
 
     public String getLogContinued() {

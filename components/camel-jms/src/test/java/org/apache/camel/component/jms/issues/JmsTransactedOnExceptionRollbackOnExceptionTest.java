@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jms.issues;
 
-
-import java.util.UUID;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -26,52 +23,55 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
-public class JmsDeadLetterChannelHandlerExceptionTest extends CamelTestSupport {
+public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSupport {
     
     public static class BadErrorHandler {
         @Handler
         public void onException(Exchange exchange, Exception exception) throws Exception {
-            
             throw new RuntimeException("error in errorhandler");
         }
     }
    
-    private final String testingEndpoint = "activemq:test." + getClass().getName();
+    protected final String testingEndpoint = "activemq:test." + getClass().getName();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-                errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName()).checkException());
+                // we attempt to handle the exception but if it throw a new exception
+                // then it causes the JMS transaction to rollback
+                onException(Exception.class).handled(true).bean(BadErrorHandler.class);
 
-                from(testingEndpoint).throwException(new RuntimeException("bad error"));
-                
-                
+                from(testingEndpoint)
+                    .log("Incoming JMS message ${body}")
+                    .throwException(new RuntimeException("bad error"));
             }
         };
     }
 
     @Test
     public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
-        UUID message = UUID.randomUUID();
-        template.sendBody(testingEndpoint, message);
+        template.sendBody(testingEndpoint, "Hello World");
 
-        Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 3000);
-
-        assertEquals(message, dlqBody);
+        Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
+        assertEquals("Hello World", dlqBody);
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentTransacted(connectionFactory));
+
+        // no redeliveries
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory(null, 0);
+        JmsComponent component = jmsComponentTransacted(connectionFactory);
+        camelContext.addComponent("activemq", component);
         return camelContext;
     }
+
 }

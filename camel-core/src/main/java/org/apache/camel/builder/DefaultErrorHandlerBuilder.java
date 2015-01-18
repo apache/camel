@@ -49,6 +49,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected Processor failureProcessor;
     protected Endpoint deadLetter;
     protected String deadLetterUri;
+    protected boolean deadLetterHandleNewException = true;
     protected boolean useOriginalMessage;
     protected boolean asyncDelayedRedelivery;
     protected String executorServiceRef;
@@ -103,6 +104,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         if (deadLetterUri != null) {
             other.setDeadLetterUri(deadLetterUri);
         }
+        other.setDeadLetterHandleNewException(deadLetterHandleNewException);
         other.setUseOriginalMessage(useOriginalMessage);
         other.setAsyncDelayedRedelivery(asyncDelayedRedelivery);
         other.setExecutorServiceRef(executorServiceRef);
@@ -203,7 +205,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         getRedeliveryPolicy().setExchangeFormatterRef(exchangeFormatterRef);
         return this;
     }
-
 
     /**
      * Will allow asynchronous delayed redeliveries.
@@ -340,8 +341,26 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         setUseOriginalMessage(true);
         return this;
     }
-    
-    
+
+    /**
+     * Whether the dead letter channel should handle (and ignore) any new exception that may been thrown during sending the
+     * message to the dead letter endpoint.
+     * <p/>
+     * The default value is <tt>true</tt> which means any such kind of exception is handled and ignored. Set this to <tt>false</tt>
+     * to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be used in situations
+     * where you use transactions, and want to use Camel's dead letter channel to deal with exceptions during routing,
+     * but if the dead letter channel itself fails because of a new exception being thrown, then by setting this to <tt>false</tt>
+     * the new exceptions is propagated back and set on the {@link org.apache.camel.Exchange}, which allows the transaction
+     * to detect the exception, and rollback.
+     *
+     * @param handleNewException <tt>true</tt> to handle (and ignore), <tt>false</tt> to catch and propagated the exception on the {@link org.apache.camel.Exchange}
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder deadLetterHandleNewException(boolean handleNewException) {
+        setDeadLetterHandleNewException(handleNewException);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -430,6 +449,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public void setDeadLetter(Endpoint deadLetter) {
         this.deadLetter = deadLetter;
         this.deadLetterUri = deadLetter.getEndpointUri();
+    }
+
+    public boolean isDeadLetterHandleNewException() {
+        return deadLetterHandleNewException;
+    }
+
+    public void setDeadLetterHandleNewException(boolean deadLetterHandleNewException) {
+        this.deadLetterHandleNewException = deadLetterHandleNewException;
     }
 
     public boolean isUseOriginalMessage() {

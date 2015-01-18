@@ -22,6 +22,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
-    boolean checkException;
 
     public DeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL
@@ -51,17 +51,12 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         setDeadLetterUri(uri);
     }
     
-    public DeadLetterChannelBuilder checkException() {
-        checkException = true;
-        return this;
-    }
-
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 
         DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
-                getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isUseOriginalMessage(),
-                getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()));
+                getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
+                isUseOriginalMessage(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()));
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -83,10 +78,10 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     public Processor getFailureProcessor() {
         if (failureProcessor == null) {
+            // wrap in our special safe fallback error handler if sending to dead letter channel fails
+            Processor child = new SendProcessor(deadLetter, ExchangePattern.InOnly);
             // force MEP to be InOnly so when sending to DLQ we would not expect a reply if the MEP was InOut
-            // If the checkException is true, sendProcessor will checkException 
-            // and mark the exchange ERRORHANDLER_HANDLED property to false
-            failureProcessor = new SendProcessor(deadLetter, ExchangePattern.InOnly, checkException);
+            failureProcessor = new FatalFallbackErrorHandler(child, true);
         }
         return failureProcessor;
     }

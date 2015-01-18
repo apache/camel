@@ -57,22 +57,16 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     protected AsyncProcessor producer;
     protected Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
-    protected final boolean unhandleException;
 
     public SendProcessor(Endpoint destination) {
         this(destination, null);
     }
 
     public SendProcessor(Endpoint destination, ExchangePattern pattern) {
-        this(destination, pattern, false);
-    }
-    
-    public SendProcessor(Endpoint destination, ExchangePattern pattern, boolean unhandleException) {
         ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
         this.camelContext = destination.getCamelContext();
         this.pattern = pattern;
-        this.unhandleException = unhandleException;
         try {
             this.destinationExchangePattern = null;
             this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
@@ -142,14 +136,12 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                             long timeTaken = watch.stop();
                             EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
                         } finally {
-                            checkException(target);
                             callback.done(doneSync);
                         }
                     }
                 });
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
-                checkException(exchange);
                 callback.done(sync);
             }
 
@@ -166,7 +158,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                     public void done(boolean doneSync) {
                         // restore previous MEP
                         target.setPattern(existingPattern);
-                        checkException(target);
                         // signal we are done
                         callback.done(doneSync);
                     }
@@ -175,15 +166,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         });
     }
     
-    protected void checkException(Exchange exchange) {
-        if (unhandleException && exchange.getException() != null) {
-            // Override the default setting of DeadLetterChannel
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, "false");
-            // just override the exception with the new added
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
-        }
-    }
-
     public Endpoint getDestination() {
         return destination;
     }

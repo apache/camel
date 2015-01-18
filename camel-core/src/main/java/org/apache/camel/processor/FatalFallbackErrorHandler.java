@@ -32,8 +32,15 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
 
     private static final Logger LOG = LoggerFactory.getLogger(FatalFallbackErrorHandler.class);
 
+    private boolean logWarn;
+
     public FatalFallbackErrorHandler(Processor processor) {
+        this(processor, false);
+    }
+
+    public FatalFallbackErrorHandler(Processor processor, boolean logWarn) {
         super(processor);
+        this.logWarn = logWarn;
     }
 
     @Override
@@ -50,12 +57,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                             + exchange.getExchangeId() + " using: [" + processor + "].";
                     if (previous != null) {
                         msg += " The previous and the new exception will be logged in the following.";
-                        LOG.error(msg);
-                        LOG.error("\\--> Previous exception on exchangeId: " + exchange.getExchangeId() , previous);
-                        LOG.error("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                        log(msg);
+                        log("\\--> Previous exception on exchangeId: " + exchange.getExchangeId(), previous);
+                        log("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
                     } else {
-                        LOG.error(msg);
-                        LOG.error("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                        log(msg);
+                        log("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
                     }
 
                     // we can propagated that exception to the caught property on the exchange
@@ -73,6 +80,26 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         });
 
         return sync;
+    }
+
+    private void log(String message) {
+        log(message, null);
+    }
+
+    private void log(String message, Throwable t) {
+        if (logWarn) {
+            if (t != null) {
+                LOG.warn(message, t);
+            } else {
+                LOG.warn(message);
+            }
+        } else {
+            if (t != null) {
+                LOG.error(message, t);
+            } else {
+                LOG.error(message);
+            }
+        }
     }
 
     @Override

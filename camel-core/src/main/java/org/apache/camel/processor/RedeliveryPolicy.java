@@ -94,6 +94,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logHandled;
     protected boolean logContinued;
     protected boolean logExhausted = true;
+    protected boolean logNewException = true;
     protected boolean logExhaustedMessageHistory = true;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
@@ -119,6 +120,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", logHandled=" + logHandled
             + ", logContinued=" + logContinued
             + ", logExhausted=" + logExhausted
+            + ", logNewException=" + logNewException
             + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
@@ -377,6 +379,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
+     * Sets whether errors should be logged when a new exception occurred during handling a previous exception
+     */
+    public RedeliveryPolicy logNewException(boolean logNewException) {
+        setLogNewException(logNewException);
+        return this;
+    }
+
+    /**
      * Sets whether to log exhausted errors
      */
     public RedeliveryPolicy logExhausted(boolean logExhausted) {
@@ -628,6 +638,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setLogHandled(boolean logHandled) {
         this.logHandled = logHandled;
+    }
+
+    public boolean isLogNewException() {
+        return logNewException;
+    }
+
+    /**
+     * Sets whether errors should be logged when a new exception occurred during handling a previous exception
+     */
+    public void setLogNewException(boolean logNewException) {
+        this.logNewException = logNewException;
     }
 
     public boolean isLogContinued() {
