@@ -1000,12 +1000,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
-            // if we should not rollback, then check whether logging is enabled
-            if (handled && !data.currentRedeliveryPolicy.isLogHandled()) {
-                // do not log handled
-                return;
-            }
-
             if (continued && !data.currentRedeliveryPolicy.isLogContinued()) {
                 // do not log handled
                 return;

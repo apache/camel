@@ -535,6 +535,28 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Sets whether new exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     * <p/>
+     * A new exception is an exception that was thrown while handling a previous exception.
+     */
+    public OnExceptionDefinition logNewException(boolean logNewException) {
+        getOrCreateRedeliveryPolicy().logNewException(logNewException);
+        return this;
+    }
+
+    /**
+     * Sets whether new exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     * <p/>
+     * A new exception is an exception that was thrown while handling a previous exception.
+     */
+    public OnExceptionDefinition logNewException(String logNewException) {
+        getOrCreateRedeliveryPolicy().logNewException(logNewException);
+        return this;
+    }
+
+    /**
      * Sets whether to log errors even if its continued
      */
     public OnExceptionDefinition logContinued(boolean logContinued) {
