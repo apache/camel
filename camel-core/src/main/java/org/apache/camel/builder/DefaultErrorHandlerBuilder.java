@@ -366,6 +366,15 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    /**
+     * @deprecated use {@link #deadLetterHandleNewException(boolean)}} with value <tt>false</tt>
+     */
+    @Deprecated
+    public DefaultErrorHandlerBuilder checkException() {
+        setDeadLetterHandleNewException(false);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
