@@ -31,7 +31,7 @@ public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSuppo
         }
     }
 
-    public void testDeadLetterChannelNewException() throws Exception {
+    public void testDeadLetterChannelNotHandleNewException() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");

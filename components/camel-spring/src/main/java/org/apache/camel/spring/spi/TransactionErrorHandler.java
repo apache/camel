@@ -67,7 +67,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
             LoggingLevel rollbackLoggingLevel) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorService);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, retryWhile, executorService);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
