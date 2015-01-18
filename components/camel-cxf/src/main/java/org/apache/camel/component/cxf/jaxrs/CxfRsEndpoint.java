@@ -116,7 +116,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private long continuationTimeout = 30000;
     @UriParam(defaultValue = "false")
     private boolean isSetDefaultBus;
-    
+    @UriParam
+    private String modelRef;    
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     private InterceptorHolder interceptorHolder = new InterceptorHolder();
     private Map<String, Object> properties;
@@ -213,6 +214,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getAddress() != null) {
             sfb.setAddress(getAddress());
         }
+        if (modelRef != null) {
+            sfb.setModelRef(modelRef);
+        }
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
         }
@@ -233,6 +237,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // address
         if (address != null) {
             cfb.setAddress(address);
+        }
+        if (modelRef != null) {
+            cfb.setModelRef(modelRef);
         }
         if (getResourceClasses() != null && !getResourceClasses().isEmpty()) {
             cfb.setResourceClass(getResourceClasses().get(0));
@@ -350,6 +357,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public void setAddress(String address) {
         this.address = address;
+    }
+    public void setModelRef(String ref) {
+        this.modelRef = ref;
     }
 
     public String getAddress() {
