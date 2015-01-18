@@ -672,6 +672,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return useOriginalMessagePolicy;
     }
 
+    public boolean isDeadLetterHandleNewException() {
+        return deadLetterHandleNewException;
+    }
+
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }

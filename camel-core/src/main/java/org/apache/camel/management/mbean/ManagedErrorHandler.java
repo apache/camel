@@ -21,6 +21,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedErrorHandlerMBean;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.spi.ManagementStrategy;
@@ -85,6 +86,16 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
 
         RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
         return redelivery.isUseOriginalMessagePolicy();
+    }
+
+    public boolean isDeadLetterHandleNewException() {
+        if (!isSupportRedelivery()) {
+            return false;
+        }
+
+        // must be a dead letter channel
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return isDeadLetterChannel() && redelivery.isDeadLetterHandleNewException();
     }
 
     public boolean isSupportTransactions() {
@@ -319,6 +330,24 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
 
         RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
         redelivery.getRedeliveryPolicy().setLogHandled(log);
+    }
+
+    public Boolean getLogNewException() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogNewException();
+    }
+
+    public void setLogNewException(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogNewException(log);
     }
 
     public Boolean getLogContinued() {
