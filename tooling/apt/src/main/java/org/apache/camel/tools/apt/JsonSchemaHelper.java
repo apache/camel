@@ -195,6 +195,11 @@ final class JsonSchemaHelper {
         for (String line : lines) {
             line = line.trim();
 
+            // terminate if we reach @param, @return or @deprecated as we only want the javadoc summary
+            if (line.startsWith("@param") || line.startsWith("@return") || line.startsWith("@deprecated")) {
+                break;
+            }
+
             // skip lines that are javadoc references
             if (line.startsWith("@")) {
                 continue;
