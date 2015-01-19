@@ -838,14 +838,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
 
-        final Boolean shouldHandle = shouldHandle(exchange, data);
-        final Boolean shouldContinue = shouldContinue(exchange, data);
+        final boolean shouldHandle = shouldHandle(exchange, data);
+        final boolean shouldContinue = shouldContinue(exchange, data);
 
         // regard both handled or continued as being handled
         boolean handled = false;
 
         // always handle if dead letter channel
-        boolean handleOrContinue = isDeadLetterChannel || (shouldHandle != null && shouldHandle) || (shouldContinue != null && shouldContinue);
+        boolean handleOrContinue = isDeadLetterChannel || shouldHandle || shouldContinue;
         if (handleOrContinue) {
             // its handled then remove traces of redelivery attempted
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
@@ -932,7 +932,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data, final boolean isDeadLetterChannel,
-                                               final Boolean shouldHandle, final Boolean shouldContinue) {
+                                               final boolean shouldHandle, final boolean shouldContinue) {
 
         Exception newException = exchange.getException();
 
@@ -954,11 +954,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         // dead letter channel is special
-        if (shouldContinue != null && shouldContinue) {
+        if (shouldContinue) {
             log.trace("This exchange is continued: {}", exchange);
             // okay we want to continue then prepare the exchange for that as well
             prepareExchangeForContinue(exchange, data);
-        } else if (shouldHandle != null && shouldHandle) {
+        } else if (shouldHandle) {
             log.trace("This exchange is handled so its marked as not failed: {}", exchange);
             exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
         } else {
@@ -1153,33 +1153,33 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
-     * Determines whether the redelivery configuration has a continued predicate
+     * Determines whether or not to continue if we are exhausted.
      *
      * @param exchange the current exchange
      * @param data     the redelivery data
-     * @return <tt>true</tt> to continue, or <tt>false</tt> to attempt to handle, or <tt>null</tt> if continued predicate has not been configured.
+     * @return <tt>true</tt> to continue, or <tt>false</tt> to exhaust.
      */
-    private Boolean shouldContinue(Exchange exchange, RedeliveryData data) {
+    private boolean shouldContinue(Exchange exchange, RedeliveryData data) {
         if (data.continuedPredicate != null) {
             return data.continuedPredicate.matches(exchange);
         }
-        // no predicate
-        return null;
+        // do not continue by default
+        return false;
     }
 
     /**
-     * Determines whether the redelivery configuration has a handled predicate
+     * Determines whether or not to handle if we are exhausted.
      *
      * @param exchange the current exchange
      * @param data     the redelivery data
-     * @return <tt>true</tt> to handle, or <tt>false</tt> to exhaust, or <tt>null</tt> if handled predicate has not been configured.
+     * @return <tt>true</tt> to handle, or <tt>false</tt> to exhaust.
      */
-    private Boolean shouldHandle(Exchange exchange, RedeliveryData data) {
+    private boolean shouldHandle(Exchange exchange, RedeliveryData data) {
         if (data.handledPredicate != null) {
             return data.handledPredicate.matches(exchange);
         }
-        // no predicate
-        return null;
+        // do not handle by default
+        return false;
     }
 
     /**
