@@ -35,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
+    @XmlAttribute(name = "documentType")
+    private String documentTypeName;
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
     @XmlAttribute(name = "saxon")
@@ -48,6 +50,8 @@ public class XPathExpression extends NamespaceAwareExpression {
     @XmlAttribute(name = "headerName")
     private String headerName;
     
+    @XmlTransient
+    private Class<?> documentType;
     @XmlTransient
     private Class<?> resultType;
     @XmlTransient
@@ -67,6 +71,22 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     public String getLanguage() {
         return "xpath";
+    }
+
+    public Class<?> getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(Class<?> documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getDocumentTypeName() {
+        return documentTypeName;
+    }
+
+    public void setDocumentTypeName(String documentTypeName) {
+        this.documentTypeName = documentTypeName;
     }
 
     public Class<?> getResultType() {
@@ -135,6 +155,13 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        if (documentType == null && documentTypeName != null) {
+            try {
+                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
         if (resultType == null && resultTypeName != null) {
             try {
                 resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
@@ -154,6 +181,9 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        if (documentType != null) {
+            setProperty(expression, "documentType", documentType);
+        }
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
@@ -179,6 +209,9 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        if (documentType != null) {
+            setProperty(predicate, "documentType", documentType);
+        }
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
