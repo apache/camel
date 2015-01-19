@@ -52,7 +52,7 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
     /**
      * Maximum number of entries to store in the dynamic registry
      */
-    public int getMaximumCacheSize();
+    int getMaximumCacheSize();
 
     /**
      * Purges the cache (removes endpoints from the dynamic cache)
