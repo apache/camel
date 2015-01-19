@@ -100,6 +100,9 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return type;
     }
 
+    /**
+     * The java type to convert to
+     */
     @Required
     public void setType(String type) {
         this.type = type;
@@ -117,6 +120,9 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return charset;
     }
 
+    /**
+     * To use a specific charset when converting
+     */
     public void setCharset(String charset) {
         this.charset = charset;
     }

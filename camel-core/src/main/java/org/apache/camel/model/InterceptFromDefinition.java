@@ -93,6 +93,10 @@ public class InterceptFromDefinition extends InterceptDefinition {
         return uri;
     }
 
+    /**
+     * Intercept incoming messages from the uri or uri pattern.
+     * If this option is not configured, then all incoming messages is intercepted.
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }

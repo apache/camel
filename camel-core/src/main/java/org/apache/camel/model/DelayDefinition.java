@@ -129,19 +129,23 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     /**
      * Enables asynchronous delay which means the thread will <b>noy</b> block while delaying.
-     *
-     * @return the builder
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(true);
         return this;
     }
 
+    /**
+     * To use a custom Thread Pool if asyncDelay has been enabled.
+     */
     public DelayDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * Refers to a custom Thread Pool if asyncDelay has been enabled.
+     */
     public DelayDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

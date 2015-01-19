@@ -48,10 +48,16 @@ public class ContextScanDefinition {
         return includes;
     }
 
+    /**
+     * Exclude finding route builder from these java package names.
+     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
 
+    /**
+     * Include finding route builder from these java package names.
+     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

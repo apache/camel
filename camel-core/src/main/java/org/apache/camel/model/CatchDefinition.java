@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -137,13 +136,31 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     // Fluent API
     //-------------------------------------------------------------------------
     /**
-     * Sets the exceptionClasses of the CatchType
+     * The exceptions to catch.
      *
      * @param exceptionClasses  a list of the exception classes
      * @return the builder
      */
     public CatchDefinition exceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
         setExceptionClasses(exceptionClasses);
+        return this;
+    }
+
+    /**
+     * The exception(s) to catch.
+     *
+     * @param exceptions  one or more exceptions
+     * @return the builder
+     */
+    public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
+        if (exceptionClasses == null) {
+            exceptionClasses = new ArrayList<Class<? extends Throwable>>();
+        }
+        if (exceptions != null) {
+            for (Class<? extends Throwable> exception : exceptions) {
+                exceptionClasses.add(exception);
+            }
+        }
         return this;
     }
     
