@@ -111,11 +111,35 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
                             }
                         }
                     }
+                    // there may be builder pattern with no-parameter methods, such as more common for boolean types
+                    // so lets try those as well
+                    for (ExecutableElement method : methods) {
+                        String methodName = method.getSimpleName().toString();
+                        if (name.equals(methodName) && method.getParameters().size() == 0) {
+                            String doc = elementUtils.getDocComment(method);
+                            if (!isNullOrEmpty(doc)) {
+                                answer = doc;
+                                break;
+                            }
+                        }
+                    }
                 }
                 // lets try builder pattern using fieldName as the method name
                 for (ExecutableElement method : methods) {
                     String methodName = method.getSimpleName().toString();
                     if (fieldName.equals(methodName) && method.getParameters().size() == 1) {
+                        String doc = elementUtils.getDocComment(method);
+                        if (!isNullOrEmpty(doc)) {
+                            answer = doc;
+                            break;
+                        }
+                    }
+                }
+                // there may be builder pattern with no-parameter methods, such as more common for boolean types
+                // so lets try those as well
+                for (ExecutableElement method : methods) {
+                    String methodName = method.getSimpleName().toString();
+                    if (fieldName.equals(methodName) && method.getParameters().size() == 0) {
                         String doc = elementUtils.getDocComment(method);
                         if (!isNullOrEmpty(doc)) {
                             answer = doc;
