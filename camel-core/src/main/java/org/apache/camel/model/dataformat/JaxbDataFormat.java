@@ -78,6 +78,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return contextPath;
     }
 
+    /**
+     * Package name where your JAXB classes are located.
+     */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -86,6 +89,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return schema;
     }
 
+    /**
+     * To validate against an existing schema.
+     * Your can use the prefix classpath:, file:* or *http: to specify how the resource should by resolved.
+     * You can separate multiple schema files by using the ',' character.
+     */
     public void setSchema(String schema) {
         this.schema = schema;
     }
@@ -94,6 +102,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
+    /**
+     * To enable pretty printing to output XML nicely formatted.
+     * <p/>
+     * Is by default false.
+     */
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -102,6 +115,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return ignoreJAXBElement;
     }
 
+    /**
+     * Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.
+     */
     public void setIgnoreJAXBElement(Boolean ignoreJAXBElement) {
         this.ignoreJAXBElement = ignoreJAXBElement;
     }
@@ -110,10 +126,22 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return mustBeJAXBElement;
     }
 
+    /**
+     * Whether marhsalling must be java objects with JAXB annotations. And if not then it fails.
+     * This option can be set to false to relax that, such as when the data is already in XML format.
+     */
     public void setMustBeJAXBElement(Boolean mustBeJAXBElement) {
         this.mustBeJAXBElement = mustBeJAXBElement;
     }
 
+    /**
+     * To turn on marshalling XML fragment trees.
+     * By default JAXB looks for @XmlRootElement annotation on given class to operate on whole XML tree.
+     * This is useful but not always - sometimes generated code does not have @XmlRootElement annotation,
+     * sometimes you need unmarshall only part of tree.
+     * In that case you can use partial unmarshalling. To enable this behaviours you need set property partClass.
+     * Camel will pass this class to JAXB's unmarshaler.
+     */
     public void setFragment(Boolean fragment) {
         this.fragment = fragment;
     }
@@ -126,6 +154,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return filterNonXmlChars;
     }
 
+    /**
+     * To ignore non xml characheters and replace them with an empty space.
+     */
     public void setFilterNonXmlChars(Boolean filterNonXmlChars) {
         this.filterNonXmlChars = filterNonXmlChars;
     }
@@ -134,6 +165,10 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
+    /**
+     * To overrule and use a specific encoding
+     * @param encoding
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -142,6 +177,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return partClass;
     }
 
+    /**
+     * Name of class used for fragment parsing.
+     * <p/>
+     * See more details at the fragment option.
+     */
     public void setPartClass(String partClass) {
         this.partClass = partClass;
     }
@@ -150,6 +190,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return partNamespace;
     }
 
+    /**
+     * XML namespace to use for fragment parsing.
+     * <p/>
+     * See more details at the fragment option.
+     */
     public void setPartNamespace(String partNamespace) {
         this.partNamespace = partNamespace;
     }
@@ -158,6 +203,10 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return namespacePrefixRef;
     }
 
+    /**
+     * When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes,
+     * such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
+     */
     public void setNamespacePrefixRef(String namespacePrefixRef) {
         this.namespacePrefixRef = namespacePrefixRef;
     }
@@ -166,6 +215,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return xmlStreamWriterWrapper;
     }
 
+    /**
+     * To use a custom xml stream writer.
+     */
     public void setXmlStreamWriterWrapper(String xmlStreamWriterWrapperRef) {
         this.xmlStreamWriterWrapper = xmlStreamWriterWrapperRef;
     }
@@ -174,6 +226,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
         return schemaLocation;
     }
 
+    /**
+     * To define the location of the schema
+     */
     public void setSchemaLocation(String schemaLocation) {
         this.schemaLocation = schemaLocation;
     }
