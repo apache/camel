@@ -54,7 +54,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String escape;
     @XmlAttribute
     private Boolean headerDisabled;
-    @XmlElement(name = "header")
+    @XmlElement
     private List<String> header;
     @XmlAttribute
     private Boolean allowMissingColumnNames;
@@ -180,12 +180,13 @@ public class CsvDataFormat extends DataFormatDefinition {
         return value.charAt(0);
     }
 
-    //region Getters/Setters
-
     public String getFormatRef() {
         return formatRef;
     }
 
+    /**
+     * The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT
+     */
     public void setFormatRef(String formatRef) {
         this.formatRef = formatRef;
     }
@@ -194,6 +195,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return formatName;
     }
 
+    /**
+     * The name of the format to use, the default value is CSVFormat.DEFAULT
+     */
     public void setFormatName(String formatName) {
         this.formatName = formatName;
     }
@@ -202,6 +206,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return commentMarkerDisabled;
     }
 
+    /**
+     * Disables the comment marker of the reference format.
+     */
     public void setCommentMarkerDisabled(Boolean commentMarkerDisabled) {
         this.commentMarkerDisabled = commentMarkerDisabled;
     }
@@ -210,6 +217,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return commentMarker;
     }
 
+    /**
+     * Sets the comment marker of the reference format.
+     */
     public void setCommentMarker(String commentMarker) {
         this.commentMarker = commentMarker;
     }
@@ -218,6 +228,11 @@ public class CsvDataFormat extends DataFormatDefinition {
         return delimiter;
     }
 
+    /**
+     * Sets the delimiter to use.
+     * <p/>
+     * The default value is , (comma)
+     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
@@ -226,6 +241,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return escapeDisabled;
     }
 
+    /**
+     * Use for disabling using escape character
+     */
     public void setEscapeDisabled(Boolean escapeDisabled) {
         this.escapeDisabled = escapeDisabled;
     }
@@ -234,10 +252,16 @@ public class CsvDataFormat extends DataFormatDefinition {
         return escape;
     }
 
+    /**
+     * Sets the escape character to use
+     */
     public void setEscape(String escape) {
         this.escape = escape;
     }
 
+    /**
+     * Use for disabling headers
+     */
     public Boolean getHeaderDisabled() {
         return headerDisabled;
     }
@@ -250,6 +274,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return header;
     }
 
+    /**
+     * To configure the CSV headers
+     */
     public void setHeader(List<String> header) {
         this.header = header;
     }
@@ -258,6 +285,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return allowMissingColumnNames;
     }
 
+    /**
+     * Whether to allow missing column names.
+     */
     public void setAllowMissingColumnNames(Boolean allowMissingColumnNames) {
         this.allowMissingColumnNames = allowMissingColumnNames;
     }
@@ -266,6 +296,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return ignoreEmptyLines;
     }
 
+    /**
+     * Whether to ignore empty lines.
+     */
     public void setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
         this.ignoreEmptyLines = ignoreEmptyLines;
     }
@@ -274,6 +307,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return ignoreSurroundingSpaces;
     }
 
+    /**
+     * Whether to ignore surrounding spaces
+     */
     public void setIgnoreSurroundingSpaces(Boolean ignoreSurroundingSpaces) {
         this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
     }
@@ -282,6 +318,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return nullStringDisabled;
     }
 
+    /**
+     * Used to disable null strings
+     */
     public void setNullStringDisabled(Boolean nullStringDisabled) {
         this.nullStringDisabled = nullStringDisabled;
     }
@@ -290,6 +329,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return nullString;
     }
 
+    /**
+     * Sets the null string
+     */
     public void setNullString(String nullString) {
         this.nullString = nullString;
     }
@@ -298,6 +340,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return quoteDisabled;
     }
 
+    /**
+     * Used to disable quotes
+     */
     public void setQuoteDisabled(Boolean quoteDisabled) {
         this.quoteDisabled = quoteDisabled;
     }
@@ -306,6 +351,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return quote;
     }
 
+    /**
+     * Sets the quote which by default is "
+     */
     public void setQuote(String quote) {
         this.quote = quote;
     }
@@ -314,6 +362,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return recordSeparatorDisabled;
     }
 
+    /**
+     * Used for disabling record separator
+     */
     public void setRecordSeparatorDisabled(String recordSeparatorDisabled) {
         this.recordSeparatorDisabled = recordSeparatorDisabled;
     }
@@ -322,6 +373,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return recordSeparator;
     }
 
+    /**
+     * Sets the record separator (aka new line) which by default is \r\n (CRLF)
+     */
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
     }
@@ -330,6 +384,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return skipHeaderRecord;
     }
 
+    /**
+     * Whether to skip the header record in the output
+     */
     public void setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
     }
@@ -338,6 +395,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return lazyLoad;
     }
 
+    /**
+     * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
+     */
     public void setLazyLoad(Boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
     }
@@ -346,6 +406,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         return useMaps;
     }
 
+    /**
+     * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
+     */
     public void setUseMaps(Boolean useMaps) {
         this.useMaps = useMaps;
     }
@@ -354,8 +417,11 @@ public class CsvDataFormat extends DataFormatDefinition {
         return recordConverterRef;
     }
 
+    /**
+     * Refers to a custom <tt>CsvRecordConverter</tt> to lookup from the registry to use.
+     */
     public void setRecordConverterRef(String recordConverterRef) {
         this.recordConverterRef = recordConverterRef;
     }
-    //endregion
+
 }

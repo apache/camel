@@ -19,7 +19,6 @@ package org.apache.camel.model.dataformat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -76,11 +75,13 @@ public class DataFormatsDefinition {
         )
     private List<DataFormatDefinition> dataFormats;
 
-
     public void setDataFormats(List<DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }
 
+    /**
+     * A list holding the configured data formats
+     */
     public List<DataFormatDefinition> getDataFormats() {
         return dataFormats;
     }

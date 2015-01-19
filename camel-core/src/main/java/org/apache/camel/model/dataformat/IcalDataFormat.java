@@ -46,6 +46,9 @@ public class IcalDataFormat extends DataFormatDefinition {
         return validating;
     }
 
+    /**
+     * Whether to validate.
+     */
     public void setValidating(Boolean validating) {
         this.validating = validating;
     }

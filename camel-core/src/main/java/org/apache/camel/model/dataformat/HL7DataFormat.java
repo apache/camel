@@ -54,6 +54,11 @@ public class HL7DataFormat extends DataFormatDefinition {
         return validate;
     }
 
+    /**
+     * Whether to validate the HL7 message
+     * <p/>
+     * Is by default true.
+     */
     public void setValidate(Boolean validate) {
         this.validate = validate;
     }
@@ -62,6 +67,9 @@ public class HL7DataFormat extends DataFormatDefinition {
         return parser;
     }
 
+    /**
+     * To use a custom HL7 parser
+     */
     public void setParser(Object parser) {
         this.parser = parser;
     }
