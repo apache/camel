@@ -59,6 +59,11 @@ public class CastorDataFormat extends DataFormatDefinition {
         return validation;
     }
 
+    /**
+     * Whether validation is turned on or off.
+     * <p/>
+     * Is by default true.
+     */
     public void setValidation(Boolean validation) {
         this.validation = validation;
     }
@@ -67,6 +72,9 @@ public class CastorDataFormat extends DataFormatDefinition {
         return mappingFile;
     }
 
+    /**
+     * Path to a Castor mapping file to load from the classpath.
+     */
     public void setMappingFile(String mappingFile) {
         this.mappingFile = mappingFile;
     }
@@ -75,6 +83,9 @@ public class CastorDataFormat extends DataFormatDefinition {
         return packages;
     }
 
+    /**
+     * Add additional packages to Castor XmlContext
+     */
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
@@ -83,6 +94,9 @@ public class CastorDataFormat extends DataFormatDefinition {
         return classes;
     }
 
+    /**
+     * Add additional class names to Castor XmlContext
+     */
     public void setClasses(String[] classes) {
         this.classes = classes;
     }
@@ -91,6 +105,11 @@ public class CastorDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
+    /**
+     * Encoding to use when marshalling an Object to XML.
+     * <p/>
+     * Is by default UTF-8
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
