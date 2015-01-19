@@ -44,6 +44,11 @@ public class XMLBeansDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
+    /**
+     * To enable pretty printing output nicely formatted.
+     * <p/>
+     * Is by default false.
+     */
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }

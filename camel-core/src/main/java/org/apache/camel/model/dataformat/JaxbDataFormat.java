@@ -103,7 +103,7 @@ public class JaxbDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To enable pretty printing to output XML nicely formatted.
+     * To enable pretty printing output nicely formatted.
      * <p/>
      * Is by default false.
      */
@@ -167,7 +167,6 @@ public class JaxbDataFormat extends DataFormatDefinition {
 
     /**
      * To overrule and use a specific encoding
-     * @param encoding
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;

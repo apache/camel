@@ -75,13 +75,13 @@ public class DataFormatsDefinition {
         )
     private List<DataFormatDefinition> dataFormats;
 
+    /**
+     * A list holding the configured data formats
+     */
     public void setDataFormats(List<DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }
 
-    /**
-     * A list holding the configured data formats
-     */
     public List<DataFormatDefinition> getDataFormats() {
         return dataFormats;
     }

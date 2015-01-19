@@ -56,6 +56,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return unmarshallClass;
     }
 
+    /**
+     * Class use when unmarshalling from XML to Java.
+     */
     public void setUnmarshallClass(Class<?> unmarshallClass) {
         this.unmarshallClass = unmarshallClass;
     }
@@ -64,6 +67,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return unmarshallTypeName;
     }
 
+    /**
+     * Class name to use when unmarshalling from XML to Java.
+     */
     public void setUnmarshallTypeName(String unmarshallTypeName) {
         this.unmarshallTypeName = unmarshallTypeName;
     }
@@ -72,6 +78,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return bindingName;
     }
 
+    /**
+     * To use a custom binding factory
+     */
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }

@@ -58,6 +58,10 @@ public class ZipDataFormat extends DataFormatDefinition {
         return compressionLevel;
     }
 
+    /**
+     * To specify a specific compression between 0-9.
+     * 0 is no compression, and 9 is best compression.
+     */
     public void setCompressionLevel(Integer compressionLevel) {
         this.compressionLevel = compressionLevel;
     }

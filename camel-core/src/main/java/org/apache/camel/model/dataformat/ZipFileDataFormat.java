@@ -52,6 +52,10 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         return usingIterator;
     }
 
+    /**
+     * If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * to split the data using an iterator in a streaming mode.
+     */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
     }

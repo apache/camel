@@ -73,6 +73,11 @@ public class JsonDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
+    /**
+     * To enable pretty printing output nicely formatted.
+     * <p/>
+     * Is by default false.
+     */
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -81,6 +86,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         return unmarshalTypeName;
     }
 
+    /**
+     * Class name of the java type to use when unarmshalling
+     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -89,6 +97,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
+    /**
+     * Class of the java type to use when unarmshalling
+     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -97,6 +108,11 @@ public class JsonDataFormat extends DataFormatDefinition {
         return library;
     }
 
+    /**
+     * Which json library to use such.
+     * <p/>
+     * Is by default xstream
+     */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
     }
@@ -105,6 +121,11 @@ public class JsonDataFormat extends DataFormatDefinition {
         return jsonView;
     }
 
+    /**
+     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output.
+     * With Jackson you can use JSON views to accomplish this. This option is to refer to the class
+     * which has @JsonView annotations
+     */
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
     }
@@ -113,6 +134,10 @@ public class JsonDataFormat extends DataFormatDefinition {
         return include;
     }
 
+    /**
+     * If you want to marshal a pojo to JSON, and the pojo has some fields with null values.
+     * And you want to skip these null values, you can set this option to <tt>NOT_NULL</tt>
+     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -121,6 +146,10 @@ public class JsonDataFormat extends DataFormatDefinition {
         return allowJmsType;
     }
 
+    /**
+     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname
+     * to use to unmarshal to.
+     */
     public void setAllowJmsType(Boolean allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
@@ -129,6 +158,10 @@ public class JsonDataFormat extends DataFormatDefinition {
         return collectionTypeName;
     }
 
+    /**
+     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows
+     * to use different collection types than java.util.Collection based as default.
+     */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
     }
@@ -137,6 +170,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         return useList;
     }
 
+    /**
+     * To unarmshal to a List of Map or a List of Pojo.
+     */
     public void setUseList(Boolean useList) {
         this.useList = useList;
     }
@@ -145,6 +181,10 @@ public class JsonDataFormat extends DataFormatDefinition {
         return enableJaxbAnnotationModule;
     }
 
+    /**
+     * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations
+     * can be used by Jackson.
+     */
     public void setEnableJaxbAnnotationModule(Boolean enableJaxbAnnotationModule) {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }

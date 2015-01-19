@@ -56,6 +56,11 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.setDataObjectType(dataObjectType);
     }
 
+    /**
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+     * <p/>
+     * Is by default org.w3c.dom.Node
+     */
     public void setDataObjectType(Class<?> dataObjectType) {
         this.dataObjectType = dataObjectType;
     }
@@ -68,6 +73,11 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         return dataObjectTypeName;
     }
 
+    /**
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+     * <p/>
+     * Is by default org.w3c.dom.Node
+     */
     public void setDataObjectTypeName(String dataObjectTypeName) {
         this.dataObjectTypeName = dataObjectTypeName;
     }

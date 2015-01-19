@@ -51,6 +51,11 @@ public class StringDataFormat extends DataFormatDefinition {
         return charset;
     }
 
+    /**
+     * Sets an encoding to use.
+     * <p/>
+     * Will by default use the JVM platform default charset.
+     */
     public void setCharset(String charset) {
         this.charset = charset;
     }

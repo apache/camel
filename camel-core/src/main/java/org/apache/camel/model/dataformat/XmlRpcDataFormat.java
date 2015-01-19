@@ -51,6 +51,11 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
         return request;
     }
 
+    /**
+     * Whether to unmarshal request or response
+     * <p/>
+     * Is by default false
+     */
     public void setRequest(Boolean request) {
         this.request = request;
     }
