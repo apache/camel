@@ -33,7 +33,7 @@
     <route>
       <from uri="direct:testSaxonWithFlag"/>
       <setBody>
-        <xpath saxon="true" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
+        <xpath saxon="true" documentType="javax.xml.transform.sax.SAXSource" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
       <log message="Test Saxon with flag: ${body}"/>
       <to uri="mock:testSaxonWithFlagResult"/>
@@ -42,7 +42,7 @@
     <route>
       <from uri="direct:testSaxonWithFactory"/>
       <setBody>
-        <xpath factoryRef="saxonFactory" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
+        <xpath factoryRef="saxonFactory" documentType="org.xml.sax.InputSource" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
       <log message="Test Saxon with factory: ${body}"/>
       <to uri="mock:testSaxonWithFactoryResult"/>
@@ -64,7 +64,7 @@
     <route>
       <from uri="direct:testSaxonWithFlagPredicate"/>
       <filter>
-        <xpath saxon="true" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
+        <xpath saxon="true" documentType="javax.xml.transform.sax.SAXSource" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
         <log message="Test Saxon with flag: ${body}"/>
         <to uri="mock:testSaxonWithFlagResultPredicate"/>
       </filter>
@@ -73,7 +73,7 @@
     <route>
       <from uri="direct:testSaxonWithFactoryPredicate"/>
       <filter>
-        <xpath factoryRef="saxonFactory" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
+        <xpath factoryRef="saxonFactory" documentType="org.xml.sax.InputSource" resultType="java.lang.String">tokenize(a, '\|')[1] = 'Hello'</xpath>
         <log message="Test Saxon with factory: ${body}"/>
         <to uri="mock:testSaxonWithFactoryResultPredicate"/>
       </filter>
