@@ -75,6 +75,10 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return mapping;
     }
 
+    /**
+     * The BeanIO mapping file.
+     * Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file.
+     */
     public void setMapping(String mapping) {
         this.mapping = mapping;
     }
@@ -83,6 +87,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return streamName;
     }
 
+    /**
+     * The name of the stream to use.
+     */
     public void setStreamName(String streamName) {
         this.streamName = streamName;
     }
@@ -91,6 +98,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreUnidentifiedRecords;
     }
 
+    /**
+     * Whether to ignore unidentified records.
+     */
     public void setIgnoreUnidentifiedRecords(Boolean ignoreUnidentifiedRecords) {
         this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
     }
@@ -99,6 +109,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreUnexpectedRecords;
     }
 
+    /**
+     * Whether to ignore unexpected records.
+     */
     public void setIgnoreUnexpectedRecords(Boolean ignoreUnexpectedRecords) {
         this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
     }
@@ -107,6 +120,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreInvalidRecords;
     }
 
+    /**
+     * Whether to ignore invalid records.
+     */
     public void setIgnoreInvalidRecords(Boolean ignoreInvalidRecords) {
         this.ignoreInvalidRecords = ignoreInvalidRecords;
     }
@@ -115,6 +131,11 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
+    /**
+     * The charset to use.
+     * <p/>
+     * Is by default the JVM platform default charset.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
