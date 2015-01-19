@@ -49,7 +49,7 @@ import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
  */
 public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
 
-    protected String findJavaDoc(Elements elementUtils, Element element, String fieldName, TypeElement classElement, boolean builderPattern) {
+    protected String findJavaDoc(Elements elementUtils, Element element, String fieldName, String name, TypeElement classElement, boolean builderPattern) {
         String answer = null;
         if (element != null) {
             answer = elementUtils.getDocComment(element);
@@ -98,8 +98,21 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
 
             // lets try builder pattern
             if (answer == null && builderPattern) {
-                // lets find the getter
                 methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+                // lets try the builder pattern using annotation name (optional) as the method name
+                if (name != null) {
+                    for (ExecutableElement method : methods) {
+                        String methodName = method.getSimpleName().toString();
+                        if (name.equals(methodName) && method.getParameters().size() == 1) {
+                            String doc = elementUtils.getDocComment(method);
+                            if (!isNullOrEmpty(doc)) {
+                                answer = doc;
+                                break;
+                            }
+                        }
+                    }
+                }
+                // lets try builder pattern using fieldName as the method name
                 for (ExecutableElement method : methods) {
                     String methodName = method.getSimpleName().toString();
                     if (fieldName.equals(methodName) && method.getParameters().size() == 1) {

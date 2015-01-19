@@ -346,7 +346,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, false);
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                     if (isNullOrEmpty(docComment)) {
                         docComment = path.description();
                     }
@@ -398,7 +398,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix);
                     } else {
-                        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, classElement, false);
+                        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                         if (isNullOrEmpty(docComment)) {
                             docComment = param.description();
                         }
