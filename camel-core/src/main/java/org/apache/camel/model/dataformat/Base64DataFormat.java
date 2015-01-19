@@ -66,6 +66,11 @@ public class Base64DataFormat extends DataFormatDefinition {
         return lineLength;
     }
 
+    /**
+     * To specific a maximum line length for the encoded data.
+     * <p/>
+     * By default 76 is used.
+     */
     public void setLineLength(Integer lineLength) {
         this.lineLength = lineLength;
     }
@@ -74,6 +79,11 @@ public class Base64DataFormat extends DataFormatDefinition {
         return lineSeparator;
     }
 
+    /**
+     * The line separators to use.
+     * <p/>
+     * By default \r\n is used.
+     */
     public void setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;
     }
@@ -82,6 +92,11 @@ public class Base64DataFormat extends DataFormatDefinition {
         return urlSafe;
     }
 
+    /**
+     * Instead of emitting '+' and '/' we emit '-' and '_' respectively.
+     * urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.
+     * Is by default false.
+     */
     public void setUrlSafe(Boolean urlSafe) {
         this.urlSafe = urlSafe;
     }

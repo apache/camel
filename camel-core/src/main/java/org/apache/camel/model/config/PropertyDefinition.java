@@ -37,7 +37,10 @@ public class PropertyDefinition {
     
     public PropertyDefinition() {
     }
-    
+
+    /**
+     * Property key
+     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -45,7 +48,10 @@ public class PropertyDefinition {
     public String getKey() {
         return key;
     }
-    
+
+    /**
+     * Property value
+     */
     public void setValue(String value) {
         this.value = value;
     }

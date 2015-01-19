@@ -71,6 +71,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return width;
     }
 
+    /**
+     * Width of the barcode
+     */
     public void setWidth(Integer width) {
         this.width = width;
     }
@@ -79,6 +82,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return height;
     }
 
+    /**
+     * Height of the barcode
+     */
     public void setHeight(Integer height) {
         this.height = height;
     }
@@ -87,6 +93,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return imageType;
     }
 
+    /**
+     * Image type of the barcode such as png
+     */
     public void setImageType(String imageType) {
         this.imageType = imageType;
     }
@@ -95,6 +104,9 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return barcodeFormat;
     }
 
+    /**
+     * Barcode format such as QR-Code
+     */
     public void setBarcodeFormat(String barcodeFormat) {
         this.barcodeFormat = barcodeFormat;
     }

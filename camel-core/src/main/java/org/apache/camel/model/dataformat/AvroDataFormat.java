@@ -36,7 +36,7 @@ import org.apache.camel.spi.Label;
 @XmlRootElement(name = "avro")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AvroDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String instanceClassName;
     @XmlTransient
     private Object schema;
@@ -54,6 +54,9 @@ public class AvroDataFormat extends DataFormatDefinition {
         return instanceClassName;
     }
 
+    /**
+     * Class name to use for marshal and unmarshalling
+     */
     public void setInstanceClassName(String instanceClassName) {
         this.instanceClassName = instanceClassName;
     }
