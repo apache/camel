@@ -33,7 +33,7 @@
         <camel.osgi.import.before.defaults>
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.component.jetty.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.jetty</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
     </properties>
 

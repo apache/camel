@@ -733,7 +733,8 @@
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-http</feature>
-    <bundle>mvn:org.apache.camel/camel-jetty/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jetty-common/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jetty8/${project.version}</bundle>
   </feature>
   <feature name='camel-jgroups' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
