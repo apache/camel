@@ -27,6 +27,8 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Topic load balancer
+ *
+ * The topic load balancer sends to all destinations (rather like JMS Topics)
  */
 @Label("eip,routing")
 @XmlRootElement(name = "topic")

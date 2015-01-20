@@ -144,7 +144,10 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     public String getRef() {
         return ref;
     }
-    
+
+    /**
+     * To refer to a custom data format to use as marshaller
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

@@ -130,6 +130,11 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return loggingLevel;
     }
 
+    /**
+     * Sets the logging level.
+     * <p/>
+     * The default value is INFO
+     */
     public void setLoggingLevel(LoggingLevel loggingLevel) {
         this.loggingLevel = loggingLevel;
     }
@@ -138,6 +143,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return message;
     }
 
+    /**
+     * Sets the log message (uses simple language)
+     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -146,6 +154,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logName;
     }
 
+    /**
+     * Sets the name of the logger
+     */
     public void setLogName(String logName) {
         this.logName = logName;
     }
@@ -154,6 +165,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return marker;
     }
 
+    /**
+     * To use slf4j marker
+     */
     public void setMarker(String marker) {
         this.marker = marker;
     }
@@ -162,6 +176,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return loggerRef;
     }
 
+    /**
+     * To refer to a custom logger instance to lookup from ther registry.
+     */
     public void setLoggerRef(String loggerRef) {
         this.loggerRef = loggerRef;
     }
@@ -170,6 +187,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logger;
     }
 
+    /**
+     * To use a custom logger instance
+     */
     public void setLogger(Logger logger) {
         this.logger = logger;
     }

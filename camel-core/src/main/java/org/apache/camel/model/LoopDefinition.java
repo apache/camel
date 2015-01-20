@@ -38,15 +38,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends ExpressionNode {
 
-    
-    /**
-     * If the copy attribute is true, a copy of the input Exchange is used for each iteration.
-     * That means each iteration will start from a copy of the same message.
-     * <p/>
-     * By default loop will loop the same exchange all over, so each iteration may
-     * have different message content.
-     *
-     */
     @XmlAttribute
     private Boolean copy;
 
@@ -78,6 +69,13 @@ public class LoopDefinition extends ExpressionNode {
         return copy;
     }
 
+    /**
+     * If the copy attribute is true, a copy of the input Exchange is used for each iteration.
+     * That means each iteration will start from a copy of the same message.
+     * <p/>
+     * By default loop will loop the same exchange all over, so each iteration may
+     * have different message content.
+     */
     public void setCopy(Boolean copy) {
         this.copy = copy;
     }

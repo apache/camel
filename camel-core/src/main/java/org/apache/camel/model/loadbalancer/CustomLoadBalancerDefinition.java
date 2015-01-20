@@ -46,6 +46,9 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
         return ref;
     }
 
+    /**
+     * Refers to the custom load balancer to lookup from the registry
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

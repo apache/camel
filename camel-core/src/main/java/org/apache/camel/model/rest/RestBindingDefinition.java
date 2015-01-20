@@ -229,6 +229,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return consumes;
     }
 
+    /**
+     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json
+     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -237,6 +240,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return produces;
     }
 
+    /**
+     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
+     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -245,6 +251,11 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return bindingMode;
     }
 
+    /**
+     * Sets the binding mode to use.
+     * <p/>
+     * The default value is auto
+     */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
     }
@@ -253,6 +264,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return type;
     }
 
+    /**
+     * Sets the class name to use for binding from input to POJO for the incoming data
+     */
     public void setType(String type) {
         this.type = type;
     }
@@ -261,6 +275,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return outType;
     }
 
+    /**
+     * Sets the class name to use for binding from POJO to output for the outgoing data
+     */
     public void setOutType(String outType) {
         this.outType = outType;
     }
@@ -269,6 +286,10 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return skipBindingOnErrorCode;
     }
 
+    /**
+     * Whether to skip binding on output if there is a custom HTTP error code header.
+     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
@@ -277,6 +298,11 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return enableCORS;
     }
 
+    /**
+     * Whether to enable CORS headers in the HTTP response.
+     * <p/>
+     * The default value is false.
+     */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
     }

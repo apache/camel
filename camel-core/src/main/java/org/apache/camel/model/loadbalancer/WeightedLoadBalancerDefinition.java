@@ -18,7 +18,6 @@ package org.apache.camel.model.loadbalancer;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,6 +34,10 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Weighted load balancer
+ *
+ * The weighted load balancing policy allows you to specify a processing load distribution ratio for each server
+ * with respect to others. In addition to the weight, endpoint selection is then further refined using
+ * random distribution based on weight.
  */
 @Label("eip,routing")
 @XmlRootElement(name = "weighted")
@@ -81,6 +84,11 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return roundRobin;
     }
 
+    /**
+     * To enable round robin mode. By default the weighted distribution mode is used.
+     * <p/>
+     * The default value is false.
+     */
     public void setRoundRobin(Boolean roundRobin) {
         this.roundRobin = roundRobin;
     }
@@ -93,6 +101,10 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatio;
     }
 
+    /**
+     * The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example "2,3,5".
+     * The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list.
+     */
     public void setDistributionRatio(String distributionRatio) {
         this.distributionRatio = distributionRatio;
     }
@@ -101,6 +113,11 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatioDelimiter;
     }
 
+    /**
+     * Delimiter used to specify the distribution ratio.
+     * <p/>
+     * The default value is ,
+     */
     public void setDistributionRatioDelimiter(String distributionRatioDelimiter) {
         this.distributionRatioDelimiter = distributionRatioDelimiter;
     }

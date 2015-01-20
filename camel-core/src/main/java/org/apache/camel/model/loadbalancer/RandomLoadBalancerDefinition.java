@@ -27,6 +27,8 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Random load balancer
+ *
+ * The random load balancer selects a random endpoint for each exchange.
  */
 @Label("eip,routing")
 @XmlRootElement(name = "random")

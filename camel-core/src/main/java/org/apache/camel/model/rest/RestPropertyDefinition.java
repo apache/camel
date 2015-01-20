@@ -37,6 +37,9 @@ public class RestPropertyDefinition {
     @XmlAttribute(required = true)
     String value;
 
+    /**
+     * Property key
+     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -44,7 +47,10 @@ public class RestPropertyDefinition {
     public String getKey() {
         return key;
     }
-    
+
+    /**
+     * Property value
+     */
     public void setValue(String value) {
         this.value = value;
     }

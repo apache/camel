@@ -93,6 +93,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return method;
     }
 
+    /**
+     * The HTTP verb such as GET or POST
+     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -101,6 +104,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return uri;
     }
 
+    /**
+     * Uri template of this REST service such as /{id}.
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -109,6 +115,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return consumes;
     }
 
+    /**
+     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json.
+     * This option will override what may be configured on a parent level
+     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -117,6 +127,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return produces;
     }
 
+    /**
+     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
+     * This option will override what may be configured on a parent level
+     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -125,6 +139,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return bindingMode;
     }
 
+    /**
+     * Sets the binding mode to use.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is auto
+     */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
     }
@@ -133,6 +153,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return skipBindingOnErrorCode;
     }
 
+    /**
+     * Whether to skip binding on output if there is a custom HTTP error code header.
+     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     * This option will override what may be configured on a parent level
+     */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
@@ -141,6 +166,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return enableCORS;
     }
 
+    /**
+     * Whether to enable CORS headers in the HTTP response.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is false.
+     */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
     }
@@ -149,6 +180,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return type;
     }
 
+    /**
+     * Sets the class name to use for binding from input to POJO for the incoming data
+     * This option will override what may be configured on a parent level
+     */
     public void setType(String type) {
         this.type = type;
     }
@@ -157,6 +192,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return outType;
     }
 
+    /**
+     * Sets the class name to use for binding from POJO to output for the outgoing data
+     * This option will override what may be configured on a parent level
+     */
     public void setOutType(String outType) {
         this.outType = outType;
     }
@@ -203,6 +242,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return toOrRoute;
     }
 
+    /**
+     * To route from this REST service to a Camel endpoint, or an inlined route
+     */
     public void setToOrRoute(OptionalIdentifiedDefinition<?> toOrRoute) {
         this.toOrRoute = toOrRoute;
     }

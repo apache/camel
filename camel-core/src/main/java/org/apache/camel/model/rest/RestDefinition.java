@@ -73,6 +73,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return path;
     }
 
+    /**
+     * Path of the rest service, such as "/foo"
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -81,6 +84,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return consumes;
     }
 
+    /**
+     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json.
+     * This option will override what may be configured on a parent level
+     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -89,6 +96,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return produces;
     }
 
+    /**
+     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
+     * This option will override what may be configured on a parent level
+     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -97,6 +108,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return bindingMode;
     }
 
+    /**
+     * Sets the binding mode to use.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is auto
+     */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
     }
@@ -105,6 +122,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return verbs;
     }
 
+    /**
+     * The HTTP verbs this REST service accepts and uses
+     */
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
@@ -113,6 +133,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return skipBindingOnErrorCode;
     }
 
+    /**
+     * Whether to skip binding on output if there is a custom HTTP error code header.
+     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     * This option will override what may be configured on a parent level
+     */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
@@ -121,6 +146,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return enableCORS;
     }
 
+    /**
+     * Whether to enable CORS headers in the HTTP response.
+     * This option will override what may be configured on a parent level
+     * <p/>
+     * The default value is false.
+     */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
     }
