@@ -54,14 +54,23 @@ public class PackageScanDefinition {
         return packages;
     }
 
+    /**
+     * Sets the java package names to use for scanning for route builder classes
+     */
     public void setPackages(List<String> packages) {
         this.packages = packages;
     }
 
+    /**
+     * Exclude finding route builder from these java package names.
+     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
 
+    /**
+     * Include finding route builder from these java package names.
+     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

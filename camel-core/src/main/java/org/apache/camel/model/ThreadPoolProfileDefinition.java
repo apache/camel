@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -118,6 +117,9 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return defaultProfile;
     }
 
+    /**
+     * Whether this profile is the default thread pool profile
+     */
     public void setDefaultProfile(Boolean defaultProfile) {
         this.defaultProfile = defaultProfile;
     }
@@ -130,6 +132,9 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return poolSize;
     }
 
+    /**
+     * Sets the core pool size
+     */
     public void setPoolSize(String poolSize) {
         this.poolSize = poolSize;
     }
@@ -138,6 +143,9 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return maxPoolSize;
     }
 
+    /**
+     * Sets the maximum pool size
+     */
     public void setMaxPoolSize(String maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
@@ -146,6 +154,9 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return keepAliveTime;
     }
 
+    /**
+     * Sets the keep alive time for idle threads in the pool
+     */
     public void setKeepAliveTime(String keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
@@ -154,6 +165,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return maxQueueSize;
     }
 
+    /**
+     * Sets the maximum number of tasks in the work queue.
+     * <p/>
+     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     */
     public void setMaxQueueSize(String maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
@@ -162,6 +178,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return allowCoreThreadTimeOut;
     }
 
+    /**
+     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
+     * <p/>
+     * Is by default <tt>false</tt>
+     */
     public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
@@ -170,6 +191,10 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return timeUnit;
     }
 
+    /**
+     * Sets the time unit to use for keep alive time
+     * By default SECONDS is used.
+     */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
@@ -185,6 +210,9 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return null;
     }
 
+    /**
+     * Sets the handler for tasks which cannot be executed by the thread pool.
+     */
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }

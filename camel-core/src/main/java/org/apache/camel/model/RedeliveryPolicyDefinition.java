@@ -581,7 +581,7 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
      *
-     * @param reference name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
+     * @param exchangeFormatterRef name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
      * @return the builder
      */
     public RedeliveryPolicyDefinition exchangeFormatterRef(String exchangeFormatterRef) {
@@ -752,6 +752,9 @@ public class RedeliveryPolicyDefinition {
         return disableRedelivery;
     }
 
+    /**
+     * Disables redelivery (same as setting maximum redeliveries to 0)
+     */
     public void setDisableRedelivery(String disableRedelivery) {
         this.disableRedelivery = disableRedelivery;
     }

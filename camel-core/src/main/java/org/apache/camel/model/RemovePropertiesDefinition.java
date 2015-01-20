@@ -77,6 +77,9 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
         }
     }
 
+    /**
+     * Name or pattern of properties to remove
+     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -89,6 +92,9 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
         return excludePatterns;
     }
 
+    /**
+     * Name or pattern of properties to not remove
+     */
     public void setExcludePatterns(String[] excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
@@ -97,6 +103,9 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
         return excludePattern;
     }
 
+    /**
+     * Name or pattern of properties to not remove
+     */
     public void setExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
     }

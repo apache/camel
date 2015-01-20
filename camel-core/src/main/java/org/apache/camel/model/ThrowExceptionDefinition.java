@@ -72,6 +72,9 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return ref;
     }
 
+    /**
+     * Reference to the exception instance to lookup from the registry to throw
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

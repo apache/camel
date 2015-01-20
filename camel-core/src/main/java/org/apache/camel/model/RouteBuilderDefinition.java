@@ -56,6 +56,9 @@ public class RouteBuilderDefinition extends IdentifiedType {
         return ref;
     }
 
+    /**
+     * Reference to the route builder instance
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }

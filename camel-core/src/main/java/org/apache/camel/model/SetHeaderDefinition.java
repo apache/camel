@@ -76,6 +76,9 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
         return new SetHeaderProcessor(getHeaderName(), expr);
     }
 
+    /**
+     * Name of message header to set a new value
+     */
     @Required
     public void setHeaderName(String headerName) {
         this.headerName = headerName;

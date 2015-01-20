@@ -40,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated
 public class SetOutHeaderDefinition extends NoOutputExpressionNode {
+    @Deprecated
     @XmlAttribute(required = true)
     private String headerName;
     
@@ -73,6 +74,9 @@ public class SetOutHeaderDefinition extends NoOutputExpressionNode {
         return ProcessorBuilder.setOutHeader(getHeaderName(), expr);
     }
 
+    /**
+     * Name of message header to set a new value
+     */
     @Required
     public void setHeaderName(String headerName) {
         this.headerName = headerName;

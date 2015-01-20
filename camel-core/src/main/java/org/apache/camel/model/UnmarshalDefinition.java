@@ -149,6 +149,9 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return ref;
     }
 
+    /**
+     * To refer to a custom data format to use as unmarshaller
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -157,6 +160,9 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return dataFormatType;
     }
 
+    /**
+     * The data format to be used
+     */
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
     }

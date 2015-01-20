@@ -275,6 +275,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return resequencerConfig;
     }
 
+    /**
+     * To configure the resequencer in using either batch or stream configuration
+     */
     public void setResequencerConfig(ResequencerConfig resequencerConfig) {
         this.resequencerConfig = resequencerConfig;
     }

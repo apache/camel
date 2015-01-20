@@ -78,6 +78,9 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return message;
     }
 
+    /**
+     * Message to use in rollback exception
+     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -86,6 +89,9 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return markRollbackOnly;
     }
 
+    /**
+     * Mark the transaction for rollback only (cannot be overruled to commit)
+     */
     public void setMarkRollbackOnly(Boolean markRollbackOnly) {
         this.markRollbackOnly = markRollbackOnly;
     }
@@ -98,6 +104,11 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return markRollbackOnlyLast;
     }
 
+    /**
+     * Mark only last sub transaction for rollback only.
+     * <p/>
+     * When using sub transactions (if the transaction manager support this)
+     */
     public void setMarkRollbackOnlyLast(Boolean markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
     }

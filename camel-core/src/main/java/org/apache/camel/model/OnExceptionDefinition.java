@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -64,7 +63,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlElement(name = "retryWhile")
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
-    private RedeliveryPolicyDefinition redeliveryPolicy;
+    private RedeliveryPolicyDefinition redeliveryPolicyType;
     @XmlAttribute(name = "redeliveryPolicyRef")
     private String redeliveryPolicyRef;
     @XmlElement(name = "handled")
@@ -92,6 +91,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     // TODO: in Camel 3.0 the OnExceptionDefinition should not contain state and ErrorHandler processors
     @XmlTransient
     private final Map<String, Processor> errorHandlers = new HashMap<String, Processor>();
+    @XmlTransient
+    private RedeliveryPolicy redeliveryPolicy;
 
     public OnExceptionDefinition() {
     }
@@ -147,10 +148,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      *         for this exception handler.
      */
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
-        if (redeliveryPolicyRef != null) {
+        if (redeliveryPolicy != null) {
+            return redeliveryPolicy;
+        } else if (redeliveryPolicyRef != null) {
             return CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);
-        } else if (redeliveryPolicy != null) {
-            return redeliveryPolicy.createRedeliveryPolicy(context, parentPolicy);
+        } else if (redeliveryPolicyType != null) {
+            return redeliveryPolicyType.createRedeliveryPolicy(context, parentPolicy);
         } else if (!outputs.isEmpty() && parentPolicy.getMaximumRedeliveries() != 0) {
             // if we have outputs, then do not inherit parent maximumRedeliveries
             // as you would have to explicit configure maximumRedeliveries on this onException to use it
@@ -244,7 +247,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
             if (handledPolicy == null && continuedPolicy == null && retryWhilePolicy == null
-                    && redeliveryPolicy == null && useOriginalMessagePolicy == null && onRedelivery == null) {
+                    && redeliveryPolicyType == null && useOriginalMessagePolicy == null && onRedelivery == null) {
                 throw new IllegalArgumentException(this + " is not configured.");
             }
         }
@@ -695,6 +698,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Set the {@link RedeliveryPolicy} to be used.
+     *
+     * @param redeliveryPolicy the redelivery policy
+     * @return the builder
+     */
+    public OnExceptionDefinition redeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
+        this.redeliveryPolicy = redeliveryPolicy;
+        return this;
+    }
+
+    /**
      * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
      *
      * @param redeliveryPolicyRef reference to use for lookup
@@ -756,6 +770,18 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return this;
     }
 
+    /**
+     * Sets a reference to a processor that should be processed <b>before</b> a redelivery attempt.
+     * <p/>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     *
+     * @param ref  reference to the processor
+     */
+    public OnExceptionDefinition onRedeliveryRef(String ref) {
+        setOnRedeliveryRef(ref);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
     @Override
@@ -783,6 +809,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return exceptions;
     }
 
+    /**
+     * A set of exceptions to react upon.
+     */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
     }
@@ -796,11 +825,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public RedeliveryPolicyDefinition getRedeliveryPolicy() {
-        return redeliveryPolicy;
+        return redeliveryPolicyType;
     }
 
     public void setRedeliveryPolicy(RedeliveryPolicyDefinition redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
+        this.redeliveryPolicyType = redeliveryPolicy;
     }
 
     public String getRedeliveryPolicyRef() {
@@ -906,10 +935,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     //-------------------------------------------------------------------------
 
     protected RedeliveryPolicyDefinition getOrCreateRedeliveryPolicy() {
-        if (redeliveryPolicy == null) {
-            redeliveryPolicy = new RedeliveryPolicyDefinition();
+        if (redeliveryPolicyType == null) {
+            redeliveryPolicyType = new RedeliveryPolicyDefinition();
         }
-        return redeliveryPolicy;
+        return redeliveryPolicyType;
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {

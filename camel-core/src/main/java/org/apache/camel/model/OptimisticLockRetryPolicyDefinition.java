@@ -67,6 +67,9 @@ public class OptimisticLockRetryPolicyDefinition {
         return policy;
     }
 
+    /**
+     * Sets the maximum number of retries
+     */
     public OptimisticLockRetryPolicyDefinition maximumRetries(int maximumRetries) {
         setMaximumRetries(maximumRetries);
         return this;
@@ -80,6 +83,9 @@ public class OptimisticLockRetryPolicyDefinition {
         this.maximumRetries = maximumRetries;
     }
 
+    /**
+     * Sets the delay in millis between retries
+     */
     public OptimisticLockRetryPolicyDefinition retryDelay(long retryDelay) {
         setRetryDelay(retryDelay);
         return this;
@@ -93,6 +99,9 @@ public class OptimisticLockRetryPolicyDefinition {
         this.retryDelay = retryDelay;
     }
 
+    /**
+     * Sets the upper value of retry in millis between retries, when using exponential or random backoff
+     */
     public OptimisticLockRetryPolicyDefinition maximumRetryDelay(long maximumRetryDelay) {
         setMaximumRetryDelay(maximumRetryDelay);
         return this;
@@ -106,6 +115,9 @@ public class OptimisticLockRetryPolicyDefinition {
         this.maximumRetryDelay = maximumRetryDelay;
     }
 
+    /**
+     * Enable exponential backoff
+     */
     public OptimisticLockRetryPolicyDefinition exponentialBackOff() {
         return exponentialBackOff(true);
     }
@@ -127,6 +139,9 @@ public class OptimisticLockRetryPolicyDefinition {
         return randomBackOff(true);
     }
 
+    /**
+     * Enables random backoff
+     */
     public OptimisticLockRetryPolicyDefinition randomBackOff(boolean randomBackOff) {
         setRandomBackOff(randomBackOff);
         return this;

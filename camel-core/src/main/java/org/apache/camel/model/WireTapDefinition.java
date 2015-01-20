@@ -315,6 +315,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return uri;
     }
 
+    /**
+     * Uri of the endpoint to use as wire tap
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -323,6 +326,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return ref;
     }
 
+    /**
+     * Reference of the endpoint to use as wire tap
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -339,6 +345,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return newExchangeProcessor;
     }
 
+    /**
+     * To use a Processor for creating a new body as the message to use for wire tapping
+     */
     public void setNewExchangeProcessor(Processor processor) {
         this.newExchangeProcessor = processor;
     }
@@ -347,6 +356,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return newExchangeProcessorRef;
     }
 
+    /**
+     * Reference to a Processor to use for creating a new body as the message to use for wire tapping
+     */
     public void setNewExchangeProcessorRef(String ref) {
         this.newExchangeProcessorRef = ref;
     }
@@ -355,6 +367,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         return newExchangeExpression;
     }
 
+    /**
+     * Expression used for creating a new body as the message to use for wire tapping
+     */
     public void setNewExchangeExpression(ExpressionSubElementDefinition expression) {
         this.newExchangeExpression = expression;
     }

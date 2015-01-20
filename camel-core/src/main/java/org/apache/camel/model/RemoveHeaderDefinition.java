@@ -60,6 +60,9 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
         return new RemoveHeaderProcessor(getHeaderName());
     }
 
+    /**
+     * Name of header to remove
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

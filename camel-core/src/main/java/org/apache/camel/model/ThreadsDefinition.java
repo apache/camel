@@ -166,18 +166,24 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         return "Threads[" + getOutputs() + "]";
     }
 
+    /**
+     * To use a custom thread pool
+     */
     public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * To refer to a custom thread pool or use a thread pool profile (as overlay)
+     */
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }
 
     /**
-     * Sets the core pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     * Sets the core pool size
      *
      * @param poolSize the core pool size to keep minimum in the pool
      * @return the builder
@@ -188,7 +194,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     }
 
     /**
-     * Sets the maximum pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     * Sets the maximum pool size
      *
      * @param maxPoolSize the maximum pool size
      * @return the builder
@@ -270,7 +276,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     }
 
     /**
-     * Whether to allow core threads to timeout
+     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
      * <p/>
      * Is by default <tt>false</tt>
      *

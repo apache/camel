@@ -76,6 +76,9 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
         return new SetPropertyProcessor(getPropertyName(), expr);
     }
 
+    /**
+     * Name of exchange property to set a new value
+     */
     @Required
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;

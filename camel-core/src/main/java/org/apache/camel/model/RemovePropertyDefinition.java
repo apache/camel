@@ -60,6 +60,9 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
         return new RemovePropertyProcessor(getPropertyName());
     }
 
+    /**
+     * Name of property to remove
+     */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }

@@ -142,6 +142,9 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         return samplePeriod;
     }
 
+    /**
+     * Sets the sample period during which only a single Exchange will pass through.
+     */
     public void setSamplePeriod(Long samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
@@ -150,6 +153,9 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         return messageFrequency;
     }
 
+    /**
+     * Sets the sample message count which only a single Exchange will pass through after this many received.
+     */
     public void setMessageFrequency(Long messageFrequency) {
         this.messageFrequency = messageFrequency;
     }
@@ -158,6 +164,9 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         this.units = TimeUnit.valueOf(units);
     }
 
+    /**
+     * Sets the time units for the sample period, defaulting to seconds.
+     */
     public void setUnits(TimeUnit units) {
         this.units = units;
     }

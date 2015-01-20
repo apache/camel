@@ -155,6 +155,9 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return resourceUri;
     }
 
+    /**
+     * The endpoint uri for the external service to poll enrich from. You must use either uri or ref.
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -163,6 +166,9 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return resourceRef;
     }
 
+    /**
+     * Refers to the endpoint for the external service to poll enrich from. You must use either uri or ref.
+     */
     public void setResourceRef(String resourceRef) {
         this.resourceRef = resourceRef;
     }
@@ -171,6 +177,17 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return timeout;
     }
 
+    /**
+     * Timeout in millis when polling from the external service.
+     * <p/>
+     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
+     * <ul>
+     *     <li>negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available.</li>
+     *     <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a message exchange is not available yet.</li>
+     *     <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns <tt>null</tt> if timed out</li>
+     * </ul>
+     * The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value
+     */
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
@@ -179,6 +196,10 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return aggregationStrategyRef;
     }
 
+    /**
+     * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
     public void setAggregationStrategyRef(String aggregationStrategyRef) {
         this.aggregationStrategyRef = aggregationStrategyRef;
     }
@@ -187,6 +208,9 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return aggregationStrategyMethodName;
     }
 
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -195,6 +219,11 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return aggregationStrategyMethodAllowNull;
     }
 
+    /**
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich),
+     * when using POJOs as the AggregationStrategy.
+     */
     public void setAggregationStrategyMethodAllowNull(Boolean aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
@@ -203,6 +232,10 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return aggregationStrategy;
     }
 
+    /**
+     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -211,6 +244,12 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         return aggregateOnException;
     }
 
+    /**
+     * If this option is false then the aggregate method is not used if there was an exception thrown while trying
+     * to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what
+     * to do if there was an exception in the aggregate method. For example to suppress the exception
+     * or set a custom message body etc.
+     */
     public void setAggregateOnException(Boolean aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
     }

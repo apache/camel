@@ -75,6 +75,9 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         return ref;
     }
 
+    /**
+     * Reference to the {@link Processor} to lookup in the registry to use.
+     */
     @Required
     public void setRef(String ref) {
         this.ref = ref;

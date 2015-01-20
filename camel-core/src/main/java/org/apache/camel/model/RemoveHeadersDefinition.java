@@ -77,6 +77,9 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         }
     }
 
+    /**
+     * Name or pattern of headers to remove
+     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -89,6 +92,9 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return excludePatterns;
     }
 
+    /**
+     * Name or pattern of headers to not remove
+     */
     public void setExcludePatterns(String[] excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
@@ -97,6 +103,9 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return excludePattern;
     }
 
+    /**
+     * Name or patter of headers to not remove
+     */
     public void setExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
     }

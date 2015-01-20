@@ -259,18 +259,27 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return this;
     }
 
+    /**
+     * To use a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public OnCompletionDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * Refers to a custom Thread Pool to be used for parallel processing.
+     * Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well.
+     */
     public OnCompletionDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }
 
     /**
-     * Doing the on completion work in parallel
+     * If enabled then the on completion process will run asynchronously by a separate thread from a thread pool.
+     * By default this is false, meaning the on completion process will run synchronously using the same caller thread as from the route.
      *
      * @return the builder
      */
@@ -295,6 +304,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return mode;
     }
 
+    /**
+     * Sets the on completion mode.
+     * <p/>
+     * The default value is AfterConsumer
+     */
     public void setMode(OnCompletionMode mode) {
         this.mode = mode;
     }
@@ -351,6 +365,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return useOriginalMessagePolicy != null;
     }
 
+    /**
+     * Will use the original input body when an {@link org.apache.camel.Exchange} for this on completion.
+     * <p/>
+     * By default this feature is off.
+     */
     public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
