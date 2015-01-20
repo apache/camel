@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -34,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "zip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "-1")
     private Integer compressionLevel;
     
     public ZipDataFormat() {
@@ -60,7 +61,7 @@ public class ZipDataFormat extends DataFormatDefinition {
 
     /**
      * To specify a specific compression between 0-9.
-     * 0 is no compression, and 9 is best compression.
+     * -1 is default compression, 0 is no compression, and 9 is best compression.
      */
     public void setCompressionLevel(Integer compressionLevel) {
         this.compressionLevel = compressionLevel;

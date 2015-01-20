@@ -32,6 +32,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -62,7 +63,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean streaming;
     @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "0")
     private Long timeout;
     @XmlAttribute
     private String onPrepareRef;

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * PGP data format
@@ -49,7 +50,7 @@ public class PGPDataFormat extends DataFormatDefinition {
     private String signatureKeyRing;
     @XmlAttribute
     private Boolean armored;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean integrity;
     @XmlAttribute
     private String provider;

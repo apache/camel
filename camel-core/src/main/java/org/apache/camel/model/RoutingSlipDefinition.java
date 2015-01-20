@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -40,7 +41,7 @@ import org.apache.camel.spi.RouteContext;
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;

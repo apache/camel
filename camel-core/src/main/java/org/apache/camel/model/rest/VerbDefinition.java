@@ -28,6 +28,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Rest command
@@ -49,7 +50,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -42,11 +43,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     private String definition;
     @XmlAttribute
     private Boolean fixed;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean ignoreFirstRecord;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\"")
     private String textQualifier;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
     private Boolean allowShortLines;

@@ -29,6 +29,7 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -47,7 +48,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
     private Boolean roundRobin;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "-1")
     private Integer maximumFailoverAttempts;
 
     public FailoverLoadBalancerDefinition() {

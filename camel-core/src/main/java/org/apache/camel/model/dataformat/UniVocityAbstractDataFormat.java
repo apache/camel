@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
@@ -38,11 +39,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     protected String nullValue;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     protected Boolean skipEmptyLines;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     protected Boolean ignoreTrailingWhitespaces;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     protected Boolean ignoreLeadingWhitespaces;
     @XmlAttribute
     protected Boolean headersDisabled;
@@ -56,9 +57,9 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     protected String emptyValue;
     @XmlAttribute
     protected String lineSeparator;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\n")
     protected String normalizedLineSeparator;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "#")
     protected String comment;
     @XmlAttribute
     protected Boolean lazyLoad;

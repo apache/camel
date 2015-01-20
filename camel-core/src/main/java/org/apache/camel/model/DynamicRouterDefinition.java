@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -40,7 +40,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public static final String DEFAULT_DELIMITER = ",";
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;

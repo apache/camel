@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
@@ -41,7 +42,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     private static final String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "TRIPLEDES")
     private String xmlCipherAlgorithm;
     @XmlAttribute
     private String passPhrase;
@@ -49,7 +50,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String secureTag;
     @XmlAttribute
     private Boolean secureTagContents;
-    @XmlAttribute
+    @XmlAttribute  @Metadata(defaultValue = "RSA_OAEP")
     private String keyCipherAlgorithm;
     @XmlAttribute
     private String recipientKeyAlias;
@@ -58,11 +59,11 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String keyOrTrustStoreParametersId;
     @XmlAttribute
     private String keyPassword;
-    @XmlAttribute
+    @XmlAttribute  @Metadata(defaultValue = "SHA1")
     private String digestAlgorithm;
-    @XmlAttribute
+    @XmlAttribute  @Metadata(defaultValue = "MGF1_SHA1")
     private String mgfAlgorithm;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean addKeyValueForEncryptedKey;
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;

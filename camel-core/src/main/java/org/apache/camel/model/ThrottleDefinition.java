@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -48,11 +49,11 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long timePeriodMillis;
     @XmlAttribute
     private Boolean asyncDelayed;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
     @XmlAttribute
     private Boolean rejectExecution;

@@ -32,6 +32,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -52,7 +53,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute

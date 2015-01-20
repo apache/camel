@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * SOAP data format
@@ -42,7 +43,7 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     private String elementNameStrategyRef;
     @XmlTransient
     private Object elementNameStrategy;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1.1")
     private String version;
     @XmlAttribute
     private String namespacePrefixRef;

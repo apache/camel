@@ -31,6 +31,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -49,9 +50,9 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean asyncDelayed;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
 
     public DelayDefinition() {

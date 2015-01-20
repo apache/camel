@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.SamplingThrottler;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -45,12 +46,12 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     // TODO: Camel 3.0 Should extend NoOutputDefinition
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1")
     private Long samplePeriod;
     @XmlAttribute
     private Long messageFrequency;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class) @Metadata(defaultValue = "SECONDS")
     private TimeUnit units;
 
     public SamplingDefinition() {

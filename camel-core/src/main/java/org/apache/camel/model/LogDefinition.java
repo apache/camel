@@ -29,6 +29,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
@@ -49,7 +50,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private static final Logger LOG = LoggerFactory.getLogger(LogDefinition.class);
     @XmlAttribute(required = true)
     private String message;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "INFO")
     private LoggingLevel loggingLevel;
     @XmlAttribute
     private String logName;

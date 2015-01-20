@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * To configure optimistic locking
@@ -35,11 +36,11 @@ import org.apache.camel.spi.Label;
 public class OptimisticLockRetryPolicyDefinition {
     @XmlAttribute
     private Integer maximumRetries;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "50")
     private Long retryDelay;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long maximumRetryDelay;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean exponentialBackOff;
     @XmlAttribute
     private Boolean randomBackOff;

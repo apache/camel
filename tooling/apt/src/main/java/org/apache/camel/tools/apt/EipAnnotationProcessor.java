@@ -41,13 +41,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 import static org.apache.camel.tools.apt.Strings.safeNull;
-
-// TODO: figure out a way to specify default value in the model classes which this APT can read
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json schema documentation
@@ -191,6 +190,13 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             model.setLabel(label.value());
         }
 
+        Metadata metadata = classElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            if (!Strings.isNullOrEmpty(metadata.label())) {
+                model.setLabel(metadata.label());
+            }
+        }
+
         // favor to use class javadoc of component as description
         if (model.getJavaType() != null) {
             Elements elementUtils = processingEnv.getElementUtils();
@@ -294,6 +300,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         String fieldTypeName = fieldType.toString();
         TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
+        String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
         boolean required = attribute.required();
 
@@ -314,7 +321,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, "", docComment, deprecated, isEnum, enums, false, null);
+        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null);
         eipOptions.add(ep);
 
         return false;
@@ -327,6 +334,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         String fieldName;
         fieldName = fieldElement.getSimpleName().toString();
         if (element != null) {
+
             String kind = "element";
             String name = element.name();
             if (isNullOrEmpty(name) || "##default".equals(name)) {
@@ -337,6 +345,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             String fieldTypeName = fieldType.toString();
             TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
+            String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
             boolean required = element.required();
 
@@ -377,7 +386,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", docComment, deprecated, isEnum, enums, isOneOf, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, isOneOf, oneOfTypes);
             eipOptions.add(ep);
         }
     }
@@ -396,6 +405,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
 
+            String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
             boolean required = true;
 
@@ -406,7 +416,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                 oneOfTypes.add(child);
             }
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, "", docComment, false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes);
             eipOptions.add(ep);
         }
     }
@@ -433,7 +443,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "messageHistory", null, classElement, true);
-        ep = new EipOption("messageHistory", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("messageHistory", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null);
         eipOptions.add(ep);
 
         // trace
@@ -448,7 +458,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
         // autoStartup
         docComment = findJavaDoc(elementUtils, null, "autoStartup", null, classElement, true);
-        ep = new EipOption("autoStartup", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("autoStartup", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null);
         eipOptions.add(ep);
 
         // startupOrder
@@ -470,7 +480,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         Set<String> enums = new LinkedHashSet<String>();
         enums.add("Default");
         enums.add("Defer");
-        docComment = findJavaDoc(elementUtils, null, "shutdownRoute", null, classElement, true);
+        docComment = findJavaDoc(elementUtils, null, "shutdownRoute", "Default", classElement, true);
         ep = new EipOption("shutdownRoute", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, true, enums, false, null);
         eipOptions.add(ep);
 
@@ -478,7 +488,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         enums = new LinkedHashSet<String>();
         enums.add("CompleteCurrentTaskOnly");
         enums.add("CompleteAllTasks");
-        docComment = findJavaDoc(elementUtils, null, "shutdownRunningTask", null, classElement, true);
+        docComment = findJavaDoc(elementUtils, null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
         ep = new EipOption("shutdownRunningTask", "attribute", "org.apache.camel.ShutdownRunningTask", false, "", docComment, false, true, enums, false, null);
         eipOptions.add(ep);
 
@@ -629,6 +639,24 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     private boolean supportOutputs(TypeElement classElement) {
         String superclass = canonicalClassName(classElement.getSuperclass().toString());
         return !"org.apache.camel.model.NoOutputExpressionNode".equals(superclass);
+    }
+
+    protected String findDefaultValue(VariableElement fieldElement, String fieldTypeName) {
+        String defaultValue = null;
+        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            if (!Strings.isNullOrEmpty(metadata.defaultValue())) {
+                defaultValue = metadata.defaultValue();
+            }
+        }
+        if (defaultValue == null) {
+            // if its a boolean type, then we use false as the default
+            if ("boolean".equals(fieldTypeName) || "java.lang.Boolean".equals(fieldTypeName)) {
+                defaultValue = "false";
+            }
+        }
+
+        return defaultValue;
     }
 
     /**

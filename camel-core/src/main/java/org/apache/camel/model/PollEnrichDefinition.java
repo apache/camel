@@ -29,6 +29,7 @@ import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -46,7 +47,7 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
     @XmlAttribute(name = "ref")
     private String resourceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "-1")
     private Long timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;

@@ -30,6 +30,7 @@ import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -47,7 +48,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute

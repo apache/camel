@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String messageIdRepositoryRef;
     @XmlAttribute
     private Boolean eager;
@@ -188,7 +188,6 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         // defaults to true if not configured
         return removeOnFailure != null ? removeOnFailure : true;
     }
-
 
     @Override
     @SuppressWarnings("unchecked")

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Base64 data format
@@ -36,9 +37,9 @@ import org.apache.camel.spi.Label;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Base64DataFormat extends DataFormatDefinition {
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "76")
     private Integer lineLength;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\r\n")
     private String lineSeparator;
     @XmlAttribute
     private Boolean urlSafe;

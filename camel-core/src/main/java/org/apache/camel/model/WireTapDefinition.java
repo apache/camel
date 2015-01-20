@@ -35,6 +35,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -64,7 +65,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean copy;
     @XmlAttribute
     private String onPrepareRef;

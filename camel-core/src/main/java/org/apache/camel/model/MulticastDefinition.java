@@ -34,6 +34,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -62,7 +63,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Boolean streaming;
     @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "0")
     private Long timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;

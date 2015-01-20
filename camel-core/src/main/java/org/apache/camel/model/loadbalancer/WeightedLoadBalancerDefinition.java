@@ -29,6 +29,7 @@ import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -47,7 +48,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     private Boolean roundRobin;
     @XmlAttribute(required = true)
     private String distributionRatio;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String distributionRatioDelimiter;
 
     public WeightedLoadBalancerDefinition() {

@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * HL7 data format
@@ -36,7 +37,7 @@ import org.apache.camel.spi.Label;
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean validate;
     @XmlTransient
     private Object parser;

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * UniVocity CSV data format
@@ -34,11 +35,11 @@ import org.apache.camel.spi.Label;
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
     protected Boolean quoteAllFields;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\"")
     protected String quote;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\"")
     protected String quoteEscape;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     protected String delimiter;
 
     public UniVocityCsvDataFormat() {

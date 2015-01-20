@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -57,7 +58,7 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private RestHostNameResolver hostNameResolver;
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute

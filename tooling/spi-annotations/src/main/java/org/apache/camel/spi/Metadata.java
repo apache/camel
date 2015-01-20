@@ -23,23 +23,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines a label which can be used to associate a class or type with label(s).
+ * Meta data for EIPs, components, data formats and other Camel concepts
  * <p/>
- * For example Camel uses this to categorize the EIPs with labels.
- *
- * @deprecated use {@link org.apache.camel.spi.Metadata} instead
+ * For example to associate labels to Camel components
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE})
-@Deprecated
-public @interface Label {
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+public @interface Metadata {
 
     /**
-     * To associate this class or type with label(s).
+     * To define one or more labels.
      * <p/>
      * Multiple labels can be defined as a comma separated value.
      */
-    String value() default "";
+    String label() default "";
+
+    /**
+     * To define a default value
+     */
+    String defaultValue() default "";
 
 }

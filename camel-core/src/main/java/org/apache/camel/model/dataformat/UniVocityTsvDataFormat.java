@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * UniVocity TSV data format
@@ -32,7 +33,7 @@ import org.apache.camel.spi.Label;
 @XmlRootElement(name = "univocity-tsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "\\")
     protected String escapeChar;
 
     public UniVocityTsvDataFormat() {

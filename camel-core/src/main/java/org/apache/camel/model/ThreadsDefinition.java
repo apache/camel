@@ -36,6 +36,7 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -68,11 +69,11 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     private Integer maxQueueSize;
     @XmlAttribute
     private Boolean allowCoreThreadTimeOut;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
     
     public ThreadsDefinition() {

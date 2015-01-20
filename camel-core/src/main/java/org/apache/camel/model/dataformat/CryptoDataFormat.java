@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "DES/CBC/PKCS5Padding")
     private String algorithm;
     @XmlAttribute
     private String cryptoProvider;
@@ -52,7 +53,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     private String algorithmParameterRef;
     @XmlAttribute
     private Integer buffersize;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
     private Boolean shouldAppendHMAC;

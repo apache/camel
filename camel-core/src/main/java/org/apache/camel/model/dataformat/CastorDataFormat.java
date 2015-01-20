@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Castor data format
@@ -39,7 +40,7 @@ public class CastorDataFormat extends DataFormatDefinition {
     private String mappingFile;
     @XmlAttribute
     private Boolean validation;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "UTF-8")
     private String encoding;
     @XmlAttribute
     private String[] packages;

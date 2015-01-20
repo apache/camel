@@ -49,6 +49,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -672,7 +673,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Whether message history is enabled on this route.
      */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -726,7 +727,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Whether to auto start this route
      */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -806,7 +807,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * To control how to shutdown the route.
      */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "Default")
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -821,7 +822,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * To control how to shutdown the route.
      */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }

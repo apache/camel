@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Configures batch-processing resequence eip.
@@ -30,9 +31,9 @@ import org.apache.camel.spi.Label;
 @XmlRootElement(name = "batch-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "100")
     private Integer batchSize;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long batchTimeout;
     @XmlAttribute
     private Boolean allowDuplicates;

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Configures stream-processing resequence eip.
@@ -33,9 +34,9 @@ import org.apache.camel.spi.Label;
 @XmlRootElement(name = "stream-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig extends ResequencerConfig {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "100")
     private Integer capacity;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long timeout;
     @XmlAttribute
     private Boolean ignoreInvalidExchanges;

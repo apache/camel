@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * UniVocity fixed-width data format
@@ -36,7 +37,7 @@ public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {
     protected Boolean skipTrailingCharsUntilNewline;
     @XmlAttribute
     protected Boolean recordEndsOnNewline;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = " ")
     protected String padding;
 
     public UniVocityFixedWidthDataFormat() {

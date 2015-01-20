@@ -37,6 +37,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -48,7 +49,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "AfterConsumer")
     private OnCompletionMode mode;
     @XmlAttribute
     private Boolean onCompleteOnly;
