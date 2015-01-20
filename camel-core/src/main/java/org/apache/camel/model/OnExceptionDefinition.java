@@ -832,6 +832,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.redeliveryPolicyType = redeliveryPolicy;
     }
 
+    public RedeliveryPolicyDefinition getRedeliveryPolicyType() {
+        return redeliveryPolicyType;
+    }
+
+    public void setRedeliveryPolicyType(RedeliveryPolicyDefinition redeliveryPolicyType) {
+        this.redeliveryPolicyType = redeliveryPolicyType;
+    }
+
     public String getRedeliveryPolicyRef() {
         return redeliveryPolicyRef;
     }

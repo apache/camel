@@ -45,7 +45,7 @@ public class EipDocumentationTest extends ContextTestSupport {
 
         assertTrue(json.contains("\"name\": \"split\""));
         // there should be javadoc included
-        assertTrue(json.contains("Whether to aggregate using a sequential single thread or allow parallel aggregation"));
+        assertTrue(json.contains("If enabled then processing each splitted messages occurs concurrently."));
         // and it support outputs
         assertTrue(json.contains("\"outputs\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"array\", \"javaType\""));
     }
