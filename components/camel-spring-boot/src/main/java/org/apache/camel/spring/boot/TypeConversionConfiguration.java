@@ -31,21 +31,11 @@ import org.springframework.core.convert.support.DefaultConversionService;
 
 @Configuration
 @ConditionalOnProperty(value = "camel.springboot.typeConversion", matchIfMissing = true)
-public class SpringConversionServiceConfiguration {
+public class TypeConversionConfiguration {
 
     @Bean
     TypeConverter typeConverter(CamelContext camelContext) {
         return camelContext.getTypeConverter();
-    }
-
-    @ConditionalOnMissingBean
-    @Bean
-    ConversionService conversionService(ApplicationContext applicationContext) {
-        DefaultConversionService service = new DefaultConversionService();
-        for (Converter converter : applicationContext.getBeansOfType(Converter.class).values()) {
-            service.addConverter(converter);
-        }
-        return service;
     }
 
     @Bean
@@ -53,6 +43,16 @@ public class SpringConversionServiceConfiguration {
         SpringTypeConverter springTypeConverter = new SpringTypeConverter(asList(conversionServices));
         camelContext.getTypeConverterRegistry().addFallbackTypeConverter(springTypeConverter, true);
         return springTypeConverter;
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    ConversionService defaultCamelConversionService(ApplicationContext applicationContext) {
+        DefaultConversionService service = new DefaultConversionService();
+        for (Converter converter : applicationContext.getBeansOfType(Converter.class).values()) {
+            service.addConverter(converter);
+        }
+        return service;
     }
 
 }

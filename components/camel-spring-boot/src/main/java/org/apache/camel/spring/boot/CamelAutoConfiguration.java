@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
-@Import(SpringConversionServiceConfiguration.class)
+@Import(TypeConversionConfiguration.class)
 public class CamelAutoConfiguration {
 
     /**
