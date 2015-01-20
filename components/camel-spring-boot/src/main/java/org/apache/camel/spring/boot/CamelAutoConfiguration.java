@@ -16,12 +16,17 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
+import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -50,8 +55,10 @@ public class CamelAutoConfiguration {
     }
 
     @Bean
-    RoutesCollector routesCollector() {
-        return new RoutesCollector();
+    @ConditionalOnMissingBean
+    RoutesCollector routesCollector(ApplicationContext applicationContext) {
+        Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
+        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations));
     }
 
     /**
@@ -82,6 +89,14 @@ public class CamelAutoConfiguration {
         PropertiesComponent properties = new PropertiesComponent();
         properties.setPropertiesParser(propertiesParser());
         return properties;
+    }
+
+    @Bean
+    CamelBeanPostProcessor camelBeanPostProcessor(CamelContext camelContext, ApplicationContext applicationContext) {
+        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
+        processor.setCamelContext(camelContext);
+        processor.setApplicationContext(applicationContext);
+        return processor;
     }
 
 }

@@ -16,24 +16,36 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Ordered;
 import org.apache.camel.RoutesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.PriorityOrdered;
 
-public class RoutesCollector implements BeanPostProcessor, ApplicationContextAware {
+public class RoutesCollector implements BeanPostProcessor, PriorityOrdered {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
-    private ApplicationContext applicationContext;
+    // Collaborators
 
-    @Autowired(required = false)
-    private CamelContextConfiguration[] camelContextConfigurations;
+    private final ApplicationContext applicationContext;
+
+    private final List<CamelContextConfiguration> camelContextConfigurations;
+
+    // Constructors
+
+    public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations) {
+        this.applicationContext = applicationContext;
+        this.camelContextConfigurations = camelContextConfigurations;
+    }
+
+    // Overridden
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -64,9 +76,8 @@ public class RoutesCollector implements BeanPostProcessor, ApplicationContextAwa
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        LOG.debug("Injecting Spring application context into RoutesCollector: {}");
-        this.applicationContext = applicationContext;
+    public int getOrder() {
+        return Ordered.LOWEST;
     }
 
 }
