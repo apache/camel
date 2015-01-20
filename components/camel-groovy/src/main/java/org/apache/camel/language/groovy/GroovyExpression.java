@@ -18,6 +18,7 @@ package org.apache.camel.language.groovy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -60,8 +61,16 @@ public class GroovyExpression extends ExpressionSupport {
         GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
         Class<Script> scriptClass = language.getScriptFromCache(text);
         if (scriptClass == null) {
-            ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
-            GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
+            GroovyShell shell;
+            Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
+            if (shellFactories.size() > 1) {
+                throw new IllegalStateException("Too many GroovyShellFactory instances found: " + shellFactories.size());
+            } else if (shellFactories.size() == 1) {
+                shell = shellFactories.iterator().next().createGroovyShell(exchange);
+            } else {
+                ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
+                shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
+            }
             scriptClass = shell.getClassLoader().parseClass(text);
             language.addScriptToCache(text, scriptClass);
         }
