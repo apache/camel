@@ -198,15 +198,12 @@ public class ExpressionDefinition implements Expression, Predicate {
         this.expression = expression;
     }
 
-    /**
-     * Gets the value of the id property.
-     */
     public String getId() {
         return id;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the id of this node
      */
     public void setId(String value) {
         this.id = value;
@@ -232,6 +229,9 @@ public class ExpressionDefinition implements Expression, Predicate {
         return trim;
     }
 
+    /**
+     * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+     */
     public void setTrim(Boolean trim) {
         this.trim = trim;
     }

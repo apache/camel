@@ -40,6 +40,9 @@ public class UniVocityHeader {
         return name;
     }
 
+    /**
+     * Header name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -48,6 +51,9 @@ public class UniVocityHeader {
         return length;
     }
 
+    /**
+     * Header length
+     */
     public void setLength(Integer length) {
         this.length = length;
     }

@@ -41,15 +41,15 @@ public class XPathExpression extends NamespaceAwareExpression {
     private String documentTypeName;
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
-    @XmlAttribute(name = "saxon")
+    @XmlAttribute
     private Boolean saxon;
-    @XmlAttribute(name = "factoryRef")
+    @XmlAttribute
     private String factoryRef;
-    @XmlAttribute(name = "objectModel")
+    @XmlAttribute
     private String objectModel;
-    @XmlAttribute(name = "logNamespaces")
+    @XmlAttribute
     private Boolean logNamespaces;
-    @XmlAttribute(name = "headerName")
+    @XmlAttribute
     private String headerName;
     @XmlTransient
     private Class<?> documentType;
@@ -77,6 +77,11 @@ public class XPathExpression extends NamespaceAwareExpression {
         return documentType;
     }
 
+    /**
+     * Class for document type to use
+     * <p/>
+     * The default value is org.w3c.dom.Document
+     */
     public void setDocumentType(Class<?> documentType) {
         this.documentType = documentType;
     }
@@ -85,6 +90,11 @@ public class XPathExpression extends NamespaceAwareExpression {
         return documentTypeName;
     }
 
+    /**
+     * Name of class for document type
+     * <p/>
+     * The default value is org.w3c.dom.Document
+     */
     public void setDocumentTypeName(String documentTypeName) {
         this.documentTypeName = documentTypeName;
     }
@@ -93,6 +103,11 @@ public class XPathExpression extends NamespaceAwareExpression {
         return resultType;
     }
 
+    /**
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -101,10 +116,18 @@ public class XPathExpression extends NamespaceAwareExpression {
         return resultTypeName;
     }
 
+    /**
+     * Sets the class name of the result type (type from output)
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
     }
 
+    /**
+     * Whether to use Saxon.
+     */
     public void setSaxon(Boolean saxon) {
         this.saxon = saxon;
     }
@@ -117,6 +140,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return saxon != null && saxon;
     }
 
+    /**
+     * References to a custom XPathFactory to lookup in the registry
+     */
     public void setFactoryRef(String factoryRef) {
         this.factoryRef = factoryRef;
     }
@@ -125,6 +151,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return factoryRef;
     }
 
+    /**
+     * The XPath object model to use
+     */
     public void setObjectModel(String objectModel) {
         this.objectModel = objectModel;
     }
@@ -133,6 +162,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return objectModel;
     }
 
+    /**
+     * Whether to log namespaces which can assist during trouble shooting
+     */
     public void setLogNamespaces(Boolean logNamespaces) {
         this.logNamespaces = logNamespaces;
     }
@@ -149,6 +181,9 @@ public class XPathExpression extends NamespaceAwareExpression {
         return headerName;
     }
 
+    /**
+     * Name of header to use as input, instead of the message body
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

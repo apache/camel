@@ -77,6 +77,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return nullValue;
     }
 
+    /**
+     * The string representation of a null value.
+     * <p/>
+     * The default value is null
+     */
     public void setNullValue(String nullValue) {
         this.nullValue = nullValue;
     }
@@ -85,6 +90,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return skipEmptyLines;
     }
 
+    /**
+     * Whether or not the empty lines must be ignored.
+     * <p/>
+     * The default value is true
+     */
     public void setSkipEmptyLines(Boolean skipEmptyLines) {
         this.skipEmptyLines = skipEmptyLines;
     }
@@ -93,6 +103,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return ignoreTrailingWhitespaces;
     }
 
+    /**
+     * Whether or not the trailing white spaces must ignored.
+     * <p/>
+     * The default value is true
+     */
     public void setIgnoreTrailingWhitespaces(Boolean ignoreTrailingWhitespaces) {
         this.ignoreTrailingWhitespaces = ignoreTrailingWhitespaces;
     }
@@ -101,6 +116,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return ignoreLeadingWhitespaces;
     }
 
+    /**
+     * Whether or not the leading white spaces must be ignored.
+     * <p/>
+     * The default value is true
+     */
     public void setIgnoreLeadingWhitespaces(Boolean ignoreLeadingWhitespaces) {
         this.ignoreLeadingWhitespaces = ignoreLeadingWhitespaces;
     }
@@ -109,6 +129,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return headersDisabled;
     }
 
+    /**
+     * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header.
+     * <p/>
+     * The default value is false
+     */
     public void setHeadersDisabled(Boolean headersDisabled) {
         this.headersDisabled = headersDisabled;
     }
@@ -117,6 +142,9 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return headers;
     }
 
+    /**
+     * The headers to use.
+     */
     public void setHeaders(List<UniVocityHeader> headers) {
         this.headers = headers;
     }
@@ -125,6 +153,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return headerExtractionEnabled;
     }
 
+    /**
+     * Whether or not the header must be read in the first line of the test document
+     * <p/>
+     * The default value is false
+     */
     public void setHeaderExtractionEnabled(Boolean headerExtractionEnabled) {
         this.headerExtractionEnabled = headerExtractionEnabled;
     }
@@ -133,6 +166,9 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return numberOfRecordsToRead;
     }
 
+    /**
+     * The maximum number of record to read.
+     */
     public void setNumberOfRecordsToRead(Integer numberOfRecordsToRead) {
         this.numberOfRecordsToRead = numberOfRecordsToRead;
     }
@@ -141,6 +177,9 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return emptyValue;
     }
 
+    /**
+     * The String representation of an empty value
+     */
     public void setEmptyValue(String emptyValue) {
         this.emptyValue = emptyValue;
     }
@@ -149,6 +188,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return lineSeparator;
     }
 
+    /**
+     * The line separator of the files
+     * <p/>
+     * The default value is to use the JVM platform line separator
+     */
     public void setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;
     }
@@ -157,6 +201,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return normalizedLineSeparator;
     }
 
+    /**
+     * The normalized line separator of the files
+     * <p/>
+     * The default value is \n
+     */
     public void setNormalizedLineSeparator(String normalizedLineSeparator) {
         this.normalizedLineSeparator = normalizedLineSeparator;
     }
@@ -165,6 +214,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return comment;
     }
 
+    /**
+     * The comment symbol.
+     * <p/>
+     * The default value is #
+     */
     public void setComment(String comment) {
         this.comment = comment;
     }
@@ -173,6 +227,11 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return lazyLoad;
     }
 
+    /**
+     * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
+     * <p/>
+     * The default value is false
+     */
     public void setLazyLoad(Boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
     }
@@ -181,6 +240,12 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         return asMap;
     }
 
+    /**
+     * Whether the unmarshalling should produce maps for the lines values instead of lists.
+     * It requires to have header (either defined or collected).
+     * <p/>
+     * The default value is false
+     */
     public void setAsMap(Boolean asMap) {
         this.asMap = asMap;
     }

@@ -84,7 +84,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
     public String getEncoding() {
         return encoding;
     }
-    
+
+    /**
+     * Sets the encoding to use
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -93,6 +96,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return driver;
     }
 
+    /**
+     * To use a custom XStream driver.
+     * The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver
+     */
     public void setDriver(String driver) {
         this.driver = driver;
     }
@@ -101,6 +108,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return driverRef;
     }
 
+    /**
+     * To refer to a custom XStream driver to lookup in the registry.
+     * The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver
+     */
     public void setDriverRef(String driverRef) {
         this.driverRef = driverRef;
     }
@@ -109,6 +120,17 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return mode;
     }
 
+    /**
+     * Mode for dealing with duplicate references The possible values are:
+     * <ul>
+     *     <li>NO_REFERENCES</li>
+     *     <li>ID_REFERENCES</li>
+     *     <li>XPATH_RELATIVE_REFERENCES</li>
+     *     <li>XPATH_ABSOLUTE_REFERENCES</li>
+     *     <li>SINGLE_NODE_XPATH_RELATIVE_REFERENCES</li>
+     *     <li>SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES</li>
+     * </ul>
+     */
     public void setMode(String mode) {
         this.mode = mode;
     }
@@ -117,6 +139,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return converters;
     }
 
+    /**
+     * List of class names for using custom XStream converters.
+     * The classes must be of type com.thoughtworks.xstream.converters.Converter
+     */
     public void setConverters(List<String> converters) {
         this.converters = converters;
     }
@@ -125,6 +151,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return aliases;
     }
 
+    /**
+     * Alias a Class to a shorter name to be used in XML elements.
+     */
     public void setAliases(Map<String, String> aliases) {
         this.aliases = aliases;
     }
@@ -133,6 +162,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return omitFields;
     }
 
+    /**
+     * Prevents a field from being serialized. To omit a field you must always provide the
+     * declaring type and not necessarily the type that is converted.
+     */
     public void setOmitFields(Map<String, String[]> omitFields) {
         this.omitFields = omitFields;
     }
@@ -141,6 +174,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return implicitCollections;
     }
 
+    /**
+     * Adds a default implicit collection which is used for any unmapped XML tag.
+     */
     public void setImplicitCollections(Map<String, String[]> implicitCollections) {
         this.implicitCollections = implicitCollections;
     }

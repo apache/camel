@@ -59,22 +59,37 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         return headerName;
     }
 
+    /**
+     * Name of header to tokenize instead of using the message body.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
     }
 
     public String getMode() {
         return mode;
     }
 
+    /**
+     * The extraction mode. The available extraction modes are:
+     * <ul>
+     *     <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
+     *     <li>w - wrapping the extracted token in its ancestor context</li>
+     *     <li>u - unwrapping the extracted token to its child content</li>
+     *     <li>t - extracting the text content of the specified element</li>
+     * </ul>
+     */
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
     public Integer getGroup() {
         return group;
     }
 
+    /**
+     * To group N parts together
+     */
     public void setGroup(Integer group) {
         this.group = group;
     }

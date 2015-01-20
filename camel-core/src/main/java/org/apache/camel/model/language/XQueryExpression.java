@@ -59,6 +59,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return type;
     }
 
+    /**
+     * Sets the class name of the result type (type from output)
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setType(String type) {
         this.type = type;
     }
@@ -67,6 +72,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return resultType;
     }
 
+    /**
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is NodeSet
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -75,6 +85,9 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return headerName;
     }
 
+    /**
+     * Name of header to use as input, instead of the message body
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

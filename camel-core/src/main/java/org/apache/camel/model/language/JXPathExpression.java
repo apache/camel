@@ -54,6 +54,13 @@ public class JXPathExpression extends ExpressionDefinition {
         return lenient;
     }
 
+    /**
+     * Allows to turn lenient on the JXPathContext.
+     * When turned on this allows the JXPath expression to evaluate against expressions and message bodies which may
+     * be invalid / missing data.
+     * <p/>
+     * This option is by default false
+     */
     public void setLenient(Boolean lenient) {
         this.lenient = lenient;
     }

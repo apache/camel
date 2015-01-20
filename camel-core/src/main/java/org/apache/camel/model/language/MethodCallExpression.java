@@ -101,6 +101,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return bean;
     }
 
+    /**
+     * Either a reference or a class name of the bean to use
+     */
     public void setBean(String bean) {
         this.bean = bean;
     }
@@ -109,6 +112,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return ref;
     }
 
+    /**
+     * Reference to bean to lookup in the registry
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -117,6 +123,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return method;
     }
 
+    /**
+     * Name of method to call
+     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -134,6 +143,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return beanTypeName;
     }
 
+    /**
+     * Class name of the bean to use
+     */
     public void setBeanTypeName(String beanTypeName) {
         this.beanTypeName = beanTypeName;
     }

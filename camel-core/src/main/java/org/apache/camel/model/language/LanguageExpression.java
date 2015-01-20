@@ -48,6 +48,9 @@ public class LanguageExpression extends ExpressionDefinition {
         return language;
     }
 
+    /**
+     * The name of the language to use
+     */
     public void setLanguage(String language) {
         this.language = language;
     }

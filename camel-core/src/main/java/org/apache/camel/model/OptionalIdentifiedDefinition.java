@@ -40,16 +40,13 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private Boolean customId;
     private DescriptionDefinition description;
 
-    /**
-     * Gets the value of the id property.
-     */
     @Override
     public String getId() {
         return id;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the id of this node
      */
     @XmlAttribute
     public void setId(String value) {

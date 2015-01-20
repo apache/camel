@@ -62,6 +62,9 @@ public class SimpleExpression extends ExpressionDefinition {
         return resultType;
     }
 
+    /**
+     * Sets the class of the result type (type from output)
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
@@ -70,6 +73,9 @@ public class SimpleExpression extends ExpressionDefinition {
         return resultTypeName;
     }
 
+    /**
+     * Sets the class name of the result type (type from output)
+     */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
     }
