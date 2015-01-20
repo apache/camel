@@ -19,7 +19,6 @@ package org.apache.camel.model.config;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,7 +38,10 @@ public class PropertiesDefinition {
     
     public PropertiesDefinition() {
     }
-    
+
+    /**
+     * A series of properties as key value pairs
+     */
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;
     }

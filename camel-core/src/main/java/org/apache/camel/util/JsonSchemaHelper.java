@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public final class JsonSchemaHelper {
 
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"");
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
 
     private JsonSchemaHelper() {
     }
@@ -158,6 +158,15 @@ public final class JsonSchemaHelper {
                     key = matcher.group(1);
                 } else {
                     String value = matcher.group(1);
+                    if (value == null) {
+                        value = matcher.group(2);
+                        // its an enum so strip out " and trim spaces after comma
+                        value = value.replaceAll("\"", "");
+                        value = value.replaceAll(", ", ",");
+                    }
+                    if (value != null) {
+                        value = value.trim();
+                    }
                     row.put(key, value);
                     // reset
                     key = null;

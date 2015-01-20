@@ -102,6 +102,10 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return ref;
     }
 
+    /**
+     * To use a custom load balancer.
+     * This option is deprecated, use the custom load balancer type instead.
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -110,6 +114,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return loadBalancerType;
     }
 
+    /**
+     * The load balancer to be used
+     */
     public void setLoadBalancerType(LoadBalancerDefinition loadbalancer) {
         if (loadBalancerType != null) {
             throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + loadbalancer);
