@@ -77,6 +77,15 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     }
 
     /**
+     * Expression to return the value of the header
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
+    /**
      * Name of message header to set a new value
      */
     @Required

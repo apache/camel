@@ -77,6 +77,15 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     }
 
     /**
+     * Expression to return the value of the message exchange property
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
+    /**
      * Name of exchange property to set a new value
      */
     @Required

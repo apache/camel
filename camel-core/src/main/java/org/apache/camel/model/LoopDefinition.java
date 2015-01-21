@@ -96,5 +96,15 @@ public class LoopDefinition extends ExpressionNode {
         boolean isCopy = getCopy() != null && getCopy();
         return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy);
     }
-    
+
+    /**
+     * Expression to define how many times we should loop. Notice the expression is only evaluated once, and should return
+     * a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion,
+     * if you want a while loop, then the dynamic router may be a better choice.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 }

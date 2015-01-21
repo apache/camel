@@ -251,7 +251,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                     processOutputs(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
 
                     // special for expression
-                    processExpression(roundEnv, elementRef, fieldElement, fieldName, eipOptions, prefix);
+                    processRefExpression(roundEnv, originalClassType, classElement, elementRef, fieldElement, fieldName, eipOptions, prefix);
                 }
             }
 
@@ -555,8 +555,11 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     /**
      * Special for processing an @XmlElementRef expression field
      */
-    private void processExpression(RoundEnvironment roundEnv, XmlElementRef elementRef, VariableElement fieldElement,
-                                   String fieldName, Set<EipOption> eipOptions, String prefix) {
+    private void processRefExpression(RoundEnvironment roundEnv, TypeElement originalClassElement, TypeElement classElement,
+                                      XmlElementRef elementRef, VariableElement fieldElement,
+                                      String fieldName, Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
         if ("expression".equals(fieldName)) {
             String kind = "element";
             String name = elementRef.name();
@@ -566,6 +569,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             name = prefix + name;
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
+
+            // find javadoc from original class as it will override the setExpression method where we can provide the javadoc for the given EIP
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassElement, true);
 
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
@@ -586,7 +592,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", deprecated, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, deprecated, false, null, true, oneOfTypes);
             eipOptions.add(ep);
         }
     }

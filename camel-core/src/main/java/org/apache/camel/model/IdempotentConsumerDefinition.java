@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Label;
@@ -133,6 +134,16 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     public IdempotentConsumerDefinition skipDuplicate(boolean skipDuplicate) {
         setSkipDuplicate(skipDuplicate);
         return this;
+    }
+
+    /**
+     * Expression used to calculate the correlation key to use for duplicate check.
+     * The Exchange which has the same correlation key is regarded as a duplicate and will be rejected.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public String getMessageIdRepositoryRef() {

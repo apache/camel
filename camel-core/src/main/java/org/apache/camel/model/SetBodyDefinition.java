@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
@@ -56,5 +57,13 @@ public class SetBodyDefinition extends NoOutputExpressionNode {
         Expression expr = getExpression().createExpression(routeContext);
         return new SetBodyProcessor(expr);
     }
-    
+
+    /**
+     * Expression that returns the new body to use
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 }

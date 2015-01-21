@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
@@ -91,6 +92,15 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
             exp = getExpression().createExpression(routeContext);
         }
         return new SortProcessor<T>(exp, getComparator());
+    }
+
+    /**
+     * Optional expression to sort by something else than the message body
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public Comparator<? super T> getComparator() {

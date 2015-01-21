@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
@@ -48,6 +49,15 @@ public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
                 return delegate.toString();
             }
         };
+    }
+
+    /**
+     * Expression used as the predicate to evaluate whether the message should be sent or not to the endpoint
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
 }

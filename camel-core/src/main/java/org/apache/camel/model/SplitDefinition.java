@@ -100,7 +100,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, true);
         aggregationStrategy = createAggregationStrategy(routeContext);
 
-
         boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
         boolean isStreaming = getStreaming() != null && getStreaming();
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
@@ -336,6 +335,15 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     // Properties
     //-------------------------------------------------------------------------
+
+    /**
+     * Expression of how to split the message body, such as as-is, using a tokenizer, or using an xpath.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;

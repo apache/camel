@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.RouteContext;
 
@@ -56,5 +57,12 @@ public class SetFaultBodyDefinition extends NoOutputExpressionNode {
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setFaultBody(expr);
     }
-    
+
+    /**
+     * Expression that returns the new fault body to use
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        super.setExpression(expression);
+    }
 }

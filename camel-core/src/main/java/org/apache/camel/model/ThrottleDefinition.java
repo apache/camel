@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
@@ -199,11 +199,18 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setExecutorServiceRef(executorServiceRef);
         return this;
     }
-    
-    
 
     // Properties
     // -------------------------------------------------------------------------
+
+    /**
+     * Expression to configure the maximum number of messages to throttle per request
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 
     public Long getTimePeriodMillis() {
         return timePeriodMillis;

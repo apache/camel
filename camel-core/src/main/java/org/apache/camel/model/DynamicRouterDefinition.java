@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
@@ -77,6 +78,18 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
             dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
         }
         return dynamicRouter;
+    }
+
+    /**
+     * Expression to call that returns the endpoint(s) to route to in the dynamic routing.
+     * <p/>
+     * <b>Important:</b> The expression will be called in a while loop fashion, until the expression returns <tt>null</tt>
+     * which means the dynamic router is finished.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public void setUriDelimiter(String uriDelimiter) {

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.Label;
@@ -98,6 +99,16 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
+    }
+
+    /**
+     * Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.
+     * Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a better choice.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public void setUriDelimiter(String uriDelimiter) {

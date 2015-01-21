@@ -74,6 +74,15 @@ public class WhenDefinition extends ExpressionNode {
         return createFilterProcessor(routeContext);
     }
 
+    /**
+     * Expression used as the predicate to evaluate whether this when should trigger and route the message or not.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
     @Override
     public ProcessorDefinition<?> endParent() {
         // when using when in the DSL we don't want to end back to this when, but instead

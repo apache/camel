@@ -156,6 +156,15 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     // Properties
     // -------------------------------------------------------------------------
 
+    /**
+     * Expression to define how long time to wait (in millis)
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
     public Boolean getAsyncDelayed() {
         return asyncDelayed;
     }
