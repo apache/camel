@@ -35,7 +35,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -44,7 +43,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {

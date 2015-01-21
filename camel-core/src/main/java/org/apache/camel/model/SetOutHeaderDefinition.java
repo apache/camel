@@ -25,7 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @deprecated not really needed, will be removed in the future
  */
-@Label("eip,transformation")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setOutHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated

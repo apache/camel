@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateSyncProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("eip,transformation")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {

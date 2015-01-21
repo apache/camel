@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -27,7 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -35,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Balances message processing among a number of nodes
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalancerDefinition extends IdentifiedType implements LoadBalancer {

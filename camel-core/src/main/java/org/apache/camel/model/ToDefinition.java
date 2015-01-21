@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Sends the message to an endpoint
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {

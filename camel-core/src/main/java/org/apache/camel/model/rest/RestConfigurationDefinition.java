@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelContextHelper;
@@ -35,7 +34,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * To configure rest
  */
-@Label("rest")
+@Metadata(label = "rest")
 @XmlRootElement(name = "restConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestConfigurationDefinition {

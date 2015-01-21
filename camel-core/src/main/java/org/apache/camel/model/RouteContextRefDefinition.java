@@ -17,21 +17,20 @@
 package org.apache.camel.model;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * To refer to an XML file with routes defined using the xml-dsl
  *
  * @version 
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "routeContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteContextRefDefinition {

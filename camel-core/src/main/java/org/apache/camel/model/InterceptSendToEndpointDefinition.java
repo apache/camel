@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.URISupport;
@@ -39,7 +39,7 @@ import org.apache.camel.util.URISupport;
  *
  * @version 
  */
-@Label("eip,intercepting")
+@Metadata(label = "eip,intercepting")
 @XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {

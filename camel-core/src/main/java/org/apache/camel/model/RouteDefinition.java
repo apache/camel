@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -47,7 +46,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -61,7 +59,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs"})
 @XmlAccessorType(XmlAccessType.PROPERTY)

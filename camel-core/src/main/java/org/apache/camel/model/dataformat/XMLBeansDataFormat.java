@@ -22,14 +22,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * XMLBeans data format
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "xmlBeans")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLBeansDataFormat extends DataFormatDefinition {

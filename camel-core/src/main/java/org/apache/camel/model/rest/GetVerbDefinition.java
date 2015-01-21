@@ -20,12 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Rest GET command
  */
-@Label("rest")
+@Metadata(label = "rest")
 @XmlRootElement(name = "get")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetVerbDefinition extends VerbDefinition {

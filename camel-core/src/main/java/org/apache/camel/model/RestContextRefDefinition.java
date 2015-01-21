@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * To refer to an XML file with rest services defined using the rest-dsl
  *
  * @version 
  */
-@Label("rest")
+@Metadata(label = "rest")
 @XmlRootElement(name = "restContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestContextRefDefinition {

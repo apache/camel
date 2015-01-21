@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.AOPProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -36,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
  * {@link org.apache.camel.spi.InterceptStrategy} to do AOP in Camel.
  * @version 
  */
-@Label("eip,intercepting")
+@Metadata(label = "eip,intercepting")
 @XmlRootElement(name = "aop")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated

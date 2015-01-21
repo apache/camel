@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -39,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {

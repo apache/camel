@@ -17,7 +17,6 @@
 package org.apache.camel.model.language;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -33,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
@@ -48,7 +46,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("language")
+@Metadata(label = "language")
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)

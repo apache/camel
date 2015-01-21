@@ -31,7 +31,7 @@ import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("eip,endpoints")
+@Metadata(label = "eip,endpoints")
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {

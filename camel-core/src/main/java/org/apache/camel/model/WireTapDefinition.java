@@ -34,7 +34,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -42,7 +41,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
  */
-@Label("eip,management")
+@Metadata(label = "eip,management")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<WireTapDefinition<Type>>

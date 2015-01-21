@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -27,14 +26,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * A series of Camel routes
  *
  * @version 
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> implements RouteContainer {

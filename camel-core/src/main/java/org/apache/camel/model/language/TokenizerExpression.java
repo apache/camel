@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -33,7 +33,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @see TokenizeLanguage
  */
-@Label("language")
+@Metadata(label = "language")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {

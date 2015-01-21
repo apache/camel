@@ -41,7 +41,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
@@ -50,7 +50,7 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {

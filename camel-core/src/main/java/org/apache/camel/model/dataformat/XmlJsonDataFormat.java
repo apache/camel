@@ -19,7 +19,6 @@ package org.apache.camel.model.dataformat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,14 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * xml-json data format
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "xmljson")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlJsonDataFormat extends DataFormatDefinition {

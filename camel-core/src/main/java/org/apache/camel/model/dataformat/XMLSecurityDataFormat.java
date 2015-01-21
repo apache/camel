@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
@@ -35,7 +34,7 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 /**
  * xml-security data format
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {

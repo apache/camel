@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -30,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version
  */
-@Label("eip,policy")
+@Metadata(label = "eip,policy")
 @XmlRootElement(name = "optimisticLockRetryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {

@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.FinallyProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("eip,errorHandler")
+@Metadata(label = "eip,errorHandler")
 @XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {

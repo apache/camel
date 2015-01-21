@@ -24,13 +24,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.TransformProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Transforms the message body based on an expression
  */
-@Label("eip,transformation")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformDefinition extends NoOutputExpressionNode {

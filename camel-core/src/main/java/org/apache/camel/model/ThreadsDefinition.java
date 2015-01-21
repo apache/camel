@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,7 +34,6 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -45,7 +43,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {

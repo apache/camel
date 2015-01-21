@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -32,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "castor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CastorDataFormat extends DataFormatDefinition {

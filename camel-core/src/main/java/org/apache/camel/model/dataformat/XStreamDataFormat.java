@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,7 +35,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)
 public class XStreamDataFormat extends DataFormatDefinition {

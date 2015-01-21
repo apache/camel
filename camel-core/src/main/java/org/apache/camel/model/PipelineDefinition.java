@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "pipeline")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {

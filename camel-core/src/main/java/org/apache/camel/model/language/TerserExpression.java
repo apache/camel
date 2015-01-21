@@ -20,14 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * For HL7 terser expressions and predicates
  *
  * @version 
  */
-@Label("language,hl7")
+@Metadata(label = "language,hl7")
 @XmlRootElement(name = "terser")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerserExpression extends ExpressionDefinition {

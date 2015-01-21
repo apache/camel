@@ -18,7 +18,6 @@ package org.apache.camel.model.dataformat;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,13 +26,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 

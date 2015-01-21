@@ -45,8 +45,6 @@ import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.getOrElse;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
 
-// TODO: add support for @Label
-
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
  */

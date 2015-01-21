@@ -26,14 +26,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ConvertBodyProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Converts the message body to another type
  */
-@Label("eip,transformation")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {

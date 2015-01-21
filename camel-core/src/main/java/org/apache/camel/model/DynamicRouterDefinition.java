@@ -27,14 +27,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.DynamicRouter;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Routes messages based on dynamic rules
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {

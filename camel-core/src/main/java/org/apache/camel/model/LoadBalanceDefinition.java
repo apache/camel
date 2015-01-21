@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,14 +48,14 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Balances message processing among a number of nodes
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {

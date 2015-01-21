@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ThrowExceptionProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Throws an exception
  */
-@Label("eip,errorHandler")
+@Metadata(label = "eip,errorHandler")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {

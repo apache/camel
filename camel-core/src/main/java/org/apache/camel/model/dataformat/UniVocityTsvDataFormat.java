@@ -23,13 +23,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
  * UniVocity TSV data format
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "univocity-tsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {

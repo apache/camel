@@ -25,14 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Google protobuf data format
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "protobuf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProtobufDataFormat extends DataFormatDefinition {

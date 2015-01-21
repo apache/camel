@@ -41,7 +41,7 @@ import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
@@ -52,7 +52,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("eip, errorHandler")
+@Metadata(label = "eip, errorHandler")
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {

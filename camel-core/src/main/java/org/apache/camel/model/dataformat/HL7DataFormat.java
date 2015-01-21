@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Label("dataformat,transformation,hl7")
+@Metadata(label = "dataformat,transformation,hl7")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {

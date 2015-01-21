@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,7 +36,7 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -48,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {

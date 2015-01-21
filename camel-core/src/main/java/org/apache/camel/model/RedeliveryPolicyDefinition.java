@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.RedeliveryPolicy;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("eip,policy")
+@Metadata(label = "eip,policy")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition {

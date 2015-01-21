@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -39,7 +38,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Defines a rest service using the rest-dsl
  */
-@Label("rest")
+@Metadata(label = "rest")
 @XmlRootElement(name = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> {

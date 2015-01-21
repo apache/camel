@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ExchangePatternProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Label("mep")
+@Metadata(label = "mep")
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {

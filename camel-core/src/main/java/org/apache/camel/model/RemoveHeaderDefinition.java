@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RemoveHeaderProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Removes a named header from the message
  */
-@Label("eip,transformation")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {

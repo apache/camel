@@ -20,12 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * For using a custom expression
  */
-@Label("language")
+@Metadata(label = "language")
 @XmlRootElement(name = "ref")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RefExpression extends ExpressionDefinition {

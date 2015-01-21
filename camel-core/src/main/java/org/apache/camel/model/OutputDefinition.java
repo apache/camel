@@ -18,20 +18,19 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * A useful base class for output types
  *
  * @version 
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {

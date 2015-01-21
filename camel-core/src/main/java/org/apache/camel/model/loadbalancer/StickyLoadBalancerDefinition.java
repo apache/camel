@@ -25,7 +25,7 @@ import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  * Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing;
  * rather like jsessionid in the web or JMSXGroupID in JMS.
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {

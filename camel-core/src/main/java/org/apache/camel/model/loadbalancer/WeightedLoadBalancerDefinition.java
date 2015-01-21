@@ -28,7 +28,6 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -40,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
  * with respect to others. In addition to the weight, endpoint selection is then further refined using
  * random distribution based on weight.
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {

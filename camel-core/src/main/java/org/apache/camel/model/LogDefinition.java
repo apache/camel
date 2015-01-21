@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +27,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.LogProcessor;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -42,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Label("eip,management")
+@Metadata(label = "eip,management")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {

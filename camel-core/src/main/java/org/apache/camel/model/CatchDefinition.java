@@ -31,7 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
@@ -40,7 +40,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @version 
  */
-@Label("eip,errorHandler")
+@Metadata(label = "eip,errorHandler")
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {

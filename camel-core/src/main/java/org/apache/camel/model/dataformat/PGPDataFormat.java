@@ -24,13 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
  * PGP data format
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "pgp")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PGPDataFormat extends DataFormatDefinition {

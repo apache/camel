@@ -27,13 +27,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.XPathBuilder;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * For XPath expressions and predicates
  */
-@Label("language")
+@Metadata(label = "language")
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {

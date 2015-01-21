@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * The random load balancer selects a random endpoint for each exchange.
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "random")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {

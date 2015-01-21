@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
@@ -108,6 +107,10 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         }
 
         final XmlRootElement rootElement = classElement.getAnnotation(XmlRootElement.class);
+        if (rootElement == null) {
+            return;
+        }
+
         String aName = rootElement.name();
         if (isNullOrEmpty(aName) || "##default".equals(aName)) {
             XmlType typeElement = classElement.getAnnotation(XmlType.class);
@@ -184,11 +187,6 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         EipModel model = new EipModel();
         model.setJavaType(javaTypeName);
         model.setName(name);
-
-        Label label = classElement.getAnnotation(Label.class);
-        if (label != null) {
-            model.setLabel(label.value());
-        }
 
         Metadata metadata = classElement.getAnnotation(Metadata.class);
         if (metadata != null) {

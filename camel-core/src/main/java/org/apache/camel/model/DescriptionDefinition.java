@@ -22,14 +22,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * To provide comments about the node.
  *
  * @version 
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescriptionDefinition {

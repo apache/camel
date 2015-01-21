@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * The topic load balancer sends to all destinations (rather like JMS Topics)
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "topic")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {

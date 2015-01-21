@@ -24,14 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * For JXPath expressions and predicates
  *
  * @version 
  */
-@Label("language")
+@Metadata(label = "language")
 @XmlRootElement(name = "jxpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JXPathExpression extends ExpressionDefinition {

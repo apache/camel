@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Custom load balancer
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "customLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {

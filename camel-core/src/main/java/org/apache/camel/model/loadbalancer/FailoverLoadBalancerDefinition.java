@@ -18,7 +18,6 @@ package org.apache.camel.model.loadbalancer;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -40,7 +38,7 @@ import org.apache.camel.spi.RouteContext;
  * If you do not specify a list any exception will cause fail over to occur.
  * This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {

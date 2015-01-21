@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RemovePropertyProcessor;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Removes a named property from the message exchange
  */
-@Label("eip,transformation")
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {

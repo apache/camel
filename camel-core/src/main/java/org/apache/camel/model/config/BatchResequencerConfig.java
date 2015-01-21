@@ -21,13 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Configures batch-processing resequence eip.
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "batch-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {

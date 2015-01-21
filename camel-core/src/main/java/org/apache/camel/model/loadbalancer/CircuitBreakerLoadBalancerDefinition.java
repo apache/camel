@@ -18,7 +18,6 @@ package org.apache.camel.model.loadbalancer;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -41,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
  * timeout is reached. After this timeout is reached, if there is a new call, it will pass and if the result is
  * success the Circuit Breaker will move to closed state, or to open state if there was an error.
  */
-@Label("eip,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition {

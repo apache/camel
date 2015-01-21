@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Label("dataformat,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {

@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -35,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Filters out duplicate messages
  */
-@Label("eip,endpoints")
+@Metadata(label = "eip,endpoints")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {

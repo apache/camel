@@ -21,12 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * A key value pair
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyDefinition {

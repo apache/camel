@@ -26,14 +26,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 
 /**
  * To configure thread pools
  *
  * @version 
  */
-@Label("configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<ThreadPoolProfileDefinition> {

@@ -27,13 +27,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Rest command
  */
-@Label("rest")
+@Metadata(label = "rest")
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> {
