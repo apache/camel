@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * A series of key value pair
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration,resequence")
 @XmlRootElement(name = "properties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertiesDefinition {

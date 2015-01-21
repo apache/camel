@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "rest")
+@Metadata(label = "configuration,rest")
 @XmlRootElement(name = "restContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestContextRefDefinition {

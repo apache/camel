@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,policy")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition {

@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Routes messages based on dynamic rules
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {

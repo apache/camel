@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {

@@ -39,7 +39,7 @@ import org.apache.camel.util.URISupport;
  *
  * @version 
  */
-@Metadata(label = "eip,intercepting")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {

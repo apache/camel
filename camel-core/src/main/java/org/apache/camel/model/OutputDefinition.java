@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "configuration")
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {

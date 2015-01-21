@@ -40,7 +40,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @version 
  */
-@Metadata(label = "eip,errorHandler")
+@Metadata(label = "error")
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {

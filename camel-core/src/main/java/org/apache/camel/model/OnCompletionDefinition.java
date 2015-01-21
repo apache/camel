@@ -43,7 +43,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {

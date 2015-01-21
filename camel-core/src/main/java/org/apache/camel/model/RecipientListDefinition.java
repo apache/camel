@@ -44,7 +44,7 @@ import org.apache.camel.util.CamelContextHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition<Type>> {

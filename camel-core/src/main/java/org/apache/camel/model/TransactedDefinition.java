@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {

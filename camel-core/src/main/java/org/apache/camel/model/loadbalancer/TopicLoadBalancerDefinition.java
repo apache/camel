@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * The topic load balancer sends to all destinations (rather like JMS Topics)
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "configuration,loadbalance")
 @XmlRootElement(name = "topic")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {

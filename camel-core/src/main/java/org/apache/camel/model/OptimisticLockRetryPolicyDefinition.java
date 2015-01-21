@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version
  */
-@Metadata(label = "eip,policy")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "optimisticLockRetryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {

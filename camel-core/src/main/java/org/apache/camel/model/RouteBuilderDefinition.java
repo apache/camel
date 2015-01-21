@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,configuration")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteBuilderDefinition extends IdentifiedType {

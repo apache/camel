@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {

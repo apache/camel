@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,endpoints")
+@Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {

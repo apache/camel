@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,policy")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {

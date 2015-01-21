@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {

@@ -52,7 +52,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "eip, errorHandler")
+@Metadata(label = "error")
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {

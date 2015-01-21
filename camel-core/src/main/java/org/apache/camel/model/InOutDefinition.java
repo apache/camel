@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "mep")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOutDefinition extends SendDefinition<InOutDefinition> {

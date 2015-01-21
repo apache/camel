@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * A key value pair
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration,resequence")
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyDefinition {

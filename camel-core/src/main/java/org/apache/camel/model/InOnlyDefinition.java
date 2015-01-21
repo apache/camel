@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "mep")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOnly")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {

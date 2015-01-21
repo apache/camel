@@ -41,7 +41,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
  */
-@Metadata(label = "eip,management")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<WireTapDefinition<Type>>

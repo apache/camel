@@ -39,7 +39,7 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  *
  * @version 
  */
-@Metadata(label = "eip,errorHandler")
+@Metadata(label = "error")
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {

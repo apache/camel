@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Routes a message through a series of steps that are pre-determined (the slip)
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {
