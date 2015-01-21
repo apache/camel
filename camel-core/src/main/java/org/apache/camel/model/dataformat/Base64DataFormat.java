@@ -39,7 +39,7 @@ public class Base64DataFormat extends DataFormatDefinition {
 
     @XmlAttribute @Metadata(defaultValue = "76")
     private Integer lineLength;
-    @XmlAttribute @Metadata(defaultValue = "\r\n")
+    @XmlAttribute @Metadata(defaultValue = "\\r\\n")
     private String lineSeparator;
     @XmlAttribute
     private Boolean urlSafe;

@@ -57,7 +57,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     protected String emptyValue;
     @XmlAttribute
     protected String lineSeparator;
-    @XmlAttribute @Metadata(defaultValue = "\n")
+    @XmlAttribute @Metadata(defaultValue = "\\n")
     protected String normalizedLineSeparator;
     @XmlAttribute @Metadata(defaultValue = "#")
     protected String comment;
