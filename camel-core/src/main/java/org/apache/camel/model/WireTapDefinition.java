@@ -112,8 +112,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
         CamelInternalProcessor internal = new CamelInternalProcessor(target);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
 
+        // is true bt default
+        boolean isCopy = getCopy() == null || getCopy();
+
         WireTapProcessor answer = new WireTapProcessor(endpoint, internal, getPattern(), threadPool, shutdownThreadPool);
-        answer.setCopy(isCopy());
+        answer.setCopy(isCopy);
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.mandatoryLookup(newExchangeProcessorRef, Processor.class);
         }
@@ -401,11 +404,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
 
     public void setCopy(Boolean copy) {
         this.copy = copy;
-    }
-
-    public boolean isCopy() {
-        // should default to true if not configured
-        return copy != null ? copy : true;
     }
 
     public String getOnPrepareRef() {

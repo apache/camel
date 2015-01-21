@@ -40,7 +40,6 @@ public class JsonPathExpression extends ExpressionDefinition {
 
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
-
     @XmlTransient
     private Class<?> resultType;
 

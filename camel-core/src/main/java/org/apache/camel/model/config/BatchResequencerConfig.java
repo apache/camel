@@ -96,10 +96,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
         this.batchTimeout = batchTimeout;
     }
 
-    public boolean isAllowDuplicates() {
-        return allowDuplicates != null && allowDuplicates;
-    }
-
     public Boolean getAllowDuplicates() {
         return allowDuplicates;
     }
@@ -109,10 +105,6 @@ public class BatchResequencerConfig extends ResequencerConfig {
      */
     public void setAllowDuplicates(Boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
-    }
-
-    public boolean isReverse() {
-        return reverse != null && reverse;
     }
 
     public Boolean getReverse() {

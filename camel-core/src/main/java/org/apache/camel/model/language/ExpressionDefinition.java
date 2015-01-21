@@ -35,6 +35,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Label;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -58,7 +59,7 @@ public class ExpressionDefinition implements Expression, Predicate {
     private String id;
     @XmlValue
     private String expression;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean trim;
     @XmlTransient
     private Predicate predicate;
@@ -155,8 +156,10 @@ public class ExpressionDefinition implements Expression, Predicate {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
                 String exp = getExpression();
+                // should be true by default
+                boolean isTrim = getTrim() == null || getTrim();
                 // trim if configured to trim
-                if (exp != null && isTrim()) {
+                if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
                 predicate = language.createPredicate(exp);
@@ -178,8 +181,10 @@ public class ExpressionDefinition implements Expression, Predicate {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
                 String exp = getExpression();
+                // should be true by default
+                boolean isTrim = getTrim() == null || getTrim();
                 // trim if configured to trim
-                if (exp != null && isTrim()) {
+                if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
                 setExpressionValue(language.createExpression(exp));
@@ -234,11 +239,6 @@ public class ExpressionDefinition implements Expression, Predicate {
      */
     public void setTrim(Boolean trim) {
         this.trim = trim;
-    }
-
-    public boolean isTrim() {
-        // trim by default
-        return trim == null || trim;
     }
 
     /**

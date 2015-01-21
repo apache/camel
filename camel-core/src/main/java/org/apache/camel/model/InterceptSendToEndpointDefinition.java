@@ -97,7 +97,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
                 } else if (getUri() == null || matchPattern(routeContext.getCamelContext(), uri, getUri())) {
                     // only proxy if the uri is matched decorate endpoint with our proxy
                     // should be false by default
-                    boolean skip = isSkipSendToOriginalEndpoint();
+                    boolean skip = getSkipSendToOriginalEndpoint() != null && getSkipSendToOriginalEndpoint();
                     InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
                     proxy.setDetour(detour);
                     return proxy;
@@ -217,10 +217,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
     }
     
-    public boolean isSkipSendToOriginalEndpoint() {
-        return skipSendToOriginalEndpoint != null && skipSendToOriginalEndpoint;
-    }
-
     public String getUri() {
         return uri;
     }

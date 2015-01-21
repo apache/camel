@@ -100,11 +100,16 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, true);
         aggregationStrategy = createAggregationStrategy(routeContext);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", this, isParallelProcessing());
+
+        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
+        boolean isStreaming = getStreaming() != null && getStreaming();
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", this, isParallelProcessing);
 
         long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing()) {
+        if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (onPrepareRef != null) {
@@ -114,9 +119,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Expression exp = getExpression().createExpression(routeContext);
 
         Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
-                            isParallelProcessing(), threadPool, shutdownThreadPool, isStreaming(), isStopOnException(),
-                            timeout, onPrepare, isShareUnitOfWork(), isParallelAggregate());
-        if (isShareUnitOfWork()) {
+                            isParallelProcessing, threadPool, shutdownThreadPool, isStreaming, isStopOnException(),
+                            timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
+        if (isShareUnitOfWork) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
             internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
@@ -352,10 +357,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.parallelProcessing = parallelProcessing;
     }
 
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
-    }
-
     public Boolean getStreaming() {
         return streaming;
     }
@@ -364,16 +365,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.streaming = streaming;
     }
 
-    public boolean isStreaming() {
-        return streaming != null && streaming;
-    }
-
     public Boolean getParallelAggregate() {
         return parallelAggregate;
-    }
-
-    public boolean isParallelAggregate() {
-        return parallelAggregate != null && parallelAggregate;
     }
 
     public void setParallelAggregate(Boolean parallelAggregate) {
@@ -475,7 +468,4 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public boolean isShareUnitOfWork() {
-        return shareUnitOfWork != null && shareUnitOfWork;
-    }
 }

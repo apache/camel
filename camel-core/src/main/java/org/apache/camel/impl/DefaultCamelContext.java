@@ -1363,6 +1363,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // extract options from the node
                 Map<String, Object> options = new LinkedHashMap<String, Object>();
                 IntrospectionSupport.getProperties(target, options, "", false);
+                // remove outputs which we do not want to include
+                options.remove("outputs");
 
                 // include other rows
                 for (Map<String, String> row : rows) {

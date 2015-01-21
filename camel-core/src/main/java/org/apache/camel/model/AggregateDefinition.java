@@ -171,9 +171,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, isParallelProcessing());
-        if (threadPool == null && !isParallelProcessing()) {
+        boolean parallel = getParallelProcessing() != null && getParallelProcessing();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, parallel);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this, parallel);
+        if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
             // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
             threadPool = new SynchronousExecutorService();
@@ -208,8 +209,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
         // set other options
-        answer.setParallelProcessing(isParallelProcessing());
-        answer.setOptimisticLocking(isOptimisticLocking());
+        answer.setParallelProcessing(parallel);
+        if (getOptimisticLocking() != null) {
+            answer.setOptimisticLocking(getOptimisticLocking());
+        }
         if (getCompletionPredicate() != null) {
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
@@ -232,19 +235,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             answer.setCompletionSize(getCompletionSize());
         }
         if (getCompletionFromBatchConsumer() != null) {
-            answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
+            answer.setCompletionFromBatchConsumer(getCompletionFromBatchConsumer());
         }
         if (getEagerCheckCompletion() != null) {
-            answer.setEagerCheckCompletion(isEagerCheckCompletion());
+            answer.setEagerCheckCompletion(getEagerCheckCompletion());
         }
         if (getIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreInvalidCorrelationKeys(isIgnoreInvalidCorrelationKeys());
+            answer.setIgnoreInvalidCorrelationKeys(getIgnoreInvalidCorrelationKeys());
         }
         if (getCloseCorrelationKeyOnCompletion() != null) {
             answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
         }
         if (getDiscardOnCompletionTimeout() != null) {
-            answer.setDiscardOnCompletionTimeout(isDiscardOnCompletionTimeout());
+            answer.setDiscardOnCompletionTimeout(getDiscardOnCompletionTimeout());
         }
         if (getForceCompletionOnStop() != null) {
             answer.setForceCompletionOnStop(getForceCompletionOnStop());
@@ -489,20 +492,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return groupExchanges;
     }
 
-    public boolean isGroupExchanges() {
-        return groupExchanges != null && groupExchanges;
-    }
-
     public void setGroupExchanges(Boolean groupExchanges) {
         this.groupExchanges = groupExchanges;
     }
 
     public Boolean getCompletionFromBatchConsumer() {
         return completionFromBatchConsumer;
-    }
-
-    public boolean isCompletionFromBatchConsumer() {
-        return completionFromBatchConsumer != null && completionFromBatchConsumer;
     }
 
     public void setCompletionFromBatchConsumer(Boolean completionFromBatchConsumer) {
@@ -525,16 +520,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.optimisticLocking = optimisticLocking;
     }
 
-    public boolean isOptimisticLocking() {
-        return optimisticLocking != null && optimisticLocking;
-    }
-
     public Boolean getParallelProcessing() {
         return parallelProcessing;
-    }
-
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
     }
 
     public void setParallelProcessing(boolean parallelProcessing) {
@@ -553,20 +540,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return eagerCheckCompletion;
     }
 
-    public boolean isEagerCheckCompletion() {
-        return eagerCheckCompletion != null && eagerCheckCompletion;
-    }
-
     public void setEagerCheckCompletion(Boolean eagerCheckCompletion) {
         this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
     public Boolean getIgnoreInvalidCorrelationKeys() {
         return ignoreInvalidCorrelationKeys;
-    }
-
-    public boolean isIgnoreInvalidCorrelationKeys() {
-        return ignoreInvalidCorrelationKeys != null && ignoreInvalidCorrelationKeys;
     }
 
     public void setIgnoreInvalidCorrelationKeys(Boolean ignoreInvalidCorrelationKeys) {
@@ -601,10 +580,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return discardOnCompletionTimeout;
     }
 
-    public boolean isDiscardOnCompletionTimeout() {
-        return discardOnCompletionTimeout != null && discardOnCompletionTimeout;
-    }
-
     public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
@@ -625,13 +600,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return timeoutCheckerExecutorServiceRef;
     }
 
-
     public Boolean getForceCompletionOnStop() {
         return forceCompletionOnStop;
-    }
-
-    public boolean isForceCompletionOnStop() {
-        return forceCompletionOnStop != null && forceCompletionOnStop;
     }
 
     public void setForceCompletionOnStop(Boolean forceCompletionOnStop) {

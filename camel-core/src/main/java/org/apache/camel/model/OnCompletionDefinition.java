@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -120,7 +119,12 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             routeScoped = super.getParent() != null;
         }
 
-        if (isOnCompleteOnly() && isOnFailureOnly()) {
+        boolean isOnCompleteOnly = getOnCompleteOnly() != null && getOnCompleteOnly();
+        boolean isOnFailureOnly = getOnFailureOnly() != null && getOnFailureOnly();
+        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
+        boolean original = getUseOriginalMessagePolicy() != null && getUseOriginalMessagePolicy();
+
+        if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
@@ -140,16 +144,14 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, isParallelProcessing());
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this, isParallelProcessing);
 
         // should be after consumer by default
         boolean afterConsumer = mode == null || mode == OnCompletionMode.AfterConsumer;
 
-        // should be false by default
-        boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;
         OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), internal,
-                threadPool, shutdownThreadPool, isOnCompleteOnly(), isOnFailureOnly(), when, original, afterConsumer);
+                threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when, original, afterConsumer);
         return answer;
     }
 
@@ -209,7 +211,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onCompleteOnly() {
-        if (isOnFailureOnly()) {
+        boolean isOnFailureOnly = getOnFailureOnly() != null && getOnFailureOnly();
+        if (isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to avoid end user being able
@@ -225,7 +228,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onFailureOnly() {
-        if (isOnCompleteOnly()) {
+        boolean isOnCompleteOnly = getOnCompleteOnly() != null && getOnCompleteOnly();
+        if (isOnCompleteOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to avoid end user being able
@@ -322,20 +326,12 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.onCompleteOnly = onCompleteOnly;
     }
 
-    public boolean isOnCompleteOnly() {
-        return onCompleteOnly != null && onCompleteOnly;
-    }
-
     public Boolean getOnFailureOnly() {
         return onFailureOnly;
     }
 
     public void setOnFailureOnly(Boolean onFailureOnly) {
         this.onFailureOnly = onFailureOnly;
-    }
-
-    public boolean isOnFailureOnly() {
-        return onFailureOnly != null && onFailureOnly;
     }
 
     public WhenDefinition getOnWhen() {
@@ -363,7 +359,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     public Boolean getUseOriginalMessagePolicy() {
-        return useOriginalMessagePolicy != null;
+        return useOriginalMessagePolicy;
     }
 
     /**
@@ -382,10 +378,5 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     public void setParallelProcessing(Boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
-
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
-    }
-
 
 }

@@ -357,8 +357,10 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression,
-                config.isAllowDuplicates(), config.isReverse());
+        boolean isReverse = config.getReverse() != null && config.getReverse();
+        boolean isAllowDuplicates = config.getAllowDuplicates() != null && config.getAllowDuplicates();
+
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         if (config.getIgnoreInvalidExchanges() != null) {

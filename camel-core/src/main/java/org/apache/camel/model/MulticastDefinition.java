@@ -279,20 +279,26 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             strategy = new UseLatestAggregationStrategy();
         }
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing());
+        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isStreaming = getStreaming() != null && getStreaming();
+        boolean isStopOnException = getStopOnException() != null && getStopOnException();
+        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing);
 
         long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing()) {
+        if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (onPrepareRef != null) {
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
         }
 
-        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing(),
-                                      threadPool, shutdownThreadPool, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork(), isParallelAggregate());
-        if (isShareUnitOfWork()) {
+        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
+                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
+        if (isShareUnitOfWork) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
             internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
@@ -344,10 +350,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.parallelProcessing = parallelProcessing;
     }
 
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
-    }
-
     public Boolean getStreaming() {
         return streaming;
     }
@@ -356,20 +358,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.streaming = streaming;
     }
 
-    public boolean isStreaming() {
-        return streaming != null && streaming;
-    }
-
     public Boolean getStopOnException() {
         return stopOnException;
     }
 
     public void setStopOnException(Boolean stopOnException) {
         this.stopOnException = stopOnException;
-    }
-
-    public Boolean isStopOnException() {
-        return stopOnException != null && stopOnException;
     }
 
     public ExecutorService getExecutorService() {
@@ -459,22 +453,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public boolean isShareUnitOfWork() {
-        return shareUnitOfWork != null && shareUnitOfWork;
-    }
-
     public Boolean getParallelAggregate() {
         return parallelAggregate;
-    }
-
-    /**
-     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
-     * <p/>
-     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
-     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
-     */
-    public boolean isParallelAggregate() {
-        return parallelAggregate != null && parallelAggregate;
     }
 
     public void setParallelAggregate(Boolean parallelAggregate) {

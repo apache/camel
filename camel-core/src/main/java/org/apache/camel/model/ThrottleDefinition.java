@@ -83,8 +83,9 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isAsyncDelayed());
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, isAsyncDelayed());
+        boolean async = getAsyncDelayed() != null && getAsyncDelayed();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, async);
+        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, async);
         
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
@@ -95,12 +96,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
             throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
         }
 
-        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, isRejectExecution());
+        boolean reject = getRejectExecution() != null && getRejectExecution();
+        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject);
 
-        if (getAsyncDelayed() != null) {
-            answer.setAsyncDelayed(getAsyncDelayed());
-        }
-        
+        answer.setAsyncDelayed(async);
         if (getCallerRunsWhenRejected() == null) {
             // should be true by default
             answer.setCallerRunsWhenRejected(true);
@@ -222,10 +221,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         this.asyncDelayed = asyncDelayed;
     }
 
-    public boolean isAsyncDelayed() {
-        return asyncDelayed != null && asyncDelayed;
-    }
-
     public Boolean getCallerRunsWhenRejected() {
         return callerRunsWhenRejected;
     }
@@ -250,8 +245,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         this.executorServiceRef = executorServiceRef;
     }
     
-    public boolean isRejectExecution() {
-        return rejectExecution != null ? rejectExecution : false;
+    public Boolean getRejectExecution() {
+        return rejectExecution;
     }
 
     public void setRejectExecution(Boolean rejectExecution) {

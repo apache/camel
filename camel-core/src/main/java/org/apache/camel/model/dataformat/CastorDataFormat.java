@@ -38,7 +38,7 @@ import org.apache.camel.spi.Metadata;
 public class CastorDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String mappingFile;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean validation;
     @XmlAttribute @Metadata(defaultValue = "UTF-8")
     private String encoding;
@@ -49,11 +49,6 @@ public class CastorDataFormat extends DataFormatDefinition {
 
     public CastorDataFormat() {
         super("castor");
-    }
-
-    public boolean isValidation() {
-        // defaults to true if not configured
-        return validation != null ? validation : true;
     }
 
     public Boolean getValidation() {
@@ -120,7 +115,9 @@ public class CastorDataFormat extends DataFormatDefinition {
         if (mappingFile != null) {
             setProperty(camelContext, dataFormat, "mappingFile", mappingFile);
         }
-        setProperty(camelContext, dataFormat, "validation", isValidation());
+        // should be true by default
+        boolean isValidation = getValidation() == null || getValidation();
+        setProperty(camelContext, dataFormat, "validation", isValidation);
 
         if (encoding != null) {
             setProperty(camelContext, dataFormat, "encoding", encoding);

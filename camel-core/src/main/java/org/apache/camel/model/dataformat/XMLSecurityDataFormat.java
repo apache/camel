@@ -257,7 +257,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
             setProperty(camelContext, dataFormat, "secureTag", "");
         }
 
-        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents());
+        boolean isSecureTagContents = getSecureTagContents() != null && getSecureTagContents();
+        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
 
         if (passPhrase != null) {
             setProperty(camelContext, dataFormat, "passPhrase", getPassPhrase().getBytes());
@@ -293,9 +294,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         if (mgfAlgorithm != null) {
             setProperty(camelContext, dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
         }
-        if (addKeyValueForEncryptedKey != null) {
-            setProperty(camelContext, dataFormat, "addKeyValueForEncryptedKey", isAddKeyValueForEncryptedKey());
-        }
+        // should be true by default
+        boolean isAddKeyValueForEncryptedKey = getAddKeyValueForEncryptedKey() == null || getAddKeyValueForEncryptedKey();
+        setProperty(camelContext, dataFormat, "addKeyValueForEncryptedKey", isAddKeyValueForEncryptedKey);
     }
 
     public String getXmlCipherAlgorithm() {
@@ -361,10 +362,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.secureTagContents = secureTagContents;
     }
 
-    public boolean isSecureTagContents() {
-        return secureTagContents != null && secureTagContents;
-    }
-
     /**
      * The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are:
      * <ul>
@@ -403,6 +400,10 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     
     public String getKeyOrTrustStoreParametersId() {
         return this.keyOrTrustStoreParametersId;
+    }
+
+    public KeyStoreParameters getKeyOrTrustStoreParameters() {
+        return keyOrTrustStoreParameters;
     }
 
     /**
@@ -456,16 +457,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     public void setMgfAlgorithm(String mgfAlgorithm) {
         this.mgfAlgorithm = mgfAlgorithm;
     }
-    
-    public boolean isAddKeyValueForEncryptedKey() {
-        // The default value is true
-        return addKeyValueForEncryptedKey != null ? addKeyValueForEncryptedKey : true;
+
+    public Boolean getAddKeyValueForEncryptedKey() {
+        return addKeyValueForEncryptedKey;
     }
 
     /**
      * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
      */
-    public void setAddKeyValueForEncryptedKey(boolean addKeyValueForEncryptedKey) {
+    public void setAddKeyValueForEncryptedKey(Boolean addKeyValueForEncryptedKey) {
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
 

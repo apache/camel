@@ -32,10 +32,10 @@ import org.apache.camel.spi.Label;
 public class RestPropertyDefinition {
 
     @XmlAttribute(required = true)
-    String key;
+    private String key;
 
     @XmlAttribute(required = true)
-    String value;
+    private String value;
 
     /**
      * Property key

@@ -289,7 +289,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
             MulticastDefinition def = (MulticastDefinition) defn;
-            if (def.isShareUnitOfWork() && child == null) {
+            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && def.getShareUnitOfWork();
+            if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
             } else {

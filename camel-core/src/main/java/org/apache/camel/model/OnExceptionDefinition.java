@@ -928,19 +928,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
 
-    public boolean isUseOriginalMessage() {
-        return useOriginalMessagePolicy != null && useOriginalMessagePolicy;
-    }
+    // Implementation methods
+    //-------------------------------------------------------------------------
 
-    public boolean isAsyncDelayedRedelivery(CamelContext context) {
+    protected boolean isAsyncDelayedRedelivery(CamelContext context) {
         if (getRedeliveryPolicy() != null) {
             return getRedeliveryPolicy().isAsyncDelayedRedelivery(context);
         }
         return false;
     }
-
-    // Implementation methods
-    //-------------------------------------------------------------------------
 
     protected RedeliveryPolicyDefinition getOrCreateRedeliveryPolicy() {
         if (redeliveryPolicyType == null) {

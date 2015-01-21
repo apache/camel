@@ -68,11 +68,12 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
             for (String ratio : ratios) {
                 distributionRatioList.add(new Integer(ratio.trim()));
             }
-            
-            if (!isRoundRobin()) {
-                loadBalancer = new WeightedRandomLoadBalancer(distributionRatioList);
-            } else {
+
+            boolean isRoundRobin = getRoundRobin() != null && getRoundRobin();
+            if (isRoundRobin) {
                 loadBalancer = new WeightedRoundRobinLoadBalancer(distributionRatioList);
+            } else {
+                loadBalancer = new WeightedRandomLoadBalancer(distributionRatioList);
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -92,10 +93,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
      */
     public void setRoundRobin(Boolean roundRobin) {
         this.roundRobin = roundRobin;
-    }
-
-    public boolean isRoundRobin() {
-        return roundRobin != null && roundRobin;
     }
 
     public String getDistributionRatio() {
@@ -125,10 +122,11 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     public String toString() {
-        if (!isRoundRobin()) {
-            return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
-        } else {
+        boolean isRoundRobin = getRoundRobin() != null && getRoundRobin();
+        if (isRoundRobin) {
             return "WeightedRoundRobinLoadBalancer[" + distributionRatio + "]";
+        } else {
+            return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
         }
     }
 }

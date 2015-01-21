@@ -80,11 +80,6 @@ public class LoopDefinition extends ExpressionNode {
         this.copy = copy;
     }
 
-    public boolean isCopy() {
-        // do not copy by default to be backwards compatible
-        return copy != null ? copy : false;
-    }
-
     @Override
     public String toString() {
         return "Loop[" + getExpression() + " -> " + getOutputs() + "]";
@@ -98,7 +93,8 @@ public class LoopDefinition extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor output = this.createChildProcessor(routeContext, true);
-        return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy());
+        boolean isCopy = getCopy() != null && getCopy();
+        return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy);
     }
     
 }

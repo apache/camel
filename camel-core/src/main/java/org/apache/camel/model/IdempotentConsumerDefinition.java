@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Label;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -39,11 +40,11 @@ import org.apache.camel.util.ObjectHelper;
 public class IdempotentConsumerDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
     private String messageIdRepositoryRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean eager;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean skipDuplicate;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean removeOnFailure;
     @XmlTransient
     private IdempotentRepository<?> idempotentRepository;
@@ -158,11 +159,6 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.eager = eager;
     }
 
-    public boolean isEager() {
-        // defaults to true if not configured
-        return eager != null ? eager : true;
-    }
-
     public Boolean getSkipDuplicate() {
         return skipDuplicate;
     }
@@ -171,22 +167,12 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.skipDuplicate = skipDuplicate;
     }
 
-    public boolean isSkipDuplicate() {
-        // defaults to true if not configured
-        return skipDuplicate != null ? skipDuplicate : true;
-    }
-
     public Boolean getRemoveOnFailure() {
         return removeOnFailure;
     }
 
     public void setRemoveOnFailure(Boolean removeOnFailure) {
         this.removeOnFailure = removeOnFailure;
-    }
-
-    public boolean isRemoveOnFailure() {
-        // defaults to true if not configured
-        return removeOnFailure != null ? removeOnFailure : true;
     }
 
     @Override
@@ -203,7 +189,12 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
 
         Expression expression = getExpression().createExpression(routeContext);
 
-        return new IdempotentConsumer(expression, idempotentRepository, isEager(), isSkipDuplicate(), isRemoveOnFailure(), childProcessor);
+        // these boolean should be true by default
+        boolean eager = getEager() == null || getEager();
+        boolean duplicate = getSkipDuplicate() == null || getSkipDuplicate();
+        boolean remove = getRemoveOnFailure() == null || getRemoveOnFailure();
+
+        return new IdempotentConsumer(expression, idempotentRepository, eager, duplicate, remove, childProcessor);
     }
 
     /**

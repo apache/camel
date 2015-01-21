@@ -94,10 +94,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         this.exceptions = exceptions;
     }
 
-    public boolean isRoundRobin() {
-        return roundRobin != null && roundRobin;
-    }
-
     public Boolean getRoundRobin() {
         return roundRobin;
     }

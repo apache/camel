@@ -136,10 +136,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return saxon;
     }
 
-    public boolean isSaxon() {
-        return saxon != null && saxon;
-    }
-
     /**
      * References to a custom XPathFactory to lookup in the registry
      */
@@ -173,10 +169,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return logNamespaces;
     }
 
-    public boolean isLogNamespaces() {
-        return logNamespaces != null && logNamespaces;
-    }
-    
     public String getHeaderName() {
         return headerName;
     }
@@ -216,13 +208,16 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        boolean isSaxon = getSaxon() != null && getSaxon();
+        boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
+
         if (documentType != null) {
             setProperty(expression, "documentType", documentType);
         }
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
-        if (isSaxon()) {
+        if (isSaxon) {
             ObjectHelper.cast(XPathBuilder.class, expression).enableSaxon();
         }
         if (xpathFactory != null) {
@@ -231,7 +226,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(expression, "objectModelUri", objectModel);
         }
-        if (isLogNamespaces()) {
+        if (isLogNamespaces) {
             ObjectHelper.cast(XPathBuilder.class, expression).setLogNamespaces(true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
@@ -244,13 +239,16 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        boolean isSaxon = getSaxon() != null && getSaxon();
+        boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
+
         if (documentType != null) {
             setProperty(predicate, "documentType", documentType);
         }
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
-        if (isSaxon()) {
+        if (isSaxon) {
             ObjectHelper.cast(XPathBuilder.class, predicate).enableSaxon();
         }
         if (xpathFactory != null) {
@@ -259,7 +257,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(predicate, "objectModelUri", objectModel);
         }
-        if (isLogNamespaces()) {
+        if (isLogNamespaces) {
             ObjectHelper.cast(XPathBuilder.class, predicate).setLogNamespaces(true);
         }
         if (ObjectHelper.isNotEmpty(getHeaderName())) {

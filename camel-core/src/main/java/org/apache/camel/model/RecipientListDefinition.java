@@ -109,6 +109,13 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         final Expression expression = getExpression().createExpression(routeContext);
 
+        boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
+        boolean isStreaming = getStreaming() != null && getStreaming();
+        boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isStopOnException = getStopOnException() != null && getStopOnException();
+        boolean isIgnoreInvalidEndpoints = getIgnoreInvalidEndpoints() != null && getIgnoreInvalidEndpoints();
+
         RecipientList answer;
         if (delimiter != null) {
             answer = new RecipientList(routeContext.getCamelContext(), expression, delimiter);
@@ -116,10 +123,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
             answer = new RecipientList(routeContext.getCamelContext(), expression);
         }
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
-        answer.setParallelProcessing(isParallelProcessing());
-        answer.setParallelAggregate(isParallelAggregate());
-        answer.setStreaming(isStreaming());
-        answer.setShareUnitOfWork(isShareUnitOfWork());
+        answer.setParallelProcessing(isParallelProcessing);
+        answer.setParallelAggregate(isParallelAggregate);
+        answer.setStreaming(isStreaming);
+        answer.setShareUnitOfWork(isShareUnitOfWork);
+        answer.setStopOnException(isStopOnException);
+        answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
         if (getCacheSize() != null) {
             answer.setCacheSize(getCacheSize());
         }
@@ -129,22 +138,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         if (onPrepare != null) {
             answer.setOnPrepare(onPrepare);
         }
-        if (stopOnException != null) {
-            answer.setStopOnException(isStopOnException());
-        }
-        if (ignoreInvalidEndpoints != null) {
-            answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
-        }
         if (getTimeout() != null) {
             answer.setTimeout(getTimeout());
         }
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", this, isParallelProcessing());
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
+        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", this, isParallelProcessing);
         answer.setExecutorService(threadPool);
         answer.setShutdownExecutorService(shutdownThreadPool);
         long timeout = getTimeout() != null ? getTimeout() : 0;
-        if (timeout > 0 && !isParallelProcessing()) {
+        if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
 
@@ -433,10 +436,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.parallelProcessing = parallelProcessing;
     }
 
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
-    }
-
     public String getStrategyRef() {
         return strategyRef;
     }
@@ -488,20 +487,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    public boolean isIgnoreInvalidEndpoints() {
-        return ignoreInvalidEndpoints != null && ignoreInvalidEndpoints;
-    }
-
     public Boolean getStopOnException() {
         return stopOnException;
     }
 
     public void setStopOnException(Boolean stopOnException) {
         this.stopOnException = stopOnException;
-    }
-
-    public boolean isStopOnException() {
-        return stopOnException != null && stopOnException;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -530,10 +521,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setStreaming(Boolean streaming) {
         this.streaming = streaming;
-    }
-
-    public boolean isStreaming() {
-        return streaming != null && streaming;
     }
 
     public Long getTimeout() {
@@ -568,10 +555,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public boolean isShareUnitOfWork() {
-        return shareUnitOfWork != null && shareUnitOfWork;
-    }
-
     public Integer getCacheSize() {
         return cacheSize;
     }
@@ -582,16 +565,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public Boolean getParallelAggregate() {
         return parallelAggregate;
-    }
-
-    /**
-     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
-     * <p/>
-     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
-     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
-     */
-    public boolean isParallelAggregate() {
-        return parallelAggregate != null && parallelAggregate;
     }
 
     public void setParallelAggregate(Boolean parallelAggregate) {

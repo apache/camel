@@ -91,7 +91,9 @@ public class SimpleExpression extends ExpressionDefinition {
         }
 
         String exp = getExpression();
-        if (isTrim() && exp != null) {
+        // should be true by default
+        boolean isTrim = getTrim() == null || getTrim();
+        if (exp != null && isTrim) {
             exp = exp.trim();
         }
 
