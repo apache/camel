@@ -40,8 +40,13 @@ public @interface Metadata {
     String label() default "";
 
     /**
-     * To define a default value
+     * To define a default value.
      */
     String defaultValue() default "";
+
+    /**
+     * To define that this entity is required.
+     */
+    String required() default "";
 
 }

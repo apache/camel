@@ -301,6 +301,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
         boolean required = attribute.required();
+        // metadata may overrule element required
+        required = findRequired(fieldElement, required);
 
         // gather enums
         Set<String> enums = new TreeSet<String>();
@@ -346,6 +348,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
             boolean required = element.required();
+            // metadata may overrule element required
+            required = findRequired(fieldElement, required);
 
             // gather enums
             Set<String> enums = new LinkedHashSet<String>();
@@ -405,7 +409,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+
             boolean required = true;
+            required = findRequired(fieldElement, required);
 
             // gather oneOf of the elements
             Set<String> oneOfTypes = new TreeSet<String>();
@@ -645,7 +651,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         return !"org.apache.camel.model.NoOutputExpressionNode".equals(superclass);
     }
 
-    protected String findDefaultValue(VariableElement fieldElement, String fieldTypeName) {
+    private String findDefaultValue(VariableElement fieldElement, String fieldTypeName) {
         String defaultValue = null;
         Metadata metadata = fieldElement.getAnnotation(Metadata.class);
         if (metadata != null) {
@@ -660,6 +666,16 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             }
         }
 
+        return defaultValue;
+    }
+
+    private boolean findRequired(VariableElement fieldElement, boolean defaultValue) {
+        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            if (!Strings.isNullOrEmpty(metadata.required())) {
+                defaultValue = "true".equals(metadata.required());
+            }
+        }
         return defaultValue;
     }
 
