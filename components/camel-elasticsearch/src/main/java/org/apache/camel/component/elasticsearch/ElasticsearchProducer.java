@@ -27,6 +27,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 
 /**
@@ -114,12 +115,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.setBody(client.get(getRequest));
         } else if (ElasticsearchConfiguration.OPERATION_BULK_INDEX.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            List<String> indexedIds = new LinkedList<String>();
-            for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
-                indexedIds.add(response.getId());
-            }
-            log.debug("List of successfully indexed document ids : {}", indexedIds);
-            message.setBody(indexedIds);
+            message.setBody(client.bulk(bulkRequest).actionGet());
         } else if (ElasticsearchConfiguration.OPERATION_DELETE.equals(operation)) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.delete(deleteRequest).actionGet());
