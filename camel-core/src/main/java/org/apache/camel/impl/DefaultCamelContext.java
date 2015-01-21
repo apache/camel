@@ -1372,7 +1372,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     String defaultValue = row.get("defaultValue");
                     String type = row.get("type");
                     String javaType = row.get("javaType");
-                    String deprecated = row.get("javaType");
+                    String deprecated = row.get("deprecated");
                     String description = row.get("description");
 
                     // find the configured option
