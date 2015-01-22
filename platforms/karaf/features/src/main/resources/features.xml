@@ -1377,6 +1377,26 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.stringtemplate/${stringtemplate-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stringtemplate/${project.version}</bundle>
   </feature>
+  <!-- TODO: swagger JARs in not OSGi bundles
+  <feature name='camel-swagger' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details> camel-swagger need to access the http OSGi services </details>
+    <feature>http</feature>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-version}</bundle>
+    <bundle dependency='true'>mvn:org.scala-lang.modules/scala-xml_2.11/${scalaxml-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:com.wordnik/swagger-annotations/${swagger-version}</bundle>
+    <bundle dependency='true'>mvn:com.wordnik/swagger-core_2.10/${swagger-version}</bundle>
+    <bundle dependency='true'>mvn:com.wordnik/sswagger-servlet_2.10/${swagger-version}</bundle>
+    <bundle dependency='true'>mvn:com.wordnik/swagger-jaxrs_2.10/${swagger-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-swagger/${project.version}</bundle>
+  </feature>
+  -->
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-netty</feature>
