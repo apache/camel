@@ -16,182 +16,31 @@
  */
 package org.apache.camel.util;
 
-import java.util.AbstractSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 
 /**
- * A map that uses case insensitive keys, but preserves the original keys in the keySet.
+ * A map that uses case insensitive keys, but preserves the original key cases.
  * <p/>
- * This map allows you to do lookup using case insensitive keys so you can retrieve the value without worrying about
- * whether some transport protocol affects the keys such as Http and Mail protocols can do.
- * <p/>
- * When copying from this map to a regular Map such as {@link java.util.HashMap} then the original keys are
- * copied over and you get the old behavior back using a regular Map with case sensitive keys.
+ * The map is based on {@link TreeMap} and therefore uses O(n) for lookup and not O(1) as a {@link java.util.HashMap} does.
  * <p/>
  * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed
  * by the Camel routing engine.
  *
  * @version 
  */
-public class CaseInsensitiveMap extends HashMap<String, Object> {
+public class CaseInsensitiveMap extends TreeMap<String, Object> {
+
     private static final long serialVersionUID = -8538318195477618308L;
 
-    // holds a map of lower case key -> original key
-    private Map<String, String> originalKeys = new HashMap<String, String>();
-    // holds a snapshot view of current entry set
-    private transient Set<Map.Entry<String, Object>> entrySetView;
-
     public CaseInsensitiveMap() {
+        super(String.CASE_INSENSITIVE_ORDER);
     }
 
     public CaseInsensitiveMap(Map<? extends String, ?> map) {
+        // must use the insensitive order
+        super(String.CASE_INSENSITIVE_ORDER);
         putAll(map);
-    }
-
-    public CaseInsensitiveMap(int initialCapacity, float loadFactor) {
-        super(initialCapacity, loadFactor);
-        originalKeys = new HashMap<String, String>(initialCapacity, loadFactor);
-    }
-
-    public CaseInsensitiveMap(int initialCapacity) {
-        super(initialCapacity);
-        originalKeys = new HashMap<String, String>(initialCapacity);
-    }
-
-    @Override
-    public Object get(Object key) {
-        String s = assembleKey(key);
-        Object answer = super.get(s);
-        if (answer == null) {
-            // fallback to lookup by original key
-            String originalKey = originalKeys.get(s);
-            answer = super.get(originalKey);
-        }
-        return answer;
-    }
-
-    @Override
-    public synchronized Object put(String key, Object value) {
-        // invalidate views as we mutate
-        entrySetView = null;
-        String s = assembleKey(key);
-        originalKeys.put(s, key);
-        return super.put(s, value);
-    }
-
-    @Override
-    public synchronized void putAll(Map<? extends String, ?> map) {
-        entrySetView = null;
-        if (map != null && !map.isEmpty()) {
-            for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                String s = assembleKey(key);
-                originalKeys.put(s, key);
-                super.put(s, value);
-            }
-        }
-    }
-
-    @Override
-    public synchronized Object remove(Object key) {
-        if (key == null) {
-            return null;
-        }
-
-        // invalidate views as we mutate
-        entrySetView = null;
-        String s = assembleKey(key);
-        originalKeys.remove(s);
-        return super.remove(s);
-    }
-
-    @Override
-    public synchronized void clear() {
-        // invalidate views as we mutate
-        entrySetView = null;
-        originalKeys.clear();
-        super.clear();
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-        if (key == null) {
-            return false;
-        }
-
-        String s = assembleKey(key);
-        return super.containsKey(s);
-    }
-
-    private static String assembleKey(Object key) {
-        return key.toString().toLowerCase(Locale.ENGLISH);
-    }
-
-    @Override
-    public synchronized Set<Map.Entry<String, Object>> entrySet() {
-        if (entrySetView == null) {
-            // build the key set using the original keys so we retain their case
-            // when for example we copy values to another map
-            entrySetView = new HashSet<Map.Entry<String, Object>>(this.size());
-            for (final Map.Entry<String, Object> entry : super.entrySet()) {
-                Map.Entry<String, Object> view = new Map.Entry<String, Object>() {
-                    public String getKey() {
-                        String s = entry.getKey();
-                        // use the original key so we can preserve it
-                        return originalKeys.get(s);
-                    }
-
-                    public Object getValue() {
-                        return entry.getValue();
-                    }
-
-                    public Object setValue(Object o) {
-                        return entry.setValue(o);
-                    }
-                };
-                entrySetView.add(view);
-            }
-        }
-
-        return entrySetView;
-    }
-
-    @Override
-    public Set<String> keySet() {
-        return new CaseInsensitiveKeySet();
-    }
-
-    /**
-     * To use the original keys but support checking if a key exist using case insensitive.
-     */
-    private final class CaseInsensitiveKeySet extends AbstractSet<String> {
-
-        public Iterator<String> iterator() {
-            // use the original case keys, which is stored in as values
-            return originalKeys.values().iterator();
-        }
-
-        public int size() {
-            return CaseInsensitiveMap.this.size();
-        }
-
-        public boolean contains(Object o) {
-            return CaseInsensitiveMap.this.containsKey(o);
-        }
-
-        public boolean remove(Object o) {
-            return CaseInsensitiveMap.this.remove(o) != null;
-        }
-
-        public void clear() {
-            CaseInsensitiveMap.this.clear();
-        }
     }
 
 }

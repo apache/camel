@@ -344,7 +344,9 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         Map<String, Object> other = new HashMap<String, Object>(map);
         assertEquals(false, other.containsKey("foo"));
-        assertEquals(true, other.containsKey("FOO"));
+        assertEquals(false, other.containsKey("FOO"));
+        // CaseInsensitiveMap preserves the original keys, which would be the 1st key we put
+        assertEquals(true, other.containsKey("Foo"));
         assertEquals(1, other.size());
     }
 
@@ -462,7 +464,9 @@ public class CaseInsensitiveMapTest extends TestCase {
                     foo.put("cake", "cheese");
 
                     // copy foo to map as map is a shared resource
-                    map.putAll(foo);
+                    synchronized (map) {
+                        map.putAll(foo);
+                    }
 
                     latch.countDown();
                 }
