@@ -30,7 +30,7 @@ public class EnumTypeConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        if (type.isEnum() && value != null) {
+        if (type.isEnum()) {
             String text = value.toString();
             Class<Enum> enumClass = (Class<Enum>) type;
 
