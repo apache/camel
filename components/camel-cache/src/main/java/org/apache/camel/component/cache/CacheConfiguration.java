@@ -52,6 +52,8 @@ public class CacheConfiguration implements Cloneable {
     private CacheEventListenerRegistry eventListenerRegistry = new CacheEventListenerRegistry();
     @UriParam
     private CacheLoaderRegistry cacheLoaderRegistry = new CacheLoaderRegistry();
+    @UriParam
+    private boolean objectCache;
 
     public CacheConfiguration() {
     }
@@ -109,6 +111,14 @@ public class CacheConfiguration implements Cloneable {
             // remove leading if any given as fromString uses LRU, LFU or FIFO
             policy = policy.replace("MemoryStoreEvictionPolicy.", "");
             setMemoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.fromString(policy));
+        }
+        if (cacheSettings.containsKey("objectCache")){
+            setObjectCache(Boolean.valueOf((String) cacheSettings.get("objectCache")));
+        }
+
+        if (isObjectCache()
+                && (isOverflowToDisk() || isDiskPersistent())) {
+            throw new IllegalArgumentException("Unable to create object cache with disk access");
         }
     }
     
@@ -209,4 +219,11 @@ public class CacheConfiguration implements Cloneable {
         return cacheLoaderRegistry;
     }
 
+    public boolean isObjectCache() {
+        return objectCache;
+    }
+
+    public void setObjectCache(boolean objectCache) {
+        this.objectCache = objectCache;
+    }
 }
