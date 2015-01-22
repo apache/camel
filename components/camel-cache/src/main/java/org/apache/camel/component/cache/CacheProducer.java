@@ -125,6 +125,8 @@ public class CacheProducer extends DefaultProducer {
             throw new CacheException("Body cannot be null for operation " + cacheOperation);
         } else if (body instanceof Serializable) {
             element = new Element(key, body);
+        } else if (config.isObjectCache()) {
+            element = new Element(key, body);
         } else {
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
             // Read InputStream into a byte[] buffer
