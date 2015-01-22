@@ -230,7 +230,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
     }
 
-    public void testManagedCamelContextExplainEndpointUri() throws Exception {
+    public void testManagedCamelContextExplainEndpointUriFalse() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -244,17 +244,24 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertEquals(5, StringHelper.countChar(json, '{'));
-        assertEquals(5, StringHelper.countChar(json, '}'));
+        assertEquals(7, StringHelper.countChar(json, '{'));
+        assertEquals(7, StringHelper.countChar(json, '}'));
+
+        assertTrue(json.contains("\"scheme\": \"log\""));
+        assertTrue(json.contains("\"description\": \"The Log Component to log message exchanges to the underlying logging mechanism.\""));
+        assertTrue(json.contains("\"label\": \"core,monitoring\""));
+
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
                 + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
                 + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
+        // and we should also have the javadoc documentation
+        assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
 
-    public void testManagedCamelContextExplainEip() throws Exception {
+    public void testManagedCamelContextExplainEndpointUriTrue() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
@@ -264,11 +271,85 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
         // get the json
-        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"transform", false}, new String[]{"java.lang.String", "boolean"});
+        String json = (String) mbeanServer.invoke(on, "explainEndpointJson", new Object[]{"log:foo?groupDelay=2000&groupSize=5", true},
+                new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+
+        assertEquals(14, StringHelper.countChar(json, '{'));
+        assertEquals(14, StringHelper.countChar(json, '}'));
+
+        assertTrue(json.contains("\"scheme\": \"log\""));
+        assertTrue(json.contains("\"description\": \"The Log Component to log message exchanges to the underlying logging mechanism.\""));
+        assertTrue(json.contains("\"label\": \"core,monitoring\""));
+
+        assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
+                + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
+                + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
+                + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
+        assertTrue(json.contains("\"marker\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\""));
+        // and we should also have the javadoc documentation
+        assertTrue(json.contains("Set the initial delay for stats (in millis)"));
+    }
+
+    public void testManagedCamelContextExplainEipFalse() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"myTransform", false}, new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
         assertTrue(json.contains("\"label\": \"eip,transformation\""));
         assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
+        // we should see the constant value
+        assertTrue(json.contains("Bye World"));
+    }
+
+    public void testManagedCamelContextExplainEipTrue() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"myTransform", true}, new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"label\": \"eip,transformation\""));
+        assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
+        // and now we have the description option also
+        assertTrue(json.contains("\"description\": { \"kind\": \"element\", \"required\": \"false\", \"type\": \"object\", \"javaType\""));
+        // we should see the constant value
+        assertTrue(json.contains("Bye World"));
+    }
+
+    public void testManagedCamelContextExplainEipModel() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainEipJson", new Object[]{"aggregate", false}, new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"description\": \"Aggregates many messages into a single message\""));
+        assertTrue(json.contains("\"label\": \"eip,routing\""));
+        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
+        assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"boolean\""));
     }
 
     @Override
@@ -278,7 +359,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("mock:result");
 
-                from("direct:foo").transform(constant("Bye World"));
+                from("direct:foo").transform(constant("Bye World")).id("myTransform");
             }
         };
     }

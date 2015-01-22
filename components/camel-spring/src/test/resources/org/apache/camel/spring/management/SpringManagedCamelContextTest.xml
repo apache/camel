@@ -30,7 +30,7 @@
     </route>
     <route>
       <from uri="direct:foo"/>
-      <transform>
+      <transform id="myTransform">
         <constant>Bye World</constant>
       </transform>
     </route>
