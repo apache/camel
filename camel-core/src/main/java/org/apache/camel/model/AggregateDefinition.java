@@ -66,8 +66,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
     @XmlTransient
     private ExpressionDefinition expression;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -114,6 +112,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean discardOnCompletionTimeout;
     @XmlAttribute
     private Boolean forceCompletionOnStop;
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public AggregateDefinition() {
     }
