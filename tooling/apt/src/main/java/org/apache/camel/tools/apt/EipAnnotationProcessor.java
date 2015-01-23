@@ -399,8 +399,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             Set<String> oneOfTypes = new TreeSet<String>();
             boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
             if (isOneOf) {
-                // okay its actually an expression
+                // okay its actually an language expression, so favor using that in the eip option
                 kind = "expression";
+                fieldTypeName = ONE_OF_LANGUAGES;
                 TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
                 String superClassName = canonicalClassName(languages.toString());
                 // find all classes that has that superClassName
