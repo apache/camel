@@ -40,7 +40,8 @@ import org.apache.camel.util.IOHelper;
  * This aggregation strategy will aggregate all incoming messages into a ZIP file.
  * <p>If the incoming exchanges contain {@link GenericFileMessage} file name will 
  * be taken from the body otherwise the body content will be treated as a byte 
- * array and the ZIP entry will be named using the message id.</p>
+ * array and the ZIP entry will be named using the message id (unless the flag
+ * useFilenameHeader is set to true.</p>
  * <p><b>Note:</b> Please note that this aggregation strategy requires eager 
  * completion check to work properly.</p>
  */
@@ -49,17 +50,21 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     private String filePrefix;
     private String fileSuffix = ".zip";
     private boolean preserveFolderStructure;
+    private boolean useFilenameHeader;
 
     public ZipAggregationStrategy() {
-        this(false);
+        this(false, false);
     }
     
     /**
      * @param preserveFolderStructure if true, the folder structure is preserved when the source is
      * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
+     * @param useFilenameHeader if true, the filename header will be used to name aggregated byte arrays
+     * within the ZIP file.
      */
-    public ZipAggregationStrategy(boolean preserveFolderStructure) {
+    public ZipAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader) {
         this.preserveFolderStructure = preserveFolderStructure;
+        this.useFilenameHeader = useFilenameHeader;
     }
     
     /**
@@ -85,6 +90,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     public String getFileSuffix() {
         return fileSuffix;
     }
+
     /**
      * Sets the suffix that will be used when creating the ZIP filename.
      * @param fileSuffix suffix to use on ZIP file.
@@ -136,7 +142,8 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             // Handle all other messages
             try {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                addEntryToZip(zipFile, newExchange.getIn().getMessageId(), buffer, buffer.length);
+                String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                addEntryToZip(zipFile, entryName, buffer, buffer.length);
                 GenericFile<File> genericFile = FileConsumer.asGenericFile(
                     zipFile.getParent(), zipFile, Charset.defaultCharset().toString());
                 genericFile.bindToExchange(answer);
