@@ -305,6 +305,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         setRegistry(registry);
     }
 
+    public <T extends CamelContext> T adapt(Class<T> type) {
+        return type.cast(this);
+    }
+
     public String getName() {
         return getNameStrategy().getName();
     }
