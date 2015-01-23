@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +30,7 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -53,13 +56,28 @@ public class CMISProducer extends DefaultProducer {
         exchange.getOut().setBody(cmisObject.getId());
     }
 
+    private Map<String, Object> filterTypeProperties(Map<String, Object> properties) {
+        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+        String objectTypeName = CamelCMISConstants.CMIS_DOCUMENT;
+        if (properties.containsKey(PropertyIds.OBJECT_TYPE_ID))
+            objectTypeName = (String)properties.get(PropertyIds.OBJECT_TYPE_ID);
+
+        Set<String> types = cmisSessionFacade.getPropertiesFor(objectTypeName);
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            if (types.contains(entry.getKey())) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
+
     private CmisObject createNode(Exchange exchange) throws Exception {
         validateRequiredHeader(exchange, PropertyIds.NAME);
 
         Message message = exchange.getIn();
         String parentFolderPath = parentFolderPathFor(message);
         Folder parentFolder = getFolderOnPath(exchange, parentFolderPath);
-        Map<String, Object> cmisProperties = CMISHelper.filterCMISProperties(message.getHeaders());
+        Map<String, Object> cmisProperties = filterTypeProperties(message.getHeaders());
 
         if (isDocument(exchange)) {
             String fileName = message.getHeader(PropertyIds.NAME, String.class);
