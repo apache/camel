@@ -370,6 +370,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             Set<String> oneOfTypes = new TreeSet<String>();
             boolean isOneOf = ONE_OF_TYPE_NAME.equals(fieldTypeName);
             if (isOneOf) {
+                // okay its actually an expression
+                kind = "expression";
                 TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
                 String superClassName = canonicalClassName(languages.toString());
                 // find all classes that has that superClassName
@@ -565,7 +567,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         Elements elementUtils = processingEnv.getElementUtils();
 
         if ("expression".equals(fieldName)) {
-            String kind = "element";
+            String kind = "expression";
             String name = elementRef.name();
             if (isNullOrEmpty(name) || "##default".equals(name)) {
                 name = fieldName;
