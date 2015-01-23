@@ -1377,7 +1377,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.stringtemplate/${stringtemplate-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stringtemplate/${project.version}</bundle>
   </feature>
-  <!-- Does not work yet 
+  <!-- Does not work yet, see CAMEL-8264
   <feature name='camel-swagger' version='${project.version}' resolver='(obr)' start-level='50'>
     <details> camel-swagger need to access the http OSGi services </details>
     <feature>http</feature>
@@ -1400,7 +1400,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/2.6_1</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json4s/3.2.8_1</bundle>
     <bundle>mvn:org.apache.camel/camel-swagger/${project.version}</bundle>
-  </feature> -->
+  </feature>  -->
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-netty</feature>
