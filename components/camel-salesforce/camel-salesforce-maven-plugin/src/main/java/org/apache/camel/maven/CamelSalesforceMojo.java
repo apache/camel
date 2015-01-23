@@ -114,6 +114,12 @@ public class CamelSalesforceMojo extends AbstractMojo {
     protected File outputDirectory;
 
     /**
+     * Salesforce URL.
+     */
+    @Parameter(property = "camelSalesforce.loginUrl", defaultValue = SalesforceLoginConfig.DEFAULT_LOGIN_URL)
+    protected String loginUrl;
+
+    /**
      * Names of Salesforce SObject for which POJOs must be generated
      */
     @Parameter
@@ -178,8 +184,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         final SalesforceSession session = new SalesforceSession(httpClient,
-                new SalesforceLoginConfig(SalesforceLoginConfig.DEFAULT_LOGIN_URL,
-                        clientId, clientSecret, userName, password, false));
+                new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
 
         getLog().info("Salesforce login...");
         try {
