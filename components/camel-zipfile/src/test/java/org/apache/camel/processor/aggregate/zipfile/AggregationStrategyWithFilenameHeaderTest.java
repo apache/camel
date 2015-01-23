@@ -17,22 +17,22 @@
 package org.apache.camel.processor.aggregate.zipfile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
-public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
+public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
 
-    private static final int EXPECTED_NO_FILES = 5;
+    private static final List<String> FILE_NAMES = Arrays.asList("foo", "bar");
 
     @Override
     public void setUp() throws Exception {
@@ -42,32 +42,34 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
     @Test
     public void testSplitter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
+    	MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
         mock.expectedMessageCount(1);
-
+        
+        template.setDefaultEndpointUri("direct:start");
+        template.sendBodyAndHeader("foo", Exchange.FILE_NAME, FILE_NAMES.get(0));
+        template.sendBodyAndHeader("bar", Exchange.FILE_NAME, FILE_NAMES.get(1));
         assertMockEndpointsSatisfied();
 
         Thread.sleep(500);
 
         File[] files = new File("target/out").listFiles();
+        assertTrue(files != null);
         assertTrue("Should be a file in target/out directory", files.length > 0);
-        
+
         File resultFile = files[0];
-        Set<String> expectedZipFiles = new HashSet<String>(Arrays.asList("another" + File.separator + "hello.txt", 
-                                                                         "other" + File.separator + "greetings.txt",
-                                                                         "chiau.txt", "hi.txt", "hola.txt"));
-        ZipInputStream zin = new ZipInputStream(new FileInputStream(resultFile));
+
+        final ZipFile file = new ZipFile(resultFile);
         try {
+            final Enumeration<? extends ZipEntry> entries = file.entries();
             int fileCount = 0;
-            for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
-                expectedZipFiles.remove(ze.toString());
+            while (entries.hasMoreElements()) {
                 fileCount++;
+                final ZipEntry entry = entries.nextElement();
+                assertTrue("Zip entry file name should be on of: " + FILE_NAMES, FILE_NAMES.contains(entry.getName()));                
             }
-            assertTrue("Zip file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files",
-                       fileCount == AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES);
-            assertEquals("Should have found all of the zip files in the file.", 0, expectedZipFiles.size());
+            assertEquals("Zip file should contains " + FILE_NAMES.size() + " files", FILE_NAMES.size(), fileCount);
         } finally {
-            IOHelper.close(zin);
+            IOHelper.close(file);
         }
     }
 
@@ -76,12 +78,10 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // Unzip file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?consumer.delay=1000&noop=true&recursive=true")
-                    .aggregate(new ZipAggregationStrategy(true, false))
-                        .constant(true)
-                        .completionFromBatchConsumer()
-                        .eagerCheckCompletion()
+                from("direct:start")
+                	.aggregate(new ZipAggregationStrategy(false, true))
+                    	.constant(true)
+                    	.completionTimeout(50)
                     .to("file:target/out")
                     .to("mock:aggregateToZipEntry")
                     .log("Done processing zip file: ${header.CamelFileName}");
