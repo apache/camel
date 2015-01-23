@@ -190,6 +190,12 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     @Override
+    public String getDataFormatName() {
+        // json data format is special as the name can be from different bundles
+        return "json-" + library.name().toLowerCase();
+    }
+
+    @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
