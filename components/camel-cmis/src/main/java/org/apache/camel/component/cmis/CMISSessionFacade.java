@@ -190,8 +190,10 @@ public class CMISSessionFacade {
     }
 
     public boolean isObjectTypeVersionable(String objectType) {
-        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType)) {
-            ObjectType typeDefinition = session.getTypeDefinition(objectType);
+        ObjectType typeDefinition = session.getTypeDefinition(objectType);
+        ObjectType objectBaseType = typeDefinition.getBaseType();
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType) 
+                || (objectBaseType != null && CamelCMISConstants.CMIS_DOCUMENT.equals(objectBaseType.getId()))) {
             return ((DocumentType)typeDefinition).isVersionable();
         }
         return false;
