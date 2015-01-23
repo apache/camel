@@ -102,7 +102,7 @@ public class CMISProducer extends DefaultProducer {
     private boolean isFolder(Message message) {
         String baseTypeId = message.getHeader(PropertyIds.OBJECT_TYPE_ID, String.class);
         if (baseTypeId != null) {
-            return baseTypeId.equals(CamelCMISConstants.CMIS_FOLDER);
+            return CamelCMISConstants.CMIS_FOLDER.equals(cmisSessionFacade.getCMISTypeFor(baseTypeId));
         }
         return message.getBody() == null;
     }
@@ -137,7 +137,7 @@ public class CMISProducer extends DefaultProducer {
     private boolean isDocument(Exchange exchange) {
         String baseTypeId = exchange.getIn().getHeader(PropertyIds.OBJECT_TYPE_ID, String.class);
         if (baseTypeId != null) {
-            return baseTypeId.equals(CamelCMISConstants.CMIS_DOCUMENT);
+            return CamelCMISConstants.CMIS_DOCUMENT.equals(cmisSessionFacade.getCMISTypeFor(baseTypeId));
         }
         return exchange.getIn().getBody() != null;
     }
