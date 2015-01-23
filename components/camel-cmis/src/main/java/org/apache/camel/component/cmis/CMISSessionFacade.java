@@ -190,10 +190,8 @@ public class CMISSessionFacade {
     }
 
     public boolean isObjectTypeVersionable(String objectType) {
-        ObjectType typeDefinition = session.getTypeDefinition(objectType);
-        ObjectType objectBaseType = typeDefinition.getBaseType();
-        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType) 
-                || (objectBaseType != null && CamelCMISConstants.CMIS_DOCUMENT.equals(objectBaseType.getId()))) {
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
+            ObjectType typeDefinition = session.getTypeDefinition(objectType);
             return ((DocumentType)typeDefinition).isVersionable();
         }
         return false;
@@ -203,7 +201,12 @@ public class CMISSessionFacade {
         return buf != null ? session.getObjectFactory()
                 .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
     }
-    
+
+    public String getCMISTypeFor(String customOrCMISType) {
+        ObjectType objectBaseType = session.getTypeDefinition(customOrCMISType).getBaseType();
+        return objectBaseType == null ? customOrCMISType : objectBaseType.getId();
+    }
+
     public OperationContext createOperationContext() {
         return session.createOperationContext();
     }
