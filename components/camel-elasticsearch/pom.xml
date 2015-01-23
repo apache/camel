@@ -34,20 +34,6 @@
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elasticsearch</camel.osgi.export.service>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>sonatype-oss</id>
-            <name>Sonatype OSS</name>
-            <url>http://oss.sonatype.org/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

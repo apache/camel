@@ -43,14 +43,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/data");
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        // let's speed up the tests using the same context
-        return true;
+        super.setUp();
     }
 
     @Test
