@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.Metadata;
 
@@ -231,6 +232,11 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                 }
 
+                XmlValue value = fieldElement.getAnnotation(XmlValue.class);
+                if (value != null) {
+                    processValue(roundEnv, originalClassType, classElement, fieldElement, fieldName, value, eipOptions, prefix);
+                }
+
                 XmlElements elements = fieldElement.getAnnotation(XmlElements.class);
                 if (elements != null) {
                     processElements(roundEnv, classElement, elements, fieldElement, eipOptions, prefix);
@@ -325,6 +331,29 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         eipOptions.add(ep);
 
         return false;
+    }
+
+    private void processValue(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, VariableElement fieldElement, String fieldName, XmlValue value,
+        Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        // XmlValue has no name attribute
+        String name = fieldName;
+
+        name = prefix + name;
+        TypeMirror fieldType = fieldElement.asType();
+        String fieldTypeName = fieldType.toString();
+
+        String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
+        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+        boolean required = true;
+        // metadata may overrule element required
+        required = findRequired(fieldElement, required);
+
+        boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+
+        EipOption ep = new EipOption(name, "value", fieldTypeName, required, defaultValue, docComment, deprecated, false, null, false, null);
+        eipOptions.add(ep);
     }
 
     private void processElement(RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, VariableElement fieldElement,
