@@ -58,6 +58,11 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
     private static final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
+    // special for inputs (these classes have sub classes, so we use this to find all classes)
+    private static final String[] ONE_OF_INPUTS = new String[]{
+            "org.apache.camel.model.ProcessorDefinition",
+            "org.apache.camel.model.VerbDefinition"
+    };
     // special for outputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_OUTPUTS = new String[]{
         "org.apache.camel.model.ProcessorDefinition",
@@ -147,6 +152,10 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         Set<EipOption> eipOptions = new LinkedHashSet<EipOption>();
         findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "");
 
+        // after we have found all the options then figure out if the model accepts input/output
+        eipModel.setInput(hasInput(roundEnv, classElement));
+        eipModel.setOutput(hasOutput(eipModel, eipOptions));
+
         String json = createParameterJsonSchema(eipModel, eipOptions);
         writer.println(json);
     }
@@ -160,7 +169,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n    \"title\": \"").append(asTitle(eipModel.getName())).append("\",");
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
-        buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\"");
+        buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
+        buffer.append("\n    \"input\": \"").append(eipModel.getInput()).append("\",");
+        buffer.append("\n    \"output\": \"").append(eipModel.getOutput()).append("\"");
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");
@@ -734,12 +745,37 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         return sb.toString().trim();
     }
 
+    private boolean hasInput(RoundEnvironment roundEnv, TypeElement classElement) {
+        for (String name : ONE_OF_INPUTS) {
+            if (hasSuperClass(roundEnv, classElement, name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasOutput(EipModel model, Set<EipOption> options) {
+        // if we are from/rest then we accept output
+        if ("from".equals(model.getName()) || "rest".equals(model.getName())) {
+            return true;
+        }
+
+        for (EipOption option : options) {
+            if ("outputs".equals(option.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static final class EipModel {
 
         private String name;
         private String javaType;
         private String label;
         private String description;
+        private boolean input;
+        private boolean output;
 
         public String getName() {
             return name;
@@ -772,6 +808,31 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         public void setDescription(String description) {
             this.description = description;
         }
+
+        public boolean isInput() {
+            return input;
+        }
+
+        public void setInput(boolean input) {
+            this.input = input;
+        }
+
+        public String getInput() {
+            return input ? "true" : "false";
+        }
+
+        public boolean isOutput() {
+            return output;
+        }
+
+        public void setOutput(boolean output) {
+            this.output = output;
+        }
+
+        public String getOutput() {
+            return output ? "true" : "false";
+        }
+
     }
 
     private static final class EipOption {

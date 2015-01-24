@@ -17,7 +17,6 @@
 package org.apache.camel.tools.apt;
 
 /**
- /**
  * A little helper class for converting a collection of values to a (usually comma separated) string.
  */
 class CollectionStringBuffer {
