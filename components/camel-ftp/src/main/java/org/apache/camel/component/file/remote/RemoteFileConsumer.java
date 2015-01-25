@@ -17,9 +17,11 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 
@@ -70,13 +72,13 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             if (!loggedInWarning) {
                 log.warn(message);
                 loggedInWarning = true;
-            } 
+            }
             return false;
         } else {
             // need to log the failed log again
             loggedInWarning = false;
         }
-       
+
         return true;
     }
 
@@ -98,7 +100,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
         return super.processExchange(exchange);
     }
-    
+
     @Override
     protected boolean isRetrieveFile() {
         return getEndpoint().isDownload();
@@ -165,4 +167,46 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();
     }
 
+    /**
+     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile .
+     *
+     * @param absolutePath The path of the directory to poll
+     * @param dirName The name of the directory to poll
+     * @param fileList current list of files gathered
+     * @param depth the current depth of the directory
+     * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
+     * @throws GenericFileOperationFailedException if the exception during doPollDirectory can not be ignored
+     */
+    protected boolean doSafePollSubDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth) {
+        try {
+            log.trace("Polling sub directory: {} from: {}", absolutePath, endpoint);
+            //Try to poll the directory
+            return doPollDirectory(absolutePath, dirName, fileList, depth);
+        } catch (Exception e) {
+            log.debug("Caught exception " + e.getMessage());
+            if (ignoreCannotRetrieveFile(absolutePath, null, e)) {
+                log.trace("Ignoring file error " + e.getMessage() + " for " + absolutePath);
+                //indicate no files in this directory to poll, continue with fileList
+                return true;
+            } else {
+                log.trace("Not ignoring file error " + e.getMessage() + " for " + absolutePath);
+                if (e instanceof GenericFileOperationFailedException) {
+                    throw (GenericFileOperationFailedException) e;
+                } else {
+                    throw new GenericFileOperationFailedException("Cannot poll sub-directory: " + absolutePath + " from: " + endpoint, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Poll directory given by dirName or absolutePath
+     *
+     * @param absolutePath The path of the directory to poll
+     * @param dirName The name of the directory to poll
+     * @param fileList current list of files gathered
+     * @param depth the current depth of the directory
+     * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
+     */
+    protected abstract boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth);
 }

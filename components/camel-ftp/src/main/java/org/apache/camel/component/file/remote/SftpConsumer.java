@@ -58,7 +58,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
-        boolean answer = doPollDirectory(absolutePath, dirName, fileList, depth);
+        boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
             operations.changeToParentDirectory();
