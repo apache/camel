@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -59,7 +60,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
-        boolean answer = doPollDirectory(absolutePath, dirName, fileList, depth);
+        boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
             operations.changeToParentDirectory();
@@ -167,10 +168,19 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     @Override
     protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
         if (getEndpoint().getConfiguration().isIgnoreFileNotFoundOrPermissionError()) {
-            // error code 550 is file not found
-            int code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, 0, int.class);
-            if (code == 550) {
-                return true;
+            if (exchange != null) {
+                // error code 550 is file not found
+                int code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, 0, int.class);
+                if (code == 550) {
+                    return true;
+                }
+            }
+            if (cause != null && cause instanceof GenericFileOperationFailedException) {
+                GenericFileOperationFailedException generic = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
+                //exchange is null and cause has the reason for failure to read directories
+                if (generic.getCode() == 550) {
+                    return true;
+                }
             }
         }
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
