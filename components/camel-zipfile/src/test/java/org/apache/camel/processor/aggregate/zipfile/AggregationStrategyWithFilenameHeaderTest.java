@@ -67,7 +67,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
                 final ZipEntry entry = entries.nextElement();
                 assertTrue("Zip entry file name should be on of: " + FILE_NAMES, FILE_NAMES.contains(entry.getName()));                
             }
-            assertEquals("Zip file should contains " + FILE_NAMES.size() + " files", FILE_NAMES.size(), fileCount);
+            assertEquals("Zip file should contain " + FILE_NAMES.size() + " files", FILE_NAMES.size(), fileCount);
         } finally {
             IOHelper.close(file);
         }
