@@ -110,7 +110,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             }
 
             if (file.getAttrs().isDir()) {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
@@ -123,7 +123,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
                 // just assuming its a file we should poll
             } else {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
                     // matched file so add
                     fileList.add(remote);
@@ -159,9 +159,10 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file) {
+    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file, String charset) {
         RemoteFile<ChannelSftp.LsEntry> answer = new RemoteFile<ChannelSftp.LsEntry>();
 
+        answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getFilename());
