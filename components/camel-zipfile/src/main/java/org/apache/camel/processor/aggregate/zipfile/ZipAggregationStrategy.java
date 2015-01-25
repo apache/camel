@@ -55,6 +55,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     public ZipAggregationStrategy() {
         this(false, false);
     }
+
+    /**
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
+     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
+     */
+    public ZipAggregationStrategy(boolean preserveFolderStructure) {
+        this(preserveFolderStructure, false);
+    }
     
     /**
      * @param preserveFolderStructure if true, the folder structure is preserved when the source is
