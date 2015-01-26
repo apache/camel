@@ -85,17 +85,34 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     @Override
     public synchronized void putAll(Map<? extends String, ?> map) {
         entrySetView = null;
-        if (map != null && !map.isEmpty()) {
-            for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                String s = assembleKey(key);
-                originalKeys.put(s, key);
-                super.put(s, value);
+        if (map instanceof CaseInsensitiveMap) {
+            CaseInsensitiveMap cmap = (CaseInsensitiveMap)map;
+            originalKeys.putAll(cmap.getOriginalKeys());
+            // Calling the super.putAll() is much slower in JDK 1.7
+            for (Map.Entry<String, Object> entry : cmap.superEntrySet()) {
+                super.put(entry.getKey(), entry.getValue());
+            }
+        } else {
+            if (map != null && !map.isEmpty()) {
+                for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    String s = assembleKey(key);
+                    originalKeys.put(s, key);
+                    super.put(s, value);
+                }
             }
         }
     }
-
+    
+    protected synchronized Map<String, String> getOriginalKeys() {
+        return originalKeys;
+    }
+    
+    protected synchronized Set<Map.Entry<String, Object>> superEntrySet() {
+        return super.entrySet();
+    }
+ 
     @Override
     public synchronized Object remove(Object key) {
         if (key == null) {
