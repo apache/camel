@@ -127,7 +127,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
 
             if (file.isDirectory()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getName();
@@ -138,7 +138,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     }
                 }
             } else if (file.isFile()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
                     // matched file so add
                     fileList.add(remote);
@@ -186,9 +186,10 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file) {
+    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file, String charset) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
 
+        answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
@@ -221,7 +222,6 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // the file name should be the relative path
         answer.setFileName(answer.getRelativeFilePath());
 
-        answer.setCharset(endpoint.getCharset());
         return answer;
     }
 
