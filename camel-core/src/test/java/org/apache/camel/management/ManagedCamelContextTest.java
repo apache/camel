@@ -307,7 +307,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(json);
 
         assertTrue(json.contains("\"label\": \"eip,transformation\""));
-        assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
+        assertTrue(json.contains("\"expression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
         // we should see the constant value
         assertTrue(json.contains("Bye World"));
     }
@@ -326,7 +326,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(json);
 
         assertTrue(json.contains("\"label\": \"eip,transformation\""));
-        assertTrue(json.contains("\"expression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
+        assertTrue(json.contains("\"expression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
         // and now we have the description option also
         assertTrue(json.contains("\"description\": { \"kind\": \"element\", \"required\": \"false\", \"type\": \"object\", \"javaType\""));
         // we should see the constant value
@@ -348,7 +348,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"description\": \"Aggregates many messages into a single message\""));
         assertTrue(json.contains("\"label\": \"eip,routing\""));
-        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"object\""));
+        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
         assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"boolean\""));
     }
 
