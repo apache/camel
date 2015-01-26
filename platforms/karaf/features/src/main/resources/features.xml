@@ -1377,13 +1377,12 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.stringtemplate/${stringtemplate-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stringtemplate/${project.version}</bundle>
   </feature>
-  <!-- Does not work yet, see CAMEL-8264
   <feature name='camel-swagger' version='${project.version}' resolver='(obr)' start-level='50'>
     <details> camel-swagger need to access the http OSGi services </details>
     <feature>http</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-version}</bundle>
-    <bundle dependency='true'>mvn:org.scala-lang.modules/scala-xml_2.11/${scalaxml-version}</bundle>
+    <!-- must use Scala 2.10 -->
+    <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-2.10-version}</bundle>
     <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -1392,15 +1391,16 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-scala_2.11/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-scala_2.10/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-annotations/${swagger-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-core/${swagger-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-jaxrs/${swagger-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/2.6_1</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json4s/3.2.8_1</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/${paranamer-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json4s/${json4s-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-swagger/${project.version}</bundle>
-  </feature>  -->
+  </feature>  
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-netty</feature>
