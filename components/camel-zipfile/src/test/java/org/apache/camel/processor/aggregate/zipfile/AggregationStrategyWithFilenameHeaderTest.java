@@ -42,9 +42,9 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
 
     @Test
     public void testSplitter() throws Exception {
-    	MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
+        MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
         mock.expectedMessageCount(1);
-        
+
         template.setDefaultEndpointUri("direct:start");
         template.sendBodyAndHeader("foo", Exchange.FILE_NAME, FILE_NAMES.get(0));
         template.sendBodyAndHeader("bar", Exchange.FILE_NAME, FILE_NAMES.get(1));
@@ -65,7 +65,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
             while (entries.hasMoreElements()) {
                 fileCount++;
                 final ZipEntry entry = entries.nextElement();
-                assertTrue("Zip entry file name should be on of: " + FILE_NAMES, FILE_NAMES.contains(entry.getName()));                
+                assertTrue("Zip entry file name should be on of: " + FILE_NAMES, FILE_NAMES.contains(entry.getName()));
             }
             assertEquals("Zip file should contain " + FILE_NAMES.size() + " files", FILE_NAMES.size(), fileCount);
         } finally {
@@ -79,12 +79,12 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                	.aggregate(new ZipAggregationStrategy(false, true))
-                    	.constant(true)
-                    	.completionTimeout(50)
-                    .to("file:target/out")
-                    .to("mock:aggregateToZipEntry")
-                    .log("Done processing zip file: ${header.CamelFileName}");
+                        .aggregate(new ZipAggregationStrategy(false, true))
+                            .constant(true)
+                            .completionTimeout(50)
+                            .to("file:target/out")
+                            .to("mock:aggregateToZipEntry")
+                            .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 
