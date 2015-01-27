@@ -90,14 +90,13 @@ public class RemoteFileIgnoreDoPollErrorTest {
         return new RemoteFileConsumer<Object>(remoteFileEndpoint, null, null) {
             @Override
             protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<Object>> genericFiles, int depth) {
-                switch (doPollResult) {
-                case "IllegalStateException":
+                if ("IllegalStateException".equals(doPollResult)) {
                     throw new IllegalStateException("Problem");
-                case "GenericFileOperationFailedException":
+                } else if ("GenericFileOperationFailedException".equals(doPollResult)) {
                     throw new GenericFileOperationFailedException("Perm error");
-                case "true":
+                } else if ("true".equals(doPollResult)) {
                     return true;
-                default:
+                } else {
                     return false;
                 }
             }
