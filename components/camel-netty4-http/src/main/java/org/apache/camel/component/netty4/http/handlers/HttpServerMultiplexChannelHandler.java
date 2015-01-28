@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4.http.handlers;
 
+import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -133,14 +134,20 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         if (handler != null) {
             handler.exceptionCaught(ctx, cause);
         } else {
-            // we cannot throw the exception here
-            LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", cause);
-            // Now we just send 404 back to the client
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
-            response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            ctx.writeAndFlush(response);
-            ctx.close();
+            if (cause instanceof ClosedChannelException) {
+                // The channel is closed so we do nothing here
+                LOG.debug("Channel already closed. Ignoring this exception.");
+                return;
+            } else {
+                // we cannot throw the exception here
+                LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", cause);
+                // Now we just send 404 back to the client
+                HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
+                response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                response.headers().set(Exchange.CONTENT_LENGTH, 0);
+                ctx.writeAndFlush(response);
+                ctx.close();
+            }
         }
     }
 
