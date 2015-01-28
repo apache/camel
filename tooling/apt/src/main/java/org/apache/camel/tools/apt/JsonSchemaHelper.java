@@ -80,7 +80,8 @@ final class JsonSchemaHelper {
 
         if (!Strings.isNullOrEmpty(defaultValue)) {
             sb.append(", \"defaultValue\": ");
-            sb.append(Strings.doubleQuote(defaultValue));
+            String text = safeDefaultValue(defaultValue);
+            sb.append(Strings.doubleQuote(text));
         }
 
         if (!Strings.isNullOrEmpty(description)) {
@@ -247,6 +248,19 @@ final class JsonSchemaHelper {
         String s = sb.toString();
         s = s.replaceAll("\\s+", " ");
         return s.trim();
+    }
+
+    /**
+     * The default value may need to be escaped to be safe for json
+     */
+    private static String safeDefaultValue(String value) {
+        if ("\"".equals(value)) {
+            return "\\\"";
+        } else if ("\\".equals(value)) {
+            return "\\\\";
+        } else {
+            return value;
+        }
     }
 
 }
