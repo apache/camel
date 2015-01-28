@@ -88,8 +88,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         mavenOption.versionAsInProject().start(true).startLevel(10);
         return mavenOption;
     }
-    public static UrlReference getCamelKarafFeatureUrl(String version) {
 
+    public static UrlReference getCamelKarafFeatureUrl(String version) {
         String type = "xml/features";
         MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.camel.karaf").artifactId("apache-camel");
         if (version == null) {
