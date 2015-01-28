@@ -109,9 +109,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the text is qualified with a char such as "
-     * <p/>
-     * The default value is "
+     * If the text is qualified with a char such as &quot;
      */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;
@@ -123,8 +121,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
     /**
      * The delimiter char (could be ; , or similar)
-     * <p/>
-     * The default value is ,
      */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;

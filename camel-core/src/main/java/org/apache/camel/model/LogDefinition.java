@@ -176,7 +176,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     }
 
     /**
-     * To refer to a custom logger instance to lookup from ther registry.
+     * To refer to a custom logger instance to lookup from the registry.
      */
     public void setLoggerRef(String loggerRef) {
         this.loggerRef = loggerRef;
