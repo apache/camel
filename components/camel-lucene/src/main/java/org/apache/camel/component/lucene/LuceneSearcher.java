@@ -59,10 +59,10 @@ public class LuceneSearcher {
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
-        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_4_10_2);
+        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_4_10_2, false);
     }
 
-    public Hits search(String searchPhrase, int maxNumberOfHits, Version luceneVersion) throws Exception {
+    public Hits search(String searchPhrase, int maxNumberOfHits, Version luceneVersion, boolean returnLuceneDocs) throws Exception {
         Hits searchHits = new Hits();
 
         int numberOfHits = doSearch(searchPhrase, maxNumberOfHits, luceneVersion);
@@ -71,6 +71,9 @@ public class LuceneSearcher {
         for (ScoreDoc hit : hits) {
             Document selectedDocument = indexSearcher.doc(hit.doc);
             Hit aHit = new Hit();
+            if(returnLuceneDocs) {
+                aHit.setDocument(selectedDocument);
+            }
             aHit.setHitLocation(hit.doc);
             aHit.setScore(hit.score);
             aHit.setData(selectedDocument.get("contents"));
