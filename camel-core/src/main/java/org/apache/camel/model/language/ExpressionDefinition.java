@@ -43,8 +43,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A useful base class for an expression
- *
- * @version 
  */
 @Metadata(label = "language")
 @XmlRootElement
@@ -196,6 +194,9 @@ public class ExpressionDefinition implements Expression, Predicate {
         return expression;
     }
 
+    /**
+     * The expression value in your chosen language syntax
+     */
     @Required
     public void setExpression(String expression) {
         this.expression = expression;

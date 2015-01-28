@@ -86,7 +86,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private String timeoutCheckerExecutorServiceRef;
     @XmlAttribute
     private String aggregationRepositoryRef;
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;

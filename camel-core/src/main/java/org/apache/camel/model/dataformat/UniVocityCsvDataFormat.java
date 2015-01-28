@@ -34,9 +34,9 @@ import org.apache.camel.spi.Metadata;
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
     protected Boolean quoteAllFields;
-    @XmlAttribute @Metadata(defaultValue = "''")
+    @XmlAttribute @Metadata(defaultValue = "\"")
     protected String quote;
-    @XmlAttribute @Metadata(defaultValue = "''")
+    @XmlAttribute @Metadata(defaultValue = "\"")
     protected String quoteEscape;
     @XmlAttribute @Metadata(defaultValue = ",")
     protected String delimiter;
