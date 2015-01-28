@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.mvel;
+package org.apache.camel.component.mvel;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
