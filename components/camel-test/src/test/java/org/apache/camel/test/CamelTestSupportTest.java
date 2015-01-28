@@ -65,7 +65,7 @@ public class CamelTestSupportTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         called = true;
 
-        JndiRegistry jndi = super.createRegistry();
+        JndiRegistry jndi = (JndiRegistry) super.createRegistry();
         jndi.bind("beer", "yes");
         return jndi;
     }

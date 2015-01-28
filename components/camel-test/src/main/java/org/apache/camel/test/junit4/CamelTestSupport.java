@@ -51,6 +51,7 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
@@ -489,7 +490,7 @@ public abstract class CamelTestSupport extends TestSupport {
         return context;
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createRegistry() throws Exception {
         return new JndiRegistry(createJndiContext());
     }
 
