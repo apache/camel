@@ -23,11 +23,11 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class HipchatConfiguration {
     @UriPath
+    private String protocol = HipchatConstants.DEFAULT_PROTOCOL;
+    @UriPath
     private String host = HipchatConstants.DEFAULT_HOST;
     @UriPath
     private Integer port = HipchatConstants.DEFAULT_PORT;
-    @UriParam
-    private String protocol = HipchatConstants.DEFAULT_PROTOCOL;
     @UriParam
     private String authToken;
     @UriParam
@@ -37,6 +37,9 @@ public class HipchatConfiguration {
         return host;
     }
 
+    /**
+     * The host for the hipchat server. Is by default api.hipchat.com
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -45,6 +48,9 @@ public class HipchatConfiguration {
         return port;
     }
 
+    /**
+     * The port for the hipchat server. Is by default 80.
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -53,6 +59,9 @@ public class HipchatConfiguration {
         return protocol;
     }
 
+    /**
+     * The protocol for the hipchat server. Is by default http.
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -61,6 +70,9 @@ public class HipchatConfiguration {
         return authToken;
     }
 
+    /**
+     * OAuth 2 auth token
+     */
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
@@ -69,6 +81,11 @@ public class HipchatConfiguration {
         return consumeUsers;
     }
 
+    /**
+     * Username(s) when consuming messages from the hiptchat server.
+     * <p/>
+     * Multiple user names can be separated by comma.
+     */
     public void setConsumeUsers(String consumeUsers) {
         this.consumeUsers = consumeUsers;
     }

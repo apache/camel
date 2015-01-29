@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "hipchat", consumerClass = HipchatConsumer.class, label = "api,cloud")
 public class HipchatEndpoint extends ScheduledPollEndpoint {
 
+    @UriParam
     private HipchatConfiguration configuration;
 
     public HipchatEndpoint(String uri, HipchatComponent component) {

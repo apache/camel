@@ -20,25 +20,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HipchatComponentTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Test
-    public void testAuthTokenMandatory() throws Exception {
-        HipchatComponent component = new HipchatComponent(Mockito.mock(CamelContext.class));
-        expectedException.expect(IllegalArgumentException.class);
-        component.createEndpoint("", "", new HashMap<String, Object>());
-    }
 
     @Test
     public void testUriParseNoPort() throws Exception {
