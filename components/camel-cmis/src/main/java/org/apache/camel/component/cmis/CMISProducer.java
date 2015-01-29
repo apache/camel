@@ -59,8 +59,9 @@ public class CMISProducer extends DefaultProducer {
     private Map<String, Object> filterTypeProperties(Map<String, Object> properties) {
         Map<String, Object> result = new HashMap<String, Object>(properties.size());
         String objectTypeName = CamelCMISConstants.CMIS_DOCUMENT;
-        if (properties.containsKey(PropertyIds.OBJECT_TYPE_ID))
-            objectTypeName = (String)properties.get(PropertyIds.OBJECT_TYPE_ID);
+        if (properties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
+            objectTypeName = (String) properties.get(PropertyIds.OBJECT_TYPE_ID);
+        }
 
         Set<String> types = cmisSessionFacade.getPropertiesFor(objectTypeName);
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
@@ -161,7 +162,7 @@ public class CMISProducer extends DefaultProducer {
     }
 
     private byte[] getBodyData(Message message) {
-        return message.getBody(new byte[0].getClass());
+        return message.getBody(byte[].class);
     }
 
     private String getMimeType(Message message) throws NoSuchHeaderException {
