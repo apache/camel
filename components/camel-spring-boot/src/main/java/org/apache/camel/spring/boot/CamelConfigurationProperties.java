@@ -46,7 +46,7 @@ public class CamelConfigurationProperties {
     /**
      * Sets the name of the this CamelContext.
      */
-    private String name = null;
+    private String name;
 
     // Getters & setters
 

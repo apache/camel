@@ -51,7 +51,7 @@ public class CamelAutoConfiguration {
             camelContext.disableJMX();
         }
 
-        if (configurationProperties.getName()!=null) {
+        if (configurationProperties.getName() != null) {
             ((SpringCamelContext) camelContext).setName(configurationProperties.getName());
         }
 

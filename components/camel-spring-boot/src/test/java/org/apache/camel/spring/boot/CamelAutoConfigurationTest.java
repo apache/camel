@@ -22,7 +22,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
