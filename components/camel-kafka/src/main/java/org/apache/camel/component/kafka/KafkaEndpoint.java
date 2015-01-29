@@ -23,6 +23,7 @@ import kafka.message.MessageAndMetadata;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -33,7 +34,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "kafka", consumerClass = KafkaConsumer.class, label = "messaging")
-public class KafkaEndpoint extends DefaultEndpoint {
+public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriPath
     private String brokers;
@@ -453,4 +454,8 @@ public class KafkaEndpoint extends DefaultEndpoint {
         return configuration.getRequestTimeoutMs();
     }
 
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
+    }
 }
