@@ -46,11 +46,7 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-tx</artifactId>
         </exclusion>
-      </exclusions>      
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
