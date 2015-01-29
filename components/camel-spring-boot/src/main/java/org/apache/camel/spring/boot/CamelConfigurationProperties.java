@@ -43,6 +43,11 @@ public class CamelConfigurationProperties {
      */
     private boolean typeConversion = true;
 
+    /**
+     * Sets the name of the this CamelContext.
+     */
+    private String name = null;
+
     // Getters & setters
 
     public boolean isJmxEnabled() {
@@ -75,6 +80,14 @@ public class CamelConfigurationProperties {
 
     public void setTypeConversion(boolean typeConversion) {
         this.typeConversion = typeConversion;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

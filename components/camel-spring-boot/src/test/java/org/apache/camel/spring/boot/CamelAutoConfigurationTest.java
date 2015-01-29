@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.apache.camel.spring.boot.TestConfig.CONTEXT_NAME;
 import static org.apache.camel.spring.boot.TestConfig.ROUTE_ID;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -44,7 +43,8 @@ import static org.mockito.Mockito.verify;
 @SpringApplicationConfiguration(classes = {TestConfig.class, CamelAutoConfigurationTest.class, RouteConfigWithCamelContextInjected.class})
 @IntegrationTest({
         "camel.springboot.consumerTemplateCacheSize=100",
-        "camel.springboot.jmxEnabled=false"})
+        "camel.springboot.jmxEnabled=true",
+        "camel.springboot.name=customName"})
 public class CamelAutoConfigurationTest extends Assert {
 
     // Collaborators fixtures
@@ -132,7 +132,8 @@ public class CamelAutoConfigurationTest extends Assert {
 
     @Test
     public void shouldChangeContextNameViaConfigurationCallback() {
-        assertEquals(CONTEXT_NAME, camelContext.getName());
+        assertEquals("customName", camelContext.getName());
+        assertEquals(camelContext.getName(), camelContext.getManagementName());
     }
 
     @Test
@@ -157,8 +158,6 @@ class TestConfig {
 
     static final String ROUTE_ID = "testRoute";
 
-    static final String CONTEXT_NAME = "customName";
-
     // Test beans
 
     @Bean
@@ -175,17 +174,6 @@ class TestConfig {
     @Bean
     CamelContextConfiguration camelContextConfiguration() {
         return mock(CamelContextConfiguration.class);
-    }
-
-    @Bean
-    CamelContextConfiguration nameConfiguration() {
-        return new CamelContextConfiguration() {
-            @Override
-            public void beforeApplicationStart(CamelContext camelContext) {
-                SpringCamelContext springCamelContext = (SpringCamelContext) camelContext;
-                springCamelContext.setName(CONTEXT_NAME);
-            }
-        };
     }
 
 }
