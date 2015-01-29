@@ -18,10 +18,7 @@ package org.apache.camel.component.cmis;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -190,7 +187,7 @@ public class CMISSessionFacade {
     }
 
     public boolean isObjectTypeVersionable(String objectType) {
-        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType)) {
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
             ObjectType typeDefinition = session.getTypeDefinition(objectType);
             return ((DocumentType)typeDefinition).isVersionable();
         }
@@ -201,7 +198,16 @@ public class CMISSessionFacade {
         return buf != null ? session.getObjectFactory()
                 .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
     }
-    
+
+    public String getCMISTypeFor(String customOrCMISType) {
+        ObjectType objectBaseType = session.getTypeDefinition(customOrCMISType).getBaseType();
+        return objectBaseType == null ? customOrCMISType : objectBaseType.getId();
+    }
+
+    public Set<String> getPropertiesFor(String objectType) {
+        return session.getTypeDefinition(objectType).getPropertyDefinitions().keySet();
+    }
+
     public OperationContext createOperationContext() {
         return session.createOperationContext();
     }
