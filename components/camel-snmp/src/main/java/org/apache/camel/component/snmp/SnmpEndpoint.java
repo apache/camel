@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
+import org.snmp4j.security.SecurityLevel;
 
 @UriEndpoint(scheme = "snmp", label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
@@ -67,6 +68,22 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     @UriParam(defaultValue = "60")
     private int delay = 60;
 
+    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV)
+    private int securityLevel = SecurityLevel.AUTH_PRIV;
+    @UriParam
+    private String securityName;
+    @UriParam
+    private String authenticationProtocol;
+    @UriParam
+    private String authenticationPassphrase;
+    @UriParam
+    private String privacyProtocol;
+    @UriParam
+    private String privacyPassphrase;
+    @UriParam
+    private String snmpContextName;
+    @UriParam
+    private String snmpContextEngineId;
     /**
      * creates a snmp endpoint
      *
@@ -258,6 +275,70 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         String address = String.format("%s:%s/%d", getProtocol(), host, port);
         LOG.debug("Using snmp address {}", address);
         setAddress(address);
+    }
+
+    public int getSecurityLevel() {
+        return securityLevel;
+    }
+
+    public void setSecurityLevel(int securityLevel) {
+        this.securityLevel = securityLevel;
+    }
+
+    public String getSecurityName() {
+        return securityName;
+    }
+
+    public void setSecurityName(String securityName) {
+        this.securityName = securityName;
+    }
+
+    public String getAuthenticationProtocol() {
+        return authenticationProtocol;
+    }
+
+    public void setAuthenticationProtocol(String authenticationProtocol) {
+        this.authenticationProtocol = authenticationProtocol;
+    }
+
+    public String getAuthenticationPassphrase() {
+        return authenticationPassphrase;
+    }
+
+    public void setAuthenticationPassphrase(String authenticationPassphrase) {
+        this.authenticationPassphrase = authenticationPassphrase;
+    }
+
+    public String getPrivacyProtocol() {
+        return privacyProtocol;
+    }
+
+    public void setPrivacyProtocol(String privacyProtocol) {
+        this.privacyProtocol = privacyProtocol;
+    }
+
+    public String getPrivacyPassphrase() {
+        return privacyPassphrase;
+    }
+
+    public void setPrivacyPassphrase(String privacyPassphrase) {
+        this.privacyPassphrase = privacyPassphrase;
+    }
+
+    public String getSnmpContextName() {
+        return snmpContextName;
+    }
+
+    public void setSnmpContextName(String snmpContextName) {
+        this.snmpContextName = snmpContextName;
+    }
+
+    public String getSnmpContextEngineId() {
+        return snmpContextEngineId;
+    }
+
+    public void setSnmpContextEngineId(String snmpContextEngineId) {
+        this.snmpContextEngineId = snmpContextEngineId;
     }
 
     @Override

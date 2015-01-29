@@ -16,6 +16,6 @@
  */
 package org.apache.camel.component.snmp;
 
-public enum SnmpActionType {
-    TRAP, POLL, GET_NEXT
+public enum SnmpPrivacyProtocolType {
+    DES, TRIDES, AES128, AES192, AES256; 
 }
