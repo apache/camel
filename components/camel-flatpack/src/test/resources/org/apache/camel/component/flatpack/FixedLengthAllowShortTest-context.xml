@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="df" class="org.apache.camel.component.flatpack.FlatpackDataFormat">
+    <bean id="df" class="org.apache.camel.dataformat.flatpack.FlatpackDataFormat">
         <property name="definition" value="PEOPLE-FixedLength.pzmap.xml"/>
         <property name="fixed" value="true"/>
         <property name="allowShortLines" value="true"/>

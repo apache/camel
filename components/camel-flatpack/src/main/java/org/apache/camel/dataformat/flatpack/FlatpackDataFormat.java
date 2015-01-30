@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.flatpack;
+package org.apache.camel.dataformat.flatpack;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +34,7 @@ import net.sf.flatpack.writer.DelimiterWriterFactory;
 import net.sf.flatpack.writer.FixedWriterFactory;
 import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.flatpack.DataSetList;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * This data format supports two operations:
  * <ul>
  * <li>marshal = from <tt>List&lt;Map&lt;String, Object&gt;&gt;</tt> to <tt>OutputStream</tt> (can be converted to String)</li>
- * <li>unmarshal = from <tt>InputStream</tt> (such as a File) to {@link DataSetList}.
+ * <li>unmarshal = from <tt>InputStream</tt> (such as a File) to {@link org.apache.camel.component.flatpack.DataSetList}.
  * </ul>
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
  *

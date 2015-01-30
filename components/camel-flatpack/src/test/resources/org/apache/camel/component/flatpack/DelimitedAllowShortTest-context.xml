@@ -21,7 +21,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="df" class="org.apache.camel.component.flatpack.FlatpackDataFormat">
+    <bean id="df" class="org.apache.camel.dataformat.flatpack.FlatpackDataFormat">
         <property name="definition" value="INVENTORY-Delimited.pzmap.xml"/>
         <property name="fixed" value="false"/>
         <property name="allowShortLines" value="true"/>
