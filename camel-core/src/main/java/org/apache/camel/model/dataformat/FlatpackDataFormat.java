@@ -109,7 +109,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the text is qualified with a char such as &quot;
+     * If the text is qualified with a char such as "
      */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;

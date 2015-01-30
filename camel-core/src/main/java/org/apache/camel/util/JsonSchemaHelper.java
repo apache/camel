@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 public final class JsonSchemaHelper {
 
     private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
+    private static final String QUOT = "&quot;";
 
     private JsonSchemaHelper() {
     }
@@ -143,6 +144,9 @@ public final class JsonSchemaHelper {
                 break;
             }
 
+            // need to safe encode \" so we can parse the line
+            line = line.replaceAll("\\\\\"", QUOT);
+
             Map<String, String> row = new LinkedHashMap<String, String>();
             Matcher matcher = PATTERN.matcher(line);
 
@@ -166,6 +170,8 @@ public final class JsonSchemaHelper {
                     }
                     if (value != null) {
                         value = value.trim();
+                        // encode back
+                        value = value.replaceAll(QUOT, "\"");
                     }
                     row.put(key, value);
                     // reset
