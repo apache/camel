@@ -56,11 +56,11 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 
+    @Test
     public void testFlatpackDefaultValue() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("flatpack");
         assertNotNull(json);
-        System.out.println(json);
 
         assertTrue(json.contains("\"name\": \"flatpack"));
 
@@ -86,7 +86,40 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         assertEquals("java.lang.String", found.get("javaType"));
         assertEquals("false", found.get("deprecated"));
         assertEquals("\"", found.get("defaultValue"));
-        assertEquals("If the text is qualified with a char such as &quot;", found.get("description"));
+        assertEquals("If the text is qualified with a char such as \"", found.get("description"));
+    }
+
+    @Test
+    public void testUniVocityTsvEscapeChar() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String json = context.getEipParameterJsonSchema("univocity-tsv");
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"name\": \"univocity-tsv"));
+
+        // the default value is a bit tricky as its \, which is written escaped as \\
+        assertTrue(json.contains("\"escapeChar\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"deprecated\": \"false\", \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
+
+        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+        assertEquals(15, rows.size());
+
+        Map<String, String> found = null;
+        for (Map<String, String> row : rows) {
+            if ("escapeChar".equals(row.get("name"))) {
+                found = row;
+                break;
+            }
+        }
+        assertNotNull(found);
+        assertEquals("escapeChar", found.get("name"));
+        assertEquals("attribute", found.get("kind"));
+        assertEquals("false", found.get("required"));
+        assertEquals("string", found.get("type"));
+        assertEquals("java.lang.String", found.get("javaType"));
+        assertEquals("false", found.get("deprecated"));
+        assertEquals("\\", found.get("defaultValue"));
+        assertEquals("The escape character.", found.get("description"));
     }
 
 }
