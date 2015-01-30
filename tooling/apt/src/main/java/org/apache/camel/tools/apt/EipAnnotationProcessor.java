@@ -17,6 +17,8 @@
 package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -149,7 +151,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         EipModel eipModel = findEipModelProperties(roundEnv, classElement, javaTypeName, name);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
-        Set<EipOption> eipOptions = new LinkedHashSet<EipOption>();
+        Set<EipOption> eipOptions = new TreeSet<EipOption>(new EipOptionComparator(eipModel));
         findClassProperties(writer, roundEnv, eipOptions, classElement, classElement, "");
 
         // after we have found all the options then figure out if the model accepts input/output
@@ -929,6 +931,43 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         @Override
         public int hashCode() {
             return name.hashCode();
+        }
+    }
+
+    private static class EipOptionComparator implements Comparator<EipOption> {
+
+        private final EipModel model;
+
+        private EipOptionComparator(EipModel model) {
+            this.model = model;
+        }
+
+        @Override
+        public int compare(EipOption o1, EipOption o2) {
+            int weigth = weigth(o1);
+            int weigth2 = weigth(o2);
+
+            if (weigth == weigth2) {
+                // keep the current order
+                return 1;
+            } else {
+                // sort according to weight
+                return weigth2 - weigth;
+            }
+        }
+
+        private int weigth(EipOption o) {
+            String name = o.getName();
+            // these should be last
+            if ("description".equals(name)) {
+                return -10;
+            } else if ("id".equals(name)) {
+                return -9;
+            } else if ("pattern".equals(name) && "to".equals(model.getName())) {
+                // and pattern only for the to model
+                return -8;
+            }
+            return 0;
         }
     }
 
