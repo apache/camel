@@ -71,7 +71,8 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-atmosphere-websocket</artifactId>
     </dependency>
-    <groupId>org.apache.camel</groupId>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-atoms</artifactId>
     </dependency>
     <dependency>
