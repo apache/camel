@@ -29,6 +29,7 @@
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-apns</include>
         <include>org.apache.camel:camel-atmosphere-websocket</include>
+        <include>org.apache.camel:camel-atoms</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-avro</include>
