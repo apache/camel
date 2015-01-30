@@ -821,7 +821,13 @@
   <feature name='camel-jsonpath' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:com.jayway.jsonpath/json-path/${json-path-version}</bundle>
-    <bundle>wrap:mvn:net.minidev/json-smart/${json-smart-version}</bundle>
+    <bundle>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
+    <bundle>mvn:net.minidev/asm/${json-asm-version}</bundle>
+    <!-- should be optional: https://code.google.com/p/json-path/issues/detail?id=66 -->
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jsonpath/${project.version}</bundle>
   </feature>
   <feature name='camel-jt400' version='${project.version}' resolver='(obr)' start-level='50'>

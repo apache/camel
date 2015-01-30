@@ -276,8 +276,9 @@
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
     <json4s-bundle-version>3.2.8_1</json4s-bundle-version>
-    <json-path-version>1.1.0</json-path-version>
-    <json-smart-version>2.0</json-smart-version>
+    <json-asm-version>1.0.2</json-asm-version>
+    <json-path-version>1.2.0</json-path-version>
+    <json-smart-version>2.1.1</json-smart-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
