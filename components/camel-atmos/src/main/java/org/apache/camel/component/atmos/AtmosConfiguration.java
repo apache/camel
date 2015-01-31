@@ -22,34 +22,44 @@ import java.net.URISyntaxException;
 import com.emc.atmos.api.AtmosApi;
 import com.emc.atmos.api.AtmosConfig;
 import com.emc.atmos.api.jersey.AtmosApiClient;
-
 import org.apache.camel.component.atmos.util.AtmosException;
 import org.apache.camel.component.atmos.util.AtmosOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
+@UriParams
 public class AtmosConfiguration {
-    
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtmosConfiguration.class);
 
+    @UriPath
+    private String name;
+    @UriPath
+    private AtmosOperation operation;
     //atmos shared secret
+    @UriParam
     private String secretKey;
     //local path to put files
+    @UriParam
     private String localPath;
     //where to put files on atmos
+    @UriParam
     private String remotePath;
     //new path on atmos when moving files
+    @UriParam
     private String newRemotePath;
     //search query on atmos
+    @UriParam
     private String query;
     //atmos client fullTokenId
+    @UriParam
     private String fullTokenId;
     //atmos server uri
+    @UriParam
     private String uri;
     //atmos ssl validation
+    @UriParam
     private boolean enableSslValidation;
     //specific atmos operation for the component
-    private AtmosOperation operation;
     //reference to atmo client
     private AtmosApi client;
     
@@ -81,7 +91,15 @@ public class AtmosConfiguration {
         
         this.client = atmosclient;
     }
-    
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getSecretKey() {
         return secretKey;
     }

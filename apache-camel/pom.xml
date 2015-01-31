@@ -69,11 +69,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-atmosphere-websocket</artifactId>
+      <artifactId>camel-atmos</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-atoms</artifactId>
+      <artifactId>camel-atmosphere-websocket</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

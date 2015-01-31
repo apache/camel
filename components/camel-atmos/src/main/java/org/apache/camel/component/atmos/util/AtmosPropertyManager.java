@@ -23,6 +23,9 @@ import java.util.Properties;
 
 public final class AtmosPropertyManager {
 
+    // TODO: this is wrong, this should be configured on the component instead
+    // and no static code please!
+
     private static Properties properties;
     private static AtmosPropertyManager instance;
 
