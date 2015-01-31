@@ -94,9 +94,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
     
-    @UriParam(defaultValue = "true")
-    protected boolean copyOnExchange = true;
-
     private volatile Processor defaultProcessor;
     private volatile Map<Integer, Processor> processors;
     private volatile List<Exchange> receivedExchanges;
@@ -111,24 +108,26 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile Map<String, Object> expectedPropertyValues;
     private volatile Map<String, Object> actualPropertyValues;
 
+    private volatile int counter;
+
     @UriPath(description = "Name of mock endpoint")
     private String name;
-    @UriParam
-    private volatile int expectedCount;
-    @UriParam
-    private volatile long sleepForEmptyTest;
-    @UriParam
-    private volatile long resultWaitTime;
-    @UriParam
-    private volatile long resultMinimumWaitTime;
-    @UriParam
-    private volatile long assertPeriod;
-    @UriParam
-    private volatile int counter;
-    @UriParam
-    private volatile int retainFirst;
-    @UriParam
-    private volatile int retainLast;
+    @UriParam(defaultValue = "-1")
+    private int expectedCount;
+    @UriParam(defaultValue = "0")
+    private long sleepForEmptyTest;
+    @UriParam(defaultValue = "0")
+    private long resultWaitTime;
+    @UriParam(defaultValue = "0")
+    private long resultMinimumWaitTime;
+    @UriParam(defaultValue = "0")
+    private long assertPeriod;
+    @UriParam(defaultValue = "-1")
+    private int retainFirst;
+    @UriParam(defaultValue = "-1")
+    private int retainLast;
+    @UriParam(defaultValue = "true")
+    protected boolean copyOnExchange = true;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -992,6 +991,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<Throwable> getFailures() {
         return failures;
     }
