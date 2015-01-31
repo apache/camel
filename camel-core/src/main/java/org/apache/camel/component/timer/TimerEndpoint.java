@@ -54,7 +54,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private boolean daemon = true;
     @UriParam
     private Timer timer;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "0")
     private long repeatCount;
 
     public TimerEndpoint() {
