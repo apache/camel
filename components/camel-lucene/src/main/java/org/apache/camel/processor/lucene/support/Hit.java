@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.lucene.support;
 
+import org.apache.lucene.document.Document;
 import java.io.Serializable;
 
 public class Hit implements Serializable {
@@ -24,6 +25,7 @@ public class Hit implements Serializable {
     private int hitLocation;
     private float score;
     private String data;
+    private Document document;
 
     public int getHitLocation() {
         return hitLocation;
@@ -47,6 +49,14 @@ public class Hit implements Serializable {
 
     public void setData(String value) {
         this.data = value;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     @Override

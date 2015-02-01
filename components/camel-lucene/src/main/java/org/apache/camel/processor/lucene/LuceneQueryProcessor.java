@@ -46,10 +46,13 @@ public class LuceneQueryProcessor implements Processor {
         Hits hits;
 
         String phrase = exchange.getIn().getHeader("QUERY", String.class);
+        String returnLuceneDocs = exchange.getIn().getHeader("RETURN_LUCENE_DOCS", String.class);
+        boolean isReturnLuceneDocs = (returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true")) ? true : false;
+
         if (phrase != null) {
             searcher = new LuceneSearcher();
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, luceneVersion);            
+            hits = searcher.search(phrase, maxNumberOfHits, luceneVersion, isReturnLuceneDocs);
         } else {
             throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
         }            
