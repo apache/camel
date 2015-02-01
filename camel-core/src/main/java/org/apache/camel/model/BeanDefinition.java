@@ -51,7 +51,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String method;
     @XmlAttribute
     private String beanType;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean cache;
     @XmlAttribute
     @Deprecated

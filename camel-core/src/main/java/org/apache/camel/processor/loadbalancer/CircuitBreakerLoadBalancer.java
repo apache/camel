@@ -143,7 +143,6 @@ public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements T
     }
 
     private boolean openCircuit(final Exchange exchange, final AsyncCallback callback) {
-        
         boolean output = rejectExchange(exchange, callback);
         state.set(STATE_OPEN);
         logState();

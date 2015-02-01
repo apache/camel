@@ -52,7 +52,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
     private Boolean parallelProcessing;
