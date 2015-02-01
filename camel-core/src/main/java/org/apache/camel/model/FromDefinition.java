@@ -40,6 +40,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     @XmlAttribute
     private String uri;
     @XmlAttribute
+    @Deprecated
     private String ref;
     @XmlTransient
     private Endpoint endpoint;
@@ -110,7 +111,9 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      * ApplicationContext or JNDI) to use
      *
      * @param ref the reference name to use
+     * @deprecated use uri with ref:uri instead
      */
+    @Deprecated
     public void setRef(String ref) {
         clear();
         this.ref = ref;

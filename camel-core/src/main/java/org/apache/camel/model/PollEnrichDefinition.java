@@ -45,6 +45,7 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
     @XmlAttribute(name = "ref")
+    @Deprecated
     private String resourceRef;
     @XmlAttribute @Metadata(defaultValue = "-1")
     private Long timeout;
@@ -168,7 +169,10 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     /**
      * Refers to the endpoint for the external service to poll enrich from. You must use either uri or ref.
+     *
+     * @deprecated use uri with ref:uri instead
      */
+    @Deprecated
     public void setResourceRef(String resourceRef) {
         this.resourceRef = resourceRef;
     }

@@ -45,6 +45,7 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
     @XmlAttribute(name = "ref")
+    @Deprecated
     private String resourceRef;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
@@ -162,7 +163,10 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
 
     /**
      * Refers to the endpoint for the external service to enrich from. You must use either uri or ref.
+     *
+     * @deprecated use uri with ref:uri instead
      */
+    @Deprecated
     public void setResourceRef(String resourceRef) {
         this.resourceRef = resourceRef;
     }

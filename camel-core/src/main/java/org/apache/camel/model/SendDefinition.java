@@ -39,6 +39,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     @XmlAttribute
     protected String uri;
     @XmlAttribute
+    @Deprecated
     protected String ref;
     @XmlTransient
     protected Endpoint endpoint;
@@ -82,7 +83,9 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
      * Sets the reference of the endpoint to send to.
      *
      * @param ref the reference of the endpoint
+     * @deprecated use uri with ref:uri instead
      */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }

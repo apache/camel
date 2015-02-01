@@ -151,7 +151,10 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
 
     /**
      * To refer to a custom data format to use as unmarshaller
+     *
+     * @deprecated use custom dataformat instead
      */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }

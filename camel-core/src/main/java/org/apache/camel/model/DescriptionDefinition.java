@@ -79,6 +79,7 @@ public class DescriptionDefinition {
     /**
      * Layout height
      */
+    @Deprecated
     public void setLayoutHeight(Double layoutHeight) {
         this.layoutHeight = layoutHeight;
     }
@@ -90,6 +91,7 @@ public class DescriptionDefinition {
     /**
      * Layout width
      */
+    @Deprecated
     public void setLayoutWidth(Double layoutWidth) {
         this.layoutWidth = layoutWidth;
     }
@@ -101,6 +103,7 @@ public class DescriptionDefinition {
     /**
      * Layout position X
      */
+    @Deprecated
     public void setLayoutX(Double layoutX) {
         this.layoutX = layoutX;
     }
@@ -112,6 +115,7 @@ public class DescriptionDefinition {
     /**
      * Layout position Y
      */
+    @Deprecated
     public void setLayoutY(Double layoutY) {
         this.layoutY = layoutY;
     }

@@ -49,6 +49,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
     @XmlAttribute
     protected String uri;
     @XmlAttribute
+    @Deprecated
     protected String ref;
     @XmlTransient
     protected Endpoint endpoint;
@@ -331,7 +332,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends N
 
     /**
      * Reference of the endpoint to use as wire tap
+     *
+     * @deprecated use uri with ref:uri instead
      */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }

@@ -104,7 +104,10 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * To use a custom load balancer.
      * This option is deprecated, use the custom load balancer type instead.
+     *
+     * @deprecated use custom load balancer
      */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }

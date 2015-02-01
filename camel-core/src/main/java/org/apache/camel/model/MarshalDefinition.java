@@ -147,7 +147,10 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
 
     /**
      * To refer to a custom data format to use as marshaller
+     *
+     * @deprecated use uri with ref:uri instead
      */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }
