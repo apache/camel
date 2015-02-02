@@ -86,7 +86,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private String timeoutCheckerExecutorServiceRef;
     @XmlAttribute
     private String aggregationRepositoryRef;
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
@@ -101,6 +101,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
+    @Deprecated
     private Boolean groupExchanges;
     @XmlAttribute
     private Boolean eagerCheckCompletion;
@@ -803,7 +804,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single
      * combined Exchange holding all the aggregated exchanges in a {@link java.util.List}.
+     *
+     * @deprecated use {@link GroupedExchangeAggregationStrategy} as aggregation strategy instead.
      */
+    @Deprecated
     public AggregateDefinition groupExchanges() {
         setGroupExchanges(true);
         // must use eager check when using grouped exchanges
