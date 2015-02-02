@@ -193,6 +193,15 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     public void setLocations(String[] locations) {
+        // make sure to trim as people may use new lines when configuring using XML
+        // and do this in the setter as Spring/Blueprint resolves placeholders before Camel is being started
+        if (locations != null && locations.length > 0) {
+            for (int i = 0; i < locations.length; i++) {
+                String loc = locations[i];
+                locations[i] = loc.trim();
+            }
+        }
+
         this.locations = locations;
     }
 
