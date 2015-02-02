@@ -21,15 +21,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
@@ -66,6 +60,11 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Camel namespace for the spring XML configuration file.
@@ -81,16 +80,40 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
 
-    public static void renameNamespaceRecursive(Node node) {
+    /**
+     * Prepares the nodes before parsing.
+     */
+    public static void doBeforeParse(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+            // ensure namespace with versions etc is renamed to be same namespace so we can parse using this handler
             Document doc = node.getOwnerDocument();
             if (node.getNamespaceURI().startsWith(SPRING_NS + "/v")) {
                 doc.renameNode(node, SPRING_NS, node.getNodeName());
             }
+
+            // remove whitespace noise from uri attributes, eg new lines, and tabs etc, which allows end users to format
+            // their Camel routes in more human readable format, but at runtime those attributes must be trimmed
+            // the parser removes most of the noise, but keeps double spaces in the attribute values
+            NamedNodeMap map = node.getAttributes();
+            for (int i = 0; i < map.getLength(); i++) {
+                Node att = map.item(i);
+                if ("uri".equals(att.getNodeName()) || "url".equals(att.getNodeName())) {
+
+                    String value = att.getNodeValue();
+                    // remove all double spaces
+                    String changed = value.replaceAll("\\s{2,}", "");
+
+                    if (!value.equals(changed)) {
+                        LOG.debug("Removing whitespace noise from attribute {} -> {}", value, changed);
+                        att.setNodeValue(changed);
+                    }
+                }
+            }
         }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); ++i) {
-            renameNamespaceRecursive(list.item(i));
+            doBeforeParse(list.item(i));
         }
     }
 
@@ -257,7 +280,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-            renameNamespaceRecursive(element);
+            doBeforeParse(element);
             super.doParse(element, parserContext, builder);
 
             // now lets parse the routes with JAXB
@@ -287,7 +310,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-            renameNamespaceRecursive(element);
+            doBeforeParse(element);
             super.doParse(element, parserContext, builder);
 
             // now lets parse the routes with JAXB
@@ -317,7 +340,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-            renameNamespaceRecursive(element);
+            doBeforeParse(element);
             super.doParse(element, parserContext, builder);
 
             String contextId = element.getAttribute("id");

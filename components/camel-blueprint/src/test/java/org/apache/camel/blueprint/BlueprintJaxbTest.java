@@ -52,7 +52,7 @@ public class BlueprintJaxbTest extends TestSupport {
                 break;
             }
         }
-        CamelNamespaceHandler.renameNamespaceRecursive(elem, CamelNamespaceHandler.BLUEPRINT_NS, CamelNamespaceHandler.SPRING_NS);
+        CamelNamespaceHandler.doBeforeParse(elem, CamelNamespaceHandler.BLUEPRINT_NS, CamelNamespaceHandler.SPRING_NS);
 
         JAXBContext context = JAXBContext.newInstance("org.apache.camel.blueprint:"
                                                         + "org.apache.camel:org.apache.camel.model:"

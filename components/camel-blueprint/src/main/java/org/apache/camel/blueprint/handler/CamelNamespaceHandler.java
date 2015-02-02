@@ -35,6 +35,7 @@ import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -131,16 +132,38 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     private JAXBContext jaxbContext;
 
-    public static void renameNamespaceRecursive(Node node, String fromNamespace, String toNamespace) {
+    /**
+     * Prepares the nodes before parsing.
+     */
+    public static void doBeforeParse(Node node, String fromNamespace, String toNamespace) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
             if (node.getNamespaceURI().equals(fromNamespace)) {
                 doc.renameNode(node, toNamespace, node.getLocalName());
             }
+
+            // remove whitespace noise from uri attributes, eg new lines, and tabs etc, which allows end users to format
+            // their Camel routes in more human readable format, but at runtime those attributes must be trimmed
+            // the parser removes most of the noise, but keeps double spaces in the attribute values
+            NamedNodeMap map = node.getAttributes();
+            for (int i = 0; i < map.getLength(); i++) {
+                Node att = map.item(i);
+                if ("uri".equals(att.getNodeName()) || "url".equals(att.getNodeName())) {
+
+                    String value = att.getNodeValue();
+                    // remove all double spaces
+                    String changed = value.replaceAll("\\s{2,}", "");
+
+                    if (!value.equals(changed)) {
+                        LOG.debug("Removing whitespace noise from attribute {} -> {}", value, changed);
+                        att.setNodeValue(changed);
+                    }
+                }
+            }
         }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); ++i) {
-            renameNamespaceRecursive(list.item(i), fromNamespace, toNamespace);
+            doBeforeParse(list.item(i), fromNamespace, toNamespace);
         }
     }
 
@@ -158,7 +181,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         try {
             // as the camel-core model namespace is Spring we need to rename from blueprint to spring
-            renameNamespaceRecursive(element, BLUEPRINT_NS, SPRING_NS);
+            doBeforeParse(element, BLUEPRINT_NS, SPRING_NS);
 
             if (element.getLocalName().equals(CAMEL_CONTEXT)) {
                 return parseCamelContextNode(element, context);
@@ -180,7 +203,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         } finally {
             // make sure to rename back so we leave the DOM as-is
-            renameNamespaceRecursive(element, SPRING_NS, BLUEPRINT_NS);
+            doBeforeParse(element, SPRING_NS, BLUEPRINT_NS);
         }
 
         return null;
