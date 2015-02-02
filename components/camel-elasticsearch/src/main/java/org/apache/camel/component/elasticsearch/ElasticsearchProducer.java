@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 
 /**
