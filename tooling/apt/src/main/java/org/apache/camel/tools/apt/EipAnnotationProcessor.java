@@ -61,8 +61,8 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     private static final String ONE_OF_LANGUAGES = "org.apache.camel.model.language.ExpressionDefinition";
     // special for inputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_INPUTS = new String[]{
-            "org.apache.camel.model.ProcessorDefinition",
-            "org.apache.camel.model.VerbDefinition"
+        "org.apache.camel.model.ProcessorDefinition",
+        "org.apache.camel.model.VerbDefinition"
     };
     // special for outputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_OUTPUTS = new String[]{
@@ -933,7 +933,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    private static class EipOptionComparator implements Comparator<EipOption> {
+    private static final class EipOptionComparator implements Comparator<EipOption> {
 
         private final EipModel model;
 
