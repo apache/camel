@@ -94,10 +94,8 @@ public class RemoteFileIgnoreDoPollErrorTest {
                     throw new IllegalStateException("Problem");
                 } else if ("GenericFileOperationFailedException".equals(doPollResult)) {
                     throw new GenericFileOperationFailedException("Perm error");
-                } else if ("true".equals(doPollResult)) {
-                    return true;
                 } else {
-                    return false;
+                    return "true".equals(doPollResult);
                 }
             }
             @Override
