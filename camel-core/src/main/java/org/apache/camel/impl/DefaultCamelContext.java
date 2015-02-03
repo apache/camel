@@ -1183,7 +1183,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             Class<?> clazz = finder.findClass(componentName);
             if (clazz == null) {
-                return null;
+                // fallback and find existing component
+                Component existing = hasComponent(componentName);
+                if (existing != null) {
+                    clazz = existing.getClass();
+                } else {
+                    return null;
+                }
             }
 
             String packageName = clazz.getPackage().getName();
@@ -1214,7 +1220,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             Class<?> clazz = finder.findClass(componentName);
             if (clazz == null) {
-                return null;
+                // fallback and find existing component
+                Component existing = hasComponent(componentName);
+                if (existing != null) {
+                    clazz = existing.getClass();
+                } else {
+                    return null;
+                }
             }
 
             String packageName = clazz.getPackage().getName();
