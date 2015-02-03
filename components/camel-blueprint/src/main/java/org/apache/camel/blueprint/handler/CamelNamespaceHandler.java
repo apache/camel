@@ -142,20 +142,19 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 doc.renameNode(node, toNamespace, node.getLocalName());
             }
 
-            // remove whitespace noise from uri attributes, eg new lines, and tabs etc, which allows end users to format
+            // remove whitespace noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to format
             // their Camel routes in more human readable format, but at runtime those attributes must be trimmed
             // the parser removes most of the noise, but keeps double spaces in the attribute values
             NamedNodeMap map = node.getAttributes();
             for (int i = 0; i < map.getLength(); i++) {
                 Node att = map.item(i);
-                if ("uri".equals(att.getNodeName()) || "url".equals(att.getNodeName())) {
-
+                if (att.getNodeName().equals("uri") || att.getNodeName().endsWith("Uri")) {
                     String value = att.getNodeValue();
                     // remove all double spaces
                     String changed = value.replaceAll("\\s{2,}", "");
 
                     if (!value.equals(changed)) {
-                        LOG.debug("Removing whitespace noise from attribute {} -> {}", value, changed);
+                        LOG.debug("Removed whitespace noise from attribute {} -> {}", value, changed);
                         att.setNodeValue(changed);
                     }
                 }
