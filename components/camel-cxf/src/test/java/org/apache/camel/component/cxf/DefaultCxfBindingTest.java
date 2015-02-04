@@ -61,10 +61,16 @@ import org.junit.Test;
  */
 public class DefaultCxfBindingTest extends Assert {
     
-    private static final String SOAP_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
+    private static final String SOAP_MESSAGE_1 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
         + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
         + " <soap:Body> <request> <ns1:identifier>TEST</ns1:identifier> </request>"
         + " </soap:Body> </soap:Envelope>";
+    
+    private static final String SOAP_MESSAGE_2 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
+        + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
+        + " <soap:Body> <ns1:identifier xmlns:ns1=\"http://www.mycompany.com/test/\" xmlns=\"http://www.mycompany.com/test/1/\">TEST</ns1:identifier>"
+        + " </soap:Body> </soap:Envelope>";
+    
     private DefaultCamelContext context = new DefaultCamelContext();
 
     @Test
@@ -76,27 +82,52 @@ public class DefaultCxfBindingTest extends Assert {
         assertSame("The header filter strategy is set", hfs, cxfBinding.getHeaderFilterStrategy());
     }
     
-    @Test
-    public void testPayloadBodyNamespace() throws Exception {
-        MessageImpl message = new MessageImpl();
+    private Document getDocument(String soapMessage) throws Exception {
+        
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(IOConverter.toInputStream(SOAP_MESSAGE, null));
+        Document document = documentBuilder.parse(IOConverter.toInputStream(soapMessage, null));
         document.getDocumentElement().normalize();
-        message.setContent(Node.class, document);
+       
+        return document;
+    }
+    
+    @Test
+    public void testPayloadBodyNamespace() throws Exception {
+        MessageImpl message = new MessageImpl();
         Map<String, String> nsMap = new HashMap<String, String>();
+        Document document = getDocument(SOAP_MESSAGE_1);
+        message.setContent(Node.class, document);
         DefaultCxfBinding.getPayloadBodyElements(message, nsMap);
         
         assertEquals(2, nsMap.size());
         assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
         
-        document = documentBuilder.newDocument();
         Element element = document.createElement("tag");
         DefaultCxfBinding.addNamespace(element, nsMap);
         assertEquals("http://www.mycompany.com/test/", element.getAttribute("xmlns"));
         assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns:ns1"));
     }
+    
+    @Test
+    public void testOverridePayloadBodyNamespace() throws Exception {
+        MessageImpl message = new MessageImpl();
+        Map<String, String> nsMap = new HashMap<String, String>();
+        Document document = getDocument(SOAP_MESSAGE_2);
+        message.setContent(Node.class, document);
+        DefaultCxfBinding.getPayloadBodyElements(message, nsMap);
+        
+        assertEquals(2, nsMap.size());
+        assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
+        
+        Element element = (Element)document.getElementsByTagName("ns1:identifier").item(0);
+        assertNotNull("We should get the element", element);
+        DefaultCxfBinding.addNamespace(element, nsMap);
+        assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns"));
+        assertEquals("http://www.mycompany.com/test/", element.getAttribute("xmlns:ns1"));
+    }
+
     
     @Test
     public void testSetCharsetWithContentType() {
