@@ -1206,8 +1206,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     IOHelper.close(inputStream);
                 }
             }
-            return null;
-
+            // special for ActiveMQ as it is really just JMS
+            if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
+                return getComponentDocumentation("jms");
+            } else {
+                return null;
+            }
         } catch (ClassNotFoundException e) {
             return null;
         }
@@ -1243,8 +1247,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     IOHelper.close(inputStream);
                 }
             }
-            return null;
-
+            // special for ActiveMQ as it is really just JMS
+            if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
+                return getComponentParameterJsonSchema("jms");
+            } else {
+                return null;
+            }
         } catch (ClassNotFoundException e) {
             return null;
         }
