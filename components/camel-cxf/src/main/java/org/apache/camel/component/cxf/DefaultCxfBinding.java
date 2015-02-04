@@ -731,10 +731,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     protected static void addNamespace(Element element, Map<String, String> nsMap) {
         for (String ns : nsMap.keySet()) {
+            // We should not override the namespace setting of the element
             if (XMLConstants.XMLNS_ATTRIBUTE.equals(ns)) {
-                element.setAttribute(ns, nsMap.get(ns));
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE))) {
+                    element.setAttribute(ns, nsMap.get(ns));
+                }
             } else {
-                element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns))) {
+                    element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                }
             }
         }
                      
