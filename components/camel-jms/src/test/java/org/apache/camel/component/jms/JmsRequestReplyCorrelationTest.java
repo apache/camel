@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -23,11 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
@@ -71,6 +73,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     public void testRequestReplyCorrelationWithDuplicateId() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
+        NotifyBuilder notify = new NotifyBuilder(context).whenReceived(1).create();
 
         // just send out the request to fill the correlation id first
         template.asyncSend("jms:queue:helloDelay", new Processor() {
@@ -81,6 +84,8 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
                 in.setHeader("JMSCorrelationID", "b");
             }
         });
+        // Added use the notify to make sure the message is processed, so we get the exception later
+        notify.matches(1, TimeUnit.SECONDS);
         
         Exchange out = template.send("jms:queue:helloDelay", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
