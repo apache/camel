@@ -30,7 +30,10 @@
     <description>Camel Support for the Dozer type conversion framework</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.converter.dozer.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>
+            org.apache.camel.converter.dozer.*,
+            org.apache.camel.component.dozer.*
+        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
@@ -57,7 +60,21 @@
           <artifactId>slf4j-log4j12</artifactId>
           <scope>test</scope>
         </dependency>
-
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-test-spring</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-jaxb</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-jackson</artifactId>
+	      <scope>test</scope>
+	    </dependency>
     </dependencies>
 
 </project>
