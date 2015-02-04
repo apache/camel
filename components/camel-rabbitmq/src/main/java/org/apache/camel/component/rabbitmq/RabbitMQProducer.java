@@ -52,7 +52,7 @@ public class RabbitMQProducer extends DefaultProducer {
     /**
      * Channel callback (similar to Spring JDBC ConnectionCallback)
      */
-    private static interface ChannelCallback<T> {
+    private interface ChannelCallback<T> {
         T doWithChannel(Channel channel) throws Exception;
     }
 
