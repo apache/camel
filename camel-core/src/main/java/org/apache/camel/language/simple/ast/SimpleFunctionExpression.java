@@ -111,7 +111,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return ExpressionBuilder.propertyOgnlExpression(remainder);
             } else {
                 // regular property
-                return ExpressionBuilder.propertyExpression(remainder);
+                return ExpressionBuilder.exchangePropertyExpression(remainder);
             }
         }
 

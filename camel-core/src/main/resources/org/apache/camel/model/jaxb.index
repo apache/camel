@@ -53,6 +53,8 @@ PipelineDefinition
 PolicyDefinition
 PollEnrichDefinition
 ProcessDefinition
+PropertiesDefinition
+PropertyDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
 RemoveHeaderDefinition

@@ -525,7 +525,9 @@ public final class ExpressionBuilder {
      *
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
+     * @deprecated use {@link #exchangePropertyExpression(String)} instead
      */
+    @Deprecated
     public static Expression propertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -534,11 +536,30 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "property(" + propertyName + ")";
+                return "exchangeProperty(" + propertyName + ")";
             }
         };
     }
     
+    /**
+     * Returns an expression for the property value of exchange with the given name
+     *
+     * @param propertyName the name of the property the expression will return
+     * @return an expression object which will return the property value
+     */
+    public static Expression exchangePropertyExpression(final String propertyName) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getProperty(propertyName);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeProperty(" + propertyName + ")";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the property value of exchange with the given name invoking methods defined
      * in a simple OGNL notation

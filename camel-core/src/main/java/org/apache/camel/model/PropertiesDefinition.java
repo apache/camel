@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.config;
+package org.apache.camel.model;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * A series of key value pair
  */
-@Metadata(label = "configuration,resequence")
+@Metadata(label = "configuration")
 @XmlRootElement(name = "properties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertiesDefinition {

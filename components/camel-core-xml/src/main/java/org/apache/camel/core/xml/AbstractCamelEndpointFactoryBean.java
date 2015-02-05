@@ -16,35 +16,44 @@
  */
 package org.apache.camel.core.xml;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchEndpointException;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.util.URISupport;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {
     @XmlAttribute(required = false)
     @Deprecated
     private Boolean singleton;
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String uri;
     @XmlAttribute
+    @Deprecated
     private ExchangePattern pattern;
+    @XmlElement(name = "property")
+    private List<PropertyDefinition> properties;
     @XmlTransient
     private Endpoint endpoint;
 
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
-            notNull(uri, "uri");
-            endpoint = getCamelContext().getEndpoint(uri);
+            String target = createUri();
+            endpoint = getCamelContext().getEndpoint(target);
             if (endpoint == null) {
-                throw new NoSuchEndpointException(uri);
+                throw new NoSuchEndpointException(target);
             }
         }
         return endpoint;
@@ -54,24 +63,64 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         return Endpoint.class;
     }
 
+    @Deprecated
+    public Boolean getSingleton() {
+        return singleton;
+    }
+
+    @Deprecated
+    public void setSingleton(Boolean singleton) {
+        this.singleton = singleton;
+    }
+
     public String getUri() {
         return uri;
     }
 
     /**
-     * Sets the URI to use to resolve the endpoint
-     *
-     * @param uri the URI used to set the endpoint
+     * Sets the URI to use to resolve the endpoint.
+     * <p/>
+     * Notice that additional options can be configured using a series of property.
      */
     public void setUri(String uri) {
         this.uri = uri;
     }
 
+    @Deprecated
     public ExchangePattern getPattern() {
         return pattern;
     }
 
+    /**
+     * Sets the exchange pattern of the endpoint
+     *
+     * @deprecated set the pattern in the uri
+     */
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
     }
+
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    /**
+     * To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint beans.
+     */
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
+
+    private String createUri() throws UnsupportedEncodingException, URISyntaxException {
+        if (properties == null || properties.isEmpty()) {
+            return uri;
+        } else {
+            Map<String, Object> map = new LinkedHashMap<String, Object>();
+            for (PropertyDefinition property : properties) {
+                map.put(property.getKey(), property.getValue());
+            }
+            return URISupport.appendParametersToURI(uri, map);
+        }
+    }
+
 }

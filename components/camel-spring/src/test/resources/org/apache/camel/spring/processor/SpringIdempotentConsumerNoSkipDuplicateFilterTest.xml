@@ -37,7 +37,7 @@
                 <!-- we will to handle duplicate messages using a filter -->
                 <filter>
                     <!-- the filter will only react on duplicate messages, if this property is set on the Exchange -->
-                    <property>CamelDuplicateMessage</property>
+                    <exchangeProperty>CamelDuplicateMessage</exchangeProperty>
                     <!-- and send the message to this mock, due its part of an unit test -->
                     <!-- but you can of course do anything as its part of the route -->
                     <to uri="mock:duplicate"/>

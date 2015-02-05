@@ -454,6 +454,25 @@ public final class URISupport {
     }
 
     /**
+     * Appends the given parameters to the given URI.
+     * <p/>
+     * It keeps the original parameters and if a new parameter is already defined in
+     * {@code originalURI}, it will be replaced by its value in {@code newParameters}.
+     *
+     * @param originalURI   the original URI
+     * @param newParameters the parameters to add
+     * @return the URI with all the parameters
+     * @throws URISyntaxException           is thrown if the uri syntax is invalid
+     * @throws UnsupportedEncodingException is thrown if encoding error
+     */
+    public static String appendParametersToURI(String originalURI, Map<String, Object> newParameters) throws URISyntaxException, UnsupportedEncodingException {
+        URI uri = new URI(normalizeUri(originalURI));
+        Map<String, Object> parameters = parseParameters(uri);
+        parameters.putAll(newParameters);
+        return createRemainingURI(uri, parameters).toString();
+    }
+
+    /**
      * Normalizes the uri by reordering the parameters so they are sorted and thus
      * we can use the uris for endpoint matching.
      * <p/>

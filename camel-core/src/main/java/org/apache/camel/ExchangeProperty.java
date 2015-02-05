@@ -14,32 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.language;
+package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.camel.spi.Metadata;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * An expression which extracts the named exchange property
+ * Marks a parameter as being an injection point of a property of an {@link org.apache.camel.Exchange}
  *
- * @version 
+ * @see org.apache.camel.Exchange#getProperty(String)
+ * @version
  */
-@Metadata(label = "language")
-@XmlRootElement(name = "property")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class PropertyExpression extends ExpressionDefinition {
-
-    public PropertyExpression() {
-    }
-
-    public PropertyExpression(String expression) {
-        super(expression);
-    }
-
-    public String getLanguage() {
-        return "property";
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ElementType.PARAMETER })
+public @interface ExchangeProperty {
+    String value();
 }

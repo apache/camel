@@ -18,7 +18,7 @@ package org.apache.camel.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.language.property.PropertyLanguage;
+import org.apache.camel.language.property.ExchangePropertyLanguage;
 
 public class PropertyTest extends LanguageTestSupport {
 
@@ -35,7 +35,7 @@ public class PropertyTest extends LanguageTestSupport {
     }
 
     public void testSingleton() {
-        PropertyLanguage prop = new PropertyLanguage();
+        ExchangePropertyLanguage prop = new ExchangePropertyLanguage();
         assertTrue(prop.isSingleton());
     }
 

@@ -16,6 +16,7 @@
 ## ------------------------------------------------------------------------
 ConstantExpression
 ELExpression
+ExchangePropertyExpression
 ExpressionDefinition
 GroovyExpression
 HeaderExpression
@@ -27,7 +28,6 @@ MethodCallExpression
 MvelExpression
 OgnlExpression
 PhpExpression
-PropertyExpression
 PythonExpression
 RefExpression
 RubyExpression

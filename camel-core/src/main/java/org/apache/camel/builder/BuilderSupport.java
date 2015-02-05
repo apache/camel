@@ -27,9 +27,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.model.language.PropertyExpression;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +63,24 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a value builder for the given property
+     *
+     * Returns a value builder for the given exchange property
+     * @deprecated use {@link #exchangeProperty(String)} instead
      */
+    @Deprecated
     public ValueBuilder property(String name) {
-        PropertyExpression expression = new PropertyExpression(name);
+        ExchangePropertyExpression expression = new ExchangePropertyExpression(name);
         return new ValueBuilder(expression);
     }
     
+    /**
+     * Returns a value builder for the given exchange property
+     */
+    public ValueBuilder exchangeProperty(String name) {
+        ExchangePropertyExpression expression = new ExchangePropertyExpression(name);
+        return new ValueBuilder(expression);
+    }
+
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */

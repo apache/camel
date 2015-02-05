@@ -30,7 +30,7 @@
     <route>
       <from uri="direct:a" />
       <recipientList>
-        <property>myProperty</property>
+        <exchangeProperty>myProperty</exchangeProperty>
       </recipientList>
     </route>
     <!-- END SNIPPET: e1 -->    

@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ELExpression;
+import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -34,7 +35,6 @@ import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.PhpExpression;
-import org.apache.camel.model.language.PropertyExpression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.RubyExpression;
@@ -184,9 +184,19 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * An expression of an exchange property of the given name
+     *
+     * @deprecated use {@link #exchangeProperty(String)} instead
      */
+    @Deprecated
     public T property(String name) {
-        return expression(new PropertyExpression(name));
+        return expression(new ExchangePropertyExpression(name));
+    }
+
+    /**
+     * An expression of an exchange property of the given name
+     */
+    public T exchangeProperty(String name) {
+        return expression(new ExchangePropertyExpression(name));
     }
 
     /**

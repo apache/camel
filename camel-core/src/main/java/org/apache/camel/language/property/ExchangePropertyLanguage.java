@@ -24,12 +24,20 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * A language for property expressions.
+ * A language for exchange property expressions.
  */
-public class PropertyLanguage implements Language, IsSingleton {
+public class ExchangePropertyLanguage implements Language, IsSingleton {
 
-    public static Expression property(String propertyName) {        
-        return ExpressionBuilder.propertyExpression(propertyName);
+    /**
+     * @deprecated use {@link #exchangeProperty(String)} instead
+     */
+    @Deprecated
+    public static Expression property(String propertyName) {
+        return exchangeProperty(propertyName);
+    }
+
+    public static Expression exchangeProperty(String propertyName) {
+        return ExpressionBuilder.exchangePropertyExpression(propertyName);
     }
 
     public Predicate createPredicate(String expression) {
@@ -37,7 +45,7 @@ public class PropertyLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(String expression) {
-        return PropertyLanguage.property(expression);
+        return ExchangePropertyLanguage.exchangeProperty(expression);
     }
 
     public boolean isSingleton() {

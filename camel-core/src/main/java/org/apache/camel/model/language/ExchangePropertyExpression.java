@@ -23,23 +23,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * An expression which extracts the named exchange header
+ * An expression which extracts the named exchange property
  *
  * @version 
  */
 @Metadata(label = "language")
-@XmlRootElement(name = "header")
+@XmlRootElement(name = "exchangeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HeaderExpression extends ExpressionDefinition {
+public class ExchangePropertyExpression extends ExpressionDefinition {
 
-    public HeaderExpression() {
+    public ExchangePropertyExpression() {
     }
 
-    public HeaderExpression(String expression) {
+    public ExchangePropertyExpression(String expression) {
         super(expression);
     }
 
     public String getLanguage() {
-        return "header";
+        return "exchangeProperty";
     }
 }
