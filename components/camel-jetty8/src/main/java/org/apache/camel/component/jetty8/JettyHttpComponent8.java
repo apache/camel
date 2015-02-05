@@ -78,7 +78,7 @@ public class JettyHttpComponent8 extends JettyHttpComponent {
                     .invoke(result, responseBufferSize);
             }
             if (result != null && responseHeaderSize != null) {
-                result.getClass().getMethod("setResponseBufferSize", Integer.TYPE)
+                result.getClass().getMethod("setResponseHeaderSize", Integer.TYPE)
                     .invoke(result, responseHeaderSize);
             }
             result.getClass().getMethod("setPort", Integer.TYPE).invoke(result, porto);
