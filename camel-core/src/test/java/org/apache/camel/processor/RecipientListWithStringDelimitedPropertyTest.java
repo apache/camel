@@ -37,9 +37,9 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
         y.expectedBodiesReceived(BODY);
         z.expectedBodiesReceived(BODY);
         
-        x.message(0).property("myProperty").isEqualTo(PROPERTY_VALUE);
-        y.message(0).property("myProperty").isEqualTo(PROPERTY_VALUE);
-        z.message(0).property("myProperty").isEqualTo(PROPERTY_VALUE);      
+        x.message(0).exchangeProperty("myProperty").isEqualTo(PROPERTY_VALUE);
+        y.message(0).exchangeProperty("myProperty").isEqualTo(PROPERTY_VALUE);
+        z.message(0).exchangeProperty("myProperty").isEqualTo(PROPERTY_VALUE);
         
         sendBody();
 

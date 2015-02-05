@@ -28,10 +28,10 @@ public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupp
         MockEndpoint result =  getMockEndpoint("mock:result");
         // A+A+A gets completed by size, the others by consumer
         result.expectedBodiesReceived("A+A+A", "A", "B+B", "Z");
-        result.message(0).property(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("size");
-        result.message(1).property(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("consumer");
-        result.message(2).property(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("consumer");
-        result.message(3).property(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("consumer");
+        result.message(0).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("size");
+        result.message(1).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("consumer");
+        result.message(2).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("consumer");
+        result.message(3).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("consumer");
 
         template.sendBody("direct:start", "A");
         template.sendBody("direct:start", "A");

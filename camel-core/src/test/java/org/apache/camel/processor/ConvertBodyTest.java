@@ -53,7 +53,7 @@ public class ConvertBodyTest extends ContextTestSupport {
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion etc
-        getMockEndpoint("mock:foo").message(0).property(Exchange.CHARSET_NAME).isNull();
+        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
 
         template.sendBody("direct:foo", "Hello World");
 

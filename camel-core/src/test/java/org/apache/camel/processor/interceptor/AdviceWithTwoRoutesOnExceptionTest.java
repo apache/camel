@@ -40,7 +40,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
 
@@ -60,7 +60,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
 
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:b", "Hello World");
 
@@ -91,8 +91,8 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(2);
-        getMockEndpoint("mock:error").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-        getMockEndpoint("mock:error").message(1).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(1).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
         template.sendBody("direct:b", "Bye World");

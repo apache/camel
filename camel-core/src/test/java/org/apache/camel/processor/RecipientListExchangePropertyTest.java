@@ -28,13 +28,13 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
     public void testExchangeProperty() throws Exception {
         getMockEndpoint("mock:x").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:x").message(0).property("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:x").message(0).exchangeProperty("foo").isEqualTo(myStuff);
         getMockEndpoint("mock:y").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:y").message(0).property("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:y").message(0).exchangeProperty("foo").isEqualTo(myStuff);
         getMockEndpoint("mock:z").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:z").message(0).property("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:z").message(0).exchangeProperty("foo").isEqualTo(myStuff);
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").message(0).property("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:result").message(0).exchangeProperty("foo").isEqualTo(myStuff);
 
         template.sendBodyAndProperty("direct:a", "Hello World", "foo", myStuff);
 

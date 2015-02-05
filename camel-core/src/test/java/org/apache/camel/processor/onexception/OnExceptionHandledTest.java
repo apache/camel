@@ -29,9 +29,9 @@ public class OnExceptionHandledTest extends ContextTestSupport {
     public void testHandled() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:handled");
         mock.expectedBodiesReceived("Hello World");
-        mock.message(0).property(Exchange.EXCEPTION_CAUGHT).isNotNull();
-        mock.message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-        mock.message(0).property(Exchange.EXCEPTION_CAUGHT).method("getMessage").isEqualTo("Forced");
+        mock.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isNotNull();
+        mock.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        mock.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).method("getMessage").isEqualTo("Forced");
 
         template.sendBody("direct:start", "Hello World");
 

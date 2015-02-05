@@ -38,8 +38,8 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // we should poll at most 2
         mock.expectedMinimumMessageCount(2);
-        mock.message(0).property(Exchange.BATCH_SIZE).isEqualTo(2);
-        mock.message(1).property(Exchange.BATCH_SIZE).isEqualTo(2);
+        mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
+        mock.message(1).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
 
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");

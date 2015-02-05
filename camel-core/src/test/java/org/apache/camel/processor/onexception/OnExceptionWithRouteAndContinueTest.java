@@ -31,12 +31,12 @@ public class OnExceptionWithRouteAndContinueTest extends ContextTestSupport {
 
         // catch should see the exception also
         MockEndpoint mock = getMockEndpoint("mock:catch");
-        mock.message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        mock.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
         // and we should keep the exception so we know what caused the failure
-        result.message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        result.message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 

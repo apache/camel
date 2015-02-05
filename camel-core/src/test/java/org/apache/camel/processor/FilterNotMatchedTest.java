@@ -29,10 +29,10 @@ public class FilterNotMatchedTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property(Exchange.FILTER_MATCHED).isEqualTo(true);
+        mock.message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(true);
 
-        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isNotNull();
-        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isEqualTo(true);
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isNotNull();
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(true);
 
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
 
@@ -43,8 +43,8 @@ public class FilterNotMatchedTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isNotNull();
-        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isEqualTo(false);
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isNotNull();
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(false);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 

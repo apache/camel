@@ -145,9 +145,19 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * An expression of an exchange property of the given name
+     *
+     * @deprecated use {@link #exchangeProperty(String)} instead
      */
+    @Deprecated
     public T property(String name) {
-        return delegate.property(name);
+        return exchangeProperty(name);
+    }
+
+    /**
+     * An expression of an exchange property of the given name
+     */
+    public T exchangeProperty(String name) {
+        return delegate.exchangeProperty(name);
     }
 
     /**
