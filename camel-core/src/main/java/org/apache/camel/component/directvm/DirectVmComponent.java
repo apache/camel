@@ -27,8 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Represents the component that manages {@link DirectVmEndpoint}. It holds the
- * list of named direct-vm endpoints.
+ * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.
  */
 public class DirectVmComponent extends UriEndpointComponent {
 

@@ -22,8 +22,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * To compose a Camel component with a Camel data-format as a single binding unit.
+ * The <a href="http://camel.apache.org/binding.html>Binding Component<a/> is for composing a Camel component with a Camel data-format as a single binding unit.
  * <p/>
+ *
  * A Binding component using the URI form <code>binding:nameOfBinding:endpointURI</code>
  * to extract the binding name which is then resolved from the registry and used to create a
  * {@link BindingEndpoint} from the underlying {@link Endpoint}

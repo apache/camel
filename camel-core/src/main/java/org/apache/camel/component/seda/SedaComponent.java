@@ -28,8 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a href="http://camel.apache.org/seda.html">SEDA components</a>
- * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
+ * The <a href="http://camel.apache.org/seda.html">SEDA Component</a> is for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
  * @version 
  */

@@ -25,7 +25,7 @@ import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * Component for testing with mock endpoints.
+ * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
  *
  * @version 
  */

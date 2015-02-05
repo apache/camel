@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Component for lookup of existing endpoints bound in the {@link org.apache.camel.spi.Registry}.
+ * The <a href="http://camel.apache.org/ref.html">Ref Component</a> is for lookup of existing endpoints bound in the {@link org.apache.camel.spi.Registry}.
  * <p/>
  * This component uses the <tt>ref:</tt> notation instead of the mostly common <tt>uri:</tt> notation. 
  */
