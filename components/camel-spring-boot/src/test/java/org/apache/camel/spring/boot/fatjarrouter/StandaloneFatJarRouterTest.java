@@ -33,7 +33,7 @@ public class StandaloneFatJarRouterTest extends Assert {
     public void shouldStartCamelRoute() throws InterruptedException, IOException {
         // Given
         final int port = SocketUtils.findAvailableTcpPort();
-        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarrouter", "--http.port=" + port);
+        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.FatJarRouter", "--http.port=" + port);
         await().until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
