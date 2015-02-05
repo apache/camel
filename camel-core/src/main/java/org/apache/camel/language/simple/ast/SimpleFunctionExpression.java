@@ -90,6 +90,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
         // property
         remainder = ifStartsWithReturnRemainder("property", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
+        }
         if (remainder != null) {
             // remove leading character (dot or ?)
             if (remainder.startsWith(".") || remainder.startsWith("?")) {
@@ -103,7 +106,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // validate syntax
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${property.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${exchangeProperty.OGNL} was: " + function, token.getIndex());
             }
 
             if (OgnlHelper.isValidOgnlExpression(remainder)) {

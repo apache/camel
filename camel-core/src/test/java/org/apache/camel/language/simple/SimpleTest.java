@@ -198,6 +198,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("property.medal", "gold");
     }
 
+    public void testSimpleExchangePropertyExpressions() throws Exception {
+        exchange.setProperty("medal", "gold");
+        assertExpression("exchangeProperty.medal", "gold");
+    }
+
     public void testSimpleSystemPropertyExpressions() throws Exception {
         System.setProperty("who", "I was here");
         assertExpression("sys.who", "I was here");
@@ -272,16 +277,16 @@ public class SimpleTest extends LanguageTestSupport {
         lines.add("ActiveMQ in Action");
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${property.wicket[0]}", "Camel in Action");
-        assertExpression("${property.wicket[1]}", "ActiveMQ in Action");
+        assertExpression("${exchangeProperty.wicket[0]}", "Camel in Action");
+        assertExpression("${exchangeProperty.wicket[1]}", "ActiveMQ in Action");
         try {
-            assertExpression("${property.wicket[2]}", "");
+            assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
             assertEquals("Index: 2, Size: 2", cause.getMessage());
         }
-        assertExpression("${property.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
     
     public void testOGNLPropertyLinesList() throws Exception {
@@ -290,10 +295,10 @@ public class SimpleTest extends LanguageTestSupport {
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${property.wicket[0].getId}", 123);
-        assertExpression("${property.wicket[1].getName}", "ActiveMQ in Action");
+        assertExpression("${exchangeProperty.wicket[0].getId}", 123);
+        assertExpression("${exchangeProperty.wicket[1].getName}", "ActiveMQ in Action");
         try {
-            assertExpression("${property.wicket[2]}", "");
+            assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
@@ -318,17 +323,33 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${property.unknown[cool]}", null);
     }
    
+    public void testOGNLExchangePropertyMap() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        map.put("code", 4321);
+        exchange.setProperty("wicket", map);
+
+        assertExpression("${exchangeProperty.wicket[cool]}", "Camel rocks");
+        assertExpression("${exchangeProperty.wicket[dude]}", "Hey dude");
+        assertExpression("${exchangeProperty.wicket[unknown]}", null);
+        assertExpression("${exchangeProperty.wicket[code]}", 4321);
+        // no header named unknown
+        assertExpression("${exchangeProperty?.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
+    }
+
     public void testOGNLPropertyMapWithDot() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("this.code", "This code");
         exchange.setProperty("wicket", map);
 
-        assertExpression("${property.wicket[this.code]}", "This code");
+        assertExpression("${exchangeProperty.wicket[this.code]}", "This code");
     }
     
     public void testOGNLPropertyMapNotMap() throws Exception {
         try {
-            assertExpression("${property.foobar[bar]}", null);
+            assertExpression("${exchangeProperty.foobar[bar]}", null);
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
@@ -341,7 +362,16 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${property.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${property.OGNL} was: property.foobar[bar at location 0"));
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: property.foobar[bar at location 0"));
+        }
+    }
+
+    public void testOGNLExchangePropertyMapIllegalSyntax() throws Exception {
+        try {
+            assertExpression("${exchangeProperty.foobar[bar}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
