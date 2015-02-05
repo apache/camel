@@ -18,13 +18,14 @@ package org.apache.camel.core.xml;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
@@ -43,8 +44,8 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     @XmlAttribute
     @Deprecated
     private ExchangePattern pattern;
-    @XmlElement(name = "property")
-    private List<PropertyDefinition> properties;
+    @XmlElementRef
+    private List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
     @XmlTransient
     private Endpoint endpoint;
 

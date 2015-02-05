@@ -72,7 +72,7 @@ import org.w3c.dom.NodeList;
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
-    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class, false);
+    protected BeanDefinitionParser endpointParser = new EndpointDefinitionParser();
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<String>();
     protected Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
@@ -126,6 +126,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("restContext", new RestContextDefinitionParser());
         // register routeContext parser
         registerParser("routeContext", new RouteContextDefinitionParser());
+        // register endpoint parser
+        registerParser("endpoint", endpointParser);
 
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
         addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
@@ -135,7 +137,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true, false);
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true, false);
         addBeanDefinitionParser("export", CamelServiceExporter.class, true, false);
-        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true, false);
         addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
         addBeanDefinitionParser("redeliveryPolicyProfile", CamelRedeliveryPolicyFactoryBean.class, true, true);
 
@@ -238,6 +239,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            doBeforeParse(element);
             super.doParse(element, builder);
             
             // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
@@ -299,6 +301,33 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element, binder);
+        }
+    }
+
+    protected class EndpointDefinitionParser extends BeanDefinitionParser {
+
+        public EndpointDefinitionParser() {
+            super(CamelEndpointFactoryBean.class, false);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            doBeforeParse(element);
+            super.doParse(element, parserContext, builder);
+
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
+
+            if (value instanceof CamelEndpointFactoryBean) {
+                CamelEndpointFactoryBean factoryBean = (CamelEndpointFactoryBean) value;
+                builder.addPropertyValue("properties", factoryBean.getProperties());
+            }
         }
     }
 

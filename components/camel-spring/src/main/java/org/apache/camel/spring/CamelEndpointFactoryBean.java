@@ -50,4 +50,9 @@ public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean i
         this.applicationContext = applicationContext;
     }
 
+    @Override
+    public Endpoint getObject() throws Exception {
+        Endpoint answer = super.getObject();
+        return answer;
+    }
 }
