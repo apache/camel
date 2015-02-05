@@ -28,6 +28,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
+ * The <a href="http://camel.apache.org/timer.html">Timer Component</a> is for generating message exchanges when a timer fires.
+ *
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
  * list of {@link TimerConsumer} objects that are started.
  *

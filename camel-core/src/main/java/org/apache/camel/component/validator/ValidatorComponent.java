@@ -22,8 +22,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * The <a href="http://camel.apache.org/validation.html">Validator Component</a>
- * for validating XML against some schema
+ * The <a href="http://camel.apache.org/validation.html">Validator Component</a> is for validating XML against a schema
+ *
+ * @version
  */
 public class ValidatorComponent extends UriEndpointComponent {
 

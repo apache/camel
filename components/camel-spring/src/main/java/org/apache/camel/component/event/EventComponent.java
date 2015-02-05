@@ -30,8 +30,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * An <a href="http://camel.apache.org/event.html">Event Component</a>
- * for working with Spring ApplicationEvents.
+ * The <a href="http://camel.apache.org/event.html">Event Component</a> is for working with Spring ApplicationEvents.
  * 
  * @version 
  */

@@ -28,8 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An <a href="http://camel.apache.org/xslt.html">XSLT Component</a>
- * for performing XSLT transforms of messages
+ * The <a href="http://camel.apache.org/xslt.html">XSLT Component</a> is for performing XSLT transformations of messages
  */
 public class XsltComponent extends UriEndpointComponent {
 

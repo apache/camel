@@ -24,11 +24,11 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * Represents the component that manages {@link DirectEndpoint}. It holds the
- * list of named direct endpoints.
+ * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the list of named direct endpoints.
  *
- * @version 
+ * @version
  */
+
 public class DirectComponent extends UriEndpointComponent {
 
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
