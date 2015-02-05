@@ -25,7 +25,7 @@ import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 
 /**
- * The <a href="http://camel.apache.org/class.html">Class Component</a> is for invoking Java classes from Camel.
+ * The <a href="http://camel.apache.org/class.html">Class Component</a> is for binding JavaBeans to Camel message exchanges based on class name.
  * <p/>
  * This component is an extension to the {@link org.apache.camel.component.bean.BeanComponent}.
  *

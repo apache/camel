@@ -26,8 +26,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
- * The <a href="http://camel.apache.org/language-component.html">language component</a> to send
- * {@link org.apache.camel.Exchange}s to a given language and have the script being executed.
+ * The <a href="http://camel.apache.org/language-component.html">Language component</a> enables sending
+ * {@link org.apache.camel.Exchange}s to a given language in order to have a script executed.
  *
  * @version 
  */
