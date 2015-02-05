@@ -127,7 +127,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     @UriParam(defaultValue = "-1")
     private int retainLast;
     @UriParam(defaultValue = "true")
-    protected boolean copyOnExchange = true;
+    private boolean copyOnExchange = true;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
