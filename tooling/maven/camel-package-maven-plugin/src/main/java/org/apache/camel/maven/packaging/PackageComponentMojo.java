@@ -115,7 +115,9 @@ public class PackageComponentMojo extends AbstractMojo {
             properties.put("artifactId", project.getArtifactId());
             properties.put("version", project.getVersion());
             properties.put("projectName", project.getName());
-            properties.put("projectDescription", project.getDescription());
+            if (project.getDescription() != null) {
+                properties.put("projectDescription", project.getDescription());
+            }
 
             camelMetaDir.mkdirs();
             File outFile = new File(camelMetaDir, "component.properties");

@@ -223,7 +223,9 @@ public class PackageLanguageMojo extends AbstractMojo {
             properties.put("artifactId", project.getArtifactId());
             properties.put("version", project.getVersion());
             properties.put("projectName", project.getName());
-            properties.put("projectDescription", project.getDescription());
+            if (project.getDescription() != null) {
+                properties.put("projectDescription", project.getDescription());
+            }
 
             camelMetaDir.mkdirs();
             File outFile = new File(camelMetaDir, "language.properties");
@@ -286,7 +288,9 @@ public class PackageLanguageMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("language").append("\",");
         buffer.append("\n    \"modelName\": \"").append(languageModel.getModelName()).append("\",");
-        buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
+        if (languageModel.getDescription() != null) {
+            buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
+        }
         buffer.append("\n    \"label\": \"").append(languageModel.getLabel()).append("\",");
         buffer.append("\n    \"javaType\": \"").append(languageModel.getJavaType()).append("\",");
         if (languageModel.getModelJavaType() != null) {

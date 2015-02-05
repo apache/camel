@@ -223,7 +223,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
             properties.put("artifactId", project.getArtifactId());
             properties.put("version", project.getVersion());
             properties.put("projectName", project.getName());
-            properties.put("projectDescription", project.getDescription());
+            if (project.getDescription() != null) {
+                properties.put("projectDescription", project.getDescription());
+            }
 
             camelMetaDir.mkdirs();
             File outFile = new File(camelMetaDir, "dataformat.properties");
@@ -289,7 +291,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");
         buffer.append("\n    \"modelName\": \"").append(dataFormatModel.getModelName()).append("\",");
-        buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
+        if (dataFormatModel.getDescription() != null) {
+            buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
+        }
         buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");
         buffer.append("\n    \"javaType\": \"").append(dataFormatModel.getJavaType()).append("\",");
         if (dataFormatModel.getModelJavaType() != null) {
