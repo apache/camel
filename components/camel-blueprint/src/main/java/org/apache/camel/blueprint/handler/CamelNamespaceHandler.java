@@ -28,17 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 
 import org.apache.aries.blueprint.BeanProcessor;
 import org.apache.aries.blueprint.ComponentDefinitionRegistry;
@@ -52,11 +44,13 @@ import org.apache.aries.blueprint.mutable.MutableRefMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
+import org.apache.camel.blueprint.CamelEndpointFactoryBean;
 import org.apache.camel.blueprint.CamelRestContextFactoryBean;
 import org.apache.camel.blueprint.CamelRouteContextFactoryBean;
 import org.apache.camel.builder.xml.Namespaces;
@@ -97,7 +91,6 @@ import org.apache.camel.util.blueprint.SecureRandomParametersFactoryBean;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.SecureRandomParameters;
-
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
@@ -107,6 +100,11 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static org.osgi.service.blueprint.reflect.ComponentMetadata.ACTIVATION_LAZY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
@@ -124,6 +122,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     private static final String CAMEL_CONTEXT = "camelContext";
     private static final String ROUTE_CONTEXT = "routeContext";
     private static final String REST_CONTEXT = "restContext";
+    private static final String ENDPOINT = "endpoint";
     private static final String KEY_STORE_PARAMETERS = "keyStoreParameters";
     private static final String SECURE_RANDOM_PARAMETERS = "secureRandomParameters";
     private static final String SSL_CONTEXT_PARAMETERS = "sslContextParameters";
@@ -190,6 +189,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
             if (element.getLocalName().equals(REST_CONTEXT)) {
                 return parseRestContextNode(element, context);
+            }
+            if (element.getLocalName().equals(ENDPOINT)) {
+                return parseEndpointNode(element, context);
             }
             if (element.getLocalName().equals(KEY_STORE_PARAMETERS)) {
                 return parseKeyStoreParametersNode(element, context);
@@ -406,6 +408,47 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         injectNamespaces(element, binder);
 
         LOG.trace("Parsing RestContext done, returning {}", element, ctx);
+        return ctx;
+    }
+
+    private Metadata parseEndpointNode(Element element, ParserContext context) {
+        LOG.trace("Parsing Endpoint {}", element);
+        // now parse the rests with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof CamelEndpointFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + CamelEndpointFactoryBean.class);
+        }
+
+        CamelEndpointFactoryBean rcfb = (CamelEndpointFactoryBean) value;
+        String id = rcfb.getId();
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + id);
+        factory.setObject(new PassThroughCallable<Object>(rcfb));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + id);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(id);
+        ctx.setRuntimeClass(Endpoint.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getObject");
+        // must be lazy as we want CamelContext to be activated first
+        ctx.setActivation(ACTIVATION_LAZY);
+
+        LOG.trace("Parsing endpoint done, returning {}", element, ctx);
         return ctx;
     }
 
