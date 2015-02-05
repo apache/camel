@@ -20,9 +20,9 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
-import org.apache.camel.Property;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -100,7 +100,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
         private static final Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
 
         public void someMethod(String body, @Header("foo")
-                               String header, @Property("cheese") String cheese) throws ValidationException {
+                               String header, @ExchangeProperty("cheese") String cheese) throws ValidationException {
             assertEquals("old", cheese);
 
             if ("bar".equals(header)) {
