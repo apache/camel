@@ -308,6 +308,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String explainEipJson(String nameOrId, boolean includeAllOptions);
 
     /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param componentName the id of the component
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     */
+    @ManagedOperation(description = " Returns a JSON schema representation of the component parameters for the given component by its id")
+    String explainComponentJson(String componentName, boolean includeAllOptions) throws Exception;
+
+    /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri
      *
      * @param uri the endpoint uri

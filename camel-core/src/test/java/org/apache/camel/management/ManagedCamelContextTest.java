@@ -244,11 +244,11 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertEquals(7, StringHelper.countChar(json, '{'));
-        assertEquals(7, StringHelper.countChar(json, '}'));
+        assertEquals(8, StringHelper.countChar(json, '{'));
+        assertEquals(8, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
-        assertTrue(json.contains("\"description\": \"The Log Component to log message exchanges to the underlying logging mechanism.\""));
+        assertTrue(json.contains("\"description\": \"The Log Component is for logging message exchanges via the underlying logging mechanism.\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
@@ -275,11 +275,11 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertEquals(14, StringHelper.countChar(json, '{'));
-        assertEquals(14, StringHelper.countChar(json, '}'));
+        assertEquals(15, StringHelper.countChar(json, '{'));
+        assertEquals(15, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
-        assertTrue(json.contains("\"description\": \"The Log Component to log message exchanges to the underlying logging mechanism.\""));
+        assertTrue(json.contains("\"description\": \"The Log Component is for logging message exchanges via the underlying logging mechanism.\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
@@ -350,6 +350,25 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"eip,routing\""));
         assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
         assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"boolean\""));
+    }
+
+    public void testManagedCamelContextExplainComponentModel() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "explainComponentJson", new Object[]{"seda", false}, new String[]{"java.lang.String", "boolean"});
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"description\": \"The SEDA Component is for asynchronous SEDA exchanges on a BlockingQueue within a CamelContext\""));
+        assertTrue(json.contains("\"label\": \"core,endpoint\""));
+        assertTrue(json.contains("\"concurrentConsumers\": { \"value\": \"1\" }"));
+        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\" }"));
     }
 
     @Override

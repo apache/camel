@@ -1413,7 +1413,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**
-     * Returns the JSON schema representation of the endpoint parameters for the given component name.
+     * Returns the JSON schema representation of the component and endpoint parameters for the given component name.
      *
      * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSon schema support
      */
@@ -1448,6 +1448,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the json or <tt>null</tt> if the eipName or the id was not found
      */
     String explainEipJson(String nameOrId, boolean includeAllOptions);
+
+    /**
+     * Returns a JSON schema representation of the component parameters (not endpoint parameters) for the given component by its id.
+     *
+     * @param componentName the name of the component.
+     * @param includeAllOptions whether to include non configured options also (eg default options)
+     * @return the json or <tt>null</tt> if the component was not found
+     */
+    String explainComponentJson(String componentName, boolean includeAllOptions);
 
     /**
      * Returns a JSON schema representation of the endpoint parameters for the given endpoint uri.

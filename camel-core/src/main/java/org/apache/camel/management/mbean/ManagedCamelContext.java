@@ -623,6 +623,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.explainEipJson(nameOrId, includeAllOptions);
     }
 
+    public String explainComponentJson(String componentName, boolean includeAllOptions) throws Exception {
+        return context.explainComponentJson(componentName, includeAllOptions);
+    }
+
     public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
         return context.explainEndpointJson(uri, includeAllOptions);
     }

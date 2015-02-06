@@ -1488,6 +1488,146 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public String explainComponentJson(String componentName, boolean includeAllOptions) {
+        try {
+            String json = getComponentParameterJsonSchema(componentName);
+            if (json == null) {
+                return null;
+            }
+
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+
+            // selected rows to use for answer
+            Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+
+            // insert values from component
+            Component component = getComponent(componentName);
+            Map<String, Object> options = new HashMap<String, Object>();
+            IntrospectionSupport.getProperties(component, options, null);
+
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String name = entry.getKey();
+                String value = "";
+                if (entry.getValue() != null) {
+                    value = entry.getValue().toString();
+                }
+                value = URISupport.sanitizePath(value);
+
+                // find type and description from the json schema
+                String type = null;
+                String kind = null;
+                String required = null;
+                String javaType = null;
+                String deprecated = null;
+                String defaultValue = null;
+                String description = null;
+                for (Map<String, String> row : rows) {
+                    if (name.equals(row.get("name"))) {
+                        type = row.get("type");
+                        kind = row.get("kind");
+                        required = row.get("required");
+                        javaType = row.get("javaType");
+                        deprecated = row.get("deprecated");
+                        defaultValue = row.get("defaultValue");
+                        description = row.get("description");
+                        break;
+                    }
+                }
+
+                // add as selected row
+                selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+            }
+
+            // include other rows
+            for (Map<String, String> row : rows) {
+                String name = row.get("name");
+                String kind = row.get("kind");
+                String required = row.get("required");
+                String value = row.get("value");
+                String defaultValue = row.get("defaultValue");
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                String deprecated = row.get("deprecated");
+                value = URISupport.sanitizePath(value);
+                String description = row.get("description");
+
+                // always include path options
+                if (includeAllOptions) {
+                    // add as selected row
+                    if (!selected.containsKey(name)) {
+                        selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+                    }
+                }
+            }
+
+            json = ObjectHelper.before(json, "  \"componentProperties\": {");
+
+            StringBuilder buffer = new StringBuilder("  \"componentProperties\": {");
+
+            boolean first = true;
+            for (String[] row : selected.values()) {
+                if (first) {
+                    first = false;
+                } else {
+                    buffer.append(",");
+                }
+                buffer.append("\n    ");
+
+                String name = row[0];
+                String kind = row[1];
+                String required = row[2];
+                String type = row[3];
+                String javaType = row[4];
+                String deprecated = row[5];
+                String value = row[6];
+                String defaultValue = row[7];
+                String description = row[8];
+
+                // add json of the option
+                buffer.append(doubleQuote(name)).append(": { ");
+                CollectionStringBuffer csb = new CollectionStringBuffer();
+                if (kind != null) {
+                    csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (required != null) {
+                    csb.append("\"required\": \"" + required + "\"");
+                }
+                if (type != null) {
+                    csb.append("\"type\": \"" + type + "\"");
+                }
+                if (javaType != null) {
+                    csb.append("\"javaType\": \"" + javaType + "\"");
+                }
+                if (deprecated != null) {
+                    csb.append("\"deprecated\": \"" + deprecated + "\"");
+                }
+                if (value != null) {
+                    csb.append("\"value\": \"" + value + "\"");
+                }
+                if (defaultValue != null) {
+                    csb.append("\"defaultValue\": \"" + defaultValue + "\"");
+                }
+                if (description != null) {
+                    csb.append("\"description\": \"" + description + "\"");
+                }
+                if (!csb.isEmpty()) {
+                    buffer.append(csb.toString());
+                }
+                buffer.append(" }");
+            }
+
+            buffer.append("\n  }\n}\n");
+
+            // insert the original first part of the json into the start of the buffer
+            buffer.insert(0, json);
+            return buffer.toString();
+
+        } catch (Exception e) {
+            // ignore and return empty response
+            return null;
+        }
+    }
+
     public String explainEndpointJson(String uri, boolean includeAllOptions) {
         try {
             URI u = new URI(uri);
