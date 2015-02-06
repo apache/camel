@@ -47,7 +47,8 @@ public class CamelSWFWorkflowConsumerTest extends CamelSWFTestSupport {
 
     @Test
     public void receivesDecisionTask() throws Exception {
-        result.expectedMessageCount(1);
+        // use minimum as depending on the polling we may do more than 1 in the test before we assert and stop
+        result.expectedMinimumMessageCount(1);
         result.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {
                 return exchange.getIn().getHeader(SWFConstants.ACTION) != null;

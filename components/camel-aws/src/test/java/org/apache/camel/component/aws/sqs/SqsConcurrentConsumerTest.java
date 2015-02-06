@@ -29,12 +29,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
-
-/**
- * Created by ceposta
- * <a href="http://christianposta.com/blog>http://christianposta.com/blog</a>.
- */
 public class SqsConcurrentConsumerTest extends CamelTestSupport {
     private static final int NUM_CONCURRENT = 10;
     private static final int NUM_MESSAGES = 100;
@@ -44,19 +38,14 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
     @Test
     public void consumeMessagesFromQueue() throws Exception {
         NotifyBuilder notifier = new NotifyBuilder(context).whenCompleted(NUM_MESSAGES).create();
-        assertTrue("We didn't process "
-                + NUM_MESSAGES
-                + " messages as we expected!", notifier.matches(5, TimeUnit.SECONDS));
+        assertTrue("We didn't process " + NUM_MESSAGES + " messages as we expected!", notifier.matches(5, TimeUnit.SECONDS));
 
-
-
-        // simple test to make sure all N concurrent consumers were used in the test
-        if (threadNumbers.size() != NUM_CONCURRENT) {
-            fail(String.format("We were expecting to have %d numbers of concurrent consumers, but only found %d",
+        // simple test to make sure that concurrent consumers were used in the test
+        // usually we use all threads evenly but sometimes threads are reused so just test that 50%+ was used
+        if (threadNumbers.size() < (NUM_CONCURRENT / 2)) {
+            fail(String.format("We were expecting to have about half of %d numbers of concurrent consumers, but only found %d",
                     NUM_CONCURRENT, threadNumbers.size()));
         }
-
-
     }
 
     @Override
@@ -79,7 +68,6 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         }
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -95,6 +83,5 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
             }
         };
     }
-
 
 }
