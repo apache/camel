@@ -17,7 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;

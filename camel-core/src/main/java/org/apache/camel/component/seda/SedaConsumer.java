@@ -31,7 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;

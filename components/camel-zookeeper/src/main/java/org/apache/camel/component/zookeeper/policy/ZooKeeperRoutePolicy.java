@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.impl.RoutePolicySupport;
+import org.apache.camel.support.RoutePolicySupport;
 
 /**
  * <code>ZooKeeperRoutePolicy</code> uses the leader election capabilities of a

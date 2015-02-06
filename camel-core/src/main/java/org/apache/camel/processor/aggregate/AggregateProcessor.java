@@ -45,7 +45,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
-import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;

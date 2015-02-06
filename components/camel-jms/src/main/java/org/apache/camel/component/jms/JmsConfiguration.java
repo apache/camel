@@ -989,7 +989,7 @@ public class JmsConfiguration implements Cloneable {
         if (errorHandler != null) {
             container.setErrorHandler(errorHandler);
         } else {
-            ErrorHandler handler = new DefaultSpringErrorHandler(EndpointMessageListener.class, getErrorHandlerLoggingLevel(), isErrorHandlerLogStackTrace());
+            ErrorHandler handler = new DefaultSpringErrorHandler(endpoint.getCamelContext(), EndpointMessageListener.class, getErrorHandlerLoggingLevel(), isErrorHandlerLogStackTrace());
             container.setErrorHandler(handler);
         }
 
