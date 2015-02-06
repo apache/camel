@@ -28,6 +28,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
@@ -157,13 +158,21 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
         Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
+        Set<ComponentOption> componentOptions = new LinkedHashSet<ComponentOption>();
+
+        TypeElement componentClassElement = findTypeElement(roundEnv, componentModel.getJavaType());
+        if (componentClassElement != null) {
+            findComponentClassProperties(writer, roundEnv, componentOptions, componentClassElement, "");
+        }
+
         findClassProperties(writer, roundEnv, endpointPaths, endpointOptions, classElement, "");
 
-        String json = createParameterJsonSchema(componentModel, endpointPaths, endpointOptions);
+        String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions);
         writer.println(json);
     }
 
-    public String createParameterJsonSchema(ComponentModel componentModel, Set<EndpointPath> paths, Set<EndpointOption> options) {
+    public String createParameterJsonSchema(ComponentModel componentModel, Set<ComponentOption> componentOptions,
+                                            Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions) {
         StringBuilder buffer = new StringBuilder("{");
         // component model
         buffer.append("\n \"component\": {");
@@ -177,14 +186,28 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n    \"version\": \"").append(componentModel.getVersionId()).append("\"");
         buffer.append("\n  },");
 
-        // and empty component properties as placeholder for future improvement
+        // and component properties
         buffer.append("\n  \"componentProperties\": {");
+        boolean first = true;
+        for (ComponentOption entry : componentOptions) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+            // as its json we need to sanitize the docs
+            String doc = entry.getDocumentationWithNotes();
+            doc = sanitizeDescription(doc, false);
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", null, entry.getType(), entry.getDefaultValue(), doc, entry.isDeprecated(),
+                    entry.isEnumType(), entry.getEnums(), false, null));
+        }
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");
-        boolean first = true;
+        first = true;
         // include paths in the top
-        for (EndpointPath path : paths) {
+        for (EndpointPath path : endpointPaths) {
             if (first) {
                 first = false;
             } else {
@@ -196,7 +219,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
 
         // and then regular parameter options
-        for (EndpointOption entry : options) {
+        for (EndpointOption entry : endpointOptions) {
             if (first) {
                 first = false;
             } else {
@@ -324,6 +347,76 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         return model;
     }
 
+    protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<ComponentOption> componentOptions, TypeElement classElement, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+        while (true) {
+            List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
+            for (VariableElement fieldElement : fieldElements) {
+                String fieldName = fieldElement.getSimpleName().toString();
+                boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+
+                // skip unwanted fields as they are inherited from default component and are not intended for end users to configure
+                if ("endpointClass".equals(fieldName) || "camelContext".equals(fieldName)) {
+                    continue;
+                }
+
+                // must be a getter/setter pair
+                ExecutableElement getter = findGetter(fieldName, classElement);
+                ExecutableElement setter = findSetter(fieldName, classElement);
+                if (getter != null && setter != null) {
+                    String name = fieldName;
+                    name = prefix + name;
+                    TypeMirror fieldType = fieldElement.asType();
+                    String fieldTypeName = fieldType.toString();
+                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+
+                    // we do not yet have default values / notes / as no annotation support yet
+                    // String defaultValue = param.defaultValue();
+                    // String defaultValueNote = param.defaultValueNote();
+                    String defaultValue = null;
+                    String defaultValueNote = null;
+
+                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
+                    if (docComment == null) {
+                        docComment = "";
+                    }
+
+                    // gather enums
+                    Set<String> enums = new LinkedHashSet<String>();
+                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                    if (isEnum) {
+                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                        // find all the enum constants which has the possible enum value that can be used
+                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                        for (VariableElement var : fields) {
+                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                String val = var.toString();
+                                enums.add(val);
+                            }
+                        }
+                    }
+
+                    ComponentOption option = new ComponentOption(name, fieldTypeName, defaultValue, defaultValueNote,
+                            docComment.trim(), deprecated, isEnum, enums);
+                    componentOptions.add(option);
+                }
+            }
+
+            // check super classes which may also have fields
+            TypeElement baseTypeElement = null;
+            TypeMirror superclass = classElement.getSuperclass();
+            if (superclass != null) {
+                String superClassName = canonicalClassName(superclass.toString());
+                baseTypeElement = findTypeElement(roundEnv, superClassName);
+            }
+            if (baseTypeElement != null) {
+                classElement = baseTypeElement;
+            } else {
+                break;
+            }
+        }
+    }
+
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
@@ -416,7 +509,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             }
                         }
 
-                        EndpointOption option = new EndpointOption(name, fieldTypeName, defaultValue, defaultValueNote,  docComment.trim(), deprecated, isEnum, enums);
+                        EndpointOption option = new EndpointOption(name, fieldTypeName, defaultValue, defaultValueNote,
+                                docComment.trim(), deprecated, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
@@ -515,6 +609,102 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public void setLabel(String label) {
             this.label = label;
+        }
+    }
+
+    private static final class ComponentOption {
+
+        private String name;
+        private String type;
+        private String defaultValue;
+        private String defaultValueNote;
+        private String documentation;
+        private boolean deprecated;
+        private boolean enumType;
+        private Set<String> enums;
+
+        private ComponentOption(String name, String type, String defaultValue, String defaultValueNote,
+                               String documentation, boolean deprecated, boolean enumType, Set<String> enums) {
+            this.name = name;
+            this.type = type;
+            this.defaultValue = defaultValue;
+            this.defaultValueNote = defaultValueNote;
+            this.documentation = documentation;
+            this.deprecated = deprecated;
+            this.enumType = enumType;
+            this.enums = enums;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
+        public String getDocumentation() {
+            return documentation;
+        }
+
+        public boolean isDeprecated() {
+            return deprecated;
+        }
+
+        public String getEnumValuesAsHtml() {
+            CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
+            if (enums != null && enums.size() > 0) {
+                for (String e : enums) {
+                    csb.append(e);
+                }
+            }
+            return csb.toString();
+        }
+
+        public String getDocumentationWithNotes() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(documentation);
+
+            if (!isNullOrEmpty(defaultValueNote)) {
+                sb.append(". Default value notice: ").append(defaultValueNote);
+            }
+
+            return sb.toString();
+        }
+
+        public boolean isEnumType() {
+            return enumType;
+        }
+
+        public Set<String> getEnums() {
+            return enums;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            EndpointOption that = (EndpointOption) o;
+
+            if (!name.equals(that.name)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
         }
     }
 

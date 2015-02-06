@@ -55,50 +55,28 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             answer = elementUtils.getDocComment(element);
         }
         if (isNullOrEmpty(answer)) {
-            String setter = "set" + fieldName.substring(0, 1).toUpperCase();
-            if (fieldName.length() > 1) {
-                setter += fieldName.substring(1);
-            }
-            //  lets find the setter
-            List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-            for (ExecutableElement method : methods) {
-                String methodName = method.getSimpleName().toString();
-                if (setter.equals(methodName) && method.getParameters().size() == 1 && method.getReturnType().getKind().equals(TypeKind.VOID)) {
-                    String doc = elementUtils.getDocComment(method);
-                    if (!isNullOrEmpty(doc)) {
-                        answer = doc;
-                        break;
-                    }
+            ExecutableElement setter = findSetter(fieldName, classElement);
+            if (setter != null) {
+                String doc = elementUtils.getDocComment(setter);
+                if (!isNullOrEmpty(doc)) {
+                    answer = doc;
                 }
             }
 
             // lets find the getter
             if (answer == null) {
-                String getter1 = "get" + fieldName.substring(0, 1).toUpperCase();
-                if (fieldName.length() > 1) {
-                    getter1 += fieldName.substring(1);
-                }
-                String getter2 = "is" + fieldName.substring(0, 1).toUpperCase();
-                if (fieldName.length() > 1) {
-                    getter2 += fieldName.substring(1);
-                }
-                //  lets find the getter
-                methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-                for (ExecutableElement method : methods) {
-                    String methodName = method.getSimpleName().toString();
-                    if ((getter1.equals(methodName) || getter2.equals(methodName)) && method.getParameters().size() == 0) {
-                        String doc = elementUtils.getDocComment(method);
-                        if (!isNullOrEmpty(doc)) {
-                            answer = doc;
-                            break;
-                        }
+                ExecutableElement getter = findGetter(fieldName, classElement);
+                if (setter != null) {
+                    String doc = elementUtils.getDocComment(setter);
+                    if (!isNullOrEmpty(doc)) {
+                        answer = doc;
                     }
                 }
             }
 
             // lets try builder pattern
             if (answer == null && builderPattern) {
-                methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+                List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
                 // lets try the builder pattern using annotation name (optional) as the method name
                 if (name != null) {
                     for (ExecutableElement method : methods) {
@@ -150,6 +128,44 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             }
         }
         return answer;
+    }
+
+    protected ExecutableElement findSetter(String fieldName, TypeElement classElement) {
+        String setter = "set" + fieldName.substring(0, 1).toUpperCase();
+        if (fieldName.length() > 1) {
+            setter += fieldName.substring(1);
+        }
+        //  lets find the setter
+        List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+        for (ExecutableElement method : methods) {
+            String methodName = method.getSimpleName().toString();
+            if (setter.equals(methodName) && method.getParameters().size() == 1 && method.getReturnType().getKind().equals(TypeKind.VOID)) {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
+    protected ExecutableElement findGetter(String fieldName, TypeElement classElement) {
+        String getter1 = "get" + fieldName.substring(0, 1).toUpperCase();
+        if (fieldName.length() > 1) {
+            getter1 += fieldName.substring(1);
+        }
+        String getter2 = "is" + fieldName.substring(0, 1).toUpperCase();
+        if (fieldName.length() > 1) {
+            getter2 += fieldName.substring(1);
+        }
+        //  lets find the getter
+        List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+        for (ExecutableElement method : methods) {
+            String methodName = method.getSimpleName().toString();
+            if ((getter1.equals(methodName) || getter2.equals(methodName)) && method.getParameters().size() == 0) {
+                return method;
+            }
+        }
+
+        return null;
     }
 
     protected TypeElement findTypeElement(RoundEnvironment roundEnv, String className) {
