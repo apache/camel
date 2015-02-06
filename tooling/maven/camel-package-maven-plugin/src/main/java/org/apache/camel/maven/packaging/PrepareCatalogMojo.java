@@ -243,6 +243,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> missingComponents = new TreeSet<File>();
         Set<File> missingLabels = new TreeSet<File>();
         Set<File> missingUriPaths = new TreeSet<File>();
+        Set<File> missingJavaDoc = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
 
         // find all json files in components and camel-core
@@ -327,6 +328,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 if (!text.contains("\"kind\": \"path\"")) {
                     missingUriPaths.add(file);
                 }
+
+                // check all the properties if they have description
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
+                for (Map<String, String> row : rows) {
+                    String doc = row.get("description");
+                    if (doc == null || doc.isEmpty()) {
+                        missingJavaDoc.add(file);
+                        break;
+                    }
+                }
             } catch (IOException e) {
                 // ignore
             }
@@ -359,7 +370,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingUriPaths, missingLabels, usedLabels);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingJavaDoc, missingUriPaths, missingLabels, usedLabels);
     }
 
     protected void executeDataFormats() throws MojoExecutionException, MojoFailureException {
@@ -613,8 +624,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingUriPaths,
-                                       Set<File> missingLabels, Map<String, Set<String>> usedLabels) {
+    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingJavaDoc,
+                                       Set<File> missingUriPaths, Set<File>missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -634,6 +645,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
             getLog().info("");
             getLog().warn("\tMissing labels detected: " + missingLabels.size());
             for (File file : missingLabels) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!missingJavaDoc.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing javadoc detected: " + missingJavaDoc.size());
+            for (File file : missingJavaDoc) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
