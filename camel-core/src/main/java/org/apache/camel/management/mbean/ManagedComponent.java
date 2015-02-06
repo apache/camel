@@ -17,14 +17,24 @@
 package org.apache.camel.management.mbean;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.Component;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -75,7 +85,6 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
         return component;
     }
 
-    @Override
     public String informationJson() {
         try {
             // a component may have been given a different name, so resolve its default name by its java type
@@ -87,4 +96,40 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
+
+    public TabularData explain(boolean allOptions) {
+        try {
+            // a component may have been given a different name, so resolve its default name by its java type
+            // as we can find the component json information from the default component name
+            String defaultName = component.getCamelContext().resolveComponentDefaultName(component.getClass().getName());
+            String target = defaultName != null ? defaultName : name;
+            String json = component.getCamelContext().explainComponentJson(target, allOptions);
+
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainComponentTabularType());
+
+            for (Map<String, String> row : rows) {
+                String name = row.get("name");
+                String kind = row.get("kind");
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
+                String value = row.get("value") != null ? row.get("value") : "";
+                String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
+                String description = row.get("description") != null ? row.get("description") : "";
+
+                CompositeType ct = CamelOpenMBeanTypes.explainComponentCompositeType();
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"option", "kind", "type", "java type", "deprecated", "value", "default value", "description"},
+                        new Object[]{name, kind, type, javaType, deprecated, value, defaultValue, description});
+                answer.put(data);
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 }

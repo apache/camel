@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -35,5 +37,8 @@ public interface ManagedComponentMBean {
 
     @ManagedOperation(description = "Component information as JSon")
     String informationJson();
+
+    @ManagedOperation(description = "Explain how this component is configured")
+    TabularData explain(boolean allOptions);
 
 }

@@ -38,6 +38,9 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Endpoint State")
     String getState();
 
+    @ManagedOperation(description = "Endpoint information as JSon")
+    String informationJson();
+
     @ManagedOperation(description = "Explain how this endpoint is configured")
     TabularData explain(boolean allOptions);
 

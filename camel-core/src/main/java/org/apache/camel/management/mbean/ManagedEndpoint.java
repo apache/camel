@@ -84,6 +84,11 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     }
 
     @Override
+    public String informationJson() {
+        return endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), true);
+    }
+
+    @Override
     public TabularData explain(boolean allOptions) {
         try {
             String json = endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), allOptions);

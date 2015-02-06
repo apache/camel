@@ -1418,7 +1418,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                json = ObjectHelper.before(json, "  \"properties\": {");
+                // use before componentProperties as we do not want to include component properties when explaining endpoint
+                json = ObjectHelper.before(json, "  \"componentProperties\": {");
 
                 StringBuilder buffer = new StringBuilder("  \"properties\": {");
 
@@ -1507,6 +1508,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             for (Map.Entry<String, Object> entry : options.entrySet()) {
                 String name = entry.getKey();
+
+                // skip unwanted options which is default inherited from DefaultComponent
+                if ("camelContext".equals(name) || "endpointClass".equals(name)) {
+                    continue;
+                }
+
                 String value = "";
                 if (entry.getValue() != null) {
                     value = entry.getValue().toString();
