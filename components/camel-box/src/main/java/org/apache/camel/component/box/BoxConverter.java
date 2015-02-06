@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.box;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 
 import com.box.restclientv2.requestsbase.BoxFileUploadRequestObject;
 import org.apache.camel.Converter;
