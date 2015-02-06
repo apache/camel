@@ -21,7 +21,6 @@ import java.util.Properties;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -62,19 +61,14 @@ public class KafkaProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws CamelException {
-        Object partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
-        if (partitionKey == null) {
-            throw new CamelExchangeException("No partition key set", exchange);
-        }
-
         String topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, endpoint.getTopic(), String.class);
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }
-
+        String partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, String.class);
+        String messageKey = exchange.getIn().getHeader(KafkaConstants.KEY, String.class);
         String msg = exchange.getIn().getBody(String.class);
-
-        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, partitionKey.toString(), msg);
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
         producer.send(data);
     }
 
