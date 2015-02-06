@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class, label = "core,testing")
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
+    private final AtomicInteger receivedCounter = new AtomicInteger();
     @UriPath(name = "name", description = "name of DataSet to lookup in the registry")
     private volatile DataSet dataSet;
-    private final AtomicInteger receivedCounter = new AtomicInteger();
     @UriParam(defaultValue = "0")
     private int minRate;
     @UriParam(defaultValue = "3")
@@ -62,7 +62,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     public DataSetEndpoint() {
         this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
         // optimize as we dont need to copy the exchange
-        copyOnExchange = false;
+        setCopyOnExchange(false);
     }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
@@ -70,7 +70,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.dataSet = dataSet;
         this.log = LoggerFactory.getLogger(endpointUri);
         // optimize as we dont need to copy the exchange
-        copyOnExchange = false;
+        setCopyOnExchange(false);
     }
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
