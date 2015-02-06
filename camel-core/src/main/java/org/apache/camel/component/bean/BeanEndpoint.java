@@ -75,7 +75,8 @@ public class BeanEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Whether to message body is an array type to use during bean parameter binding.
+     * How to treat the parameters which are passed from the message body;
+     * if it is true, the message body should be an array of parameters.
      * <p/>
      * Note: This option is used internally by Camel, and is not intended for end users to use.
      *
@@ -91,12 +92,8 @@ public class BeanEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Whether to cache the lookup of the bean.
-     * <p/>
-     * If this option is enabled, then the bean is used as a singleton scope.
-     * <p/>
-     * The default value of false, let Camel lookup the bean on each usage, which allows to honor
-     * Spring, CDI, etc to control the scope of the bean.
+     * If enabled, Camel will cache the result of the first Registry look-up.
+     * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      */
     public void setCache(boolean cache) {
         this.cache = cache;
