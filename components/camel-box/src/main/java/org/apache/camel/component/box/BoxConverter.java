@@ -18,6 +18,7 @@ package org.apache.camel.component.box;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 
 import com.box.restclientv2.requestsbase.BoxFileUploadRequestObject;
 import org.apache.camel.Converter;
@@ -35,8 +36,8 @@ public final class BoxConverter {
     @Converter
     public static BoxFileUploadRequestObject genericFileToBoxFileUploadRequestObject(GenericFile<?> file, Exchange exchange) throws Exception {
         String folderId = "0";
-        if (exchange != null) {
-            folderId = exchange.getProperty(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);
+        if (exchange != null && exchange.getIn() != null) {
+            folderId = exchange.getIn().getHeader(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);
         }
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
@@ -50,5 +51,17 @@ public final class BoxConverter {
             return BoxFileUploadRequestObject.uploadFileRequestObject(folderId, file.getFileName(), is);
         }
         return null;
+    }
+
+    @Converter
+    public static BoxFileUploadRequestObject toBox(byte[] data, Exchange exchange) throws Exception {
+        String folderId = "0";
+        String fileName = "dummy.bin";
+        if (exchange != null && exchange.getIn() != null) {
+            folderId = exchange.getIn().getHeader(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);
+            fileName = exchange.getIn().getHeader("CamelFileName", String.class);
+        }
+        InputStream is = new ByteArrayInputStream(data);
+        return BoxFileUploadRequestObject.uploadFileRequestObject(folderId, fileName, is);
     }
 }
