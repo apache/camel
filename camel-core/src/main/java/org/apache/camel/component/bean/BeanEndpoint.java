@@ -37,6 +37,7 @@ public class BeanEndpoint extends ProcessorEndpoint {
     @UriParam(defaultValue = "false")
     private boolean cache;
     @UriParam(defaultValue = "false")
+    @Deprecated
     private boolean multiParameterArray;
     @UriParam
     private String method;
@@ -73,6 +74,14 @@ public class BeanEndpoint extends ProcessorEndpoint {
         return multiParameterArray;
     }
 
+    /**
+     * Whether to message body is an array type to use during bean parameter binding.
+     * <p/>
+     * Note: This option is used internally by Camel, and is not intended for end users to use.
+     *
+     * @deprecated this option is used internally by Camel, and is not intended for end users to use
+     */
+    @Deprecated
     public void setMultiParameterArray(boolean mpArray) {
         multiParameterArray = mpArray;
     }
@@ -81,6 +90,14 @@ public class BeanEndpoint extends ProcessorEndpoint {
         return cache;
     }
 
+    /**
+     * Whether to cache the lookup of the bean.
+     * <p/>
+     * If this option is enabled, then the bean is used as a singleton scope.
+     * <p/>
+     * The default value of false, let Camel lookup the bean on each usage, which allows to honor
+     * Spring, CDI, etc to control the scope of the bean.
+     */
     public void setCache(boolean cache) {
         this.cache = cache;
     }
