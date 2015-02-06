@@ -30,6 +30,7 @@ trait Languages {
   implicit def addLanguageMethodsToExchange(exchange: Exchange) = new {
     def constant(expression: String) =   Languages.this.constant(expression)(exchange)
     def el(expression: String) =         Languages.this.el(expression)(exchange)
+    def exchangeProperty(propertyName: String) = Languages.this.exchangeProperty(propertyName)(exchange)
     def groovy(expression: String) =     Languages.this.groovy(expression)(exchange)
     def header(headerName: String) =     Languages.this.header(headerName)(exchange)
     def javascript(expression: String) = Languages.this.javascript(expression)(exchange)
@@ -38,6 +39,7 @@ trait Languages {
     def mvel(expression: String) =       Languages.this.mvel(expression)(exchange)
     def ognl(expression: String) =       Languages.this.ognl(expression)(exchange)
     def php(expression: String) =        Languages.this.php(expression)(exchange)
+    @Deprecated
     def property(propertyName: String) = Languages.this.property(propertyName)(exchange)
     def python(expression: String) =     Languages.this.python(expression)(exchange)
     def ref(expression: String) =        Languages.this.ref(expression)(exchange)
@@ -58,6 +60,7 @@ trait Languages {
   // a set of methods to allow direct use of the language as an expression
   def constant(expression: String)(exchange: Exchange) =   Languages.evaluate(expression)(exchange)("constant")
   def el(expression: String)(exchange: Exchange) =         Languages.evaluate(expression)(exchange)("el")
+  def exchangeProperty(propertyName: String)(exchange: Exchange) = Languages.evaluate(propertyName)(exchange)("exchangeProperty")
   def groovy(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("groovy")
   def header(headerName: String)(exchange: Exchange) =     Languages.evaluate(headerName)(exchange)("header")
   def javascript(expression: String)(exchange: Exchange) = Languages.evaluate(expression)(exchange)("javascript")
@@ -67,7 +70,8 @@ trait Languages {
   def mvel(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("mvel")
   def ognl(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("ognl")
   def php(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("php")
-  def property(propertyName: String)(exchange: Exchange) = Languages.evaluate(propertyName)(exchange)("property")
+  @Deprecated
+  def property(propertyName: String)(exchange: Exchange) = Languages.evaluate(propertyName)(exchange)("exchangeProperty")
   def python(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("python")
   def ref(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("ref")
   def ruby(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("ruby")
