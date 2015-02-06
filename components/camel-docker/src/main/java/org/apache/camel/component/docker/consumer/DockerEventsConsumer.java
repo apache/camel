@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 import com.github.dockerjava.api.command.EventCallback;
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.model.Event;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -143,5 +142,10 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
         LOGGER.debug("Reestablishing connection with Docker");
         eventsCmd.exec();
         
+    }
+
+    @Override
+    public boolean isReceiving() {
+        return isRunAllowed();
     }
 }

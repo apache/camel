@@ -18,6 +18,8 @@ package org.apache.camel.component.docker.producer;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.AttachContainerCmd;
@@ -53,6 +55,7 @@ import com.github.dockerjava.api.command.VersionCmd;
 import com.github.dockerjava.api.command.WaitContainerCmd;
 import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.Device;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
@@ -62,7 +65,6 @@ import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.RestartPolicy;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.DockerClientFactory;
@@ -299,7 +301,7 @@ public class DockerProducer extends DefaultProducer {
         String filter = DockerHelper.getProperty(DockerConstants.DOCKER_FILTER, configuration, message, String.class);
         
         if (filter != null) {
-            listImagesCmd.withFilter(filter);
+            listImagesCmd.withFilters(filter);
         }
         
         Boolean showAll = DockerHelper.getProperty(DockerConstants.DOCKER_SHOW_ALL, configuration, message, Boolean.class);
@@ -837,15 +839,27 @@ public class DockerProducer extends DefaultProducer {
         }
         
         String[] capAdd = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_CAP_ADD, message);
-
         if (capAdd != null) {
-            startContainerCmd.withCapAdd(capAdd);
+            List<Capability> caps = new ArrayList<Capability>();
+            for (String s : capAdd) {
+                Capability cap = Capability.valueOf(s);
+                caps.add(cap);
+            }
+            Capability[] array = caps.toArray(new Capability[caps.size()]);
+            startContainerCmd.withCapAdd(array);
         }
         
         String[] capDrop = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_CAP_DROP, message);
-
         if (capDrop != null) {
-            startContainerCmd.withCapDrop(capDrop);
+            if (capAdd != null) {
+                List<Capability> caps = new ArrayList<Capability>();
+                for (String s : capDrop) {
+                    Capability cap = Capability.valueOf(s);
+                    caps.add(cap);
+                }
+                Capability[] array = caps.toArray(new Capability[caps.size()]);
+                startContainerCmd.withCapDrop(array);
+            }
         }
         
         return startContainerCmd;
