@@ -71,7 +71,7 @@ public class LuceneSearcher {
         for (ScoreDoc hit : hits) {
             Document selectedDocument = indexSearcher.doc(hit.doc);
             Hit aHit = new Hit();
-            if(returnLuceneDocs) {
+            if (returnLuceneDocs) {
                 aHit.setDocument(selectedDocument);
             }
             aHit.setHitLocation(hit.doc);

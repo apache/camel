@@ -16,8 +16,9 @@
  */
 package org.apache.camel.processor.lucene.support;
 
-import org.apache.lucene.document.Document;
 import java.io.Serializable;
+
+import org.apache.lucene.document.Document;
 
 public class Hit implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -25,7 +26,7 @@ public class Hit implements Serializable {
     private int hitLocation;
     private float score;
     private String data;
-    private Document document;
+    private transient Document document;
 
     public int getHitLocation() {
         return hitLocation;
