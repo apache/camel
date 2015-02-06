@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.net.URISyntaxException;
 import java.util.Properties;
 
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -30,7 +28,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,8 +40,7 @@ public class KafkaProducerTest {
     private Message in = new DefaultMessage();
 
     @SuppressWarnings({"unchecked"})
-    public KafkaProducerTest() throws IllegalAccessException, InstantiationException, ClassNotFoundException,
-            URISyntaxException {
+    public KafkaProducerTest() throws Exception {
         endpoint = new KafkaEndpoint("kafka:broker1:1234,broker2:4567?topic=sometopic",
                 "broker1:1234," + "broker2:4567?topic=sometopic", null);
         producer = new KafkaProducer(endpoint);
@@ -61,8 +57,7 @@ public class KafkaProducerTest {
 
     @Test
     @SuppressWarnings({"unchecked"})
-    public void processSendsMesssage() throws Exception {
-
+    public void processSendsMessage() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
@@ -73,8 +68,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMesssageWithTopicHeaderAndNoTopicInEndPoint() throws Exception {
-
+    public void processSendsMessageWithTopicHeaderAndNoTopicInEndPoint() throws Exception {
         endpoint.setTopic(null);
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
@@ -82,21 +76,20 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
-        verifySendMessage("4", "anotherTopic");
+        verifySendMessage("4", "anotherTopic", null);
     }
 
     @Test
-    public void processSendsMesssageWithTopicHeaderAndEndPoint() throws Exception {
-
+    public void processSendsMessageWithTopicHeaderAndEndPoint() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+        in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
 
-        verifySendMessage("4", "anotherTopic");
-      
+        verifySendMessage("4", "anotherTopic", "someKey");
     }
 
     @Test(expected = CamelException.class)
@@ -107,32 +100,31 @@ public class KafkaProducerTest {
         producer.process(exchange);
     }
 
-    @Test(expected = CamelException.class)
-    public void processRequiresPartitionHeader() throws Exception {
+    @Test
+    public void processDoesNotRequirePartitionHeader() throws Exception {
         endpoint.setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         producer.process(exchange);
     }
-    
-    @Test
-    
-    public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
 
+    @Test
+    public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
         endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange);
 
-        verifySendMessage("4", "someTopic");
-        
+        verifySendMessage("4", "someTopic", null);
     }
-    
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void verifySendMessage(String key, String topic) {
+    protected void verifySendMessage(String partitionKey, String topic, String messageKey) {
         ArgumentCaptor<KeyedMessage> captor = ArgumentCaptor.forClass(KeyedMessage.class);
         Mockito.verify(producer.producer).send(captor.capture());
-        assertEquals(key, captor.getValue().key());
+        assertEquals(partitionKey, captor.getValue().partitionKey());
+        assertEquals(messageKey, captor.getValue().key());
         assertEquals(topic, captor.getValue().topic());
     }
+
 }
