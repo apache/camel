@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * The <a href="http://camel.apache.org/controlbus.html">Control Bus component</a> allows sending messages to a control-bus endpoint to control routes.
+ * The <a href="http://camel.apache.org/controlbus.html">Control Bus component</a> allows sending messages to a control-bus endpoint to control the lifecycle of routes.
  */
 public class ControlBusComponent extends UriEndpointComponent {
 
