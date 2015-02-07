@@ -37,7 +37,7 @@ public class AggregateTimeoutManualTest extends ContextTestSupport {
         // by default the use latest aggregation strategy
         result.expectedBodiesReceived("Message 1999");
         // should take at least 3 seconds to complete this one
-        result.setMinimumResultWaitTime(2500);
+        result.setResultMinimumWaitTime(2500);
 
         for (int i = 0; i < 2000; i++) {
             template.sendBodyAndHeader("direct:start", "Message " + i, "id", "1");

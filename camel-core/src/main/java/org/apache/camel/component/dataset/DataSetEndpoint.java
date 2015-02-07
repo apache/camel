@@ -110,14 +110,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return exchange;
     }
 
-    public int getMinRate() {
-        return minRate;
-    }
-
-    public void setMinRate(int minRate) {
-        this.minRate = minRate;
-    }
-
     @Override
     protected void waitForCompleteLatch(long timeout) throws InterruptedException {
         super.waitForCompleteLatch(timeout);
@@ -141,6 +133,17 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public void setDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
+    }
+
+    public int getMinRate() {
+        return minRate;
+    }
+
+    /**
+     * Wait until the DataSet contains at least this number of messages
+     */
+    public void setMinRate(int minRate) {
+        this.minRate = minRate;
     }
 
     public long getPreloadSize() {
@@ -180,6 +183,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return initialDelay;
     }
 
+    /**
+     * Time period in millis to wait before starting sending messages.
+     */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
     }

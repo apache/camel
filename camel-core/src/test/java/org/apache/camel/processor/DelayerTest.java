@@ -51,7 +51,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         // should at least take 1 sec to complete
-        resultEndpoint.setMinimumResultWaitTime(900);
+        resultEndpoint.setResultMinimumWaitTime(900);
         template.sendBody("seda:b", "<hello>world!</hello>");
         resultEndpoint.assertIsSatisfied();
     }
@@ -60,7 +60,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         // should at least take 1 sec to complete
-        resultEndpoint.setMinimumResultWaitTime(900);
+        resultEndpoint.setResultMinimumWaitTime(900);
         template.sendBody("seda:c", "<hello>world!</hello>");
         resultEndpoint.assertIsSatisfied();
     }
@@ -69,7 +69,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         // should at least take 1 sec to complete
-        resultEndpoint.setMinimumResultWaitTime(900);
+        resultEndpoint.setResultMinimumWaitTime(900);
         template.sendBodyAndHeader("seda:d", "<hello>world!</hello>", BEAN_DELAYER_HEADER, 1000);
         resultEndpoint.assertIsSatisfied();
     }

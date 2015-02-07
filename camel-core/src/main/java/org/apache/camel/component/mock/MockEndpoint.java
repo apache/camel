@@ -1047,8 +1047,16 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Sets the minimum expected amount of time (in millis) the {@link #assertIsSatisfied()} will
      * wait on a latch until it is satisfied
      */
-    public void setMinimumResultWaitTime(long resultMinimumWaitTime) {
+    public void setResultMinimumWaitTime(long resultMinimumWaitTime) {
         this.resultMinimumWaitTime = resultMinimumWaitTime;
+    }
+
+    /**
+     * @deprecated use {@link #setResultMinimumWaitTime(long)}
+     */
+    @Deprecated
+    public void setMinimumResultWaitTime(long resultMinimumWaitTime) {
+        setResultMinimumWaitTime(resultMinimumWaitTime);
     }
 
     /**
@@ -1069,6 +1077,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @param expectedCount the number of message exchanges that should be
      *                expected by this endpoint
      * @see #setAssertPeriod(long)                      
+     */
+    public void setExpectedCount(int expectedCount) {
+        setExpectedMessageCount(expectedCount);
+    }
+
+    /**
+     * @see #setExpectedCount(int)
      */
     public void setExpectedMessageCount(int expectedCount) {
         this.expectedCount = expectedCount;
