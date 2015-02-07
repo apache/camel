@@ -37,12 +37,11 @@ public class DataFormatEndpoint extends DefaultEndpoint {
 
     private MarshalProcessor marshal;
     private UnmarshalProcessor unmarshal;
-
-    @UriPath(description = "Name of data format followed by operation which must be either marhsal or unmarshal")
-    private String name;
-    @UriParam
     private DataFormat dataFormat;
-    @UriParam
+
+    @UriPath(description = "Name of data format")
+    private String name;
+    @UriPath(enums = "marshal,unmarshal")
     private String operation;
 
     public DataFormatEndpoint() {
@@ -51,6 +50,14 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     public DataFormatEndpoint(String endpointUri, Component component, DataFormat dataFormat) {
         super(endpointUri, component);
         this.dataFormat = dataFormat;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public DataFormat getDataFormat() {
@@ -65,6 +72,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+    /**
+     * Operation to use either marshal or unmarshal
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -100,6 +110,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
+        if (dataFormat == null && name != null) {
+            dataFormat = getCamelContext().resolveDataFormat(name);
+        }
         if (operation.equals("marshal")) {
             marshal = new MarshalProcessor(dataFormat);
             marshal.setCamelContext(getCamelContext());

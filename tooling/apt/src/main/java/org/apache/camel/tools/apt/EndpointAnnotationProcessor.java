@@ -444,15 +444,25 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                     // gather enums
                     Set<String> enums = new LinkedHashSet<String>();
-                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                    if (isEnum) {
-                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
-                        // find all the enum constants which has the possible enum value that can be used
-                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                        for (VariableElement var : fields) {
-                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                String val = var.toString();
-                                enums.add(val);
+
+                    boolean isEnum;
+                    if (!Strings.isNullOrEmpty(path.enums())) {
+                        isEnum = true;
+                        String[] values = path.enums().split(",");
+                        for (String val : values) {
+                            enums.add(val);
+                        }
+                    } else {
+                        isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                        if (isEnum) {
+                            TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                            // find all the enum constants which has the possible enum value that can be used
+                            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                            for (VariableElement var : fields) {
+                                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                    String val = var.toString();
+                                    enums.add(val);
+                                }
                             }
                         }
                     }
@@ -496,15 +506,25 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                         // gather enums
                         Set<String> enums = new LinkedHashSet<String>();
-                        boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                        if (isEnum) {
-                            TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
-                            // find all the enum constants which has the possible enum value that can be used
-                            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                            for (VariableElement var : fields) {
-                                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                    String val = var.toString();
-                                    enums.add(val);
+
+                        boolean isEnum;
+                        if (!Strings.isNullOrEmpty(param.enums())) {
+                            isEnum = true;
+                            String[] values = param.enums().split(",");
+                            for (String val : values) {
+                                enums.add(val);
+                            }
+                        } else {
+                            isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                            if (isEnum) {
+                                TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                                // find all the enum constants which has the possible enum value that can be used
+                                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                                for (VariableElement var : fields) {
+                                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                        String val = var.toString();
+                                        enums.add(val);
+                                    }
                                 }
                             }
                         }

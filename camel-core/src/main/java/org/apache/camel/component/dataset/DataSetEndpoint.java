@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriPath(name = "name", description = "name of DataSet to lookup in the registry")
+    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry")
     private volatile DataSet dataSet;
     @UriParam(defaultValue = "0")
     private int minRate;

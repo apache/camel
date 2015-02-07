@@ -38,9 +38,10 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "direct", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectEndpoint extends DefaultEndpoint {
 
+    private volatile Map<String, DirectConsumer> consumers;
+
     @UriPath(description = "Name of direct endpoint")
     private String name;
-    private volatile Map<String, DirectConsumer> consumers;
     @UriParam(defaultValue = "false")
     private boolean block;
     @UriParam(defaultValue = "30000")
