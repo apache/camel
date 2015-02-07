@@ -1418,8 +1418,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                // use before componentProperties as we do not want to include component properties when explaining endpoint
-                json = ObjectHelper.before(json, "  \"componentProperties\": {");
+                json = ObjectHelper.before(json, "  \"properties\": {");
 
                 StringBuilder buffer = new StringBuilder("  \"properties\": {");
 

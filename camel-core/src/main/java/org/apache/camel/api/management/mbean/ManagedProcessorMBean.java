@@ -47,6 +47,9 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Stop Processor")
     void stop() throws Exception;
 
+    @ManagedOperation(description = "Processor information as JSon")
+    String informationJson();
+
     @ManagedOperation(description = "Explain how this processor is configured")
     TabularData explain(boolean allOptions);
 

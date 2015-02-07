@@ -137,6 +137,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         ServiceHelper.stopService(getProcessor());
     }
 
+    public String informationJson() {
+        return context.explainEipJson(id, true);
+    }
+
     public TabularData explain(boolean allOptions) {
         try {
             String json = context.explainEipJson(id, allOptions);

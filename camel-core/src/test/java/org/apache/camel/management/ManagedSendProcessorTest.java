@@ -73,6 +73,12 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
         assertEquals(5, data.size());
+
+        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
+        assertNotNull(json);
+        assertTrue(json.contains("\"description\": \"Sends the message to an endpoint\""));
+        assertTrue(json.contains(" \"uri\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"deprecated\": \"false\", \"value\": \"mock:result\""));
     }
 
     @Override
