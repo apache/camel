@@ -2051,7 +2051,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public LoopDefinition loop(Expression expression) {
         LoopDefinition loop = new LoopDefinition();
-        loop.setExpression(expression);
+        loop.setExpression(new ExpressionDefinition(expression));
         addOutput(loop);
         return loop;
     }

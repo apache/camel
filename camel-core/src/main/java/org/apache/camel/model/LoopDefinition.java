@@ -61,10 +61,6 @@ public class LoopDefinition extends ExpressionNode {
         return this;
     }
 
-    public void setExpression(Expression expr) {
-        setExpression(ExpressionNodeHelper.toExpressionDefinition(expr));
-    }
-
     public Boolean getCopy() {
         return copy;
     }

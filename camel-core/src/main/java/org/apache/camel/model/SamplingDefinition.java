@@ -158,7 +158,10 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     public void setMessageFrequency(Long messageFrequency) {
         this.messageFrequency = messageFrequency;
     }
-    
+
+    /**
+     * Sets the time units for the sample period, defaulting to seconds.
+     */
     public void setUnits(String units) {
         this.units = TimeUnit.valueOf(units);
     }
