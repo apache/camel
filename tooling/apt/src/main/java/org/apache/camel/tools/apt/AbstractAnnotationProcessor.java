@@ -66,8 +66,8 @@ public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
             // lets find the getter
             if (answer == null) {
                 ExecutableElement getter = findGetter(fieldName, classElement);
-                if (setter != null) {
-                    String doc = elementUtils.getDocComment(setter);
+                if (getter != null) {
+                    String doc = elementUtils.getDocComment(getter);
                     if (!isNullOrEmpty(doc)) {
                         answer = doc;
                     }
