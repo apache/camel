@@ -36,6 +36,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -354,6 +355,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             for (VariableElement fieldElement : fieldElements) {
                 String fieldName = fieldElement.getSimpleName().toString();
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
 
                 // skip unwanted fields as they are inherited from default component and are not intended for end users to configure
                 if ("endpointClass".equals(fieldName) || "camelContext".equals(fieldName)) {
@@ -370,10 +372,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
+
                     // we do not yet have default values / notes / as no annotation support yet
-                    // String defaultValue = param.defaultValue();
                     // String defaultValueNote = param.defaultValueNote();
-                    String defaultValue = null;
+                    String defaultValue = metadata != null ? metadata.defaultValue() : null;
                     String defaultValueNote = null;
 
                     String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);

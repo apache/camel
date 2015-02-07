@@ -52,10 +52,10 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private boolean fixedRate;
     @UriParam(defaultValue = "true")
     private boolean daemon = true;
-    @UriParam
-    private Timer timer;
     @UriParam(defaultValue = "0")
     private long repeatCount;
+    @UriParam
+    private Timer timer;
 
     public TimerEndpoint() {
     }
@@ -180,6 +180,12 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return repeatCount;
     }
 
+    /**
+     * Specifies a maximum limit of number of fires.
+     * So if you set it to 1, the timer will only fire once.
+     * If you set it to 5, it will only fire five times.
+     * A value of zero or negative means fire forever.
+     */
     @ManagedAttribute(description = "Repeat Count")
     public void setRepeatCount(long repeatCount) {
         this.repeatCount = repeatCount;
@@ -229,6 +235,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return getComponent().getTimer(consumer);
     }
 
+    /**
+     * To use a custom {@link Timer}
+     */
     public void setTimer(Timer timer) {
         this.timer = timer;
     }

@@ -38,9 +38,11 @@ import org.slf4j.Logger;
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
+    private Logger providedLogger;
+    private ExchangeFormatter localFormatter;
     @UriPath(description = "Name of the logging category to use")
     private String loggerName;
-    @UriParam(defaultValue = "INFO")
+    @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
     private String level;
     @UriParam
     private String marker;
@@ -52,9 +54,6 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Boolean groupActiveOnly;
     @UriParam
     private Long groupDelay;
-    @UriParam
-    private Logger providedLogger;
-    private ExchangeFormatter localFormatter;
 
     public LogEndpoint() {
     }
@@ -124,7 +123,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Logging level to use. Possible values: ERROR, WARN, INFO, DEBUG, TRACE, OFF.
+     * Logging level to use.
      * <p/>
      * The default value is INFO.
      */
@@ -133,7 +132,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Logging level to use. Possible values: ERROR, WARN, INFO, DEBUG, TRACE, OFF.
+     * Logging level to use.
      * <p/>
      * The default value is INFO.
      */

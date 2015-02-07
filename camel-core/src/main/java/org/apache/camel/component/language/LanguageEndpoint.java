@@ -45,6 +45,7 @@ import org.apache.camel.util.ResourceHelper;
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
+    private boolean contentResolvedFromResource;
     @UriPath
     private String languageName;
     @UriParam
@@ -53,8 +54,6 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean transform = true;
     @UriParam(defaultValue = "false")
     private boolean binary;
-    @UriParam(defaultValue = "false")
-    private boolean contentResolvedFromResource;
     @UriParam(defaultValue = "false")
     private boolean cacheScript;
 

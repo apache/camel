@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.
@@ -38,6 +39,7 @@ public class DirectVmComponent extends UriEndpointComponent {
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
     private boolean block;
+    @Metadata(defaultValue = "30000")
     private long timeout = 30000L;
 
     public DirectVmComponent() {
@@ -112,6 +114,10 @@ public class DirectVmComponent extends UriEndpointComponent {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
@@ -120,6 +126,9 @@ public class DirectVmComponent extends UriEndpointComponent {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

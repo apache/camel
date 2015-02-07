@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -36,6 +37,7 @@ public class DirectComponent extends UriEndpointComponent {
     // on DefaultCamelContext
     private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
     private boolean block;
+    @Metadata(defaultValue = "30000")
     private long timeout = 30000L;
 
     public DirectComponent() {
@@ -61,6 +63,10 @@ public class DirectComponent extends UriEndpointComponent {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
@@ -69,6 +75,9 @@ public class DirectComponent extends UriEndpointComponent {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

@@ -98,12 +98,6 @@ public class DirectEndpoint extends DefaultEndpoint {
         return consumers.get(key);
     }
 
-    /**
-     * If sending a message to a direct endpoint which has no active consumer,
-     * then we can tell the producer to block and wait for the consumer to become active.
-     * <p/>
-     * Is by default <tt>false</tt>.
-     */
     public boolean isBlock() {
         return block;
     }
@@ -111,28 +105,17 @@ public class DirectEndpoint extends DefaultEndpoint {
     /**
      * If sending a message to a direct endpoint which has no active consumer,
      * then we can tell the producer to block and wait for the consumer to become active.
-     * <p/>
-     * Is by default <tt>false</tt>.
-     *
-     * @param block whether to block
      */
     public void setBlock(boolean block) {
         this.block = block;
     }
 
-    /**
-     * The timeout value to use if block is enabled.
-     * <p/>
-     * Is by default <tt>30000</tt>.
-     */
     public long getTimeout() {
         return timeout;
     }
 
     /**
      * The timeout value to use if block is enabled.
-     * <p/>
-     * Is by default <tt>30000</tt>.
      *
      * @param timeout the timeout value
      */

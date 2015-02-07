@@ -76,6 +76,10 @@ public class DirectVmEndpoint extends DefaultEndpoint {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
@@ -84,6 +88,9 @@ public class DirectVmEndpoint extends DefaultEndpoint {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
