@@ -41,6 +41,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -128,13 +129,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected IdempotentRepository<String> idempotentRepository;
     @UriParam
     protected GenericFileFilter<T> filter;
+    protected volatile AntPathMatcherGenericFileFilter<T> antFilter;
     @UriParam
-    protected AntPathMatcherGenericFileFilter<T> antFilter;
+    protected String antInclude;
+    @UriParam
+    protected String antExclude;
     @UriParam
     protected Comparator<GenericFile<T>> sorter;
     @UriParam
     protected Comparator<Exchange> sortBy;
-    @UriParam
+    @UriParam(enums = "none,markerFile,fileLock,rename,changed")
     protected String readLock = "none";
     @UriParam(defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
@@ -285,25 +289,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
     }
 
-
-    public String getChmod() {
-        return chmod;
-    }
-
-
-    public void setChmod(String chmod) throws Exception {
-        if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
-            this.chmod = chmod.trim();
-        } else {
-            throw new IllegalArgumentException("chmod option [" + chmod + "] is not valid");
-        }
-    }
-
-
     /**
-     *  Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
-     *
-     * @return
+     * Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
      */
     public boolean chmodPermissionsAreValid(String chmod) {
         if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
@@ -364,10 +351,31 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return permissions;
     }
 
+    public String getChmod() {
+        return chmod;
+    }
+
+    /**
+     * Specify the file permissions which is sent by the producer, the chmod value must be between 000 and 777;
+     * If there is a leading digit like in 0755 we will ignore it.
+     */
+    public void setChmod(String chmod) throws Exception {
+        if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
+            this.chmod = chmod.trim();
+        } else {
+            throw new IllegalArgumentException("chmod option [" + chmod + "] is not valid");
+        }
+    }
+
     public boolean isNoop() {
         return noop;
     }
 
+    /**
+     * If true, the file is not moved or deleted in any way.
+     * This option is good for readonly data, or for ETL type requirements.
+     * If noop=true, Camel will set idempotent=true as well, to avoid consuming the same files over and over again.
+     */
     public void setNoop(boolean noop) {
         this.noop = noop;
     }
@@ -376,6 +384,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return recursive;
     }
 
+    /**
+     * If a directory, will look for files in all the sub-directories as well.
+     */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
     }
@@ -384,6 +395,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return include;
     }
 
+    /**
+     * Is used to include files, if filename matches the regex pattern.
+     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -392,18 +406,39 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return exclude;
     }
 
+    /**
+     * Is used to exclude files, if filename matches the regex pattern.
+     */
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
 
+    public String getAntInclude() {
+        return antInclude;
+    }
+
+    /**
+     * Ant style filter inclusion.
+     * Multiple inclusions may be specified in comma-delimited format.
+     */
     public void setAntInclude(String antInclude) {
+        this.antInclude = antInclude;
         if (this.antFilter == null) {
             this.antFilter = new AntPathMatcherGenericFileFilter<T>();
         }
         this.antFilter.setIncludes(antInclude);
     }
 
+    public String getAntExclude() {
+        return antExclude;
+    }
+
+    /**
+     * Ant style filter exclusion. If both antInclude and antExclude are used, antExclude takes precedence over antInclude.
+     * Multiple exclusions may be specified in comma-delimited format.
+     */
     public void setAntExclude(String antExclude) {
+        this.antExclude = antExclude;
         if (this.antFilter == null) {
             this.antFilter = new AntPathMatcherGenericFileFilter<T>();
         }
@@ -412,8 +447,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
-     * <p/>
-     * Is by default turned on <tt>true</tt>.
      */
     public void setAntFilterCaseSensitive(boolean antFilterCaseSensitive) {
         if (this.antFilter == null) {
@@ -430,6 +463,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return delete;
     }
 
+    /**
+     * If true, the file will be deleted after it is processed successfully.
+     */
     public void setDelete(boolean delete) {
         this.delete = delete;
     }
@@ -438,6 +474,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return flatten;
     }
 
+    /**
+     * Flatten is used to flatten the file name path to strip any leading paths, so it's just the file name.
+     * This allows you to consume recursively into sub-directories, but when you eg write the files to another directory
+     * they will be written in a single directory.
+     * Setting this to true on the producer enforces that any file name in CamelFileName header
+     * will be stripped for any leading paths.
+     */
     public void setFlatten(boolean flatten) {
         this.flatten = flatten;
     }
@@ -446,48 +489,52 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return move;
     }
 
+    /**
+     * Expression (such as Simple Language) used to dynamically set the filename when moving it after processing.
+     * To move files into a .done subdirectory just enter .done.
+     */
     public void setMove(Expression move) {
         this.move = move;
     }
 
     /**
-     * Sets the move failure expression based on
-     * {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
-    public void setMoveFailed(String fileLanguageExpression) {
-        String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
-        this.moveFailed = createFileLanguageExpression(expression);
-    }
-
-    public Expression getMoveFailed() {
-        return moveFailed;
-    }
-
-    public void setMoveFailed(Expression moveFailed) {
-        this.moveFailed = moveFailed;
-    }
-
-    /**
-     * Sets the move expression based on
-     * {@link org.apache.camel.language.simple.SimpleLanguage}
+     * @see #setMove(org.apache.camel.Expression)
      */
     public void setMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
         this.move = createFileLanguageExpression(expression);
     }
 
+    public Expression getMoveFailed() {
+        return moveFailed;
+    }
+
+    /**
+     * Sets the move failure expression based on Simple language.
+     * For example, to move files into a .error subdirectory use: .error.
+     * Note: When moving the files to the fail location Camel will handle the error and will not pick up the file again.
+     */
+    public void setMoveFailed(Expression moveFailed) {
+        this.moveFailed = moveFailed;
+    }
+
+    public void setMoveFailed(String fileLanguageExpression) {
+        String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
+        this.moveFailed = createFileLanguageExpression(expression);
+    }
+
     public Expression getPreMove() {
         return preMove;
     }
 
+    /**
+     * Expression (such as File Language) used to dynamically set the filename when moving it before processing.
+     * For example to move in-progress files into the order directory set this value to order.
+     */
     public void setPreMove(Expression preMove) {
         this.preMove = preMove;
     }
 
-    /**
-     * Sets the pre move expression based on
-     * {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
     public void setPreMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
         this.preMove = createFileLanguageExpression(expression);
@@ -497,14 +544,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return moveExisting;
     }
 
+    /**
+     * Expression (such as File Language) used to compute file name to use when fileExist=Move is configured.
+     * To move files into a backup subdirectory just enter backup.
+     * This option only supports the following File Language tokens: "file:name", "file:name.ext", "file:name.noext", "file:onlyname",
+     * "file:onlyname.noext", "file:ext", and "file:parent". Notice the "file:parent" is not supported by the FTP component,
+     * as the FTP component can only move any existing files to a relative directory based on current dir as base.
+     */
     public void setMoveExisting(Expression moveExisting) {
         this.moveExisting = moveExisting;
     }
 
-    /**
-     * Sets the move existing expression based on
-     * {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
     public void setMoveExisting(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
         this.moveExisting = createFileLanguageExpression(expression);
@@ -514,14 +564,24 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return fileName;
     }
 
+    /**
+     * Use Expression such as File Language to dynamically set the filename.
+     * For consumers, it's used as a filename filter.
+     * For producers, it's used to evaluate the filename to write.
+     * If an expression is set, it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression).
+     * The expression options support both String and Expression types.
+     * If the expression is a String type, it is always evaluated using the File Language.
+     * If the expression is an Expression type, the specified Expression type is used - this allows you,
+     * for instance, to use OGNL expressions. For the consumer, you can use it to filter filenames,
+     * so you can for instance consume today's file using the File Language syntax: mydata-${date:now:yyyyMMdd}.txt.
+     * The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header;
+     * the CamelOverruleFileName is a header that is used only once, and makes it easier as this avoids to temporary
+     * store CamelFileName and have to restore it afterwards.
+     */
     public void setFileName(Expression fileName) {
         this.fileName = fileName;
     }
 
-    /**
-     * Sets the file expression based on
-     * {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
     public void setFileName(String fileLanguageExpression) {
         this.fileName = createFileLanguageExpression(fileLanguageExpression);
     }
@@ -531,7 +591,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Sets the done file name.
+     * If provided, then Camel will write a 2nd done file when the original file has been written.
+     * The done file will be empty. This option configures what file name to use.
+     * Either you can specify a fixed name. Or you can use dynamic placeholders.
+     * The done file will always be written in the same folder as the original file.
      * <p/>
      * Only ${file.name} and ${file.name.noext} is supported as dynamic placeholders.
      */
@@ -547,6 +610,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return charset;
     }
 
+    /**
+     * This option is used to specify the encoding of the file.
+     * You can use this on the consumer, to specify the encodings of the files, which allow Camel to know the charset
+     * it should load the file content in case the file content is being accessed.
+     * Likewise when writing a file, you can use this option to specify which charset to write the file as well.
+     */
     public void setCharset(String charset) {
         IOHelper.validateCharset(charset);
         this.charset = charset;
@@ -556,6 +625,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return idempotent != null;
     }
 
+    /**
+     * Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files.
+     * Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled
+     * as well to avoid consuming the same files over and over again.
+     */
     public void setIdempotent(Boolean idempotent) {
         this.idempotent = idempotent;
     }
@@ -564,6 +638,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return idempotentKey;
     }
 
+    /**
+     * To use a custom idempotent key. By default the absolute path of the file is used.
+     * You can use the File Language, for example to use the file name and file size, you can do:
+     * <tt>idempotentKey=${file:name}-${file:size}</tt>
+     */
     public void setIdempotentKey(Expression idempotentKey) {
         this.idempotentKey = idempotentKey;
     }
@@ -576,6 +655,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return idempotentRepository;
     }
 
+    /**
+     * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository
+     * if none is specified and idempotent is true.
+     */
     public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
@@ -584,6 +667,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return filter;
     }
 
+    /**
+     * Pluggable filter as a org.apache.camel.component.file.GenericFileFilter class.
+     * Will skip files if filter returns false in its accept() method.
+     */
     public void setFilter(GenericFileFilter<T> filter) {
         this.filter = filter;
     }
@@ -592,6 +679,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return sorter;
     }
 
+    /**
+     * Pluggable sorter as a java.util.Comparator<org.apache.camel.component.file.GenericFile> class.
+     */
     public void setSorter(Comparator<GenericFile<T>> sorter) {
         this.sorter = sorter;
     }
@@ -600,6 +690,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return sortBy;
     }
 
+    /**
+     * Built-in sort by using the File Language.
+     * Supports nested sorts, so you can have a sort by file name and as a 2nd group sort by modified date.
+     */
     public void setSortBy(Comparator<Exchange> sortBy) {
         this.sortBy = sortBy;
     }
@@ -617,8 +711,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Enables and uses temporary prefix when writing files, after write it will
-     * be renamed to the correct name.
+     * This option is used to write the file using a temporary name and then, after the write is complete,
+     * rename it to the real name. Can be used to identify files being written and also avoid consumers
+     * (not using exclusive read locks) reading in progress files. Is often used by FTP when uploading big files.
      */
     public void setTempPrefix(String tempPrefix) {
         this.tempPrefix = tempPrefix;
@@ -630,6 +725,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return tempFileName;
     }
 
+    /**
+     * The same as tempPrefix option but offering a more fine grained control on the naming of the temporary filename as it uses the File Language.
+     */
     public void setTempFileName(Expression tempFileName) {
         this.tempFileName = tempFileName;
     }
@@ -642,6 +740,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return eagerDeleteTargetFile;
     }
 
+    /**
+     * Whether or not to eagerly delete any existing target file.
+     * This option only applies when you use fileExists=Override and the tempFileName option as well.
+     * You can use this to disable (set it to false) deleting the target file before the temp file is written.
+     * For example you may write big files and want the target file to exists during the temp file is being written.
+     * This ensure the target file is only deleted until the very last moment, just before the temp file is being
+     * renamed to the target filename. This option is also used to control whether to delete any existing files when
+     * fileExist=Move is enabled, and an existing file exists.
+     * If this option copyAndDeleteOnRenameFails false, then an exception will be thrown if an existing file existed,
+     * if its true, then the existing file is deleted before the move operation.
+     */
     public void setEagerDeleteTargetFile(boolean eagerDeleteTargetFile) {
         this.eagerDeleteTargetFile = eagerDeleteTargetFile;
     }
@@ -661,6 +770,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return exclusiveReadLockStrategy;
     }
 
+    /**
+     * Pluggable read-lock as a org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy implementation.
+     */
     public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy) {
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
@@ -669,6 +781,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLock;
     }
 
+    /**
+     * Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not in-progress or being written).
+     * Camel will wait until the file lock is granted.
+     * <p/>
+     * This option provides the build in strategies:
+     * <ul>
+     *     <li>none - No read lock is in use
+     *     <li>markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component
+     *     <li>changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec
+     *     to determine this, so this option cannot consume files as fast as the others, but can be more reliable as the JDK IO API cannot
+     *     always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency.</li>
+     *     <li>fileLock - is for using java.nio.channels.FileLock. This option is not avail for the FTP component. This approach should be avoided when accessing
+     *     a remote file system via a mount/share unless that file system supports distributed file locks.</li>
+     *     <li>rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.</li>
+     * </ul>
+     */
     public void setReadLock(String readLock) {
         this.readLock = readLock;
     }
@@ -677,6 +805,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLockCheckInterval;
     }
 
+    /**
+     * Interval in millis for the read-lock, if supported by the read lock.
+     * This interval is used for sleeping between attempts to acquire the read lock.
+     * For example when using the changed read lock, you can set a higher interval period to cater for slow writes.
+     * The default of 1 sec. may be too fast if the producer is very slow writing the file.
+     * For FTP the default readLockCheckInterval is 5000.
+     */
     public void setReadLockCheckInterval(long readLockCheckInterval) {
         this.readLockCheckInterval = readLockCheckInterval;
     }
@@ -685,6 +820,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLockTimeout;
     }
 
+    /**
+     * Optional timeout in millis for the read-lock, if supported by the read-lock.
+     * If the read-lock could not be granted and the timeout triggered, then Camel will skip the file.
+     * At next poll Camel, will try the file again, and this time maybe the read-lock could be granted.
+     * Use a value of 0 or lower to indicate forever. Currently fileLock, changed and rename support the timeout.
+     * Notice: For FTP the default readLockTimeout value is 20000 instead of 10000.
+     */
     public void setReadLockTimeout(long readLockTimeout) {
         this.readLockTimeout = readLockTimeout;
     }
@@ -693,6 +835,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLockMarkerFile;
     }
 
+    /**
+     * Whether to use marker file with the changed, rename, or exclusive read lock types.
+     * By default a marker file is used as well to guard against other processes picking up the same files.
+     * This behavior can be turned off by setting this option to false.
+     * For example if you do not want to write marker files to the file systems by the Camel application.
+     */
     public void setReadLockMarkerFile(boolean readLockMarkerFile) {
         this.readLockMarkerFile = readLockMarkerFile;
     }
@@ -701,6 +849,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLockLoggingLevel;
     }
 
+    /**
+     * Logging level used when a read lock could not be acquired.
+     * By default a WARN is logged. You can change this level, for example to OFF to not have any logging.
+     * This option is only applicable for readLock of types: changed, fileLock, rename.
+     */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
@@ -709,6 +862,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return readLockMinLength;
     }
 
+    /**
+     * This option applied only for readLock=changed. This option allows you to configure a minimum file length.
+     * By default Camel expects the file to contain data, and thus the default value is 1.
+     * You can set this option to zero, to allow consuming zero-length files.
+     */
     public void setReadLockMinLength(long readLockMinLength) {
         this.readLockMinLength = readLockMinLength;
     }
@@ -717,6 +875,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return bufferSize;
     }
 
+    /**
+     * Write buffer sized in bytes.
+     */
     public void setBufferSize(int bufferSize) {
         if (bufferSize <= 0) {
             throw new IllegalArgumentException("BufferSize must be a positive value, was " + bufferSize);
@@ -728,6 +889,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return fileExist;
     }
 
+    /**
+     * What to do if a file already exists with the same name.
+     *
+     * Override, which is the default, replaces the existing file.
+     * <ul>
+     *   <li>Append - adds content to the existing file.</li>
+     *   <li>Fail - throws a GenericFileOperationException, indicating that there is already an existing file.</li>
+     *   <li>Ignore - silently ignores the problem and does not override the existing file, but assumes everything is okay.</li>
+     *   <li>Move - option requires to use the moveExisting option to be configured as well.
+     *   The option eagerDeleteTargetFile can be used to control what to do if an moving the file, and there exists already an existing file,
+     *   otherwise causing the move operation to fail.
+     *   The Move option will move any existing files, before writing the target file.</li>
+     *   <li>TryRename Camel is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
+     *   without doing any exists check.This check may be faster on some file systems and especially FTP servers.</li>
+     * </ul>
+     */
     public void setFileExist(GenericFileExist fileExist) {
         this.fileExist = fileExist;
     }
@@ -736,6 +913,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return autoCreate;
     }
 
+    /**
+     * Automatically create missing directories in the file's pathname. For the file consumer, that means creating the starting directory.
+     * For the file producer, it means the directory the files should be written to.
+     */
     public void setAutoCreate(boolean autoCreate) {
         this.autoCreate = autoCreate;
     }
@@ -744,6 +925,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return startingDirectoryMustExist;
     }
 
+    /**
+     * Whether the starting directory must exist. Mind that the autoCreate option is default enabled,
+     * which means the starting directory is normally auto created if it doesn't exist.
+     * You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+     */
     public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
         this.startingDirectoryMustExist = startingDirectoryMustExist;
     }
@@ -752,6 +938,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return directoryMustExist;
     }
 
+    /**
+     * Similar to startingDirectoryMustExist but this applies during polling recursive sub directories.
+     */
     public void setDirectoryMustExist(boolean directoryMustExist) {
         this.directoryMustExist = directoryMustExist;
     }
@@ -760,6 +949,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return processStrategy;
     }
 
+    /**
+     * A pluggable org.apache.camel.component.file.GenericFileProcessStrategy allowing you to implement your own readLock option or similar.
+     * Can also be used when special conditions must be met before a file can be consumed, such as a special ready file exists.
+     * If this option is set then the readLock option does not apply.
+     */
     public void setProcessStrategy(GenericFileProcessStrategy<T> processStrategy) {
         this.processStrategy = processStrategy;
     }
@@ -768,6 +962,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return localWorkDirectory;
     }
 
+    /**
+     * When consuming, a local work directory can be used to store the remote file content directly in local files,
+     * to avoid loading the content into memory. This is beneficial, if you consume a very big remote file and thus can conserve memory.
+     */
     public void setLocalWorkDirectory(String localWorkDirectory) {
         this.localWorkDirectory = localWorkDirectory;
     }
@@ -776,6 +974,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Tlo define a maximum messages to gather per poll.
+     * By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
+     * Set a value of 0 or negative to disabled it.
+     * Notice: If this option is in use then the File and FTP components will limit before any sorting.
+     * For example if you have 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up, and then sorted.
+     * You can use the eagerMaxMessagesPerPoll option and set this to false to allow to scan all files first and then sort afterwards.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
@@ -784,6 +990,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return eagerMaxMessagesPerPoll;
     }
 
+    /**
+     * Allows for controlling whether the limit from maxMessagesPerPoll is eager or not.
+     * If eager then the limit is during the scanning of files. Where as false would scan all files, and then perform sorting.
+     * Setting this option to false allows for sorting all files first, and then limit the poll. Mind that this requires a
+     * higher memory usage as all file details are in memory to perform the sorting.
+     */
     public void setEagerMaxMessagesPerPoll(boolean eagerMaxMessagesPerPoll) {
         this.eagerMaxMessagesPerPoll = eagerMaxMessagesPerPoll;
     }
@@ -792,6 +1004,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return maxDepth;
     }
 
+    /**
+     * The maximum depth to traverse when recursively processing a directory.
+     */
     public void setMaxDepth(int maxDepth) {
         this.maxDepth = maxDepth;
     }
@@ -800,6 +1015,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return minDepth;
     }
 
+    /**
+     * The minimum depth to start processing when recursively processing a directory.
+     * Using minDepth=1 means the base directory. Using minDepth=2 means the first sub directory.
+     */
     public void setMinDepth(int minDepth) {
         this.minDepth = minDepth;
     }
@@ -808,6 +1027,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return inProgressRepository;
     }
 
+    /**
+     * A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository.
+     * The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used.
+     */
     public void setInProgressRepository(IdempotentRepository<String> inProgressRepository) {
         this.inProgressRepository = inProgressRepository;
     }
@@ -816,6 +1039,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return keepLastModified;
     }
 
+    /**
+     * Will keep the last modified timestamp from the source file (if any).
+     * Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp.
+     * This header can contain either a java.util.Date or long with the timestamp.
+     * If the timestamp exists and the option is enabled it will set this timestamp on the written file.
+     * Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers.
+     */
     public void setKeepLastModified(boolean keepLastModified) {
         this.keepLastModified = keepLastModified;
     }
@@ -823,7 +1053,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public boolean isAllowNullBody() {
         return allowNullBody;
     }
-    
+
+    /**
+     * Used to specify if a null body is allowed during file writing.
+     * If set to true then an empty file will be created, when set to false, and attempting to send a null body to the file component,
+     * a GenericFileWriteException of 'Cannot write null body to file.' will be thrown.
+     * If the `fileExist` option is set to 'Override', then the file will be truncated, and if set to `append` the file will remain unchanged.
+     */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
     }
