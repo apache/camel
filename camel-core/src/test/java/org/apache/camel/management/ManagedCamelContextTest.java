@@ -275,8 +275,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertEquals(15, StringHelper.countChar(json, '{'));
-        assertEquals(15, StringHelper.countChar(json, '}'));
+        assertEquals(14, StringHelper.countChar(json, '{'));
+        assertEquals(14, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"description\": \"The Log Component is for logging message exchanges via the underlying logging mechanism.\""));
@@ -367,8 +367,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"description\": \"The SEDA Component is for asynchronous SEDA exchanges on a BlockingQueue within a CamelContext\""));
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
-        assertTrue(json.contains("\"concurrentConsumers\": { \"value\": \"1\" }"));
-        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\" }"));
+        assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\": \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
+        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\""));
     }
 
     @Override

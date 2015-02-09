@@ -48,9 +48,9 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertEquals(4, data.size());
 
-        // there should be 10 in total
+        // there should be 9 in total
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertEquals(10, data.size());
+        assertEquals(9, data.size());
     }
 
     @Override
