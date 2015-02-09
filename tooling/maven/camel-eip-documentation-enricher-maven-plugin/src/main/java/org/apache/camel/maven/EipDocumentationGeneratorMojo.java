@@ -23,8 +23,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,7 +46,6 @@ import java.util.Map;
 @Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
     defaultPhase = LifecyclePhase.PACKAGE)
 public class EipDocumentationGeneratorMojo extends AbstractMojo {
-  private final Logger logger = LoggerFactory.getLogger(EipDocumentationGeneratorMojo.class);
 
   /**
    * Project's source directory as specified in the POM.
@@ -59,7 +56,6 @@ public class EipDocumentationGeneratorMojo extends AbstractMojo {
   @Parameter(required = true)
   File outputCamelSchemaFile;
 
-//  @Parameter(defaultValue = "${project.build.directory}/../../../..//camel-core")
   @Parameter(defaultValue = "${project.build.directory}/../../..//camel-core")
   File camelCoreDir;
 
@@ -97,7 +93,9 @@ public class EipDocumentationGeneratorMojo extends AbstractMojo {
       String type = item.getAttribute(Constants.TYPE_ATTRIBUTE_NAME);
       if (name != null && type != null) {
         type = type.replaceAll("tns:", "");
-        logger.debug("Putting attributes type:'{}', name:'{}'", name, type);
+        if (getLog().isDebugEnabled()) {
+          getLog().debug(String.format("Putting attributes type:'%s', name:'%s'", name, type));
+        }
         typeToNameMap.put(type, name);
       }
     }
