@@ -20,6 +20,7 @@ import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.camel.spi.Metadata;
 import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.Component;
@@ -44,9 +45,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpoint.class);
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String resourceUri;
-    @UriParam
+    @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI)
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
     @UriParam
     private SchemaFactory schemaFactory;
@@ -138,6 +139,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return schemaLanguage;
     }
 
+    /**
+     * Configures the W3C XML Schema Namespace URI.
+     */
     public void setSchemaLanguage(String schemaLanguage) {
         this.schemaLanguage = schemaLanguage;
     }
@@ -146,6 +150,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return schemaFactory;
     }
 
+    /**
+     * To use a custom javax.xml.validation.SchemaFactory
+     */
     public void setSchemaFactory(SchemaFactory schemaFactory) {
         this.schemaFactory = schemaFactory;
     }
@@ -154,6 +161,11 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return errorHandler;
     }
 
+    /**
+     * To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler.
+     * <p/>
+     * The default error handler captures the errors and throws an exception.
+     */
     public void setErrorHandler(ValidatorErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
@@ -162,6 +174,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return useDom;
     }
 
+    /**
+     * Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
+     */
     public void setUseDom(boolean useDom) {
         this.useDom = useDom;
     }
@@ -170,6 +185,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return useSharedSchema;
     }
 
+    /**
+     * Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
+     */
     public void setUseSharedSchema(boolean useSharedSchema) {
         this.useSharedSchema = useSharedSchema;
     }
@@ -178,6 +196,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return resourceResolver;
     }
 
+    /**
+     * To use a custom LSResourceResolver
+     */
     public void setResourceResolver(LSResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver;
     }
@@ -186,6 +207,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return failOnNullBody;
     }
 
+    /**
+     * Whether to fail if no body exists.
+     */
     public void setFailOnNullBody(boolean failOnNullBody) {
         this.failOnNullBody = failOnNullBody;
     }
@@ -194,6 +218,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return failOnNullHeader;
     }
 
+    /**
+     * Whether to fail if no header exists when validating against a header.
+     */
     public void setFailOnNullHeader(boolean failOnNullHeader) {
         this.failOnNullHeader = failOnNullHeader;
     }
@@ -202,6 +229,9 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         return headerName;
     }
 
+    /**
+     * To validate against a header instead of the message body.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

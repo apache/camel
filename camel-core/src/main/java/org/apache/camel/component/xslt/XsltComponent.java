@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,9 @@ public class XsltComponent extends UriEndpointComponent {
 
     private XmlConverter xmlConverter;
     private URIResolver uriResolver;
+    @Metadata(defaultValue = "true")
     private boolean contentCache = true;
+    @Metadata(defaultValue = "false")
     private boolean saxon;
 
     public XsltComponent() {
@@ -47,6 +50,9 @@ public class XsltComponent extends UriEndpointComponent {
         return xmlConverter;
     }
 
+    /**
+     * To use a custom implementation of {@link org.apache.camel.converter.jaxp.XmlConverter}
+     */
     public void setXmlConverter(XmlConverter xmlConverter) {
         this.xmlConverter = xmlConverter;
     }
@@ -55,6 +61,9 @@ public class XsltComponent extends UriEndpointComponent {
         return uriResolver;
     }
 
+    /**
+     * To use a custom javax.xml.transform.URIResolver
+     */
     public void setUriResolver(URIResolver uriResolver) {
         this.uriResolver = uriResolver;
     }
@@ -63,6 +72,11 @@ public class XsltComponent extends UriEndpointComponent {
         return contentCache;
     }
 
+    /**
+     * Cache for the resource content (the stylesheet file) when it is loaded.
+     * If set to false Camel will reload the stylesheet file on each message processing. This is good for development.
+     * A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+     */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }
@@ -71,6 +85,10 @@ public class XsltComponent extends UriEndpointComponent {
         return saxon;
     }
 
+    /**
+     * Whether to use Saxon as the transformerFactoryClass.
+     * If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+     */
     public void setSaxon(boolean saxon) {
         this.saxon = saxon;
     }

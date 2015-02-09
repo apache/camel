@@ -34,6 +34,7 @@ import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -53,7 +54,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
@@ -154,6 +155,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return resourceUri;
     }
 
+    /**
+     * The name of the template to load from classpath or file system
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -162,6 +166,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return converter;
     }
 
+    /**
+     * To use a custom implementation of {@link org.apache.camel.converter.jaxp.XmlConverter}
+     */
     public void setConverter(XmlConverter converter) {
         this.converter = converter;
     }
@@ -170,6 +177,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return transformerFactoryClass;
     }
 
+    /**
+     * To use a custom XSLT transformer factory, specified as a FQN class name
+     */
     public void setTransformerFactoryClass(String transformerFactoryClass) {
         this.transformerFactoryClass = transformerFactoryClass;
     }
@@ -178,6 +188,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return transformerFactory;
     }
 
+    /**
+     * To use a custom XSLT transformer factory
+     */
     public void setTransformerFactory(TransformerFactory transformerFactory) {
         this.transformerFactory = transformerFactory;
     }
@@ -186,6 +199,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return saxon;
     }
 
+    /**
+     * Whether to use Saxon as the transformerFactoryClass.
+     * If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+     */
     public void setSaxon(boolean saxon) {
         this.saxon = saxon;
     }
@@ -194,6 +211,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return resultHandlerFactory;
     }
 
+    /**
+     * Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of
+     * using custom org.apache.camel.builder.xml.ResultHandler types.
+     */
     public void setResultHandlerFactory(ResultHandlerFactory resultHandlerFactory) {
         this.resultHandlerFactory = resultHandlerFactory;
     }
@@ -202,6 +223,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return failOnNullBody;
     }
 
+    /**
+     * Whether or not to throw an exception if the input body is null.
+     */
     public void setFailOnNullBody(boolean failOnNullBody) {
         this.failOnNullBody = failOnNullBody;
     }
@@ -210,6 +234,12 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return output;
     }
 
+    /**
+     * Option to specify which output type to use.
+     * Possible values are: string, bytes, DOM, file. The first three options are all in memory based, where as file is streamed directly to a java.io.File.
+     * For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName.
+     * Also any paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.
+     */
     public void setOutput(XsltOutput output) {
         this.output = output;
     }
@@ -218,6 +248,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return transformerCacheSize;
     }
 
+    /**
+     * The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer().
+     */
     public void setTransformerCacheSize(int transformerCacheSize) {
         this.transformerCacheSize = transformerCacheSize;
     }
@@ -226,6 +259,11 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return errorListener;
     }
 
+    /**
+     *  Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error
+     *  listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use.
+     *  So only use this option for special use-cases.
+     */
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
     }
@@ -234,6 +272,11 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return contentCache;
     }
 
+    /**
+     * Cache for the resource content (the stylesheet file) when it is loaded.
+     * If set to false Camel will reload the stylesheet file on each message processing. This is good for development.
+     * A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+     */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }
@@ -242,6 +285,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return uriResolver;
     }
 
+    /**
+     * To use a custom javax.xml.transform.URIResolver
+     */
     public void setUriResolver(URIResolver uriResolver) {
         this.uriResolver = uriResolver;
     }
@@ -250,6 +296,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return allowStAX;
     }
 
+    /**
+     * Whether to allow using StAX as the javax.xml.transform.Source.
+     */
     public void setAllowStAX(boolean allowStAX) {
         this.allowStAX = allowStAX;
     }
@@ -258,6 +307,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return deleteOutputFile;
     }
 
+    /**
+     * If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange
+     * is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use.
+     */
     public void setDeleteOutputFile(boolean deleteOutputFile) {
         this.deleteOutputFile = deleteOutputFile;
     }
@@ -266,6 +319,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return parameters;
     }
 
+    /**
+     * Additional parameters to configure on the javax.xml.transform.Transformer.
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
