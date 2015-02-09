@@ -377,9 +377,24 @@
           </execution>
         </executions>
       </plugin>
-
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>eip-documentation-enricher</id>
+            <phase>package</phase>
+            <goals>
+              <goal>eip-documentation-enricher</goal>
+            </goals>
+            <configuration>
+              <inputCamelSchemaFile>${project.build.directory}/schema/camel-spring.xsd</inputCamelSchemaFile>
+              <outputCamelSchemaFile>${project.build.directory}/schema/camel-spring.xsd</outputCamelSchemaFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
-
     <pluginManagement>
         <plugins>
             <plugin>

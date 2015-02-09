@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -26,8 +24,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
 public class DomParser {
-  private final Logger logger = LoggerFactory.getLogger(DomParser.class);
-
 
   public NodeList findElementsAndTypes(Document document, XPath xPath) throws XPathExpressionException {
     return  (NodeList) xPath.compile("/xs:schema/xs:element")
