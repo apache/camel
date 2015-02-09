@@ -49,6 +49,7 @@ public class KafkaConsumer extends DefaultConsumer {
     private final KafkaEndpoint endpoint;
     private final Processor processor;
     private Map<ConsumerConnector, CyclicBarrier> consumerBarriers;
+    private boolean doConsume;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -73,6 +74,7 @@ public class KafkaConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        doConsume = true;
         log.info("Starting Kafka consumer");
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConsumersCount(); i++) {
@@ -104,6 +106,7 @@ public class KafkaConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        doConsume = false;
         log.info("Stopping Kafka consumer");
         for (ConsumerConnector consumer : consumerBarriers.keySet()) {
             if (consumer != null) {
@@ -112,7 +115,7 @@ public class KafkaConsumer extends DefaultConsumer {
         }
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
             } else {
                 executor.shutdownNow();
             }
@@ -131,13 +134,14 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         public void run() {
+            log.info("running BatchingConsumerTask");
 
             int processed = 0;
             boolean consumerTimeout;
             MessageAndMetadata<byte[], byte[]> mm = null;
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
 
-            while (true) {
+            while (doConsume) {
 
                 try {
                     consumerTimeout = false;
@@ -175,6 +179,8 @@ public class KafkaConsumer extends DefaultConsumer {
                     }
                 }
             }
+
+            log.info("finished BatchingConsumerTask");
         }
     }
 
@@ -201,6 +207,7 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         public void run() {
+            log.info("running AutoCommitConsumerTask");
             for (MessageAndMetadata<byte[], byte[]> mm : stream) {
                 Exchange exchange = endpoint.createKafkaExchange(mm);
                 try {
@@ -209,6 +216,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     LOG.error(e.getMessage(), e);
                 }
             }
+            log.info("finished AutoCommitConsumerTask");
         }
     }
 }
