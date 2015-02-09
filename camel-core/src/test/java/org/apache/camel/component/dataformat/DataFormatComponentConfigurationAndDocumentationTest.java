@@ -45,7 +45,9 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"operation\": { \"kind\": \"parameter\", \"type\": \"string\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"deprecated\": \"false\", \"description\": \"Name of data format\" }"));
+        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"type\": \"string\""));
         assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
 
