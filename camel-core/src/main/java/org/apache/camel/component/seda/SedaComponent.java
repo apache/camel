@@ -36,7 +36,7 @@ public class SedaComponent extends UriEndpointComponent {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = 500;
     protected int queueSize;
-    protected int defaultConcurrentConsumers = 1;
+    protected int concurrentConsumers = 1;
     private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
     private BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
 
@@ -48,6 +48,9 @@ public class SedaComponent extends UriEndpointComponent {
         super(endpointClass);
     }
 
+    /**
+     * Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).
+     */
     public void setQueueSize(int size) {
         queueSize = size;
     }
@@ -55,19 +58,25 @@ public class SedaComponent extends UriEndpointComponent {
     public int getQueueSize() {
         return queueSize;
     }
-    
+
+    /**
+     * Sets the default number of concurrent threads processing exchanges.
+     */
     public void setConcurrentConsumers(int size) {
-        defaultConcurrentConsumers = size;
+        concurrentConsumers = size;
     }
     
     public int getConcurrentConsumers() {
-        return defaultConcurrentConsumers;
+        return concurrentConsumers;
     }
 
     public BlockingQueueFactory<Exchange> getDefaultQueueFactory() {
         return defaultQueueFactory;
     }
 
+    /**
+     * Sets the default queue factory.
+     */
     public void setDefaultQueueFactory(BlockingQueueFactory<Exchange> defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
     }
@@ -155,7 +164,7 @@ public class SedaComponent extends UriEndpointComponent {
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, defaultConcurrentConsumers);
+        int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, concurrentConsumers);
         boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
         if (limitConcurrentConsumers && consumers >  maxConcurrentConsumers) {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "

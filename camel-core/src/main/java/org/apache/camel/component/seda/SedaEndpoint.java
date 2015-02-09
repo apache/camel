@@ -236,6 +236,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    /**
+     * Define the queue instance which will be used by seda endpoint.
+     * <p/>
+     * This option is only for rare use-cases where you want to use a custom queue instance.
+     */
     public void setQueue(BlockingQueue<Exchange> queue) {
         this.queue = queue;
         this.size = queue.remainingCapacity();
@@ -246,6 +251,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return size;
     }
 
+    /**
+     * The maximum capacity of the SEDA queue (i.e., the number of messages it can hold).
+     */
     public void setSize(int size) {
         this.size = size;
     }
@@ -255,6 +263,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return queue.size();
     }
 
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
+     * By default, an exception will be thrown stating that the queue is full.
+     * By enabling this option, the calling thread will instead block and wait until the message can be accepted.
+     */
     public void setBlockWhenFull(boolean blockWhenFull) {
         this.blockWhenFull = blockWhenFull;
     }
@@ -264,6 +277,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return blockWhenFull;
     }
 
+    /**
+     * Number of concurrent threads processing exchanges.
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
@@ -277,6 +293,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return waitForTaskToComplete;
     }
 
+    /**
+     * Option to specify whether the caller should wait for the async task to complete or not before continuing.
+     * The following three options are supported: Always, Never or IfReplyExpected.
+     * The first two values are self-explanatory.
+     * The last value, IfReplyExpected, will only wait if the message is Request Reply based.
+     * The default option is IfReplyExpected.
+     */
     public void setWaitForTaskToComplete(WaitForTaskToComplete waitForTaskToComplete) {
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
@@ -286,6 +309,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return timeout;
     }
 
+    /**
+     * Timeout (in milliseconds) before a SEDA producer will stop waiting for an asynchronous task to complete.
+     * You can disable timeout by using 0 or a negative value.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -295,6 +322,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return failIfNoConsumers;
     }
 
+    /**
+     * Whether the producer should fail by throwing an exception, when sending to a SEDA queue with no active consumers.
+     */
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;
     }
@@ -304,6 +334,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return multipleConsumers;
     }
 
+    /**
+     * Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging.
+     * That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message.
+     * When enabled, this option should be specified on every consumer endpoint.
+     */
     public void setMultipleConsumers(boolean multipleConsumers) {
         this.multipleConsumers = multipleConsumers;
     }
@@ -313,6 +348,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return pollTimeout;
     }
 
+    /**
+     * The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue running.
+     * Setting a lower value allows the consumer to react more quickly upon shutdown.
+     */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
     }
@@ -322,6 +361,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return purgeWhenStopping;
     }
 
+    /**
+     * Whether to purge the task queue when stopping the consumer/route.
+     * This allows to stop faster, as any pending messages on the queue is discarded.
+     */
     public void setPurgeWhenStopping(boolean purgeWhenStopping) {
         this.purgeWhenStopping = purgeWhenStopping;
     }
