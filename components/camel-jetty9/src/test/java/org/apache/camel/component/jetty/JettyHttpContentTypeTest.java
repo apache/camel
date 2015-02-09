@@ -42,9 +42,6 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
                 "content-type", "text/plain; charset=\"" + CHARSET + "\"", String.class);
         assertEquals("Bye World", out);
 
-        Exchange exchange = getMockEndpoint("mock:input").getExchanges().get(0);
-        Message in = exchange.getIn();
-        System.out.println(in.getHeaders());
         assertMockEndpointsSatisfied();
     }
 
