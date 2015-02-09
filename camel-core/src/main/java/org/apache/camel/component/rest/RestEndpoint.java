@@ -25,6 +25,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,9 +37,9 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "rest", label = "core,http,rest")
 public class RestEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
     private String method;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String path;
     @UriPath
     private String uriTemplate;
@@ -72,6 +73,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return method;
     }
 
+    /**
+     * HTTP method to use.
+     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -80,6 +84,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return path;
     }
 
+    /**
+     * The base path
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -88,6 +95,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return uriTemplate;
     }
 
+    /**
+     * The uri template
+     */
     public void setUriTemplate(String uriTemplate) {
         this.uriTemplate = uriTemplate;
     }
@@ -96,6 +106,10 @@ public class RestEndpoint extends DefaultEndpoint {
         return consumes;
     }
 
+    /**
+     * Media type such as: 'text/xml', or 'application/json' this REST service accepts.
+     * By default we accept all kinds of types.
+     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -104,6 +118,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return produces;
     }
 
+    /**
+     * Media type such as: 'text/xml', or 'application/json' this REST service returns.
+     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -112,6 +129,12 @@ public class RestEndpoint extends DefaultEndpoint {
         return componentName;
     }
 
+    /**
+     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
+     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
+     * If either one is found, then that is being used.
+     */
     public void setComponentName(String componentName) {
         this.componentName = componentName;
     }
@@ -120,6 +143,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return inType;
     }
 
+    /**
+     * To declare the incoming POJO binding type as a FQN class name
+     */
     public void setInType(String inType) {
         this.inType = inType;
     }
@@ -128,6 +154,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return outType;
     }
 
+    /**
+     * To declare the outgoing POJO binding type as a FQN class name
+     */
     public void setOutType(String outType) {
         this.outType = outType;
     }
@@ -136,6 +165,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return routeId;
     }
 
+    /**
+     * Name of the route this REST services creates
+     */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }
@@ -144,6 +176,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return description;
     }
 
+    /**
+     * Human description to document this REST service
+     */
     public void setDescription(String description) {
         this.description = description;
     }
@@ -152,6 +187,9 @@ public class RestEndpoint extends DefaultEndpoint {
         return parameters;
     }
 
+    /**
+     * Additional parameters to configure the consumer of the REST transport for this REST service
+     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }

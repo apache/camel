@@ -46,6 +46,7 @@ import static org.apache.camel.tools.apt.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.Strings.getOrElse;
 import static org.apache.camel.tools.apt.Strings.isNullOrEmpty;
+import static org.apache.camel.tools.apt.Strings.safeNull;
 
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
@@ -200,7 +201,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", null, entry.getType(), entry.getDefaultValue(), doc, entry.isDeprecated(),
+            Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), entry.getDefaultValue(), doc, entry.isDeprecated(),
                     entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  },");
@@ -215,7 +217,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", null, path.getType(), "", path.getDocumentation(), path.isDeprecated(),
+            String doc = path.getDocumentation();
+            doc = sanitizeDescription(doc, false);
+            Boolean required = path.getRequired() != null ? Boolean.valueOf(path.getRequired()) : null;
+            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", required, path.getType(), null, doc, path.isDeprecated(),
                     path.isEnumType(), path.getEnums(), false, null));
         }
 
@@ -230,7 +235,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", null, entry.getType(), entry.getDefaultValue(), doc, entry.isDeprecated(),
+            Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), entry.getDefaultValue(), doc, entry.isDeprecated(),
                     entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  }");
@@ -258,6 +264,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             writer.println("    <th>Name</th>");
             writer.println("    <th>Kind</th>");
             writer.println("    <th>Type</th>");
+            writer.println("    <th>Required</th>");
             writer.println("    <th>Deprecated</th>");
             writer.println("    <th>Default Value</th>");
             writer.println("    <th>Enum Values</th>");
@@ -269,6 +276,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 writer.println("    <td>" + path.getName() + "</td>");
                 writer.println("    <td>" + "path" + "</td>");
                 writer.println("    <td>" + path.getType() + "</td>");
+                writer.println("    <td>" + safeNull(path.getRequired()) + "</td>");
                 writer.println("    <td>" + path.isDeprecated() + "</td>");
                 writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
                 writer.println("    <td>" + path.getDocumentation() + "</td>");
@@ -280,6 +288,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 writer.println("    <td>" + option.getName() + "</td>");
                 writer.println("    <td>" + "parameter" + "</td>");
                 writer.println("    <td>" + option.getType() + "</td>");
+                writer.println("    <td>" + safeNull(option.getRequired()) + "</td>");
                 writer.println("    <td>" + option.isDeprecated() + "</td>");
                 writer.println("    <td>" + option.getDefaultValue() + "</td>");
                 writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
@@ -372,7 +381,6 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String fieldTypeName = fieldType.toString();
                     TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-
                     // we do not yet have default values / notes / as no annotation support yet
                     // String defaultValueNote = param.defaultValueNote();
                     String defaultValue = metadata != null ? metadata.defaultValue() : null;
@@ -382,6 +390,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     if (docComment == null) {
                         docComment = "";
                     }
+
+                    String required =  metadata != null ? metadata.required() : null;
 
                     // gather enums
                     Set<String> enums = new LinkedHashSet<String>();
@@ -398,7 +408,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
-                    ComponentOption option = new ComponentOption(name, fieldTypeName, defaultValue, defaultValueNote,
+                    ComponentOption option = new ComponentOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
                             docComment.trim(), deprecated, isEnum, enums);
                     componentOptions.add(option);
                 }
@@ -425,6 +435,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
 
+                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
@@ -443,6 +454,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     if (isNullOrEmpty(docComment)) {
                         docComment = path.description();
                     }
+
+                    String required =  metadata != null ? metadata.required() : null;
 
                     // gather enums
                     Set<String> enums = new LinkedHashSet<String>();
@@ -469,7 +482,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, docComment, deprecated, isEnum, enums);
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, docComment, deprecated, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -506,6 +519,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             docComment = param.description();
                         }
 
+                        String required =  metadata != null ? metadata.required() : null;
+
                         // gather enums
                         Set<String> enums = new LinkedHashSet<String>();
 
@@ -531,7 +546,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                             }
                         }
 
-                        EndpointOption option = new EndpointOption(name, fieldTypeName, defaultValue, defaultValueNote,
+                        EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
                                 docComment.trim(), deprecated, isEnum, enums);
                         endpointOptions.add(option);
                     }
@@ -638,6 +653,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         private String name;
         private String type;
+        private String required;
         private String defaultValue;
         private String defaultValueNote;
         private String documentation;
@@ -645,10 +661,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private boolean enumType;
         private Set<String> enums;
 
-        private ComponentOption(String name, String type, String defaultValue, String defaultValueNote,
+        private ComponentOption(String name, String type, String required, String defaultValue, String defaultValueNote,
                                String documentation, boolean deprecated, boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
+            this.required = required;
             this.defaultValue = defaultValue;
             this.defaultValueNote = defaultValueNote;
             this.documentation = documentation;
@@ -663,6 +680,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getType() {
             return type;
+        }
+
+        public String getRequired() {
+            return required;
         }
 
         public String getDefaultValue() {
@@ -734,6 +755,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         private String name;
         private String type;
+        private String required;
         private String defaultValue;
         private String defaultValueNote;
         private String documentation;
@@ -741,10 +763,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private boolean enumType;
         private Set<String> enums;
 
-        private EndpointOption(String name, String type, String defaultValue, String defaultValueNote,
+        private EndpointOption(String name, String type, String required, String defaultValue, String defaultValueNote,
                                String documentation, boolean deprecated, boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
+            this.required = required;
             this.defaultValue = defaultValue;
             this.defaultValueNote = defaultValueNote;
             this.documentation = documentation;
@@ -759,6 +782,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getType() {
             return type;
+        }
+
+        public String getRequired() {
+            return required;
         }
 
         public String getDefaultValue() {
@@ -830,15 +857,17 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         private String name;
         private String type;
+        private String required;
         private String documentation;
         private boolean deprecated;
         private boolean enumType;
         private Set<String> enums;
 
-        private EndpointPath(String name, String type, String documentation, boolean deprecated,
+        private EndpointPath(String name, String type, String required, String documentation, boolean deprecated,
                              boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
+            this.required = required;
             this.documentation = documentation;
             this.deprecated = deprecated;
             this.enumType = enumType;
@@ -851,6 +880,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getType() {
             return type;
+        }
+
+        public String getRequired() {
+            return required;
         }
 
         public String getDocumentation() {
