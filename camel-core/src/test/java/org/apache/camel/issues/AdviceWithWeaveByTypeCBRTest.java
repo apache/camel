@@ -14,28 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
-
-import java.util.Iterator;
+package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ChoiceDefinition;
 
-public class ProcessorDefinitionHelperTest extends ContextTestSupport {
+/**
+ * @version
+ */
+public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
 
-    public void testFilterTypeInOutputs() throws Exception {
-        RouteDefinition route = context.getRouteDefinitions().get(0);
+    public void testWeaveByType() throws Exception {
+        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveByType(ChoiceDefinition.class).replace().to("mock:baz");
+            }
+        });
 
-        Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
-        assertNotNull(it);
+        getMockEndpoint("mock:baz").expectedMessageCount(1);
 
-        assertEquals("choice1", it.next().getId());
-        assertEquals("whenfoo", it.next().getId());
-        assertEquals("foo", it.next().getId());
-        assertEquals("whenbar", it.next().getId());
-        assertEquals("bar", it.next().getId());
-        assertEquals("baz", it.next().getId());
-        assertFalse(it.hasNext());
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -44,11 +47,14 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
+                    .transform(simple("Hello ${body}"))
+                    .log("Got ${body}")
+                    .to("mock:result")
                     .choice()
-                        .when(header("foo")).id("whenfoo").to("mock:foo").id("foo")
-                        .when(header("bar")).id("whenbar").to("mock:bar").id("bar")
+                        .when(header("foo").isEqualTo("bar"))
+                        .to("mock:resultA")
                     .otherwise()
-                        .to("mock:baz").id("baz");
+                        .to("mock:resultB");
             }
         };
     }
