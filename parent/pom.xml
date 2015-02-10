@@ -177,6 +177,7 @@
     <geronimo-servlet-spec-version>1.0</geronimo-servlet-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <gmaven-plugin-version>1.4</gmaven-plugin-version>
+    <gmetric4j-version>1.0.9</gmetric4j-version>
     <google-app-engine-version>1.8.3</google-app-engine-version>
     <google-app-engine-bundle-version>1.8.3_1</google-app-engine-bundle-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
@@ -354,6 +355,7 @@
     <olingo2-version>2.0.0</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.0_1</olingo-odata2-core-bundle-version>
     <ognl-version>3.0.8_1</ognl-version>
+    <oncrpc-version>1.1.2</oncrpc-version>
     <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
@@ -815,6 +817,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ftp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ganglia</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
