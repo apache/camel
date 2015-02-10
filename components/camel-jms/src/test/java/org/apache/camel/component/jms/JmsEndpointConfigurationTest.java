@@ -266,7 +266,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getCamelContext());
         assertNull(endpoint.getDefaultTaskExecutorType());
         assertNull(endpoint.getMessageListenerContainerFactory());
-        assertEquals(-1, endpoint.getRecoveryInterval());
+        assertEquals(5000, endpoint.getRecoveryInterval());
+        assertEquals(1000, endpoint.getReceiveTimeout());
         assertEquals("JmsConsumer[Foo]", endpoint.getThreadName());
         assertEquals(-1, endpoint.getTimeToLive());
         assertEquals(-1, endpoint.getTransactionTimeout());

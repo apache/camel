@@ -102,10 +102,10 @@ public class JmsConfiguration implements Cloneable {
     private int cacheLevel = -1;
     @UriParam
     private String cacheLevelName;
-    @UriParam(defaultValue = "-1")
-    private long recoveryInterval = -1;
-    @UriParam(defaultValue = "-1")
-    private long receiveTimeout = -1;
+    @UriParam(defaultValue = "5000")
+    private long recoveryInterval = 5000;
+    @UriParam(defaultValue = "1000")
+    private long receiveTimeout = 1000;
     @UriParam(defaultValue = "20000")
     private long requestTimeout = 20000L;
     @UriParam(defaultValue = "1000")
@@ -422,9 +422,6 @@ public class JmsConfiguration implements Cloneable {
             template.setPriority(priority);
         }
         template.setPubSubNoLocal(pubSubNoLocal);
-        if (receiveTimeout >= 0) {
-            template.setReceiveTimeout(receiveTimeout);
-        }
         // only set TTL if we have a positive value and it has not been disabled
         if (timeToLive >= 0 && !isDisableTimeToLive()) {
             template.setTimeToLive(timeToLive);

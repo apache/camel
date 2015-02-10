@@ -26,7 +26,7 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- *  As the template is created per JmsPollingConsumer, we need to put JmsPollingConsumer into this endpoint
+ *  A JMS {@link org.apache.camel.PollingConsumer}.
  */
 public class JmsPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private JmsOperations template;
@@ -71,10 +71,11 @@ public class JmsPollingConsumer extends PollingConsumerSupport implements Servic
     }
 
     protected void doStart() throws Exception {
+        // noop
     }
 
     protected void doStop() throws Exception {
-       
+        // noop
     }
 
     protected void setReceiveTimeout(long timeout) {
