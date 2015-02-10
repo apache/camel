@@ -26,7 +26,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Enriches xml document with documentation from json files.
+ */
 public class DocumentationEnricher {
+
   public void enrichTopLevelElementsDocumentation(Document document,
                                                   NodeList elements,
                                                   Map<String, File> jsonFiles)
@@ -35,12 +39,21 @@ public class DocumentationEnricher {
       Element item = (Element) elements.item(i);
       String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
       if (jsonFiles.containsKey(name)) {
-        addDocumentation(document, item, jsonFiles.get(name));
+        addElementDocumentation(document, item, jsonFiles.get(name));
       }
     }
   }
 
-  private void addDocumentation(Document document, Element item, File jsonFile)
+  public void enrichTypeAttributesDocumentation(Document document,
+                                                NodeList attributeElements,
+                                                File jsonFile) throws IOException {
+    for (int j = 0; j < attributeElements.getLength(); j++) {
+      Element item = (Element) attributeElements.item(j);
+      addAttributeDocumentation(item, jsonFile, document);
+    }
+  }
+
+  private void addElementDocumentation(Document document, Element item, File jsonFile)
       throws IOException {
     List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema
         (Constants.MODEL_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), false);
@@ -52,28 +65,6 @@ public class DocumentationEnricher {
       }
     }
   }
-
-  private void addDocumentation(Document document, Element item, String textContent) {
-    Element annotation = document.createElement(Constants.XS_ANNOTATION_ELEMENT_NAME);
-    Element documentation = document.createElement(Constants.XS_DOCUMENTATION_ELEMENT_NAME);
-    documentation.setAttribute("xml:lang", "en");
-    documentation.setTextContent(textContent);
-    annotation.appendChild(documentation);
-    if (item.getFirstChild() != null){
-      item.insertBefore(annotation, item.getFirstChild());
-    } else {
-      item.appendChild(annotation);
-    }
-  }
-
-  public void enrichTypeAttributesDocumentation(Document document,
-                                                NodeList attributeElements,
-                                                File jsonFile) throws IOException {
-      for (int j = 0; j < attributeElements.getLength(); j++) {
-        Element item = (Element) attributeElements.item(j);
-        addAttributeDocumentation(item, jsonFile, document);
-      }
-    }
 
   private void addAttributeDocumentation(Element item,
                                          File jsonFile,
@@ -90,6 +81,19 @@ public class DocumentationEnricher {
           break;
         }
       }
+    }
+  }
+
+  private void addDocumentation(Document document, Element item, String textContent) {
+    Element annotation = document.createElement(Constants.XS_ANNOTATION_ELEMENT_NAME);
+    Element documentation = document.createElement(Constants.XS_DOCUMENTATION_ELEMENT_NAME);
+    documentation.setAttribute("xml:lang", "en");
+    documentation.setTextContent(textContent);
+    annotation.appendChild(documentation);
+    if (item.getFirstChild() != null){
+      item.insertBefore(annotation, item.getFirstChild());
+    } else {
+      item.appendChild(annotation);
     }
   }
 }

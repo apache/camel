@@ -43,37 +43,46 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Injects EIP documentation to camel schema.
+ */
 @Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
     defaultPhase = LifecyclePhase.PACKAGE)
-public class EipDocumentationGeneratorMojo extends AbstractMojo {
+public class EipDocumentationEnricherMojo extends AbstractMojo {
 
   /**
-   * Project's source directory as specified in the POM.
+   * Path to camel EIP schema.
    */
   @Parameter(required = true)
   File inputCamelSchemaFile;
 
+  /**
+   * Path to camel EIP schema with enriched documentation.
+   */
   @Parameter(required = true)
   File outputCamelSchemaFile;
 
+  /**
+   * Path to camel core project root directory.
+   */
   @Parameter(defaultValue = "${project.build.directory}/../../..//camel-core")
   File camelCoreDir;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     File rootDir = new File(camelCoreDir, Constants.PATH_TO_MODEL_DIR);
-    DomParser domParser = new DomParser();
+    DomFinder domFinder = new DomFinder();
     DocumentationEnricher documentationEnricher = new DocumentationEnricher();
     Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
     XPath xPath = buildXPath(new CamelSpringNamespace());
     try {
       Document document = buildNamespaceAwareDocument(inputCamelSchemaFile);
-      NodeList elementsAndTypes = domParser.findElementsAndTypes(document, xPath);
+      NodeList elementsAndTypes = domFinder.findElementsAndTypes(document, xPath);
       documentationEnricher.enrichTopLevelElementsDocumentation
           (document, elementsAndTypes, jsonFiles);
       Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
       for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
-        NodeList attributeElements = domParser.findAttributesElements(document, xPath, entry.getKey());
+        NodeList attributeElements = domFinder.findAttributesElements(document, xPath, entry.getKey());
         if (jsonFiles.containsKey(entry.getValue())){
           documentationEnricher.enrichTypeAttributesDocumentation
               (document, attributeElements, jsonFiles.get(entry.getValue()));

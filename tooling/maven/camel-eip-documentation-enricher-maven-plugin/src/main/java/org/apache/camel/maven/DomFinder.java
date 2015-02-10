@@ -23,7 +23,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-public class DomParser {
+/**
+ * Finds xml elements where documentation can be added.
+ */
+public class DomFinder {
 
   public NodeList findElementsAndTypes(Document document, XPath xPath) throws XPathExpressionException {
     return  (NodeList) xPath.compile("/xs:schema/xs:element")

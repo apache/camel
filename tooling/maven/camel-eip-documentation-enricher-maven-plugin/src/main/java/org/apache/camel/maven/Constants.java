@@ -16,6 +16,9 @@
  */
 package org.apache.camel.maven;
 
+/**
+ * Stores mojo related constants.
+ */
 public final class Constants {
   private Constants(){}
 
