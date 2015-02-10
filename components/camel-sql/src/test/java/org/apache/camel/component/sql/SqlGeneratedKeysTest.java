@@ -106,6 +106,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         exchange.getIn().setBody(new Object[] {"Star Swirl", "Wizard"});
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
         exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new String[]{"ID1", "ID2"});
+        exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
         Exchange out = template.send(endpoint, exchange);
@@ -114,6 +115,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         assertNotNull(out);
         assertNotNull(out.getOut());
         assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getOut().getHeader("foo"));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
@@ -141,6 +143,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         payload.add(new Object[] {"project q", "ASF", "new project q"});
         exchange.getIn().setBody(payload);
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
+        exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
         Exchange out = template.send(endpoint, exchange);
@@ -149,6 +152,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         assertNotNull(out);
         assertNotNull(out.getOut());
         assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getOut().getHeader("foo"));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
@@ -175,6 +179,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         exchange.getIn().setBody(new Object[] {"project x", "ASF", "new project"});
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
         exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new String[]{"ID"});
+        exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
         Exchange out = template.send(endpoint, exchange);
@@ -183,6 +188,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         assertNotNull(out);
         assertNotNull(out.getOut());
         assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getOut().getHeader("foo"));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
@@ -205,6 +211,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         exchange.getIn().setBody(new Object[] {"project x", "ASF", "new project"});
         exchange.getIn().setHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, true);
         exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_COLUMNS, new int[]{1});
+        exchange.getIn().setHeader("foo", "123");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
         Exchange out = template.send(endpoint, exchange);
@@ -212,6 +219,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getOut().getHeader("foo"));
 
         List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "

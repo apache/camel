@@ -156,6 +156,11 @@ public class SqlProducer extends DefaultProducer {
                 }
 
                 if (shouldRetrieveGeneratedKeys) {
+                    // if no OUT message yet then create one and propagate headers
+                    if (!exchange.hasOut()) {
+                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                    }
+
                     if (isResultSet) {
                         // we won't return generated keys for SELECT statements
                         exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
