@@ -45,21 +45,23 @@ public class SqlComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // endpoint options overrule component configured datasource
         DataSource ds = resolveAndRemoveReferenceParameter(parameters, "dataSource", DataSource.class);
-        if (ds != null) {
-            dataSource = ds;
-        }
-
-        //TODO cmueller: remove the 'dataSourceRef' lookup in Camel 3.0
         String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-        if (dataSource == null && dataSourceRef != null) {
-                dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
-            }
+        if (ds == null && dataSourceRef != null) {
+            ds = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
+        }
+        if (ds == null) {
+            // fallback and use component
+            ds = dataSource;
+        }
+        if (ds == null) {
+            throw new IllegalArgumentException("DataSource must be configured");
         }
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
         
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
         String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
