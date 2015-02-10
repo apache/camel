@@ -255,22 +255,6 @@
         </dependencies>
         <executions>
           <execution>
-            <id>package</id>
-            <phase>package</phase>
-            <configuration>
-              <target>
-                <echo>Including source code from camel-core-xml in the camel-spring-sources.jar</echo>
-                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
-                  <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
-                  <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
-                </jar>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>generate-sources</id>
             <phase>process-classes</phase>
             <configuration>
@@ -323,13 +307,23 @@
                     <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
                     <classpath refid="maven.compile.classpath" />
                 </schemagen>
-                <copy file="${project.build.directory}/schema/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
-                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
 
-                <copy todir="${project.build.directory}/classes">
-                  <fileset dir="${project.build.directory}/schema" />
-                </copy>
-
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <echo>Including source code from camel-core-xml in the camel-spring-sources.jar</echo>
+                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                  <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
+                  <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
+                </jar>
               </target>
             </configuration>
             <goals>
@@ -369,7 +363,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/schema/camel-spring.xsd</file>
+                  <file>${project.build.directory}/classes/camel-spring.xsd</file>
                   <type>xsd</type>
                 </artifact>
               </artifacts>
@@ -377,19 +371,51 @@
           </execution>
         </executions>
       </plugin>
+      <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <target>
+                <echo>Copying XSD schema to be included in JAR</echo>
+                <copy file="${project.build.directory}/classes/camel-spring.xsd"
+                      tofile="${project.build.directory}/schema/camel-spring.xsd"/>
+                <copy file="${project.build.directory}/classes/camel-spring.xsd"
+                      tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"/>
+                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
+                         token="http://camel.apache.org/schema/spring"
+                         value="http://camel.apache.org/schema/spring/v${camel.schema.version}"/>
+                <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                <copy todir="${project.build.directory}/classes">
+                  <fileset dir="${project.build.directory}/schema"/>
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>eip-documentation-enricher</id>
-            <phase>package</phase>
+            <!-- need to run earlier so we use the process-test-resources phase -->
+            <phase>process-test-resources</phase>
             <goals>
               <goal>eip-documentation-enricher</goal>
             </goals>
             <configuration>
               <inputCamelSchemaFile>${project.build.directory}/schema/camel-spring.xsd</inputCamelSchemaFile>
-              <outputCamelSchemaFile>${project.build.directory}/schema/camel-spring.xsd</outputCamelSchemaFile>
+              <outputCamelSchemaFile>${project.build.directory}/classes/camel-spring.xsd</outputCamelSchemaFile>
             </configuration>
           </execution>
         </executions>

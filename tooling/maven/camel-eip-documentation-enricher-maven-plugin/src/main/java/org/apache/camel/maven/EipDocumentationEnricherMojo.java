@@ -52,7 +52,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Injects EIP documentation to camel schema.
  */
 @Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.PACKAGE)
+        defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class EipDocumentationEnricherMojo extends AbstractMojo {
 
     /**
