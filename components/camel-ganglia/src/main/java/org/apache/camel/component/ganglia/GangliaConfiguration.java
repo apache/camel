@@ -22,14 +22,13 @@ import java.net.URI;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 /**
- * @version 
+ * @version
  */
 @UriParams
 public class GangliaConfiguration implements Cloneable {
@@ -53,7 +52,7 @@ public class GangliaConfiguration implements Cloneable {
     @UriPath
     private int port = DEFAULT_PORT;
 
-    @UriParam
+    @UriParam(defaultValue = "MULTICAST")
     private GMetric.UDPAddressingMode mode = DEFAULT_MODE;
 
     @UriParam(defaultValue = "5")
@@ -65,22 +64,22 @@ public class GangliaConfiguration implements Cloneable {
     @UriParam
     private String spoofHostname;
 
-    @UriParam(defaultValue = "Java")
+    @UriParam(defaultValue = "java")
     private String groupName = DEFAULT_GROUP_NAME;
 
     @UriParam
-    private String prefix;
+    private String prefix = null;
 
     @UriParam(defaultValue = "metric")
     private String metricName = DEFAULT_METRIC_NAME;
 
-    @UriParam
+    @UriParam(defaultValue = "STRING")
     private GMetricType type = DEFAULT_TYPE;
 
-    @UriParam
+    @UriParam(defaultValue = "BOTH")
     private GMetricSlope slope = DEFAULT_SLOPE;
 
-    @UriParam(defaultValue = "")
+    @UriParam
     private String units = DEFAULT_UNITS;
 
     @UriParam(defaultValue = "60")
@@ -114,8 +113,7 @@ public class GangliaConfiguration implements Cloneable {
 
     public GMetric createGMetric() {
         try {
-            return new GMetric(host, port, mode, ttl, wireFormat31x,
-                null, spoofHostname);
+            return new GMetric(host, port, mode, ttl, wireFormat31x, null, spoofHostname);
         } catch (IOException ex) {
             throw new RuntimeCamelException("Failed to initialize Ganglia", ex);
         }
@@ -217,19 +215,23 @@ public class GangliaConfiguration implements Cloneable {
         this.units = units;
     }
 
-    public int getTMax() {
+    public boolean isWireFormat31x() {
+        return wireFormat31x;
+    }
+
+    public int getTmax() {
         return tmax;
     }
 
-    public void setTMax(int tmax) {
+    public void setTmax(int tmax) {
         this.tmax = tmax;
     }
 
-    public int getDMax() {
+    public int getDmax() {
         return dmax;
     }
 
-    public void setDMax(int dmax) {
+    public void setDmax(int dmax) {
         this.dmax = dmax;
     }
 

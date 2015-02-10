@@ -46,7 +46,7 @@
     <dependency>
       <groupId>info.ganglia.gmetric4j</groupId>
       <artifactId>gmetric4j</artifactId>
-      <version>1.0.7</version>
+      <version>${gmetric4j-version}</version>
     </dependency>
 
     <!-- test dependencies -->

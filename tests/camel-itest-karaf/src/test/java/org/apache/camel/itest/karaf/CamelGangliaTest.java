@@ -14,22 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ganglia;
+package org.apache.camel.itest.karaf;
 
-/**
- * @version 
- */
-public final class GangliaConstants {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-    public static final String GROUP_NAME = "CamelGangliaGroupName";
-    public static final String METRIC_NAME = "CamelGangliaMetricName";
-    public static final String METRIC_TYPE = "CamelGangliaMetricType";
-    public static final String METRIC_SLOPE = "CamelGangliaMetricSlope";
-    public static final String METRIC_UNITS = "CamelGangliaMetricUnits";
-    public static final String METRIC_TMAX = "CamelGangliaMetricTmax";
-    public static final String METRIC_DMAX = "CamelGangliaMetricDmax";
+@RunWith(PaxExam.class)
+public class CamelGangliaTest extends AbstractFeatureTest {
 
-    private GangliaConstants() {
+    public static final String COMPONENT = extractName(CamelGangliaTest.class);
+
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
+    }
+
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
     }
 
 }

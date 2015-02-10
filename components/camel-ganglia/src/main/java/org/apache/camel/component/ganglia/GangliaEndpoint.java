@@ -19,7 +19,6 @@ package org.apache.camel.component.ganglia;
 import info.ganglia.gmetric4j.Publisher;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetricPublisher;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
