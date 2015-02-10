@@ -34,6 +34,7 @@ public class ElasticsearchConfiguration {
 
     public static final String PARAM_OPERATION = "operation";
     public static final String OPERATION_INDEX = "INDEX";
+    public static final String OPERATION_BULK = "BULK";
     public static final String OPERATION_BULK_INDEX = "BULK_INDEX";
     public static final String OPERATION_GET_BY_ID = "GET_BY_ID";
     public static final String OPERATION_DELETE = "DELETE";
@@ -62,7 +63,7 @@ public class ElasticsearchConfiguration {
     private boolean local;
     @UriParam
     private Boolean data;
-    @UriParam
+    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE")
     private String operation;
     @UriParam
     private String ip;

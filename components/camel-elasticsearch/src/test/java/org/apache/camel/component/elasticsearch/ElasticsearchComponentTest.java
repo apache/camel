@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -268,7 +269,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void bulkRequestBody() throws Exception {
+    @SuppressWarnings("unchecked")
+    public void bulkIndexRequestBody() throws Exception {
         // given
         BulkRequest request = new BulkRequest();
         request.add(new IndexRequest("foo", "bar", "baz")
@@ -284,6 +286,22 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         assertThat(indexedDocumentIds, hasItem("baz"));
     }
 
+    @Test
+    public void bulkRequestBody() throws Exception {
+        // given
+        BulkRequest request = new BulkRequest();
+        request.add(new IndexRequest("foo", "bar", "baz")
+                .source("{\"content\": \"hello\"}"));
+
+        // when
+        BulkResponse response = template.requestBody(
+                "direct:bulk", request, BulkResponse.class);
+
+        // then
+        assertThat(response, notNullValue());
+        assertEquals("baz", response.getItems()[0].getId());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -294,6 +312,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
                 from("direct:bulk_index").to("elasticsearch://local?operation=BULK_INDEX&indexName=twitter&indexType=tweet");
+                from("direct:bulk").to("elasticsearch://local?operation=BULK&indexName=twitter&indexType=tweet");
                 //from("direct:indexWithIp").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost");
                 //from("direct:indexWithIpAndPort").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
             }

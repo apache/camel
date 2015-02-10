@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -56,7 +61,12 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (request instanceof GetRequest) {
             return ElasticsearchConfiguration.OPERATION_GET_BY_ID;
         } else if (request instanceof BulkRequest) {
-            return ElasticsearchConfiguration.OPERATION_BULK_INDEX;
+            // do we want bulk or bulk_index?
+            if ("BULK_INDEX".equals(getEndpoint().getConfig().getOperation())) {
+                return ElasticsearchConfiguration.OPERATION_BULK_INDEX;
+            } else {
+                return ElasticsearchConfiguration.OPERATION_BULK;
+            }
         } else if (request instanceof DeleteRequest) {
             return ElasticsearchConfiguration.OPERATION_DELETE;
         }
@@ -108,9 +118,16 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (ElasticsearchConfiguration.OPERATION_GET_BY_ID.equals(operation)) {
             GetRequest getRequest = message.getBody(GetRequest.class);
             message.setBody(client.get(getRequest));
-        } else if (ElasticsearchConfiguration.OPERATION_BULK_INDEX.equals(operation)) {
+        } else if (ElasticsearchConfiguration.OPERATION_BULK.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             message.setBody(client.bulk(bulkRequest).actionGet());
+        } else if (ElasticsearchConfiguration.OPERATION_BULK_INDEX.equals(operation)) {
+            BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            List<String> indexedIds = new ArrayList<String>();
+            for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
+                indexedIds.add(response.getId());
+            }
+            message.setBody(indexedIds);
         } else if (ElasticsearchConfiguration.OPERATION_DELETE.equals(operation)) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.delete(deleteRequest).actionGet());
