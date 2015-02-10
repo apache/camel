@@ -220,6 +220,12 @@ public final class ProcessorDefinitionHelper {
             // special for choice
             if (out instanceof ChoiceDefinition) {
                 ChoiceDefinition choice = (ChoiceDefinition) out;
+
+                // ensure to add ourself if we match also
+                if (type.isInstance(choice)) {
+                    found.add((T)choice);
+                }
+
                 for (WhenDefinition when : choice.getWhenClauses()) {
                     if (type.isInstance(when)) {
                         found.add((T)when);   
@@ -241,6 +247,12 @@ public final class ProcessorDefinitionHelper {
             // special for try ... catch ... finally
             if (out instanceof TryDefinition) {
                 TryDefinition doTry = (TryDefinition) out;
+
+                // ensure to add ourself if we match also
+                if (type.isInstance(doTry)) {
+                    found.add((T)doTry);
+                }
+
                 List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
                 doFindType(doTryOut, type, found);
 
@@ -260,6 +272,12 @@ public final class ProcessorDefinitionHelper {
             // special for some types which has special outputs
             if (out instanceof OutputDefinition) {
                 OutputDefinition outDef = (OutputDefinition) out;
+
+                // ensure to add ourself if we match also
+                if (type.isInstance(outDef)) {
+                    found.add((T)outDef);
+                }
+
                 List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
                 doFindType(outDefOut, type, found);
 
