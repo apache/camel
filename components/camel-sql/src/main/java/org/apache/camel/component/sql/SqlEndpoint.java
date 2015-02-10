@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -49,6 +51,11 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     @UriPath
     private String query;
     @UriParam
+    @Deprecated
+    private String dataSourceRef;
+    @UriParam
+    private DataSource dataSource;
+    @UriParam
     private boolean batch;
     @UriParam
     private int maxMessagesPerPoll;
@@ -62,13 +69,13 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private String onConsumeFailed;
     @UriParam
     private String onConsumeBatchComplete;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
     @UriParam
     private boolean alwaysPopulateStatement;
-    @UriParam
+    @UriParam(defaultValue = ",")
     private char separator = ',';
-    @UriParam
+    @UriParam(defaultValue = "SelectList")
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam
     private String outputClass;
@@ -308,6 +315,28 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
      */
     public void setOutputHeader(String outputHeader) {
         this.outputHeader = outputHeader;
+    }
+
+    public String getDataSourceRef() {
+        return dataSourceRef;
+    }
+
+    /**
+     * Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database.
+     */
+    public void setDataSourceRef(String dataSourceRef) {
+        this.dataSourceRef = dataSourceRef;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * Sets the DataSource to use to communicate with the database.
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
