@@ -24,8 +24,7 @@
   <packaging>bundle</packaging>
   <version>${version}</version>
 
-  <name>A Camel Blueprint Route</name>
-  <url>http://www.myorganization.org</url>
+  <name>Camel Blueprint Route</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,22 +55,16 @@
       <version>${slf4j-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j-version}</version>
     </dependency>
 
-    <!-- testing -->
+    <!-- Testing & Camel Plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-blueprint</artifactId>
       <version>${camel-version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -103,6 +96,15 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <version>${maven-bundle-plugin-version}</version>
         <extensions>true</extensions>
+        <executions>
+          <execution>
+           <id>bundle-manifest</id>
+           <phase>process-classes</phase>
+           <goals>
+               <goal>manifest</goal>
+           </goals>
+          </execution>
+        </executions>
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
