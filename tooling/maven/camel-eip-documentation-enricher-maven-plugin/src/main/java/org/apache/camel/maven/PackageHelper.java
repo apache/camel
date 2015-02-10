@@ -28,40 +28,41 @@ import java.util.Map;
 /**
  * Utility class to find, read json files.
  */
-public class PackageHelper {
-  private PackageHelper() {}
+public final class PackageHelper {
 
-  public static String fileToString(File file) throws IOException {
-    byte[] encoded = Files.readAllBytes(Paths.get(file.toURI()));
-    return new String(encoded, Charset.defaultCharset());
-  }
+    private PackageHelper() {
+    }
 
-  public static Map<String, File> findJsonFiles(File rootDir) {
-    Map<String, File> results = new HashMap<>();
-    findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
-    return results;
-  }
+    public static String fileToString(File file) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(file.toURI()));
+        return new String(encoded, Charset.defaultCharset());
+    }
 
-  private static void findJsonFiles0(File dir, Map<String, File> result, FileFilter filter) {
-    File[] files = dir.listFiles(filter);
-    if (files != null) {
-      for (File file : files) {
-        // skip files in root dirs as Camel does not store information there but others may do
-        boolean jsonFile = file.isFile() && file.getName().endsWith(Constants.JSON_SUFIX);
-        if (jsonFile) {
-          result.put(file.getName().replaceAll("\\"+ Constants.JSON_SUFIX, ""), file);
-        } else if (file.isDirectory()) {
-          findJsonFiles0(file, result, filter);
+    public static Map<String, File> findJsonFiles(File rootDir) {
+        Map<String, File> results = new HashMap<String, File>();
+        findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
+        return results;
+    }
+
+    private static void findJsonFiles0(File dir, Map<String, File> result, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean jsonFile = file.isFile() && file.getName().endsWith(Constants.JSON_SUFIX);
+                if (jsonFile) {
+                    result.put(file.getName().replaceAll("\\" + Constants.JSON_SUFIX, ""), file);
+                } else if (file.isDirectory()) {
+                    findJsonFiles0(file, result, filter);
+                }
+            }
         }
-      }
     }
-  }
 
-  private static class CamelComponentsModelFilter implements FileFilter {
-    @Override
-    public boolean accept(File pathname) {
-      return pathname.isDirectory() ||
-          pathname.getName().endsWith(Constants.JSON_SUFIX);
+    private static class CamelComponentsModelFilter implements FileFilter {
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.isDirectory() || pathname.getName().endsWith(Constants.JSON_SUFIX);
+        }
     }
-  }
 }

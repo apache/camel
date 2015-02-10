@@ -16,32 +16,32 @@
  */
 package org.apache.camel.maven;
 
-import javax.xml.namespace.NamespaceContext;
 import java.util.Iterator;
+import javax.xml.namespace.NamespaceContext;
 
 /**
  * Default namespace for xsd schema.
  */
 public class CamelSpringNamespace implements NamespaceContext {
 
-  @Override
-  public String getNamespaceURI(String prefix) {
-    if (prefix == null) {
-      throw new IllegalArgumentException("The prefix cannot be null.");
+    @Override
+    public String getNamespaceURI(String prefix) {
+        if (prefix == null) {
+            throw new IllegalArgumentException("The prefix cannot be null.");
+        }
+        if ("xs".equals(prefix)) {
+            return "http://www.w3.org/2001/XMLSchema";
+        }
+        return null;
     }
-    if ("xs".equals(prefix)) {
-      return "http://www.w3.org/2001/XMLSchema";
+
+    @Override
+    public String getPrefix(String namespaceURI) {
+        throw new UnsupportedOperationException("Operation not supported");
     }
-    return null;
-  }
 
-  @Override
-  public String getPrefix(String namespaceURI) {
-    throw new UnsupportedOperationException("Operation not supported");
-  }
-
-  @Override
-  public Iterator getPrefixes(String namespaceURI) {
-    throw new UnsupportedOperationException("Operation not supported");
-  }
+    @Override
+    public Iterator getPrefixes(String namespaceURI) {
+        throw new UnsupportedOperationException("Operation not supported");
+    }
 }

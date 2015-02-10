@@ -20,20 +20,23 @@ package org.apache.camel.maven;
  * Stores mojo related constants.
  */
 public final class Constants {
-  private Constants(){}
 
-  // Camel core constants.
-  public static final String PATH_TO_MODEL_DIR = "target/classes/org/apache/camel/model";
+    // Camel core constants.
+    public static final String PATH_TO_MODEL_DIR = "target/classes/org/apache/camel/model";
 
-  // XML constants.
-  public static final String NAME_ATTRIBUTE_NAME = "name";
-  public static final String TYPE_ATTRIBUTE_NAME = "type";
-  public static final String XS_ANNOTATION_ELEMENT_NAME = "xs:annotation";
-  public static final String XS_DOCUMENTATION_ELEMENT_NAME = "xs:documentation";
+    // XML constants.
+    public static final String NAME_ATTRIBUTE_NAME = "name";
+    public static final String TYPE_ATTRIBUTE_NAME = "type";
+    public static final String XS_ANNOTATION_ELEMENT_NAME = "xs:annotation";
+    public static final String XS_DOCUMENTATION_ELEMENT_NAME = "xs:documentation";
 
-  // Json files constants.
-  public static final String PROPERTIES_ATTRIBUTE_NAME = "properties";
-  public static final String JSON_SUFIX = ".json";
-  public static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
-  public static final String MODEL_ATTRIBUTE_NAME = "model";
+    // Json files constants.
+    public static final String PROPERTIES_ATTRIBUTE_NAME = "properties";
+    public static final String JSON_SUFIX = ".json";
+    public static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
+    public static final String MODEL_ATTRIBUTE_NAME = "model";
+
+    private Constants() {
+    }
+
 }

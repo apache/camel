@@ -16,26 +16,26 @@
  */
 package org.apache.camel.maven;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
  * Finds xml elements where documentation can be added.
  */
 public class DomFinder {
 
-  public NodeList findElementsAndTypes(Document document, XPath xPath) throws XPathExpressionException {
-    return  (NodeList) xPath.compile("/xs:schema/xs:element")
-        .evaluate(document, XPathConstants.NODESET);
-  }
+    public NodeList findElementsAndTypes(Document document, XPath xPath) throws XPathExpressionException {
+        return (NodeList) xPath.compile("/xs:schema/xs:element")
+                .evaluate(document, XPathConstants.NODESET);
+    }
 
-  public NodeList findAttributesElements(Document document, XPath xPath, String name) throws XPathExpressionException {
-    return (NodeList) xPath.compile(
-        "/xs:schema/xs:complexType[@name='" + name + "']//xs:attribute")
-        .evaluate(document, XPathConstants.NODESET);
-  }
+    public NodeList findAttributesElements(Document document, XPath xPath, String name) throws XPathExpressionException {
+        return (NodeList) xPath.compile(
+                "/xs:schema/xs:complexType[@name='" + name + "']//xs:attribute")
+                .evaluate(document, XPathConstants.NODESET);
+    }
 }
