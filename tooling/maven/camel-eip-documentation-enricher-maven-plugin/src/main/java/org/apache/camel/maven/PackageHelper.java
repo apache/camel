@@ -25,9 +25,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class to find, read json files.
+ */
 public class PackageHelper {
-  private PackageHelper() {
-  }
+  private PackageHelper() {}
 
   public static String fileToString(File file) throws IOException {
     byte[] encoded = Files.readAllBytes(Paths.get(file.toURI()));

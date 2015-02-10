@@ -19,14 +19,17 @@ package org.apache.camel.maven;
 import javax.xml.namespace.NamespaceContext;
 import java.util.Iterator;
 
+/**
+ * Default namespace for xsd schema.
+ */
 public class CamelSpringNamespace implements NamespaceContext {
 
   @Override
   public String getNamespaceURI(String prefix) {
-    if (prefix == null){
+    if (prefix == null) {
       throw new IllegalArgumentException("The prefix cannot be null.");
     }
-    if ("xs".equals(prefix)){
+    if ("xs".equals(prefix)) {
       return "http://www.w3.org/2001/XMLSchema";
     }
     return null;
