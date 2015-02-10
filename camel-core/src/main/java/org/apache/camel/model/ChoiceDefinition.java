@@ -211,6 +211,9 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         return whenClauses;
     }
 
+    /**
+     * Sets the when clauses
+     */
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
     }

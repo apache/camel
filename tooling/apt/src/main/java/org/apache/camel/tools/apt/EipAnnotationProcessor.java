@@ -268,6 +268,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
                     // special for expression
                     processRefExpression(roundEnv, originalClassType, classElement, elementRef, fieldElement, fieldName, eipOptions, prefix);
+
+                    // special for when clauses
+                    processRefWhenClauses(roundEnv, originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
                 }
             }
 
@@ -601,51 +604,6 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     }
 
     /**
-     * Special for processing an @XmlElementRef expression field
-     */
-    private void processRefExpression(RoundEnvironment roundEnv, TypeElement originalClassElement, TypeElement classElement,
-                                      XmlElementRef elementRef, VariableElement fieldElement,
-                                      String fieldName, Set<EipOption> eipOptions, String prefix) {
-        Elements elementUtils = processingEnv.getElementUtils();
-
-        if ("expression".equals(fieldName)) {
-            String kind = "expression";
-            String name = elementRef.name();
-            if (isNullOrEmpty(name) || "##default".equals(name)) {
-                name = fieldName;
-            }
-            name = prefix + name;
-            TypeMirror fieldType = fieldElement.asType();
-            String fieldTypeName = fieldType.toString();
-
-            // find javadoc from original class as it will override the setExpression method where we can provide the javadoc for the given EIP
-            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassElement, true);
-
-            // gather oneOf expression/predicates which uses language
-            Set<String> oneOfTypes = new TreeSet<String>();
-            TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
-            String superClassName = canonicalClassName(languages.toString());
-            // find all classes that has that superClassName
-            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-            findTypeElementChildren(roundEnv, children, superClassName);
-            for (TypeElement child : children) {
-                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                if (rootElement != null) {
-                    String childName = rootElement.name();
-                    if (childName != null) {
-                        oneOfTypes.add(childName);
-                    }
-                }
-            }
-
-            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
-
-            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, deprecated, false, null, true, oneOfTypes);
-            eipOptions.add(ep);
-        }
-    }
-
-    /**
      * Special for processing an @XmlElementRef outputs field
      */
     private void processOutputs(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
@@ -681,6 +639,77 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             oneOfTypes.remove("route");
 
             EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", false, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef expression field
+     */
+    private void processRefExpression(RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
+                                      XmlElementRef elementRef, VariableElement fieldElement,
+                                      String fieldName, Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        if ("expression".equals(fieldName)) {
+            String kind = "expression";
+            String name = elementRef.name();
+            if (isNullOrEmpty(name) || "##default".equals(name)) {
+                name = fieldName;
+            }
+            name = prefix + name;
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            // find javadoc from original class as it will override the setExpression method where we can provide the javadoc for the given EIP
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
+
+            // gather oneOf expression/predicates which uses language
+            Set<String> oneOfTypes = new TreeSet<String>();
+            TypeElement languages = findTypeElement(roundEnv, ONE_OF_LANGUAGES);
+            String superClassName = canonicalClassName(languages.toString());
+            // find all classes that has that superClassName
+            Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+            findTypeElementChildren(roundEnv, children, superClassName);
+            for (TypeElement child : children) {
+                XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                if (rootElement != null) {
+                    String childName = rootElement.name();
+                    if (childName != null) {
+                        oneOfTypes.add(childName);
+                    }
+                }
+            }
+
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, deprecated, false, null, true, oneOfTypes);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an @XmlElementRef when field
+     */
+    private void processRefWhenClauses(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
+                                       VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        if ("whenClauses".equals(fieldName)) {
+            String kind = "element";
+            String name = elementRef.name();
+            if (isNullOrEmpty(name) || "##default".equals(name)) {
+                name = fieldName;
+            }
+            name = prefix + name;
+            TypeMirror fieldType = fieldElement.asType();
+            String fieldTypeName = fieldType.toString();
+
+            // find javadoc from original class as it will override the setExpression method where we can provide the javadoc for the given EIP
+            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, false, "", docComment, deprecated, false, null, false, null);
             eipOptions.add(ep);
         }
     }
