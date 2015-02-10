@@ -49,9 +49,8 @@ public class SqlComponent extends UriEndpointComponent {
         }
 
         //TODO cmueller: remove the 'dataSourceRef' lookup in Camel 3.0
-        if (dataSource == null) {
-            String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
-            if (dataSourceRef != null) {
+        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
+        if (dataSource == null && dataSourceRef != null) {
                 dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
             }
         }
