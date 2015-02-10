@@ -167,13 +167,42 @@
               </executions>
             </plugin>
 
+            <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>package</id>
+                  <phase>prepare-package</phase>
+                  <configuration>
+                    <target>
+                      <echo>Copying XSD schema to be included in JAR</echo>
+                      <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
+                      <copy todir="${project.build.directory}/classes">
+                        <fileset dir="${project.build.directory}/schema" />
+                      </copy>
+                      <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                      <copy todir="${project.build.directory}/classes">
+                        <fileset dir="${project.build.directory}/schema"/>
+                      </copy>
+                    </target>
+                  </configuration>
+                  <goals>
+                    <goal>run</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+
             <plugin>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
               <executions>
                 <execution>
                   <id>eip-documentation-enricher</id>
-                  <phase>package</phase>
+                  <!-- need to run earlier so we use the process-test-resources phase -->
+                  <phase>process-test-resources</phase>
                   <goals>
                     <goal>eip-documentation-enricher</goal>
                   </goals>
@@ -337,10 +366,6 @@
                                       <schema namespace="http://camel.apache.org/schema/spring" file="camel-blueprint.xsd" />
                                       <classpath refid="maven.compile.classpath" />
                                   </schemagen>
-                                  <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
-                                  <copy todir="${project.build.directory}/classes">
-                                      <fileset dir="${project.build.directory}/schema" />
-                                  </copy>
 
                               </target>
                           </configuration>
