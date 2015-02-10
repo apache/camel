@@ -99,6 +99,7 @@
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-gae</module>
+    <module>camel-ganglia</module>
     <module>camel-geocoder</module>
     <module>camel-github</module>
     <module>camel-google-calendar</module>
