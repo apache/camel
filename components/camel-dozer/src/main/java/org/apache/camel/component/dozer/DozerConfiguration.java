@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.dozer;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 import static org.dozer.util.DozerConstants.DEFAULT_MAPPING_FILE;
-
 
 /**
  * Configuration used for a Dozer endpoint.
@@ -29,7 +29,7 @@ import static org.dozer.util.DozerConstants.DEFAULT_MAPPING_FILE;
 @UriParams
 public class DozerConfiguration {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String name;
     @UriParam
     private String marshalId;

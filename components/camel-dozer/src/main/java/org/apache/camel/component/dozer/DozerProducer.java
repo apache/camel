@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -117,9 +116,7 @@ public class DozerProducer extends DefaultProducer {
             // Stop/shutdown is handled when the corresponding methods are 
             // called on this producer.
             unmarshaller = new UnmarshalProcessor(dataFormat);
-            if (unmarshaller instanceof CamelContextAware) {
-                ((CamelContextAware)unmarshaller).setCamelContext(exchange.getContext());
-            }
+            unmarshaller.setCamelContext(exchange.getContext());
             unmarshaller.start();
         }
         return unmarshaller;
@@ -142,9 +139,7 @@ public class DozerProducer extends DefaultProducer {
             // Stop/shutdown is handled when the corresponding methods are 
             // called on this producer.
             marshaller = new MarshalProcessor(dataFormat);
-            if (marshaller instanceof CamelContextAware) {
-                ((CamelContextAware)marshaller).setCamelContext(exchange.getContext());
-            }
+            marshaller.setCamelContext(exchange.getContext());
             marshaller.start();
         }
         return marshaller;

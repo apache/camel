@@ -26,15 +26,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.dozer.CustomConverter;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Represents a Dozer endpoint.
- */
 @UriEndpoint(scheme = "dozer", label = "transformation")
 public class DozerEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);
@@ -42,18 +41,14 @@ public class DozerEndpoint extends DefaultEndpoint {
     // IDs for built-in custom converters used with the Dozer component
     private static final String CUSTOM_MAPPING_ID = "_customMapping";
     private static final String LITERAL_MAPPING_ID = "_literalMapping";
-    
-    private DozerConfiguration configuration;
+
     private DozerBeanMapper mapper;
     private LiteralMapper literalMapper;
     private CustomMapper customMapper;
 
-    /**
-     * Create a new TransformEndpoint.
-     * @param endpointUri The uri of the Camel endpoint.
-     * @param component The {@link DozerComponent}.
-     * @param configuration endpoint configuration
-     */
+    @UriParam
+    private DozerConfiguration configuration;
+
     public DozerEndpoint(String endpointUri, Component component, DozerConfiguration configuration) throws Exception {
         super(endpointUri, component);
         this.configuration = configuration;
@@ -68,8 +63,7 @@ public class DozerEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException(
-                "Consumer not supported for Transform endpoints");
+        throw new UnsupportedOperationException("Consumer not supported for Dozer endpoints");
     }
 
     @Override
@@ -77,10 +71,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public synchronized DozerBeanMapper getMapper() throws Exception {
-        if (mapper == null) {
-            initDozer();
-        }
+    public DozerBeanMapper getMapper() throws Exception {
         return mapper;
     }
 
@@ -100,30 +91,41 @@ public class DozerEndpoint extends DefaultEndpoint {
         return literalMapper;
     }
 
-    private void initDozer() throws Exception {
-        mapper = new DozerBeanMapper();
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (mapper == null) {
+            mapper = createDozerBeanMapper();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
+    private DozerBeanMapper createDozerBeanMapper() throws Exception {
+        DozerBeanMapper answer = new DozerBeanMapper();
         InputStream mapStream = null;
         try {
             LOG.info("Loading Dozer mapping file {}.", configuration.getMappingFile());
             // create the mapper instance and add the mapping file
-            mapStream = ResourceHelper.resolveResourceAsInputStream(
-                    getCamelContext().getClassResolver(), configuration.getMappingFile());
-            if (mapStream == null) {
-                throw new Exception("Unable to resolve Dozer config: " + configuration.getMappingFile());
-            }
-            mapper.addMapping(mapStream);
+            mapStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configuration.getMappingFile());
+            answer.addMapping(mapStream);
             
             // add our built-in converters
             Map<String, CustomConverter> converters = new HashMap<String, CustomConverter>();
             converters.put(CUSTOM_MAPPING_ID, customMapper);
             converters.put(LITERAL_MAPPING_ID, literalMapper);
-            converters.putAll(mapper.getCustomConvertersWithId());
-            mapper.setCustomConvertersWithId(converters);
+            converters.putAll(answer.getCustomConvertersWithId());
+            answer.setCustomConvertersWithId(converters);
             
         } finally {
-            if (mapStream != null) {
-                mapStream.close();
-            }
+            IOHelper.close(mapStream);
         }
+
+        return answer;
     }
 }

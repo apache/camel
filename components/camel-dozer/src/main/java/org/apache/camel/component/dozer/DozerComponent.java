@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Represents the component that manages {@link DozerEndpoint}.
- */
 public class DozerComponent extends UriEndpointComponent {
 
     public DozerComponent() {
