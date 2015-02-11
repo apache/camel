@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ClientModeTCPNettyServerBootstrapFactory.class);
-    private final ChannelGroup allChannels;
+    
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
@@ -55,8 +55,6 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     private EventLoopGroup workerGroup;
 
     public ClientModeTCPNettyServerBootstrapFactory() {
-        // The executor just execute tasks in the callers thread
-        this.allChannels = new DefaultChannelGroup(ClientModeTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
@@ -72,11 +70,11 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     }
 
     public void addChannel(Channel channel) {
-        allChannels.add(channel);
+        // we don't need to track the channel in client mode
     }
 
     public void removeChannel(Channel channel) {
-        allChannels.remove(channel);
+        // we don't need to track the channel in client mode
     }
 
     public void addConsumer(NettyConsumer consumer) {
@@ -105,17 +103,13 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         LOG.debug("ClientModeServerBootstrap connect to {}:{}", configuration.getHost(), configuration.getPort());
         ChannelFuture connectFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         channel = openChannel(connectFuture);
-        // to keep track of all channels in use
-        allChannels.add(channel);
     }
 
     @Override
     protected void doSuspend() throws Exception {
         if (channel != null) {
             LOG.debug("ClientModeServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture future = channel.close();
-            future.awaitUninterruptibly();
-            allChannels.remove(channel);
+            channel.close().sync();
             channel = null;
         }
     }
@@ -152,19 +146,13 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         }
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = openChannel(channelFuture);
-        // to keep track of all channels in use
-        allChannels.add(channel);
+       
     }
 
     protected void stopServerBootstrap() {
         // close all channels
         LOG.info("ClientModeServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
         
-        LOG.trace("Closing {} channels", allChannels.size());
-        if (allChannels != null) {
-            allChannels.close().awaitUninterruptibly();
-        }
-       
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
             workerGroup = null;
