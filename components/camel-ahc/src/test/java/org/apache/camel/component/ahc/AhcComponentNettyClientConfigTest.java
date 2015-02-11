@@ -32,11 +32,11 @@ public class AhcComponentNettyClientConfigTest extends BaseAhcTest {
 
         // use netty provider to reuse address
         NettyAsyncHttpProviderConfig provider = new NettyAsyncHttpProviderConfig();
-        provider.addProperty(NettyAsyncHttpProviderConfig.REUSE_ADDRESS, Boolean.TRUE);
+        provider.addProperty("reuseAddress", Boolean.TRUE);
 
         AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
                 .setAsyncHttpClientProviderConfig(provider)
-                .setFollowRedirects(true)
+                .setFollowRedirect(true)
                 .setMaxRequestRetry(3)
                 .build();
 

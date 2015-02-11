@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -76,6 +76,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                 new AsyncHttpClientConfig.Builder();
 
         builder.setSSLContext(new SSLContextParameters().createSSLContext());
+        builder.setHostnameVerifier(new AllowAllHostnameVerifier());
         config = builder.build();
         c = new AsyncHttpClient(config);
 
@@ -123,10 +124,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                                 latch.countDown();
                             }
 
-                            @Override
-                            public void onFragment(String fragment, boolean last) {
-                            }
-
+                            
                             @Override
                             public void onOpen(WebSocket websocket) {
                             }
@@ -143,7 +141,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextMessage("Hello from WS client");
+        websocket.sendMessage("Hello from WS client");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
