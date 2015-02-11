@@ -32,9 +32,6 @@ import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.ChannelGroupFuture;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
@@ -48,7 +45,6 @@ import org.slf4j.LoggerFactory;
 public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ClientModeTCPNettyServerBootstrapFactory.class);
-    private final ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
@@ -58,10 +54,7 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     private Channel channel;
     private BossPool bossPool;
     private WorkerPool workerPool;
-
-    public ClientModeTCPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(ClientModeTCPNettyServerBootstrapFactory.class.getName());
-    }
+   
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.camelContext = camelContext;
@@ -76,11 +69,11 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     }
 
     public void addChannel(Channel channel) {
-        allChannels.add(channel);
+        // we don't need to track the channel in client mode
     }
 
     public void removeChannel(Channel channel) {
-        allChannels.remove(channel);
+        // we don't need to track the channel in client mode
     }
 
     public void addConsumer(NettyConsumer consumer) {
@@ -106,26 +99,16 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
     @Override
     protected void doResume() throws Exception {
-        if (channel != null) {
-            LOG.debug("ServerBootstrap connecting to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture future = channel.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            future.awaitUninterruptibly();
-            if (!future.isSuccess()) {
-                // if we cannot connect, then re-create channel
-                allChannels.remove(channel);
-                ChannelFuture connectFuture = serverBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-                channel = openChannel(connectFuture);
-                allChannels.add(channel);
-            }
-        }
+        ChannelFuture connectFuture = serverBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        channel = openChannel(connectFuture);
     }
 
     @Override
     protected void doSuspend() throws Exception {
         if (channel != null) {
             LOG.debug("ServerBootstrap disconnecting from {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture future = channel.disconnect();
-            future.awaitUninterruptibly();
+            channel.disconnect().sync();
+            channel = null;
         }
     }
 
@@ -213,8 +196,6 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
             throw cause;
         }
         Channel answer = channelFuture.getChannel();
-        // to keep track of all channels in use
-        allChannels.add(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
@@ -225,10 +206,6 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     protected void stopServerBootstrap() {
         // close all channels
         LOG.info("ServerBootstrap disconnecting from {}:{}", configuration.getHost(), configuration.getPort());
-
-        LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
 
         // close server external resources
         if (channelFactory != null) {
