@@ -25,10 +25,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketByteListener;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketByteListener;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 
 
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class TestClient {
     }
 
     public void sendTextMessage(String message) {
-        websocket.sendTextMessage(message);
+        websocket.sendMessage(message);
     }
 
     public void sendBytesMessage(byte[] message) {
@@ -144,11 +144,7 @@ public class TestClient {
             latch.countDown();
         }
 
-        @Override
-        public void onFragment(byte[] fragment, boolean last) {
-            // TODO Auto-generated method stub
-        }
-
+        
         @Override
         public void onMessage(String message) {
             received.add(message);
@@ -156,10 +152,7 @@ public class TestClient {
             latch.countDown();
         }
 
-        @Override
-        public void onFragment(String fragment, boolean last) {
-            // TODO Auto-generated method stub
-        }
+       
         
     }
 }
