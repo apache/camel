@@ -152,7 +152,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         // signature policy
         checkXpath(doc, pathToSignatureProperties
                 + "etsi:SignaturePolicyIdentifier/etsi:SignaturePolicyId/etsi:SigPolicyId/etsi:Identifier/text()", prefix2Namespace,
-                "urn:oid:1.2.840.113549.1.9.16.6.1");
+                "1.2.840.113549.1.9.16.6.1");
         checkXpath(doc, pathToSignatureProperties
                 + "etsi:SignaturePolicyIdentifier/etsi:SignaturePolicyId/etsi:SigPolicyId/etsi:Identifier/@Qualifier", prefix2Namespace,
                 "OIDAsURN");
@@ -213,7 +213,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:Description/text()", prefix2Namespace, "invoice");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:MimeType/text()", prefix2Namespace, "text/xml");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Identifier/text()",
-                prefix2Namespace, "urn:oid:1.2.840.113549.1.9.16.6.2");
+                prefix2Namespace, "1.2.840.113549.1.9.16.6.2");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Identifier/@Qualifier",
                 prefix2Namespace, "OIDAsURN");
         checkXpath(doc, pathToDataObjectProperties + "etsi:DataObjectFormat/etsi:ObjectIdentifier/etsi:Description/text()",
@@ -227,9 +227,9 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
         //commitment 
         checkXpath(doc, pathToDataObjectProperties + "etsi:CommitmentTypeIndication/etsi:CommitmentTypeId/etsi:Identifier/text()",
-                prefix2Namespace, "urn:oid:1.2.840.113549.1.9.16.6.4");
+                prefix2Namespace, "1.2.840.113549.1.9.16.6.4");
         checkXpath(doc, pathToDataObjectProperties + "etsi:CommitmentTypeIndication/etsi:CommitmentTypeId/etsi:Identifier/@Qualifier",
-                prefix2Namespace, "OIDAsURN");
+                prefix2Namespace, "OIDAsURI");
         checkXpath(doc, pathToDataObjectProperties + "etsi:CommitmentTypeIndication/etsi:CommitmentTypeId/etsi:Description/text()",
                 prefix2Namespace, "description for commitment type ID");
         checkXpath(doc, pathToDataObjectProperties
@@ -763,7 +763,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
         // policy
         props.setSignaturePolicy(XAdESSignatureProperties.SIG_POLICY_EXPLICIT_ID);
-        props.setSigPolicyId("urn:oid:1.2.840.113549.1.9.16.6.1");
+        props.setSigPolicyId("1.2.840.113549.1.9.16.6.1");
         props.setSigPolicyIdQualifier("OIDAsURN");
         props.setSigPolicyIdDescription("invoice version 3.1");
         props.setSignaturePolicyDigestAlgorithm(DigestMethod.SHA256);
@@ -789,15 +789,15 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         // data object format
         props.setDataObjectFormatDescription("invoice");
         props.setDataObjectFormatMimeType("text/xml");
-        props.setDataObjectFormatIdentifier("urn:oid:1.2.840.113549.1.9.16.6.2");
+        props.setDataObjectFormatIdentifier("1.2.840.113549.1.9.16.6.2");
         props.setDataObjectFormatIdentifierQualifier("OIDAsURN");
         props.setDataObjectFormatIdentifierDescription("identifier desc");
         props.setDataObjectFormatIdentifierDocumentationReferences(Arrays.asList(new String[] {
             "http://test.com/dataobject.format.doc.ref1.txt", "http://test.com/dataobject.format.doc.ref2.txt" }));
 
         //commitment
-        props.setCommitmentTypeId("urn:oid:1.2.840.113549.1.9.16.6.4");
-        props.setCommitmentTypeIdQualifier("OIDAsURN");
+        props.setCommitmentTypeId("1.2.840.113549.1.9.16.6.4");
+        props.setCommitmentTypeIdQualifier("OIDAsURI");
         props.setCommitmentTypeIdDescription("description for commitment type ID");
         props.setCommitmentTypeIdDocumentationReferences(Arrays.asList(new String[] {"http://test.com/commitment.ref1.txt",
             "http://test.com/commitment.ref2.txt" }));
