@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class NIOConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(NIOConverter.class);
 
     /**
