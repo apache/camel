@@ -326,7 +326,18 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     protected static ScriptEngine createScriptEngine(String language) {
-        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = createScriptEngine(language, ScriptBuilder.class.getClassLoader());
+        if (engine == null) {
+            engine = createScriptEngine(language, Thread.currentThread().getContextClassLoader());
+        }
+        if (engine == null) {
+            throw new IllegalArgumentException("No script engine could be created for: " + language);
+        }
+        return engine;
+    }
+
+    private static ScriptEngine createScriptEngine(String language, ClassLoader classLoader) {
+        ScriptEngineManager manager = new ScriptEngineManager(classLoader);
         ScriptEngine engine = null;
 
         // some script names has alias
