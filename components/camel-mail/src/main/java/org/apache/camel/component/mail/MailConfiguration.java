@@ -20,10 +20,12 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -33,10 +35,10 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 /**
  * Represents the configuration data for communicating over email
  *
- * @version 
+ * @version
  */
 @UriParams
-public class MailConfiguration implements Cloneable {   
+public class MailConfiguration implements Cloneable {
 
     private JavaMailSender javaMailSender;
     private Properties javaMailProperties;
@@ -95,8 +97,13 @@ public class MailConfiguration implements Cloneable {
     private boolean peek = true;
     @UriParam
     private SSLContextParameters sslContextParameters;
+    private ClassLoader applicationClassLoader;
 
     public MailConfiguration() {
+    }
+    
+    public MailConfiguration(CamelContext context) {
+        this.applicationClassLoader = context.getApplicationContextClassLoader();
     }
 
     /**
@@ -173,11 +180,19 @@ public class MailConfiguration implements Cloneable {
         if (session != null) {
             answer.setSession(session);
         } else {
-            // use our authenticator that does no live user interaction but returns the already configured username and password
-            Session session = Session.getInstance(answer.getJavaMailProperties(), new DefaultAuthenticator(getUsername(), getPassword()));
-            // sets the debug mode of the underlying mail framework
-            session.setDebug(debugMode);
-            answer.setSession(session);
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            try {
+                if (applicationClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(applicationClassLoader);
+                }
+                // use our authenticator that does no live user interaction but returns the already configured username and password
+                Session session = Session.getInstance(answer.getJavaMailProperties(), new DefaultAuthenticator(getUsername(), getPassword()));
+                // sets the debug mode of the underlying mail framework
+                session.setDebug(debugMode);
+                answer.setSession(session);
+            } finally {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
         }
 
         return answer;
@@ -420,7 +435,7 @@ public class MailConfiguration implements Cloneable {
     public Map<Message.RecipientType, String> getRecipients() {
         return recipients;
     }
-    
+
     public String getReplyTo() {
         return replyTo;
     }
