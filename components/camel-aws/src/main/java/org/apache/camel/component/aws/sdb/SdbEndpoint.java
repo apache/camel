@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SDB Endpoint</a>.  
  */
-@UriEndpoint(scheme = "aws-sdb", label = "cloud,database,nosql")
+@UriEndpoint(scheme = "aws-sdb", producerOnly = true, label = "cloud,database,nosql")
 public class SdbEndpoint extends ScheduledPollEndpoint {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
