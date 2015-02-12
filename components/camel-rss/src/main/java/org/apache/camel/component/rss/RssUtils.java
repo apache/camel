@@ -24,13 +24,24 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
 public final class RssUtils {
+
     private RssUtils() {
         // Helper class
     }
-    
+
     public static SyndFeed createFeed(String feedUri) throws Exception {
-        InputStream in = new URL(feedUri).openStream();
-        SyndFeedInput input = new SyndFeedInput();
-        return input.build(new XmlReader(in));
+        return createFeed(feedUri, Thread.currentThread().getContextClassLoader());
+    }
+
+    public static SyndFeed createFeed(String feedUri, ClassLoader classLoader) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            InputStream in = new URL(feedUri).openStream();
+            SyndFeedInput input = new SyndFeedInput();
+            return input.build(new XmlReader(in));
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
     }
 }
