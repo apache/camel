@@ -14,28 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paxlogging;
+package org.apache.camel.itest.karaf;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.spi.ComponentResolver;
-import org.osgi.framework.BundleContext;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-/**
- * Component resolver for the paxlogging component
- */
-public class PaxLoggingComponentResolver implements ComponentResolver {
+@RunWith(PaxExam.class)
+public class CamelPaxloggingTest extends AbstractFeatureTest {
 
-    private final BundleContext bundleContext;
+    public static final String COMPONENT = extractName(CamelPaxloggingTest.class);
 
-    public PaxLoggingComponentResolver(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
     }
 
-    public Component resolveComponent(String name, CamelContext context) throws Exception {
-        if (PaxLoggingComponent.NAME.equals(name)) {
-            return new PaxLoggingComponent(context, bundleContext);
-        }
-        return null;
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
     }
+
 }

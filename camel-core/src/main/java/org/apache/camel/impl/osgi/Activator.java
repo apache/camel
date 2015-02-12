@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -400,13 +401,28 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             //Setup the TCCL with Camel context application class loader
             ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
             try {
-                ClassLoader  newClassLoader = context.getApplicationContextClassLoader();
+                ClassLoader newClassLoader = context.getApplicationContextClassLoader();
                 if (newClassLoader != null) {
                     Thread.currentThread().setContextClassLoader(newClassLoader);
                 }
-                return createInstance(name, url, context.getInjector());
+                T answer = createInstance(name, url, context.getInjector());
+                if (answer != null) {
+                    initBundleContext(answer);
+                }
+                return answer;
             } finally {
                 Thread.currentThread().setContextClassLoader(oldClassLoader);   
+            }
+        }
+
+        private void initBundleContext(T answer) {
+            try {
+                Method method = answer.getClass().getMethod("setBundleContext", BundleContext.class);
+                if (method != null) {
+                    method.invoke(answer, bundle.getBundleContext());
+                }
+            } catch (Exception e) {
+                // ignore
             }
         }
 

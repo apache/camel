@@ -18,9 +18,9 @@ package org.apache.camel.component.paxlogging;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,17 +29,18 @@ import org.osgi.framework.BundleContext;
  */
 public class PaxLoggingComponent extends UriEndpointComponent {
 
-    public static final String NAME = "paxlogging";
+    private BundleContext bundleContext;
 
-    private final BundleContext bundleContext;
-
-    public PaxLoggingComponent(CamelContext context, BundleContext bundleContext) {
-        super(context, PaxLoggingEndpoint.class);
-        this.bundleContext = bundleContext;
+    public PaxLoggingComponent() {
+        super(PaxLoggingEndpoint.class);
     }
 
     public BundleContext getBundleContext() {
         return bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -49,4 +50,9 @@ public class PaxLoggingComponent extends UriEndpointComponent {
         return endpoint;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ObjectHelper.notNull(bundleContext, "BundleContext", this);
+    }
 }
