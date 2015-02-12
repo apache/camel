@@ -35,6 +35,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
+    private String moduleRefs;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
@@ -250,6 +252,18 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         this.moduleClassNames = moduleClassNames;
     }
 
+    public String getModuleRefs() {
+        return moduleRefs;
+    }
+
+    /**
+     * To use custom Jackson modules referred from the Camel registry.
+     * Multiple modules can be separated by comma.
+     */
+    public void setModuleRefs(String moduleRefs) {
+        this.moduleRefs = moduleRefs;
+    }
+
     /**
      * Uses {@link java.util.ArrayList} when unmarshalling.
      */
@@ -307,6 +321,18 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
+                LOG.info("Registering module: {} -> {}", name, module);
+                objectMapper.registerModule(module);
+            }
+        }
+        if (moduleRefs != null) {
+            Iterable<Object> it = ObjectHelper.createIterable(moduleRefs);
+            for (Object o : it) {
+                String name = o.toString();
+                if (name.startsWith("#")) {
+                    name = name.substring(1);
+                }
+                Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
                 LOG.info("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }

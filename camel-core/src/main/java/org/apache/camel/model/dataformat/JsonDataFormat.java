@@ -62,6 +62,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Boolean enableJaxbAnnotationModule;
     @XmlAttribute
     private String moduleClassNames;
+    @XmlAttribute
+    private String moduleRefs;
 
     public JsonDataFormat() {
         super("json");
@@ -203,6 +205,18 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.moduleClassNames = moduleClassNames;
     }
 
+    public String getModuleRefs() {
+        return moduleRefs;
+    }
+
+    /**
+     * To use custom Jackson modules referred from the Camel registry.
+     * Multiple modules can be separated by comma.
+     */
+    public void setModuleRefs(String moduleRefs) {
+        this.moduleRefs = moduleRefs;
+    }
+
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
@@ -265,6 +279,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (moduleClassNames != null) {
             setProperty(camelContext, dataFormat, "modulesClassNames", moduleClassNames);
+        }
+        if (moduleRefs != null) {
+            setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);
         }
     }
 
