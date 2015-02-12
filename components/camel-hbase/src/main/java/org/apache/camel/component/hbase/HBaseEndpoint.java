@@ -39,11 +39,11 @@ import org.apache.hadoop.hbase.filter.Filter;
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
-    @UriPath
-    private final String tableName;
     private final HTablePool tablePool;
     private HBaseAdmin admin;
 
+    @UriPath
+    private final String tableName;
     //Operation properties.
     @UriParam(defaultValue = "100")
     private int maxResults = 100;

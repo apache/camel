@@ -29,6 +29,8 @@ public class HBaseRow implements Cloneable {
     private Class<?> rowType = String.class;
     private Set<HBaseCell> cells;
 
+    private long timestamp;
+
     public HBaseRow() {
         this(new LinkedHashSet<HBaseCell>());
     }
@@ -68,6 +70,14 @@ public class HBaseRow implements Cloneable {
 
     public int size() {
         return cells.size();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void apply(HBaseRow modelRow) {
