@@ -107,7 +107,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
         }
         
         public void shutdown() {
-            channel.close();
+            channel.disconnect();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
