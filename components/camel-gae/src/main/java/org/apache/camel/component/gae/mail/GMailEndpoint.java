@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a <a href="http://camel.apache.org/gmail.html">Google App Engine Mail endpoint</a>.
  */
-@UriEndpoint(scheme = "gmail", label = "cloud,mail")
+@UriEndpoint(scheme = "gmail", producerOnly = true, label = "cloud,mail")
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 
     private OutboundBinding<GMailEndpoint, Message, Void> outboundBinding;

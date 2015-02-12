@@ -43,7 +43,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 /**
  * Represents a <a href="http://camel.apache.org/gtask.html">Google App Engine Task Queueing endpoint</a>.
  */
-@UriEndpoint(scheme = "gtask", label = "cloud")
+@UriEndpoint(scheme = "gtask", producerOnly = true, label = "cloud")
 public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSupport<GTaskEndpoint, TaskOptions, Void> {
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;

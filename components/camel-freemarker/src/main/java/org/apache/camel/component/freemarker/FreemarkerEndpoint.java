@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Freemarker endpoint
  */
-@UriEndpoint(scheme = "freemarker", label = "transformation")
+@UriEndpoint(scheme = "freemarker", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam

@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * @see ExecCommand
  * @see ExecResult
  */
-@UriEndpoint(scheme = "exec", label = "system")
+@UriEndpoint(scheme = "exec", producerOnly = true, label = "system")
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**
