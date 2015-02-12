@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
  *
- * @version 
+ * @version
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
 
@@ -324,7 +325,18 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     protected static ScriptEngine createScriptEngine(String language) {
-        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = createScriptEngine(language, ScriptBuilder.class.getClassLoader());
+        if (engine == null) {
+            engine = createScriptEngine(language, Thread.currentThread().getContextClassLoader());
+        }
+        if (engine == null) {
+            throw new IllegalArgumentException("No script engine could be created for: " + language);
+        }
+        return engine;
+    }
+
+    private static ScriptEngine createScriptEngine(String language, ClassLoader classLoader) {
+        ScriptEngineManager manager = new ScriptEngineManager(classLoader);
         ScriptEngine engine = null;
 
         // some script names has alias
@@ -343,10 +355,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         if (engine == null) {
             engine = checkForOSGiEngine(language);
         }
-        if (engine == null) {
-            throw new IllegalArgumentException("No script engine could be created for: " + language);
-        }
-        if (isPython(language)) {
+        if (engine != null && isPython(language)) {
             ScriptContext context = engine.getContext();
             context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
         }
@@ -383,7 +392,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Script evaluation failed: " + e.getMessage(), e);
-            } 
+            }
             if (e.getCause() != null) {
                 throw createScriptEvaluationException(e.getCause());
             } else {
