@@ -33,29 +33,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScpComponent.class);
 
-    static {
-        JSch.setConfig("StrictHostKeyChecking",  "yes");
-        JSch.setLogger(new com.jcraft.jsch.Logger() {
-            @Override
-            public boolean isEnabled(int level) {
-                return level == FATAL || level == ERROR ? LOG.isErrorEnabled()
-                    : level == WARN ? LOG.isWarnEnabled()
-                    : level == INFO ? LOG.isInfoEnabled() : LOG.isDebugEnabled();
-            }
-            @Override
-            public void log(int level, String message) {
-                if (level == FATAL || level == ERROR) {
-                    LOG.error("[JSCH] {}", message);
-                } else if (level == WARN) {
-                    LOG.warn("[JSCH] {}", message);
-                } else if (level == INFO) {
-                    LOG.info("[JSCH] {}", message);
-                } else {
-                    LOG.debug("[JSCH] {}", message);
-                }
-            }
-        });
-    }
+    private boolean verboseLogging;
 
     public ScpComponent() {
     }
@@ -72,6 +50,62 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
     protected void afterPropertiesSet(GenericFileEndpoint<ScpFile> endpoint) throws Exception {
         // noop
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        initJsch();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // noop
+    }
+
+    public boolean isVerboseLogging() {
+        return verboseLogging;
+    }
+
+    /**
+     * JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default.
+     * But setting this option to <tt>true</tt> turns on the verbose logging again.
+     */
+    public void setVerboseLogging(boolean verboseLogging) {
+        this.verboseLogging = verboseLogging;
+    }
+
+    protected void initJsch()  {
+        JSch.setConfig("StrictHostKeyChecking",  "yes");
+        JSch.setLogger(new com.jcraft.jsch.Logger() {
+            @Override
+            public boolean isEnabled(int level) {
+                return level == FATAL || level == ERROR ? LOG.isErrorEnabled()
+                        : level == WARN ? LOG.isWarnEnabled()
+                        : level == INFO ? LOG.isInfoEnabled() : LOG.isDebugEnabled();
+            }
+
+            @Override
+            public void log(int level, String message) {
+                if (level == FATAL || level == ERROR) {
+                    LOG.error("[JSCH] {}", message);
+                } else if (level == WARN) {
+                    LOG.warn("[JSCH] {}", message);
+                } else if (level == INFO) {
+                    // JSCH is verbose at INFO logging so allow to turn the noise down and log at DEBUG by default
+                    if (isVerboseLogging()) {
+                        LOG.info("[JSCH] {}", message);
+                    } else {
+                        LOG.debug("[JSCH] {}", message);
+                    }
+                } else {
+                    LOG.debug("[JSCH] {}", message);
+                }
+            }
+        });
     }
 
 }

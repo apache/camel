@@ -32,7 +32,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -41,7 +40,6 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +47,12 @@ import org.slf4j.LoggerFactory;
  * SCP remote file operations
  */
 public class ScpOperations implements RemoteFileOperations<ScpFile> {
-    private static final String DEFAULT_KNOWN_HOSTS = "META-INF/.ssh/known_hosts";
     private static final Logger LOG = LoggerFactory.getLogger(ScpOperations.class);
 
     private ScpEndpoint endpoint;
     private Session session;
     private ChannelExec channel;
+    private String userKnownHostFile;
 
     @Override
     public void setEndpoint(GenericFileEndpoint<ScpFile> endpoint) {
@@ -209,7 +207,6 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
-        // TODO: not really used, maybe implement at a later time
         return true;
     }
     
@@ -219,26 +216,33 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             final JSch jsch = new JSch();
             // get from configuration
             if (ObjectHelper.isNotEmpty(config.getCiphers())) {
-                LOG.debug("Using ciphers: {}", config.getCiphers());
+                LOG.trace("Using ciphers: {}", config.getCiphers());
                 Hashtable<String, String> ciphers = new Hashtable<String, String>();
                 ciphers.put("cipher.s2c", config.getCiphers());
                 ciphers.put("cipher.c2s", config.getCiphers());
                 JSch.setConfig(ciphers);
             }
             if (ObjectHelper.isNotEmpty(config.getPrivateKeyFile())) {
-                LOG.debug("Using private keyfile: {}", config.getPrivateKeyFile());
+                LOG.trace("Using private keyfile: {}", config.getPrivateKeyFile());
                 String pkfp = config.getPrivateKeyFilePassphrase();
                 jsch.addIdentity(config.getPrivateKeyFile(), ObjectHelper.isNotEmpty(pkfp) ? pkfp : null);
             }
 
             String knownHostsFile = config.getKnownHostsFile();
-            jsch.setKnownHosts(ObjectHelper.isEmpty(knownHostsFile) ? DEFAULT_KNOWN_HOSTS : knownHostsFile);
+            if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {
+                if (userKnownHostFile == null) {
+                    userKnownHostFile = System.getProperty("user.home") + "/.ssh/known_hosts";
+                    LOG.info("Known host file not configured, using user known host file: " + userKnownHostFile);
+                }
+                knownHostsFile = userKnownHostFile;
+            }
+            jsch.setKnownHosts(ObjectHelper.isEmpty(knownHostsFile) ? null : knownHostsFile);
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));
             
             if (ObjectHelper.isNotEmpty(config.getStrictHostKeyChecking())) {
-                LOG.debug("Using StrickHostKeyChecking: {}", config.getStrictHostKeyChecking());
+                LOG.trace("Using StrickHostKeyChecking: {}", config.getStrictHostKeyChecking());
                 session.setConfig("StrictHostKeyChecking", config.getStrictHostKeyChecking());
             }
 

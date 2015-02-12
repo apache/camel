@@ -30,6 +30,10 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
+    @UriParam(defaultValue = "true")
+    private boolean useUserKnownHostsFile = true;
+    @UriParam(defaultValue = "true")
+    private boolean verboseLogging = true;
     @UriParam
     private String knownHostsFile;
     @UriParam
@@ -70,6 +74,14 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
+    }
+
+    public boolean isUseUserKnownHostsFile() {
+        return useUserKnownHostsFile;
+    }
+
+    public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
+        this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
 
     public String getPrivateKeyFile() {
