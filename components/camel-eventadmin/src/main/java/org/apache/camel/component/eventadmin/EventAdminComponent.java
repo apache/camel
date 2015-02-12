@@ -20,20 +20,20 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.osgi.framework.BundleContext;
 
 /**
  * EventAdmin component.
  */
-public class EventAdminComponent extends DefaultComponent {
+public class EventAdminComponent extends UriEndpointComponent {
 
     public static final String NAME = "eventadmin";
 
     private final BundleContext bundleContext;
 
     public EventAdminComponent(CamelContext context, BundleContext bundleContext) {
-        super(context);
+        super(context, EventAdminEndpoint.class);
         this.bundleContext = bundleContext;
     }
 

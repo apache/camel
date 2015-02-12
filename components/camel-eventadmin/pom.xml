@@ -27,7 +27,7 @@
     <artifactId>camel-eventadmin</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Event Admin</name>
-    <description>Camel Event Admin support</description>
+    <description>Camel OSGi Event Admin support</description>
 
     <properties>
         <camel.osgi.activator>org.apache.camel.component.eventadmin.Activator</camel.osgi.activator>
