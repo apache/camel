@@ -24,8 +24,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 
 /**
- * The pax-logging component allows receiving log events from OPS4j PaxLogging
- * and send them to camel routes.
+ * The OSGi pax-logging component allows receiving log events from OPS4j PaxLogging
+ * and send them to Camel routes.
  */
 public class PaxLoggingComponent extends UriEndpointComponent {
 
@@ -39,6 +39,9 @@ public class PaxLoggingComponent extends UriEndpointComponent {
         return bundleContext;
     }
 
+    /**
+     * The OSGi BundleContext is automatic injected by Camel
+     */
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }

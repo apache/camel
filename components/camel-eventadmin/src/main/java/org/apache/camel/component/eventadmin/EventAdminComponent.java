@@ -18,27 +18,31 @@ package org.apache.camel.component.eventadmin;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 
 /**
- * EventAdmin component.
+ * OSGi EventAdmin component.
  */
 public class EventAdminComponent extends UriEndpointComponent {
 
-    public static final String NAME = "eventadmin";
+    private BundleContext bundleContext;
 
-    private final BundleContext bundleContext;
-
-    public EventAdminComponent(CamelContext context, BundleContext bundleContext) {
-        super(context, EventAdminEndpoint.class);
-        this.bundleContext = bundleContext;
+    public EventAdminComponent() {
+        super(EventAdminEndpoint.class);
     }
 
     public BundleContext getBundleContext() {
         return bundleContext;
+    }
+
+    /**
+     * The OSGi BundleContext is automatic injected by Camel
+     */
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -46,6 +50,12 @@ public class EventAdminComponent extends UriEndpointComponent {
         EventAdminEndpoint endpoint = new EventAdminEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ObjectHelper.notNull(bundleContext, "BundleContext", this);
     }
 
 }
