@@ -32,7 +32,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
         super(endpoint, processor, filter, lastUpdate, throttleEntries);
     }
-    
+
     @Override
     protected void populateList(Object feed) throws Exception {
         if (list == null) {
@@ -51,14 +51,14 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     @Override
     protected Object createFeed() throws Exception {
-        return RssUtils.createFeed(endpoint.getFeedUri());
+        return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
     }
 
     @Override
     protected void resetList() {
-        list = null;    
+        list = null;
     }
-    
+
     protected EntryFilter createEntryFilter(Date lastUpdate) {
         return new UpdatedDateFilter(lastUpdate);
     }
