@@ -35,7 +35,7 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
-@UriEndpoint(scheme = "snmp", label = "monitoring")
+@UriEndpoint(scheme = "snmp", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";

@@ -36,7 +36,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 /**
  * Represents a xmlrpc endpoint.
  */
-@UriEndpoint(scheme = "xmlrpc", label = "transformation")
+@UriEndpoint(scheme = "xmlrpc", producerOnly = true, label = "transformation")
 public class XmlRpcEndpoint extends DefaultEndpoint {
     @UriPath
     private String address;
