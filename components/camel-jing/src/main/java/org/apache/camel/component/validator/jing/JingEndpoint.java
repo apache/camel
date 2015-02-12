@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
-@UriEndpoint(scheme = "jing", label = "validation")
+@UriEndpoint(scheme = "jing", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
     @UriPath

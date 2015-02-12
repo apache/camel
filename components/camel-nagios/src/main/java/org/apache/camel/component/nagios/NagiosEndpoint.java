@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "nagios", label = "monitoring")
+@UriEndpoint(scheme = "nagios", producerOnly = true, label = "monitoring")
 public class NagiosEndpoint extends DefaultEndpoint {
 
     private INagiosPassiveCheckSender sender;

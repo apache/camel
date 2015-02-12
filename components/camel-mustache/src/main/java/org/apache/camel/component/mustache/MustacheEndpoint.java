@@ -42,7 +42,7 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
 /**
  * Represents a Camel Mustache endpoint.
  */
-@UriEndpoint(scheme = "mustache", label = "transformation")
+@UriEndpoint(scheme = "mustache", producerOnly = true, label = "transformation")
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;

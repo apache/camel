@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "lucene", label = "database,search")
+@UriEndpoint(scheme = "lucene", producerOnly = true, label = "database,search")
 public class LuceneEndpoint extends DefaultEndpoint {
     @UriParam
     LuceneConfiguration config;
