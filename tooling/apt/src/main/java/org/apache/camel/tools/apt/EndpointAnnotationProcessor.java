@@ -155,7 +155,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, scheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, scheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
@@ -182,6 +182,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
+        if (componentModel.isConsumerOnly()) {
+            buffer.append("\n    \"consumerOnly\": \"").append("true").append("\",");
+        } else if (componentModel.isProducerOnly()) {
+            buffer.append("\n    \"producerOnly\": \"").append("true").append("\",");
+        }
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
@@ -299,9 +304,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, String scheme, String label) {
+    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
         model.setLabel(label);
+        model.setConsumerOnly(uriEndpoint.consumerOnly());
+        model.setProducerOnly(uriEndpoint.producerOnly());
 
         String data = loadResource("META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {
@@ -591,6 +598,8 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private String artifactId;
         private String versionId;
         private String label;
+        private boolean consumerOnly;
+        private boolean producerOnly;
 
         private ComponentModel(String scheme) {
             this.scheme = scheme;
@@ -646,6 +655,22 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public void setLabel(String label) {
             this.label = label;
+        }
+
+        public boolean isConsumerOnly() {
+            return consumerOnly;
+        }
+
+        public void setConsumerOnly(boolean consumerOnly) {
+            this.consumerOnly = consumerOnly;
+        }
+
+        public boolean isProducerOnly() {
+            return producerOnly;
+        }
+
+        public void setProducerOnly(boolean producerOnly) {
+            this.producerOnly = producerOnly;
         }
     }
 

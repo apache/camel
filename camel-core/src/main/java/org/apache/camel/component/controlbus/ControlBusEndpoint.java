@@ -32,7 +32,7 @@ import org.apache.camel.util.CamelLogger;
 /**
  * The control bus endpoint.
  */
-@UriEndpoint(scheme = "controlbus", label = "core,monitoring")
+@UriEndpoint(scheme = "controlbus", producerOnly = true, label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language")

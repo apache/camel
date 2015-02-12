@@ -59,4 +59,19 @@ public @interface UriEndpoint {
      * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>, <tt>database</tt>, etc.
      */
     String label() default "";
+
+    /**
+     * Whether this endpoint can only be used as a producer.
+     * <p/>
+     * By default its assumed the endpoint can be used as both consumer and producer.
+     */
+    boolean producerOnly() default false;
+
+    /**
+     * Whether this endpoint can only be used as a consumer.
+     * <p/>
+     * By default its assumed the endpoint can be used as both consumer and producer.
+     */
+    boolean consumerOnly() default false;
+
 }
