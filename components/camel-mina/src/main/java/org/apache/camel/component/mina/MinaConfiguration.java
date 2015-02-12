@@ -70,6 +70,8 @@ public class MinaConfiguration implements Cloneable {
     private boolean disconnectOnNoReply = true;
     @UriParam(defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+    @UriParam(defaultValue = "false")
+    private boolean clientMode;
 
     /**
      * Returns a copy of this configuration
@@ -247,6 +249,14 @@ public class MinaConfiguration implements Cloneable {
 
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
+    }
+    
+    public boolean isClientMode() {
+        return clientMode;
+    }
+    
+    public void setClientMode(boolean clientMode) {
+        this.clientMode = clientMode;
     }
     
     // here we just shows the option setting of host, port, protocol 
