@@ -329,8 +329,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     missingUriPaths.add(file);
                 }
 
-                // check all the properties if they have description
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
+                // check all the component properties if they have description
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", text, true);
+                for (Map<String, String> row : rows) {
+                    String doc = row.get("description");
+                    if (doc == null || doc.isEmpty()) {
+                        missingJavaDoc.add(file);
+                        break;
+                    }
+                }
+
+                // check all the endpoint properties if they have description
+                rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
                 for (Map<String, String> row : rows) {
                     String doc = row.get("description");
                     if (doc == null || doc.isEmpty()) {
