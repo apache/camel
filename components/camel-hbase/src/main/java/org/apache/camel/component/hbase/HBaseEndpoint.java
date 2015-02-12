@@ -34,10 +34,10 @@ import org.apache.hadoop.hbase.filter.Filter;
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
-    private final String tableName;
     private final HTablePool tablePool;
     private HBaseAdmin admin;
 
+    private final String tableName;
     //Operation properties.
     private int maxResults = 100;
     private List<Filter> filters;
