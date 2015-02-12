@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Component for JavaMail.
  *
- * @version 
+ * @version
  */
 public class MailComponent extends UriEndpointComponent {
     private MailConfiguration configuration;
@@ -40,7 +40,6 @@ public class MailComponent extends UriEndpointComponent {
 
     public MailComponent() {
         super(MailEndpoint.class);
-        this.configuration = new MailConfiguration();
     }
 
     public MailComponent(MailConfiguration configuration) {
@@ -50,7 +49,6 @@ public class MailComponent extends UriEndpointComponent {
 
     public MailComponent(CamelContext context) {
         super(context, MailEndpoint.class);
-        this.configuration = new MailConfiguration();
     }
 
     @Override
@@ -61,8 +59,7 @@ public class MailComponent extends UriEndpointComponent {
         }
 
         // must use copy as each endpoint can have different options
-        ObjectHelper.notNull(configuration, "configuration");
-        MailConfiguration config = configuration.copy();
+        MailConfiguration config = getConfiguration().copy();
 
         // only configure if we have a url with a known protocol
         config.configure(url);
@@ -105,6 +102,9 @@ public class MailComponent extends UriEndpointComponent {
     }
 
     public MailConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new MailConfiguration(getCamelContext());
+        }
         return configuration;
     }
 
