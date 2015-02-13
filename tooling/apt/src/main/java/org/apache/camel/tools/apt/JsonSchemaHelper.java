@@ -84,7 +84,7 @@ final class JsonSchemaHelper {
             sb.append(Strings.doubleQuote(text));
         }
 
-        if (label != null) {
+        if (!Strings.isNullOrEmpty(label)) {
             sb.append(", \"label\": ");
             sb.append(Strings.doubleQuote(label));
         }

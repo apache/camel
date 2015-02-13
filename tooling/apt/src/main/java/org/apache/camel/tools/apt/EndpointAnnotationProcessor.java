@@ -207,6 +207,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), entry.getDefaultValue(), doc,
                     entry.isDeprecated(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
         }
@@ -214,23 +215,45 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         buffer.append("\n  \"properties\": {");
         first = true;
+
         // include paths in the top
-        for (EndpointPath path : endpointPaths) {
+        for (EndpointPath entry : endpointPaths) {
+            String label = entry.getLabel();
+            if (label != null) {
+                // skip options which are either consumer or producer labels but the component does not support them
+                if (label.contains("consumer") && componentModel.isProducerOnly()) {
+                    continue;
+                } else if (label.contains("producer") && componentModel.isConsumerOnly()) {
+                    continue;
+                }
+            }
+
             if (first) {
                 first = false;
             } else {
                 buffer.append(",");
             }
             buffer.append("\n    ");
-            String doc = path.getDocumentation();
+            String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
-            Boolean required = path.getRequired() != null ? Boolean.valueOf(path.getRequired()) : null;
-            buffer.append(JsonSchemaHelper.toJson(path.getName(), "path", required, path.getType(), null, doc,
-                    path.isDeprecated(), path.getLabel(), path.isEnumType(), path.getEnums(), false, null));
+            Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), null, doc,
+                    entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
 
         // and then regular parameter options
         for (EndpointOption entry : endpointOptions) {
+            String label = entry.getLabel();
+            if (label != null) {
+                // skip options which are either consumer or producer labels but the component does not support them
+                if (label.contains("consumer") && componentModel.isProducerOnly()) {
+                    continue;
+                } else if (label.contains("producer") && componentModel.isConsumerOnly()) {
+                    continue;
+                }
+            }
+
             if (first) {
                 first = false;
             } else {
@@ -241,8 +264,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), entry.getDefaultValue(),
-                    doc, entry.isDeprecated(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
+                    doc, entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  }");
 
@@ -455,7 +479,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                     name = prefix + name;
 
-                    String labels = path.label();
+                    String label = path.label();
                     String required = metadata != null ? metadata.required() : null;
 
                     TypeMirror fieldType = fieldElement.asType();
@@ -492,7 +516,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, docComment, deprecated, labels, isEnum, enums);
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, docComment, deprecated, label, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -508,7 +532,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     String defaultValue = param.defaultValue();
                     String defaultValueNote = param.defaultValueNote();
                     String required =  metadata != null ? metadata.required() : null;
-                    String labels = param.label();
+                    String label = param.label();
 
                     // if the field type is a nested parameter then iterate through its fields
                     TypeMirror fieldType = fieldElement.asType();
@@ -557,7 +581,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
 
                         EndpointOption option = new EndpointOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), deprecated, labels, isEnum, enums);
+                                docComment.trim(), deprecated, label, isEnum, enums);
                         endpointOptions.add(option);
                     }
                 }
