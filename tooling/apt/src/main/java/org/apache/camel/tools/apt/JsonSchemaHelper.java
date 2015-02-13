@@ -31,7 +31,7 @@ final class JsonSchemaHelper {
     }
 
     public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
-                                Boolean deprecated, boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
+                                Boolean deprecated, String label, boolean enumType, Set<String> enums, boolean oneOfType, Set<String> oneOffTypes) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
@@ -82,6 +82,11 @@ final class JsonSchemaHelper {
             sb.append(", \"defaultValue\": ");
             String text = safeDefaultValue(defaultValue);
             sb.append(Strings.doubleQuote(text));
+        }
+
+        if (label != null) {
+            sb.append(", \"label\": ");
+            sb.append(Strings.doubleQuote(label));
         }
 
         if (!Strings.isNullOrEmpty(description)) {
