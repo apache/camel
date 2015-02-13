@@ -66,8 +66,6 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     public SnmpOIDPoller(SnmpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        // convert delay from seconds to millis
-        setDelay(endpoint.getDelay() * 1000L);
     }
 
     @Override
