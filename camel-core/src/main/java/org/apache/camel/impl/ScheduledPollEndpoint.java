@@ -284,7 +284,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setPollStrategy(PollingConsumerPollStrategy pollStrategy) {
         this.pollStrategy = pollStrategy;
-        consumerPropertiesInUse = true;
+        // we are allowed to change poll strategy
     }
 
     public LoggingLevel getRunLoggingLevel() {
