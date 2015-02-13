@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.vm;
+package org.apache.camel.component.stub;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.vm.VmConsumer;
+import org.apache.camel.component.vm.VmEndpoint;
 
 public class StubConsumer extends VmConsumer {
 
