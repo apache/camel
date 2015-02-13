@@ -41,8 +41,8 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"block\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"block\": { \"kind\": \"parameter\", \"label\": \"producer\", \"type\": \"boolean\""));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         log.info(json);
 
         // should include javadoc
-        assertTrue("Should include javadoc", json.contains("\"timeout\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"long\","
-                + " \"deprecated\": \"false\", \"defaultValue\": \"30000\","
+        assertTrue("Should include javadoc", json.contains("\"timeout\": { \"kind\": \"parameter\", \"label\": \"producer\","
+                + " \"type\": \"integer\", \"javaType\": \"long\", \"deprecated\": \"false\", \"defaultValue\": \"30000\","
                 + " \"description\": \"The timeout value to use if block is enabled."));
     }
 
