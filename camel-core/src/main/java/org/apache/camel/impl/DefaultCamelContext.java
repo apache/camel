@@ -32,10 +32,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -144,8 +146,6 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -692,10 +692,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
-    public void addRoutes(RoutesBuilder builder) throws Exception {
-        log.debug("Adding routes from builder: {}", builder);
-        // lets now add the routes from the builder
-        builder.addRoutesToCamelContext(this);
+    public void addRoutes(final RoutesBuilder builder) throws Exception {
+        doWithDefinedClassLoader(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                log.debug("Adding routes from builder: {}", builder);
+                builder.addRoutesToCamelContext(DefaultCamelContext.this);
+                return null;
+            }});
     }
 
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
@@ -1763,26 +1767,36 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     // -----------------------------------------------------------------------
 
     protected synchronized void doStart() throws Exception {
+        doWithDefinedClassLoader(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    doStartCamel();
+                    return null;
+                } catch (Exception e) {
+                    // fire event that we failed to start
+                    EventHelper.notifyCamelContextStartupFailed(DefaultCamelContext.this, e);
+                    // rethrow cause
+                    throw e;
+                }
+            }
+        });
+    }
+
+    private <T> T doWithDefinedClassLoader(Callable<T> callable) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
-            doStartCamel();
-        } catch (Exception e) {
-            // fire event that we failed to start
-            EventHelper.notifyCamelContextStartupFailed(this, e);
-            // rethrow cause
-            throw e;
+            // Using the ApplicationClassLoader as the default for TCCL
+            if (applicationContextClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(applicationContextClassLoader);
+            }
+            return callable.call();
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 
     private void doStartCamel() throws Exception {
-        if (applicationContextClassLoader == null) {
-            // Using the TCCL as the default value of ApplicationClassLoader
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            if (cl == null) {
-                // use the classloader that loaded this class
-                cl = this.getClass().getClassLoader();
-            }
-            setApplicationContextClassLoader(cl);
-        }
 
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
