@@ -143,20 +143,6 @@
 
     <profile>
       <id>validate</id>
-      <!-- Added the repository for the google script -->
-      <repositories>
-        <repository>
-          <id>google.script.repo</id>
-          <name>Google Script Engine Deploy Repository</name>
-          <url>http://scriptengines.googlecode.com/svn/m2-repo/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
       <build>
         <plugins>
           <plugin>

@@ -398,7 +398,7 @@
     <scalatest-version>2.2.0</scalatest-version>
     <scalaxml-version>1.0.3</scalaxml-version>
     <scribe-version>1.3.5</scribe-version>
-    <scriptengines-version>1.1</scriptengines-version>
+    <scriptengines-version>1.1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
     <servicemix-specs-version>2.2.0</servicemix-specs-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>

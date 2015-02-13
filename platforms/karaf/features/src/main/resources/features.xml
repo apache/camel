@@ -1195,17 +1195,17 @@
     <bundle>mvn:org.apache.camel/camel-scr/${project.version}</bundle>
   </feature>
    <feature name='camel-script-jruby' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-jruby/${scriptengines-version}</bundle>
+    <bundle>mvn:com.google.code.scriptengines/scriptengines-jruby/${scriptengines-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
   </feature>
   <feature name='camel-script-javascript' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
+    <bundle>mvn:com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
   </feature>
   <feature name='camel-script-groovy' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-groovy/${scriptengines-version}</bundle>
+    <bundle>mvn:com.google.code.scriptengines/scriptengines-groovy/${scriptengines-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
   </feature>
