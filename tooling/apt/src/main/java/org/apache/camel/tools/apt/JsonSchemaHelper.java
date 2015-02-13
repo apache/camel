@@ -39,6 +39,12 @@ final class JsonSchemaHelper {
         sb.append(": { \"kind\": ");
         sb.append(Strings.doubleQuote(kind));
 
+        // we want label early so its easier to spot
+        if (!Strings.isNullOrEmpty(label)) {
+            sb.append(", \"label\": ");
+            sb.append(Strings.doubleQuote(label));
+        }
+
         if (required != null) {
             sb.append(", \"required\": ");
             sb.append(Strings.doubleQuote(required.toString()));
@@ -82,11 +88,6 @@ final class JsonSchemaHelper {
             sb.append(", \"defaultValue\": ");
             String text = safeDefaultValue(defaultValue);
             sb.append(Strings.doubleQuote(text));
-        }
-
-        if (!Strings.isNullOrEmpty(label)) {
-            sb.append(", \"label\": ");
-            sb.append(Strings.doubleQuote(label));
         }
 
         if (!Strings.isNullOrEmpty(description)) {
