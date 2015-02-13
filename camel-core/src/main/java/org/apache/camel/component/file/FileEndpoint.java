@@ -44,7 +44,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam(defaultValue = "false")
     private boolean renameUsingCopy;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean forceWrites = true;
 
     public FileEndpoint() {
