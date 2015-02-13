@@ -72,9 +72,9 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainComponentCompositeType() throws OpenDataException {
-        return new CompositeType("components", "Components", new String[]{"option", "kind", "type", "java type", "deprecated", "value", "default value", "description"},
-                new String[]{"Option", "Kind", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+        return new CompositeType("components", "Components", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
     public static TabularType explainEndpointTabularType() throws OpenDataException {
@@ -83,9 +83,9 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainEndpointsCompositeType() throws OpenDataException {
-        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "type", "java type", "deprecated", "value", "default value", "description"},
-                new String[]{"Option", "Kind", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+        return new CompositeType("endpoints", "Endpoints", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
     public static TabularType explainEipTabularType() throws OpenDataException {
@@ -94,9 +94,9 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType explainEipsCompositeType() throws OpenDataException {
-        return new CompositeType("eips", "EIPs", new String[]{"option", "kind", "type", "java type", "deprecated", "value", "default value", "description"},
-                new String[]{"Option", "Kind", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+        return new CompositeType("eips", "EIPs", new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                new String[]{"Option", "Kind", "Label", "Type", "Java Type", "Deprecated", "Value", "Default Value", "Description"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 
     public static TabularType listComponentsTabularType() throws OpenDataException {
