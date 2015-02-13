@@ -36,6 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -1763,26 +1764,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     // -----------------------------------------------------------------------
 
     protected synchronized void doStart() throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
+            if (applicationContextClassLoader != null) {
+                // Using the ApplicationClassLoader as the default for TCCL
+                Thread.currentThread().setContextClassLoader(applicationContextClassLoader);
+            } else {
+                // Using this ClassLoader as the default for ApplicationClassLoader
+                setApplicationContextClassLoader(getClass().getClassLoader());
+            }
             doStartCamel();
         } catch (Exception e) {
             // fire event that we failed to start
             EventHelper.notifyCamelContextStartupFailed(this, e);
             // rethrow cause
             throw e;
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 
     private void doStartCamel() throws Exception {
-        if (applicationContextClassLoader == null) {
-            // Using the TCCL as the default value of ApplicationClassLoader
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            if (cl == null) {
-                // use the classloader that loaded this class
-                cl = this.getClass().getClassLoader();
-            }
-            setApplicationContextClassLoader(cl);
-        }
 
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
