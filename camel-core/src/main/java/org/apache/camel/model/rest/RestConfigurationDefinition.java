@@ -72,16 +72,16 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String xmlDataFormat;
 
-    @XmlElement(name = "componentProperty")
+    @XmlElement(name = "componentProperties")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<RestPropertyDefinition>();
 
-    @XmlElement(name = "endpointProperty")
+    @XmlElement(name = "endpointProperties")
     private List<RestPropertyDefinition> endpointProperties = new ArrayList<RestPropertyDefinition>();
 
-    @XmlElement(name = "consumerProperty")
+    @XmlElement(name = "consumerProperties")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<RestPropertyDefinition>();
 
-    @XmlElement(name = "dataFormatProperty")
+    @XmlElement(name = "dataFormatProperties")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<RestPropertyDefinition>();
 
     @XmlElement(name = "corsHeaders")
