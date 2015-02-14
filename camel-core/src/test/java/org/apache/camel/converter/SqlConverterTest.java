@@ -18,27 +18,21 @@ package org.apache.camel.converter;
 
 import java.sql.Timestamp;
 
-import org.apache.camel.Converter;
+import org.apache.camel.ContextTestSupport;
 
-/**
- * SQL Date and time related converters.
- */
-@Converter
-public final class SQLConverter {
+public class SQLConverterTest extends ContextTestSupport {
 
-    /**
-     * Utility classes should not have a public constructor.
-     */
-    private SQLConverter() {
+    public void testTimestamp() {
+        long value = System.currentTimeMillis();
+        Timestamp ts = context.getTypeConverter().convertTo(Timestamp.class, value);
+        Timestamp expected = new Timestamp(value);
+        assertEquals(expected, ts);
     }
 
-    @Converter
-    public static Timestamp toTimestamp(Long l) {
-        return new Timestamp(l);
-    }
-    
-    @Converter
-    public static Long toLong(Timestamp ts) {
-        return ts.getTime();
+    public void testToLong() {
+        long value = System.currentTimeMillis();
+        Timestamp ts = new Timestamp(value);
+        long l = context.getTypeConverter().convertTo(Long.class, ts);
+        assertEquals(value, l);
     }
 }
