@@ -23,8 +23,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 
@@ -49,10 +49,10 @@ public class EjbComponent extends BeanComponent {
 
         // plugin registry to lookup in jndi for the EJBs
         Registry registry = new JndiRegistry(getContext());
-        answer.setBeanHolder(new EjbRegistryBean(registry, getCamelContext(), answer.getBeanName()));
+        // and register the bean as a holder on the endpoint
+        BeanHolder holder = new EjbRegistryBean(registry, getCamelContext(), answer.getBeanName());
+        answer.setBeanHolder(holder);
 
-        Processor processor = answer.getProcessor();
-        setProperties(processor, parameters);
         return answer;
     }
 
