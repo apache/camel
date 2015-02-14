@@ -43,9 +43,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private static final String SPRING_SCHEDULER = "org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler";
     private static final String QUARTZ_2_SCHEDULER = "org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerScheduler";
 
-    private boolean consumerPropertiesInUse;
-    private String schedulerName;
-
     // if adding more options then align with org.apache.camel.impl.ScheduledPollConsumer
     @UriParam(defaultValue = "true", label = "consumer")
     private boolean startScheduler = true;
@@ -67,6 +64,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private boolean greedy;
     @UriParam(enums = "spring,quartz2", label = "consumer")
     private ScheduledPollConsumerScheduler scheduler;
+    private String schedulerName; // used when configuring scheduler using a string value
     @UriParam(label = "consumer")
     private Map<String, Object> schedulerProperties;
     @UriParam(label = "consumer")
@@ -151,16 +149,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // if any of the consumer properties was configured then we need to initialize the options before starting
-        if (consumerPropertiesInUse) {
-            initConsumerProperties();
-        }
-
-        super.doStart();
-    }
-
     protected void initConsumerProperties() {
         // must setup consumer properties before we are ready to start
         Map<String, Object> options = getConsumerProperties();
@@ -211,6 +199,18 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        initConsumerProperties();
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
+    }
+
     public boolean isStartScheduler() {
         return startScheduler;
     }
@@ -220,7 +220,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setStartScheduler(boolean startScheduler) {
         this.startScheduler = startScheduler;
-        consumerPropertiesInUse = true;
     }
 
     public long getInitialDelay() {
@@ -232,7 +231,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
-        consumerPropertiesInUse = true;
     }
 
     public long getDelay() {
@@ -244,7 +242,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setDelay(long delay) {
         this.delay = delay;
-        consumerPropertiesInUse = true;
     }
 
     public TimeUnit getTimeUnit() {
@@ -256,7 +253,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
-        consumerPropertiesInUse = true;
     }
 
     public boolean isUseFixedDelay() {
@@ -268,7 +264,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setUseFixedDelay(boolean useFixedDelay) {
         this.useFixedDelay = useFixedDelay;
-        consumerPropertiesInUse = true;
     }
 
     public PollingConsumerPollStrategy getPollStrategy() {
@@ -296,7 +291,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
         this.runLoggingLevel = runLoggingLevel;
-        consumerPropertiesInUse = true;
     }
 
     public boolean isSendEmptyMessageWhenIdle() {
@@ -308,7 +302,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setSendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
         this.sendEmptyMessageWhenIdle = sendEmptyMessageWhenIdle;
-        consumerPropertiesInUse = true;
     }
 
     public boolean isGreedy() {
@@ -320,7 +313,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setGreedy(boolean greedy) {
         this.greedy = greedy;
-        consumerPropertiesInUse = true;
     }
 
     public ScheduledPollConsumerScheduler getScheduler() {
@@ -339,7 +331,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setScheduler(ScheduledPollConsumerScheduler scheduler) {
         this.scheduler = scheduler;
-        consumerPropertiesInUse = true;
     }
 
     /**
@@ -349,7 +340,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setScheduler(String schedulerName) {
         this.schedulerName = schedulerName;
-        consumerPropertiesInUse = true;
     }
 
     public Map<String, Object> getSchedulerProperties() {
@@ -361,7 +351,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setSchedulerProperties(Map<String, Object> schedulerProperties) {
         this.schedulerProperties = schedulerProperties;
-        consumerPropertiesInUse = true;
     }
 
     public ScheduledExecutorService getScheduledExecutorService() {
@@ -375,7 +364,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
         this.scheduledExecutorService = scheduledExecutorService;
-        consumerPropertiesInUse = true;
     }
 
     public int getBackoffMultiplier() {
@@ -389,7 +377,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setBackoffMultiplier(int backoffMultiplier) {
         this.backoffMultiplier = backoffMultiplier;
-        consumerPropertiesInUse = true;
     }
 
     public int getBackoffIdleThreshold() {
@@ -401,7 +388,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setBackoffIdleThreshold(int backoffIdleThreshold) {
         this.backoffIdleThreshold = backoffIdleThreshold;
-        consumerPropertiesInUse = true;
     }
 
     public int getBackoffErrorThreshold() {
@@ -413,6 +399,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setBackoffErrorThreshold(int backoffErrorThreshold) {
         this.backoffErrorThreshold = backoffErrorThreshold;
-        consumerPropertiesInUse = true;
     }
+
 }
