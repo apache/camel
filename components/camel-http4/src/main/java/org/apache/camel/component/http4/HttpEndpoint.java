@@ -19,10 +19,12 @@ package org.apache.camel.component.http4;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http4.helper.HttpHelper;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @UriEndpoint(scheme = "http4,http4s", producerOnly = true, label = "http")
-public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
+public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
@@ -110,6 +112,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public Producer createProducer() throws Exception {
         return new HttpProducer(this);
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("Cannot consume from http endpoint");
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
