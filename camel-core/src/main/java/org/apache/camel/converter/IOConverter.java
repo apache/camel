@@ -39,6 +39,9 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Properties;
 
@@ -76,11 +79,24 @@ public final class IOConverter {
 
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
-            final BufferedReader reader = toReader(file, charset);
+        	final BufferedReader reader = toReader(file, charset);
+        	final Charset defaultStreamCharset = Charset.forName("UTF-8");
             return new InputStream() {
+            	private ByteBuffer bufferBytes;
+            	private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+            	
                 @Override
                 public int read() throws IOException {
-                    return reader.read();
+                	if (bufferBytes == null || bufferBytes.remaining() <= 0) {
+                		bufferedChars.clear();
+                		int len = reader.read(bufferedChars);
+                		bufferedChars.flip();
+                		if (len == -1) {
+                			return -1;
+                		}
+                		bufferBytes = defaultStreamCharset.encode(bufferedChars);
+                	}
+					return bufferBytes.get();
                 }
                 
                 @Override
