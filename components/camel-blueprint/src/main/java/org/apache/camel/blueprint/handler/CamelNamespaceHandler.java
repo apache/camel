@@ -54,6 +54,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.blueprint.BlueprintModelJAXBContextFactory;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.blueprint.CamelEndpointFactoryBean;
@@ -632,36 +633,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     public JAXBContext getJaxbContext() throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = createJaxbContext();
+            jaxbContext = new BlueprintModelJAXBContextFactory().newJAXBContext();
         }
         return jaxbContext;
-    }
-
-    protected JAXBContext createJaxbContext() throws JAXBException {
-        StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
-            if (packages.length() > 0) {
-                packages.append(":");
-            }
-            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
-        }
-        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
-    }
-
-    protected Set<Class<?>> getJaxbPackages() {
-        // we nedd to have a class from each different package with jaxb models
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(CamelContextFactoryBean.class);
-        classes.add(AbstractCamelContextFactoryBean.class);
-        classes.add(org.apache.camel.ExchangePattern.class);
-        classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
-        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
-        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        classes.add(org.apache.camel.model.rest.RestDefinition.class);
-        classes.add(SSLContextParametersFactoryBean.class);
-        return classes;
     }
 
     private RefMetadata createRef(ParserContext context, String value) {

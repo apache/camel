@@ -68,6 +68,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
+        setModelJAXBContextFactory(new BlueprintModelJAXBContextFactory());
     }
 
     public BundleContext getBundleContext() {

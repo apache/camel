@@ -68,6 +68,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public SpringCamelContext(ApplicationContext applicationContext) {
         setApplicationContext(applicationContext);
+        setModelJAXBContextFactory(new SpringModelJAXBContextFactory());
     }
 
     public static void setNoStart(boolean b) {

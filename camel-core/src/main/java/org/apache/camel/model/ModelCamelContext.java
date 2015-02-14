@@ -23,11 +23,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 
 /**
  * Model level interface for the {@link CamelContext}
  */
 public interface ModelCamelContext extends CamelContext {
+
+    /**
+     * @return the JAXB Context factory used to create Models.
+     */
+    ModelJAXBContextFactory getModelJAXBContextFactory();
+
+    void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
 
     /**
      * Returns a list of the current route definitions

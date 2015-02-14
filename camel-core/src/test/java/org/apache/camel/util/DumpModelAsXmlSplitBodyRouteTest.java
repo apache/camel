@@ -31,7 +31,7 @@ import org.apache.camel.model.ModelHelper;
 public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
 
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
