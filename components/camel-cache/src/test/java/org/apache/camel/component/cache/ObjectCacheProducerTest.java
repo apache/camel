@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.cache;
 
 import org.apache.camel.EndpointInject;
@@ -11,21 +27,16 @@ import org.junit.Test;
 
 public class ObjectCacheProducerTest extends CamelTestSupport {
 
-
-//    protected String ehcacheConfigurationPath() {
-//        return "src/test/resources/test-object-ehcache.xml";
-//    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @EndpointInject(uri = "mock:ObjectCacheProducerTest.result")
     protected MockEndpoint resultEndpoint;
 
     @EndpointInject(uri = "mock:ObjectCacheProducerTest.cacheException")
     protected MockEndpoint cacheExceptionEndpoint;
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     /**
      * Test storing 3 elements into object cache then retrieving them back.
@@ -101,7 +112,6 @@ public class ObjectCacheProducerTest extends CamelTestSupport {
     private void sendNonSerializedData(String endpoint, final PoetryNotSerializable notSerializable) throws Exception {
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
-
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
@@ -123,6 +133,5 @@ public class ObjectCacheProducerTest extends CamelTestSupport {
         poetry.setPoet(poet);
         poetry.setPoem(poem);
         return poetry;
-
     }
 }
