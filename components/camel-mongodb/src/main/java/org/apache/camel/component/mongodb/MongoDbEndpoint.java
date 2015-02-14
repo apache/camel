@@ -214,7 +214,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @param collection
      */
     public void ensureIndex(DBCollection collection, List<DBObject> dynamicIndex) {
-        collection.dropIndexes();
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
             for (DBObject index : dynamicIndex) {
                 LOG.debug("create BDObject Index {}", index);
