@@ -17,8 +17,10 @@
 package org.apache.camel.spring.boot.fatjarrouter;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -33,11 +35,15 @@ public class StandaloneFatJarRouterTest extends Assert {
     public void shouldStartCamelRoute() throws InterruptedException, IOException {
         // Given
         final int port = SocketUtils.findAvailableTcpPort();
-        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.FatJarRouter", "--http.port=" + port);
-        await().until(new Callable<Boolean>() {
+        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarrouter.TestFatJarRouter", "--http.port=" + port);
+        await().atMost(1, TimeUnit.MINUTES).until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                new URL("http://localhost:" + port);
+                try {
+                    new URL("http://localhost:" + port).openStream();
+                } catch (ConnectException ex) {
+                    return false;
+                }
                 return true;
             }
         });
