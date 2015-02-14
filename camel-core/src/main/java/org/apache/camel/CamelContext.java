@@ -49,6 +49,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -1537,5 +1538,19 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the list of current route policy factories
      */
     List<RoutePolicyFactory> getRoutePolicyFactories();
+
+    /**
+     * Returns the JAXB Context factory used to create Models.
+     *
+     * @return the JAXB Context factory used to create Models.
+     */
+    ModelJAXBContextFactory getModelJAXBContextFactory();
+
+    /**
+     * Sets a custom JAXB Context factory to be used
+     *
+     * @param modelJAXBContextFactory a JAXB Context factory
+     */
+    void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
 
 }
