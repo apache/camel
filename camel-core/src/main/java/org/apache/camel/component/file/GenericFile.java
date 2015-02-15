@@ -17,6 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -131,6 +133,17 @@ public class GenericFile<T> implements WrappedFile<T>  {
             message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
             message.setHeader("CamelFileAbsolute", isAbsolute());
             message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
+            
+            if (file instanceof File) {
+                File f = (File) file;
+                Path path = f.toPath();
+                try {
+                    message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
+                } catch (Exception ex) {
+                    // just ignore the exception
+                    System.out.println(ex);
+                }
+            }
     
             if (isAbsolute()) {
                 message.setHeader(Exchange.FILE_PATH, getAbsoluteFilePath());

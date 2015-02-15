@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
 
 public class GenericFileMessageTest extends ContextTestSupport {
@@ -32,5 +33,18 @@ public class GenericFileMessageTest extends ContextTestSupport {
         file.setFile(new File("target/test.txt"));
         message = new GenericFileMessage<File>(file); 
         assertEquals(FileUtil.isWindows() ? "target\\test.txt" : "target/test.txt", message.toString());
+        
+    }
+    
+    public void testGenericFileContentType() throws Exception {
+        GenericFileMessage<File> message = new GenericFileMessage<File>(); 
+        
+        GenericFile<File> file = new GenericFile<File>();
+        file.setEndpointPath("target");
+        file.setFileName("target");
+        file.setFile(new File("target/camel-core-test.log"));
+        message = new GenericFileMessage<File>(file); 
+        file.populateHeaders(message);
+        assertEquals("Get a wrong file content type", "txt", message.getHeader(Exchange.FILE_CONTENT_TYPE));
     }
 }
