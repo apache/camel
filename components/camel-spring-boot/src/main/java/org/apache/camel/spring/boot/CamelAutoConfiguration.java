@@ -95,10 +95,12 @@ public class CamelAutoConfiguration {
         return properties;
     }
 
+    /**
+     * Camel post processor - required to support Camel annotations.
+     */
     @Bean
-    CamelBeanPostProcessor camelBeanPostProcessor(CamelContext camelContext, ApplicationContext applicationContext) {
+    CamelBeanPostProcessor camelBeanPostProcessor(ApplicationContext applicationContext) {
         CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setCamelContext(camelContext);
         processor.setApplicationContext(applicationContext);
         return processor;
     }
