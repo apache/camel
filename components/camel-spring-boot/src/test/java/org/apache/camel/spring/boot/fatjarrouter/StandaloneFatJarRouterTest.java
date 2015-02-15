@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -35,12 +36,13 @@ public class StandaloneFatJarRouterTest extends Assert {
     public void shouldStartCamelRoute() throws InterruptedException, IOException {
         // Given
         final int port = SocketUtils.findAvailableTcpPort();
+        final URL httpEndpoint = new URL("http://localhost:" + port);
         TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarrouter.TestFatJarRouter", "--http.port=" + port);
-        await().atMost(1, TimeUnit.MINUTES).until(new Callable<Boolean>() {
+        await().atMost(1, MINUTES).until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 try {
-                    new URL("http://localhost:" + port).openStream();
+                    httpEndpoint.openStream();
                 } catch (ConnectException ex) {
                     return false;
                 }
@@ -49,7 +51,7 @@ public class StandaloneFatJarRouterTest extends Assert {
         });
 
         // When
-        String response = IOUtils.toString(new URL("http://localhost:" + port));
+        String response = IOUtils.toString(httpEndpoint);
 
         // Then
         assertEquals("stringBean", response);
