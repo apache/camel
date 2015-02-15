@@ -218,6 +218,19 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- mocking ftp server -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockftpserver</groupId>
+      <artifactId>MockFtpServer</artifactId>
+      <version>2.5</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- some TX tests using iBatis -->
     <dependency>
       <groupId>org.apache.derby</groupId>
