@@ -19,9 +19,9 @@ package org.apache.camel.component.stomp;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -118,14 +118,26 @@ public class StompEndpoint extends DefaultEndpoint {
         connection.close(null);
     }
 
-    protected void send(Message message) {
+    protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
-        frame.content(utf8(message.getBody().toString()));
+        frame.content(utf8(exchange.getIn().getBody().toString()));
+
         connection.getDispatchQueue().execute(new Task() {
             @Override
             public void run() {
-                connection.send(frame, null);
+                connection.send(frame, new Callback<Void>() {
+                    @Override
+                    public void onFailure(Throwable e) {
+                        exchange.setException(e);
+                        callback.done(false);
+                    }
+
+                    @Override
+                    public void onSuccess(Void v) {
+                        callback.done(false);
+                    }
+                });
             }
         });
     }
