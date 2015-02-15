@@ -94,10 +94,7 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
                 // using the features to install the camel components
                 loadCamelFeatures(
                         "camel-blueprint", "camel-jclouds"),
-                workingDirectory("target/paxrunner/"),
-                felix());
-
-        // TODO: equinox fails for some reason
+                workingDirectory("target/paxrunner/"));
 
         return options;
     }
