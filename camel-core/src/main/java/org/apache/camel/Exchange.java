@@ -130,6 +130,8 @@ public interface Exchange {
     String FILTER_MATCHED       = "CamelFilterMatched";
     String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
     String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
+    String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
+    String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     
