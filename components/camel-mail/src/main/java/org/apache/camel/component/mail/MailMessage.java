@@ -24,6 +24,7 @@ import javax.mail.MessagingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -51,11 +52,8 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public String toString() {
-        if (mailMessage != null) {
-            return "MailMessage: " + MailUtils.dumpMessage(mailMessage);
-        } else {
-            return "MailMessage: " + getBody();
-        }
+        // do not dump the mail content, as it requires live connection to the mail server
+        return "MailMessage@" + ObjectHelper.getIdentityHashCode(this);
     }
 
     public MailMessage copy() {
