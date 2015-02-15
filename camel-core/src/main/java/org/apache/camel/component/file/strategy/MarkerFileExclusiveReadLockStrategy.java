@@ -83,15 +83,16 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             return;
         }
 
-        String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
-        File lock = new File(lockFileName);
         // only release the file if camel get the lock before
         if (exchange.getProperty(Exchange.FILE_LOCK_FILE_ACQUIRED, false, Boolean.class)) {
-            LOG.trace("Unlocking file: {}", lockFileName);
-            boolean deleted = FileUtil.deleteFile(lock);
-            LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
-        } else {
-            LOG.trace("Don't try to delete the Lock file: {} as camel doesn't get to lock before.", lockFileName);
+            String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
+            File lock = new File(lockFileName);
+
+            if (lock.exists()) {
+                LOG.trace("Unlocking file: {}", lockFileName);
+                boolean deleted = FileUtil.deleteFile(lock);
+                LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
+            }
         }
     }
 
