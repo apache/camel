@@ -176,14 +176,14 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
         // recover by re-creating operations which should most likely be able to recover
         if (!loggedIn) {
-            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
+            log.debug("Trying to recover connection to: {} with a new FTP client.", getEndpoint());
             setOperations(getEndpoint().createRemoteFileOperations());
             connectIfNecessary();
         }
     }
 
     protected void connectIfNecessary() throws GenericFileOperationFailedException {
-        if (!getOperations().isConnected()) {
+        if (!loggedIn || !getOperations().isConnected()) {
             log.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
             RemoteFileConfiguration config = getEndpoint().getConfiguration();
             loggedIn = getOperations().connect(config);
