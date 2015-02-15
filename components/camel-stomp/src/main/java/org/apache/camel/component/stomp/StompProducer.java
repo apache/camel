@@ -32,11 +32,11 @@ public class StompProducer extends DefaultAsyncProducer implements Processor {
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            stompEndpoint.send(exchange.getIn());
+            stompEndpoint.send(exchange, callback);
+            return false;
         } catch (Exception e) {
             exchange.setException(e);
         }
-        callback.done(true);
         return true;
     }
 
