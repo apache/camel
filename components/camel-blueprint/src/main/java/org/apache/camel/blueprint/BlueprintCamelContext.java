@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.TypeConverter;
+import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
@@ -68,7 +69,8 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
-        setModelJAXBContextFactory(new BlueprintModelJAXBContextFactory());
+        // must use classloader of the namespace handler
+        setModelJAXBContextFactory(new BlueprintModelJAXBContextFactory(CamelNamespaceHandler.class.getClassLoader()));
     }
 
     public BundleContext getBundleContext() {

@@ -16,20 +16,50 @@
  */
 package org.apache.camel.blueprint;
 
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
-public class BlueprintModelJAXBContextFactory extends DefaultModelJAXBContextFactory{
+import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
+import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
 
-    public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES = ":"
-            + "org.apache.camel.core.xml:"
-            + "org.apache.camel.blueprint:"
-            + "org.apache.camel.util.blueprint:";
+public class BlueprintModelJAXBContextFactory implements ModelJAXBContextFactory {
 
-    protected String getPackages() {
-        return super.getPackages() + ADDITIONAL_JAXB_CONTEXT_PACKAGES;
+    private final ClassLoader classLoader;
+
+    public BlueprintModelJAXBContextFactory(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
-    protected ClassLoader getClassLoader() {
-        return getClass().getClassLoader();
+    private String getPackages() {
+        // we nedd to have a class from each different package with jaxb models
+        // and we must use the .class for the classloader to work in OSGi
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+        classes.add(CamelContextFactoryBean.class);
+        classes.add(AbstractCamelContextFactoryBean.class);
+        classes.add(SSLContextParametersFactoryBean.class);
+        classes.add(org.apache.camel.ExchangePattern.class);
+        classes.add(org.apache.camel.model.RouteDefinition.class);
+        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
+        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
+        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
+        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
+        classes.add(org.apache.camel.model.rest.RestDefinition.class);
+
+        StringBuilder packages = new StringBuilder();
+        for (Class<?> cl : classes) {
+            if (packages.length() > 0) {
+                packages.append(":");
+            }
+            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
+        }
+        return packages.toString();
+    }
+
+    @Override
+    public JAXBContext newJAXBContext() throws JAXBException {
+        return JAXBContext.newInstance(getPackages(), classLoader);
     }
 }

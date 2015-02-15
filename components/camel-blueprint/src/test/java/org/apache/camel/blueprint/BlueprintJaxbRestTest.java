@@ -54,7 +54,7 @@ public class BlueprintJaxbRestTest extends TestSupport {
         }
         CamelNamespaceHandler.doBeforeParse(elem, CamelNamespaceHandler.BLUEPRINT_NS, CamelNamespaceHandler.SPRING_NS);
 
-        JAXBContext context = new BlueprintModelJAXBContextFactory().newJAXBContext();
+        JAXBContext context = new BlueprintModelJAXBContextFactory(getClass().getClassLoader()).newJAXBContext();
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Object object = unmarshaller.unmarshal(elem);
         assertNotNull(object);
