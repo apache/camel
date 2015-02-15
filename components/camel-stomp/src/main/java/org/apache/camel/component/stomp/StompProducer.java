@@ -37,6 +37,7 @@ public class StompProducer extends DefaultAsyncProducer implements Processor {
         } catch (Exception e) {
             exchange.setException(e);
         }
+        callback.done(true);
         return true;
     }
 
