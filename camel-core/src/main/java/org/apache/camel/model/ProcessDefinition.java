@@ -55,9 +55,13 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
 
     @Override
     public String toString() {
-        return "process["
-                + ((ref != null) ? "ref:" + ref : processor)
-                + "]";
+        if (ref != null) {
+            return "process[ref:" + ref + "]";
+        } else {
+            // do not invoke toString on the processor as we do not know what it would do
+            String id = ObjectHelper.getIdentityHashCode(processor);
+            return "process[Processor@" + id + "]";
+        }
     }
 
     @Override
@@ -65,7 +69,9 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
         if (ref != null) {
             return "ref:" + ref;
         } else if (processor != null) {
-            return processor.toString();
+            // do not invoke toString on the processor as we do not know what it would do
+            String id = ObjectHelper.getIdentityHashCode(processor);
+            return "Processor@" + id;
         } else {
             return "";
         }
