@@ -17,11 +17,13 @@
 package org.apache.camel.component.mqtt;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.Executor;
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.fusesource.hawtdispatch.transport.TcpTransport;
 import org.fusesource.mqtt.client.MQTT;
@@ -206,6 +208,265 @@ public class MQTTConfiguration extends MQTT {
         throw new IllegalArgumentException("There is no QoS with name " + qualityOfService);
     }
 
+    @Override
+    public void setTracer(Tracer tracer) {
+        super.setTracer(tracer);
+    }
+
+    @Override
+    public void setClientId(String clientId) {
+        super.setClientId(clientId);
+    }
+
+    @Override
+    public void setClientId(UTF8Buffer clientId) {
+        super.setClientId(clientId);
+    }
+
+    @Override
+    public void setKeepAlive(short keepAlive) {
+        super.setKeepAlive(keepAlive);
+    }
+
+    @Override
+    public void setPassword(String password) {
+        super.setPassword(password);
+    }
+
+    @Override
+    public void setPassword(UTF8Buffer password) {
+        super.setPassword(password);
+    }
+
+    @Override
+    public void setUserName(String userName) {
+        super.setUserName(userName);
+    }
+
+    @Override
+    public void setUserName(UTF8Buffer userName) {
+        super.setUserName(userName);
+    }
+
+    @Override
+    public void setWillMessage(String willMessage) {
+        super.setWillMessage(willMessage);
+    }
+
+    @Override
+    public void setWillMessage(UTF8Buffer willMessage) {
+        super.setWillMessage(willMessage);
+    }
+
+    @Override
+    public void setWillQos(QoS willQos) {
+        super.setWillQos(willQos);
+    }
+
+    @Override
+    public void setVersion(String version) {
+        super.setVersion(version);
+    }
+
+    @Override
+    public String getVersion() {
+        return super.getVersion();
+    }
+
+    @Override
+    public void setWillRetain(boolean willRetain) {
+        super.setWillRetain(willRetain);
+    }
+
+    @Override
+    public void setWillTopic(String willTopic) {
+        super.setWillTopic(willTopic);
+    }
+
+    @Override
+    public void setWillTopic(UTF8Buffer willTopic) {
+        super.setWillTopic(willTopic);
+    }
+
+    @Override
+    public Executor getBlockingExecutor() {
+        return super.getBlockingExecutor();
+    }
+
+    @Override
+    public void setBlockingExecutor(Executor blockingExecutor) {
+        super.setBlockingExecutor(blockingExecutor);
+    }
+
+    @Override
+    public DispatchQueue getDispatchQueue() {
+        return super.getDispatchQueue();
+    }
+
+    @Override
+    public void setDispatchQueue(DispatchQueue dispatchQueue) {
+        super.setDispatchQueue(dispatchQueue);
+    }
+
+    @Override
+    public URI getLocalAddress() {
+        return super.getLocalAddress();
+    }
+
+    @Override
+    public void setLocalAddress(String localAddress) throws URISyntaxException {
+        super.setLocalAddress(localAddress);
+    }
+
+    @Override
+    public void setLocalAddress(URI localAddress) {
+        super.setLocalAddress(localAddress);
+    }
+
+    @Override
+    public int getMaxReadRate() {
+        return super.getMaxReadRate();
+    }
+
+    @Override
+    public void setMaxReadRate(int maxReadRate) {
+        super.setMaxReadRate(maxReadRate);
+    }
+
+    @Override
+    public int getMaxWriteRate() {
+        return super.getMaxWriteRate();
+    }
+
+    @Override
+    public void setMaxWriteRate(int maxWriteRate) {
+        super.setMaxWriteRate(maxWriteRate);
+    }
+
+    @Override
+    public int getReceiveBufferSize() {
+        return super.getReceiveBufferSize();
+    }
+
+    @Override
+    public void setReceiveBufferSize(int receiveBufferSize) {
+        super.setReceiveBufferSize(receiveBufferSize);
+    }
+
+    @Override
+    public URI getHost() {
+        return super.getHost();
+    }
+
+    @Override
+    public void setHost(String host, int port) throws URISyntaxException {
+        super.setHost(host, port);
+    }
+
+    @Override
+    public void setHost(String host) throws URISyntaxException {
+        super.setHost(host);
+    }
+
+    @Override
+    public void setHost(URI host) {
+        super.setHost(host);
+    }
+
+    @Override
+    public int getSendBufferSize() {
+        return super.getSendBufferSize();
+    }
+
+    @Override
+    public void setSendBufferSize(int sendBufferSize) {
+        super.setSendBufferSize(sendBufferSize);
+    }
+
+    @Override
+    public SSLContext getSslContext() {
+        return super.getSslContext();
+    }
+
+    @Override
+    public void setSslContext(SSLContext sslContext) {
+        super.setSslContext(sslContext);
+    }
+
+    @Override
+    public int getTrafficClass() {
+        return super.getTrafficClass();
+    }
+
+    @Override
+    public void setTrafficClass(int trafficClass) {
+        super.setTrafficClass(trafficClass);
+    }
+
+    @Override
+    public boolean isUseLocalHost() {
+        return super.isUseLocalHost();
+    }
+
+    @Override
+    public void setUseLocalHost(boolean useLocalHost) {
+        super.setUseLocalHost(useLocalHost);
+    }
+
+    @Override
+    public long getConnectAttemptsMax() {
+        return super.getConnectAttemptsMax();
+    }
+
+    @Override
+    public void setConnectAttemptsMax(long connectAttemptsMax) {
+        super.setConnectAttemptsMax(connectAttemptsMax);
+    }
+
+    @Override
+    public long getReconnectAttemptsMax() {
+        return super.getReconnectAttemptsMax();
+    }
+
+    @Override
+    public void setReconnectAttemptsMax(long reconnectAttemptsMax) {
+        super.setReconnectAttemptsMax(reconnectAttemptsMax);
+    }
+
+    @Override
+    public double getReconnectBackOffMultiplier() {
+        return super.getReconnectBackOffMultiplier();
+    }
+
+    @Override
+    public void setReconnectBackOffMultiplier(double reconnectBackOffMultiplier) {
+        super.setReconnectBackOffMultiplier(reconnectBackOffMultiplier);
+    }
+
+    @Override
+    public long getReconnectDelay() {
+        return super.getReconnectDelay();
+    }
+
+    @Override
+    public void setReconnectDelay(long reconnectDelay) {
+        super.setReconnectDelay(reconnectDelay);
+    }
+
+    @Override
+    public long getReconnectDelayMax() {
+        return super.getReconnectDelayMax();
+    }
+
+    @Override
+    public void setReconnectDelayMax(long reconnectDelayMax) {
+        super.setReconnectDelayMax(reconnectDelayMax);
+    }
+
+    @Override
+    public Tracer getTracer() {
+        return super.getTracer();
+    }
 }
 
 
