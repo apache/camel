@@ -1018,7 +1018,7 @@
   <feature name='camel-rabbitmq' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.rabbitmq/amqp-client/${rabbitmq-amqp-client-version}</bundle>
-    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>    
+    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rabbitmq/${project.version}</bundle>
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -1046,8 +1046,7 @@
   </feature>
   <feature name='camel-ruby' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-script</feature>
-    <bundle dependency='true'>mvn:org.jruby/jruby-core/${jruby-version}</bundle>
-    <bundle dependency='true'>mvn:org.jruby/jruby-stdlib/${jruby-version}</bundle>
+    <bundle dependency='true'>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
   </feature>
   <feature name='camel-rx' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1096,8 +1095,7 @@
    <feature name='camel-script-jruby' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-jruby/${scriptengines-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.jruby/jruby-core/${jruby-version}</bundle>
-    <bundle dependency='true'>mvn:org.jruby/jruby-stdlib/${jruby-version}</bundle>
+    <bundle dependency='true'>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
   </feature>
   <feature name='camel-script-javascript' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
@@ -1115,7 +1113,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
-    <bundle dependency='true'>mvn:org.jruby/jruby/${jruby-version}</bundle>
+    <bundle>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${project.version}</bundle>
   </feature>
   <feature name='camel-servlet' version='${project.version}' resolver='(obr)' start-level='50'>
