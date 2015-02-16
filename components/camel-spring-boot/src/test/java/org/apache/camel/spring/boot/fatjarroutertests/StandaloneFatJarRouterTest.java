@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.fatjarrouter;
+package org.apache.camel.spring.boot.fatjarroutertests;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -37,7 +37,7 @@ public class StandaloneFatJarRouterTest extends Assert {
         // Given
         final int port = SocketUtils.findAvailableTcpPort();
         final URL httpEndpoint = new URL("http://localhost:" + port);
-        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarrouter.TestFatJarRouter", "--http.port=" + port);
+        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests.TestFatJarRouter", "--http.port=" + port);
         await().atMost(1, MINUTES).until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {

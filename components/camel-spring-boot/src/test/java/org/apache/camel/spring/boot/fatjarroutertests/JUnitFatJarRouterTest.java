@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.fatjarrouter;
+package org.apache.camel.spring.boot.fatjarroutertests;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,7 +31,7 @@ import org.springframework.util.SocketUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestFatJarRouter.class)
-@IntegrationTest("spring.main.sources=org.apache.camel.spring.boot.fatjarrouter")
+@IntegrationTest("spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
 public class JUnitFatJarRouterTest extends Assert {
 
     static int port = SocketUtils.findAvailableTcpPort();
