@@ -27,12 +27,14 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 
 /**
  * Test camel-script for Ruby expressions in OSGi
  */
 @RunWith(PaxExam.class)
-@Ignore("You need an OSGi-ified version of JRuby for this to pass")
 public class RubyOsgiTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -55,9 +57,10 @@ public class RubyOsgiTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(
-            getDefaultCamelKarafOptions(),
+            getDefaultCamelKarafOptions(), KarafDistributionOption.keepRuntimeFolder(),
             // using the features to install the other camel components             
-            loadCamelFeatures("camel-script", "camel-ruby"));
+            loadCamelFeatures("camel-script", "camel-ruby")//, new LogLevelOption(LogLevel.DEBUG)
+        );
         
         return options;
     }
