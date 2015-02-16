@@ -23,8 +23,8 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.olingo.odata2.core.commons.ContentType;
 
 /**
  * Component configuration for Olingo2 component.
@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 @UriParams
 public class Olingo2Configuration {
 
-    private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON_CS_UTF_8.toString();
+    private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();
     private static final int DEFAULT_TIMEOUT = 30 * 1000;
 
     @UriParam
