@@ -19,7 +19,6 @@ package org.apache.camel.itest.osgi.script;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -27,9 +26,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
+
 
 /**
  * Test camel-script for Ruby expressions in OSGi
@@ -57,9 +54,9 @@ public class RubyOsgiTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(
-            getDefaultCamelKarafOptions(), KarafDistributionOption.keepRuntimeFolder(),
+            getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            loadCamelFeatures("camel-script", "camel-ruby")//, new LogLevelOption(LogLevel.DEBUG)
+            loadCamelFeatures("camel-script", "camel-ruby")
         );
         
         return options;
