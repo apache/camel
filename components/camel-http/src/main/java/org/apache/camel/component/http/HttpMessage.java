@@ -17,13 +17,13 @@
 package org.apache.camel.component.http;
 
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -71,5 +71,11 @@ public class HttpMessage extends DefaultMessage {
     
     private HttpEndpoint getEndpoint() {
         return (HttpEndpoint) getExchange().getFromEndpoint();
+    }
+
+    @Override
+    public String toString() {
+        // do not use toString on HTTP message
+        return "HttpMessage@" + ObjectHelper.getIdentityHashCode(this);
     }
 }
