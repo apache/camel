@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.linkedin;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -26,6 +28,7 @@ import org.apache.camel.component.linkedin.api.LinkedInException;
 import org.apache.camel.component.linkedin.api.model.Error;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.util.component.ApiMethod;
 
 /**
  * The LinkedIn consumer.
@@ -34,6 +37,22 @@ public class LinkedInConsumer extends AbstractApiConsumer<LinkedInApiName, Linke
 
     public LinkedInConsumer(LinkedInEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    public void interceptPropertyNames(Set<String> propertyNames) {
+        // do we need to add fields option
+        if (!propertyNames.contains(LinkedInEndpoint.FIELDS_OPTION)) {
+            final List<ApiMethod> candidates = endpoint.getCandidates();
+
+            for (ApiMethod method : candidates) {
+                if (!method.getArgNames().contains(LinkedInEndpoint.FIELDS_OPTION)) {
+                    return;
+                }
+            }
+            // all candidates use fields option, so there is no ambiguity
+            propertyNames.add(LinkedInEndpoint.FIELDS_OPTION);
+        }
     }
 
     @Override

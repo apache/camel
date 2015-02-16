@@ -543,6 +543,10 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
                 from("direct://GETCONNECTIONS")
                     .to("linkedin://" + PATH_PREFIX + "/getConnections");
 
+                // test consumer route for getConnections
+                from("linkedin://" + PATH_PREFIX + "/getConnections")
+                    .to("mock://GETCONNECTIONS");
+
                 // test route for getConnectionsById
                 from("direct://GETCONNECTIONSBYID")
                     .to("linkedin://" + PATH_PREFIX + "/getConnectionsById");
