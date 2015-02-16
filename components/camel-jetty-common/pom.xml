@@ -26,8 +26,8 @@
 
     <artifactId>camel-jetty-common</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Jetty :: common</name>
-    <description>Camel Jetty support</description>
+    <name>Camel :: Jetty :: Common</name>
+    <description>Camel Jetty 8.x/9.x support</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
