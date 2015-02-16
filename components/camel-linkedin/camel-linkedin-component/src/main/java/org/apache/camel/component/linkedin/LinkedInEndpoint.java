@@ -47,8 +47,9 @@ import org.apache.cxf.jaxrs.client.WebClient;
 @UriEndpoint(scheme = "linkedin", consumerClass = LinkedInConsumer.class, consumerPrefix = "consumer")
 public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, LinkedInConfiguration> {
 
+    protected static final String FIELDS_OPTION = "fields";
     private static final String DEFAULT_FIELDS_SELECTOR = "";
-    private static final String FIELDS_OPTION = "fields";
+
     // OAuth request filter
     private LinkedInOAuthRequestFilter requestFilter;
 
