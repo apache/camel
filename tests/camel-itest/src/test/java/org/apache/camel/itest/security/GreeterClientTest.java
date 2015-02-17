@@ -89,10 +89,11 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
             sendMessageWithUsernameToken("jim", "foo", "CXF");
             fail("should fail");
         } catch (Exception ex) {
+            String msg = ex.getMessage();
             assertTrue("Get a wrong type exception.", ex instanceof SOAPFaultException);
-            assertTrue("Get a wrong exception message", ex.getMessage().startsWith("The security token could not be authenticated or authorized"));
-            // CXF 2.4.0 WSecurity doesn't put the authentication exception
-            //assertTrue("Get a wrong exception message", ex.getMessage().endsWith("java.io.IOException: Wrong password!"));
+            assertTrue("Get a wrong exception message: " + msg,
+                       msg.startsWith("The security token could not be authenticated or authorized")
+                       || msg.startsWith("A security error was encountered when verifying the messag"));
         }
 
     }
