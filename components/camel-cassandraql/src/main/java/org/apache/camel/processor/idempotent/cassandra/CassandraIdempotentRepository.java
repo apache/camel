@@ -101,8 +101,13 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
             return false;
         } else {
             LOGGER.debug("Row with {} columns to check key", row.getColumnDefinitions());
-            return row.getColumnDefinitions().size() > 1;
+            return row.getColumnDefinitions().size() >= pkColumns.length;
         }
+    }
+
+    protected final boolean isApplied(ResultSet resultSet) {
+        Row row = resultSet.one();
+        return row==null || row.getBool("[applied]");
     }
 
     protected Object[] getPKValues(K key) {
@@ -137,7 +142,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     public boolean add(K key) {
         Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {}", (Object) idValues);
-        return !isKey(getSession().execute(insertStatement.bind(idValues)));
+        return isApplied(getSession().execute(insertStatement.bind(idValues)));
     }
 
     // -------------------------------------------------------------------------
@@ -176,8 +181,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     public boolean remove(K key) {
         Object[] idValues = getPKValues(key);
         LOGGER.debug("Deleting key {}", (Object) idValues);
-        getSession().execute(deleteStatement.bind(idValues));
-        return true;
+        return isApplied(getSession().execute(deleteStatement.bind(idValues)));
     }
     // -------------------------------------------------------------------------
     // Getters & Setters

@@ -126,7 +126,7 @@ public class CassandraIdempotentRepositoryTest {
         // When
         boolean result = idempotentRepository.contains(key);
         // Then
-        // assertFalse(result);
+        assertFalse(result);
     }
 
     @Test
