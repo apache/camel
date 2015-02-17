@@ -29,6 +29,11 @@ import org.apache.camel.component.file.GenericFile;
 @Converter
 public final class BoxConverter {
 
+    private static final String PROPERTY_FOLDER_ID_DELIMITED = BoxConstants.PROPERTY_PREFIX + "folderId";
+    private static final String PROPERTY_FOLDER_ID =
+        BoxConstants.PROPERTY_PREFIX.substring(0, BoxConstants.PROPERTY_PREFIX.length() - 1)
+            + "FolderId";
+
     private BoxConverter() {
         //Utility Class
     }
@@ -37,7 +42,9 @@ public final class BoxConverter {
     public static BoxFileUploadRequestObject genericFileToBoxFileUploadRequestObject(GenericFile<?> file, Exchange exchange) throws Exception {
         String folderId = "0";
         if (exchange != null && exchange.getIn() != null) {
-            folderId = exchange.getIn().getHeader(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);
+            folderId = exchange.getIn().getHeader(PROPERTY_FOLDER_ID_DELIMITED, folderId, String.class);
+            // support camel case CamelBoxFolderId
+            folderId = exchange.getIn().getHeader(PROPERTY_FOLDER_ID, folderId, String.class);
         }
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
@@ -58,7 +65,9 @@ public final class BoxConverter {
         String folderId = "0";
         String fileName = "dummy.bin";
         if (exchange != null && exchange.getIn() != null) {
-            folderId = exchange.getIn().getHeader(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);
+            folderId = exchange.getIn().getHeader(PROPERTY_FOLDER_ID_DELIMITED, folderId, String.class);
+            // support camel case CamelBoxFolderId
+            folderId = exchange.getIn().getHeader(PROPERTY_FOLDER_ID, folderId, String.class);
             fileName = exchange.getIn().getHeader("CamelFileName", String.class);
         }
         InputStream is = new ByteArrayInputStream(data);
