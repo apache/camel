@@ -229,8 +229,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         // reuse iterable and add it to the result list
         Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairsIterable(exchange, value);
-        for (ProcessorExchangePair pair : pairs) {
-            result.add(pair);
+        try {
+            for (ProcessorExchangePair pair : pairs) {
+                result.add(pair);
+            }
+        } finally {
+            if (pairs instanceof Closeable) {
+                IOHelper.close((Closeable) pairs, "Splitter:ProcessorExchangePairs");
+            }
         }
 
         return result;
