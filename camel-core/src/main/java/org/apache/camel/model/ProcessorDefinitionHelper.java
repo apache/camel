@@ -55,8 +55,20 @@ public final class ProcessorDefinitionHelper {
      * @return         the found definitions, or <tt>null</tt> if not found
      */
     public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
+        return filterTypeInOutputs(outputs, type, -1);
+    }
+
+    /**
+     * Looks for the given type in the list of outputs and recurring all the children as well.
+     *
+     * @param outputs  list of outputs, can be null or empty.
+     * @param type     the type to look for
+     * @param maxDeep  maximum levels deep to traverse
+     * @return         the found definitions, or <tt>null</tt> if not found
+     */
+    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<T>();
-        doFindType(outputs, type, found);
+        doFindType(outputs, type, found, maxDeep);
         return found.iterator();
     }
 
@@ -70,7 +82,7 @@ public final class ProcessorDefinitionHelper {
      */
     public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
-        doFindType(outputs, type, found);
+        doFindType(outputs, type, found, -1);
         if (found.isEmpty()) {
             return null;
         }
@@ -202,9 +214,31 @@ public final class ProcessorDefinitionHelper {
         return set;
     }
 
+    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int maxDeep) {
+
+        // do we have any top level abstracts, then we should max deep one more level down
+        // as that is really what we want to traverse as well
+        if (maxDeep > 0) {
+            for (ProcessorDefinition<?> out : outputs) {
+                if (out.isAbstract() && out.isTopLevelOnly()) {
+                    maxDeep = maxDeep + 1;
+                    break;
+                }
+            }
+        }
+
+        // start from level 1
+        doFindType(outputs, type, found, 1, maxDeep);
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found) {
+    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int current, int maxDeep) {
         if (outputs == null || outputs.isEmpty()) {
+            return;
+        }
+
+        // break out
+        if (maxDeep > 0 && current > maxDeep) {
             return;
         }
 
@@ -214,7 +248,7 @@ public final class ProcessorDefinitionHelper {
             if (out instanceof SendDefinition) {
                 SendDefinition send = (SendDefinition) out;
                 List<ProcessorDefinition<?>> children = send.getOutputs();
-                doFindType(children, type, found);
+                doFindType(children, type, found, ++current, maxDeep);
             }
 
             // special for choice
@@ -231,13 +265,13 @@ public final class ProcessorDefinitionHelper {
                         found.add((T)when);   
                     }
                     List<ProcessorDefinition<?>> children = when.getOutputs();
-                    doFindType(children, type, found);
+                    doFindType(children, type, found, ++current, maxDeep);
                 }
 
                 // otherwise is optional
                 if (choice.getOtherwise() != null) {
                     List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
-                    doFindType(children, type, found);
+                    doFindType(children, type, found, ++current, maxDeep);
                 }
 
                 // do not check children as we already did that
@@ -254,15 +288,15 @@ public final class ProcessorDefinitionHelper {
                 }
 
                 List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
-                doFindType(doTryOut, type, found);
+                doFindType(doTryOut, type, found, ++current, maxDeep);
 
                 List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
                 for (CatchDefinition doCatch : doTryCatch) {
-                    doFindType(doCatch.getOutputs(), type, found);
+                    doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
                 }
 
                 if (doTry.getFinallyClause() != null) {
-                    doFindType(doTry.getFinallyClause().getOutputs(), type, found);
+                    doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
                 }
 
                 // do not check children as we already did that
@@ -279,7 +313,7 @@ public final class ProcessorDefinitionHelper {
                 }
 
                 List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
-                doFindType(outDefOut, type, found);
+                doFindType(outDefOut, type, found, ++current, maxDeep);
 
                 // do not check children as we already did that
                 continue;
@@ -291,7 +325,7 @@ public final class ProcessorDefinitionHelper {
 
             // try children as well
             List<ProcessorDefinition<?>> children = out.getOutputs();
-            doFindType(children, type, found);
+            doFindType(children, type, found, ++current, maxDeep);
         }
     }
 

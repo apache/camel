@@ -33,6 +33,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     private boolean selectLast;
     private int selectFrom = -1;
     private int selectTo = -1;
+    private int maxDeep = -1;
 
     public AdviceWithBuilder(AdviceWithRouteBuilder builder, String id, String toString, Class<T> type) {
         this.builder = builder;
@@ -102,6 +103,25 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Will only apply for nodes maximum levels deep.
+     * <p/>
+     * The first level is <tt>1</tt>, and level <tt>2</tt> is the children of the the first level nodes, and so on.
+     * <p/>
+     * Use zero or negative value for unbounded level.
+     *
+     * @param maxDeep the maximum levels to traverse deep in the Camel route tree.
+     * @return the builder to build the nodes.
+     */
+    public AdviceWithBuilder<T> maxDeep(int maxDeep) {
+        if (maxDeep == 0) {
+            // disable it
+            this.maxDeep = -1;
+        }
+        this.maxDeep = maxDeep;
+        return this;
+    }
+
+    /**
      * Replaces the matched node(s) with the following nodes.
      *
      * @return the builder to build the nodes.
@@ -110,11 +130,11 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(route, toString, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(route, toString, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
         return answer;
     }
@@ -125,11 +145,11 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
     public void remove() {
         RouteDefinition route = builder.getOriginalRoute();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeById(route, id, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeById(route, id, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(route, toString, selectLast, selectFirst, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(route, toString, selectLast, selectFirst, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(route, type, selectFirst, selectFirst, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(route, type, selectFirst, selectFirst, selectFrom, selectTo, maxDeep));
         }
     }
 
@@ -142,11 +162,11 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(route, toString, answer, selectLast, selectFirst, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(route, toString, answer, selectLast, selectFirst, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
         return answer;
     }
@@ -160,11 +180,11 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(route, toString, answer, selectLast, selectFirst, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(route, toString, answer, selectLast, selectFirst, selectFrom, selectTo, maxDeep));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         }
         return answer;
     }

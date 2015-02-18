@@ -179,7 +179,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddLast() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, "*", null, null).selectLast().after();
+        return new AdviceWithBuilder<T>(this, "*", null, null).maxDeep(1).selectLast().after();
     }
 
 }
