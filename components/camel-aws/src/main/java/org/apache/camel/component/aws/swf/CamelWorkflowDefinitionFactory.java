@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.aws.swf;
 
+import com.amazonaws.services.simpleworkflow.flow.DataConverter;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContext;
-import com.amazonaws.services.simpleworkflow.flow.JsonDataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
 import com.amazonaws.services.simpleworkflow.flow.generic.WorkflowDefinition;
 import com.amazonaws.services.simpleworkflow.flow.generic.WorkflowDefinitionFactory;
@@ -28,11 +28,13 @@ public class CamelWorkflowDefinitionFactory extends WorkflowDefinitionFactory {
     private SWFWorkflowConsumer swfWorkflowConsumer;
     private WorkflowType workflowType;
     private WorkflowTypeRegistrationOptions registrationOptions;
+    private DataConverter dataConverter;
 
-    public CamelWorkflowDefinitionFactory(SWFWorkflowConsumer swfWorkflowConsumer, WorkflowType workflowType, WorkflowTypeRegistrationOptions registrationOptions) {
+    public CamelWorkflowDefinitionFactory(SWFWorkflowConsumer swfWorkflowConsumer, WorkflowType workflowType, WorkflowTypeRegistrationOptions registrationOptions, DataConverter dataConverter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.workflowType = workflowType;
         this.registrationOptions = registrationOptions;
+        this.dataConverter = dataConverter;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class CamelWorkflowDefinitionFactory extends WorkflowDefinitionFactory {
     @Override
     public WorkflowDefinition getWorkflowDefinition(DecisionContext context) throws Exception {
         CurrentDecisionContext.set(context);
-        return new CamelWorkflowDefinition(swfWorkflowConsumer, context, new JsonDataConverter());
+        return new CamelWorkflowDefinition(swfWorkflowConsumer, context, dataConverter);
     }
 
     @Override
