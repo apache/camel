@@ -42,9 +42,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
-public class CassandraAggregationRepositoryTest {
+public class NamedCassandraAggregationRepositoryTest {
     @Rule
-    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("AggregationDataSet.cql");
+    public CassandraCQLUnit cassandraRule = CassandraUnitUtils.cassandraCQLUnit("NamedAggregationDataSet.cql");
 
     private Cluster cluster;
     private Session session;
@@ -61,7 +61,8 @@ public class CassandraAggregationRepositoryTest {
         camelContext = new DefaultCamelContext();
         cluster = CassandraUnitUtils.cassandraCluster();
         session = cluster.connect(CassandraUnitUtils.KEYSPACE);
-        aggregationRepository = new CassandraAggregationRepository(session);
+        aggregationRepository = new NamedCassandraAggregationRepository(session, "ID");
+        aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.start();
     }
 
@@ -79,7 +80,7 @@ public class CassandraAggregationRepositoryTest {
 
     private boolean exists(String key) {
         return session.execute(
-                "select KEY from CAMEL_AGGREGATION where KEY=?", key)
+                "select KEY from NAMED_CAMEL_AGGREGATION where NAME=? and KEY=?", "ID", key)
                 .one() != null;
     }
 
