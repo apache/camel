@@ -45,7 +45,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * and generates a report.
  *
  * @goal prepare-catalog
- * @execute phase="process-resources"
  */
 public class PrepareCatalogMojo extends AbstractMojo {
 

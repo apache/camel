@@ -48,8 +48,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
  * @goal generate-dataformats-list
- * @execute phase="generate-resources"
- * @execute phase="process-classes"
  */
 public class PackageDataFormatMojo extends AbstractMojo {
 
