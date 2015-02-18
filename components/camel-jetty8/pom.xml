@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
+            <version>${jetty8-version}</version>
             <exclusions>
                <exclusion>
                    <groupId>javax.servlet</groupId>
@@ -72,22 +73,27 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+            <version>${jetty8-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-security</artifactId>
+            <version>${jetty8-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
+            <version>${jetty8-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
+            <version>${jetty8-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jmx</artifactId>
+            <version>${jetty8-version}</version>
         </dependency>
         
         <!-- test dependencies -->
@@ -132,15 +138,35 @@
     </dependencies>
 
     <build>
-    	<testSourceDirectory>../camel-jetty9/src/test/java</testSourceDirectory>
+    	<testSourceDirectory>target/generated/src/test/java</testSourceDirectory>
         <plugins>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="target/generated/src/test/java">
+                                    <fileset dir="../camel-jetty9/src/test/java"/>
+                                </copy>                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- use per test fork mode to avoid side effects -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
           	    <forkCount>1</forkCount>
-	  	    <reuseForks>false</reuseForks>
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
+                <reuseForks>false</reuseForks>
+                <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
         </plugins>
