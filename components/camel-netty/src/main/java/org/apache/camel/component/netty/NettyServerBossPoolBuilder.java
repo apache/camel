@@ -62,7 +62,7 @@ public final class NettyServerBossPoolBuilder {
     /**
      * Creates a new boss pool.
      */
-    BossPool build() {
+    public BossPool build() {
         return new NioServerBossPool(Executors.newCachedThreadPool(), bossCount, new CamelNettyThreadNameDeterminer(pattern, name));
     }
 }
