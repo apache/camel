@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cassandra;
 
+import java.util.Collection;
+
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
@@ -26,7 +28,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import static org.apache.camel.utils.cassandra.CassandraUtils.isEmpty;
 
 /**
@@ -65,9 +66,11 @@ public class CassandraProducer extends DefaultProducer {
     public CassandraEndpoint getEndpoint() {
         return (CassandraEndpoint) super.getEndpoint();
     }
+
     public boolean isPrepareStatements() {
         return getEndpoint().isPrepareStatements();
     }
+
     private Object[] getCqlParams(Message message) {
         Object cqlParamsObj = message.getBody();
         Object[] cqlParams;
@@ -122,7 +125,7 @@ public class CassandraProducer extends DefaultProducer {
             // Message Statement
             lPreparedStatement = getEndpoint().getSession().prepare((RegularStatement) messageCql);
         } else {
-            throw new IllegalArgumentException("Invalid "+CassandraConstants.CQL_QUERY+" header");
+            throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
         if (isEmpty(cqlParams)) {
             resultSet = session.execute(lPreparedStatement.bind());
@@ -149,7 +152,7 @@ public class CassandraProducer extends DefaultProducer {
             // Message Statement
             statement = (RegularStatement) messageCql;
         } else {
-            throw new IllegalArgumentException("Invalid "+CassandraConstants.CQL_QUERY+" header");
+            throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
         if (statement != null) {
             resultSet = session.execute(statement);

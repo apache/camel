@@ -180,25 +180,26 @@ public class NamedCassandraAggregationRepositoryTest {
     @Test
     public void testConfirmNotExist() {
         // Given
-        String[] keys=new String[3];
+        String[] keys = new String[3];
         for (int i = 1; i < 4; i++) {
-            keys[i-1] = "Confirm" + i; 
+            keys[i - 1] = "Confirm" + i;
         }
         addExchanges(keys);
-        for(String key:keys) {
+        for (String key : keys) {
             assertTrue(exists(key));
         }
         // When
         aggregationRepository.confirm(camelContext, "Exchange-Confirm5");
         // Then
-        for (String key: keys) {
+        for (String key : keys) {
             assertTrue(exists(key));
         }
     }
-    private void addExchanges(String ... keys) {
+
+    private void addExchanges(String... keys) {
         for (String key : keys) {
             Exchange exchange = new DefaultExchange(camelContext);
-            exchange.setExchangeId("Exchange-"+key);
+            exchange.setExchangeId("Exchange-" + key);
             aggregationRepository.add(camelContext, key, exchange);
         }
     }
@@ -212,7 +213,7 @@ public class NamedCassandraAggregationRepositoryTest {
         Set<String> exchangeIdSet = aggregationRepository.scan(camelContext);
         // Then
         for (String key : keys) {
-            assertTrue(exchangeIdSet.contains("Exchange-"+key));
+            assertTrue(exchangeIdSet.contains("Exchange-" + key));
         }
     }
 

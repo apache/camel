@@ -107,7 +107,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
 
     protected final boolean isApplied(ResultSet resultSet) {
         Row row = resultSet.one();
-        return row==null || row.getBool("[applied]");
+        return row == null || row.getBool("[applied]");
     }
 
     protected Object[] getPKValues(K key) {

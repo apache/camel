@@ -20,19 +20,27 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 import com.datastax.driver.core.querybuilder.Select;
 
-/**
- *
- */
-public class CassandraUtils {
+import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.ttl;
+
+public final class CassandraUtils {
+
+    private CassandraUtils() {
+    }
+
     /**
      * Test if the array is null or empty.
      */
     public static boolean isEmpty(Object[] array) {
         return array == null || array.length == 0;
     }
+
     /**
      * Concatenate 2 arrays.
      */
@@ -56,6 +64,7 @@ public class CassandraUtils {
     private static boolean isEmpty(String[] array) {
         return size(array) == 0;
     }
+
     /**
      * Concatenate 2 arrays.
      */
@@ -91,7 +100,7 @@ public class CassandraUtils {
      */
     public static Insert generateInsert(String table, String[] columns, boolean ifNotExists, Integer ttl) {
         Insert insert = insertInto(table);
-        for(String column: columns) {
+        for (String column : columns) {
             insert = insert.value(column, bindMarker());
         }
         if (ifNotExists) {
@@ -102,6 +111,7 @@ public class CassandraUtils {
         }
         return insert;
     }
+
     /**
      * Generate select where columns = ? CQL.
      */
@@ -116,7 +126,7 @@ public class CassandraUtils {
         Select select = select(selectColumns).from(table);
         if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
             Select.Where where = select.where();
-            for(int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
+            for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
                 where.and(eq(whereColumns[i], bindMarker()));
             }
         }
@@ -137,7 +147,7 @@ public class CassandraUtils {
         Delete delete = delete().from(table);
         if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
             Delete.Where where = delete.where();
-            for(int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
+            for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
                 where.and(eq(whereColumns[i], bindMarker()));
             }
         }
@@ -150,6 +160,7 @@ public class CassandraUtils {
     private static boolean isWhereClause(String[] whereColumns, int whereColumnsMaxIndex) {
         return !isEmpty(whereColumns) && whereColumnsMaxIndex > 0;
     }
+
     /**
      * Apply consistency level if provided, else leave default.
      */

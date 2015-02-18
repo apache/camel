@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.*;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import java.util.Arrays;
+import java.util.List;
+
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -32,10 +34,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 
 public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
@@ -67,9 +68,9 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
             public void configure() {
 
                 from("direct:input")
-                        .to("cql://localhost/camel_ks?cql=" + CQL+"&prepareStatements=false");
+                        .to("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false");
                 from("direct:inputNoParameter")
-                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL+"&prepareStatements=false");
+                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&prepareStatements=false");
             }
         };
     }
@@ -90,7 +91,7 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRequestNoParameter_Null() throws Exception {
+    public void testRequestNoParameterNull() throws Exception {
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -99,7 +100,7 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRequestNoParameter_Empty() throws Exception {
+    public void testRequestNoParameterEmpty() throws Exception {
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -122,7 +123,7 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
         session.close();
         cluster.close();
     }
-    
+
     /**
      * Test with incoming message containing a header with RegularStatement.
      */

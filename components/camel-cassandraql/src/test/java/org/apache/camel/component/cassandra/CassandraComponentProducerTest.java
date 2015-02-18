@@ -16,8 +16,15 @@
  */
 package org.apache.camel.component.cassandra;
 
-import com.datastax.driver.core.*;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -29,9 +36,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 
 public class CassandraComponentProducerTest extends CamelTestSupport {
 
@@ -92,7 +100,7 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRequestNoParameter_Null() throws Exception {
+    public void testRequestNoParameterNull() throws Exception {
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -101,7 +109,7 @@ public class CassandraComponentProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRequestNoParameter_Empty() throws Exception {
+    public void testRequestNoParameterEmpty() throws Exception {
         Object response = noParameterProducerTemplate.requestBody(Collections.emptyList());
 
         assertNotNull(response);

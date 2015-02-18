@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
@@ -29,9 +30,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 import com.datastax.driver.core.querybuilder.Select;
-import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AggregationRepository;
@@ -41,6 +40,8 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static org.apache.camel.utils.cassandra.CassandraUtils.append;
 import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
 import static org.apache.camel.utils.cassandra.CassandraUtils.concat;
@@ -112,7 +113,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
      * Prepared statement used to delete with key and exchange id
      */
     private PreparedStatement deleteIfIdStatement;
-    
+
     private long recoveryIntervalInMillis = 5000;
 
     private boolean useRecovery = true;
@@ -309,6 +310,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     /**
      * Get exchange IDs to be recovered
+     *
      * @return Exchange IDs
      */
     @Override
@@ -335,12 +337,11 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
             if (lExchangeId.equals(exchangeId)) {
                 lKey = row.getString(keyColumnName);
                 break;
-            }            
+            }
         }
         return lKey == null ? null : get(camelContext, lKey);
     }
-    
-    
+
 
     // -------------------------------------------------------------------------
     // Getters and Setters
@@ -365,7 +366,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         return prefixPKValues;
     }
 
-    public void setPrefixPKValues(Object ... prefixPKValues) {
+    public void setPrefixPKValues(Object... prefixPKValues) {
         this.prefixPKValues = prefixPKValues;
     }
 
