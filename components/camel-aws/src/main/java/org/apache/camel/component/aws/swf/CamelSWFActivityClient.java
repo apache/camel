@@ -60,7 +60,7 @@ public class CamelSWFActivityClient {
     }
 
     DynamicActivitiesClient getDynamicActivitiesClient() {
-        return new DynamicActivitiesClientImpl();
+        return new DynamicActivitiesClientImpl(null, configuration.getDataConverter());
     }
 
 }

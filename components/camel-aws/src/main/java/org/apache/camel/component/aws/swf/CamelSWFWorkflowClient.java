@@ -103,7 +103,7 @@ public class CamelSWFWorkflowClient {
         WorkflowExecution workflowExecution = new WorkflowExecution();
         workflowExecution.setWorkflowId(workflowId != null ? workflowId : genericClient.generateUniqueId());
         workflowExecution.setRunId(runId);
-        return new DynamicWorkflowClientExternalImpl(workflowExecution, null, endpoint.getStartWorkflowOptions(), null, genericClient);
+        return new DynamicWorkflowClientExternalImpl(workflowExecution, null, endpoint.getStartWorkflowOptions(), configuration.getDataConverter(), genericClient);
     }
 
     private Object[] toArray(Object input) {

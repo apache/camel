@@ -24,7 +24,6 @@ import com.amazonaws.services.simpleworkflow.flow.DataConverterException;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContext;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContextProvider;
 import com.amazonaws.services.simpleworkflow.flow.DecisionContextProviderImpl;
-import com.amazonaws.services.simpleworkflow.flow.JsonDataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowClock;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowException;
 import com.amazonaws.services.simpleworkflow.flow.common.WorkflowExecutionUtils;
@@ -40,12 +39,12 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
     private SWFWorkflowConsumer swfWorkflowConsumer;
     private DecisionContext decisionContext;
-    private JsonDataConverter dataConverter;
+    private DataConverter dataConverter;
 
     private final DecisionContextProvider contextProvider = new DecisionContextProviderImpl();
     private final WorkflowClock workflowClock = contextProvider.getDecisionContext().getWorkflowClock();
 
-    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext, JsonDataConverter dataConverter) {
+    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext, DataConverter dataConverter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.decisionContext = decisionContext;
         this.dataConverter = dataConverter;
