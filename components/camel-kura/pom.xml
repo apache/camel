@@ -37,6 +37,7 @@
         <camel.osgi.export.pkg>org.apache.camel.component.kura</camel.osgi.export.pkg>
 
         <kura-slf4j.version>1.6.4</kura-slf4j.version>
+        <eclipse-osgi.version>3.8.1.v20120830-144521</eclipse-osgi.version>
     </properties>
 
     <dependencies>
@@ -47,7 +48,7 @@
         <dependency>
             <groupId>org.eclipse.birt.runtime</groupId>
             <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.8.1.v20120830-144521</version>
+            <version>${eclipse-osgi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

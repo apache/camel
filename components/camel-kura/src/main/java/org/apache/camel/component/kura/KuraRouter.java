@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class KuraRouter extends RouteBuilder implements BundleActivator {
 
+    // Member collaborators
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected BundleContext bundleContext;
@@ -35,6 +37,8 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
     protected CamelContext camelContext;
 
     protected ProducerTemplate producerTemplate;
+
+    // Lifecycle
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
