@@ -27,9 +27,15 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.Insert;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import com.datastax.driver.core.querybuilder.Select;
+import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
@@ -49,7 +55,7 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
  * Warning: Cassandra is not the best tool for queuing use cases
  * See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
-public abstract class CassandraAggregationRepository extends ServiceSupport implements AggregationRepository {
+public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
     /**
      * Logger
      */
@@ -71,9 +77,13 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
      */
     private String exchangeColumn = "EXCHANGE";
     /**
+     * Values used as primary key prefix
+     */
+    private Object[] prefixPKValues = new Object[0];
+    /**
      * Primary key columns
      */
-    private String[] pkColumns;
+    private String[] pkColumns = {"KEY"};
     /**
      * Exchange marshaller/unmarshaller
      */
@@ -95,13 +105,21 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
     /**
-     * Prepared statement used to get keys and exchange ids
+     * Prepared statement used to get exchangeIds and exchange ids
      */
     private PreparedStatement selectKeyIdStatement;
     /**
      * Prepared statement used to delete with key and exchange id
      */
     private PreparedStatement deleteIfIdStatement;
+    
+    private long recoveryIntervalInMillis = 5000;
+
+    private boolean useRecovery = true;
+
+    private String deadLetterUri;
+
+    private int maximumRedeliveries;
 
     public CassandraAggregationRepository() {
     }
@@ -115,15 +133,10 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     }
 
     /**
-     * Get fixed primary key values.
-     */
-    protected abstract Object[] getPKValues();
-
-    /**
-     * Generate primary key values: fixed + aggregation key.
+     * Generate primary key values from aggregation key.
      */
     protected Object[] getPKValues(String key) {
-        return append(getPKValues(), key);
+        return append(prefixPKValues, key);
     }
 
     /**
@@ -158,11 +171,12 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Add exchange to repository
 
     private void initInsertStatement() {
-        String cql = generateInsert(table,
+        Insert insert = generateInsert(table,
                 getAllColumns(),
-                false, ttl).toString();
-        LOGGER.debug("Generated Insert {}", cql);
-        insertStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+                false, ttl);
+        insert = applyConsistencyLevel(insert, writeConsistencyLevel);
+        LOGGER.debug("Generated Insert {}", insert);
+        insertStatement = getSession().prepare(insert);
     }
 
     /**
@@ -186,11 +200,12 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Get exchange from repository
 
     protected void initSelectStatement() {
-        String cql = generateSelect(table,
+        Select select = generateSelect(table,
                 getAllColumns(),
-                pkColumns).toString();
-        LOGGER.debug("Generated Select {}", cql);
-        selectStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
+                pkColumns);
+        select = (Select) applyConsistencyLevel(select, readConsistencyLevel);
+        LOGGER.debug("Generated Select {}", select);
+        selectStatement = getSession().prepare(select);
     }
 
     /**
@@ -217,11 +232,11 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // -------------------------------------------------------------------------
     // Confirm exchange in repository
     private void initDeleteIfIdStatement() {
-        StringBuilder cqlBuilder = generateDelete(table, pkColumns, false);
-        cqlBuilder.append(" if ").append(exchangeIdColumn).append("=?");
-        String cql = cqlBuilder.toString();
-        LOGGER.debug("Generated Delete If Id {}", cql);
-        deleteIfIdStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+        Delete delete = generateDelete(table, pkColumns, false);
+        Delete.Conditions deleteIf = delete.onlyIf(eq(exchangeIdColumn, bindMarker()));
+        deleteIf = applyConsistencyLevel(deleteIf, writeConsistencyLevel);
+        LOGGER.debug("Generated Delete If Id {}", deleteIf);
+        deleteIfIdStatement = getSession().prepare(deleteIf);
     }
 
     /**
@@ -229,14 +244,13 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
      */
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        Object[] pkValues = getPKValues();
         String keyColumn = getKeyColumn();
-        LOGGER.debug("Selecting Ids {} ", pkValues);
+        LOGGER.debug("Selecting Ids");
         List<Row> rows = selectKeyIds();
         for (Row row : rows) {
             if (row.getString(exchangeIdColumn).equals(exchangeId)) {
                 String key = row.getString(keyColumn);
-                Object[] cqlParams = append(pkValues, key, exchangeId);
+                Object[] cqlParams = append(getPKValues(key), exchangeId);
                 LOGGER.debug("Deleting If Id {} ", cqlParams);
                 getSession().execute(deleteIfIdStatement.bind(cqlParams));
             }
@@ -247,9 +261,10 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
     // Remove exchange from repository
 
     private void initDeleteStatement() {
-        String cql = generateDelete(table, pkColumns, false).toString();
-        LOGGER.debug("Generated Delete {}", cql);
-        deleteStatement = applyConsistencyLevel(getSession().prepare(cql), writeConsistencyLevel);
+        Delete delete = generateDelete(table, pkColumns, false);
+        delete = applyConsistencyLevel(delete, writeConsistencyLevel);
+        LOGGER.debug("Generated Delete {}", delete);
+        deleteStatement = getSession().prepare(delete);
     }
 
     /**
@@ -264,33 +279,68 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
 
     // -------------------------------------------------------------------------
     private void initSelectKeyIdStatement() {
-        String cql = generateSelect(table,
+        Select select = generateSelect(table,
                 new String[]{getKeyColumn(), exchangeIdColumn}, // Key + Exchange Id columns
-                pkColumns, pkColumns.length - 1).toString(); // Where fixed PK columns
-        LOGGER.debug("Generated Select keys {}", cql);
-        selectKeyIdStatement = applyConsistencyLevel(getSession().prepare(cql), readConsistencyLevel);
+                pkColumns, pkColumns.length - 1); // Where fixed PK columns
+        select = applyConsistencyLevel(select, readConsistencyLevel);
+        LOGGER.debug("Generated Select keys {}", select);
+        selectKeyIdStatement = getSession().prepare(select);
     }
 
-    private List<Row> selectKeyIds() {
-        Object[] pkValues = getPKValues();
-        LOGGER.debug("Selecting keys {}", pkValues);
-        return getSession().execute(selectKeyIdStatement.bind(pkValues)).all();
+    protected List<Row> selectKeyIds() {
+        LOGGER.debug("Selecting keys {}", getPrefixPKValues());
+        return getSession().execute(selectKeyIdStatement.bind(getPrefixPKValues())).all();
     }
 
     /**
-     * Get aggregation keys from aggregation table.
+     * Get aggregation exchangeIds from aggregation table.
      */
     @Override
     public Set<String> getKeys() {
         List<Row> rows = selectKeyIds();
         Set<String> keys = new HashSet<String>(rows.size());
-        String keyColumnName = getPKColumns()[1];
+        String keyColumnName = getKeyColumn();
         for (Row row : rows) {
             keys.add(row.getString(keyColumnName));
         }
         return keys;
     }
 
+
+    /**
+     * Get exchange IDs to be recovered
+     * @return Exchange IDs
+     */
+    @Override
+    public Set<String> scan(CamelContext camelContext) {
+        List<Row> rows = selectKeyIds();
+        Set<String> exchangeIds = new HashSet<String>(rows.size());
+        for (Row row : rows) {
+            exchangeIds.add(row.getString(exchangeIdColumn));
+        }
+        return exchangeIds;
+    }
+
+    /**
+     * Get exchange by exchange ID.
+     * This is far from optimal.
+     */
+    @Override
+    public Exchange recover(CamelContext camelContext, String exchangeId) {
+        List<Row> rows = selectKeyIds();
+        String keyColumnName = getKeyColumn();
+        String lKey = null;
+        for (Row row : rows) {
+            String lExchangeId = row.getString(exchangeIdColumn);
+            if (lExchangeId.equals(exchangeId)) {
+                lKey = row.getString(keyColumnName);
+                break;
+            }            
+        }
+        return lKey == null ? null : get(camelContext, lKey);
+    }
+    
+    
 
     // -------------------------------------------------------------------------
     // Getters and Setters
@@ -309,6 +359,14 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+    public Object[] getPrefixPKValues() {
+        return prefixPKValues;
+    }
+
+    public void setPrefixPKValues(Object ... prefixPKValues) {
+        this.prefixPKValues = prefixPKValues;
     }
 
     public String[] getPKColumns() {
@@ -357,6 +415,55 @@ public abstract class CassandraAggregationRepository extends ServiceSupport impl
 
     public void setTtl(Integer ttl) {
         this.ttl = ttl;
+    }
+
+    @Override
+    public long getRecoveryIntervalInMillis() {
+        return recoveryIntervalInMillis;
+    }
+
+    public void setRecoveryIntervalInMillis(long recoveryIntervalInMillis) {
+        this.recoveryIntervalInMillis = recoveryIntervalInMillis;
+    }
+
+    @Override
+    public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
+        this.recoveryIntervalInMillis = timeUnit.toMillis(interval);
+    }
+
+    @Override
+    public void setRecoveryInterval(long recoveryIntervalInMillis) {
+        this.recoveryIntervalInMillis = recoveryIntervalInMillis;
+    }
+
+    @Override
+    public boolean isUseRecovery() {
+        return useRecovery;
+    }
+
+    @Override
+    public void setUseRecovery(boolean useRecovery) {
+        this.useRecovery = useRecovery;
+    }
+
+    @Override
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
+
+    @Override
+    public void setDeadLetterUri(String deadLetterUri) {
+        this.deadLetterUri = deadLetterUri;
+    }
+
+    @Override
+    public int getMaximumRedeliveries() {
+        return maximumRedeliveries;
+    }
+
+    @Override
+    public void setMaximumRedeliveries(int maximumRedeliveries) {
+        this.maximumRedeliveries = maximumRedeliveries;
     }
 
 }

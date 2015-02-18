@@ -66,6 +66,21 @@ public class CassandraComponentConsumerTest extends CamelTestSupport {
     }
 
     @Test
+    public void testConsumeUnprepared() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultUnprepared");
+        mock.expectedMinimumMessageCount(1);
+        mock.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Object body = exchange.getIn().getBody();
+                assertTrue(body instanceof List);
+            }
+        });
+        mock.await(1, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testConsumeOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultOne");
         mock.expectedMinimumMessageCount(1);
@@ -87,6 +102,8 @@ public class CassandraComponentConsumerTest extends CamelTestSupport {
             public void configure() {
                 from("cql://localhost/camel_ks?cql=" + CQL)
                         .to("mock:resultAll");
+                from("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false")
+                        .to("mock:resultUnprepared");
                 from("cql://localhost/camel_ks?cql=" + CQL + "&resultSetConversionStrategy=ONE")
                         .to("mock:resultOne");
             }
