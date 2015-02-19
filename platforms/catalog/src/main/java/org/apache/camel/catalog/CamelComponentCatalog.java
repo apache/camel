@@ -18,10 +18,12 @@ package org.apache.camel.catalog;
 
 import java.util.List;
 import java.util.Set;
+import javax.management.MXBean;
 
 /**
  * Catalog of all the Camel components from this Apache Camel release.
  */
+@MXBean
 public interface CamelComponentCatalog {
 
     /**

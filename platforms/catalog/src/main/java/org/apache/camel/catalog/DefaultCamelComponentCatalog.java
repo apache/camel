@@ -42,7 +42,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     private static final String COMPONENTS_JSON = "org/apache/camel/catalog/components";
     private static final String DATA_FORMATS_JSON = "org/apache/camel/catalog/dataformats";
     private static final String LANGUAGE_JSON = "org/apache/camel/catalog/languages";
-    private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/camel-catalog.xml";
+    private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
 
     @Override
