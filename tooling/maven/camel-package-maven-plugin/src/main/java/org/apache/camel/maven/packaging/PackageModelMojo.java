@@ -37,7 +37,6 @@ import org.apache.maven.project.MavenProjectHelper;
  * Analyses the Camel EIPs in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
  * @goal generate-eips-list
- * @execute phase="process-classes"
  */
 public class PackageModelMojo extends AbstractMojo {
 

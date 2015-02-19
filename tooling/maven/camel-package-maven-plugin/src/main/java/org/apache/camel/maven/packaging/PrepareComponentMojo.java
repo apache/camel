@@ -38,7 +38,6 @@ import static org.apache.camel.maven.packaging.PackageLanguageMojo.prepareLangua
  * And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling.
  *
  * @goal prepare-components
- * @execute phase="generate-resources"
  */
 public class PrepareComponentMojo extends AbstractMojo {
 
