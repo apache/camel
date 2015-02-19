@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GangliaConfiguration implements Cloneable {
 
-    public static final String DEFAULT_DESTINATION = "127.0.0.1";
+    public static final String DEFAULT_DESTINATION = "239.2.11.71";
     public static final int DEFAULT_PORT = 8649;
     public static final GMetric.UDPAddressingMode DEFAULT_MODE = GMetric.UDPAddressingMode.MULTICAST;
     public static final int DEFAULT_TTL = 5;
@@ -56,22 +56,22 @@ public class GangliaConfiguration implements Cloneable {
     @UriParam
     private GMetric.UDPAddressingMode mode = DEFAULT_MODE;
 
-    @UriParam(defaultValue = "5")
+    @UriParam
     private int ttl = DEFAULT_TTL;
 
-    @UriParam(defaultValue = "true")
+    @UriParam
     private boolean wireFormat31x = DEFAULT_WIRE_FORMAT_31X;
 
     @UriParam
     private String spoofHostname;
 
-    @UriParam(defaultValue = "Java")
+    @UriParam
     private String groupName = DEFAULT_GROUP_NAME;
 
     @UriParam
-    private String prefix;
+    private String prefix = null;
 
-    @UriParam(defaultValue = "metric")
+    @UriParam
     private String metricName = DEFAULT_METRIC_NAME;
 
     @UriParam
@@ -80,13 +80,13 @@ public class GangliaConfiguration implements Cloneable {
     @UriParam
     private GMetricSlope slope = DEFAULT_SLOPE;
 
-    @UriParam(defaultValue = "")
+    @UriParam
     private String units = DEFAULT_UNITS;
 
-    @UriParam(defaultValue = "60")
+    @UriParam
     private int tmax = DEFAULT_TMAX;
 
-    @UriParam(defaultValue = "0")
+    @UriParam
     private int dmax = DEFAULT_DMAX;
 
     /**
@@ -217,19 +217,19 @@ public class GangliaConfiguration implements Cloneable {
         this.units = units;
     }
 
-    public int getTMax() {
+    public int getTmax() {
         return tmax;
     }
 
-    public void setTMax(int tmax) {
+    public void setTmax(int tmax) {
         this.tmax = tmax;
     }
 
-    public int getDMax() {
+    public int getDmax() {
         return dmax;
     }
 
-    public void setDMax(int dmax) {
+    public void setDmax(int dmax) {
         this.dmax = dmax;
     }
 

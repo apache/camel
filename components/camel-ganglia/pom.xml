@@ -36,6 +36,20 @@
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=ganglia</camel.osgi.export.service>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>jboss.fs</id>
+      <name>JBoss FuseSource Public Release Repository</name>
+      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
@@ -46,7 +60,7 @@
     <dependency>
       <groupId>info.ganglia.gmetric4j</groupId>
       <artifactId>gmetric4j</artifactId>
-      <version>1.0.7</version>
+      <version>${gmetric4j-version}</version>
     </dependency>
 
     <!-- test dependencies -->

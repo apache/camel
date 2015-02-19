@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.ganglia;
 
+import java.util.concurrent.ExecutorService;
+
 import info.ganglia.gmetric4j.Publisher;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -68,17 +71,22 @@ public class GangliaProducer extends DefaultProducer {
             units = message.getHeader(GangliaConstants.METRIC_UNITS, String.class);
         }
 
-        int tmax = conf.getTMax();
+        int tmax = conf.getTmax();
         if (message.getHeaders().containsKey(GangliaConstants.METRIC_TMAX)) {
             tmax = message.getHeader(GangliaConstants.METRIC_TMAX, Integer.class);
         }
 
-        int dmax = conf.getDMax();
+        int dmax = conf.getDmax();
         if (message.getHeaders().containsKey(GangliaConstants.METRIC_DMAX)) {
             dmax = message.getHeader(GangliaConstants.METRIC_DMAX, Integer.class);
         }
 
         String value = message.getBody(String.class);
+        if ((value == null || value.length() == 0) &&
+                (type == GMetricType.FLOAT || type == GMetricType.DOUBLE)) {
+            log.debug("Metric {} string value was null, using NaN", metricName);
+            value = "NaN";
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Sending metric {} to Ganglia: {}", metricName, value);
