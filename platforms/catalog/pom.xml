@@ -33,10 +33,11 @@
   <properties>
     <camel.osgi.export.pkg>
       org.apache.camel.catalog,
-      org.apache.camel.catalog.models,
+      org.apache.camel.catalog.archetypes,
       org.apache.camel.catalog.components,
       org.apache.camel.catalog.dataformats,
-      org.apache.camel.catalog.languages
+      org.apache.camel.catalog.languages,
+      org.apache.camel.catalog.models
     </camel.osgi.export.pkg>
   </properties>
 
