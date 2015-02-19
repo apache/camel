@@ -51,6 +51,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
         CamelActivityImplementationFactory factory = new CamelActivityImplementationFactory(this, configuration);
         genericWorker = new GenericActivityWorker(endpoint.getSWClient(), configuration.getDomainName(), configuration.getActivityList());
         genericWorker.setActivityImplementationFactory(factory);
+        genericWorker.setTaskExecutorThreadPoolSize(configuration.getActivityThreadPoolSize());
         genericWorker.start();
         super.doStart();
     }
