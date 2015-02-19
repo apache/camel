@@ -36,7 +36,7 @@ import static org.apache.camel.maven.packaging.StringHelper.between;
 /**
  * Creates the Maven catalog for the Camel archetypes
  *
- * @goal generate-archetype-catalog
+ * @goal generate-and-attach-archetype-catalog
  * @execute phase="process-resources"
  */
 public class PackageArchetypeCatalogMojo extends AbstractMojo {
@@ -58,6 +58,13 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
     protected File outDir;
 
     /**
+     * The build directory
+     *
+     * @parameter default-value="${project.build.directory}"
+     */
+    protected File projectBuildDir;
+
+    /**
      * Maven ProjectHelper.
      *
      * @component
@@ -74,16 +81,19 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-            generateArchetypeCatalog(getLog(), project, projectHelper, outDir);
+            generateArchetypeCatalog(getLog(), project, projectHelper, projectBuildDir, outDir);
         } catch (IOException e) {
             throw new MojoFailureException("Error generating archetype catalog due " + e.getMessage(), e);
         }
     }
 
-    public static void generateArchetypeCatalog(Log log, MavenProject project, MavenProjectHelper projectHelper, File outDir) throws MojoExecutionException, IOException {
+    public static void generateArchetypeCatalog(Log log, MavenProject project, MavenProjectHelper projectHelper, File projectBuildDir, File outDir) throws MojoExecutionException, IOException {
 
-        // find all archetypes
-        File[] dirs = new File(".").listFiles(new FileFilter() {
+        File rootDir = projectBuildDir.getParentFile();
+        log.info("Scanning for Camel Maven Archetypes from root directory " + rootDir);
+
+        // find all archetypes which are in the parent dir of the build dir
+        File[] dirs = rootDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 // skip web console as its deprecated
@@ -182,6 +192,19 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
             fos.close();
 
             log.info("Saved archetype catalog to file " + out);
+
+            try {
+                if (projectHelper != null) {
+                    log.info("Attaching archetype catalog to Maven project: " + project.getArtifactId());
+
+                    List<String> includes = new ArrayList<String>();
+                    includes.add("archetype-catalog.xml");
+                    projectHelper.addResource(project, outDir.getPath(), includes, new ArrayList<String>());
+                    projectHelper.attachArtifact(project, "xml", "archetype-catalog", out);
+                }
+            } catch (Exception e) {
+                throw new MojoExecutionException("Failed to attach artifact to Maven project. Reason: " + e, e);
+            }
         }
     }
 
