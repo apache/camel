@@ -95,10 +95,6 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
         File[] dirs = rootDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                // skip web console as its deprecated
-                if ("camel-archetype-webconsole".equals(pathname.getName())) {
-                    return false;
-                }
                 return pathname.getName().startsWith("camel-archetype") && pathname.isDirectory();
             }
         });
