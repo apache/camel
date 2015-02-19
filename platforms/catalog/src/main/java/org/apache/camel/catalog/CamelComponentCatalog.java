@@ -18,10 +18,12 @@ package org.apache.camel.catalog;
 
 import java.util.List;
 import java.util.Set;
+import javax.management.MXBean;
 
 /**
  * Catalog of all the Camel components from this Apache Camel release.
  */
+@MXBean
 public interface CamelComponentCatalog {
 
     /**
@@ -123,4 +125,25 @@ public interface CamelComponentCatalog {
      * @return a set of all the labels.
      */
     Set<String> findModelLabels();
+
+    /**
+     * Returns the Apache Camel Maven Archetype catalog in XML format.
+     *
+     * @return the catalog in XML
+     */
+    String archetypeCatalogAsXml();
+
+    /**
+     * Returns the Camel Spring XML schema
+     *
+     * @return the spring XML schema
+     */
+    String springSchemaAsXml();
+
+    /**
+     * Returns the Camel Blueprint XML schema
+     *
+     * @return the blueprint XML schema
+     */
+    String blueprintSchemaAsXml();
 }

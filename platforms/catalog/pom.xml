@@ -33,16 +33,30 @@
   <properties>
     <camel.osgi.export.pkg>
       org.apache.camel.catalog,
-      org.apache.camel.catalog.models,
+      org.apache.camel.catalog.archetypes,
       org.apache.camel.catalog.components,
       org.apache.camel.catalog.dataformats,
-      org.apache.camel.catalog.languages
+      org.apache.camel.catalog.languages,
+      org.apache.camel.catalog.models,
+      org.apache.camel.catalog.schemas
     </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
 
     <!-- no dependency -->
+
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

@@ -30,7 +30,7 @@
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-scr</artifactId>
   <name>Camel :: Archetypes :: OSGi Service Component Runtime bundle</name>
-  <description>Creates a new Camel SCR bundle project for Karaf</description>
+  <description>Creates a new Camel SCR (Declarative Services) bundle project for OSGi</description>
   <packaging>maven-archetype</packaging>
 
   <build>

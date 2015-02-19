@@ -42,6 +42,8 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     private static final String COMPONENTS_JSON = "org/apache/camel/catalog/components";
     private static final String DATA_FORMATS_JSON = "org/apache/camel/catalog/dataformats";
     private static final String LANGUAGE_JSON = "org/apache/camel/catalog/languages";
+    private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
+    private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
 
     @Override
     public List<String> findComponentNames() {
@@ -381,6 +383,54 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
         }
 
         return answer;
+    }
+
+    @Override
+    public String archetypeCatalogAsXml() {
+        String file = ARCHETYPES_CATALOG;
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        if (is != null) {
+            try {
+                return loadText(is);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String springSchemaAsXml() {
+        String file = SCHEMAS_XML + "/camel-spring.xsd";
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        if (is != null) {
+            try {
+                return loadText(is);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String blueprintSchemaAsXml() {
+        String file = SCHEMAS_XML + "/camel-blueprint.xsd";
+
+        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        if (is != null) {
+            try {
+                return loadText(is);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return null;
     }
 
     /**
