@@ -37,7 +37,6 @@ import static org.apache.camel.maven.packaging.StringHelper.between;
  * Creates the Maven catalog for the Camel archetypes
  *
  * @goal generate-and-attach-archetype-catalog
- * @execute phase="process-resources"
  */
 public class PackageArchetypeCatalogMojo extends AbstractMojo {
 
