@@ -73,6 +73,7 @@
         <include>org.apache.camel:camel-freemarker</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
+        <include>org.apache.camel:camel-ganglia</include>
         <include>org.apache.camel:camel-geocoder</include>
         <include>org.apache.camel:camel-github</include>
         <include>org.apache.camel:camel-google-calendar</include>

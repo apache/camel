@@ -29,10 +29,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
+
 /**
  * @version 
  */
-@UriEndpoint(scheme = "ganglia", producerOnly = true, label = "monitoring")
+@UriEndpoint(scheme = "ganglia", label = "monitoring")
 public class GangliaEndpoint extends DefaultEndpoint {
 
     private Publisher publisher;
