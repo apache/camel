@@ -97,6 +97,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File archetypesOutDir;
 
     /**
+     * The output directory for XML schemas catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/schemas"
+     */
+    protected File schemasOutDir;
+
+    /**
      * The components directory where all the Apache Camel components are
      *
      * @parameter default-value="${project.build.directory}/../../../components"
@@ -116,6 +123,20 @@ public class PrepareCatalogMojo extends AbstractMojo {
      * @parameter default-value="${project.build.directory}/../../../tooling/archetypes"
      */
     protected File archetypesDir;
+
+    /**
+     * The directory where the camel-spring XML schema are
+     *
+     * @parameter default-value="${project.build.directory}/../../../components/camel-spring/target/schema"
+     */
+    protected File springSchemaDir;
+
+    /**
+     * The directory where the camel-blueprint XML schema are
+     *
+     * @parameter default-value="${project.build.directory}/../../../components/camel-blueprint/target/schema"
+     */
+    protected File blueprintSchemaDir;
 
     /**
      * Maven ProjectHelper.
@@ -138,6 +159,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeDataFormats();
         executeLanguages();
         executeArchetypes();
+        executeXmlSchemas();
     }
 
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
@@ -614,6 +636,31 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         if (file.exists() && file.isFile()) {
             File to = new File(archetypesOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+    }
+
+    protected void executeXmlSchemas() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying Spring/Blueprint XML schemas");
+
+        schemasOutDir.mkdirs();
+
+        File file = new File(springSchemaDir, "camel-spring.xsd");
+        if (file.exists() && file.isFile()) {
+            File to = new File(schemasOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+        file = new File(blueprintSchemaDir, "camel-blueprint.xsd");
+        if (file.exists() && file.isFile()) {
+            File to = new File(schemasOutDir, file.getName());
             try {
                 copyFile(file, to);
             } catch (IOException e) {

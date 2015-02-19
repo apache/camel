@@ -37,7 +37,8 @@
       org.apache.camel.catalog.components,
       org.apache.camel.catalog.dataformats,
       org.apache.camel.catalog.languages,
-      org.apache.camel.catalog.models
+      org.apache.camel.catalog.models,
+      org.apache.camel.catalog.schemas
     </camel.osgi.export.pkg>
   </properties>
 
