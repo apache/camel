@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
-@UriEndpoint(scheme = "servlet", consumerClass = ServletConsumer.class, label = "http")
+@UriEndpoint(scheme = "servlet", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
 public class ServletEndpoint extends HttpEndpoint {
 
     @UriParam

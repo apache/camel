@@ -19,6 +19,7 @@ package org.apache.camel.component.mqtt;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -46,6 +47,8 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "mqtt", consumerClass = MQTTConsumer.class, label = "messaging")
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
+
+    private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
 
     private CallbackConnection connection;
     @UriPath
@@ -87,14 +90,21 @@ public class MQTTEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        createConnection();
+    }
+
+    protected void createConnection() {
         connection = configuration.callbackConnection();
 
         connection.listener(new Listener() {
             public void onConnected() {
+                connected = true;
                 LOG.info("MQTT Connection connected to {}", configuration.getHost());
             }
 
             public void onDisconnected() {
+                connected = false;
                 LOG.debug("MQTT Connection disconnected from {}", configuration.getHost());
             }
 
@@ -113,6 +123,9 @@ public class MQTTEndpoint extends DefaultEndpoint {
             }
 
             public void onFailure(Throwable value) {
+                // mark this connection as disconnected so we force re-connect
+                connected = false;
+                LOG.warn("Connection to " + configuration.getHost() + " failure due " + value.getMessage() + ". Forcing a disconnect to re-connect on next attempt.");
                 connection.disconnect(new Callback<Void>() {
                     public void onSuccess(Void value) {
                     }
@@ -123,11 +136,11 @@ public class MQTTEndpoint extends DefaultEndpoint {
                 });
             }
         });
-
-        
     }
 
     protected void doStop() throws Exception {
+        super.doStop();
+
         if (connection != null) {
             final Promise<Void> promise = new Promise<Void>();
             connection.getDispatchQueue().execute(new Task() {
@@ -146,13 +159,14 @@ public class MQTTEndpoint extends DefaultEndpoint {
             });
             promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
         }
-        super.doStop();
     }
-    
+
     void connect() throws Exception {
         final Promise<Object> promise = new Promise<Object>();
         connection.connect(new Callback<Void>() {
             public void onSuccess(Void value) {
+                LOG.debug("Connected to {}", configuration.getHost());
+
                 String subscribeTopicName = configuration.getSubscribeTopicName();
                 subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
 
@@ -178,11 +192,13 @@ public class MQTTEndpoint extends DefaultEndpoint {
             }
 
             public void onFailure(Throwable value) {
+                LOG.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
                 promise.onFailure(value);
                 connection.disconnect(null);
                 connected = false;
             }
         });
+        LOG.info("Connecting to {} using {} seconds timeout", configuration.getHost(), configuration.getConnectWaitInSeconds());
         promise.await(configuration.getConnectWaitInSeconds(), TimeUnit.SECONDS);
     }
     
@@ -191,9 +207,39 @@ public class MQTTEndpoint extends DefaultEndpoint {
     }
  
     void publish(final String topic, final byte[] payload, final QoS qoS, final boolean retain, final Callback<Void> callback) throws Exception {
+        // if not connected then create a new connection to re-connect
+        boolean done = isConnected();
+        int attempt = 0;
+        TimeoutException timeout = null;
+        while (!done && attempt <= PUBLISH_MAX_RECONNECT_ATTEMPTS) {
+            attempt++;
+            try {
+                LOG.warn("#{} attempt to re-create connection to {} before publishing", attempt, configuration.getHost());
+                createConnection();
+                connect();
+            } catch (TimeoutException e) {
+                timeout = e;
+                LOG.debug("Timed out after {} seconds after {} attempt to re-create connection to {}",
+                        new Object[]{configuration.getConnectWaitInSeconds(), attempt, configuration.getHost()});
+            } catch (Throwable e) {
+                // other kind of error then exit asap
+                callback.onFailure(e);
+                return;
+            }
+
+            done = isConnected();
+        }
+
+        if (attempt > 3 && !isConnected()) {
+            LOG.warn("Cannot re-connect to {} after {} attempts", configuration.getHost(), attempt);
+            callback.onFailure(timeout);
+            return;
+        }
+
         connection.getDispatchQueue().execute(new Task() {
             @Override
             public void run() {
+                LOG.debug("Publishing to {}", configuration.getHost());
                 connection.publish(topic, payload, qoS, retain, callback);
             }
         });

@@ -20,7 +20,6 @@ import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.camel.spi.Metadata;
 import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.Component;
@@ -32,6 +31,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.apache.camel.processor.validation.ValidatorErrorHandler;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -40,7 +40,7 @@ import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "validator", label = "core,validation")
+@UriEndpoint(scheme = "validator", producerOnly = true, label = "core,validation")
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpoint.class);

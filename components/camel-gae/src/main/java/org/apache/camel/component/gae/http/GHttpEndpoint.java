@@ -48,7 +48,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
  * HTTP endpoint</a>.
  */
-@UriEndpoint(scheme = "ghttp", label = "cloud")
+@UriEndpoint(scheme = "ghttp", producerOnly = true, label = "cloud")
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {
 
     public static final String GHTTP_SCHEME = "ghttp";

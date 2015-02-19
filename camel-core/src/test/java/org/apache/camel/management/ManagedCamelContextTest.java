@@ -17,18 +17,16 @@
 package org.apache.camel.management;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StringHelper;
-import org.junit.Ignore;
 
 /**
  * @version 
@@ -367,7 +365,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"description\": \"The SEDA Component is for asynchronous SEDA exchanges on a BlockingQueue within a CamelContext\""));
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
-        assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\": \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
+        assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\":"
+            + " \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
         assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\""));
     }
 

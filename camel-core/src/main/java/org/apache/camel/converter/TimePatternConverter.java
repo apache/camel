@@ -51,7 +51,7 @@ public final class TimePatternConverter {
         if (matcher.find()) {
             // Note: This will also be used for regular numeric strings. 
             //       This String -> long converter will be used for all strings.
-            milliseconds = Long.valueOf(source).longValue();
+            milliseconds = Long.valueOf(source);
         } else {            
             matcher = createMatcher(REPLACEMENT_PATTERN, source);
             String replacedSource = matcher.replaceAll(""); 
@@ -60,13 +60,13 @@ public final class TimePatternConverter {
             
             matcher = createMatcher(HOUR_REGEX_PATTERN, replacedSource);
             if (matcher.find()) {
-                milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)).longValue());
+                milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)));
                 foundFlag = true;
             }
             
             matcher = createMatcher(MINUTES_REGEX_PATTERN, replacedSource);            
             if (matcher.find()) {
-                long minutes = Long.valueOf(matcher.group(1)).longValue();
+                long minutes = Long.valueOf(matcher.group(1));
                 if ((minutes > 59) && foundFlag) {
                     throw new IllegalArgumentException("Minutes should contain a valid value between 0 and 59: " + source);
                 }
@@ -76,7 +76,7 @@ public final class TimePatternConverter {
                
             matcher = createMatcher(SECONDS_REGEX_PATTERN, replacedSource);
             if (matcher.find()) {
-                long seconds = Long.valueOf(matcher.group(1)).longValue();
+                long seconds = Long.valueOf(matcher.group(1));
                 if ((seconds > 59) && foundFlag) {
                     throw new IllegalArgumentException("Seconds should contain a valid value between 0 and 59: " + source);
                 }
@@ -87,7 +87,7 @@ public final class TimePatternConverter {
             // No pattern matched... initiating fallback check and conversion (if required). 
             // The source at this point may contain illegal values or special characters 
             if (!foundFlag) {
-                milliseconds = Long.valueOf(source).longValue();
+                milliseconds = Long.valueOf(source);
             }
         }       
         

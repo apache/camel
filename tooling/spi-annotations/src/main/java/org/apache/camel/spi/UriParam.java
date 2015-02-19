@@ -68,4 +68,13 @@ public @interface UriParam {
      */
     String enums() default "";
 
+    /**
+     * To associate this parameter with label(s).
+     * <p/>
+     * Multiple labels can be defined as a comma separated value.
+     * <p/>
+     * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>, <tt>common</tt>, <tt>security</tt>, etc.
+     */
+    String label() default "";
+
 }

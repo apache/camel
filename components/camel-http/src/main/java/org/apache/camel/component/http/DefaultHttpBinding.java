@@ -437,14 +437,24 @@ public class DefaultHttpBinding implements HttpBinding {
     public Object parseBody(HttpMessage httpMessage) throws IOException {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
-        // Need to handle the GET Method which has no inputStream
-        if ("GET".equals(request.getMethod())) {
+        // there is only a body if we have a content length, or its -1 to indicate unknown length
+        int len = request.getContentLength();
+        LOG.trace("HttpServletRequest content-length: {}", len);
+        if (len == 0) {
             return null;
         }
         if (isUseReaderForPayload()) {
             // use reader to read the response body
             return request.getReader();
         } else {
+            // if we do not know if there is any data at all, then make sure to check the stream first
+            if (len < 0) {
+                InputStream is = request.getInputStream();
+                if (is.available() == 0) {
+                    // no data so return null
+                    return null;
+                }
+            }
             // reade the response body from servlet request
             return HttpHelper.readResponseBodyFromServletRequest(request, httpMessage.getExchange());
         }

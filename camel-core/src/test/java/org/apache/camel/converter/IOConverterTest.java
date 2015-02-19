@@ -56,11 +56,6 @@ public class IOConverterTest extends ContextTestSupport {
         assertTrue("Should contain Hello World!", s.contains("Hello World"));
     }
 
-    public void testToByteArray() throws Exception {
-        String val = null;
-        assertNull(IOConverter.toByteArray(val, null));
-    }
-
     public void testCopy() throws Exception {
         ByteArrayInputStream bis = new ByteArrayInputStream(TESTDATA);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -200,9 +195,6 @@ public class IOConverterTest extends ContextTestSupport {
     }
 
     public void testStringByBufferedReader() throws Exception {
-        BufferedReader reader = null;
-        assertNull(IOConverter.toString(reader));
-
         BufferedReader br = IOHelper.buffered(new StringReader("Hello World"));
         assertEquals("Hello World", IOConverter.toString(br));
     }

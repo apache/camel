@@ -45,7 +45,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * and generates a report.
  *
  * @goal prepare-catalog
- * @execute phase="process-resources"
  */
 public class PrepareCatalogMojo extends AbstractMojo {
 
@@ -91,18 +90,53 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File modelsOutDir;
 
     /**
+     * The output directory for archetypes catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/archetypes"
+     */
+    protected File archetypesOutDir;
+
+    /**
+     * The output directory for XML schemas catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/schemas"
+     */
+    protected File schemasOutDir;
+
+    /**
      * The components directory where all the Apache Camel components are
      *
-     * @parameter default-value="${project.build.directory}/../../..//components"
+     * @parameter default-value="${project.build.directory}/../../../components"
      */
     protected File componentsDir;
 
     /**
      * The camel-core directory where camel-core components are
      *
-     * @parameter default-value="${project.build.directory}/../../..//camel-core"
+     * @parameter default-value="${project.build.directory}/../../../camel-core"
      */
     protected File coreDir;
+
+    /**
+     * The archetypes directory where all the Apache Camel Maven archetypes are
+     *
+     * @parameter default-value="${project.build.directory}/../../../tooling/archetypes"
+     */
+    protected File archetypesDir;
+
+    /**
+     * The directory where the camel-spring XML schema are
+     *
+     * @parameter default-value="${project.build.directory}/../../../components/camel-spring/target/schema"
+     */
+    protected File springSchemaDir;
+
+    /**
+     * The directory where the camel-blueprint XML schema are
+     *
+     * @parameter default-value="${project.build.directory}/../../../components/camel-blueprint/target/schema"
+     */
+    protected File blueprintSchemaDir;
 
     /**
      * Maven ProjectHelper.
@@ -124,6 +158,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeComponents();
         executeDataFormats();
         executeLanguages();
+        executeArchetypes();
+        executeXmlSchemas();
     }
 
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
@@ -329,8 +365,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     missingUriPaths.add(file);
                 }
 
-                // check all the properties if they have description
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
+                // check all the component properties if they have description
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", text, true);
+                for (Map<String, String> row : rows) {
+                    String doc = row.get("description");
+                    if (doc == null || doc.isEmpty()) {
+                        missingJavaDoc.add(file);
+                        break;
+                    }
+                }
+
+                // check all the endpoint properties if they have description
+                rows = JSonSchemaHelper.parseJsonSchema("properties", text, true);
                 for (Map<String, String> row : rows) {
                     String doc = row.get("description");
                     if (doc == null || doc.isEmpty()) {
@@ -577,6 +623,50 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         printLanguagesReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels);
+    }
+
+    protected void executeArchetypes() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying Archetype Catalog");
+
+        // find the generate catalog
+        File file = new File(archetypesDir, "target/classes/archetype-catalog.xml");
+
+        // make sure to create out dir
+        archetypesOutDir.mkdirs();
+
+        if (file.exists() && file.isFile()) {
+            File to = new File(archetypesOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+    }
+
+    protected void executeXmlSchemas() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying Spring/Blueprint XML schemas");
+
+        schemasOutDir.mkdirs();
+
+        File file = new File(springSchemaDir, "camel-spring.xsd");
+        if (file.exists() && file.isFile()) {
+            File to = new File(schemasOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+        file = new File(blueprintSchemaDir, "camel-blueprint.xsd");
+        if (file.exists() && file.isFile()) {
+            File to = new File(schemasOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
     }
 
     private void printModelsReport(Set<File> json, Set<File> duplicate, Set<File> missingLabels, Map<String, Set<String>> usedLabels, Set<File> missingJavaDoc) {

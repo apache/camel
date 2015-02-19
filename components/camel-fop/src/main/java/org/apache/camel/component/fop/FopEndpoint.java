@@ -33,7 +33,7 @@ import org.apache.fop.apps.FopFactory;
 /**
  * Represents a Fop endpoint.
  */
-@UriEndpoint(scheme = "fop", label = "transformation")
+@UriEndpoint(scheme = "fop", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
 
     @UriPath

@@ -83,7 +83,7 @@ public final class NettyClientBossPoolBuilder {
     /**
      * Creates a new boss pool.
      */
-    BossPool build() {
+    public BossPool build() {
         Timer internalTimer = timer;
         if (!stopTimer) {
             internalTimer = new UnstoppableTimer(timer); 

@@ -19,15 +19,14 @@ package org.apache.camel.component.ganglia;
 import java.io.IOException;
 import java.net.URI;
 
+import info.ganglia.gmetric4j.gmetric.GMetric;
+import info.ganglia.gmetric4j.gmetric.GMetricSlope;
+import info.ganglia.gmetric4j.gmetric.GMetricType;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-
-import info.ganglia.gmetric4j.gmetric.GMetric;
-import info.ganglia.gmetric4j.gmetric.GMetricSlope;
-import info.ganglia.gmetric4j.gmetric.GMetricType;
 
 /**
  * @version 
@@ -35,18 +34,18 @@ import info.ganglia.gmetric4j.gmetric.GMetricType;
 @UriParams
 public class GangliaConfiguration implements Cloneable {
 
-    public final static String DEFAULT_DESTINATION = "239.2.11.71";
-    public final static int DEFAULT_PORT = 8649;
-    public final static GMetric.UDPAddressingMode DEFAULT_MODE = GMetric.UDPAddressingMode.MULTICAST;
-    public final static int DEFAULT_TTL = 5;
-    public final static boolean DEFAULT_WIRE_FORMAT_31X = true;
-    public final static String DEFAULT_GROUP_NAME = "Java";
-    public final static String DEFAULT_METRIC_NAME = "metric";
-    public final static GMetricType DEFAULT_TYPE = GMetricType.STRING;
-    public final static GMetricSlope DEFAULT_SLOPE = GMetricSlope.BOTH;
-    public final static String DEFAULT_UNITS = "";
-    public final static int DEFAULT_TMAX = 60;
-    public final static int DEFAULT_DMAX = 0;
+    public static final String DEFAULT_DESTINATION = "239.2.11.71";
+    public static final int DEFAULT_PORT = 8649;
+    public static final GMetric.UDPAddressingMode DEFAULT_MODE = GMetric.UDPAddressingMode.MULTICAST;
+    public static final int DEFAULT_TTL = 5;
+    public static final boolean DEFAULT_WIRE_FORMAT_31X = true;
+    public static final String DEFAULT_GROUP_NAME = "Java";
+    public static final String DEFAULT_METRIC_NAME = "metric";
+    public static final GMetricType DEFAULT_TYPE = GMetricType.STRING;
+    public static final GMetricSlope DEFAULT_SLOPE = GMetricSlope.BOTH;
+    public static final String DEFAULT_UNITS = "";
+    public static final int DEFAULT_TMAX = 60;
+    public static final int DEFAULT_DMAX = 0;
 
     @UriPath
     private String host = DEFAULT_DESTINATION;
@@ -117,7 +116,7 @@ public class GangliaConfiguration implements Cloneable {
         try {
             return new GMetric(host, port, mode, ttl, wireFormat31x,
                 null, spoofHostname);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeCamelException("Failed to initialize Ganglia", ex);
         }
     }

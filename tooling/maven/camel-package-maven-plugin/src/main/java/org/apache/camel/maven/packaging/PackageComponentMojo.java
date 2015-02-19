@@ -35,7 +35,6 @@ import org.apache.maven.project.MavenProjectHelper;
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
  * @goal generate-components-list
- * @execute phase="generate-resources"
  */
 public class PackageComponentMojo extends AbstractMojo {
 

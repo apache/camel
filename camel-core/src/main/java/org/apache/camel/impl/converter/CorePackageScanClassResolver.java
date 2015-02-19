@@ -29,6 +29,7 @@ import org.apache.camel.converter.DateTimeConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.converter.SQLConverter;
 import org.apache.camel.converter.TimePatternConverter;
 import org.apache.camel.converter.jaxp.DomConverter;
 import org.apache.camel.converter.jaxp.StaxConverter;
@@ -59,6 +60,7 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
         converters.add(ObjectConverter.class);
         converters.add(CollectionConverter.class);
         converters.add(DateTimeConverter.class);
+        converters.add(SQLConverter.class);
         converters.add(IOConverter.class);
         converters.add(NIOConverter.class);
         converters.add(StaxConverter.class);

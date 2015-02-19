@@ -43,6 +43,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
+import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Traceable;
@@ -865,10 +866,27 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
 
+        ParallelProcessableStream parallelProcessableStream = null;
+        if (isParallelProcessing() && exchange.getIn().getBody() instanceof ParallelProcessableStream) {
+            // in parallel processing case, the stream must be copied, therefore get the stream
+            parallelProcessableStream = (ParallelProcessableStream) exchange.getIn().getBody();
+        }
+
         int index = 0;
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
+            if (parallelProcessableStream != null) {
+                if (index > 0) {
+                    // copy it otherwise parallel processing is not possible,
+                    // because streams can only be read once
+                    ParallelProcessableStream copiedStreamCache = parallelProcessableStream.copy();
+                    if (copiedStreamCache != null) {
+                        copy.getIn().setBody(copiedStreamCache);  
+                    }
+                }
+            }
 
             // If the multi-cast processor has an aggregation strategy
             // then the StreamCache created by the child routes must not be 

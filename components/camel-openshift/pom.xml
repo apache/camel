@@ -27,7 +27,7 @@
   <artifactId>camel-openshift</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: OpenShift</name>
-  <description>Camel OpenShift support</description>
+  <description>Camel OpenShift 2.x support</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.openshift.*</camel.osgi.export.pkg>

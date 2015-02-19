@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a GeoCoder endpoint.
  */
-@UriEndpoint(scheme = "geocoder", label = "api,location")
+@UriEndpoint(scheme = "geocoder", producerOnly = true, label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath

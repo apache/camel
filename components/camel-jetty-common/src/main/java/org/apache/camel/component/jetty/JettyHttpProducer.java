@@ -133,9 +133,8 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
 
         LOG.trace("Using URL: {} with method: {}", url, method);
 
-        // if we post or put then set data
-        if (HttpMethods.POST.equals(methodToUse) || HttpMethods.PUT.equals(methodToUse)) {
-
+        // if there is a body to send as data
+        if (exchange.getIn().getBody() != null) {
             String contentType = ExchangeHelper.getContentType(exchange);
             if (contentType != null) {
                 httpExchange.setRequestContentType(contentType);

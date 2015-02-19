@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.swf;
 
 import java.util.ArrayList;
 
+import com.amazonaws.services.simpleworkflow.flow.DataConverter;
+import com.amazonaws.services.simpleworkflow.flow.JsonDataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
 import com.amazonaws.services.simpleworkflow.flow.generic.WorkflowDefinitionFactory;
 import com.amazonaws.services.simpleworkflow.flow.generic.WorkflowDefinitionFactoryFactory;
@@ -36,8 +38,9 @@ public class CamelWorkflowDefinitionFactoryFactory extends WorkflowDefinitionFac
     public WorkflowDefinitionFactory getWorkflowDefinitionFactory(WorkflowType workflowType) {
         WorkflowTypeRegistrationOptions registrationOptions = configuration.getWorkflowTypeRegistrationOptions() != null
                 ? configuration.getWorkflowTypeRegistrationOptions() : new WorkflowTypeRegistrationOptions();
-
-        return new CamelWorkflowDefinitionFactory(swfWorkflowConsumer, workflowType, registrationOptions);
+        DataConverter dataConverter = configuration.getDataConverter() != null
+                ? configuration.getDataConverter() : new JsonDataConverter();
+        return new CamelWorkflowDefinitionFactory(swfWorkflowConsumer, workflowType, registrationOptions, dataConverter);
     }
 
     @Override

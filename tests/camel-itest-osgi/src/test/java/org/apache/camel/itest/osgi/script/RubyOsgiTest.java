@@ -19,7 +19,6 @@ package org.apache.camel.itest.osgi.script;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -28,11 +27,11 @@ import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
+
 /**
  * Test camel-script for Ruby expressions in OSGi
  */
 @RunWith(PaxExam.class)
-@Ignore("You need an OSGi-ified version of JRuby for this to pass")
 public class RubyOsgiTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -57,7 +56,8 @@ public class RubyOsgiTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            loadCamelFeatures("camel-script", "camel-ruby"));
+            loadCamelFeatures("camel-script", "camel-ruby")
+        );
         
         return options;
     }

@@ -694,8 +694,8 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         Element identifier = createElement("Identifier", doc, input);
         commitmentTypeIdEl.appendChild(identifier);
         identifier.setTextContent(getCommitmentTypeId());
-        if (getDataObjectFormatIdentifierQualifier() != null && !getDataObjectFormatIdentifierQualifier().isEmpty()) {
-            setAttribute(identifier, "Qualifier", getDataObjectFormatIdentifierQualifier());
+        if (getCommitmentTypeIdQualifier() != null && !getCommitmentTypeIdQualifier().isEmpty()) {
+            setAttribute(identifier, "Qualifier", getCommitmentTypeIdQualifier());
         }
         if (getCommitmentTypeIdDescription() != null && !getCommitmentTypeIdDescription().isEmpty()) {
             Element description = createElement("Description", doc, input);

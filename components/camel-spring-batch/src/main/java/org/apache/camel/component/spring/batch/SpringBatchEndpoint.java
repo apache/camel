@@ -30,7 +30,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 
-@UriEndpoint(scheme = "spring-batch", label = "spring,batch,scheduling")
+@UriEndpoint(scheme = "spring-batch", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath

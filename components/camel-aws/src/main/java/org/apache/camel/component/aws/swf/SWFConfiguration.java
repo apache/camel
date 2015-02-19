@@ -75,6 +75,8 @@ public class SWFConfiguration {
     private ActivityTypeRegistrationOptions activityTypeRegistrationOptions;
     @UriParam
     private WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions;
+    @UriParam(defaultValue = "100")
+    private int activityThreadPoolSize = 100; // aws-sdk default
 
     public String getAccessKey() {
         return accessKey;
@@ -258,5 +260,11 @@ public class SWFConfiguration {
 
     public void setActivitySchedulingOptions(ActivitySchedulingOptions activitySchedulingOptions) {
         this.activitySchedulingOptions = activitySchedulingOptions;
+    }
+
+    public int getActivityThreadPoolSize() { return activityThreadPoolSize; }
+
+    public void setActivityThreadPoolSize(int activityThreadPoolSize) {
+        this.activityThreadPoolSize = activityThreadPoolSize;
     }
 }

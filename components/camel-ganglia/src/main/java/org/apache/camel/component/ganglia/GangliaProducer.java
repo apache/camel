@@ -18,20 +18,14 @@ package org.apache.camel.component.ganglia;
 
 import java.util.concurrent.ExecutorService;
 
+import info.ganglia.gmetric4j.Publisher;
+import info.ganglia.gmetric4j.gmetric.GMetricSlope;
+import info.ganglia.gmetric4j.gmetric.GMetricType;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 
-import org.apache.camel.component.ganglia.GangliaConstants;
-
-import info.ganglia.gmetric4j.Publisher;
-import info.ganglia.gmetric4j.gmetric.GMetricSlope;
-import info.ganglia.gmetric4j.gmetric.GMetricType;
-
-/**
- * @version 
- */
 public class GangliaProducer extends DefaultProducer {
 
     private final Publisher publisher;

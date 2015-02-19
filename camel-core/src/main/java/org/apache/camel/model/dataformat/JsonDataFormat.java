@@ -60,6 +60,10 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Boolean useList;
     @XmlAttribute
     private Boolean enableJaxbAnnotationModule;
+    @XmlAttribute
+    private String moduleClassNames;
+    @XmlAttribute
+    private String moduleRefs;
 
     public JsonDataFormat() {
         super("json");
@@ -189,6 +193,30 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
+    public String getModuleClassNames() {
+        return moduleClassNames;
+    }
+
+    /**
+     * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names.
+     * Multiple classes can be separated by comma.
+     */
+    public void setModuleClassNames(String moduleClassNames) {
+        this.moduleClassNames = moduleClassNames;
+    }
+
+    public String getModuleRefs() {
+        return moduleRefs;
+    }
+
+    /**
+     * To use custom Jackson modules referred from the Camel registry.
+     * Multiple modules can be separated by comma.
+     */
+    public void setModuleRefs(String moduleRefs) {
+        this.moduleRefs = moduleRefs;
+    }
+
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
@@ -248,6 +276,12 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (enableJaxbAnnotationModule != null) {
             setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
+        }
+        if (moduleClassNames != null) {
+            setProperty(camelContext, dataFormat, "modulesClassNames", moduleClassNames);
+        }
+        if (moduleRefs != null) {
+            setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);
         }
     }
 

@@ -43,8 +43,6 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     private static final Logger LOG = LoggerFactory.getLogger(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 1000;
-    private FileLock lock;
-    private String lockFileName;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
 
     @Override
@@ -65,12 +63,15 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
 
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
+
+        boolean exclusive = false;
+        FileLock lock = null;
+
         try {
             randomAccessFile = new RandomAccessFile(target, "rw");
             // try to acquire rw lock on the file before we can consume it
             channel = randomAccessFile.getChannel();
 
-            boolean exclusive = false;
             StopWatch watch = new StopWatch();
 
             while (!exclusive) {
@@ -93,7 +94,6 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 }
                 if (lock != null) {
                     LOG.trace("Acquired exclusive read lock: {} to file: {}", lock, target);
-                    lockFileName = target.getName();
                     exclusive = true;
                 } else {
                     boolean interrupted = sleep();
@@ -117,9 +117,19 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 return false;
             }
         } finally {
-            IOHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
-            IOHelper.close(randomAccessFile, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+            // close channels if we did not grab the lock
+            if (!exclusive) {
+                IOHelper.close(channel, "while acquiring exclusive read lock for file: " + target, LOG);
+                IOHelper.close(randomAccessFile, "while acquiring exclusive read lock for file: " + target, LOG);
+
+                // and also must release super lock
+                super.releaseExclusiveReadLock(operations, file, exchange);
+            }
         }
+
+        // we grabbed the lock
+        exchange.setProperty(Exchange.FILE_LOCK_EXCLUSIVE_LOCK, lock);
+        exchange.setProperty(Exchange.FILE_LOCK_RANDOM_ACCESS_FILE, randomAccessFile);
 
         return true;
     }
@@ -131,13 +141,18 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         // must call super
         super.releaseExclusiveReadLock(operations, file, exchange);
 
+        String target = file.getFileName();
+        FileLock lock = exchange.getProperty(Exchange.FILE_LOCK_EXCLUSIVE_LOCK, FileLock.class);
+        RandomAccessFile rac = exchange.getProperty(Exchange.FILE_LOCK_RANDOM_ACCESS_FILE, RandomAccessFile.class);
+
         if (lock != null) {
-            Channel channel = lock.channel();
+            Channel channel = lock.acquiredBy();
             try {
                 lock.release();
             } finally {
-                // must close channel first
-                IOHelper.close(channel, "while releasing exclusive read lock for file: " + lockFileName, LOG);
+                // close channel as well
+                IOHelper.close(channel, "while releasing exclusive read lock for file: " + target, LOG);
+                IOHelper.close(rac, "while releasing exclusive read lock for file: " + target, LOG);
             }
         }
     }

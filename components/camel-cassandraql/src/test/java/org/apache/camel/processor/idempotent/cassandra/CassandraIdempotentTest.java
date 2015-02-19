@@ -36,9 +36,10 @@ public class CassandraIdempotentTest extends CamelTestSupport {
         CassandraUnitUtils.startEmbeddedCassandra();
         cluster = CassandraUnitUtils.cassandraCluster();
         Session rootSession = cluster.connect();
-        CassandraUnitUtils.loadCQLDataSet(rootSession, "IdempotentDataSet.cql");
+        CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedIdempotentDataSet.cql");
         rootSession.close();
         idempotentRepository = new NamedCassandraIdempotentRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
         super.doPreSetup();
     }

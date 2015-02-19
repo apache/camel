@@ -22,10 +22,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketByteListener;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketByteListener;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,10 +66,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                    @Override
-                    public void onFragment(String fragment, boolean last) {
-                    }
-
+                    
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -113,10 +110,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                    @Override
-                    public void onFragment(byte[] fragment, boolean last) {
-                    }
-
+                   
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }

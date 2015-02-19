@@ -17,36 +17,64 @@
 package org.apache.camel.utils.cassandra;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.RegularStatement;
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.Select;
 
-/**
- *
- */
-public class CassandraUtils {
+import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.ttl;
+
+public final class CassandraUtils {
+
+    private CassandraUtils() {
+    }
+
     /**
-     * Apply consistency level if provided, else leave default.
+     * Test if the array is null or empty.
      */
-    public static PreparedStatement applyConsistencyLevel(PreparedStatement statement, ConsistencyLevel consistencyLevel) {
-        if (consistencyLevel != null) {
-            statement.setConsistencyLevel(consistencyLevel);
-        }
-        return statement;
+    public static boolean isEmpty(Object[] array) {
+        return array == null || array.length == 0;
     }
 
     /**
      * Concatenate 2 arrays.
      */
     public static Object[] concat(Object[] array1, Object[] array2) {
+        if (isEmpty(array1)) {
+            return array2;
+        }
+        if (isEmpty(array2)) {
+            return array1;
+        }
         Object[] array = new Object[array1.length + array2.length];
         System.arraycopy(array1, 0, array, 0, array1.length);
         System.arraycopy(array2, 0, array, array1.length, array2.length);
         return array;
     }
 
+    private static int size(String[] array) {
+        return array == null ? 0 : array.length;
+    }
+
+    private static boolean isEmpty(String[] array) {
+        return size(array) == 0;
+    }
+
     /**
      * Concatenate 2 arrays.
      */
     public static String[] concat(String[] array1, String[] array2) {
+        if (isEmpty(array1)) {
+            return array2;
+        }
+        if (isEmpty(array2)) {
+            return array1;
+        }
         String[] array = new String[array1.length + array2.length];
         System.arraycopy(array1, 0, array, 0, array1.length);
         System.arraycopy(array2, 0, array, array1.length, array2.length);
@@ -68,106 +96,78 @@ public class CassandraUtils {
     }
 
     /**
-     * Append columns to CQL.
-     */
-    public static void appendColumns(StringBuilder cqlBuilder, String[] columns, String sep, int maxColumnIndex) {
-        for (int i = 0; i < maxColumnIndex; i++) {
-            if (i > 0) {
-                cqlBuilder.append(sep);
-            }
-            cqlBuilder.append(columns[i]);
-        }
-    }
-
-    /**
-     * Append columns to CQL.
-     */
-    public static void appendColumns(StringBuilder cqlBuilder, String[] columns, String sep) {
-        appendColumns(cqlBuilder, columns, sep, columns.length);
-    }
-
-    /**
-     * Append where columns = ? to CQL.
-     */
-    public static void appendWhere(StringBuilder cqlBuilder, String[] columns, int maxColumnIndex) {
-        cqlBuilder.append(" where ");
-        appendColumns(cqlBuilder, columns, "=? and ", maxColumnIndex);
-        cqlBuilder.append("=?");
-    }
-
-    /**
-     * Append where columns = ? to CQL.
-     */
-    public void appendWhere(StringBuilder cqlBuilder, String[] columns) {
-        appendWhere(cqlBuilder, columns, columns.length);
-    }
-
-    /**
-     * Append ?,? to CQL.
-     */
-    public static void appendPlaceholders(StringBuilder cqlBuilder, int columnCount) {
-        for (int i = 0; i < columnCount; i++) {
-            if (i > 0) {
-                cqlBuilder.append(",");
-            }
-            cqlBuilder.append("?");
-        }
-    }
-
-    /**
      * Generate Insert CQL.
      */
-    public static StringBuilder generateInsert(String table, String[] columns, boolean ifNotExists, Integer ttl) {
-        StringBuilder cqlBuilder = new StringBuilder("insert into ")
-                .append(table).append("(");
-        appendColumns(cqlBuilder, columns, ",");
-        cqlBuilder.append(") values (");
-        appendPlaceholders(cqlBuilder, columns.length);
-        cqlBuilder.append(")");
+    public static Insert generateInsert(String table, String[] columns, boolean ifNotExists, Integer ttl) {
+        Insert insert = insertInto(table);
+        for (String column : columns) {
+            insert = insert.value(column, bindMarker());
+        }
         if (ifNotExists) {
-            cqlBuilder.append(" if not exists");
+            insert = insert.ifNotExists();
         }
         if (ttl != null) {
-            cqlBuilder.append(" using ttl=").append(ttl);
+            insert.using(ttl(ttl));
         }
-        return cqlBuilder;
+        return insert;
     }
 
     /**
      * Generate select where columns = ? CQL.
      */
-    public static StringBuilder generateSelect(String table, String[] selectColumns, String[] whereColumns) {
-        return generateSelect(table, selectColumns, whereColumns, whereColumns.length);
+    public static Select generateSelect(String table, String[] selectColumns, String[] whereColumns) {
+        return generateSelect(table, selectColumns, whereColumns, size(whereColumns));
     }
 
     /**
      * Generate select where columns = ? CQL.
      */
-    public static StringBuilder generateSelect(String table, String[] selectColumns, String[] whereColumns, int whereColumnsMaxIndex) {
-        StringBuilder cqlBuilder = new StringBuilder("select ");
-        appendColumns(cqlBuilder, selectColumns, ",");
-        cqlBuilder.append(" from ").append(table);
-        appendWhere(cqlBuilder, whereColumns, whereColumnsMaxIndex);
-        return cqlBuilder;
+    public static Select generateSelect(String table, String[] selectColumns, String[] whereColumns, int whereColumnsMaxIndex) {
+        Select select = select(selectColumns).from(table);
+        if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
+            Select.Where where = select.where();
+            for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
+                where.and(eq(whereColumns[i], bindMarker()));
+            }
+        }
+        return select;
     }
 
     /**
      * Generate delete where columns = ? CQL.
      */
-    public static StringBuilder generateDelete(String table, String[] whereColumns, boolean ifExists) {
-        return generateDelete(table, whereColumns, whereColumns.length, ifExists);
+    public static Delete generateDelete(String table, String[] whereColumns, boolean ifExists) {
+        return generateDelete(table, whereColumns, size(whereColumns), ifExists);
     }
 
     /**
      * Generate delete where columns = ? CQL.
      */
-    public static StringBuilder generateDelete(String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
-        StringBuilder cqlBuilder = new StringBuilder("delete from ")
-                .append(table);
-        appendWhere(cqlBuilder, whereColumns, whereColumnsMaxIndex);
+    public static Delete generateDelete(String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
+        Delete delete = delete().from(table);
+        if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
+            Delete.Where where = delete.where();
+            for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
+                where.and(eq(whereColumns[i], bindMarker()));
+            }
+        }
         if (ifExists) {
-            cqlBuilder.append(" if exists");
+            delete = delete.ifExists();
         }
-        return cqlBuilder;
+        return delete;
+    }
+
+    private static boolean isWhereClause(String[] whereColumns, int whereColumnsMaxIndex) {
+        return !isEmpty(whereColumns) && whereColumnsMaxIndex > 0;
+    }
+
+    /**
+     * Apply consistency level if provided, else leave default.
+     */
+    public static <T extends RegularStatement> T applyConsistencyLevel(T statement, ConsistencyLevel consistencyLevel) {
+        if (consistencyLevel != null) {
+            statement.setConsistencyLevel(consistencyLevel);
+        }
+        return statement;
     }
 }

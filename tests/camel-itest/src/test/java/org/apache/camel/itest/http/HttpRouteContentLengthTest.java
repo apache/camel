@@ -30,15 +30,15 @@ public class HttpRouteContentLengthTest extends CamelTestSupport {
 
     @Test
     public void testHttpClientContentLength() throws Exception {
-        invokeService(port1, true);
+        invokeService(port1);
     }
     
     @Test
     public void testHttpRouteContentLength() throws Exception {
-        invokeService(port2, false);
+        invokeService(port2);
     }
     
-    private void invokeService(int port, boolean checkChunkedHeader) {
+    private void invokeService(int port) {
         Exchange out = template.request("http://localhost:" + port + "/test", new Processor() {
 
             @Override

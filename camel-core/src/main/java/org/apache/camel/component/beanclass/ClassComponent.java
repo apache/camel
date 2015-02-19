@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.bean.BeanEndpoint;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 
@@ -54,9 +55,6 @@ public class ClassComponent extends BeanComponent {
         BeanHolder holder = new ConstantBeanHolder(bean, getCamelContext());
         endpoint.setBeanHolder(holder);
 
-        // create processor
-        Processor processor = endpoint.getProcessor();
-        setProperties(processor, parameters);
         return endpoint;
     }
 

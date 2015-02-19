@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Is used for polling rss feeds.
  */
-@UriEndpoint(scheme = "rss", consumerClass = RssEntryPollingConsumer.class, label = "feeds")
+@UriEndpoint(scheme = "rss", consumerOnly = true, consumerClass = RssEntryPollingConsumer.class, label = "feeds")
 public class RssEndpoint extends FeedEndpoint {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 

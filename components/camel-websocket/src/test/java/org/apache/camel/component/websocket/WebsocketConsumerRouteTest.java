@@ -17,9 +17,9 @@
 package org.apache.camel.component.websocket;
 
 import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -62,7 +62,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Test");
 
-        websocket.sendTextMessage("Test");
+        websocket.sendMessage("Test");
 
         result.assertIsSatisfied();
         

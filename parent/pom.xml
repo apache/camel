@@ -35,8 +35,8 @@
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.11.0</activemq-version>
-    <ahc-version>1.8.14</ahc-version>
+    <activemq-version>5.11.1</activemq-version>
+    <ahc-version>1.9.8</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.4_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
@@ -121,7 +121,7 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>3.0.3</cxf-version>
+    <cxf-version>3.0.4</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>3.0.2</cxf-xjc-utils-version>
     <deltaspike-version>1.2.1</deltaspike-version>
@@ -188,7 +188,7 @@
     <google-api-services-calendar-version>v3-rev99-1.19.0</google-api-services-calendar-version>
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
     <grizzly-websockets-version>2.3.17</grizzly-websockets-version>
-    <groovy-version>2.4.0</groovy-version>
+    <groovy-version>2.4.1</groovy-version>
     <gson-version>2.3</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
@@ -211,7 +211,7 @@
     <htmlunit.version>2.15</htmlunit.version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
-    <httpclient4-version>4.3.3</httpclient4-version>
+    <httpclient4-version>4.3.5</httpclient4-version>
     <httpasyncclient-version>4.0.2</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
@@ -253,7 +253,7 @@
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
     <jetty8-version>8.1.16.v20140903</jetty8-version>
-    <jetty9-version>9.2.4.v20141103</jetty9-version>
+    <jetty9-version>9.2.7.v20150116</jetty9-version>
     <jetty-version>${jetty8-version}</jetty-version>
     <jetty-runner-groupId>org.mortbay.jetty</jetty-runner-groupId>
     <jettison-version>1.3.6</jettison-version>
@@ -390,7 +390,7 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>1.0.5</rxjava-version>
+    <rxjava-version>1.0.6</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
     <saxon-version>9.5.1-5</saxon-version>
@@ -400,7 +400,7 @@
     <scalatest-version>2.2.0</scalatest-version>
     <scalaxml-version>1.0.3</scalaxml-version>
     <scribe-version>1.3.5</scribe-version>
-    <scriptengines-version>1.1</scriptengines-version>
+    <scriptengines-version>1.1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
     <servicemix-specs-version>2.2.0</servicemix-specs-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
@@ -491,7 +491,6 @@
     <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
     <xmlrpc-version>3.1.3</xmlrpc-version>
     <xmlrpc-client-bundle-version>3.1.3_1</xmlrpc-client-bundle-version>
-    <xmlschema-version>2.0</xmlschema-version>
     <xmlsec-version>2.0.3</xmlsec-version>
     <xmlunit-version>1.5</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
@@ -2055,53 +2054,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j-version}</version>
-      </dependency>
-
-      <!-- optional jetty support -->
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-client</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-io</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-server</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-servlet</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-servlets</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-security</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-util</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-webapp</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-jmx</artifactId>
-        <version>${jetty-version}</version>
       </dependency>
 
       <!-- optional jakarta http core support -->

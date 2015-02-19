@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -29,9 +33,10 @@ import org.apache.camel.spi.UriPath;
  *
  * @version 
  */
-@UriEndpoint(scheme = "bean", label = "core,java")
-public class BeanEndpoint extends ProcessorEndpoint {
-    private BeanHolder beanHolder;
+@UriEndpoint(scheme = "bean", producerOnly = true, label = "core,java")
+public class BeanEndpoint extends DefaultEndpoint {
+    private transient BeanHolder beanHolder;
+    private transient BeanProcessor processor;
     @UriPath
     private String beanName;
     @UriParam(defaultValue = "false")
@@ -41,19 +46,72 @@ public class BeanEndpoint extends ProcessorEndpoint {
     private boolean multiParameterArray;
     @UriParam
     private String method;
+    @UriParam
+    private Map<String, Object> parameters;
 
     public BeanEndpoint() {
-        init();
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     public BeanEndpoint(String endpointUri, Component component, BeanProcessor processor) {
-        super(endpointUri, component, processor);
-        init();
+        super(endpointUri, component);
+        this.processor = processor;
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     public BeanEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        init();
+        setExchangePattern(ExchangePattern.InOut);
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        return new BeanProducer(this, processor);
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("You cannot consume from a bean endpoint");
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public BeanProcessor getProcessor() {
+        return processor;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (processor == null) {
+            BeanHolder holder = getBeanHolder();
+            if (holder == null) {
+                RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
+                if (cache) {
+                    holder = registryBean.createCacheHolder();
+                } else {
+                    holder = registryBean;
+                }
+            }
+            processor = new BeanProcessor(holder);
+            if (method != null) {
+                processor.setMethod(method);
+            }
+            processor.setMultiParameterArray(isMultiParameterArray());
+            if (parameters != null) {
+                setProperties(processor, parameters);
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // noop
     }
 
     // Properties
@@ -118,35 +176,22 @@ public class BeanEndpoint extends ProcessorEndpoint {
         this.beanHolder = beanHolder;
     }
 
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    /**
+     * Used for configuring additional properties on the bean
+     */
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
     @Override
     protected String createEndpointUri() {
         return "bean:" + getBeanName() + (method != null ? "?method=" + method : "");
-    }
-
-    private void init() {
-        setExchangePattern(ExchangePattern.InOut);
-    }
-
-    @Override
-    protected Processor createProcessor() throws Exception {
-        BeanHolder holder = getBeanHolder();
-        if (holder == null) {
-            RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
-            if (cache) {
-                holder = registryBean.createCacheHolder();
-            } else {
-                holder = registryBean;
-            }
-        }
-        BeanProcessor processor = new BeanProcessor(holder);
-        if (method != null) {
-            processor.setMethod(method);
-        }
-        processor.setMultiParameterArray(isMultiParameterArray());
-
-        return processor;
     }
 }

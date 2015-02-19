@@ -24,7 +24,7 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.apache.camel.spi.UriEndpoint;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
-@UriEndpoint(scheme = "msv", label = "validation")
+@UriEndpoint(scheme = "msv", producerOnly = true, label = "validation")
 public class MsvEndpoint extends ValidatorEndpoint {
 
     public MsvEndpoint(String endpointUri, Component component, String resourceUri) {

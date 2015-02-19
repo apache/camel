@@ -36,10 +36,12 @@ import org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse;
 import org.apache.camel.component.olingo2.api.batch.Operation;
 import org.apache.camel.component.olingo2.api.impl.AbstractFutureCallback;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
+import org.apache.camel.component.olingo2.api.impl.SystemQueryOption;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
@@ -49,8 +51,6 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
-import org.apache.olingo.odata2.core.commons.ContentType;
-import org.apache.olingo.odata2.core.uri.SystemQueryOption;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -99,7 +99,7 @@ public class Olingo2AppIntegrationTest {
     private static final String TEST_SERVICE_URL = "http://localhost:8080/MyFormula.svc";
     //    private static final String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
 //    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
-    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON_CS_UTF_8;
+    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
     private static final String INDEX = "/index.jsp";
     private static final Pattern LINK_PATTERN = Pattern.compile("[^(]+\\('([^']+)'\\)");
     private static final String ID_PROPERTY = "Id";
@@ -535,7 +535,7 @@ public class Olingo2AppIntegrationTest {
     private static void generateSampleData(String serviceUrl) throws IOException {
         final HttpPost httpUriRequest = new HttpPost(serviceUrl.substring(0, serviceUrl.lastIndexOf('/')) + INDEX);
         httpUriRequest.setEntity(new ByteArrayEntity(GEN_SAMPLE_DATA.getBytes()));
-        ((Olingo2AppImpl)olingoApp).execute(httpUriRequest, Olingo2AppImpl.APPLICATION_FORM_URL_ENCODED,
+        ((Olingo2AppImpl)olingoApp).execute(httpUriRequest, ContentType.APPLICATION_FORM_URLENCODED,
             new FutureCallback<HttpResponse>() {
                 @Override
                 public void completed(HttpResponse result) {

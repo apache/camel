@@ -34,7 +34,7 @@ import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
-@UriEndpoint(scheme = "mvel", label = "transformation,script")
+@UriEndpoint(scheme = "mvel", producerOnly = true, label = "transformation,script")
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam

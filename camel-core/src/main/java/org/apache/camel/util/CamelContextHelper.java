@@ -579,7 +579,9 @@ public final class CamelContextHelper {
         if (answer == null && autoCreate) {
             // create a default properties component to be used as there may be default values we can use
             LOG.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
-            answer = camelContext.getComponent("properties", PropertiesComponent.class);
+            // do not auto create using getComponent as spring autowrire by constructor causes a side effect
+            answer = new PropertiesComponent();
+            camelContext.addComponent("properties", answer);
         }
         return answer;
     }

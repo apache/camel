@@ -31,11 +31,14 @@ public class ApiMethodPropertiesHelperTest {
     private static final String PROPERTY_2 = TEST_PREFIX + "property2";
     private static final String PROPERTY_3 = TEST_PREFIX + "property3";
     private static final String PROPERTY_4 = TEST_PREFIX + "property4";
+    // test camel case property names
+    private static final String PROPERTY_5 = TEST_PREFIX.substring(0, TEST_PREFIX.length() - 1) + "Property5";
 
     private static final String VALUE_1 = "value1";
     private static final long VALUE_2 = 2;
     private static final String VALUE_3 = "value3";
     private static final String VALUE_4 = "true";
+    private static final String VALUE_5 = "CamelCaseValue";
 
     private static ApiMethodPropertiesHelper<TestComponentConfiguration> propertiesHelper =
             new ApiMethodPropertiesHelper<TestComponentConfiguration>(TestComponentConfiguration.class, TEST_PREFIX) { };
@@ -48,8 +51,9 @@ public class ApiMethodPropertiesHelperTest {
         exchange.getIn().setHeader(PROPERTY_2, VALUE_2);
         exchange.getIn().setHeader(PROPERTY_3, VALUE_3);
         exchange.getIn().setHeader(PROPERTY_4, VALUE_4);
+        exchange.getIn().setHeader(PROPERTY_5, VALUE_5);
         propertiesHelper.getExchangeProperties(exchange, properties);
-        assertEquals(4, properties.size());
+        assertEquals(5, properties.size());
     }
 
     @Test

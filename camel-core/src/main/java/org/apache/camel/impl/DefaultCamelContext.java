@@ -81,7 +81,6 @@ import org.apache.camel.management.DefaultManagementMBeanAssembler;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagementStrategyFactory;
-import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ModelCamelContext;
@@ -121,6 +120,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -251,6 +251,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private UnitOfWorkFactory unitOfWorkFactory = new DefaultUnitOfWorkFactory();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
+    private ModelJAXBContextFactory modelJAXBContextFactory;
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -730,7 +731,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // load routes using JAXB
         if (jaxbContext == null) {
             // must use classloader from CamelContext to have JAXB working
-            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
+            jaxbContext = getModelJAXBContextFactory().newJAXBContext();
         }
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -1394,6 +1395,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 for (Map<String, String> row : rows) {
                     String name = row.get("name");
                     String kind = row.get("kind");
+                    String label = row.get("label");
                     String required = row.get("required");
                     String value = row.get("value");
                     String defaultValue = row.get("defaultValue");
@@ -1413,7 +1415,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (includeAllOptions || o != null) {
                         // add as selected row
                         if (!selected.containsKey(name)) {
-                            selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
                         }
                     }
                 }
@@ -1433,19 +1435,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                     String name = row[0];
                     String kind = row[1];
-                    String required = row[2];
-                    String type = row[3];
-                    String javaType = row[4];
-                    String deprecated = row[5];
-                    String value = row[6];
-                    String defaultValue = row[7];
-                    String description = row[8];
+                    String label = row[2];
+                    String required = row[3];
+                    String type = row[4];
+                    String javaType = row[5];
+                    String deprecated = row[6];
+                    String value = row[7];
+                    String defaultValue = row[8];
+                    String description = row[9];
 
                     // add json of the option
                     buffer.append(doubleQuote(name)).append(": { ");
                     CollectionStringBuffer csb = new CollectionStringBuffer();
                     if (kind != null) {
                         csb.append("\"kind\": \"" + kind + "\"");
+                    }
+                    if (label != null) {
+                        csb.append("\"label\": \"" + label + "\"");
                     }
                     if (required != null) {
                         csb.append("\"required\": \"" + required + "\"");
@@ -1522,6 +1528,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String label = null;
                 String required = null;
                 String javaType = null;
                 String deprecated = null;
@@ -1531,6 +1538,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
                         deprecated = row.get("deprecated");
@@ -1541,13 +1549,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
                 String defaultValue = row.get("defaultValue");
@@ -1561,7 +1570,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (includeAllOptions) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
                     }
                 }
             }
@@ -1581,19 +1590,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String required = row[2];
-                String type = row[3];
-                String javaType = row[4];
-                String deprecated = row[5];
-                String value = row[6];
-                String defaultValue = row[7];
-                String description = row[8];
+                String label = row[2];
+                String required = row[3];
+                String type = row[4];
+                String javaType = row[5];
+                String deprecated = row[6];
+                String value = row[7];
+                String defaultValue = row[8];
+                String description = row[9];
 
                 // add json of the option
                 buffer.append(doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (label != null) {
+                    csb.append("\"label\": \"" + label + "\"");
                 }
                 if (required != null) {
                     csb.append("\"required\": \"" + required + "\"");
@@ -1667,6 +1680,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // find type and description from the json schema
                 String type = null;
                 String kind = null;
+                String label = null;
                 String required = null;
                 String javaType = null;
                 String deprecated = null;
@@ -1676,6 +1690,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     if (name.equals(row.get("name"))) {
                         type = row.get("type");
                         kind = row.get("kind");
+                        label = row.get("label");
                         required = row.get("required");
                         javaType = row.get("javaType");
                         deprecated = row.get("deprecated");
@@ -1686,13 +1701,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
 
                 // add as selected row
-                selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
             for (Map<String, String> row : rows) {
                 String name = row.get("name");
                 String kind = row.get("kind");
+                String label = row.get("label");
                 String required = row.get("required");
                 String value = row.get("value");
                 String defaultValue = row.get("defaultValue");
@@ -1712,7 +1728,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (includeAllOptions || "path".equals(kind)) {
                     // add as selected row
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, required, type, javaType, deprecated, value, defaultValue, description});
+                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
                     }
                 }
             }
@@ -1732,19 +1748,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
                 String name = row[0];
                 String kind = row[1];
-                String required = row[2];
-                String type = row[3];
-                String javaType = row[4];
-                String deprecated = row[5];
-                String value = row[6];
-                String defaultValue = row[7];
-                String description = row[8];
+                String label = row[2];
+                String required = row[3];
+                String type = row[4];
+                String javaType = row[5];
+                String deprecated = row[6];
+                String value = row[7];
+                String defaultValue = row[8];
+                String description = row[9];
 
                 // add json of the option
                 buffer.append(doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
+                }
+                if (label != null) {
+                    csb.append("\"label\": \"" + label + "\"");
                 }
                 if (required != null) {
                     csb.append("\"required\": \"" + required + "\"");
@@ -3374,6 +3394,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             return answer;
         }
+    }
+
+    public ModelJAXBContextFactory getModelJAXBContextFactory() {
+        if (modelJAXBContextFactory == null) {
+            modelJAXBContextFactory = new DefaultModelJAXBContextFactory();
+        }
+        return modelJAXBContextFactory;
+    }
+
+    public void setModelJAXBContextFactory(final ModelJAXBContextFactory modelJAXBContextFactory) {
+        this.modelJAXBContextFactory = modelJAXBContextFactory;
     }
 
     public NodeIdFactory getNodeIdFactory() {

@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "dns", label = "networking")
+@UriEndpoint(scheme = "dns", producerOnly = true, label = "networking")
 public class DnsEndpoint extends DefaultEndpoint {
 
     @UriPath

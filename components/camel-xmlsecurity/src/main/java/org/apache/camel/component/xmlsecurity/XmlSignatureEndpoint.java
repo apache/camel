@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "xmlsecurity", label = "security,transformation")
+@UriEndpoint(scheme = "xmlsecurity", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
     @UriPath

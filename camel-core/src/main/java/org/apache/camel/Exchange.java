@@ -117,6 +117,7 @@ public interface Exchange {
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID     = "CamelFailureRouteId";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
+    String FILE_CONTENT_TYPE    =  "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
     String FILE_NAME_ONLY       = "CamelFileNameOnly";
@@ -129,6 +130,8 @@ public interface Exchange {
     String FILTER_MATCHED       = "CamelFilterMatched";
     String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
     String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
+    String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
+    String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     

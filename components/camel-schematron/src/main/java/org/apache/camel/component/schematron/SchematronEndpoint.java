@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Schematron Endpoint.
  */
-@UriEndpoint(scheme = "schematron", label = "validation")
+@UriEndpoint(scheme = "schematron", producerOnly = true, label = "validation")
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private Logger logger = LoggerFactory.getLogger(SchematronEndpoint.class);

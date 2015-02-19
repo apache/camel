@@ -44,8 +44,8 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/pollstrategy");
+        super.setUp();
         template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 

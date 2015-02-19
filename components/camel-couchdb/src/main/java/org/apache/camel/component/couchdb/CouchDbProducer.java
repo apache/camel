@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.couchdb;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
@@ -51,7 +52,11 @@ public class CouchDbProducer extends DefaultProducer {
     JsonElement getBodyAsJsonElement(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getIn().getMandatoryBody();
         if (body instanceof String) {
-            return new Gson().toJsonTree(body);
+            try {
+                return new JsonParser().parse((String) body);
+            } catch (JsonSyntaxException jse) {
+                throw new InvalidPayloadException(exchange, body.getClass());
+            }
         } else if (body instanceof JsonElement) {
             return (JsonElement) body;
         } else {

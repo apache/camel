@@ -30,6 +30,7 @@ import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.converter.stream.FileInputStreamCache.FileInputStreamCloser;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
@@ -48,8 +49,8 @@ import org.slf4j.LoggerFactory;
  * system property of "java.io.tmpdir".
  * <p/>
  * You can get a cached input stream of this stream. The temp file which is created with this 
- * output stream will be deleted when you close this output stream or the all cached 
- * fileInputStream is closed after the exchange is completed.
+ * output stream will be deleted when you close this output stream or the cached 
+ * fileInputStream(s) is/are closed after the exchange is completed.
  */
 public class CachedOutputStream extends OutputStream {
     @Deprecated
@@ -68,6 +69,7 @@ public class CachedOutputStream extends OutputStream {
     private int totalLength;
     private File tempFile;
     private FileInputStreamCache fileInputStreamCache;
+    private final FileInputStreamCloser fileInputStreamCloser = new FileInputStreamCloser();
     private CipherPair ciphers;
     private final boolean closedOnCompletion;
 
@@ -85,9 +87,7 @@ public class CachedOutputStream extends OutputStream {
                 @Override
                 public void onDone(Exchange exchange) {
                     try {
-                        if (fileInputStreamCache != null) {
-                            fileInputStreamCache.close();
-                        }
+                        closeFileInputStreams();
                         close();
                         try {
                             cleanUpTempFile();
@@ -127,9 +127,7 @@ public class CachedOutputStream extends OutputStream {
         currentStream.close();
         // need to clean up the temp file this time
         if (!closedOnCompletion) {
-            if (fileInputStreamCache != null) {
-                fileInputStreamCache.close();
-            }
+            closeFileInputStreams();
             try {
                 cleanUpTempFile();
             } catch (Exception e) {
@@ -179,29 +177,12 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public InputStream getInputStream() throws IOException {
-        flush();
-
-        if (inMemory) {
-            if (currentStream instanceof CachedByteArrayOutputStream) {
-                return ((CachedByteArrayOutputStream) currentStream).newInputStreamCache();
-            } else {
-                throw new IllegalStateException("CurrentStream should be an instance of CachedByteArrayOutputStream but is: " + currentStream.getClass().getName());
-            }
-        } else {
-            try {
-                if (fileInputStreamCache == null) {
-                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers);
-                }
-                return fileInputStreamCache;
-            } catch (FileNotFoundException e) {
-                throw new IOException("Cached file " + tempFile + " not found", e);
-            }
-        }
+        return (InputStream)newStreamCache();
     }    
 
     public InputStream getWrappedInputStream() throws IOException {
         // The WrappedInputStream will close the CachedOutputStream when it is closed
-        return new WrappedInputStream(this, getInputStream());
+        return new WrappedInputStream(this, (InputStream)newStreamCache());
     }
 
     /**
@@ -227,7 +208,7 @@ public class CachedOutputStream extends OutputStream {
         } else {
             try {
                 if (fileInputStreamCache == null) {
-                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers);
+                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers, fileInputStreamCloser);
                 }
                 return fileInputStreamCache;
             } catch (FileNotFoundException e) {
@@ -235,6 +216,11 @@ public class CachedOutputStream extends OutputStream {
             }
         }
     }
+    
+    private void closeFileInputStreams() {
+        fileInputStreamCloser.close();
+        fileInputStreamCache = null;
+    } 
 
     private void cleanUpTempFile() {
         // cleanup temporary file

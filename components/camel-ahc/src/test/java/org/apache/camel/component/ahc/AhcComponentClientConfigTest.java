@@ -30,7 +30,7 @@ public class AhcComponentClientConfigTest extends BaseAhcTest {
         AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
         // use the builder to set the options we want, in this case we want to follow redirects and try
         // at most 3 retries to send a request to the host
-        AsyncHttpClientConfig config = builder.setFollowRedirects(true).setMaxRequestRetry(3).build();
+        AsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
 
         // lookup AhcComponent
         AhcComponent component = context.getComponent("ahc", AhcComponent.class);

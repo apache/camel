@@ -49,7 +49,7 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
       val result = server.invoke(found, "dumpRestsAsXml", null, null)
       if (result != null) {
         val xml = result.asInstanceOf[String]
-        val rests: RestsDefinition = ModelHelper.createModelFromXml(xml, classOf[RestsDefinition])
+        val rests: RestsDefinition = ModelHelper.createModelFromXml(null, xml, classOf[RestsDefinition])
         val answer = new scala.collection.mutable.ListBuffer[RestDefinition]
         for (rest <- rests.getRests.asScala) {
           answer += rest

@@ -233,6 +233,28 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     }
 
     @Test
+    public void testPutMultiRowsAndMaxScan() throws Exception {
+        testPutMultiRows();
+        if (systemReady) {
+            Exchange resp = template.request("direct:maxScan", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setHeader(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                    exchange.getIn().setHeader(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+                }
+            });
+
+            Object result1 = resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(1));
+            Object result2 = resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2));
+            // as we use maxResults=2 we only get 2 results back
+            Object result3 = resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(3));
+            assertNull("Should only get 2 results back", result3);
+
+            List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0]);
+            assertTrue(bodies.contains(result1) && bodies.contains(result2));
+        }
+    }
+
+    @Test
     public void testPutMultiRowsAndScan() throws Exception {
         testPutMultiRows();
         if (systemReady) {
@@ -304,6 +326,9 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                     .to("hbase://" + PERSON_TABLE + "?family=info&qualifier=firstName&family2=birthdate&qualifier2=year");
 
                 from("direct:scan")
+                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN);
+
+                from("direct:maxScan")
                     .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
             }
         };

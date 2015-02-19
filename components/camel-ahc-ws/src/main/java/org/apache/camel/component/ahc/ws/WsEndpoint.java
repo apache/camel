@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayReader;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,10 +25,10 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.AsyncHttpProvider;
 import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketByteListener;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketByteListener;
+import com.ning.http.client.ws.WebSocketTextListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -153,9 +150,7 @@ public class WsEndpoint extends AhcEndpoint {
     }
     
     class WsListener implements WebSocketTextListener, WebSocketByteListener {
-        private ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        private StringBuffer textBuffer = new StringBuffer();
-        
+                
         @Override
         public void onOpen(WebSocket websocket) {
             LOG.debug("websocket opened");
@@ -179,30 +174,7 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-        @Override
-        public void onFragment(byte[] fragment, boolean last) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("received fragment({}) --> {}", last, fragment);
-            }
-            // for now, construct a memory based stream. In future, we provide a fragmented stream that can
-            // be consumed before the final fragment is added.
-            synchronized (byteBuffer) {
-                try {
-                    byteBuffer.write(fragment);
-                } catch (IOException e) {
-                    //ignore
-                }
-                if (last) {
-                    //REVIST avoid using baos/bais that waste memory
-                    byte[] msg = byteBuffer.toByteArray();
-                    for (WsConsumer consumer : consumers) {
-                        consumer.sendMessage(new ByteArrayInputStream(msg));
-                    }
-                    byteBuffer.reset();
-                }
-            }
-        }
-
+        
 
         @Override
         public void onMessage(String message) {
@@ -212,26 +184,6 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-        @Override
-        public void onFragment(String fragment, boolean last) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("received fragment({}) --> {}", last, fragment);
-            }
-            // for now, construct a memory based stream. In future, we provide a fragmented stream that can
-            // be consumed before the final fragment is added.
-            synchronized (textBuffer) {
-                textBuffer.append(fragment);
-                if (last) {
-                    //REVIST avoid using sb/car that waste memory
-                    char[] msg = new char[textBuffer.length()];
-                    textBuffer.getChars(0, msg.length, msg, 0);
-                    for (WsConsumer consumer : consumers) {
-                        consumer.sendMessage(new CharArrayReader(msg));
-                    }
-                    textBuffer.setLength(0);
-                }
-            }
-        }
         
     }
     

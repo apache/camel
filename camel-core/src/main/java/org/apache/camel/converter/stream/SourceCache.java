@@ -25,6 +25,8 @@ import org.apache.camel.util.IOHelper;
 
 /**
  * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.StringSource}s
+ * Remark: It is not necessary to implement {@link org.apache.camel.ParallelProcessableStream}
+ * because this source can be used in several threads.
  */
 public final class SourceCache extends StringSource implements StreamCache {
 

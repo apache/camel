@@ -49,6 +49,19 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
     }
 
     @Test
+    public void testScpSimpleProduceTwoTimes() throws Exception {
+        Assume.assumeTrue(this.isSetupComplete());
+
+        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
+
+        String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "bye.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testScpSimpleSubPathProduce() throws Exception {
         Assume.assumeTrue(this.isSetupComplete());
 

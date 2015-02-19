@@ -188,7 +188,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes()));
+                    entry.isDeprecated(), null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes()));
         }
         buffer.append("\n  }");
 

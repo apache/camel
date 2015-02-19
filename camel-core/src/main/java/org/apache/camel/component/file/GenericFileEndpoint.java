@@ -65,101 +65,109 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    @UriParam
-    protected GenericFileConfiguration configuration;
-    @UriParam
-    protected GenericFileProcessStrategy<T> processStrategy;
-    @UriParam
-    protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
-    @UriParam
-    protected String localWorkDirectory;
+    // common options
+
     @UriParam(defaultValue = "true")
     protected boolean autoCreate = true;
-    @UriParam(defaultValue = "false")
-    protected boolean startingDirectoryMustExist;
-    @UriParam(defaultValue = "false")
-    protected boolean directoryMustExist;
     @UriParam(defaultValue = "" + FileUtil.BUFFER_SIZE)
     protected int bufferSize = FileUtil.BUFFER_SIZE;
-    @UriParam(defaultValue = "Override")
-    protected GenericFileExist fileExist = GenericFileExist.Override;
-    @UriParam(defaultValue = "false")
-    protected boolean noop;
-    @UriParam(defaultValue = "false")
-    protected boolean recursive;
-    @UriParam(defaultValue = "false")
-    protected boolean delete;
     @UriParam(defaultValue = "false")
     protected boolean flatten;
-    @UriParam
-    protected int maxMessagesPerPoll;
-    @UriParam(defaultValue = "true")
-    protected boolean eagerMaxMessagesPerPoll = true;
-    @UriParam(defaultValue = "" + Integer.MAX_VALUE)
-    protected int maxDepth = Integer.MAX_VALUE;
-    @UriParam
-    protected int minDepth;
-    @UriParam
-    protected String tempPrefix;
-    @UriParam
-    protected Expression tempFileName;
-    @UriParam(defaultValue = "true")
-    protected boolean eagerDeleteTargetFile = true;
-    @UriParam
-    protected String include;
-    @UriParam
-    protected String exclude;
     @UriParam
     protected String charset;
     @UriParam
     protected Expression fileName;
+
+    // producer options
+
+    @UriParam(label = "producer", defaultValue = "Override")
+    protected GenericFileExist fileExist = GenericFileExist.Override;
+    @UriParam(label = "producer")
+    protected String tempPrefix;
+    @UriParam(label = "producer")
+    protected Expression tempFileName;
+    @UriParam(label = "producer", defaultValue = "true")
+    protected boolean eagerDeleteTargetFile = true;
+    @UriParam(defaultValue = "false", label = "producer")
+    protected boolean keepLastModified;
+    @UriParam(label = "producer")
+    protected String doneFileName;
+    @UriParam(label = "producer", defaultValue = "false")
+    protected boolean allowNullBody;
+    @UriParam(label = "producer")
+    protected String chmod;
+
+    // consumer options
+
     @UriParam
+    protected GenericFileConfiguration configuration;
+    @UriParam(label = "consumer")
+    protected GenericFileProcessStrategy<T> processStrategy;
+    @UriParam(label = "consumer")
+    protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
+    @UriParam(label = "consumer")
+    protected String localWorkDirectory;
+    @UriParam(label = "consumer", defaultValue = "false")
+    protected boolean startingDirectoryMustExist;
+    @UriParam(label = "consumer", defaultValue = "false")
+    protected boolean directoryMustExist;
+    @UriParam(label = "consumer", defaultValue = "false")
+    protected boolean noop;
+    @UriParam(label = "consumer", defaultValue = "false")
+    protected boolean recursive;
+    @UriParam(label = "consumer", defaultValue = "false")
+    protected boolean delete;
+    @UriParam(label = "consumer")
+    protected int maxMessagesPerPoll;
+    @UriParam(label = "consumer", defaultValue = "true")
+    protected boolean eagerMaxMessagesPerPoll = true;
+    @UriParam(label = "consumer", defaultValue = "" + Integer.MAX_VALUE)
+    protected int maxDepth = Integer.MAX_VALUE;
+    @UriParam(label = "consumer")
+    protected int minDepth;
+    @UriParam(label = "consumer")
+    protected String include;
+    @UriParam(label = "consumer")
+    protected String exclude;
+    @UriParam(label = "consumer")
     protected Expression move;
-    @UriParam
+    @UriParam(label = "consumer")
     protected Expression moveFailed;
-    @UriParam
+    @UriParam(label = "consumer")
     protected Expression preMove;
-    @UriParam
+    @UriParam(label = "producer")
     protected Expression moveExisting;
-    @UriParam
+    @UriParam(label = "consumer")
     protected Boolean idempotent;
-    @UriParam
+    @UriParam(label = "consumer")
     protected Expression idempotentKey;
-    @UriParam
+    @UriParam(label = "consumer")
     protected IdempotentRepository<String> idempotentRepository;
-    @UriParam
+    @UriParam(label = "consumer")
     protected GenericFileFilter<T> filter;
     protected volatile AntPathMatcherGenericFileFilter<T> antFilter;
-    @UriParam
+    @UriParam(label = "consumer")
     protected String antInclude;
-    @UriParam
+    @UriParam(label = "consumer")
     protected String antExclude;
-    @UriParam
+    @UriParam(label = "consumer")
     protected Comparator<GenericFile<T>> sorter;
-    @UriParam
+    @UriParam(label = "consumer")
     protected Comparator<Exchange> sortBy;
-    @UriParam(enums = "none,markerFile,fileLock,rename,changed")
+    @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed")
     protected String readLock = "none";
-    @UriParam(defaultValue = "1000")
+    @UriParam(label = "consumer", defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
-    @UriParam(defaultValue = "10000")
+    @UriParam(label = "consumer", defaultValue = "10000")
     protected long readLockTimeout = 10000;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     protected boolean readLockMarkerFile = true;
-    @UriParam(defaultValue = "WARN")
+    @UriParam(label = "consumer", defaultValue = "WARN")
     protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1")
     protected long readLockMinLength = 1;
-    @UriParam
+    @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
-    @UriParam(defaultValue = "false")
-    protected boolean keepLastModified;
-    @UriParam
-    protected String doneFileName;
-    @UriParam(defaultValue = "false")
-    protected boolean allowNullBody;
-    @UriParam
-    protected String chmod;
 
     public GenericFileEndpoint() {
     }

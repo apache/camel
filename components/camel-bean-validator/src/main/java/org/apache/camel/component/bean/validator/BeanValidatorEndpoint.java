@@ -34,7 +34,7 @@ import org.apache.camel.util.PlatformHelper;
 
 import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
-@UriEndpoint(scheme = "bean-validator", label = "validation")
+@UriEndpoint(scheme = "bean-validator", producerOnly = true, label = "validation")
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint")

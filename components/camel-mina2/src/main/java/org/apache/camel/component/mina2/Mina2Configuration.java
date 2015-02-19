@@ -82,6 +82,8 @@ public class Mina2Configuration implements Cloneable {
     private boolean orderedThreadPoolExecutor = true;
     @UriParam(defaultValue = "true")
     private boolean cachedAddress = true;
+    @UriParam(defaultValue = "false")
+    private boolean clientMode;
 
     /**
      * Returns a copy of this configuration
@@ -299,6 +301,14 @@ public class Mina2Configuration implements Cloneable {
 
     public boolean isCachedAddress() {
         return cachedAddress;
+    }
+    
+    public void setClientMode(boolean clientMode) {
+        this.clientMode = clientMode;
+    }
+    
+    public boolean isClientMode() {
+        return clientMode;
     }
 
     // here we just shows the option setting of host, port, protocol 

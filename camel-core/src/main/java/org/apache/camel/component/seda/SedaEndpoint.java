@@ -64,26 +64,28 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile MulticastProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
+
     @UriPath(description = "Name of queue")
     private String name;
     @UriParam(defaultValue = "" + Integer.MAX_VALUE)
     private int size = Integer.MAX_VALUE;
-    @UriParam(defaultValue = "1")
-    private int concurrentConsumers = 1;
-    @UriParam(defaultValue = "false")
-    private boolean multipleConsumers;
-    @UriParam(defaultValue = "IfReplyExpected")
-    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(defaultValue = "30000")
-    private long timeout = 30000;
-    @UriParam(defaultValue = "false")
-    private boolean blockWhenFull;
-    @UriParam(defaultValue = "1000")
-    private int pollTimeout = 1000;
-    @UriParam(defaultValue = "false")
-    private boolean purgeWhenStopping;
 
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "1")
+    private int concurrentConsumers = 1;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean multipleConsumers;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean purgeWhenStopping;
+    @UriParam(label = "consumer", defaultValue = "1000")
+    private int pollTimeout = 1000;
+
+    @UriParam(label = "producer", defaultValue = "IfReplyExpected")
+    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
+    @UriParam(label = "producer", defaultValue = "30000")
+    private long timeout = 30000;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean blockWhenFull;
+    @UriParam(label = "producer")
     private boolean failIfNoConsumers;
 
     private BlockingQueueFactory<Exchange> queueFactory;

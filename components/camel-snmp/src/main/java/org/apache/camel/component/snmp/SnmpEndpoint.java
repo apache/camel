@@ -35,7 +35,7 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
-@UriEndpoint(scheme = "snmp", label = "monitoring")
+@UriEndpoint(scheme = "snmp", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -65,9 +65,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpCommunity = DEFAULT_COMMUNITY;
     @UriParam
     private SnmpActionType type;
-    @UriParam(defaultValue = "60")
-    private int delay = 60;
-
+    @UriParam(label = "consumer", defaultValue = "60000")
+    private long delay = 60000;
     @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV)
     private int securityLevel = SecurityLevel.AUTH_PRIV;
     @UriParam
@@ -175,7 +174,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         // noop
     }
 
-    public int getDelay() {
+    public long getDelay() {
         return delay;
     }
 
@@ -184,7 +183,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      *
      * @param updateEvery the update rate in seconds
      */
-    public void setDelay(int updateEvery) {
+    @Override
+    public void setDelay(long updateEvery) {
         this.delay = updateEvery;
     }
 

@@ -109,7 +109,7 @@ public final class ObjectConverter {
     @Converter
     public static char toChar(String value) {
         // must be string with the length of 1
-        if (value == null || value.length() != 1) {
+        if (value.length() != 1) {
             throw new IllegalArgumentException("String must have exactly a length of 1: " + value);
         }
         return value.charAt(0);

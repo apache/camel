@@ -19,7 +19,7 @@ package org.apache.camel.component.ahc.ws;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.ning.http.client.websocket.WebSocket;
+import com.ning.http.client.ws.WebSocket;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -56,7 +56,7 @@ public class WsProducer extends DefaultProducer {
                 sendStreamMessage(getWebSocket(), (InputStream)message);
             } else {
                 //TODO provide other binding option, for now use the converted string
-                getWebSocket().sendTextMessage(in.getMandatoryBody(String.class));
+                getWebSocket().sendMessage(in.getMandatoryBody(String.class));
             }
         }
     }
@@ -66,15 +66,15 @@ public class WsProducer extends DefaultProducer {
             int p = 0;
             while (p < msg.length()) {
                 if (msg.length() - p < streamBufferSize) {
-                    webSocket.streamText(msg.substring(p), true);
+                    webSocket.stream(msg.substring(p), true);
                     p = msg.length();
                 } else {
-                    webSocket.streamText(msg.substring(p, streamBufferSize), false);
+                    webSocket.stream(msg.substring(p, streamBufferSize), false);
                     p += streamBufferSize;
                 }
             }
         } else {
-            webSocket.sendTextMessage(msg);
+            webSocket.sendMessage(msg);
         }
     }
     

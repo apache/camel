@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.springframework.ldap.core.LdapTemplate;
 
-@UriEndpoint(scheme = "spring-ldap", label = "spring,ldap")
+@UriEndpoint(scheme = "spring-ldap", producerOnly = true, label = "spring,ldap")
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";

@@ -26,8 +26,12 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.crypto.CipherInputStream;
 
+import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
@@ -35,21 +39,24 @@ import org.apache.camel.util.IOHelper;
 /**
  * A {@link StreamCache} for {@link File}s
  */
-public final class FileInputStreamCache extends InputStream implements StreamCache {
+public final class FileInputStreamCache extends InputStream implements StreamCache, ParallelProcessableStream {
     private InputStream stream;
     private final File file;
     private final CipherPair ciphers;
     private final long length;
+    private final FileInputStreamCache.FileInputStreamCloser closer;
 
     public FileInputStreamCache(File file) throws FileNotFoundException {
-        this(file, null);
+        this(file, null, new FileInputStreamCloser());
     }
     
-    FileInputStreamCache(File file, CipherPair ciphers) throws FileNotFoundException {
+    FileInputStreamCache(File file, CipherPair ciphers, FileInputStreamCloser closer) throws FileNotFoundException {
         this.file = file;
         this.stream = null;
         this.ciphers = ciphers;
         this.length = file.length();
+        this.closer = closer;
+        this.closer.add(this);
     }
     
     @Override
@@ -133,6 +140,50 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             };
         }
         return in;
+    }
+    
+    /** Creates a copy which uses the same underlying file
+     * and which has the same life cycle as the original instance (for example,
+     * will be closed automatically when the route is finished).
+     */
+    @Override
+    public ParallelProcessableStream copy() throws IOException {
+        FileInputStreamCache copy = new FileInputStreamCache(file, ciphers, closer);
+        return copy;
+    }
+    
+    
+    /** 
+     * Collects all FileInputStreamCache instances of a temporary file which must be closed
+     * at the end of the route.
+     * 
+     * @see CachedOutputStream
+     * 
+     */
+    static class FileInputStreamCloser {
+        
+        // there can be several input streams, for example in the multi-cast parallel processing
+        private List<FileInputStreamCache> fileInputStreamCaches;
+        
+        /** Adds a FileInputStreamCache instance to the closer.
+         * <p>
+         * Must be synchronized, because can be accessed by several threads. 
+         */
+        synchronized void  add(FileInputStreamCache fileInputStreamCache) {
+            if (fileInputStreamCaches == null) {
+                fileInputStreamCaches = new ArrayList<FileInputStreamCache>(3);
+            }
+            fileInputStreamCaches.add(fileInputStreamCache);
+        }
+        
+        void close() {
+            if (fileInputStreamCaches != null) {
+                for (FileInputStreamCache fileInputStreamCache : fileInputStreamCaches) {
+                    fileInputStreamCache.close();
+                }
+                fileInputStreamCaches.clear();
+            }
+        }
     }
 
 }

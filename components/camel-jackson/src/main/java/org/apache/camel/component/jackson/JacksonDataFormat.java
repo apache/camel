@@ -21,25 +21,39 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat extends ServiceSupport implements DataFormat {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
     private final ObjectMapper objectMapper;
+    private CamelContext camelContext;
     private Class<? extends Collection> collectionType;
+    private List<Module> modules;
+    private String moduleClassNames;
+    private String moduleRefs;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
@@ -115,6 +129,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -207,6 +229,41 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    /**
+     * To use custom Jackson {@link Module}s
+     */
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
+    }
+
+    public String getModuleClassNames() {
+        return moduleClassNames;
+    }
+
+    /**
+     * To use custom Jackson {@link Module}s specified as a String with FQN class names.
+     * Multiple classes can be separated by comma.
+     */
+    public void setModuleClassNames(String moduleClassNames) {
+        this.moduleClassNames = moduleClassNames;
+    }
+
+    public String getModuleRefs() {
+        return moduleRefs;
+    }
+
+    /**
+     * To use custom Jackson modules referred from the Camel registry.
+     * Multiple modules can be separated by comma.
+     */
+    public void setModuleRefs(String moduleRefs) {
+        this.moduleRefs = moduleRefs;
+    }
+
     /**
      * Uses {@link java.util.ArrayList} when unmarshalling.
      */
@@ -237,9 +294,10 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
+            LOG.info("Registering module: {}", module);
             objectMapper.registerModule(module);
         }
-        
+
         if (useList) {
             setCollectionType(ArrayList.class);
         }
@@ -249,6 +307,35 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         }
         if (prettyPrint) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        }
+
+        if (modules != null) {
+            for (Module module : modules) {
+                LOG.info("Registering module: {}", module);
+                objectMapper.registerModules(module);
+            }
+        }
+        if (moduleClassNames != null) {
+            Iterable<Object> it = ObjectHelper.createIterable(moduleClassNames);
+            for (Object o : it) {
+                String name = o.toString();
+                Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
+                Module module = camelContext.getInjector().newInstance(clazz);
+                LOG.info("Registering module: {} -> {}", name, module);
+                objectMapper.registerModule(module);
+            }
+        }
+        if (moduleRefs != null) {
+            Iterable<Object> it = ObjectHelper.createIterable(moduleRefs);
+            for (Object o : it) {
+                String name = o.toString();
+                if (name.startsWith("#")) {
+                    name = name.substring(1);
+                }
+                Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
+                LOG.info("Registering module: {} -> {}", name, module);
+                objectMapper.registerModule(module);
+            }
         }
     }
 

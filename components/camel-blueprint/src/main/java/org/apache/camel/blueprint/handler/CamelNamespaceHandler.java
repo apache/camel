@@ -32,12 +32,6 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.apache.aries.blueprint.BeanProcessor;
 import org.apache.aries.blueprint.ComponentDefinitionRegistry;
 import org.apache.aries.blueprint.ComponentDefinitionRegistryProcessor;
@@ -55,13 +49,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.blueprint.BlueprintCamelContext;
+import org.apache.camel.blueprint.BlueprintModelJAXBContextFactory;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.blueprint.CamelEndpointFactoryBean;
 import org.apache.camel.blueprint.CamelRestContextFactoryBean;
 import org.apache.camel.blueprint.CamelRouteContextFactoryBean;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
@@ -106,6 +100,11 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static org.osgi.service.blueprint.reflect.ComponentMetadata.ACTIVATION_LAZY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
@@ -632,36 +631,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     public JAXBContext getJaxbContext() throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = createJaxbContext();
+            jaxbContext = new BlueprintModelJAXBContextFactory(getClass().getClassLoader()).newJAXBContext();
         }
         return jaxbContext;
-    }
-
-    protected JAXBContext createJaxbContext() throws JAXBException {
-        StringBuilder packages = new StringBuilder();
-        for (Class<?> cl : getJaxbPackages()) {
-            if (packages.length() > 0) {
-                packages.append(":");
-            }
-            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
-        }
-        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
-    }
-
-    protected Set<Class<?>> getJaxbPackages() {
-        // we nedd to have a class from each different package with jaxb models
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(CamelContextFactoryBean.class);
-        classes.add(AbstractCamelContextFactoryBean.class);
-        classes.add(org.apache.camel.ExchangePattern.class);
-        classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
-        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
-        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        classes.add(org.apache.camel.model.rest.RestDefinition.class);
-        classes.add(SSLContextParametersFactoryBean.class);
-        return classes;
     }
 
     private RefMetadata createRef(ParserContext context, String value) {

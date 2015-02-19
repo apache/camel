@@ -282,7 +282,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             LOG.info("Bridging Camel and Spring property placeholder configurer with id: " + id);
 
             // get properties component
-            PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
+            PropertiesComponent pc = (PropertiesComponent) getContext().getComponent("properties", false);
+            if (pc == null) {
+                // do not auto create the component as spring autowrire by constructor causes a side effect when using bridge
+                pc = new PropertiesComponent();
+                getContext().addComponent("properties", pc);
+            }
             // replace existing resolver with us
             configurer.setResolver(pc.getPropertiesResolver());
             configurer.setParser(pc.getPropertiesParser());

@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class IOConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
     /**
@@ -292,10 +293,6 @@ public final class IOConverter {
 
     @Converter
     public static String toString(BufferedReader reader) throws IOException {
-        if (reader == null) {
-            return null;
-        }
-
         StringBuilder sb = new StringBuilder(1024);
         char[] buf = new char[1024];
         try {
@@ -335,7 +332,7 @@ public final class IOConverter {
 
     @Converter
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
-        return value != null ? value.getBytes(IOHelper.getCharsetName(exchange)) : null;
+        return value.getBytes(IOHelper.getCharsetName(exchange));
     }
 
     /**

@@ -38,9 +38,10 @@ public class CassandraAggregationTest extends CamelTestSupport {
         CassandraUnitUtils.startEmbeddedCassandra();
         cluster = CassandraUnitUtils.cassandraCluster();
         Session rootSession = cluster.connect();
-        CassandraUnitUtils.loadCQLDataSet(rootSession, "AggregationDataSet.cql");
+        CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedAggregationDataSet.cql");
         rootSession.close();
         aggregationRepository = new NamedCassandraAggregationRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.start();
         super.doPreSetup();
     }

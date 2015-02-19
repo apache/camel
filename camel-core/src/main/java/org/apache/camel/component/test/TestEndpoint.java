@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "test", label = "core,testing")
+@UriEndpoint(scheme = "test", producerOnly = true, label = "core,testing")
 public class TestEndpoint extends MockEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;

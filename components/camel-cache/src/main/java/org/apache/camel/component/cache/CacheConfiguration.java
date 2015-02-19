@@ -32,7 +32,7 @@ public class CacheConfiguration implements Cloneable {
     private String cacheName;
     @UriParam(defaultValue = "1000")
     private int maxElementsInMemory = 1000;
-    @UriParam(defaultValue = "LFU")
+    @UriParam(defaultValue = "LFU", enums = "LRU,LFU,FIFO,CLOCK")
     private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy = MemoryStoreEvictionPolicy.LFU;
     @UriParam(defaultValue = "true")
     private boolean overflowToDisk = true;
@@ -48,6 +48,8 @@ public class CacheConfiguration implements Cloneable {
     private boolean diskPersistent;
     @UriParam(defaultValue = "false")
     private long diskExpiryThreadIntervalSeconds;
+    @UriParam
+    private boolean objectCache;
     @UriParam
     private CacheEventListenerRegistry eventListenerRegistry = new CacheEventListenerRegistry();
     @UriParam
@@ -81,7 +83,7 @@ public class CacheConfiguration implements Cloneable {
         
         Map<String, Object> cacheSettings = URISupport.parseParameters(uri);
         if (cacheSettings.containsKey("maxElementsInMemory")) {
-            setMaxElementsInMemory(Integer.valueOf((String) cacheSettings.get("maxElementsInMemory")).intValue());
+            setMaxElementsInMemory(Integer.valueOf((String) cacheSettings.get("maxElementsInMemory")));
         }
         if (cacheSettings.containsKey("overflowToDisk")) {
             setOverflowToDisk(Boolean.valueOf((String) cacheSettings.get("overflowToDisk")));
@@ -93,22 +95,29 @@ public class CacheConfiguration implements Cloneable {
             setEternal(Boolean.valueOf((String) cacheSettings.get("eternal")));
         }
         if (cacheSettings.containsKey("timeToLiveSeconds")) {
-            setTimeToLiveSeconds(Long.valueOf((String) cacheSettings.get("timeToLiveSeconds")).longValue());
+            setTimeToLiveSeconds(Long.valueOf((String) cacheSettings.get("timeToLiveSeconds")));
         }
         if (cacheSettings.containsKey("timeToIdleSeconds")) {
-            setTimeToIdleSeconds(Long.valueOf((String) cacheSettings.get("timeToIdleSeconds")).longValue());
+            setTimeToIdleSeconds(Long.valueOf((String) cacheSettings.get("timeToIdleSeconds")));
         }
         if (cacheSettings.containsKey("diskPersistent")) {
             setDiskPersistent(Boolean.valueOf((String) cacheSettings.get("diskPersistent")));
         }
         if (cacheSettings.containsKey("diskExpiryThreadIntervalSeconds")) {
-            setDiskExpiryThreadIntervalSeconds(Long.valueOf((String) cacheSettings.get("diskExpiryThreadIntervalSeconds")).longValue());
+            setDiskExpiryThreadIntervalSeconds(Long.valueOf((String) cacheSettings.get("diskExpiryThreadIntervalSeconds")));
         }
         if (cacheSettings.containsKey("memoryStoreEvictionPolicy")) {
             String policy = (String) cacheSettings.get("memoryStoreEvictionPolicy");
             // remove leading if any given as fromString uses LRU, LFU or FIFO
             policy = policy.replace("MemoryStoreEvictionPolicy.", "");
             setMemoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.fromString(policy));
+        }
+        if (cacheSettings.containsKey("objectCache")) {
+            setObjectCache(Boolean.valueOf((String) cacheSettings.get("objectCache")));
+        }
+
+        if (isObjectCache() && (isOverflowToDisk() || isDiskPersistent())) {
+            throw new IllegalArgumentException("Unable to create object cache with disk access");
         }
     }
     
@@ -209,4 +218,11 @@ public class CacheConfiguration implements Cloneable {
         return cacheLoaderRegistry;
     }
 
+    public boolean isObjectCache() {
+        return objectCache;
+    }
+
+    public void setObjectCache(boolean objectCache) {
+        this.objectCache = objectCache;
+    }
 }

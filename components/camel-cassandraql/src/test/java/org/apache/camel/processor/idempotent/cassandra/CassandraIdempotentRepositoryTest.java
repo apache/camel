@@ -50,7 +50,7 @@ public class CassandraIdempotentRepositoryTest {
     public void setUp() throws Exception {
         cluster = CassandraUnitUtils.cassandraCluster();
         session = cluster.connect(CassandraUnitUtils.KEYSPACE);
-        idempotentRepository = new NamedCassandraIdempotentRepository<String>(session, "ID");
+        idempotentRepository = new CassandraIdempotentRepository<String>(session);
         idempotentRepository.start();
     }
 
@@ -68,7 +68,7 @@ public class CassandraIdempotentRepositoryTest {
 
     private boolean exists(String key) {
         return session.execute(
-                "select KEY from CAMEL_IDEMPOTENT where NAME=? and KEY=?", "ID", key)
+                "select KEY from CAMEL_IDEMPOTENT where KEY=?", key)
                 .one() != null;
     }
 
@@ -126,7 +126,7 @@ public class CassandraIdempotentRepositoryTest {
         // When
         boolean result = idempotentRepository.contains(key);
         // Then
-        // assertFalse(result);
+        assertFalse(result);
     }
 
     @Test

@@ -51,6 +51,8 @@ public class CassandraEndpoint extends DefaultEndpoint {
     private String keyspace;
     @UriParam
     private String cql;
+    @UriParam(defaultValue = "true")
+    private boolean prepareStatements = true;
     @UriParam
     private String clusterName;
     @UriParam
@@ -61,10 +63,6 @@ public class CassandraEndpoint extends DefaultEndpoint {
     private Cluster cluster;
     @UriParam
     private Session session;
-
-    /**
-     * Consistency level: ONE, TWO, QUORUM, LOCAL_QUORUM, ALL...
-     */
     @UriParam
     private ConsistencyLevel consistencyLevel;
 
@@ -281,5 +279,16 @@ public class CassandraEndpoint extends DefaultEndpoint {
 
     public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
         this.resultSetConversionStrategy = resultSetConversionStrategy;
+    }
+
+    public boolean isPrepareStatements() {
+        return prepareStatements;
+    }
+
+    /**
+     * Whether to use PreparedStatements or regular Statements
+     */
+    public void setPrepareStatements(boolean prepareStatements) {
+        this.prepareStatements = prepareStatements;
     }
 }
