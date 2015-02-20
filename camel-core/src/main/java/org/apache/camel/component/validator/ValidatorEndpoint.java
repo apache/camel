@@ -53,7 +53,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     private SchemaFactory schemaFactory;
     @UriParam
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useDom;
     @UriParam(defaultValue = "true")
     private boolean useSharedSchema = true;

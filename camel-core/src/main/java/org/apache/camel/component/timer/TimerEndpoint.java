@@ -28,6 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -40,7 +41,7 @@ import org.apache.camel.spi.UriPath;
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(scheme = "timer", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String timerName;
     @UriParam
     private Date time;
@@ -48,7 +49,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private long period = 1000;
     @UriParam(defaultValue = "1000")
     private long delay = 1000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean fixedRate;
     @UriParam(defaultValue = "true")
     private boolean daemon = true;

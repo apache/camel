@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry")
+    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = "true")
     private volatile DataSet dataSet;
     @UriParam(defaultValue = "0")
     private int minRate;

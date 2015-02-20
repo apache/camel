@@ -40,9 +40,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @UriPath(name = "directoryName") @Metadata(required = "true")
     private File file;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean renameUsingCopy;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean forceWrites = true;

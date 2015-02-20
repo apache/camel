@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
@@ -32,7 +33,7 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String name;
 
     public RefEndpoint(String endpointUri, Component component) {

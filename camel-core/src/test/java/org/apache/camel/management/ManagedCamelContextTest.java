@@ -246,14 +246,13 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals(8, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
-        assertTrue(json.contains("\"description\": \"The Log Component is for logging message exchanges via the underlying logging mechanism.\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
                 + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
                 + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
@@ -277,14 +276,13 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals(14, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
-        assertTrue(json.contains("\"description\": \"The Log Component is for logging message exchanges via the underlying logging mechanism.\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
                 + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
                 + " \"value\": \"foo\", \"description\": \"The logger name to use\" }"));
         assertTrue(json.contains("\"marker\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\""));
         // and we should also have the javadoc documentation
@@ -363,7 +361,6 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String json = (String) mbeanServer.invoke(on, "explainComponentJson", new Object[]{"seda", false}, new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
-        assertTrue(json.contains("\"description\": \"The SEDA Component is for asynchronous SEDA exchanges on a BlockingQueue within a CamelContext\""));
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
         assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\":"
             + " \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));

@@ -39,6 +39,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -65,16 +66,16 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
 
-    @UriPath(description = "Name of queue")
+    @UriPath(description = "Name of queue") @Metadata(required = "true")
     private String name;
     @UriParam(defaultValue = "" + Integer.MAX_VALUE)
     private int size = Integer.MAX_VALUE;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean multipleConsumers;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean purgeWhenStopping;
     @UriParam(label = "consumer", defaultValue = "1000")
     private int pollTimeout = 1000;
@@ -83,7 +84,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean blockWhenFull;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers;

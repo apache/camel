@@ -24,6 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,11 +38,11 @@ import org.apache.camel.spi.UriPath;
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String beanName;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean cache;
-    @UriParam(defaultValue = "false")
+    @UriParam
     @Deprecated
     private boolean multiParameterArray;
     @UriParam

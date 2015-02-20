@@ -24,6 +24,7 @@ import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -40,7 +41,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     private volatile Processor logger;
     private Logger providedLogger;
     private ExchangeFormatter localFormatter;
-    @UriPath(description = "Name of the logging category to use")
+    @UriPath(description = "Name of the logging category to use") @Metadata(required = "true")
     private String loggerName;
     @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
     private String level;

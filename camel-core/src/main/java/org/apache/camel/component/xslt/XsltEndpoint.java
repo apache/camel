@@ -64,7 +64,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String transformerFactoryClass;
     @UriParam
     private TransformerFactory transformerFactory;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean saxon;
     @UriParam
     private ResultHandlerFactory resultHandlerFactory;
@@ -80,7 +80,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private URIResolver uriResolver;
     @UriParam(defaultValue = "true")
     private boolean allowStAX = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean deleteOutputFile;
 
     @Deprecated

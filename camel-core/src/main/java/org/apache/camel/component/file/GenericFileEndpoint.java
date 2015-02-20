@@ -71,7 +71,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean autoCreate = true;
     @UriParam(defaultValue = "" + FileUtil.BUFFER_SIZE)
     protected int bufferSize = FileUtil.BUFFER_SIZE;
-    @UriParam(defaultValue = "false")
+    @UriParam
     protected boolean flatten;
     @UriParam
     protected String charset;

@@ -49,6 +49,7 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -110,7 +111,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     private volatile int counter;
 
-    @UriPath(description = "Name of mock endpoint")
+    @UriPath(description = "Name of mock endpoint") @Metadata(required = "true")
     private String name;
     @UriParam(defaultValue = "-1")
     private int expectedCount;

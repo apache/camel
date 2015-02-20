@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -35,7 +36,7 @@ import org.apache.camel.util.CamelLogger;
 @UriEndpoint(scheme = "controlbus", producerOnly = true, label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Command can be either route or language", enums = "route,language")
+    @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = "true")
     private String command;
     @UriPath
     private Language language;
@@ -43,7 +44,7 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     private String routeId;
     @UriParam(enums = "start,stop,suspend,resume,status")
     private String action;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean async;
     @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;

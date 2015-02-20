@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -31,10 +32,10 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "direct-vm", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectVmEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Name of direct-vm endpoint")
+    @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = "true")
     private String name;
 
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean block;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;

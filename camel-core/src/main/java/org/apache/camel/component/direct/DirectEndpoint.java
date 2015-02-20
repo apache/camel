@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -40,10 +41,10 @@ public class DirectEndpoint extends DefaultEndpoint {
 
     private volatile Map<String, DirectConsumer> consumers;
 
-    @UriPath(description = "Name of direct endpoint")
+    @UriPath(description = "Name of direct endpoint") @Metadata(required = "true")
     private String name;
 
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean block;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;

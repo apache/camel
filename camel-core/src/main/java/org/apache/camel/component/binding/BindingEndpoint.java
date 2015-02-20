@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.PipelineHelper;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.spi.HasBinding;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
@@ -42,9 +43,9 @@ import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 @UriEndpoint(scheme = "binding", consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private final String bindingName;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private final String delegateUri;
     private Binding binding;
     private Endpoint delegate;

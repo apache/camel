@@ -30,6 +30,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
@@ -42,7 +43,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "browse", label = "core,monitoring")
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
-    @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
+    @UriPath(description = "A name which can be any string to uniquely identify the endpoint") @Metadata(required = "true")
     private String name;
 
     private List<Exchange> exchanges;

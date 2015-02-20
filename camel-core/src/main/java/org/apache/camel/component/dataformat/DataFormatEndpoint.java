@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
@@ -38,9 +39,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     private UnmarshalProcessor unmarshal;
     private DataFormat dataFormat;
 
-    @UriPath(description = "Name of data format")
+    @UriPath(description = "Name of data format") @Metadata(required = "true")
     private String name;
-    @UriPath(enums = "marshal,unmarshal")
+    @UriPath(enums = "marshal,unmarshal") @Metadata(required = "true")
     private String operation;
 
     public DataFormatEndpoint() {

@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -46,15 +47,15 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
     private boolean contentResolvedFromResource;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String languageName;
     @UriParam
     private String script;
     @UriParam(defaultValue = "true")
     private boolean transform = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean binary;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean cacheScript;
 
     public LanguageEndpoint() {
