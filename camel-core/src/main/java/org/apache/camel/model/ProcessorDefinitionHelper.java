@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.xml.namespace.QName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
@@ -556,8 +557,26 @@ public final class ProcessorDefinitionHelper {
      * @throws Exception is thrown if property placeholders was used and there was an error resolving them
      * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
      * @see org.apache.camel.component.properties.PropertiesComponent
+     * @deprecated use {@link #resolvePropertyPlaceholders(org.apache.camel.CamelContext, Object)}
      */
+    @Deprecated
     public static void resolvePropertyPlaceholders(RouteContext routeContext, Object definition) throws Exception {
+        resolvePropertyPlaceholders(routeContext.getCamelContext(), definition);
+    }
+
+    /**
+     * Inspects the given definition and resolves any property placeholders from its properties.
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will be property placeholder resolved.
+     *
+     * @param camelContext the Camel context
+     * @param definition   the definition
+     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
+     * @see org.apache.camel.component.properties.PropertiesComponent
+     */
+    public static void resolvePropertyPlaceholders(CamelContext camelContext, Object definition) throws Exception {
         LOG.trace("Resolving property placeholders for: {}", definition);
 
         // find all getter/setter which we can use for property placeholders
@@ -577,12 +596,12 @@ public final class ProcessorDefinitionHelper {
                     Object value = processorDefinition.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
                         // enforce a properties component to be created if none existed
-                        CamelContextHelper.lookupPropertiesComponent(routeContext.getCamelContext(), true);
+                        CamelContextHelper.lookupPropertiesComponent(camelContext, true);
 
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
-                        String prefixToken = routeContext.getCamelContext().getPropertyPrefixToken();
-                        String suffixToken = routeContext.getCamelContext().getPropertySuffixToken();
+                        String prefixToken = camelContext.getPropertyPrefixToken();
+                        String suffixToken = camelContext.getPropertySuffixToken();
                         if (prefixToken == null) {
                             throw new IllegalArgumentException("Property with name [" + local + "] uses property placeholders; however, no properties component is configured.");
                         }
@@ -610,10 +629,10 @@ public final class ProcessorDefinitionHelper {
                 if (value instanceof String) {
                     // value must be a String, as a String is the key for a property placeholder
                     String text = (String) value;
-                    text = routeContext.getCamelContext().resolvePropertyPlaceholders(text);
+                    text = camelContext.resolvePropertyPlaceholders(text);
                     if (text != value) {
                         // invoke setter as the text has changed
-                        boolean changed = IntrospectionSupport.setProperty(routeContext.getCamelContext().getTypeConverter(), definition, name, text);
+                        boolean changed = IntrospectionSupport.setProperty(camelContext.getTypeConverter(), definition, name, text);
                         if (!changed) {
                             throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
                         }

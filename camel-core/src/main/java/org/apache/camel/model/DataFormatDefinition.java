@@ -88,7 +88,7 @@ public class DataFormatDefinition extends IdentifiedType {
 
             // resolve properties before we create the data format
             try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext, this);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), this);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
             }
