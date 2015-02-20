@@ -252,6 +252,9 @@ public final class RouteDefinitionHelper {
                                     List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
                                     List<OnCompletionDefinition> onCompletions) {
 
+        // init the route inputs
+        initRouteInputs(context, route.getInputs());
+
         // abstracts is the cross cutting concerns
         List<ProcessorDefinition<?>> abstracts = new ArrayList<ProcessorDefinition<?>>();
 
@@ -322,6 +325,17 @@ public final class RouteDefinitionHelper {
             }
             if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
                 validateTopLevel(child.getOutputs());
+            }
+        }
+    }
+
+    private static void initRouteInputs(CamelContext camelContext, List<FromDefinition> inputs) {
+        // resolve property placeholders on route inputs which hasn't been done yet
+        for (FromDefinition input : inputs) {
+            try {
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
     }
