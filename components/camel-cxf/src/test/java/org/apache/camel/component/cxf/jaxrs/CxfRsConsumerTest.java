@@ -18,10 +18,16 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.servlet.ServletRequest;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
@@ -56,15 +62,20 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             "cxfrs://http://localhost:" + CXT + "/rest3?"
             + "resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceNoAnnotations&"
             + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceModel.xml";
+    private static final String CXF_RS_ENDPOINT_URI4 = 
+            "cxfrs://http://localhost:" + CXT + "/rest4?"
+            + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new TestProcessor();
+        final Processor testProcessor2 = new TestProcessor2();
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(new NoErrorHandlerBuilder());
                 from(CXF_RS_ENDPOINT_URI).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI2).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI3).process(testProcessor);
+                from(CXF_RS_ENDPOINT_URI4).process(testProcessor2);
             }
         };
     }
@@ -96,6 +107,19 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     @Test
     public void testGetCustomerInterfaceAndModel() throws Exception {
         doTestGetCustomer("rest3");
+    }
+    @Test
+    public void testGetCustomerDefaultHandlerAndModel() throws Exception {
+        doTestGetCustomer("rest4");
+    }
+    @Test
+    public void testEchoCustomerDefaultHandlerAndModel() throws Exception {
+        WebTarget target = 
+            ClientBuilder.newClient().target("http://localhost:" + CXT + "/" + "rest4" + "/customerservice/customers");
+        Customer c = 
+            target.request(MediaType.APPLICATION_JSON).post(Entity.json(new Customer(333, "Barry")), Customer.class);
+        assertEquals(333L, c.getId());
+        assertEquals("Barry", c.getName());
     }
     
     private void doTestGetCustomer(String contextUri) throws Exception {
@@ -154,54 +178,60 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             httpclient.close();
         }
     }
-        
-    private static class TestProcessor implements Processor {
+     
+    private static abstract class AbstractTestProcessor implements Processor {
+        public void processGetCustomer(Exchange exchange) throws Exception {
+            Message inMessage = exchange.getIn();                        
+            String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+            assertEquals("Get a wrong http method", "GET", httpMethod);
+            String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+            // The parameter of the invocation is stored in the body of in message
+            String id = inMessage.getBody(String.class);
+            if ("/customerservice/customers/126".equals(path)) {                            
+                Customer customer = new Customer();
+                customer.setId(Long.parseLong(id));
+                customer.setName("Willem");
+                // We just put the response Object into the out message body
+                exchange.getOut().setBody(customer);
+            } else {
+                if ("/customerservice/customers/400".equals(path)) {
+                    // We return the remote client IP address this time
+                    org.apache.cxf.message.Message cxfMessage = inMessage.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+                    ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
+                    // Just make sure the request object is not null
+                    assertNotNull("The request object should not be null", request);
+                    Response r = Response.status(200).entity("The remoteAddress is 127.0.0.1").build();
+                    exchange.getOut().setBody(r);
+                    return;
+                }
+                if ("/customerservice/customers/123".equals(path)) {
+                    // send a customer response back
+                    Response r = Response.status(200).entity("customer response back!").build();
+                    exchange.getOut().setBody(r);
+                    return;
+                }
+                if ("/customerservice/customers/456".equals(path)) {
+                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                    throw new WebApplicationException(r);
+                } else if ("/customerservice/customers/234".equals(path)) {
+                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                    exchange.getOut().setBody(r);
+                    exchange.getOut().setFault(true);
+                } else {
+                    throw new RuntimeCamelException("Can't found the customer with uri " + path);
+                }
+            }
+        }
+            
+    }
+    private static class TestProcessor extends AbstractTestProcessor {
         public void process(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             // Get the operation name from in message
             String operationName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
             if ("getCustomer".equals(operationName)) {
-                String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-                assertEquals("Get a wrong http method", "GET", httpMethod);
-                String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
-                // The parameter of the invocation is stored in the body of in message
-                String id = inMessage.getBody(String.class);
-                if ("/customerservice/customers/126".equals(path)) {                            
-                    Customer customer = new Customer();
-                    customer.setId(Long.parseLong(id));
-                    customer.setName("Willem");
-                    // We just put the response Object into the out message body
-                    exchange.getOut().setBody(customer);
-                } else {
-                    if ("/customerservice/customers/400".equals(path)) {
-                        // We return the remote client IP address this time
-                        org.apache.cxf.message.Message cxfMessage = inMessage.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
-                        ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
-                        // Just make sure the request object is not null
-                        assertNotNull("The request object should not be null", request);
-                        Response r = Response.status(200).entity("The remoteAddress is 127.0.0.1").build();
-                        exchange.getOut().setBody(r);
-                        return;
-                    }
-                    if ("/customerservice/customers/123".equals(path)) {
-                        // send a customer response back
-                        Response r = Response.status(200).entity("customer response back!").build();
-                        exchange.getOut().setBody(r);
-                        return;
-                    }
-                    if ("/customerservice/customers/456".equals(path)) {
-                        Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
-                        throw new WebApplicationException(r);
-                    } else if ("/customerservice/customers/234".equals(path)) {
-                        Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
-                        exchange.getOut().setBody(r);
-                        exchange.getOut().setFault(true);
-                    } else {
-                        throw new RuntimeCamelException("Can't found the customer with uri " + path);
-                    }
-                }
-            }
-            if ("updateCustomer".equals(operationName)) {
+                processGetCustomer(exchange);
+            } else if ("updateCustomer".equals(operationName)) {
                 assertEquals("Get a wrong customer message header", "header1;header2", inMessage.getHeader("test"));
                 String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
                 assertEquals("Get a wrong http method", "PUT", httpMethod);
@@ -213,6 +243,23 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 exchange.getOut().setBody(Response.ok().build());
             }
             
+        }
+            
+    }
+    private static class TestProcessor2 extends AbstractTestProcessor {
+        public void process(Exchange exchange) throws Exception {
+            Message inMessage = exchange.getIn();                        
+            // Get the operation name from in message
+            String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+            if (path.startsWith("/customerservice/customers")) {
+                String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+                if (HttpMethod.GET.equals(httpMethod)) {
+                    processGetCustomer(exchange);
+                } else if (HttpMethod.POST.equals(httpMethod)) {
+                    InputStream inBody = exchange.getIn().getBody(InputStream.class);
+                    exchange.getOut().setBody(Response.ok(inBody).build());
+                } 
+            }
         }
             
     }

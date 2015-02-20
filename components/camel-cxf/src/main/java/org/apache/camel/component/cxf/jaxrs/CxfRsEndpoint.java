@@ -49,6 +49,8 @@ import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
+import org.apache.cxf.jaxrs.model.UserResource;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.logging.FaultListener;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
@@ -216,9 +218,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getAddress() != null) {
             sfb.setAddress(getAddress());
         }
-        if (modelRef != null) {
-            sfb.setModelRef(modelRef);
-        }
+        processResourceModel(sfb);
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
         }
@@ -233,6 +233,36 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         setupCommonFactoryProperties(sfb);
         sfb.setStart(false);
+    }
+
+    private void processResourceModel(JAXRSServerFactoryBean sfb) {
+        // Currently a CXF model document is the only possible source 
+        // of the model. Other sources will be supported going forward
+        if (modelRef != null) {
+            
+            List<UserResource> resources = ResourceUtils.getUserResources(modelRef, sfb.getBus());
+            
+            processUserResources(sfb, resources);
+        }
+    }
+    
+    /*
+     * Prepare model beans and set them on the factory.
+     * The model beans can be created from a variety of sources such as
+     * CXF Model extensions but also other documents (to be supported in the future).
+     */
+    private void processUserResources(JAXRSServerFactoryBean sfb, List<UserResource> resources) {
+        for (UserResource resource : resources) {
+            if (resource.getName() == null) {
+                resource.setName(DefaultModelResource.class.getName());
+            }
+        }
+        // The CXF to Camel exchange binding may need to be customized 
+        // for the operation name, request, response types be derived from
+        // the model info (when a given model does provide this info) as opposed
+        // to a matched method which is of no real use with a default handler. 
+        sfb.setModelBeans(resources);
+        
     }
 
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
@@ -301,7 +331,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
-        return new JAXRSServerFactoryBean();
+        return new JAXRSServerFactoryBean() {
+            protected boolean isValidClassResourceInfo(ClassResourceInfo cri) {
+                // CXF will consider interfaces created for managing model resources
+                // invalid - however it is fine with Camel processors if no service invocation
+                // is requested.
+                return !performInvocation || !cri.getServiceClass().isInterface();
+            }
+        };
     }
 
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
