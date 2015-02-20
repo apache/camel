@@ -315,7 +315,7 @@
             </goals>
           </execution>
           <execution>
-            <id>package</id>
+            <id>include-sources</id>
             <phase>package</phase>
             <configuration>
               <target>
@@ -324,6 +324,30 @@
                   <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                   <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
                 </jar>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+          <execution>
+            <id>include-schemas</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <target>
+                <echo>Copying XSD schema to be included in JAR</echo>
+                <copy file="${project.build.directory}/classes/camel-spring.xsd"
+                      tofile="${project.build.directory}/schema/camel-spring.xsd"/>
+                <copy file="${project.build.directory}/classes/camel-spring.xsd"
+                      tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"/>
+                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
+                         token="http://camel.apache.org/schema/spring"
+                         value="http://camel.apache.org/schema/spring/v${camel.schema.version}"/>
+                <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                <copy todir="${project.build.directory}/classes">
+                  <fileset dir="${project.build.directory}/schema"/>
+                </copy>
               </target>
             </configuration>
             <goals>
@@ -368,36 +392,6 @@
                 </artifact>
               </artifacts>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- after the eip-documentation-enricher we need to copy some shchema files -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>package</id>
-            <phase>prepare-package</phase>
-            <configuration>
-              <target>
-                <echo>Copying XSD schema to be included in JAR</echo>
-                <copy file="${project.build.directory}/classes/camel-spring.xsd"
-                      tofile="${project.build.directory}/schema/camel-spring.xsd"/>
-                <copy file="${project.build.directory}/classes/camel-spring.xsd"
-                      tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"/>
-                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
-                         token="http://camel.apache.org/schema/spring"
-                         value="http://camel.apache.org/schema/spring/v${camel.schema.version}"/>
-                <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                <copy todir="${project.build.directory}/classes">
-                  <fileset dir="${project.build.directory}/schema"/>
-                </copy>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
