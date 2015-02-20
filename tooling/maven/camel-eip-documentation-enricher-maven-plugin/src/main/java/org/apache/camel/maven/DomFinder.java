@@ -38,4 +38,10 @@ public class DomFinder {
                 "/xs:schema/xs:complexType[@name='" + name + "']//xs:attribute")
                 .evaluate(document, XPathConstants.NODESET);
     }
+
+    public String findBaseType(Document document, XPath xPath, String name) throws XPathExpressionException {
+        return (String) xPath.compile(
+                "/xs:schema/xs:complexType[@name='" + name + "']//xs:extension/@base")
+                .evaluate(document, XPathConstants.STRING);
+    }
 }
