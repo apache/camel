@@ -38,6 +38,9 @@
   </prerequisites>
 
   <properties>
+    <!-- enforce to require using at least this maven version -->
+    <maven-enforcer-require-maven-version>3.1.1</maven-enforcer-require-maven-version>
+
     <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -136,6 +139,31 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
+
+    <!-- enforce maven version -->
+    <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.4</version>
+          <executions>
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>${maven-enforcer-require-maven-version}</version>
+                  </requireMavenVersion>
+                </rules>    
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+    </plugins>
+
     <pluginManagement>
       <plugins>
         <plugin>
