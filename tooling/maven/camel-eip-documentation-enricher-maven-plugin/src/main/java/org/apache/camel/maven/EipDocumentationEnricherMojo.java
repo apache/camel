@@ -17,10 +17,13 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,6 +36,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
@@ -75,36 +79,68 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        Set<String> injectedTypes = new HashSet<>();
         File rootDir = new File(camelCoreDir, Constants.PATH_TO_MODEL_DIR);
         DomFinder domFinder = new DomFinder();
         DocumentationEnricher documentationEnricher = new DocumentationEnricher();
         Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
         XPath xPath = buildXPath(new CamelSpringNamespace());
+        Document document = buildNamespaceAwareDocument(inputCamelSchemaFile);
         try {
-            Document document = buildNamespaceAwareDocument(inputCamelSchemaFile);
             NodeList elementsAndTypes = domFinder.findElementsAndTypes(document, xPath);
             documentationEnricher.enrichTopLevelElementsDocumentation(document, elementsAndTypes, jsonFiles);
             Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
             for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
-                NodeList attributeElements = domFinder.findAttributesElements(document, xPath, entry.getKey());
-                if (jsonFiles.containsKey(entry.getValue())) {
-                    documentationEnricher.enrichTypeAttributesDocumentation(document, attributeElements, jsonFiles.get(entry.getValue()));
+                String elementType = entry.getKey();
+                String elementName = entry.getValue();
+                if (jsonFileExistsForElement(jsonFiles, elementName)) {
+                    injectAttributesDocumentation(domFinder,
+                            documentationEnricher,
+                            jsonFiles.get(elementName),
+                            xPath,
+                            document,
+                            elementType,
+                            injectedTypes);
                 }
             }
             saveToFile(document, outputCamelSchemaFile, buildTransformer());
-        } catch (Exception e) {
-            getLog().error(e);
+        } catch (XPathExpressionException | IOException e) {
+            throw new MojoExecutionException("Error during documentation enrichment", e);
+        }
+    }
+
+    private boolean jsonFileExistsForElement(Map<String, File> jsonFiles,
+                                             String elementName) {
+        return jsonFiles.containsKey(elementName);
+    }
+
+    private void injectAttributesDocumentation(DomFinder domFinder,
+                                               DocumentationEnricher documentationEnricher,
+                                               File jsonFile,
+                                               XPath xPath,
+                                               Document document,
+                                               String type,
+                                               Set<String> injectedTypes) throws XPathExpressionException, IOException {
+        NodeList attributeElements = domFinder.findAttributesElements(document, xPath, type);
+        if (attributeElements.getLength() > 0) {
+            documentationEnricher.enrichTypeAttributesDocumentation(document, attributeElements, jsonFile);
+            injectedTypes.add(type);
+            String baseType = domFinder.findBaseType(document, xPath, type);
+            baseType = truncateTypeNamespace(baseType);
+            if (baseType != null && !injectedTypes.contains(baseType)) {
+                injectAttributesDocumentation(domFinder, documentationEnricher, jsonFile, xPath, document, baseType, injectedTypes);
+            }
         }
     }
 
     private Map<String, String> buildTypeToNameMap(NodeList elementsAndTypes) {
-        Map<String, String> typeToNameMap = new HashMap<String, String>();
+        Map<String, String> typeToNameMap = new HashMap<>();
         for (int i = 0; i < elementsAndTypes.getLength(); i++) {
             Element item = (Element) elementsAndTypes.item(i);
             String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
             String type = item.getAttribute(Constants.TYPE_ATTRIBUTE_NAME);
             if (name != null && type != null) {
-                type = type.replaceAll("tns:", "");
+                type = truncateTypeNamespace(type);
                 if (getLog().isDebugEnabled()) {
                     getLog().debug(String.format("Putting attributes type:'%s', name:'%s'", name, type));
                 }
@@ -114,29 +150,49 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return typeToNameMap;
     }
 
+    private String truncateTypeNamespace(String baseType) {
+        return baseType.replaceAll("tns:", "");
+    }
+
     private XPath buildXPath(NamespaceContext namespaceContext) {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(namespaceContext);
         return xPath;
     }
 
-    private Transformer buildTransformer() throws TransformerConfigurationException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+    private Transformer buildTransformer() throws MojoExecutionException {
+        Transformer transformer;
+        try {
+            transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        } catch (TransformerConfigurationException e) {
+            throw new MojoExecutionException("Error during building transformer", e);
+        }
         return transformer;
     }
 
-    public Document buildNamespaceAwareDocument(File xml) throws ParserConfigurationException, IOException, SAXException {
+    public Document buildNamespaceAwareDocument(File xml) throws MojoExecutionException {
+        Document result;
+        DocumentBuilder builder;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        return builder.parse(xml);
+        try {
+            builder = factory.newDocumentBuilder();
+            result =  builder.parse(xml);
+        } catch (SAXException | ParserConfigurationException | IOException  e) {
+            throw new MojoExecutionException("Error during building a document", e);
+        }
+        return result;
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer) throws IOException, TransformerException {
-        StreamResult result = new StreamResult(new FileOutputStream(outputFile));
-        DOMSource source = new DOMSource(document);
-        transformer.transform(source, result);
+    private void saveToFile(Document document, File outputFile, Transformer transformer) throws MojoExecutionException {
+        try {
+            StreamResult result = new StreamResult(new FileOutputStream(outputFile));
+            DOMSource source = new DOMSource(document);
+            transformer.transform(source, result);
+        } catch (FileNotFoundException | TransformerException e) {
+            throw new MojoExecutionException("Error during saving to file", e);
+        }
     }
 }
