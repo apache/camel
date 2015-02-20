@@ -966,7 +966,7 @@
                   </descriptors>
                   <finalName>${project.artifactId}-${project.version}</finalName>
                   <appendAssemblyId>false</appendAssemblyId>
-	          <tarLongFileMode>gnu</tarLongFileMode>
+                  <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
               </execution>
               <execution>
@@ -986,24 +986,5 @@
           </plugin>
         </plugins>
       </build>
-
-  <reporting>
-    <plugins>
-      <!-- let's generate nice PNG / SVG diagrams from our routes -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <reportSets>
-          <reportSet>
-            <configuration />
-            <reports>
-              <report>converters-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
 
 </project>
