@@ -16,12 +16,21 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 public class SchedulerComponent extends UriEndpointComponent {
+
+    private final Map<String, ScheduledExecutorService> executors = new HashMap<String, ScheduledExecutorService>();
+    private final Map<String, AtomicInteger> refCounts = new HashMap<String, AtomicInteger>();
+
+    private int concurrentTasks = 1;
 
     public SchedulerComponent() {
         super(SchedulerEndpoint.class);
@@ -30,7 +39,67 @@ public class SchedulerComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SchedulerEndpoint answer = new SchedulerEndpoint(uri, this, remaining);
+        answer.setConcurrentTasks(getConcurrentTasks());
         setProperties(answer, parameters);
         return answer;
     }
+
+    public int getConcurrentTasks() {
+        return concurrentTasks;
+    }
+
+    public void setConcurrentTasks(int concurrentTasks) {
+        this.concurrentTasks = concurrentTasks;
+    }
+
+    protected ScheduledExecutorService addConsumer(SchedulerConsumer consumer) {
+        String name = consumer.getEndpoint().getName();
+        int concurrentTasks = consumer.getEndpoint().getConcurrentTasks();
+
+        ScheduledExecutorService answer;
+        synchronized (executors) {
+            answer = executors.get(name);
+            if (answer == null) {
+                answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "scheduler://" + name, concurrentTasks);
+                executors.put(name, answer);
+                // store new reference counter
+                refCounts.put(name, new AtomicInteger(1));
+            } else {
+                // increase reference counter
+                AtomicInteger counter = refCounts.get(name);
+                if (counter != null) {
+                    counter.incrementAndGet();
+                }
+            }
+        }
+        return answer;
+    }
+
+    protected void removeConsumer(SchedulerConsumer consumer) {
+        String name = consumer.getEndpoint().getName();
+
+        synchronized (executors) {
+            // decrease reference counter
+            AtomicInteger counter = refCounts.get(name);
+            if (counter != null && counter.decrementAndGet() <= 0) {
+                refCounts.remove(name);
+                // remove scheduler as its no longer in use
+                ScheduledExecutorService scheduler = executors.remove(name);
+                if (scheduler != null) {
+                    getCamelContext().getExecutorServiceManager().shutdown(scheduler);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        Collection<ScheduledExecutorService> collection = executors.values();
+        for (ScheduledExecutorService scheduler : collection) {
+            getCamelContext().getExecutorServiceManager().shutdown(scheduler);
+        }
+        executors.clear();
+        refCounts.clear();
+    }
+
 }

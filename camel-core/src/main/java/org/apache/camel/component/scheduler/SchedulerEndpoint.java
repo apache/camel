@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.scheduler;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "scheduler", consumerOnly = true, consumerClass = SchedulerConsumer.class, label = "core,scheduling")
@@ -29,10 +32,17 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String name;
+    @UriParam
+    private int concurrentTasks = 1;
 
     public SchedulerEndpoint(String uri, SchedulerComponent component, String remaining) {
         super(uri, component);
         this.name = remaining;
+    }
+
+    @Override
+    public SchedulerComponent getComponent() {
+        return (SchedulerComponent) super.getComponent();
     }
 
     @Override
@@ -58,5 +68,25 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getConcurrentTasks() {
+        return concurrentTasks;
+    }
+
+    public void setConcurrentTasks(int concurrentTasks) {
+        this.concurrentTasks = concurrentTasks;
+    }
+
+    public void onConsumerStart(SchedulerConsumer consumer) {
+        // if using default scheduler then obtain thread pool from component which manages their lifecycle
+        if (consumer.getScheduler() == null && consumer.getScheduledExecutorService() == null) {
+            ScheduledExecutorService scheduler = getComponent().addConsumer(consumer);
+            consumer.setScheduledExecutorService(scheduler);
+        }
+    }
+
+    public void onConsumerStop(SchedulerConsumer consumer) {
+        getComponent().removeConsumer(consumer);
     }
 }

@@ -80,5 +80,17 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
         return polled ? 1 : 0;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        getEndpoint().onConsumerStart(this);
 
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        getEndpoint().onConsumerStop(this);
+
+        super.doStop();
+    }
 }
