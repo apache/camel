@@ -54,7 +54,7 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
     public StreamCache copy() throws IOException {
         if (byteArrayForCopy == null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(in.available());
-            IOHelper.copy(this, baos);
+            IOHelper.copy(in, baos);
             // reset so that the stream can be reused
             reset();
             // cache the byte array, in order not to copy the byte array in the next call again

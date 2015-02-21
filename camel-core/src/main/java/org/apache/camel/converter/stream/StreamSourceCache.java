@@ -84,10 +84,10 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
 
     public StreamCache copy() throws IOException {
         if (streamCache != null) {
-            return new StreamSourceCache(streamCache).copy();
+            return new StreamSourceCache(streamCache.copy());
         }
         if (readCache != null) {
-            return new StreamSourceCache((ReaderCache) readCache.copy());
+            return new StreamSourceCache(readCache.copy());
         }
         return null;
     }
