@@ -188,6 +188,7 @@ public interface Exchange {
     
     String SAXPARSER_FACTORY   = "CamelSAXParserFactory";
 
+    String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding"; 

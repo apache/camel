@@ -40,6 +40,11 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
             getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
         }
 
-        return 1;
+        // a property can be used to control if the scheduler polled a message or not
+        // for example to overrule and indicate no message was polled, which can affect the scheduler
+        // to leverage backoff on idle etc.
+        boolean polled = exchange.getProperty(Exchange.SCHEDULER_POLLED_MESSAGES, true, boolean.class);
+        return polled ? 1 : 0;
     }
+
 }

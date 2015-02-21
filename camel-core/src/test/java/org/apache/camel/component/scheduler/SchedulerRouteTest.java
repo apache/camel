@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.timer;
+package org.apache.camel.component.scheduler;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 /**
  * @version 
  */
-public class TimerRouteTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
+public class SchedulerRouteTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(SchedulerRouteTest.class);
     private MyBean bean = new MyBean();
 
-    public void testTimerInvokesBeanMethod() throws Exception {
+    public void testSchedulerInvokesBeanMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
@@ -46,8 +46,8 @@ public class TimerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=100")
-                    .log("Fired timer")
+                from("scheduler://foo?delay=100")
+                    .log("Fired scheduler")
                     .to("bean:myBean", "mock:result");
             }
         };

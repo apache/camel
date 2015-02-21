@@ -49,6 +49,13 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay = true;
 
+    public DefaultScheduledPollConsumerScheduler() {
+    }
+
+    public DefaultScheduledPollConsumerScheduler(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduledExecutorService = scheduledExecutorService;
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -186,6 +193,5 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
             futures.clear();
         }
     }
-
 
 }

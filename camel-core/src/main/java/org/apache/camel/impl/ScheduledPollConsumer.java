@@ -415,7 +415,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
 
         if (scheduler == null) {
-            scheduler = new DefaultScheduledPollConsumerScheduler();
+            scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
         scheduler.onInit(this);

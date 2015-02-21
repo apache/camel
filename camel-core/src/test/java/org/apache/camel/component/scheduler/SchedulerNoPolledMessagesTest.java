@@ -14,58 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.timer;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.naming.Context;
+package org.apache.camel.component.scheduler;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
-public class TimerRouteTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
-    private MyBean bean = new MyBean();
+public class SchedulerNoPolledMessagesTest extends ContextTestSupport {
 
-    public void testTimerInvokesBeanMethod() throws Exception {
+    public void testSchedulerNoPolledMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(2);
+        mock.expectedMinimumMessageCount(3);
+        // the first 2 is fast
+        mock.message(0).arrives().between(0, 500).millis().beforeNext();
+        mock.message(1).arrives().between(0, 500).millis().beforeNext();
+        // the last message should be slower as the backoff idle has kicked in
+        mock.message(2).arrives().between(500, 1500).millis().afterPrevious();
 
         assertMockEndpointsSatisfied();
-
-        assertTrue("Should have fired 2 or more times was: " + bean.counter.get(), bean.counter.get() >= 2);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=100")
-                    .log("Fired timer")
-                    .to("bean:myBean", "mock:result");
+                from("scheduler://foo?delay=100&backoffMultiplier=10&backoffIdleThreshold=2")
+                    .log("Fired scheduler")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            // force no messages to be polled which should affect the scheduler to think its idle
+                            exchange.setProperty(Exchange.SCHEDULER_POLLED_MESSAGES, false);
+                        }
+                    })
+                    .to("mock:result");
             }
         };
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", bean);
-        return answer;
-    }
-
-    public static class MyBean {
-        public AtomicInteger counter = new AtomicInteger(0);
-
-        public void someMethod() {
-            LOG.debug("Invoked someMethod()");
-            counter.incrementAndGet();
-        }
-    }
 }
