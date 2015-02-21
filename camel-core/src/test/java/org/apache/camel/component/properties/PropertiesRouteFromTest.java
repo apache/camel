@@ -21,7 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 
 /**
@@ -37,7 +36,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         assertEquals("direct:cool", uri);
 
         // use a routes definition to dump the routes
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("foo"));
+        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("foo"));
         assertTrue(xml.contains("<from uri=\"direct:cool\"/>"));
         assertTrue(xml.contains("<to uri=\"mock:result\""));
     }
