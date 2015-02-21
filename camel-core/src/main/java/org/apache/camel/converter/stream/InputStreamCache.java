@@ -41,7 +41,7 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
     }
 
     public StreamCache copy() {
-        return new InputStreamCache(buf);
+        return new InputStreamCache(buf, count);
     }
 
     public boolean inMemory() {
