@@ -30,6 +30,7 @@
 
     <modules>
       <module>commands</module>
+      <module>commands-catalog</module>
       <module>features</module>
     </modules>
 

@@ -39,6 +39,10 @@
     <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
   </feature>
+  <feature name='camel-catalog' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands-catalog/${project.version}</bundle>
+  </feature>
   <feature name='camel-spring' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <feature version='${spring-version-range-karaf}'>spring</feature>

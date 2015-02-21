@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands;
+package org.apache.camel.karaf.commands.catalog;
 
-import org.apache.camel.commands.CatalogComponentListCommand;
+import org.apache.camel.commands.CatalogLanguageLabelListCommand;
+import org.apache.camel.karaf.commands.CamelCommandSupport;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "catalog-component-list", description = "Lists all Camel components from the Camel catalog")
-public class CatalogComponentList extends CamelCommandSupport {
+@Command(scope = "camel", name = "catalog-component-label-list", description = "Lists all Camel language labels from the Camel catalog")
+public class CatalogLanguageLabelList extends CamelCommandSupport {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
-    @Option(name = "--label", aliases = "-l", description = "To filter components by their label(s), such as database",
-            required = false, multiValued = false)
-    String label;
-
     protected Object doExecute() throws Exception {
-        CatalogComponentListCommand command = new CatalogComponentListCommand(verbose, label);
+        CatalogLanguageLabelListCommand command = new CatalogLanguageLabelListCommand(verbose);
         return command.execute(camelController, System.out, System.err);
     }
 

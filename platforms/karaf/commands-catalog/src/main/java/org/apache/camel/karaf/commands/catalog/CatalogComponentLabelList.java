@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands;
+package org.apache.camel.karaf.commands.catalog;
 
 import org.apache.camel.commands.CatalogComponentLabelListCommand;
+import org.apache.camel.karaf.commands.CamelCommandSupport;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 

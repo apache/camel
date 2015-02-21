@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karaf.commands;
+package org.apache.camel.karaf.commands.catalog;
 
-import org.apache.camel.commands.CatalogEipLabelListCommand;
+import org.apache.camel.commands.CatalogDataFormatListCommand;
+import org.apache.camel.karaf.commands.CamelCommandSupport;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 
-@Command(scope = "camel", name = "catalog-eip-label-list", description = "Lists all Camel EIP labels from the Camel catalog")
-public class CatalogEipLabelList extends CamelCommandSupport {
+@Command(scope = "camel", name = "catalog-dataformat-list", description = "Lists all Camel dataformats from the Camel catalog")
+public class CatalogDataFormatList extends CamelCommandSupport {
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean verbose;
 
+    @Option(name = "--label", aliases = "-l", description = "To filter dataformats by their label(s), such as xml",
+            required = false, multiValued = false)
+    String label;
+
     protected Object doExecute() throws Exception {
-        CatalogEipLabelListCommand command = new CatalogEipLabelListCommand(verbose);
+        CatalogDataFormatListCommand command = new CatalogDataFormatListCommand(verbose, label);
         return command.execute(camelController, System.out, System.err);
     }
 

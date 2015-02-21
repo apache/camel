@@ -215,46 +215,6 @@
         <null/>
       </completers>
     </command>
-    <command name="camel/catalog-component-list">
-      <action class="org.apache.camel.karaf.commands.CatalogComponentList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-component-label-list">
-      <action class="org.apache.camel.karaf.commands.CatalogComponentLabelList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-dataformat-list">
-      <action class="org.apache.camel.karaf.commands.CatalogDataFormatList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-dataformat-label-list">
-      <action class="org.apache.camel.karaf.commands.CatalogDataFormatLabelList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-language-list">
-      <action class="org.apache.camel.karaf.commands.CatalogLanguageList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-language-label-list">
-      <action class="org.apache.camel.karaf.commands.CatalogLanguageLabelList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-eip-list">
-      <action class="org.apache.camel.karaf.commands.CatalogEipList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel/catalog-eip-label-list">
-      <action class="org.apache.camel.karaf.commands.CatalogEipLabelList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
   </command-bundle>
 
   <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">
