@@ -24,9 +24,8 @@ import io.netty.buffer.ByteBuf;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
-
 /**
- * A {@link ChannelBuffer} which is exposed as an {@link InputStream} which makes it very
+ * A {@link ByteBuf} which is exposed as an {@link InputStream} which makes it very
  * easy to use by Camel and other Camel components. Also supported is {@link StreamCache}
  * which allows the data to be re-read for example when doing content based routing with XPath.
  */
@@ -85,6 +84,11 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
         } finally {
             buffer.readerIndex(idx);
         }
+    }
+
+    @Override
+    public StreamCache copy() throws IOException {
+        return new NettyChannelBufferStreamCache(buffer.copy());
     }
 
     @Override

@@ -20,13 +20,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.StreamCache;
 
 /**
  * A {@link StreamCache} for caching using an in-memory byte array.
  */
-public final class InputStreamCache extends ByteArrayInputStream implements StreamCache, ParallelProcessableStream {
+public final class InputStreamCache extends ByteArrayInputStream implements StreamCache {
 
     public InputStreamCache(byte[] data) {
         super(data);
@@ -37,15 +36,12 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
         super.count = count;
     }
     
-    private InputStreamCache(byte[] data, int pos, int count) {
-        super(data);  
-        super.pos = pos;
-        super.count = count;
-        // you cannot use super(data,off,len), because then mark is set to off!
-    }
-
     public void writeTo(OutputStream os) throws IOException {
         os.write(buf, pos, count - pos);
+    }
+
+    public StreamCache copy() {
+        return new InputStreamCache(buf);
     }
 
     public boolean inMemory() {
@@ -54,11 +50,5 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
 
     public long length() {
         return count;
-    }
-    
-    /** Creates a new InputStream using the same underlying cache. */
-    @Override
-    public ParallelProcessableStream copy() {
-        return new InputStreamCache(buf, super.pos, super.count);
     }
 }

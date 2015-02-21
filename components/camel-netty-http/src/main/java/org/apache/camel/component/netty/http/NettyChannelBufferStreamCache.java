@@ -87,6 +87,11 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
+    public StreamCache copy() throws IOException {
+        return new NettyChannelBufferStreamCache(buffer.copy());
+    }
+
+    @Override
     public boolean inMemory() {
         return true;
     }

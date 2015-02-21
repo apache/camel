@@ -20,13 +20,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 
-import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.StreamCache;
 
 /**
  * A {@link org.apache.camel.StreamCache} for String {@link java.io.Reader}s
  */
-public class ReaderCache extends StringReader implements StreamCache, ParallelProcessableStream {
+public class ReaderCache extends StringReader implements StreamCache {
 
     private final String data;
 
@@ -52,6 +51,10 @@ public class ReaderCache extends StringReader implements StreamCache, ParallelPr
         os.write(data.getBytes());
     }
 
+    public StreamCache copy() throws IOException {
+        return new ReaderCache(data);
+    }
+
     public boolean inMemory() {
         return true;
     }
@@ -62,11 +65,6 @@ public class ReaderCache extends StringReader implements StreamCache, ParallelPr
 
     String getData() {
         return data;
-    }
-
-    @Override
-    public ParallelProcessableStream copy() throws IOException {
-        return new ReaderCache(data);
     }
 
 }

@@ -28,10 +28,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.CipherInputStream;
 
-import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
@@ -39,7 +37,7 @@ import org.apache.camel.util.IOHelper;
 /**
  * A {@link StreamCache} for {@link File}s
  */
-public final class FileInputStreamCache extends InputStream implements StreamCache, ParallelProcessableStream {
+public final class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
     private final File file;
     private final CipherPair ciphers;
@@ -101,6 +99,11 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         }
     }
 
+    public StreamCache copy() throws IOException {
+        FileInputStreamCache copy = new FileInputStreamCache(file, ciphers, closer);
+        return copy;
+    }
+
     public boolean inMemory() {
         return false;
     }
@@ -141,18 +144,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         }
         return in;
     }
-    
-    /** Creates a copy which uses the same underlying file
-     * and which has the same life cycle as the original instance (for example,
-     * will be closed automatically when the route is finished).
-     */
-    @Override
-    public ParallelProcessableStream copy() throws IOException {
-        FileInputStreamCache copy = new FileInputStreamCache(file, ciphers, closer);
-        return copy;
-    }
-    
-    
+
     /** 
      * Collects all FileInputStreamCache instances of a temporary file which must be closed
      * at the end of the route.

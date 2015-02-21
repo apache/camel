@@ -43,9 +43,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
-import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
@@ -866,10 +866,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
 
-        ParallelProcessableStream parallelProcessableStream = null;
-        if (isParallelProcessing() && exchange.getIn().getBody() instanceof ParallelProcessableStream) {
+        StreamCache streamCache = null;
+        if (isParallelProcessing() && exchange.getIn().getBody() instanceof StreamCache) {
             // in parallel processing case, the stream must be copied, therefore get the stream
-            parallelProcessableStream = (ParallelProcessableStream) exchange.getIn().getBody();
+            streamCache = (StreamCache) exchange.getIn().getBody();
         }
 
         int index = 0;
@@ -877,11 +877,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // copy exchange, and do not share the unit of work
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
-            if (parallelProcessableStream != null) {
+            if (streamCache != null) {
                 if (index > 0) {
                     // copy it otherwise parallel processing is not possible,
                     // because streams can only be read once
-                    ParallelProcessableStream copiedStreamCache = parallelProcessableStream.copy();
+                    StreamCache copiedStreamCache = streamCache.copy();
                     if (copiedStreamCache != null) {
                         copy.getIn().setBody(copiedStreamCache);  
                     }

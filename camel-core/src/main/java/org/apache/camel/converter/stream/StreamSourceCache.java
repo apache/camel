@@ -19,18 +19,16 @@ package org.apache.camel.converter.stream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A {@link org.apache.camel.StreamCache} for {@link javax.xml.transform.stream.StreamSource}s
  */
-public final class StreamSourceCache extends StreamSource implements StreamCache, ParallelProcessableStream {
+public final class StreamSourceCache extends StreamSource implements StreamCache {
 
     private final StreamCache streamCache;
     private final ReaderCache readCache;
@@ -84,6 +82,16 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    public StreamCache copy() throws IOException {
+        if (streamCache != null) {
+            return new StreamSourceCache(streamCache).copy();
+        }
+        if (readCache != null) {
+            return new StreamSourceCache((ReaderCache) readCache.copy());
+        }
+        return null;
+    }
+
     public boolean inMemory() {
         if (streamCache != null) {
             return streamCache.inMemory();
@@ -95,6 +103,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    
     public long length() {
         if (streamCache != null) {
             return streamCache.length();
@@ -104,18 +113,6 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             // should not happen
             return 0;
         }
-    }
-
-    
-    @Override
-    public ParallelProcessableStream copy() throws IOException {
-        if (streamCache != null) {
-            return  new StreamSourceCache((StreamCache)((ParallelProcessableStream)streamCache).copy());
-        }
-        if (readCache != null) {
-            return new StreamSourceCache((ReaderCache) readCache.copy());
-        }
-        return null;
     }
 
 }

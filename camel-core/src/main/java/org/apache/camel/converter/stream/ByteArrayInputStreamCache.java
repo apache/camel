@@ -22,17 +22,15 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.camel.ParallelProcessableStream;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A {@link StreamCache} for {@link java.io.ByteArrayInputStream}
  */
-public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache, ParallelProcessableStream {
+public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
     private final int length;
-    
     private byte[] byteArrayForCopy;
 
     public ByteArrayInputStreamCache(ByteArrayInputStream in) {
@@ -40,6 +38,7 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
         this.length = in.available();
     }
 
+    @Override
     public void reset() {
         try {
             super.reset();
@@ -48,27 +47,11 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
         }
     }
 
-
     public void writeTo(OutputStream os) throws IOException {
         IOHelper.copyAndCloseInput(in, os);
     }
 
-    public boolean inMemory() {
-        return true;
-    }
-
-    @Override
-    public long length() {
-        return length;
-    }
-
-    /**
-     * Transforms to InputStreamCache by copying the byte array. An
-     * InputStreamCache can be copied in such a way that the underlying byte
-     * array is kept.
-     */
-    @Override
-    public ParallelProcessableStream copy() throws IOException {
+    public StreamCache copy() throws IOException {
         if (byteArrayForCopy == null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(in.available());
             IOHelper.copy(this, baos);
@@ -78,5 +61,14 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
             byteArrayForCopy = baos.toByteArray();
         }
         return new InputStreamCache(byteArrayForCopy);
+    }
+
+    public boolean inMemory() {
+        return true;
+    }
+
+    @Override
+    public long length() {
+        return length;
     }
 }

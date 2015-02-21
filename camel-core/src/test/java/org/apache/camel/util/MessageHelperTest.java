@@ -63,6 +63,10 @@ public class MessageHelperTest extends TestCase {
                 // noop
             }
 
+            public StreamCache copy() throws IOException {
+                return null;
+            }
+
             public boolean inMemory() {
                 return true;
             }
