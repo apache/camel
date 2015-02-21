@@ -16,28 +16,61 @@
  */
 package org.apache.camel.component.scheduler;
 
-import org.apache.camel.Endpoint;
+import java.util.Date;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 public class SchedulerConsumer extends ScheduledPollConsumer {
 
-    public SchedulerConsumer(Endpoint endpoint, Processor processor) {
+    public SchedulerConsumer(SchedulerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
     @Override
+    public SchedulerEndpoint getEndpoint() {
+        return (SchedulerEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected int poll() throws Exception {
-        Exchange exchange = getEndpoint().createExchange();
-        try {
-            getProcessor().process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
+        return sendTimerExchange();
+    }
+
+    protected int sendTimerExchange() {
+        final Exchange exchange = getEndpoint().createExchange();
+        exchange.setProperty(Exchange.TIMER_NAME, getEndpoint().getName());
+
+        Date now = new Date();
+        exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
+
+        if (log.isTraceEnabled()) {
+            log.trace("Timer {} is firing", getEndpoint().getName());
         }
 
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+        if (!getEndpoint().isSynchronous()) {
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    // handle any thrown exception
+                    if (exchange.getException() != null) {
+                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                    }
+                }
+            });
+        } else {
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            // handle any thrown exception
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
         }
 
         // a property can be used to control if the scheduler polled a message or not
@@ -46,5 +79,6 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
         boolean polled = exchange.getProperty(Exchange.SCHEDULER_POLLED_MESSAGES, true, boolean.class);
         return polled ? 1 : 0;
     }
+
 
 }
