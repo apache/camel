@@ -10,8 +10,6 @@
     This bundle provides the Karaf shell commands to manipulate and manage Camel Components.
 
     The following commands are available:
-    \u001B[36mcamel:catalog-component-list\u001B[0m Lists all Camel components from the Camel catalog.
-    \u001B[36mcamel:catalog-label\u001B[0m Lists all Camel component labels from the Camel catalog.
     \u001B[36mcamel:component-list\u001B[0m Lists all Camel components that are in use in Karaf.
     \u001B[36mcamel:context-info\u001B[0m Display detailed information about a Camel context.
     \u001B[36mcamel:context-list\u001B[0m Lists all Camel contexts.
