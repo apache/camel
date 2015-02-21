@@ -23,9 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class GangliaComponent extends UriEndpointComponent {
 
     private GangliaConfiguration configuration;

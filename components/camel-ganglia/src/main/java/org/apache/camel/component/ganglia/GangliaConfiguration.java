@@ -27,13 +27,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-/**
- * @version
- */
 @UriParams
 public class GangliaConfiguration implements Cloneable {
 
-    public static final String DEFAULT_DESTINATION = "127.0.0.1";
+    public static final String DEFAULT_DESTINATION = "239.2.11.71";
     public static final int DEFAULT_PORT = 8649;
     public static final GMetric.UDPAddressingMode DEFAULT_MODE = GMetric.UDPAddressingMode.MULTICAST;
     public static final int DEFAULT_TTL = 5;

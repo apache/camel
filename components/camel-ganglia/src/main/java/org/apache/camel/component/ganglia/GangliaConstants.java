@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.ganglia;
 
-/**
- * @version 
- */
 public final class GangliaConstants {
 
     public static final String GROUP_NAME = "CamelGangliaGroupName";

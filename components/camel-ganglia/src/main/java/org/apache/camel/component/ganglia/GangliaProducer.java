@@ -23,9 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 
-/**
- * @version 
- */
 public class GangliaProducer extends DefaultProducer {
 
     private final Publisher publisher;
