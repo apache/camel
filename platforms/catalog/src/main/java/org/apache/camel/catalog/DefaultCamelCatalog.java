@@ -30,9 +30,9 @@ import java.util.TreeSet;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Default {@link org.apache.camel.catalog.CamelComponentCatalog}.
+ * Default {@link CamelCatalog}.
  */
-public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
+public class DefaultCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
@@ -49,7 +49,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<String>();
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
         if (is != null) {
             try {
                 loadLines(is, names);
@@ -64,7 +64,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public List<String> findDataFormatNames() {
         List<String> names = new ArrayList<String>();
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
         if (is != null) {
             try {
                 loadLines(is, names);
@@ -79,7 +79,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public List<String> findLanguageNames() {
         List<String> names = new ArrayList<String>();
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
         if (is != null) {
             try {
                 loadLines(is, names);
@@ -94,7 +94,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public List<String> findModelNames() {
         List<String> names = new ArrayList<String>();
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
         if (is != null) {
             try {
                 loadLines(is, names);
@@ -229,7 +229,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String modelJSonSchema(String name) {
         String file = MODEL_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -245,7 +245,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String componentJSonSchema(String name) {
         String file = COMPONENTS_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -261,7 +261,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String dataFormatJSonSchema(String name) {
         String file = DATA_FORMATS_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -277,7 +277,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String languageJSonSchema(String name) {
         String file = LANGUAGE_JSON + "/" + name + ".json";
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -389,7 +389,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String archetypeCatalogAsXml() {
         String file = ARCHETYPES_CATALOG;
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -405,7 +405,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String springSchemaAsXml() {
         String file = SCHEMAS_XML + "/camel-spring.xsd";
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);
@@ -421,7 +421,7 @@ public class DefaultCamelComponentCatalog implements CamelComponentCatalog {
     public String blueprintSchemaAsXml() {
         String file = SCHEMAS_XML + "/camel-blueprint.xsd";
 
-        InputStream is = DefaultCamelComponentCatalog.class.getClassLoader().getResourceAsStream(file);
+        InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
                 return loadText(is);

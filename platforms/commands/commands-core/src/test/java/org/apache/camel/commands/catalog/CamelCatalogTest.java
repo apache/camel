@@ -19,8 +19,8 @@ package org.apache.camel.commands.catalog;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.camel.catalog.CamelComponentCatalog;
-import org.apache.camel.catalog.DefaultCamelComponentCatalog;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +28,13 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class CamelComponentCatalogTest {
+public class CamelCatalogTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelComponentCatalogTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogTest.class);
 
     @Test
     public void testFindComponentNames() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames();
 
         assertNotNull(names);
@@ -45,7 +45,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testFindComponentNamesFilter() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("testing");
 
         assertNotNull(names);
@@ -56,7 +56,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testFindComponentNamesFilterWildcard() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("t*");
 
         assertNotNull(names);
@@ -67,7 +67,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testFindComponentNamesFilterTwo() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("transformation");
 
         assertNotNull(names);
@@ -78,7 +78,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testFindComponentNamesFilterNoMatch() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("cannotmatchme");
 
         assertNotNull(names);
@@ -88,7 +88,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testCoreComponentJson() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         String json = catalog.componentJSonSchema("bean");
 
         assertNotNull(json);
@@ -99,7 +99,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testFtpComponentJson() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         String json = catalog.componentJSonSchema("ftp");
 
         assertNotNull(json);
@@ -110,7 +110,7 @@ public class CamelComponentCatalogTest {
 
     @Test
     public void testLabels() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         Set<String> labels = catalog.findComponentLabels();
 
         assertNotNull(labels);

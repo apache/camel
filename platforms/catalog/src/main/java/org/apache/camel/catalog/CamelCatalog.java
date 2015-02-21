@@ -21,10 +21,10 @@ import java.util.Set;
 import javax.management.MXBean;
 
 /**
- * Catalog of all the Camel components from this Apache Camel release.
+ * Catalog of components, data formats, models (EIPs), languages, and more  from this Apache Camel release.
  */
 @MXBean
-public interface CamelComponentCatalog {
+public interface CamelCatalog {
 
     /**
      * Find all the component names from the Camel catalog

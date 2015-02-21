@@ -19,8 +19,8 @@ package org.apache.camel.commands.catalog;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.camel.catalog.CamelComponentCatalog;
-import org.apache.camel.catalog.DefaultCamelComponentCatalog;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class CamelModelCatalogTest {
 
     @Test
     public void testFindModelNames() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findModelNames();
 
         assertNotNull(names);
@@ -45,7 +45,7 @@ public class CamelModelCatalogTest {
 
     @Test
     public void testFindModelNamesFilter() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findModelNames("transformation");
 
         assertNotNull(names);
@@ -56,7 +56,7 @@ public class CamelModelCatalogTest {
 
     @Test
     public void testFindModelNamesFilterWildcard() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findModelNames("t*");
 
         assertNotNull(names);
@@ -67,7 +67,7 @@ public class CamelModelCatalogTest {
 
     @Test
     public void testFindComponentNamesFilterNoMatch() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findModelNames("cannotmatchme");
 
         assertNotNull(names);
@@ -77,7 +77,7 @@ public class CamelModelCatalogTest {
 
     @Test
     public void testCoreComponentJson() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         String json = catalog.modelJSonSchema("split");
 
         assertNotNull(json);
@@ -88,7 +88,7 @@ public class CamelModelCatalogTest {
 
     @Test
     public void testLabels() {
-        CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         Set<String> labels = catalog.findModelLabels();
 
         assertNotNull(labels);

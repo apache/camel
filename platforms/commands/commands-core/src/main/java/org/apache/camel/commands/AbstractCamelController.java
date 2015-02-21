@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.catalog.CamelComponentCatalog;
-import org.apache.camel.catalog.DefaultCamelComponentCatalog;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.commands.internal.RegexUtil;
 import org.apache.camel.util.JsonSchemaHelper;
 
@@ -34,7 +34,7 @@ import org.apache.camel.util.JsonSchemaHelper;
  */
 public abstract class AbstractCamelController implements CamelController {
 
-    private CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+    private CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Override
     public List<Map<String, String>> listEipsCatalog(String filter) throws Exception {

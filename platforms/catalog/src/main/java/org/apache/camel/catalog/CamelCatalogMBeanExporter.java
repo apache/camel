@@ -23,24 +23,24 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 /**
- * MBean exporter to register the {@link CamelComponentCatalog} in JMX.
+ * MBean exporter to register the {@link CamelCatalog} in JMX.
  */
 public class CamelCatalogMBeanExporter {
 
     public static final String MBEAN_NAME = "org.apache.camel.catalog:type=catalog,name=catalog";
 
-    private CamelComponentCatalog catalog;
+    private CamelCatalog catalog;
     private ObjectName objectName;
     private MBeanServer mBeanServer;
 
     /**
-     * Initializes and exports the {@link org.apache.camel.catalog.CamelComponentCatalog} in JMX using the domain name,
+     * Initializes and exports the {@link CamelCatalog} in JMX using the domain name,
      * which can be obtained using {@link #getObjectName()}.
      *
      * @throws Exception
      */
     public void init() throws Exception {
-        catalog = new DefaultCamelComponentCatalog();
+        catalog = new DefaultCamelCatalog();
 
         if (objectName == null) {
             objectName = getObjectName();
@@ -66,7 +66,7 @@ public class CamelCatalogMBeanExporter {
     }
 
     /**
-     * Destroyes and unregisteres the {@link org.apache.camel.catalog.CamelComponentCatalog} from JMX.
+     * Destroyes and unregisteres the {@link CamelCatalog} from JMX.
      *
      * @throws Exception is thrown if error during unregistration
      */

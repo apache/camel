@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class CamelCatalogTest extends TestCase {
 
-    private CamelComponentCatalog catalog = new DefaultCamelComponentCatalog();
+    private CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Test
     public void testFindNames() throws Exception {
