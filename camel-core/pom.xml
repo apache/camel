@@ -70,6 +70,7 @@
       org.apache.camel.spi.ComponentResolver;component=ref,
       org.apache.camel.spi.ComponentResolver;component=rest,
       org.apache.camel.spi.ComponentResolver;component=seda,
+      org.apache.camel.spi.ComponentResolver;component=scheduler,
       org.apache.camel.spi.ComponentResolver;component=stub,
       org.apache.camel.spi.ComponentResolver;component=test,
       org.apache.camel.spi.ComponentResolver;component=timer,
