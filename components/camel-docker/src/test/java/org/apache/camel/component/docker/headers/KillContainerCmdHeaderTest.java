@@ -45,7 +45,6 @@ public class KillContainerCmdHeaderTest extends BaseDockerHeaderTest<KillContain
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_SIGNAL, signal);
 
-        
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).killContainerCmd(containerId);

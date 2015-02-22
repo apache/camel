@@ -80,7 +80,7 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
     @Override
     protected void doStart() throws Exception {
         
-        eventsCmd = DockerClientFactory.getDockerClient(endpoint.getConfiguration(), null).eventsCmd(this);
+        eventsCmd = DockerClientFactory.getDockerClient(endpoint.getConfiguration(),null).eventsCmd(this);
         
         eventsCmd.withSince(String.valueOf(processInitialEvent()));
         eventsExecutorService =  eventsCmd.exec();

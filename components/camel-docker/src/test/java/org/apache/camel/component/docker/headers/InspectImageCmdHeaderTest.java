@@ -42,7 +42,6 @@ public class InspectImageCmdHeaderTest extends BaseDockerHeaderTest<InspectImage
         
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE_ID, imageId);
-
         
         template.sendBodyAndHeaders("direct:in", "", headers);
         

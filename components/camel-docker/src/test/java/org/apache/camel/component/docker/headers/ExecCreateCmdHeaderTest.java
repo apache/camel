@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import java.util.Map;
+import com.github.dockerjava.api.command.ExecCreateCmd;
 
-import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
+import java.util.Map;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -28,41 +28,53 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 /**
- * Validates Copy File from Container Request headers are applied properly
+ * Validates Exec Create Request headers are parsed properly
  */
-public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyFileFromContainerCmd> {
+public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd> {
     
     @Mock
-    private CopyFileFromContainerCmd mockObject;
+    private ExecCreateCmd mockObject;
     
     @Test
-    public void copyFileFromContainerHeaderTest() {
+    public void execCreateHeaderTest() {
         
         String containerId = "9c09acd48a25";
-        String resource = "/test";
-        String hostPath = "/test/test2";
+        boolean tty = true;
+        boolean stdErr = false;
+        boolean stdOut = true;
+        boolean stdIn = true;
+        
         
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
-        headers.put(DockerConstants.DOCKER_RESOURCE, resource);
-        headers.put(DockerConstants.DOCKER_HOST_PATH, hostPath);
+        headers.put(DockerConstants.DOCKER_TTY, tty);
+        headers.put(DockerConstants.DOCKER_ATTACH_STD_ERR, stdErr);        
+        headers.put(DockerConstants.DOCKER_ATTACH_STD_OUT, stdOut);
+        headers.put(DockerConstants.DOCKER_ATTACH_STD_IN, stdIn);
+        headers.put(DockerConstants.DOCKER_CMD, "date;whoami");
 
 
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
-        Mockito.verify(dockerClient, Mockito.times(1)).copyFileFromContainerCmd(containerId, resource);
-        Mockito.verify(mockObject, Mockito.times(1)).withHostPath(Matchers.eq(hostPath));
+        
+        Mockito.verify(dockerClient, Mockito.times(1)).execCreateCmd(Matchers.eq(containerId));
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(Matchers.eq(stdErr));
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(Matchers.eq(stdOut));
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(Matchers.eq(stdIn));
+        Mockito.verify(mockObject, Mockito.times(1)).withCmd(new String[]{"date","whoami"});
+
+
         
     }
-
+    
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.copyFileFromContainerCmd(Matchers.anyString(), Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.execCreateCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override
     protected DockerOperation getOperation() {
-        return DockerOperation.COPY_FILE_CONTAINER;
+        return DockerOperation.EXEC_CREATE;
     }
 
 }

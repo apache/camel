@@ -34,7 +34,7 @@ public class InfoCmdHeaderTest extends BaseDockerHeaderTest<InfoCmd> {
     private InfoCmd mockObject;
     
     @Test
-    public void listImageHeaderTest() {
+    public void infoHeaderTest() {
                 
         Map<String, Object> headers = getDefaultParameters();
         
