@@ -41,7 +41,6 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -1271,6 +1270,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     @Override
     protected void doStart() throws Exception {
+        // validate that the read lock options is valid for the process strategy
+        if (!"none".equals(readLock) && !"off".equals(readLock)) {
+            if (readLockTimeout > 0 && readLockTimeout <= readLockCheckInterval) {
+                throw new IllegalArgumentException("The option readLockTimeout must be higher than readLockCheckInterval"
+                        + ", was readLockTimeout=" + readLockTimeout + ", readLockCheckInterval=" + readLockCheckInterval
+                        + ". A good practice is to let the readLockTimeout be at least 3 or more times higher than the readLockCheckInterval" +
+                        ", to ensure the read lock procedure has amble times to run several times checks during acquiring the lock.");
+            }
+        }
+
         ServiceHelper.startServices(inProgressRepository, idempotentRepository);
         super.doStart();
     }
