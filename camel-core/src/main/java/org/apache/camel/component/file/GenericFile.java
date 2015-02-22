@@ -141,7 +141,6 @@ public class GenericFile<T> implements WrappedFile<T>  {
                     message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
                 } catch (Exception ex) {
                     // just ignore the exception
-                    System.out.println(ex);
                 }
             }
     
