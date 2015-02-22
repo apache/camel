@@ -21,10 +21,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -65,8 +64,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private boolean allowJmsType;
     private boolean useList;
     private boolean enableJaxbAnnotationModule;
-    private Set<String> enableFeatures;
-    private Set<String> disableFeatures;
+    private String enableFeatures;
+    private String disableFeatures;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -294,7 +293,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         this.allowJmsType = allowJmsType;
     }
 
-    public Set<String> getEnableFeatures() {
+    public String getEnableFeatures() {
         return enableFeatures;
     }
 
@@ -302,11 +301,11 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
      * Set of features to enable on the Jackson {@link ObjectMapper}.
      * The features should be a name that matches a enum from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
      */
-    public void setEnableFeatures(Set<String> enableFeatures) {
+    public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
     }
 
-    public Set<String> getDisableFeatures() {
+    public String getDisableFeatures() {
         return disableFeatures;
     }
 
@@ -314,50 +313,56 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
      * Set of features to disable on the Jackson {@link ObjectMapper}.
      * The features should be a name that matches a enum from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
      */
-    public void setDisableFeatures(Set<String> disableFeatures) {
+    public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
 
     public void enableFeature(SerializationFeature feature) {
         if (enableFeatures == null) {
-            enableFeatures = new HashSet<String>();
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
         }
-        enableFeatures.add(feature.name());
     }
 
     public void enableFeature(DeserializationFeature feature) {
         if (enableFeatures == null) {
-            enableFeatures = new HashSet<String>();
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
         }
-        enableFeatures.add(feature.name());
     }
 
     public void enableFeature(MapperFeature feature) {
         if (enableFeatures == null) {
-            enableFeatures = new HashSet<String>();
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
         }
-        enableFeatures.add(feature.name());
     }
 
     public void disableFeature(SerializationFeature feature) {
         if (disableFeatures == null) {
-            disableFeatures = new HashSet<String>();
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
         }
-        disableFeatures.add(feature.name());
     }
 
     public void disableFeature(DeserializationFeature feature) {
         if (disableFeatures == null) {
-            disableFeatures = new HashSet<String>();
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
         }
-        disableFeatures.add(feature.name());
     }
 
     public void disableFeature(MapperFeature feature) {
         if (disableFeatures == null) {
-            disableFeatures = new HashSet<String>();
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
         }
-        disableFeatures.add(feature.name());
     }
 
     @Override
@@ -382,7 +387,9 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         }
 
         if (enableFeatures != null) {
-            for (String enable : enableFeatures) {
+            Iterator<Object> it = ObjectHelper.createIterator(enableFeatures);
+            while (it.hasNext()) {
+                String enable = it.next().toString();
                 // it can be different kind
                 SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
                 if (sf != null) {
@@ -403,7 +410,9 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
             }
         }
         if (disableFeatures != null) {
-            for (String disable : disableFeatures) {
+            Iterator<Object> it = ObjectHelper.createIterator(enableFeatures);
+            while (it.hasNext()) {
+                String disable = it.next().toString();
                 // it can be different kind
                 SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
                 if (sf != null) {

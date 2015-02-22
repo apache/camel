@@ -16,11 +16,9 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -66,10 +64,10 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String moduleClassNames;
     @XmlAttribute
     private String moduleRefs;
-    @XmlElement
-    private Set<String> enableFeatures;
-    @XmlElement
-    private Set<String> disableFeatures;
+    @XmlAttribute
+    private String enableFeatures;
+    @XmlAttribute
+    private String disableFeatures;
 
     public JsonDataFormat() {
         super("json");
@@ -223,7 +221,7 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.moduleRefs = moduleRefs;
     }
 
-    public Set<String> getEnableFeatures() {
+    public String getEnableFeatures() {
         return enableFeatures;
     }
 
@@ -232,12 +230,14 @@ public class JsonDataFormat extends DataFormatDefinition {
      * <p/>
      * The features should be a name that matches a enum from <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
      * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+     * <p/>
+     * Multiple features can be separated by comma
      */
-    public void setEnableFeatures(Set<String> enableFeatures) {
+    public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
     }
 
-    public Set<String> getDisableFeatures() {
+    public String getDisableFeatures() {
         return disableFeatures;
     }
 
@@ -246,8 +246,10 @@ public class JsonDataFormat extends DataFormatDefinition {
      * <p/>
      * The features should be a name that matches a enum from <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
      * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+     * <p/>
+     * Multiple features can be separated by comma
      */
-    public void setDisableFeatures(Set<String> disableFeatures) {
+    public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
 
