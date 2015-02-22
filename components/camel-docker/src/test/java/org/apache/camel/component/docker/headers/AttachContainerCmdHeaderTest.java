@@ -41,7 +41,7 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
         String containerId = "9c09acd48a25";
         boolean stdOut = true;
         boolean stdErr = true;
-        boolean followStream = true;
+        boolean followStream = false;
         boolean logs = true;
         boolean timestamps = true;
         

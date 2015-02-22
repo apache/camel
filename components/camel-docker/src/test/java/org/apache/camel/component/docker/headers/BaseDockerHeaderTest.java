@@ -93,6 +93,14 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return "docker@camel.apache.org";
     }
     
+    protected Integer getMaxPerRouteConnections() {
+        return 100;
+    }
+
+    protected Integer getMaxTotalConnections() {
+        return 100;
+    }
+
     public T getMockObject() {
         return mockObject;
     }
@@ -102,6 +110,8 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         parameters.put(DockerConstants.DOCKER_HOST, getHost());
         parameters.put(DockerConstants.DOCKER_PORT, getPort());
         parameters.put(DockerConstants.DOCKER_EMAIL, getEmail());
+        parameters.put(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, getMaxPerRouteConnections());
+        parameters.put(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, getMaxTotalConnections());
 
         return parameters;
     }
@@ -111,6 +121,8 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setHost(getHost());
         clientProfile.setPort(getPort());
         clientProfile.setEmail(getEmail());
+        clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
+        clientProfile.setMaxTotalConnections(getMaxTotalConnections());
         
         return clientProfile;
 

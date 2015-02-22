@@ -39,7 +39,7 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
     public void removeContainerHeaderTest() {
         
         String containerId = "9c09acd48a25";
-        boolean force = true;
+        boolean force = false;
         boolean removeVolumes = true;
         
         Map<String, Object> headers = getDefaultParameters();

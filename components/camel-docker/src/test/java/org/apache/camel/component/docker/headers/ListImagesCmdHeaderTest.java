@@ -39,7 +39,7 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
     @Test
     public void listImageHeaderTest() {
         
-        String filter = "filter";
+        String filter = "{\"dangling\":[\"true\"]}";
         Boolean showAll = true;
         
         Map<String, Object> headers = getDefaultParameters();

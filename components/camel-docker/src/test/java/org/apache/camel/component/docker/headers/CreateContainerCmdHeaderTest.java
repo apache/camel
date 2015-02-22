@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import java.util.Map;
-
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
+import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.api.model.Volume;
+
+import java.util.Map;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -40,19 +43,91 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
     @Test
     public void createContainerHeaderTest() {
         
-        String imageId = "be29975e0098";
-        ExposedPort tcp22 = ExposedPort.tcp(22);
+        String image = "busybox";
+        ExposedPort exposedPort = ExposedPort.tcp(22);
+        boolean tty = true;
+        String name = "cameldocker";
+        String workingDir = "/opt";
+        boolean disableNetwork = false;
+        String hostname = "dockerjava";
+        String user = "docker";
+        boolean stdInOpen = false;
+        boolean stdInOnce = false;
+        boolean attachStdErr = true;
+        boolean attachStdOut = true;
+        boolean attachStdIn = false;
+        Long memoryLimit = 2048L;
+        Long swapMemory = 512L;
+        Integer cpuShares = 512;
+        Volume volumes = new Volume("/example");
+        String volumesFromContainer = "container2";
+        String env = "FOO=bar";
+        String cmd = "whoami";
+        HostConfig hostConfig = new HostConfig();
+        Capability capAdd = Capability.NET_BROADCAST;
+        Capability capDrop = Capability.BLOCK_SUSPEND;
+        String[] entrypoint = new String[]{"sleep","9999"};
+        String portSpecs = "80";
+        String dns = "8.8.8.8";
 
         
         Map<String, Object> headers = getDefaultParameters();
-        headers.put(DockerConstants.DOCKER_IMAGE_ID, imageId);
-        headers.put(DockerConstants.DOCKER_EXPOSED_PORTS, tcp22);
+        headers.put(DockerConstants.DOCKER_IMAGE, image);
+        headers.put(DockerConstants.DOCKER_EXPOSED_PORTS, exposedPort);
+        headers.put(DockerConstants.DOCKER_TTY, tty);
+        headers.put(DockerConstants.DOCKER_NAME, name);
+        headers.put(DockerConstants.DOCKER_WORKING_DIR, workingDir);
+        headers.put(DockerConstants.DOCKER_DISABLE_NETWORK, disableNetwork);
+        headers.put(DockerConstants.DOCKER_HOSTNAME, hostname);
+        headers.put(DockerConstants.DOCKER_USER, user);
+        headers.put(DockerConstants.DOCKER_STD_IN_OPEN, stdInOpen);
+        headers.put(DockerConstants.DOCKER_STD_IN_ONCE, stdInOnce);
+        headers.put(DockerConstants.DOCKER_ATTACH_STD_IN, attachStdIn);
+        headers.put(DockerConstants.DOCKER_ATTACH_STD_ERR, attachStdErr);
+        headers.put(DockerConstants.DOCKER_ATTACH_STD_OUT, attachStdOut);
+        headers.put(DockerConstants.DOCKER_MEMORY_LIMIT, memoryLimit);
+        headers.put(DockerConstants.DOCKER_MEMORY_SWAP, swapMemory);
+        headers.put(DockerConstants.DOCKER_CPU_SHARES, cpuShares);
+        headers.put(DockerConstants.DOCKER_VOLUMES, volumes);
+        headers.put(DockerConstants.DOCKER_VOLUMES_FROM, volumesFromContainer);
+        headers.put(DockerConstants.DOCKER_ENV, env);
+        headers.put(DockerConstants.DOCKER_CMD, cmd);
+        headers.put(DockerConstants.DOCKER_HOST_CONFIG, hostConfig);
+        headers.put(DockerConstants.DOCKER_CAP_ADD, capAdd);
+        headers.put(DockerConstants.DOCKER_CAP_DROP, capDrop);
+        headers.put(DockerConstants.DOCKER_ENTRYPOINT, entrypoint);
+        headers.put(DockerConstants.DOCKER_PORT_SPECS, portSpecs);
+        headers.put(DockerConstants.DOCKER_DNS, dns);
 
         
         template.sendBodyAndHeaders("direct:in", "", headers);
         
-        Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(imageId);
-        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Matchers.any(ExposedPort.class));
+        Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(image);
+        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Matchers.eq(exposedPort));
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
+        Mockito.verify(mockObject, Mockito.times(1)).withName(Matchers.eq(name));
+        Mockito.verify(mockObject, Mockito.times(1)).withWorkingDir(workingDir);
+        Mockito.verify(mockObject, Mockito.times(1)).withDisableNetwork(disableNetwork);
+        Mockito.verify(mockObject, Mockito.times(1)).withHostName(hostname);
+        Mockito.verify(mockObject, Mockito.times(1)).withUser(user);
+        Mockito.verify(mockObject, Mockito.times(1)).withStdinOpen(stdInOpen);
+        Mockito.verify(mockObject, Mockito.times(1)).withStdInOnce(stdInOnce);
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(attachStdErr);
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(attachStdIn);
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(attachStdOut);
+        Mockito.verify(mockObject, Mockito.times(1)).withMemoryLimit(memoryLimit);
+        Mockito.verify(mockObject, Mockito.times(1)).withMemorySwap(swapMemory);
+        Mockito.verify(mockObject, Mockito.times(1)).withCpuShares(cpuShares);
+        Mockito.verify(mockObject, Mockito.times(1)).withVolumes(volumes);
+        Mockito.verify(mockObject, Mockito.times(1)).withVolumesFrom(volumesFromContainer);
+        Mockito.verify(mockObject, Mockito.times(1)).withEnv(env);
+        Mockito.verify(mockObject, Mockito.times(1)).withCmd(cmd);
+        Mockito.verify(mockObject, Mockito.times(1)).withHostConfig(hostConfig);
+        Mockito.verify(mockObject, Mockito.times(1)).withCapAdd(capAdd);
+        Mockito.verify(mockObject, Mockito.times(1)).withCapDrop(capDrop);
+        Mockito.verify(mockObject, Mockito.times(1)).withEntrypoint(entrypoint);
+        Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
+        Mockito.verify(mockObject, Mockito.times(1)).withDns(dns);
         
     }
 

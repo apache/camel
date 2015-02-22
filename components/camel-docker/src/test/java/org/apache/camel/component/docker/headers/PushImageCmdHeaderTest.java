@@ -41,6 +41,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     private String email = "jdoe@example.com";
     private String serverAddress = "http://docker.io/v1";
     private String name = "imagename";
+    private String tag = "1.0";
 
     
     @Test
@@ -53,11 +54,14 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         headers.put(DockerConstants.DOCKER_EMAIL, email);
         headers.put(DockerConstants.DOCKER_SERVER_ADDRESS, serverAddress);
         headers.put(DockerConstants.DOCKER_NAME, name);
+        headers.put(DockerConstants.DOCKER_TAG, tag);
 
         
         template.sendBodyAndHeaders("direct:in", "", headers);
         
         Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
+        Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
+
         
     }
 

@@ -36,7 +36,7 @@ public class TagImageCmdHeaderTest extends BaseDockerHeaderTest<TagImageCmd> {
     private TagImageCmd mockObject;
     
     @Test
-    public void topImageHeaderTest() {
+    public void tagImageHeaderTest() {
         
         String imageId = "be29975e0098";
         String repository = "docker/empty";
@@ -54,7 +54,7 @@ public class TagImageCmdHeaderTest extends BaseDockerHeaderTest<TagImageCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
                 
         Mockito.verify(dockerClient, Mockito.times(1)).tagImageCmd(imageId, repository, tag);
-        Mockito.verify(mockObject, Mockito.times(1)).withForce();
+        Mockito.verify(mockObject, Mockito.times(1)).withForce(force);
         
     }
 

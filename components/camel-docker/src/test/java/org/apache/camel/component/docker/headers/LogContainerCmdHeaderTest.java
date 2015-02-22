@@ -42,7 +42,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         boolean stdOut = true;
         boolean stdErr = true;
         boolean followStream = true;
-        boolean timestamps = true;
+        boolean timestamps = false;
         boolean tailAll = true;
         int tail = 5;
         
