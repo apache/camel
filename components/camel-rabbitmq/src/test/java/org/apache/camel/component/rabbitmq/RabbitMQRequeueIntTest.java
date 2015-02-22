@@ -45,17 +45,6 @@ public class RabbitMQRequeueIntTest extends CamelTestSupport {
                         .id("consumingRoute")
                         .log("Receiving message")
                         .inOnly(consumingMockEndpoint)
-                        .choice()
-                        .when(body().isEqualTo("requeue header false"))
-                            .log("Setting REQUEUE flag to false")
-                            .setHeader(RabbitMQConstants.REQUEUE, constant(false))
-                        .when(body().isEqualTo("requeue header true"))
-                            .log("Setting REQUEUE flag to true")
-                            .setHeader(RabbitMQConstants.REQUEUE, constant(true))
-                        .when(body().isEqualTo("non-boolean header"))
-                                .log("Setting REQUEUE flag to non-boolean")
-                                .setHeader(RabbitMQConstants.REQUEUE, constant(4l))
-                        .end()
                         .throwException(new Exception("Simulated exception"));
             }
         };
@@ -66,7 +55,7 @@ public class RabbitMQRequeueIntTest extends CamelTestSupport {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
-        directProducer.sendBody("no requeue header");
+        directProducer.sendBody("Hello, World!");
 
         Thread.sleep(100);
         producingMockEndpoint.assertIsSatisfied();
@@ -78,7 +67,7 @@ public class RabbitMQRequeueIntTest extends CamelTestSupport {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
-        directProducer.sendBody("non-boolean header");
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, 4l);
 
         Thread.sleep(100);
         producingMockEndpoint.assertIsSatisfied();
@@ -90,7 +79,7 @@ public class RabbitMQRequeueIntTest extends CamelTestSupport {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
-        directProducer.sendBody("non-boolean header");
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, false);
 
         Thread.sleep(100);
         producingMockEndpoint.assertIsSatisfied();
@@ -102,7 +91,7 @@ public class RabbitMQRequeueIntTest extends CamelTestSupport {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.setMinimumExpectedMessageCount(2);
 
-        directProducer.sendBody("requeue header true");
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
 
         Thread.sleep(100);
         producingMockEndpoint.assertIsSatisfied();
