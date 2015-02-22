@@ -54,6 +54,7 @@
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
+    <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
     <jaxb-version>2.2.11</jaxb-version>
   </properties>
 
@@ -420,6 +421,11 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-antrun-plugin</artifactId>
               <dependencies>
+                <dependency>
+                  <groupId>com.sun.xml.bind</groupId>
+                  <artifactId>jaxb-core</artifactId>
+                  <version>${jaxb-version}</version>
+                </dependency>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
                   <artifactId>jaxb-impl</artifactId>
