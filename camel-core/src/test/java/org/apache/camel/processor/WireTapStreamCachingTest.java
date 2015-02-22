@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.io.StringReader;
-
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,13 +30,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class MulticastStreamCachingTest extends ContextTestSupport {
+public class WireTapStreamCachingTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
 
-    public void testSendingAMessageUsingMulticastConvertsToReReadable() throws Exception {
+    public void testSendingAMessageUsingWiretapConvertsToReReadable() throws Exception {
         x.expectedBodiesReceived("<input/>+output");
         y.expectedBodiesReceived("<input/>+output");
         z.expectedBodiesReceived("<input/>+output");
@@ -80,8 +79,8 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                //stream caching should fix re-readability issues when multicasting messages
-                from("direct:a").multicast().to("direct:x", "direct:y", "direct:z");
+                //stream caching should fix re-readability issues when wire tapping messages
+                from("direct:a").wireTap("direct:x").wireTap("direct:y").wireTap("direct:z");
 
                 from("direct:x").process(processor).to("mock:x");
                 from("direct:y").process(processor).to("mock:y");

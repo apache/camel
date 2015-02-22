@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -28,7 +29,9 @@ import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.support.ServiceSupport;
@@ -93,7 +96,16 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         }
 
         // must configure the wire tap beforehand
-        final Exchange wireTapExchange = configureExchange(exchange, exchangePattern);
+        Exchange target;
+        try {
+            target = configureExchange(exchange, exchangePattern);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+
+        final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
@@ -114,7 +126,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     }
 
 
-    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
+    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) throws IOException {
         Exchange answer;
         if (copy) {
             // use a copy of the original exchange
@@ -142,6 +154,17 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
+            }
+        }
+
+        // if the body is a stream cache we must use a copy of the stream in the wire tapped exchange
+        Message msg = answer.hasOut() ? answer.getOut() : answer.getIn();
+        if (msg.getBody() instanceof StreamCache) {
+            // in parallel processing case, the stream must be copied, therefore get the stream
+            StreamCache cache = (StreamCache) msg.getBody();
+            StreamCache copied = cache.copy();
+            if (copied != null) {
+                msg.setBody(copied);
             }
         }
 
