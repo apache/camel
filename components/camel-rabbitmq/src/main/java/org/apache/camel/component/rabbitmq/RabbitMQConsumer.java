@@ -184,6 +184,13 @@ public class RabbitMQConsumer extends DefaultConsumer {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             mergeAmqpProperties(exchange, properties);
 
+            Message msg;
+            if (exchange.hasOut()) {
+                msg = exchange.getOut();
+            } else {
+                msg = exchange.getIn();
+            }
+
             boolean sendReply = properties.getReplyTo() != null;
             if (sendReply && !exchange.getPattern().isOutCapable()) {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -200,12 +207,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
             if (!exchange.isFailed()) {
                 // processing success
                 if (sendReply && exchange.getPattern().isOutCapable()) {
-                    Message msg;
-                    if (exchange.hasOut()) {
-                        msg = exchange.getOut();
-                    } else {
-                        msg = exchange.getIn();
-                    }
                     AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
                             .headers(msg.getHeaders())
                             .correlationId(properties.getCorrelationId())
@@ -217,9 +218,15 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     channel.basicAck(deliveryTag, false);
                 }
             } else {
+                boolean isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
                 // processing failed, then reject and handle the exception
                 if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
-                    channel.basicReject(deliveryTag, false);
+                    log.trace("Rejecting receipt [delivery_tag={}] with requeue={}", deliveryTag, isRequeueHeaderSet);
+                    if (isRequeueHeaderSet) {
+                        channel.basicReject(deliveryTag, true);
+                    } else {
+                        channel.basicReject(deliveryTag, false);
+                    }
                 }
                 if (exchange.getException() != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
