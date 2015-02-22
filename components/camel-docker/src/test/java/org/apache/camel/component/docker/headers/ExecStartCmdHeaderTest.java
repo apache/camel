@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import java.util.Map;
+import com.github.dockerjava.api.command.ExecStartCmd;
 
-import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
+import java.util.Map;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -28,41 +28,38 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 /**
- * Validates Copy File from Container Request headers are applied properly
+ * Validates Exec Start Request headers are parsed properly
  */
-public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyFileFromContainerCmd> {
+public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     
     @Mock
-    private CopyFileFromContainerCmd mockObject;
+    private ExecStartCmd mockObject;
     
     @Test
-    public void copyFileFromContainerHeaderTest() {
+    public void execCreateHeaderTest() {
         
-        String containerId = "9c09acd48a25";
-        String resource = "/test";
-        String hostPath = "/test/test2";
+        String id = "1";
+        boolean tty = true;
         
         Map<String, Object> headers = getDefaultParameters();
-        headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
-        headers.put(DockerConstants.DOCKER_RESOURCE, resource);
-        headers.put(DockerConstants.DOCKER_HOST_PATH, hostPath);
-
-
+        headers.put(DockerConstants.DOCKER_EXEC_ID, id);
+        headers.put(DockerConstants.DOCKER_TTY, tty);
+        
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
-        Mockito.verify(dockerClient, Mockito.times(1)).copyFileFromContainerCmd(containerId, resource);
-        Mockito.verify(mockObject, Mockito.times(1)).withHostPath(Matchers.eq(hostPath));
+        
+        Mockito.verify(dockerClient, Mockito.times(1)).execStartCmd(Matchers.eq(id));
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
         
     }
-
+    
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.copyFileFromContainerCmd(Matchers.anyString(), Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.execStartCmd(Matchers.anyString())).thenReturn(mockObject);
     }
 
     @Override
     protected DockerOperation getOperation() {
-        return DockerOperation.COPY_FILE_CONTAINER;
+        return DockerOperation.EXEC_START;
     }
 
 }

@@ -37,9 +37,12 @@ public class DockerComponent extends DefaultComponent {
         this.configuration = configuration;
     }
     
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         
-        DockerConfiguration configuration = getConfiguration();
+        // Each endpoint can have its own configuration so make
+        // a copy of the configuration
+        DockerConfiguration configuration = getConfiguration().copy();
         
         String normalizedRemaining = remaining.replaceAll("/", "");
         

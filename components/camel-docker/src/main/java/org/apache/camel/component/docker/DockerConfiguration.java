@@ -16,29 +16,26 @@
  */
 package org.apache.camel.component.docker;
 
+import com.github.dockerjava.api.DockerClient;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dockerjava.api.DockerClient;
-
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class DockerConfiguration {
-    private static final String DEFAULT_DOCKER_HOST = "localhost";
-    private static final int DEFAULT_DOCKER_PORT = 2375;
+public class DockerConfiguration implements Cloneable {
 
     @UriPath
     private DockerOperation operation;
 
+    private DockerClientProfile clientProfile;
+
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
-
-    public void setClient(DockerClientProfile clientProfile, DockerClient client) {
-        clients.put(clientProfile, client);
-    }
 
     public Map<String, Object> getParameters() {
         return parameters;
@@ -56,17 +53,30 @@ public class DockerConfiguration {
         this.operation = operation;
     }
 
-    public String getDefaultHost() {
-        return DEFAULT_DOCKER_HOST;
-    }
-
-    public Integer getDefaultPort() {
-        return DEFAULT_DOCKER_PORT;
-    }
-
     public DockerClient getClient(DockerClientProfile clientProfile) throws DockerException {
         return clients.get(clientProfile);
-
     }
+
+    public void setClient(DockerClientProfile clientProfile, DockerClient client) {
+        clients.put(clientProfile, client);
+    }
+
+    public void setClientProfile(DockerClientProfile clientProfile) {
+        this.clientProfile = clientProfile;
+    }
+
+    public DockerClientProfile getClientProfile() {
+        return clientProfile;
+    }
+
+    public DockerConfiguration copy() {
+        try {
+            return (DockerConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+
 
 }

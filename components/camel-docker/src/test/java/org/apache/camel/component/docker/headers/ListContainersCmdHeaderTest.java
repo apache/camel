@@ -39,13 +39,17 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
     public void listContainerHeaderTest() {
         
         boolean showSize = true;
-        boolean showAll = true;
+        boolean showAll = false;
         int limit = 2;
+        String since = "id1";
+        String before = "id2";
         
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_LIMIT, limit);
         headers.put(DockerConstants.DOCKER_SHOW_ALL, showAll);
         headers.put(DockerConstants.DOCKER_SHOW_SIZE, showSize);
+        headers.put(DockerConstants.DOCKER_SINCE, since);
+        headers.put(DockerConstants.DOCKER_BEFORE, before);
 
 
         
@@ -55,7 +59,8 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Matchers.eq(showAll));
         Mockito.verify(mockObject, Mockito.times(1)).withShowSize(Matchers.eq(showSize));
         Mockito.verify(mockObject, Mockito.times(1)).withLimit(Matchers.eq(limit));
-
+        Mockito.verify(mockObject, Mockito.times(1)).withSince(Matchers.eq(since));
+        Mockito.verify(mockObject, Mockito.times(1)).withBefore(Matchers.eq(before));
         
     }
 

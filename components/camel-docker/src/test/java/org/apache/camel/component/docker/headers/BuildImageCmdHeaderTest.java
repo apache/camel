@@ -56,9 +56,9 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         template.sendBodyAndHeaders("direct:in", inputStream, getHeaders());
         
         Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Matchers.any(InputStream.class));
-        Mockito.verify(mockObject, Mockito.times(1)).withQuiet();
-        Mockito.verify(mockObject, Mockito.times(1)).withNoCache();
-        Mockito.verify(mockObject, Mockito.times(1)).withRemove();
+        Mockito.verify(mockObject, Mockito.times(1)).withQuiet(quiet);
+        Mockito.verify(mockObject, Mockito.times(1)).withNoCache(noCache);
+        Mockito.verify(mockObject, Mockito.times(1)).withRemove(remove);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
         
     }
@@ -69,9 +69,9 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         template.sendBodyAndHeaders("direct:in", file, getHeaders());
         
         Mockito.verify(dockerClient, Mockito.times(1)).buildImageCmd(Matchers.any(File.class));
-        Mockito.verify(mockObject, Mockito.times(1)).withQuiet();
-        Mockito.verify(mockObject, Mockito.times(1)).withNoCache();
-        Mockito.verify(mockObject, Mockito.times(1)).withRemove();
+        Mockito.verify(mockObject, Mockito.times(1)).withQuiet(quiet);
+        Mockito.verify(mockObject, Mockito.times(1)).withNoCache(noCache);
+        Mockito.verify(mockObject, Mockito.times(1)).withRemove(remove);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
         
     }
