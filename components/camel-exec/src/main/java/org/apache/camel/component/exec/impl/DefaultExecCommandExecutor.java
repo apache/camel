@@ -51,12 +51,6 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExecCommandExecutor.class);
 
-    private final Exchange exchange;
-
-    public DefaultExecCommandExecutor(Exchange exchange) {
-        this.exchange = exchange;
-    }
-
     public ExecResult execute(ExecCommand command) {
         notNull(command, "command");
 
