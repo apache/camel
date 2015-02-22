@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.exec.impl.DefaultExecCommandExecutor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -42,8 +43,14 @@ public class ExecProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         ExecCommand execCommand = getBinding().readInput(exchange, endpoint);
 
+        ExecCommandExecutor executor = endpoint.getCommandExecutor();
+        if (executor == null) {
+            executor = new DefaultExecCommandExecutor(exchange);
+        }
+
         log.info("Executing {}", execCommand);
-        ExecResult result = endpoint.getCommandExecutor().execute(execCommand);
+        ExecResult result = executor.execute(execCommand);
+
         ObjectHelper.notNull(result, "The command executor must return a not-null result");
         log.info("The command {} had exit value {}", execCommand, result.getExitValue());
         if (result.getExitValue() != 0) {
