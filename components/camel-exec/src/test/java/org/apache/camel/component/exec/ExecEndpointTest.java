@@ -74,7 +74,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
 
         assertEquals(NO_TIMEOUT, e.getTimeout());
         assertEquals("test", e.getExecutable());
-        assertNotNull(e.getCommandExecutor());
         assertNotNull(e.getBinding());
     }
 
@@ -150,7 +149,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         ExecEndpoint endpoint = createExecEndpoint(UnsafeUriCharactersEncoder.encode(uri));
         assertEquals(cmd, endpoint.getExecutable());
         assertNull(endpoint.getArgs());
-        assertNotNull(endpoint.getCommandExecutor());
 
         assertEquals(dir, endpoint.getWorkingDir());
     }
@@ -165,7 +163,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
 
         assertNull(endpoint.getArgs());
         assertNull(endpoint.getWorkingDir());
-        assertNotNull(endpoint.getCommandExecutor());
 
         assertEquals(executable, endpoint.getExecutable());
     }

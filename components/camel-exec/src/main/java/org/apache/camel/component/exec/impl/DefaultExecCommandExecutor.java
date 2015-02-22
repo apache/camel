@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecCommandExecutor;
+import org.apache.camel.component.exec.ExecDefaultExecutor;
 import org.apache.camel.component.exec.ExecEndpoint;
 import org.apache.camel.component.exec.ExecException;
 import org.apache.camel.component.exec.ExecResult;
@@ -48,6 +50,12 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExecCommandExecutor.class);
+
+    private final Exchange exchange;
+
+    public DefaultExecCommandExecutor(Exchange exchange) {
+        this.exchange = exchange;
+    }
 
     public ExecResult execute(ExecCommand command) {
         notNull(command, "command");
@@ -76,6 +84,25 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
             LOG.error("ExecException while executing command: " + command.toString() + " - " + ee.getMessage());
             throw new ExecException("Failed to execute command " + command, ee);
         } catch (IOException ioe) {
+            // workaround to ignore if the stream was already closes due some race condition in commons-exec
+            String msg = ioe.getMessage();
+            if ("Stream closed".equals(msg)) {
+                LOG.debug("Ignoring Stream closed IOException", ioe);
+                // if the size is zero, we have no output, so construct the result
+                // with null (required by ExecResult)
+                InputStream stdout = out.size() == 0 ? null : new ByteArrayInputStream(out.toByteArray());
+                InputStream stderr = err.size() == 0 ? null : new ByteArrayInputStream(err.toByteArray());
+
+                // use 0 as exit value as the executor didn't return the value
+                int exitValue = 0;
+                if (executor instanceof ExecDefaultExecutor) {
+                    // get the exit value from the executor as it captures this to work around the common-exec bug
+                    exitValue = ((ExecDefaultExecutor) executor).getExitValue();
+                }
+
+                ExecResult result = new ExecResult(command, stdout, stderr, exitValue);
+                return result;
+            }
             // invalid working dir
             LOG.error("IOException while executing command: " + command.toString() + " - " + ioe.getMessage());
             throw new ExecException("Unable to execute command " + command, ioe);
@@ -86,7 +113,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
     }
 
     protected DefaultExecutor prepareDefaultExecutor(ExecCommand execCommand) {
-        DefaultExecutor executor = new DefaultExecutor();
+        DefaultExecutor executor = new ExecDefaultExecutor();
         executor.setExitValues(null);
 
         if (execCommand.getWorkingDir() != null) {

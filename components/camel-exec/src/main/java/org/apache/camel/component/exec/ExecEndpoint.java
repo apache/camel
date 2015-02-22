@@ -61,7 +61,6 @@ public class ExecEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.timeout = NO_TIMEOUT;
         this.binding = new DefaultExecBinding();
-        this.commandExecutor = new DefaultExecCommandExecutor();
     }
 
     public Producer createProducer() throws Exception {
