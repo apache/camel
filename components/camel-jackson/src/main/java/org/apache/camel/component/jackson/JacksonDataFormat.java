@@ -410,7 +410,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
             }
         }
         if (disableFeatures != null) {
-            Iterator<Object> it = ObjectHelper.createIterator(enableFeatures);
+            Iterator<Object> it = ObjectHelper.createIterator(disableFeatures);
             while (it.hasNext()) {
                 String disable = it.next().toString();
                 // it can be different kind
