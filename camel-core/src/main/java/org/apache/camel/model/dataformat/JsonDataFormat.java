@@ -16,9 +16,11 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -64,6 +66,10 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String moduleClassNames;
     @XmlAttribute
     private String moduleRefs;
+    @XmlElement
+    private Set<String> enableFeatures;
+    @XmlElement
+    private Set<String> disableFeatures;
 
     public JsonDataFormat() {
         super("json");
@@ -217,6 +223,34 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.moduleRefs = moduleRefs;
     }
 
+    public Set<String> getEnableFeatures() {
+        return enableFeatures;
+    }
+
+    /**
+     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+     * <p/>
+     * The features should be a name that matches a enum from <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+     */
+    public void setEnableFeatures(Set<String> enableFeatures) {
+        this.enableFeatures = enableFeatures;
+    }
+
+    public Set<String> getDisableFeatures() {
+        return disableFeatures;
+    }
+
+    /**
+     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+     * <p/>
+     * The features should be a name that matches a enum from <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+     */
+    public void setDisableFeatures(Set<String> disableFeatures) {
+        this.disableFeatures = disableFeatures;
+    }
+
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
@@ -282,6 +316,12 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (moduleRefs != null) {
             setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);
+        }
+        if (enableFeatures != null) {
+            setProperty(camelContext, dataFormat, "enableFeatures", enableFeatures);
+        }
+        if (disableFeatures != null) {
+            setProperty(camelContext, dataFormat, "disableFeatures", disableFeatures);
         }
     }
 

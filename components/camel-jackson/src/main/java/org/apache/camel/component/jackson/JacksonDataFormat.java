@@ -21,10 +21,14 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -61,6 +65,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     private boolean allowJmsType;
     private boolean useList;
     private boolean enableJaxbAnnotationModule;
+    private Set<String> enableFeatures;
+    private Set<String> disableFeatures;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -288,6 +294,72 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
         this.allowJmsType = allowJmsType;
     }
 
+    public Set<String> getEnableFeatures() {
+        return enableFeatures;
+    }
+
+    /**
+     * Set of features to enable on the Jackson {@link ObjectMapper}.
+     * The features should be a name that matches a enum from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
+     */
+    public void setEnableFeatures(Set<String> enableFeatures) {
+        this.enableFeatures = enableFeatures;
+    }
+
+    public Set<String> getDisableFeatures() {
+        return disableFeatures;
+    }
+
+    /**
+     * Set of features to disable on the Jackson {@link ObjectMapper}.
+     * The features should be a name that matches a enum from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
+     */
+    public void setDisableFeatures(Set<String> disableFeatures) {
+        this.disableFeatures = disableFeatures;
+    }
+
+    public void enableFeature(SerializationFeature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = new HashSet<String>();
+        }
+        enableFeatures.add(feature.name());
+    }
+
+    public void enableFeature(DeserializationFeature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = new HashSet<String>();
+        }
+        enableFeatures.add(feature.name());
+    }
+
+    public void enableFeature(MapperFeature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = new HashSet<String>();
+        }
+        enableFeatures.add(feature.name());
+    }
+
+    public void disableFeature(SerializationFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = new HashSet<String>();
+        }
+        disableFeatures.add(feature.name());
+    }
+
+    public void disableFeature(DeserializationFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = new HashSet<String>();
+        }
+        disableFeatures.add(feature.name());
+    }
+
+    public void disableFeature(MapperFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = new HashSet<String>();
+        }
+        disableFeatures.add(feature.name());
+    }
+
     @Override
     protected void doStart() throws Exception {
         
@@ -302,11 +374,54 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
             setCollectionType(ArrayList.class);
         }
         if (include != null) {
-            JsonInclude.Include inc = JsonInclude.Include.valueOf(include);
+            JsonInclude.Include inc = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
             objectMapper.setSerializationInclusion(inc);
         }
         if (prettyPrint) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        }
+
+        if (enableFeatures != null) {
+            for (String enable : enableFeatures) {
+                // it can be different kind
+                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
+                if (sf != null) {
+                    objectMapper.enable(sf);
+                    continue;
+                }
+                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+                if (df != null) {
+                    objectMapper.enable(df);
+                    continue;
+                }
+                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
+                if (mf != null) {
+                    objectMapper.enable(mf);
+                    continue;
+                }
+                throw new IllegalArgumentException("Enable feature: " + enable + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+            }
+        }
+        if (disableFeatures != null) {
+            for (String disable : disableFeatures) {
+                // it can be different kind
+                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+                if (sf != null) {
+                    objectMapper.disable(sf);
+                    continue;
+                }
+                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+                if (df != null) {
+                    objectMapper.disable(df);
+                    continue;
+                }
+                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
+                if (mf != null) {
+                    objectMapper.disable(mf);
+                    continue;
+                }
+                throw new IllegalArgumentException("Disable feature: " + disable + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+            }
         }
 
         if (modules != null) {
