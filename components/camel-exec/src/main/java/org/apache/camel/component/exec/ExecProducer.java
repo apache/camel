@@ -45,7 +45,8 @@ public class ExecProducer extends DefaultProducer {
 
         ExecCommandExecutor executor = endpoint.getCommandExecutor();
         if (executor == null) {
-            executor = new DefaultExecCommandExecutor(exchange);
+            // create a new non-shared executor
+            executor = new DefaultExecCommandExecutor();
         }
 
         log.info("Executing {}", execCommand);
