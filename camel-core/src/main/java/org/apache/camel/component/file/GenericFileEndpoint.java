@@ -1285,8 +1285,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             if (readLockTimeout > 0 && readLockTimeout <= readLockCheckInterval) {
                 throw new IllegalArgumentException("The option readLockTimeout must be higher than readLockCheckInterval"
                         + ", was readLockTimeout=" + readLockTimeout + ", readLockCheckInterval=" + readLockCheckInterval
-                        + ". A good practice is to let the readLockTimeout be at least 3 or more times higher than the readLockCheckInterval" +
-                        ", to ensure the read lock procedure has amble times to run several times checks during acquiring the lock.");
+                        + ". A good practice is to let the readLockTimeout be at least 3 or more times higher than the readLockCheckInterval"
+                        + ", to ensure the read lock procedure has amble times to run several times checks during acquiring the lock.");
             }
         }
 
