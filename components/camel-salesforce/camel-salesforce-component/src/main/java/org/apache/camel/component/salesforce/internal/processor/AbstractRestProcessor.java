@@ -17,9 +17,14 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -30,12 +35,26 @@ import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.ServiceHelper;
+import org.eclipse.jetty.http.HttpMethods;
 
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_METHOD;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_URL;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.API_VERSION;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_CLASS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_FIELDS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_SEARCH;
 
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
     protected static final String RESPONSE_CLASS = AbstractRestProcessor.class.getName() + ".responseClass";
+    private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
 
     private RestClient restClient;
     private Map<String, Class<?>> classMap;
@@ -127,6 +146,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 break;
             case SEARCH:
                 processSearch(exchange, callback);
+                break;
+            case APEX_CALL:
+                processApexCall(exchange, callback);
                 break;
             default:
                 throw new SalesforceException("Unknow operation name: " + operationName, null);
@@ -244,12 +266,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
 
         restClient.createSObject(sObjectName, getRequestStream(exchange),
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                }
+            });
     }
 
     private void processUpdateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -270,13 +292,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final String finalsObjectId = sObjectId;
         restClient.updateSObject(sObjectName, sObjectId, getRequestStream(exchange),
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                }
+            });
     }
 
     private void processDeleteSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -325,13 +347,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final Object finalOldValue = oldValue;
         restClient.getSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                }
+            });
     }
 
     private void processUpsertSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -357,12 +379,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Object finalOldValue = oldValue;
         restClient.upsertSObject(sObjectName, sObjectExtIdName, sObjectExtIdValue, getRequestStream(exchange),
             new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                    }
-                });
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                }
+            });
     }
 
     private void processDeleteSobjectWithId(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -384,13 +406,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final Object finalOldValue = oldValue;
         restClient.deleteSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                }
+            });
     }
 
     private void processGetBlobField(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -412,13 +434,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final String sObjectId = sObjectIdValue;
 
         restClient.getBlobField(sObjectName, sObjectId, sObjectBlobFieldName,
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, sObjectId, null, null);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                }
+            });
     }
 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -459,6 +481,90 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 processResponse(exchange, response, exception, callback);
             }
         });
+    }
+
+    private void processApexCall(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+
+        // HTTP method, URL and query params for APEX call
+        final String apexUrl = getApexUrl(exchange);
+        String apexMethod = getParameter(APEX_METHOD, exchange, IGNORE_BODY, IS_OPTIONAL);
+        // default to GET
+        if (apexMethod == null) {
+            apexMethod = HttpMethods.GET;
+            log.debug("Using HTTP GET method by default for APEX REST call for {}", apexUrl);
+        }
+        final Map<String, Object> queryParams = getQueryParams(exchange);
+
+        // set response class
+        setResponseClass(exchange, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL));
+
+        // set request stream
+        final Object requestBody = exchange.getIn().getBody();
+        final InputStream requestDto =
+            (requestBody != null && !(requestBody instanceof Map)) ? getRequestStream(exchange) : null;
+
+        restClient.apexCall(apexMethod, apexUrl, queryParams, requestDto,
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                }
+            });
+    }
+
+    private String getApexUrl(Exchange exchange) throws SalesforceException {
+        final String apexUrl = getParameter(APEX_URL, exchange, IGNORE_BODY, NOT_OPTIONAL);
+
+        final Matcher matcher = URL_TEMPLATE.matcher(apexUrl);
+        StringBuilder result = new StringBuilder();
+        int start = 0;
+        while (matcher.find()) {
+            // append part before parameter template
+            result.append(apexUrl.substring(start, matcher.start()));
+            start = matcher.end();
+
+            // append template value from exchange header
+            final String parameterName = matcher.group(1);
+            final Object value = exchange.getIn().getHeader(parameterName);
+            if (value == null) {
+                throw new IllegalArgumentException("Missing APEX URL template header " + parameterName);
+            }
+            try {
+                result.append(URLEncoder.encode(String.valueOf(value), "UTF-8").replaceAll("\\+", "%20"));
+            } catch (UnsupportedEncodingException e) {
+                throw new SalesforceException("Unexpected error: " + e.getMessage(), e);
+            }
+        }
+        if (start != 0) {
+            // append remaining URL
+            result.append(apexUrl.substring(start));
+            final String resolvedUrl = result.toString();
+            log.debug("Resolved APEX URL {} to {}", apexUrl, resolvedUrl);
+            return resolvedUrl;
+        }
+        return apexUrl;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getQueryParams(Exchange exchange) {
+
+        // use endpoint map
+        Map<String, Object> queryParams = new HashMap<String, Object>(endpoint.getConfiguration().getApexQueryParams());
+
+        // look for individual properties, allowing endpoint properties to be overridden
+        for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+            if (entry.getKey().startsWith(APEX_QUERY_PARAM_PREFIX)) {
+                queryParams.put(entry.getKey().substring(APEX_QUERY_PARAM_PREFIX.length()), entry.getValue());
+            }
+        }
+        // add params from body if it's a map
+        final Object body = exchange.getIn().getBody();
+        if (body instanceof Map) {
+            queryParams.putAll((Map<String, Object>) body);
+        }
+
+        log.debug("Using APEX query params {}", queryParams);
+        return queryParams;
     }
 
     private void restoreFields(Exchange exchange, AbstractSObjectBase sObjectBase,

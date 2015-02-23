@@ -22,6 +22,15 @@ public class SObjectUrls extends AbstractDTOBase {
     private String describe;
     private String rowTemplate;
     private String passwordUtilities;
+    private String approvalLayouts;
+    private String quickActions;
+    private String caseArticleSuggestions;
+    private String listviews;
+    private String layouts;
+    private String namedLayouts;
+    private String compactLayouts;
+    private String caseRowArticleSuggestions;
+    private String push;
 
     public String getSobject() {
         return sobject;
@@ -53,5 +62,77 @@ public class SObjectUrls extends AbstractDTOBase {
 
     public void setPasswordUtilities(String passwordUtilities) {
         this.passwordUtilities = passwordUtilities;
+    }
+
+    public String getApprovalLayouts() {
+        return approvalLayouts;
+    }
+
+    public void setApprovalLayouts(String approvalLayouts) {
+        this.approvalLayouts = approvalLayouts;
+    }
+
+    public String getQuickActions() {
+        return quickActions;
+    }
+
+    public void setQuickActions(String quickActions) {
+        this.quickActions = quickActions;
+    }
+
+    public String getCaseArticleSuggestions() {
+        return caseArticleSuggestions;
+    }
+
+    public void setCaseArticleSuggestions(String caseArticleSuggestions) {
+        this.caseArticleSuggestions = caseArticleSuggestions;
+    }
+
+    public String getListviews() {
+        return listviews;
+    }
+
+    public void setListviews(String listviews) {
+        this.listviews = listviews;
+    }
+
+    public String getLayouts() {
+        return layouts;
+    }
+
+    public void setLayouts(String layouts) {
+        this.layouts = layouts;
+    }
+
+    public String getNamedLayouts() {
+        return namedLayouts;
+    }
+
+    public void setNamedLayouts(String namedLayouts) {
+        this.namedLayouts = namedLayouts;
+    }
+
+    public String getCompactLayouts() {
+        return compactLayouts;
+    }
+
+    public void setCompactLayouts(String compactLayouts) {
+        this.compactLayouts = compactLayouts;
+    }
+
+    public String getCaseRowArticleSuggestions() {
+        return caseRowArticleSuggestions;
+    }
+
+    public void setCaseRowArticleSuggestions(String caseRowArticleSuggestions) {
+        this.caseRowArticleSuggestions = caseRowArticleSuggestions;
+    }
+
+    public String getPush() {
+        return push;
+    }
+
+    public void setPush(String push) {
+        this.push = push;
     }
 }

@@ -34,6 +34,17 @@ public class RestResources extends AbstractDTOBase {
     private String tooling;
     private String licensing;
     private String analytics;
+    private String limits;
+    private String theme;
+    private String queryAll;
+    private String knowledgeManagement;
+    private String process;
+    private String flexiPage;
+    private String quickActions;
+    private String appMenu;
+    private String compactLayouts;
+    private String actions;
+    private String tabs;
 
     public String getSobjects() {
         return sobjects;
@@ -113,5 +124,93 @@ public class RestResources extends AbstractDTOBase {
 
     public void setAnalytics(String analytics) {
         this.analytics = analytics;
+    }
+
+    public String getLimits() {
+        return limits;
+    }
+
+    public void setLimits(String limits) {
+        this.limits = limits;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public String getQueryAll() {
+        return queryAll;
+    }
+
+    public void setQueryAll(String queryAll) {
+        this.queryAll = queryAll;
+    }
+
+    public String getKnowledgeManagement() {
+        return knowledgeManagement;
+    }
+
+    public void setKnowledgeManagement(String knowledgeManagement) {
+        this.knowledgeManagement = knowledgeManagement;
+    }
+
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
+    public String getFlexiPage() {
+        return flexiPage;
+    }
+
+    public void setFlexiPage(String flexiPage) {
+        this.flexiPage = flexiPage;
+    }
+
+    public String getQuickActions() {
+        return quickActions;
+    }
+
+    public void setQuickActions(String quickActions) {
+        this.quickActions = quickActions;
+    }
+
+    public String getAppMenu() {
+        return appMenu;
+    }
+
+    public void setAppMenu(String appMenu) {
+        this.appMenu = appMenu;
+    }
+
+    public String getCompactLayouts() {
+        return compactLayouts;
+    }
+
+    public void setCompactLayouts(String compactLayouts) {
+        this.compactLayouts = compactLayouts;
+    }
+
+    public String getActions() {
+        return actions;
+    }
+
+    public void setActions(String actions) {
+        this.actions = actions;
+    }
+
+    public String getTabs() {
+        return tabs;
+    }
+
+    public void setTabs(String tabs) {
+        this.tabs = tabs;
     }
 }
