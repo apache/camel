@@ -19,12 +19,14 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
+
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -344,7 +346,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         throws UnsupportedEncodingException, URISyntaxException {
 
         if (queryParams != null && !queryParams.isEmpty()) {
-            apexUrl = URISupport.appendParametersToURI(apexUrl, queryParams);
+            apexUrl = URISupport.createRemainingURI(new URI(apexUrl), queryParams).toString();
         }
 
         return instanceUrl + SERVICES_APEXREST + apexUrl;
