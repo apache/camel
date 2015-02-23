@@ -37,7 +37,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.JodaTimeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
@@ -144,6 +144,11 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             exchange.setProperty(RESPONSE_CLASS, SearchResults.class);
             break;
 
+        case APEX_CALL:
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, "response");
+            break;
+
         default:
             // ignore, some operations do not require alias or class exchange properties
         }
@@ -156,14 +161,14 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             Message in = exchange.getIn();
             InputStream request = in.getBody(InputStream.class);
             if (request == null) {
-                AbstractSObjectBase sObject = in.getBody(AbstractSObjectBase.class);
-                if (sObject != null) {
-                    // marshall the SObject
+                AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
+                if (dto != null) {
+                    // marshall the DTO
                     // first process annotations on the class, for things like alias, etc.
-                    localXStream.processAnnotations(sObject.getClass());
+                    localXStream.processAnnotations(dto.getClass());
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     // make sure we write the XML with the right encoding
-                    localXStream.toXML(sObject, new OutputStreamWriter(out, StringUtil.__UTF8_CHARSET));
+                    localXStream.toXML(dto, new OutputStreamWriter(out, StringUtil.__UTF8_CHARSET));
                     request = new ByteArrayInputStream(out.toByteArray());
                 } else {
                     // if all else fails, get body as String

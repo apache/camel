@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 
@@ -172,5 +173,17 @@ public interface RestClient {
      * @param callback  {@link ResponseCallback} to handle response or exception
      */
     void search(String soslQuery, ResponseCallback callback);
+
+    /**
+     * Executes a user defined APEX REST API call.
+     *
+     * @param httpMethod    HTTP method to execute.
+     * @param apexUrl       APEX api url.
+     * @param queryParams   optional query parameters for GET methods, may be empty.
+     * @param requestDto    optional input DTO for POST, etc. may be null.
+     * @param callback      {@link ResponseCallback} to handle response or exception
+     */
+    void apexCall(String httpMethod, String apexUrl, Map<String, Object> queryParams, InputStream requestDto,
+                  ResponseCallback callback);
 
 }

@@ -35,6 +35,7 @@ public enum OperationName {
     QUERY("query"),
     QUERY_MORE("queryMore"),
     SEARCH("search"),
+    APEX_CALL("apexCall"),
 
     // bulk API
     CREATE_JOB("createJob"),

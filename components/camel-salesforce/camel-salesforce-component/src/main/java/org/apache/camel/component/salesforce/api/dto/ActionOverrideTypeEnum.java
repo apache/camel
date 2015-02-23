@@ -14,28 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.internal.dto;
+package org.apache.camel.component.salesforce.api.dto;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonValue;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
-/**
- * Salesforce Enumeration DTO for picklist NotifyForFields
- */
-public enum NotifyForFieldsEnum {
+@JsonDeserialize
+public enum ActionOverrideTypeEnum {
 
-    // All
-    ALL("All"),
-    // Referenced
-    REFERENCED("Referenced"),
-    // Select
-    SELECT("Select"),
-    // Where
-    WHERE("Where");
+    // The override uses a custom override provided by an installed package.
+    // If there isn’t one available, the standard Salesforce behavior is used.
+    DEFAULT("default"),
+    // The override uses behavior from an s-control.
+    SCONTROL("scontrol"),
+    // The override uses regular Salesforce behavior.
+    STANDARD("standard"),
+    // The override uses behavior from a Visualforce page.
+    VISUALFORCE("visualforce");
 
     final String value;
 
-    private NotifyForFieldsEnum(String value) {
+    private ActionOverrideTypeEnum(String value) {
         this.value = value;
     }
 
@@ -45,8 +45,8 @@ public enum NotifyForFieldsEnum {
     }
 
     @JsonCreator
-    public static NotifyForFieldsEnum fromValue(String value) {
-        for (NotifyForFieldsEnum e : NotifyForFieldsEnum.values()) {
+    public static ActionOverrideTypeEnum fromValue(String value) {
+        for (ActionOverrideTypeEnum e : ActionOverrideTypeEnum.values()) {
             if (e.value.equals(value)) {
                 return e;
             }

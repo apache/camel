@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
@@ -113,11 +113,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             Message in = exchange.getIn();
             request = in.getBody(InputStream.class);
             if (request == null) {
-                AbstractSObjectBase sObject = in.getBody(AbstractSObjectBase.class);
-                if (sObject != null) {
-                    // marshall the SObject
+                AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
+                if (dto != null) {
+                    // marshall the DTO
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    objectMapper.writeValue(out, sObject);
+                    objectMapper.writeValue(out, dto);
                     request = new ByteArrayInputStream(out.toByteArray());
                 } else {
                     // if all else fails, get body as String

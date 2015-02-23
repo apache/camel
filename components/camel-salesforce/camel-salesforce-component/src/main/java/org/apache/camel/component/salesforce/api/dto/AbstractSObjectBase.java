@@ -35,6 +35,8 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     private String LastModifiedById;
     private DateTime SystemModstamp;
     private String LastActivityDate;
+    private DateTime LastViewedDate;
+    private DateTime LastReferencedDate;
 
     /**
      * Utility method to clear all system {@link AbstractSObjectBase} fields.
@@ -160,6 +162,26 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     @JsonProperty("LastActivityDate")
     public void setLastActivityDate(String lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
+    }
+
+    @JsonProperty("LastViewedDate")
+    public DateTime getLastViewedDate() {
+        return LastViewedDate;
+    }
+
+    @JsonProperty("LastViewedDate")
+    public void setLastViewedDate(DateTime lastViewedDate) {
+        LastViewedDate = lastViewedDate;
+    }
+
+    @JsonProperty("LastReferencedDate")
+    public DateTime getLastReferencedDate() {
+        return LastReferencedDate;
+    }
+
+    @JsonProperty("LastReferencedDate")
+    public void setLastReferencedDate(DateTime lastReferencedDate) {
+        LastReferencedDate = lastReferencedDate;
     }
 }
 //CHECKSTYLE:ON
