@@ -29,18 +29,18 @@ import org.codehaus.jackson.annotate.JsonValue;
  * Salesforce Enumeration DTO for picklist $field.Name
  */
 public enum $enumName {
-## find the last entry
-#set ( $lastEntry = $utility.getLastEntry($field) )
+#set ( $values = $utility.getUniqueValues($field) )
 
-#foreach ( $entry in $field.PicklistValues)
-#set ( $value = $entry.Value )
-#if ( $entry == $lastEntry )
-#set ( $delim = ";" )
+## handle empty picklists
+#if ( $values.isEmpty() )
+    ; // empty picklist!
 #else
-#set ( $delim = ",")
-#end
+#foreach ( $entry in $values)
+#set ( $value = $entry.Value )
     // $value
-    $utility.getEnumConstant($value)("$value")$delim
+    $utility.getEnumConstant($value)("$value")#if ( $foreach.hasNext ),#else;#end
+
+#end
 #end
 
     final String value;
