@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -212,7 +216,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             final ObjectMapper mapper = new ObjectMapper();
 
             // call getGlobalObjects to get all SObjects
-            final Set<String> objectNames = new HashSet<String>();
+            final Set<String> objectNames = new TreeSet<String>();
             final SyncResponseCallback callback = new SyncResponseCallback();
             try {
                 getLog().info("Getting Salesforce Objects...");
@@ -307,23 +311,23 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // for every accepted name, get SObject description
             final Set<SObjectDescription> descriptions = new HashSet<SObjectDescription>();
 
-            try {
-                getLog().info("Retrieving Object descriptions...");
-                for (String name : objectNames) {
-                    callback.reset();
-                    restClient.getDescription(name, callback);
-                    if (!callback.await(TIMEOUT, TimeUnit.MILLISECONDS)) {
-                        throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
-                    }
-                    final SalesforceException ex = callback.getException();
-                    if (ex != null) {
-                        throw ex;
-                    }
-                    descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
+            getLog().info("Retrieving Object descriptions...");
+            for (String name : objectNames) {
+                try {
+                        callback.reset();
+                        restClient.getDescription(name, callback);
+                        if (!callback.await(TIMEOUT, TimeUnit.MILLISECONDS)) {
+                            throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
+                        }
+                        final SalesforceException ex = callback.getException();
+                        if (ex != null) {
+                            throw ex;
+                        }
+                        descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
+                } catch (Exception e) {
+                    String msg = "Error getting SObject description for '" + name + "': " + e.getMessage();
+                    throw new MojoExecutionException(msg, e);
                 }
-            } catch (Exception e) {
-                String msg = "Error getting SObject description " + e.getMessage();
-                throw new MojoExecutionException(msg, e);
             }
 
             // create package directory
@@ -494,6 +498,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"duration", "javax.xml.datatype.Duration"},
                 {"NOTATION", "javax.xml.namespace.QName"}
 */
+                {"address", "String"}
             };
             LOOKUP_MAP = new HashMap<String, String>();
             for (String[] entry : typeMap) {
@@ -556,9 +561,27 @@ public class CamelSalesforceMojo extends AbstractMojo {
             return false;
         }
 
-        public PickListValue getLastEntry(SObjectField field) {
-            final List<PickListValue> values = field.getPicklistValues();
-            return values.get(values.size() - 1);
+        public List<PickListValue> getUniqueValues(SObjectField field) {
+            if (field.getPicklistValues().isEmpty()) {
+                return field.getPicklistValues();
+            }
+            final List<PickListValue> result = new ArrayList<PickListValue>();
+            final Set<String> literals = new HashSet<String>();
+            for (PickListValue listValue : field.getPicklistValues()) {
+                final String value = listValue.getValue();
+                if (!literals.contains(value)) {
+                    literals.add(value);
+                    result.add(listValue);
+                }
+            }
+            literals.clear();
+            Collections.sort(result, new Comparator<PickListValue>() {
+                @Override
+                public int compare(PickListValue o1, PickListValue o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+            return result;
         }
 
         public boolean isPicklist(SObjectField field) {
