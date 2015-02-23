@@ -33,10 +33,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -150,17 +152,16 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
-
 /**
  * Represents the context used to configure routes and the policies to use.
  *
- * @version 
+ * @version
  */
 @SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
@@ -285,7 +286,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // [TODO] Remove in 3.0
         Container.Instance.manage(this);
     }
-    
+
     /**
      * Creates the {@link CamelContext} using the given JNDI context as the registry
      *
@@ -597,7 +598,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType 
+            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType
                 + " but is: " + endpoint.getClass().getCanonicalName());
         }
     }
@@ -722,9 +723,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
-    public void addRoutes(RoutesBuilder builder) throws Exception {
+    public void addRoutes(final RoutesBuilder builder) throws Exception {
         log.debug("Adding routes from builder: {}", builder);
-        builder.addRoutesToCamelContext(this);
+        doWithDefinedClassLoader(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                builder.addRoutesToCamelContext(DefaultCamelContext.this);
+                return null;
+            }});
     }
 
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
@@ -892,10 +898,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 startRouteService(routeService, false);
             }
             return completed;
-        } 
+        }
         return false;
     }
-    
+
     public synchronized void stopRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
@@ -945,7 +951,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
             // must stop route service as well (and remove the routes from management)
             stopRouteService(routeService, true);
-        } 
+        }
     }
 
     public synchronized boolean removeRoute(String routeId) throws Exception {
@@ -1445,7 +1451,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     String description = row[9];
 
                     // add json of the option
-                    buffer.append(doubleQuote(name)).append(": { ");
+                    buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                     CollectionStringBuffer csb = new CollectionStringBuffer();
                     if (kind != null) {
                         csb.append("\"kind\": \"" + kind + "\"");
@@ -1600,7 +1606,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String description = row[9];
 
                 // add json of the option
-                buffer.append(doubleQuote(name)).append(": { ");
+                buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
@@ -1758,7 +1764,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 String description = row[9];
 
                 // add json of the option
-                buffer.append(doubleQuote(name)).append(": { ");
+                buffer.append(StringQuoteHelper.doubleQuote(name)).append(": { ");
                 CollectionStringBuffer csb = new CollectionStringBuffer();
                 if (kind != null) {
                     csb.append("\"kind\": \"" + kind + "\"");
@@ -1909,20 +1915,20 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         return answer;
     }
-    
+
     public String getPropertyPrefixToken() {
         PropertiesComponent pc = getPropertiesComponent();
-        
+
         if (pc != null) {
             return pc.getPrefixToken();
         } else {
             return null;
         }
     }
-    
+
     public String getPropertySuffixToken() {
         PropertiesComponent pc = getPropertiesComponent();
-        
+
         if (pc != null) {
             return pc.getSuffixToken();
         } else {
@@ -1948,14 +1954,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // the parser will throw exception if property key was not found
                 String answer = pc.parseUri(text);
                 log.debug("Resolved text: {} -> {}", text, answer);
-                return answer; 
+                return answer;
             }
         }
 
         // return original text as is
         return text;
     }
-    
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -2287,7 +2293,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public ServicePool<Endpoint, Producer> getProducerServicePool() {
         return producerServicePool;
     }
-    
+
     public ServicePool<Endpoint, PollingConsumer> getPollingConsumerServicePool() {
         return pollingConsumerServicePool;
     }
@@ -2453,26 +2459,37 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     // -----------------------------------------------------------------------
 
     protected synchronized void doStart() throws Exception {
+        doWithDefinedClassLoader(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    doStartCamel();
+                    return null;
+                } catch (Exception e) {
+                    // fire event that we failed to start
+                    EventHelper.notifyCamelContextStartupFailed(DefaultCamelContext.this, e);
+                    // rethrow cause
+                    throw e;
+                }
+            }
+        });
+    }
+
+    private <T> T doWithDefinedClassLoader(Callable<T> callable) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
-            doStartCamel();
-        } catch (Exception e) {
-            // fire event that we failed to start
-            EventHelper.notifyCamelContextStartupFailed(this, e);
-            // rethrow cause
-            throw e;
+            // Using the ApplicationClassLoader as the default for TCCL
+            if (applicationContextClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(applicationContextClassLoader);
+            }
+            return callable.call();
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 
     private void doStartCamel() throws Exception {
-        if (applicationContextClassLoader == null) {
-            // Using the TCCL as the default value of ApplicationClassLoader
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            if (cl == null) {
-                // use the classloader that loaded this class
-                cl = this.getClass().getClassLoader();
-            }
-            setApplicationContextClassLoader(cl);
-        }
+
         if (classResolver instanceof CamelContextAware) {
             ((CamelContextAware) classResolver).setCamelContext(this);
         }
@@ -2507,7 +2524,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (getDelayer() != null && getDelayer() > 0) {
             log.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
         }
-        
+
         // register debugger
         if (getDebugger() != null) {
             log.info("Debugger: {} is enabled on CamelContext: {}", getDebugger(), getName());
@@ -2850,7 +2867,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         service.start();
     }
-    
+
     private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
@@ -2936,7 +2953,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         routeService.setRemovingRoutes(removingRoutes);
         stopRouteService(routeService);
     }
-    
+
     protected void logRouteState(Route route, String state) {
         if (log.isInfoEnabled()) {
             if (route.getConsumer() != null) {
@@ -2946,7 +2963,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
     }
-    
+
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         for (Route route : routeService.getRoutes()) {
@@ -3105,7 +3122,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     throw new FailedToStartRouteException(routeService.getId(),
                         "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                 }
-                
+
                 // check for multiple consumer violations with existing routes which
                 // have already been started, or is currently starting
                 List<Endpoint> existingEndpoints = new ArrayList<Endpoint>();
@@ -3313,7 +3330,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected boolean shouldStartRoutes() {
         return isStarted() && !isStarting();
     }
-    
+
     /**
      * Gets the properties component in use.
      * Returns {@code null} if no properties component is in use.
@@ -3638,7 +3655,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setDebugger(Debugger debugger) {
         this.debugger = debugger;
     }
-    
+
     public UuidGenerator getUuidGenerator() {
         return uuidGenerator;
     }
