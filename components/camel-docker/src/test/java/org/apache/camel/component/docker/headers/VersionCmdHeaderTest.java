@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.VersionCmd;
-
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -32,16 +31,16 @@ public class VersionCmdHeaderTest extends BaseDockerHeaderTest<VersionCmd> {
 
     @Mock
     private VersionCmd mockObject;
-    
+
     @Test
     public void pingHeaderTest() {
-                
+
         Map<String, Object> headers = getDefaultParameters();
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).versionCmd();
-        
+
     }
 
     @Override

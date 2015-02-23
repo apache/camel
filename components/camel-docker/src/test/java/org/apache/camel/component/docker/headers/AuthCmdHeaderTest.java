@@ -31,35 +31,35 @@ import org.mockito.Mockito;
  * Validates Authentication Request headers are parsed properly
  */
 public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
-    
+
     @Mock
     private AuthCmd mockObject;
-    
+
     private String userName = "jdoe";
     private String password = "password";
     private String email = "jdoe@example.com";
     private String serverAddress = "http://docker.io/v1";
-    
+
     @Test
     public void authHeaderTest() {
         String userName = "jdoe";
         String password = "password";
         String email = "jdoe@example.com";
         String serverAddress = "http://docker.io/v1";
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_USERNAME, userName);
         headers.put(DockerConstants.DOCKER_PASSWORD, password);
         headers.put(DockerConstants.DOCKER_EMAIL, email);
         headers.put(DockerConstants.DOCKER_SERVER_ADDRESS, serverAddress);
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).authCmd();
-        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig)Mockito.anyObject());
-        
+        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) Mockito.anyObject());
+
     }
-    
+
     @Override
     public DockerClientProfile getClientProfile() {
         DockerClientProfile clientProfile = super.getClientProfile();
@@ -67,7 +67,7 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
         clientProfile.setPassword(password);
         clientProfile.setUsername(userName);
         clientProfile.setServerAddress(serverAddress);
-       
+
         return clientProfile;
     }
 

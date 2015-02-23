@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.docker.headers;
 
+import java.util.Map;
+
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
-
-import java.util.Map;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -36,13 +35,13 @@ import org.mockito.Mockito;
  */
 public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerCmd> {
 
-    
+
     @Mock
     private CreateContainerCmd mockObject;
-    
+
     @Test
     public void createContainerHeaderTest() {
-        
+
         String image = "busybox";
         ExposedPort exposedPort = ExposedPort.tcp(22);
         boolean tty = true;
@@ -66,11 +65,11 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         HostConfig hostConfig = new HostConfig();
         Capability capAdd = Capability.NET_BROADCAST;
         Capability capDrop = Capability.BLOCK_SUSPEND;
-        String[] entrypoint = new String[]{"sleep","9999"};
+        String[] entrypoint = new String[]{"sleep", "9999"};
         String portSpecs = "80";
         String dns = "8.8.8.8";
 
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE, image);
         headers.put(DockerConstants.DOCKER_EXPOSED_PORTS, exposedPort);
@@ -99,9 +98,9 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         headers.put(DockerConstants.DOCKER_PORT_SPECS, portSpecs);
         headers.put(DockerConstants.DOCKER_DNS, dns);
 
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(image);
         Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(Matchers.eq(exposedPort));
         Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
@@ -128,7 +127,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withEntrypoint(entrypoint);
         Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
         Mockito.verify(mockObject, Mockito.times(1)).withDns(dns);
-        
+
     }
 
     @Override

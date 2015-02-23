@@ -17,10 +17,11 @@
 package org.apache.camel.component.docker;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class DockerHelperTest {
-    
+
     @Test
     public void transformHeaderTestFromHeader() {
         String headerField = DockerHelper.transformFromHeaderName(DockerConstants.DOCKER_REGISTRY);

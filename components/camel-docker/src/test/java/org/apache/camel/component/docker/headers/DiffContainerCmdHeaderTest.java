@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.ContainerDiffCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -34,22 +33,22 @@ public class DiffContainerCmdHeaderTest extends BaseDockerHeaderTest<ContainerDi
 
     @Mock
     private ContainerDiffCmd mockObject;
-    
+
     @Test
     public void containerDiffHeaderTest() {
-                
+
         String containerId = "9c09acd48a25";
         String containerIdDiff = "0f9dfe8defa0";
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_CONTAINER_ID_DIFF, containerIdDiff);
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).containerDiffCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withContainerId(containerIdDiff);
-        
+
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.InfoCmd;
-
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -32,16 +31,16 @@ public class InfoCmdHeaderTest extends BaseDockerHeaderTest<InfoCmd> {
 
     @Mock
     private InfoCmd mockObject;
-    
+
     @Test
     public void infoHeaderTest() {
-                
+
         Map<String, Object> headers = getDefaultParameters();
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).infoCmd();
-        
+
     }
 
     @Override

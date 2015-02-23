@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.docker.headers;
 
-import com.github.dockerjava.api.command.ExecStartCmd;
-
 import java.util.Map;
 
+import com.github.dockerjava.api.command.ExecStartCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -31,27 +30,27 @@ import org.mockito.Mockito;
  * Validates Exec Start Request headers are parsed properly
  */
 public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
-    
+
     @Mock
     private ExecStartCmd mockObject;
-    
+
     @Test
     public void execCreateHeaderTest() {
-        
+
         String id = "1";
         boolean tty = true;
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_EXEC_ID, id);
         headers.put(DockerConstants.DOCKER_TTY, tty);
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).execStartCmd(Matchers.eq(id));
         Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
-        
+
     }
-    
+
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.execStartCmd(Matchers.anyString())).thenReturn(mockObject);

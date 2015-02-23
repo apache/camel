@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.dockerjava.api.DockerClient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.DockerClientProfile;
@@ -36,63 +35,62 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
-    
+
     @Mock
     protected DockerClient dockerClient;
-        
-    protected DockerConfiguration dockerConfiguration;    
-    
+
+    protected DockerConfiguration dockerConfiguration;
+
     @Mock
     T mockObject;
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            
+
             @Override
             public void configure() throws Exception {
                 from("direct:in").to("docker://" + getOperation().toString());
-                
+
             }
         };
-        
-    }   
-    
+
+    }
+
     @Before
     public void setupTest() {
         setupMocks();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         dockerConfiguration = new DockerConfiguration();
         dockerConfiguration.setParameters(getDefaultParameters());
-        
-        
+
+
         dockerConfiguration.setClient(getClientProfile(), dockerClient);
-        
+
         DockerComponent dockerComponent = new DockerComponent(dockerConfiguration);
         camelContext.addComponent("docker", dockerComponent);
-        
 
-        
+
         return camelContext;
     }
-    
-    
+
+
     protected String getHost() {
         return "localhost";
     }
-    
+
     protected Integer getPort() {
         return 5000;
     }
-    
+
     protected String getEmail() {
         return "docker@camel.apache.org";
     }
-    
+
     protected Integer getMaxPerRouteConnections() {
         return 100;
     }
@@ -104,7 +102,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
     public T getMockObject() {
         return mockObject;
     }
-    
+
     protected Map<String, Object> getDefaultParameters() {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(DockerConstants.DOCKER_HOST, getHost());
@@ -115,7 +113,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
         return parameters;
     }
-    
+
     protected DockerClientProfile getClientProfile() {
         DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(getHost());
@@ -123,15 +121,15 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setEmail(getEmail());
         clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(getMaxTotalConnections());
-        
+
         return clientProfile;
 
     }
-    
-    
+
+
     protected abstract void setupMocks();
-    
+
     protected abstract DockerOperation getOperation();
-         
-    
+
+
 }

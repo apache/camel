@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.docker.headers;
 
+import java.util.Map;
+
 import com.github.dockerjava.api.command.CommitCmd;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
-
-import java.util.Map;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -36,13 +35,13 @@ import org.mockito.Mockito;
  */
 public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd> {
 
-    
+
     @Mock
     private CommitCmd mockObject;
-    
+
     @Test
     public void commitContainerHeaderTest() {
-        
+
         String containerId = "9c09acd48a25";
         String env = "FOO=bar";
         boolean attachStdErr = true;
@@ -66,8 +65,8 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
         Volumes volumes = new Volumes(new Volume("/example"));
         boolean tty = true;
         String hostname = "dockerhostname";
-        
-        
+
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_ENV, env);
@@ -92,9 +91,9 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
         headers.put(DockerConstants.DOCKER_OPEN_STD_IN, openStdIn);
         headers.put(DockerConstants.DOCKER_STD_IN_ONCE, stdInOnce);
         headers.put(DockerConstants.DOCKER_PORT_SPECS, portSpecs);
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).commitCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withEnv(env);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(attachStdErr);
@@ -118,7 +117,7 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
         Mockito.verify(mockObject, Mockito.times(1)).withOpenStdin(openStdIn);
         Mockito.verify(mockObject, Mockito.times(1)).withStdinOnce(stdInOnce);
         Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
-        
+
     }
 
     @Override

@@ -36,7 +36,7 @@ public class DockerProducerTestIT extends CamelTestSupport {
         template.sendBody("direct:in", "");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);  
+        mock.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
@@ -46,9 +46,9 @@ public class DockerProducerTestIT extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://imagelist?host=" + host + "&port=" + port + "&certPath=/Users/cameluser/.docker/boot2docker-vm&secure=true")
-                    .log("${body}")
-                      .to("mock:result");
+                        .to("docker://imagelist?host=" + host + "&port=" + port + "&certPath=/Users/cameluser/.docker/boot2docker-vm&secure=true")
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

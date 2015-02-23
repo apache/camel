@@ -29,8 +29,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @RunWith(PowerMockRunner.class)
 public class DockerClientProfileRegistryTest extends CamelTestSupport {
-        
-    
+
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -40,24 +40,24 @@ public class DockerClientProfileRegistryTest extends CamelTestSupport {
         profile.setPort(2376);
         profile.setSecure(true);
         profile.setCertPath("/Users/cameluser/.boot2docker/certs/boot2docker-vm");
-        
+
         PropertyPlaceholderDelegateRegistry registry = (PropertyPlaceholderDelegateRegistry) camelContext.getRegistry();
-        JndiRegistry jndiRegistry = (JndiRegistry)registry.getRegistry();
+        JndiRegistry jndiRegistry = (JndiRegistry) registry.getRegistry();
         jndiRegistry.bind("dockerProfile", profile);
-        
-        
+
+
         return camelContext;
     }
-    
+
     @Test
     public void clientProfileTest() {
         DockerEndpoint endpoint = resolveMandatoryEndpoint(context(), "docker://info?clientProfile=#dockerProfile", DockerEndpoint.class);
         assertNotNull(endpoint.getConfiguration().getClientProfile());
-        DockerClientProfile clientProfile =  endpoint.getConfiguration().getClientProfile();
+        DockerClientProfile clientProfile = endpoint.getConfiguration().getClientProfile();
         assertEquals("192.168.59.103", clientProfile.getHost());
         assertEquals((Integer) 2376, clientProfile.getPort());
         assertTrue(clientProfile.isSecure());
-        assertEquals("/Users/cameluser/.boot2docker/certs/boot2docker-vm" ,clientProfile.getCertPath());
+        assertEquals("/Users/cameluser/.boot2docker/certs/boot2docker-vm", clientProfile.getCertPath());
 
     }
 

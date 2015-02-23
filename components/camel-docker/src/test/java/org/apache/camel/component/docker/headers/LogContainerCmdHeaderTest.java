@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.LogContainerCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -31,13 +30,13 @@ import org.mockito.Mockito;
  * Validates Log Container Request headers are applied properly
  */
 public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainerCmd> {
-    
+
     @Mock
     private LogContainerCmd mockObject;
-    
+
     @Test
     public void logContainerHeaderTest() {
-        
+
         String containerId = "9c09acd48a25";
         boolean stdOut = true;
         boolean stdErr = true;
@@ -45,7 +44,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         boolean timestamps = false;
         boolean tailAll = true;
         int tail = 5;
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_FOLLOW_STREAM, followStream);
@@ -56,7 +55,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         headers.put(DockerConstants.DOCKER_TAIL_ALL, tailAll);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
+
         Mockito.verify(dockerClient, Mockito.times(1)).logContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Matchers.eq(followStream));
         Mockito.verify(mockObject, Mockito.times(1)).withTail(Matchers.eq(tail));
@@ -64,7 +63,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         Mockito.verify(mockObject, Mockito.times(1)).withStdErr(Matchers.eq(stdErr));
         Mockito.verify(mockObject, Mockito.times(1)).withStdOut(Matchers.eq(stdOut));
         Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(Matchers.eq(timestamps));
-        
+
     }
 
     @Override

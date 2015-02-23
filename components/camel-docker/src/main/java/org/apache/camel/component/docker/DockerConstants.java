@@ -23,15 +23,19 @@ import java.util.Map;
  * Docker Component constants
  */
 public final class DockerConstants {
-    
+
     public static final String DOCKER_PREFIX = "CamelDocker";
 
     public static final Map<String, Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<String, Class<?>>();
 
-    /** Connectivity **/
+    /**
+     * Connectivity *
+     */
     public static final String DOCKER_CLIENT_PROFILE = "CamelDockerClientProfile";
 
-    /** Connectivity **/
+    /**
+     * Connectivity *
+     */
     public static final String DOCKER_API_REQUEST_TIMEOUT = "CamelDockerRequestTimeout";
     public static final String DOCKER_CERT_PATH = "CamelDockerCertPath";
     public static final String DOCKER_HOST = "CamelDockerHost";
@@ -39,84 +43,122 @@ public final class DockerConstants {
     public static final String DOCKER_MAX_PER_ROUTE_CONNECTIONS = "CamelDockerMaxPerRouteConnections";
     public static final String DOCKER_MAX_TOTAL_CONNECTIONS = "CamelDockerMaxTotalConnections";
     public static final String DOCKER_SECURE = "CamelDockerSecure";
-    
-    /** List Images **/
+
+    /**
+     * List Images *
+     */
     public static final String DOCKER_FILTER = "CamelDockerFilter";
     public static final String DOCKER_SHOW_ALL = "CamelDockerShowAll";
 
-    /** Common **/
+    /**
+     * Common *
+     */
     public static final String DOCKER_CONTAINER_ID = "CamelDockerContainerId";
     public static final String DOCKER_IMAGE_ID = "CamelDockerImageId";
 
-    /** Auth **/
+    /**
+     * Auth *
+     */
     public static final String DOCKER_EMAIL = "CamelDockerEmail";
     public static final String DOCKER_PASSWORD = "CamelDockerPassword";
     public static final String DOCKER_SERVER_ADDRESS = "CamelDockerServerAddress";
     public static final String DOCKER_USERNAME = "CamelDockerUsername";
-    
-    /** Pull **/
+
+    /**
+     * Pull *
+     */
     public static final String DOCKER_REGISTRY = "CamelDockerRegistry";
     public static final String DOCKER_REPOSITORY = "CamelDockerRepository";
     public static final String DOCKER_TAG = "CamelDockerTag";
-    
-    /** Push **/
+
+    /**
+     * Push *
+     */
     public static final String DOCKER_NAME = "CamelDockerName";
-    
-    /** Search **/
+
+    /**
+     * Search *
+     */
     public static final String DOCKER_TERM = "CamelDockerTerm";
-    
-    /** Remove **/
+
+    /**
+     * Remove *
+     */
     public static final String DOCKER_FORCE = "CamelDockerForce";
     public static final String DOCKER_NO_PRUNE = "CamelDockerNoPrune";
-    
-    /** Events **/
+
+    /**
+     * Events *
+     */
     public static final String DOCKER_INITIAL_RANGE = "CamelDockerInitialRange";
-    
-    /** List Container **/
+
+    /**
+     * List Container *
+     */
     public static final String DOCKER_BEFORE = "CamelDockerBefore";
     public static final String DOCKER_LIMIT = "CamelDockerLimit";
     public static final String DOCKER_SHOW_SIZE = "CamelDockerShowSize";
     public static final String DOCKER_SINCE = "CamelDockerSince";
 
 
-    /** Remove Container **/
+    /**
+     * Remove Container *
+     */
     public static final String DOCKER_REMOVE_VOLUMES = "CamelDockerRemoveVolumes";
 
-    /** Attach Container **/
+    /**
+     * Attach Container *
+     */
     public static final String DOCKER_FOLLOW_STREAM = "CamelDockerFollowStream";
     public static final String DOCKER_LOGS = "CamelDockerLogs";
     public static final String DOCKER_STD_ERR = "CamelDockerStdErr";
     public static final String DOCKER_STD_OUT = "CamelDockerStdOut";
     public static final String DOCKER_TIMESTAMPS = "CamelDockerTimestamps";
-    
-    /** Logs **/
+
+    /**
+     * Logs *
+     */
     public static final String DOCKER_TAIL = "CamelDockerTail";
     public static final String DOCKER_TAIL_ALL = "CamelDockerTailAll";
-    
-    /** Copy **/
+
+    /**
+     * Copy *
+     */
     public static final String DOCKER_HOST_PATH = "CamelDockerHostPath";
     public static final String DOCKER_RESOURCE = "CamelDockerResource";
 
-    /** Diff Container **/
+    /**
+     * Diff Container *
+     */
     public static final String DOCKER_CONTAINER_ID_DIFF = "CamelDockerContainerIdDiff";
 
-    /** Stop Container **/
+    /**
+     * Stop Container *
+     */
     public static final String DOCKER_TIMEOUT = "CamelDockerTimeout";
 
-    /** Kill Container **/
+    /**
+     * Kill Container *
+     */
     public static final String DOCKER_SIGNAL = "CamelDockerSignal";
-    
-    /** Top Container **/
+
+    /**
+     * Top Container *
+     */
     public static final String DOCKER_PS_ARGS = "CamelDockerPsArgs";
-    
-    /** Build Image **/
+
+    /**
+     * Build Image *
+     */
     public static final String DOCKER_NO_CACHE = "CamelDockerNoCache";
     public static final String DOCKER_QUIET = "CamelDockerQuiet";
     public static final String DOCKER_REMOVE = "CamelDockerRemove";
     public static final String DOCKER_TAR_INPUT_STREAM = "CamelDockerTarInputStream";
-    
-    
-    /** Commit Container **/
+
+
+    /**
+     * Commit Container *
+     */
     public static final String DOCKER_ATTACH_STD_ERR = "CamelDockerAttachStdErr";
     public static final String DOCKER_ATTACH_STD_IN = "CamelDockerAttachStdIn";
     public static final String DOCKER_ATTACH_STD_OUT = "CamelDockerAttachStdOut";
@@ -139,33 +181,39 @@ public final class DockerConstants {
     public static final String DOCKER_VOLUMES = "CamelDockerVolumes";
     public static final String DOCKER_WORKING_DIR = "CamelDockerWorkingDir";
 
-    /** Create Container **/
+    /**
+     * Create Container *
+     */
     public static final String DOCKER_CPU_SHARES = "CamelDockerCpuShares";
     public static final String DOCKER_DNS = "CamelDockerDns";
     public static final String DOCKER_ENTRYPOINT = "CamelDockerEntryPoint";
     public static final String DOCKER_HOST_CONFIG = "CamelDockerHostConfig";
     public static final String DOCKER_IMAGE = "CamelDockerImage";
-    public static final String DOCKER_MEMORY_LIMIT = "CamelDockerMemoryLimit";    
+    public static final String DOCKER_MEMORY_LIMIT = "CamelDockerMemoryLimit";
     public static final String DOCKER_STD_IN_OPEN = "CamelDockerStdInOpen";
     public static final String DOCKER_VOLUMES_FROM = "CamelDockerVolumesFrom";
 
-    
-    /** Start Container **/
-    public static final String DOCKER_BINDS = "CamelDockerBinds";    
+
+    /**
+     * Start Container *
+     */
+    public static final String DOCKER_BINDS = "CamelDockerBinds";
     public static final String DOCKER_CAP_ADD = "CamelDockerCapAdd";
     public static final String DOCKER_CAP_DROP = "CamelDockerCapDrop";
     public static final String DOCKER_DEVICES = "CamelDockeDevices";
     public static final String DOCKER_DNS_SEARCH = "CamelDockerDnsSearch";
-    public static final String DOCKER_LINKS = "CamelDockerLinks"; 
-    public static final String DOCKER_LXC_CONF = "CamelDockerLxcConf";    
+    public static final String DOCKER_LINKS = "CamelDockerLinks";
+    public static final String DOCKER_LXC_CONF = "CamelDockerLxcConf";
     public static final String DOCKER_NETWORK_MODE = "CamelNetworkMode";
     public static final String DOCKER_PORT_BINDINGS = "CamelDockerPortBinding";
     public static final String DOCKER_PORTS = "CamelDockerPorts";
     public static final String DOCKER_PRIVILEGED = "CamelDockerDnsPrivileged";
     public static final String DOCKER_PUBLISH_ALL_PORTS = "CamelDockerPublishAllPorts";
     public static final String DOCKER_RESTART_POLICY = "CamelDockerRestartPolicy";
-    
-    /** Exec **/
+
+    /**
+     * Exec *
+     */
     public static final String DOCKER_DETACH = "CamelDockerDetach";
     public static final String DOCKER_EXEC_ID = "CamelDockerExecId";
 
@@ -181,9 +229,9 @@ public final class DockerConstants {
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SERVER_ADDRESS, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_USERNAME, String.class);
     }
-    
+
     private DockerConstants() {
         // Helper class
     }
-    
+
 }

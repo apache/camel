@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.ListContainersCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -31,19 +30,19 @@ import org.mockito.Mockito;
  * Validates List Containers Request headers are applied properly
  */
 public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContainersCmd> {
-    
+
     @Mock
     private ListContainersCmd mockObject;
-    
+
     @Test
     public void listContainerHeaderTest() {
-        
+
         boolean showSize = true;
         boolean showAll = false;
         int limit = 2;
         String since = "id1";
         String before = "id2";
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_LIMIT, limit);
         headers.put(DockerConstants.DOCKER_SHOW_ALL, showAll);
@@ -52,16 +51,15 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         headers.put(DockerConstants.DOCKER_BEFORE, before);
 
 
-        
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
+
         Mockito.verify(dockerClient, Mockito.times(1)).listContainersCmd();
         Mockito.verify(mockObject, Mockito.times(1)).withShowAll(Matchers.eq(showAll));
         Mockito.verify(mockObject, Mockito.times(1)).withShowSize(Matchers.eq(showSize));
         Mockito.verify(mockObject, Mockito.times(1)).withLimit(Matchers.eq(limit));
         Mockito.verify(mockObject, Mockito.times(1)).withSince(Matchers.eq(since));
         Mockito.verify(mockObject, Mockito.times(1)).withBefore(Matchers.eq(before));
-        
+
     }
 
     @Override

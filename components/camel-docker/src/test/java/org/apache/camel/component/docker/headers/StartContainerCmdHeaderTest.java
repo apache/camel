@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.docker.headers;
 
+import java.util.Map;
+
 import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Capability;
@@ -27,9 +29,6 @@ import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.RestartPolicy;
 import com.github.dockerjava.api.model.Volume;
-
-import java.util.Map;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -41,19 +40,19 @@ import org.mockito.Mockito;
  * Validates Start Container Request headers are applied properly
  */
 public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartContainerCmd> {
-    
-    @Mock
-    private StartContainerCmd mockObject;
-    
+
     @Mock
     ExposedPort exposedPort;
-    
+
+    @Mock
+    private StartContainerCmd mockObject;
+
     @Test
     public void startContainerHeaderTest() {
-        
+
         String containerId = "be29975e0098";
         Volume vol = new Volume("/opt/webapp1");
-        Bind[] binds = new Bind[]{new Bind("/opt/webapp1",vol)};
+        Bind[] binds = new Bind[]{new Bind("/opt/webapp1", vol)};
         boolean publishAllPorts = false;
         boolean privileged = false;
         String[] dns = new String[]{"8.8.8.8"};
@@ -65,9 +64,9 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
         Capability capDrop = Capability.BLOCK_SUSPEND;
         Device[] devices = new Device[]{new Device("rwm", "/dev/nulo", "/dev/zero")};
         RestartPolicy restartPolicy = RestartPolicy.noRestart();
-        PortBinding[] portBindings = new PortBinding[]{new PortBinding(Ports.Binding(28768),ExposedPort.tcp(22))};
+        PortBinding[] portBindings = new PortBinding[]{new PortBinding(Ports.Binding(28768), ExposedPort.tcp(22))};
         Ports ports = new Ports(ExposedPort.tcp(22), Ports.Binding(11022));
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_BINDS, binds);
@@ -86,9 +85,9 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
         headers.put(DockerConstants.DOCKER_PORT_BINDINGS, portBindings);
         headers.put(DockerConstants.DOCKER_PORTS, ports);
 
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
+
         Mockito.verify(dockerClient, Mockito.times(1)).startContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withBinds(binds);
         Mockito.verify(mockObject, Mockito.times(1)).withPublishAllPorts(publishAllPorts);
@@ -105,7 +104,7 @@ public class StartContainerCmdHeaderTest extends BaseDockerHeaderTest<StartConta
         Mockito.verify(mockObject, Mockito.times(1)).withRestartPolicy(restartPolicy);
         Mockito.verify(mockObject, Mockito.times(1)).withPortBindings(portBindings);
         Mockito.verify(mockObject, Mockito.times(1)).withPortBindings(ports);
-        
+
     }
 
     @Override

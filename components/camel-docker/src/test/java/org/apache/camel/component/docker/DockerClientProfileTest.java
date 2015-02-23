@@ -17,13 +17,14 @@
 package org.apache.camel.component.docker;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 /**
  * Validates the {@link DockerClientProfile}
  */
 public class DockerClientProfileTest {
-    
+
     @Test
     public void clientProfileTest() {
         String host = "host";
@@ -34,8 +35,8 @@ public class DockerClientProfileTest {
         Integer requestTimeout = 40;
         boolean secure = true;
         String certPath = "/docker/cert/path";
-        
-        
+
+
         DockerClientProfile clientProfile1 = new DockerClientProfile();
         clientProfile1.setHost(host);
         clientProfile1.setEmail(email);
@@ -45,7 +46,7 @@ public class DockerClientProfileTest {
         clientProfile1.setRequestTimeout(requestTimeout);
         clientProfile1.setSecure(secure);
         clientProfile1.setCertPath(certPath);
-        
+
         DockerClientProfile clientProfile2 = new DockerClientProfile();
         clientProfile2.setHost(host);
         clientProfile2.setEmail(email);
@@ -55,7 +56,7 @@ public class DockerClientProfileTest {
         clientProfile2.setRequestTimeout(requestTimeout);
         clientProfile2.setSecure(secure);
         clientProfile2.setCertPath(certPath);
-        
+
         assertEquals(clientProfile1, clientProfile2);
     }
 

@@ -42,74 +42,74 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
     private static final transient Logger LOGGER = LoggerFactory.getLogger(DockerEventsConsumer.class);
 
     private DockerEndpoint endpoint;
-        
+
     private EventsCmd eventsCmd;
-    
+
     private ExecutorService eventsExecutorService;
 
     public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-              
+
     }
 
     @Override
     public DockerEndpoint getEndpoint() {
-        return (DockerEndpoint)super.getEndpoint();
+        return (DockerEndpoint) super.getEndpoint();
     }
-    
+
 
     /**
      * Determine the point in time to begin streaming events
      */
-    private long processInitialEvent()  {
+    private long processInitialEvent() {
 
         long currentTime = new Date().getTime();
-        
+
         Long initialRange = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
 
         if (initialRange != null) {
             currentTime = currentTime - initialRange;
-        } 
-        
+        }
+
         return currentTime;
-        
-        
+
+
     }
 
     @Override
     protected void doStart() throws Exception {
-        
-        eventsCmd = DockerClientFactory.getDockerClient(endpoint.getConfiguration(),null).eventsCmd(this);
-        
+
+        eventsCmd = DockerClientFactory.getDockerClient(endpoint.getConfiguration(), null).eventsCmd(this);
+
         eventsCmd.withSince(String.valueOf(processInitialEvent()));
-        eventsExecutorService =  eventsCmd.exec();
+        eventsExecutorService = eventsCmd.exec();
 
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
- 
+
         if (eventsExecutorService != null && !eventsExecutorService.isTerminated()) {
             LOGGER.trace("Stopping Docker events Executor Service");
-            
+
             eventsExecutorService.shutdown();
         }
 
         super.doStop();
     }
-       
+
 
     @Override
     public void onEvent(Event event) {
-        
+
         LOGGER.debug("Received Docker Event: " + event);
-                
+
         final Exchange exchange = getEndpoint().createExchange();
         Message message = exchange.getIn();
         message.setBody(event);
-        
+
         try {
             LOGGER.trace("Processing exchange [{}]...", exchange);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -124,7 +124,7 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
         if (exchange.getException() != null) {
             getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
         }
-        
+
     }
 
     @Override
@@ -134,14 +134,14 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
 
     @Override
     public void onCompletion(int numEvents) {
-        
+
         LOGGER.debug("Docker events connection completed. Events processed : {}", numEvents);
-        
+
         eventsCmd.withSince(null);
-        
+
         LOGGER.debug("Reestablishing connection with Docker");
         eventsCmd.exec();
-        
+
     }
 
     @Override

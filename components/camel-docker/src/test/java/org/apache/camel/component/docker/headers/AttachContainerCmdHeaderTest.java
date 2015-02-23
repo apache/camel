@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.AttachContainerCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -31,20 +30,20 @@ import org.mockito.Mockito;
  * Validates Attach Container Request headers are applied properly
  */
 public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachContainerCmd> {
-    
+
     @Mock
     private AttachContainerCmd mockObject;
-    
+
     @Test
     public void attachContainerHeaderTest() {
-        
+
         String containerId = "9c09acd48a25";
         boolean stdOut = true;
         boolean stdErr = true;
         boolean followStream = false;
         boolean logs = true;
         boolean timestamps = true;
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_FOLLOW_STREAM, followStream);
@@ -54,16 +53,15 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
         headers.put(DockerConstants.DOCKER_LOGS, logs);
 
 
-        
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
+
         Mockito.verify(dockerClient, Mockito.times(1)).attachContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Matchers.eq(followStream));
         Mockito.verify(mockObject, Mockito.times(1)).withLogs(Matchers.eq(logs));
         Mockito.verify(mockObject, Mockito.times(1)).withStdErr(Matchers.eq(stdErr));
         Mockito.verify(mockObject, Mockito.times(1)).withStdOut(Matchers.eq(stdOut));
         Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(Matchers.eq(timestamps));
-        
+
     }
 
     @Override

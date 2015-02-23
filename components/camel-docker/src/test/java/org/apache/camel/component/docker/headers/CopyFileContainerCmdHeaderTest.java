@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -31,17 +30,17 @@ import org.mockito.Mockito;
  * Validates Copy File from Container Request headers are applied properly
  */
 public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyFileFromContainerCmd> {
-    
+
     @Mock
     private CopyFileFromContainerCmd mockObject;
-    
+
     @Test
     public void copyFileFromContainerHeaderTest() {
-        
+
         String containerId = "9c09acd48a25";
         String resource = "/test";
         String hostPath = "/test/test2";
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_RESOURCE, resource);
@@ -49,10 +48,10 @@ public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyFil
 
 
         template.sendBodyAndHeaders("direct:in", "", headers);
-                
+
         Mockito.verify(dockerClient, Mockito.times(1)).copyFileFromContainerCmd(containerId, resource);
         Mockito.verify(mockObject, Mockito.times(1)).withHostPath(Matchers.eq(hostPath));
-        
+
     }
 
     @Override

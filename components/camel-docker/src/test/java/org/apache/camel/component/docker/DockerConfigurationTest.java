@@ -27,33 +27,33 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class DockerConfigurationTest {
-    
+
     private DockerConfiguration configuration;
-    
+
     @Before
     public void setupTest() {
         configuration = new DockerConfiguration();
     }
-    
+
     @Test
     public void testPropertyFromHeader() {
         String host = "camelhost";
-        
+
         Message message = new DefaultMessage();
         message.setHeader(DockerConstants.DOCKER_HOST, host);
-        
+
         String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);
     }
-    
+
     @Test
     public void testPropertyfromEndpointProperties() {
         String host = "camelhost";
-        
+
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(DockerHelper.transformFromHeaderName(DockerConstants.DOCKER_HOST), host);
         configuration.setParameters(parameters);
-        
+
         Message message = new DefaultMessage();
         String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);

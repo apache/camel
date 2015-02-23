@@ -49,7 +49,7 @@ public class DockerEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         DockerOperation operation = configuration.getOperation();
-        
+
         if (operation != null && operation.canProduce()) {
             return new DockerProducer(this);
         } else {
@@ -67,9 +67,7 @@ public class DockerEndpoint extends DefaultEndpoint {
         default:
             throw new DockerException(operation + " is not a valid consumer operation");
         }
-
     }
-    
 
     public boolean isSingleton() {
         return true;
@@ -78,11 +76,11 @@ public class DockerEndpoint extends DefaultEndpoint {
     public DockerConfiguration getConfiguration() {
         return configuration;
     }
-    
+
     @Override
     public boolean isLenientProperties() {
         return true;
     }
 
- 
+
 }

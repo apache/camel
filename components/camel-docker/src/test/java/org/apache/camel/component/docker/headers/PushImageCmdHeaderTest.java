@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.PushImageCmd;
-
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -32,10 +31,10 @@ import org.mockito.Mockito;
  * Validates Push Image Request headers are applied properly
  */
 public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
-    
+
     @Mock
     private PushImageCmd mockObject;
-    
+
     private String userName = "jdoe";
     private String password = "password";
     private String email = "jdoe@example.com";
@@ -43,11 +42,11 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     private String name = "imagename";
     private String tag = "1.0";
 
-    
+
     @Test
     public void pushImageHeaderTest() {
-        
-        
+
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_USERNAME, userName);
         headers.put(DockerConstants.DOCKER_PASSWORD, password);
@@ -56,13 +55,13 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         headers.put(DockerConstants.DOCKER_NAME, name);
         headers.put(DockerConstants.DOCKER_TAG, tag);
 
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
 
-        
+
     }
 
     @Override
@@ -74,7 +73,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     protected DockerOperation getOperation() {
         return DockerOperation.PUSH_IMAGE;
     }
-    
+
     @Override
     public DockerClientProfile getClientProfile() {
         DockerClientProfile clientProfile = super.getClientProfile();
@@ -82,9 +81,9 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         clientProfile.setPassword(password);
         clientProfile.setUsername(userName);
         clientProfile.setServerAddress(serverAddress);
-        
+
         return clientProfile;
-       
+
     }
 
 

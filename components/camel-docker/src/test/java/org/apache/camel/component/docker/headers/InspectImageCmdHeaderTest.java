@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.InspectImageCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -34,26 +33,26 @@ public class InspectImageCmdHeaderTest extends BaseDockerHeaderTest<InspectImage
 
     @Mock
     private InspectImageCmd mockObject;
-    
+
     @Test
     public void listImageHeaderTest() {
-        
+
         String imageId = "be29975e0098";
-        
+
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE_ID, imageId);
-        
+
         template.sendBodyAndHeaders("direct:in", "", headers);
-        
+
         Mockito.verify(dockerClient, Mockito.times(1)).inspectImageCmd(Matchers.eq(imageId));
-        
+
     }
 
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.inspectImageCmd(Matchers.anyString())).thenReturn(mockObject);
 
-        
+
     }
 
     @Override
