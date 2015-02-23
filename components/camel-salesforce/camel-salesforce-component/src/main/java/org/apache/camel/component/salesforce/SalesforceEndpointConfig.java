@@ -36,7 +36,7 @@ import org.eclipse.jetty.client.HttpClient;
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    public static final String DEFAULT_VERSION = "27.0";
+    public static final String DEFAULT_VERSION = "33.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";
@@ -52,6 +52,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_CLASS = "sObjectClass";
     public static final String SOBJECT_QUERY = "sObjectQuery";
     public static final String SOBJECT_SEARCH = "sObjectSearch";
+    public static final String APEX_METHOD = "apexMethod";
+    public static final String APEX_URL = "apexUrl";
+
+    // prefix for parameters in headers
+    public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
 
     // parameters for Bulk API
     public static final String CONTENT_TYPE = "contentType";
@@ -84,6 +89,12 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectQuery;
     @UriParam
     private String sObjectSearch;
+    @UriParam
+    private String apexMethod;
+    @UriParam
+    private String apexUrl;
+    @UriParam
+    private Map<String, Object> apexQueryParams;
 
     // Bulk API properties
     @UriParam
@@ -102,6 +113,14 @@ public class SalesforceEndpointConfig implements Cloneable {
     private NotifyForFieldsEnum notifyForFields;
     @UriParam
     private NotifyForOperationsEnum notifyForOperations;
+    @UriParam
+    private Boolean notifyForOperationCreate;
+    @UriParam
+    private Boolean notifyForOperationUpdate;
+    @UriParam
+    private Boolean notifyForOperationDelete;
+    @UriParam
+    private Boolean notifyForOperationUndelete;
 
     // Jetty HttpClient, set using reference
     @UriParam
@@ -205,6 +224,30 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.sObjectSearch = sObjectSearch;
     }
 
+    public String getApexMethod() {
+        return apexMethod;
+    }
+
+    public void setApexMethod(String apexMethod) {
+        this.apexMethod = apexMethod;
+    }
+
+    public String getApexUrl() {
+        return apexUrl;
+    }
+
+    public void setApexUrl(String apexUrl) {
+        this.apexUrl = apexUrl;
+    }
+
+    public Map<String, Object> getApexQueryParams() {
+        return apexQueryParams == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(apexQueryParams);
+    }
+
+    public void setApexQueryParams(Map<String, Object> apexQueryParams) {
+        this.apexQueryParams = apexQueryParams;
+    }
+
     public ContentType getContentType() {
         return contentType;
     }
@@ -261,6 +304,38 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.notifyForOperations = notifyForOperations;
     }
 
+    public Boolean getNotifyForOperationCreate() {
+        return notifyForOperationCreate;
+    }
+
+    public void setNotifyForOperationCreate(Boolean notifyForOperationCreate) {
+        this.notifyForOperationCreate = notifyForOperationCreate;
+    }
+
+    public Boolean getNotifyForOperationUpdate() {
+        return notifyForOperationUpdate;
+    }
+
+    public void setNotifyForOperationUpdate(Boolean notifyForOperationUpdate) {
+        this.notifyForOperationUpdate = notifyForOperationUpdate;
+    }
+
+    public Boolean getNotifyForOperationDelete() {
+        return notifyForOperationDelete;
+    }
+
+    public void setNotifyForOperationDelete(Boolean notifyForOperationDelete) {
+        this.notifyForOperationDelete = notifyForOperationDelete;
+    }
+
+    public Boolean getNotifyForOperationUndelete() {
+        return notifyForOperationUndelete;
+    }
+
+    public void setNotifyForOperationUndelete(Boolean notifyForOperationUndelete) {
+        this.notifyForOperationUndelete = notifyForOperationUndelete;
+    }
+
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -284,6 +359,9 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_CLASS, sObjectClass);
         valueMap.put(SOBJECT_QUERY, sObjectQuery);
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
+        valueMap.put(APEX_METHOD, apexMethod);
+        valueMap.put(APEX_URL, apexUrl);
+        // apexQueryParams are handled explicitly in AbstractRestProcessor
 
         // add bulk API properties
         if (contentType != null) {

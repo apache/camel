@@ -59,6 +59,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private static final int CONNECTION_TIMEOUT = 60000;
     private static final int RESPONSE_TIMEOUT = 60000;
     private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
+    private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     private SalesforceLoginConfig loginConfig;
     private SalesforceEndpointConfig config;
@@ -86,8 +87,14 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         // get Operation from remaining URI
         OperationName operationName = null;
         String topicName = null;
+        String apexUrl = null;
         try {
             LOG.debug("Creating endpoint for: {}", remaining);
+            if (remaining.startsWith(APEX_CALL_PREFIX)) {
+                // extract APEX URL
+                apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
+                remaining = OperationName.APEX_CALL.value();
+            }
             operationName = OperationName.fromValue(remaining);
         } catch (IllegalArgumentException ex) {
             // if its not an operation name, treat is as topic name for consumer endpoints
@@ -107,11 +114,25 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         final SalesforceEndpointConfig copy = config.copy();
         setProperties(copy, parameters);
 
+        // set apexUrl in endpoint config
+        if (apexUrl != null) {
+            copy.setApexUrl(apexUrl);
+        }
+
         final SalesforceEndpoint endpoint = new SalesforceEndpoint(uri, this, copy,
                 operationName, topicName);
 
         // map remaining parameters to endpoint (specifically, synchronous)
         setProperties(endpoint, parameters);
+
+        // if operation is APEX call, map remaining parameters to query params
+        if (operationName == OperationName.APEX_CALL && !parameters.isEmpty()) {
+            Map<String, Object> queryParams = new HashMap<String, Object>(parameters);
+            parameters.clear();
+
+            queryParams.putAll(copy.getApexQueryParams());
+            copy.setApexQueryParams(queryParams);
+        }
 
         return endpoint;
     }
