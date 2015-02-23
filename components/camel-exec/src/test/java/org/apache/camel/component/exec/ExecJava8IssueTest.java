@@ -103,10 +103,14 @@ public class ExecJava8IssueTest extends Assert {
      * Creates a script which will append " world" to a file
      */
     private void writeScript(File script) throws IOException {
-        try (FileWriter fw = new FileWriter(script);
-             PrintWriter pw = new PrintWriter(fw)) {
+        FileWriter fw = new FileWriter(script);
+        try {
+            PrintWriter pw = new PrintWriter(fw);
             String s = "echo \" world\" >> $1";
             pw.print(s);
+        } finally {
+            fw.flush();
+            fw.close();
         }
     }
 

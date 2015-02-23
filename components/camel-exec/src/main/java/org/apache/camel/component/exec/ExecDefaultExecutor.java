@@ -31,7 +31,7 @@ public class ExecDefaultExecutor extends DefaultExecutor {
     }
 
     @Override
-    protected Process launch(CommandLine command, Map<String, String> env, File dir) throws IOException {
+    protected Process launch(CommandLine command, Map env, File dir) throws IOException {
         process = super.launch(command, env, dir);
         return process;
     }
