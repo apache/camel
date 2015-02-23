@@ -24,7 +24,12 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
@@ -38,6 +43,7 @@ import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -297,6 +303,94 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         LOG.debug("ExecuteSearch: {}", searchResults);
     }
 
+    @Test
+    public void testApexCall() throws Exception {
+        try {
+            doTestApexCall("");
+            doTestApexCall("Xml");
+        } catch (CamelExecutionException e) {
+            if (e.getCause() instanceof SalesforceException) {
+                SalesforceException cause = (SalesforceException) e.getCause();
+                if (cause.getStatusCode() == HttpStatus.NOT_FOUND_404) {
+                    LOG.error("Make sure test REST resource MerchandiseRestResource.apxc has been loaded: "
+                        + e.getMessage());
+                }
+            }
+            throw e;
+        }
+    }
+
+    private void doTestApexCall(String suffix) throws Exception {
+
+        if (testId == null) {
+            // execute getBasicInfo to get test id from recent items
+            doTestGetBasicInfo("");
+        }
+
+        // request merchandise with id in URI template
+        Merchandise__c merchandise = template().requestBodyAndHeader("direct:apexCallGet" + suffix, null,
+            "id", testId, Merchandise__c.class);
+        assertNotNull(merchandise);
+        LOG.debug("ApexCallGet: {}", merchandise);
+
+        // request merchandise with id as query param
+        merchandise = template().requestBodyAndHeader("direct:apexCallGetWithId" + suffix, null,
+            SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "id", testId, Merchandise__c.class);
+        assertNotNull(merchandise);
+        LOG.debug("ApexCallGetWithId: {}", merchandise);
+
+        // patch merchandise
+        // clear fields that won't be modified
+        merchandise.clearBaseFields();
+        merchandise.setId(testId);
+        merchandise.setPrice__c(null);
+        merchandise.setTotal_Inventory__c(null);
+
+        merchandise = template().requestBody("direct:apexCallPatch" + suffix,
+            new MerchandiseRequest(merchandise), Merchandise__c.class);
+        assertNotNull(merchandise);
+        LOG.debug("ApexCallPatch: {}", merchandise);
+    }
+
+    /**
+     * Request DTO for Salesforce APEX REST calls.
+     * See https://www.salesforce.com/us/developer/docs/apexcode/Content/apex_rest_methods.htm.
+     */
+    @XStreamAlias("request")
+    public static class MerchandiseRequest extends AbstractDTOBase {
+        private Merchandise__c merchandise;
+
+        public MerchandiseRequest(Merchandise__c merchandise) {
+            this.merchandise = merchandise;
+        }
+
+        public Merchandise__c getMerchandise() {
+            return merchandise;
+        }
+
+        public void setMerchandise(Merchandise__c merchandise) {
+            this.merchandise = merchandise;
+        }
+    }
+
+    /**
+     * Response DTO for Salesforce APEX REST calls.
+     * See https://www.salesforce.com/us/developer/docs/apexcode/Content/apex_rest_methods.htm.
+     */
+    @XStreamAlias("response")
+    public static class MerchandiseXmlResponse extends Merchandise__c {
+        // XML response contains a type string with the SObject type name
+        private String type;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+    }
+
     @Override
     protected RouteBuilder doCreateRouteBuilder() throws Exception {
 
@@ -409,6 +503,25 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 from("direct:searchXml")
                     .to("salesforce:search?format=XML&sObjectSearch=FIND {Wee}");
+
+                // testApexCall
+                from("direct:apexCallGet")
+                    .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c");
+
+                from("direct:apexCallGetXml")
+                    .to("salesforce:apexCall/Merchandise/{id}?format=XML&apexMethod=GET&sObjectClass=" + MerchandiseXmlResponse.class.getName());
+
+                from("direct:apexCallGetWithId")
+                    .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId&sObjectClass=" + Merchandise__c.class.getName());
+
+                from("direct:apexCallGetWithIdXml")
+                    .to("salesforce:apexCall?format=XML&apexMethod=GET&apexUrl=Merchandise/&id=dummyId&sObjectClass=" + MerchandiseXmlResponse.class.getName());
+
+                from("direct:apexCallPatch")
+                    .to("salesforce:apexCall?apexMethod=PATCH&apexUrl=Merchandise/&sObjectName=Merchandise__c");
+
+                from("direct:apexCallPatchXml")
+                    .to("salesforce:apexCall/Merchandise/?format=XML&apexMethod=PATCH&sObjectClass=" + MerchandiseXmlResponse.class.getName());
             }
         };
     }

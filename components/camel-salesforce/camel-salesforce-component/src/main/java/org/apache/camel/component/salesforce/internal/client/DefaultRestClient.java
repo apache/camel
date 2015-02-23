@@ -19,8 +19,10 @@ package org.apache.camel.component.salesforce.internal.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -28,6 +30,7 @@ import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
+import org.apache.camel.util.URISupport;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.eclipse.jetty.client.ContentExchange;
@@ -42,6 +45,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private static final String SERVICES_DATA = "/services/data/";
     private static final String TOKEN_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String SERVICES_APEXREST = "/services/apexrest/";
 
     protected PayloadFormat format;
     private ObjectMapper objectMapper;
@@ -267,9 +271,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void query(String soqlQuery, ResponseCallback callback) {
         try {
 
-            String encodedQuery = URLEncoder.encode(soqlQuery, StringUtil.__UTF8_CHARSET.toString());
-            // URLEncoder likes to use '+' for spaces
-            encodedQuery = encodedQuery.replace("+", "%20");
+            String encodedQuery = urlEncode(soqlQuery);
             final ContentExchange get = getContentExchange(HttpMethods.GET, versionUrl() + "query/?q=" + encodedQuery);
 
             // requires authorization token
@@ -297,9 +299,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void search(String soslQuery, ResponseCallback callback) {
         try {
 
-            String encodedQuery = URLEncoder.encode(soslQuery, StringUtil.__UTF8_CHARSET.toString());
-            // URLEncoder likes to use '+' for spaces
-            encodedQuery = encodedQuery.replace("+", "%20");
+            String encodedQuery = urlEncode(soslQuery);
             final ContentExchange get = getContentExchange(HttpMethods.GET, versionUrl() + "search/?q=" + encodedQuery);
 
             // requires authorization token
@@ -311,6 +311,43 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             String msg = "Unexpected error: " + e.getMessage();
             callback.onResponse(null, new SalesforceException(msg, e));
         }
+    }
+
+    @Override
+    public void apexCall(String httpMethod, String apexUrl,
+                         Map<String, Object> queryParams, InputStream requestDto, ResponseCallback callback) {
+        // create APEX call exchange
+        final ContentExchange exchange;
+        try {
+            exchange = getContentExchange(httpMethod, apexCallUrl(apexUrl, queryParams));
+            // set request SObject and content type
+            if (requestDto != null) {
+                exchange.setRequestContentSource(requestDto);
+                exchange.setRequestContentType(
+                    PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+            }
+
+            // requires authorization token
+            setAccessToken(exchange);
+
+            doHttpRequest(exchange, new DelegatingClientCallback(callback));
+        } catch (UnsupportedEncodingException e) {
+            String msg = "Unexpected error: " + e.getMessage();
+            callback.onResponse(null, new SalesforceException(msg, e));
+        } catch (URISyntaxException e) {
+            String msg = "Unexpected error: " + e.getMessage();
+            callback.onResponse(null, new SalesforceException(msg, e));
+        }
+    }
+
+    private String apexCallUrl(String apexUrl, Map<String, Object> queryParams)
+        throws UnsupportedEncodingException, URISyntaxException {
+
+        if (queryParams != null && !queryParams.isEmpty()) {
+            apexUrl = URISupport.appendParametersToURI(apexUrl, queryParams);
+        }
+
+        return instanceUrl + SERVICES_APEXREST + apexUrl;
     }
 
     private String servicesDataUrl() {
@@ -336,9 +373,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             throw new IllegalArgumentException("External field name and value cannot be NULL");
         }
         try {
-            String encodedValue = URLEncoder.encode(fieldValue, StringUtil.__UTF8_CHARSET.toString());
-            // URLEncoder likes to use '+' for spaces
-            encodedValue = encodedValue.replace("+", "%20");
+            String encodedValue = urlEncode(fieldValue);
             return sobjectsUrl(sObjectName + "/" + fieldName + "/" + encodedValue);
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
@@ -348,6 +383,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     protected void setAccessToken(HttpExchange httpExchange) {
         httpExchange.setRequestHeader(TOKEN_HEADER, TOKEN_PREFIX + accessToken);
+    }
+
+    private String urlEncode(String query) throws UnsupportedEncodingException {
+        String encodedQuery = URLEncoder.encode(query, StringUtil.__UTF8_CHARSET.toString());
+        // URLEncoder likes to use '+' for spaces
+        encodedQuery = encodedQuery.replace("+", "%20");
+        return encodedQuery;
     }
 
     private static class DelegatingClientCallback implements ClientResponseCallback {

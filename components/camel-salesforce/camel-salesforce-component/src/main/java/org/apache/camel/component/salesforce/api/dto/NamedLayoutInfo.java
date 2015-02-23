@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-public class RecordTypeInfo extends AbstractDTOBase {
+public class NamedLayoutInfo extends AbstractDTOBase {
 
     private String name;
-    private Boolean available;
-    private String recordTypeId;
-    private Boolean defaultRecordTypeMapping;
     private InfoUrls urls;
 
     public String getName() {
@@ -30,30 +27,6 @@ public class RecordTypeInfo extends AbstractDTOBase {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
-    public String getRecordTypeId() {
-        return recordTypeId;
-    }
-
-    public void setRecordTypeId(String recordTypeId) {
-        this.recordTypeId = recordTypeId;
-    }
-
-    public Boolean isDefaultRecordTypeMapping() {
-        return defaultRecordTypeMapping;
-    }
-
-    public void setDefaultRecordTypeMapping(Boolean defaultRecordTypeMapping) {
-        this.defaultRecordTypeMapping = defaultRecordTypeMapping;
     }
 
     public InfoUrls getUrls() {
