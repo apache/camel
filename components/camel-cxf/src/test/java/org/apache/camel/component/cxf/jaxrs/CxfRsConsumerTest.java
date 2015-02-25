@@ -179,7 +179,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         }
     }
      
-    private static abstract class AbstractTestProcessor implements Processor {
+    private abstract static class AbstractTestProcessor implements Processor {
         public void processGetCustomer(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
