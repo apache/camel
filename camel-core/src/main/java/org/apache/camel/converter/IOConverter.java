@@ -80,31 +80,31 @@ public final class IOConverter {
 
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
-        	final BufferedReader reader = toReader(file, charset);
-        	final Charset defaultStreamCharset = Charset.forName("UTF-8");
+            final BufferedReader reader = toReader(file, charset);
+            final Charset defaultStreamCharset = Charset.forName("UTF-8");
             return new InputStream() {
-            	private ByteBuffer bufferBytes;
-            	private CharBuffer bufferedChars = CharBuffer.allocate(4096);
-            	
+                private ByteBuffer bufferBytes;
+                private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+
                 @Override
                 public int read() throws IOException {
-                	if (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                		bufferedChars.clear();
-                		int len = reader.read(bufferedChars);
-                		bufferedChars.flip();
-                		if (len == -1) {
-                			return -1;
-                		}
-                		bufferBytes = defaultStreamCharset.encode(bufferedChars);
-                	}
-					return bufferBytes.get();
+                    if (bufferBytes == null || bufferBytes.remaining() <= 0) {
+                        bufferedChars.clear();
+                        int len = reader.read(bufferedChars);
+                        bufferedChars.flip();
+                        if (len == -1) {
+                            return -1;
+                        }
+                        bufferBytes = defaultStreamCharset.encode(bufferedChars);
+                    }
+                    return bufferBytes.get();
                 }
-                
+
                 @Override
                 public void close() throws IOException {
                     reader.close();
                 }
-                
+
                 @Override
                 public void reset() throws IOException {
                     reader.reset();
