@@ -19,51 +19,26 @@ All URI option can be passed as Header properties. Values found in a message hea
 | ------------- | ---------------- |
 |containerId|CamelDockerContainerId |
 
-## Client Profile
+## Configuration
 
-A client profile encapsulates the parameters necessary to communicate with docker. It is constructed into a *DockerClientProfile* object from the following uri or or header values as described below
+Options on the Docker Endpoint mapped to a *DockerConfiguration* POJO. This object contains the values integral to the communication with the Docker sever as first order attributes along with a Map of additional parameters based on the options for each type of interaction.
 
-The following options are required
+The following are the the primary options for communicating with the Docker server
 
 | Option | Header | Description | Default Value |
 |-----------|-----------|-----------------|-------------------|
 | host     | CamelDockerHost | Docker host | localhost |
 | port      | CamelDockerPort | Docker port | 2375 |
-
-The following are additional optional parameters
-
-| Option | Header | Description | Default Value |
-|-----------|-----------|-----------------|-------------------|
 | username | CamelDockerUserName | User name to authenticate with | |
 | password | CamelDockerPassword | Password to authenticate with | |
 | secure | CamelDockerSecure | Use HTTPS communication | false |
-|certPath | CamelDockerCertPath | Location containing the SSL certificate chain | | 
+|certPath | CamelDockerCertPath | Location containing the SSL certificate chain | |
 | email | CamelDockerEmail | Email address associated with the user | |
 | requestTimeout | CamelDockerRequestTimeout | Request timeout for response (in seconds) | 30 |
-|serverAddress | CamelDockerServerAddress | Address of the Docker registry server (If not specified, *host* will be used) | | 
+|serverAddress | CamelDockerServerAddress | Address of the Docker registry server (If not specified, *host* will be used) | https://index.docker.io/v1/ |
 |maxTotalConnections | CamelDockerMaxTotalConnections | Maximum number of total connections | 100 |
 |maxPerRouteConnections | CamelDockerMaxPerRouteConnections | Maximum number of connections per route | 100 |
 
-### Client Profile Bean
-
-Instead of leveraging uri or header parameters, a DockerClientProfile bean may be referenced using the *clientProfile* uri option which has been defined in the Camel Registry. This gives the user the option of defining a static configuration for docker connectivity without requiring the use of defining each parameter on the endpoint.
-
-The following illustrates how a DockerClientProfile can be defined in Spring DSL
-
-    <bean id="devClientProfile" class="org.apache.camel.component.docker.DockerClientProfile">
-        <property name="host" value="192.168.59.103" />
-        <property name="port" value="2376" />
-        <property name="secure" value="true" />
-        <property name="certPath" value="/Users/cameluser/.boot2docker/certs/boot2docker-vm"
-    </bean>
-
-
-Reference the bean in your Camel route
-
-```
-<from uri="direct:in" />
-<to uri="docker://info?clientProfile=#devClientProfile" />
-```
 
 ## Consumer Operations
 

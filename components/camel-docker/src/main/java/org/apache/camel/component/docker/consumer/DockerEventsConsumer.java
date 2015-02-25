@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.docker.DockerClientFactory;
+import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
@@ -43,6 +44,8 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
 
     private DockerEndpoint endpoint;
 
+    private DockerComponent component;
+
     private EventsCmd eventsCmd;
 
     private ExecutorService eventsExecutorService;
@@ -50,6 +53,7 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
     public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
+        this.component = (DockerComponent) endpoint.getComponent();
 
     }
 
@@ -80,7 +84,7 @@ public class DockerEventsConsumer extends DefaultConsumer implements EventCallba
     @Override
     protected void doStart() throws Exception {
 
-        eventsCmd = DockerClientFactory.getDockerClient(endpoint.getConfiguration(), null).eventsCmd(this);
+        eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).eventsCmd(this);
 
         eventsCmd.withSince(String.valueOf(processInitialEvent()));
         eventsExecutorService = eventsCmd.exec();

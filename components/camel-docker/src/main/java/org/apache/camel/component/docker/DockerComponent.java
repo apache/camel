@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.docker;
 
+import com.github.dockerjava.api.DockerClient;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -28,6 +31,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class DockerComponent extends DefaultComponent {
 
     private DockerConfiguration configuration;
+    private Map<DockerClientProfile,DockerClient> clients = new HashMap<DockerClientProfile,DockerClient>();
 
     public DockerComponent() {
 
@@ -71,5 +75,14 @@ public class DockerComponent extends DefaultComponent {
 
         return configuration;
     }
+
+    public DockerClient getClient(DockerClientProfile clientProfile) throws DockerException {
+        return clients.get(clientProfile);
+    }
+
+    public void setClient(DockerClientProfile clientProfile, DockerClient client) {
+        clients.put(clientProfile, client);
+    }
+
 
 }

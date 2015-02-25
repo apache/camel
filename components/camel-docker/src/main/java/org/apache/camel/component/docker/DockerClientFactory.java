@@ -34,58 +34,48 @@ import org.apache.camel.util.ObjectHelper;
 public final class DockerClientFactory {
 
     private DockerClientFactory() {
-        //Helper class
+        // Helper class
     }
 
     /**
      * Produces a {@link DockerClient} to communicate with Docker
      */
-    public static DockerClient getDockerClient(DockerConfiguration dockerConfiguration, Message message) throws DockerException {
+    public static DockerClient getDockerClient(DockerComponent dockerComponent, DockerConfiguration dockerConfiguration, Message message) throws DockerException {
 
         ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
 
-        DockerClientProfile endpointClientProfile = dockerConfiguration.getClientProfile();
+        DockerClientProfile clientProfile = new DockerClientProfile();
 
-        DockerClientProfile clientProfile;
-        DockerClient client;
+        Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, message, Integer.class, dockerConfiguration.getPort());
+        String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, message, String.class, dockerConfiguration.getHost());
 
-        // Check if profile is specified in configuration
-        if (endpointClientProfile != null) {
-            clientProfile = endpointClientProfile;
-        } else {
+        Integer maxTotalConnections = DockerHelper.getProperty(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, dockerConfiguration, message, Integer.class,
+                                                               dockerConfiguration.getMaxTotalConnections());
+        Integer maxPerRouteConnections = DockerHelper.getProperty(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, dockerConfiguration, message, Integer.class,
+                                                                  dockerConfiguration.getMaxPerRouteConnections());
 
-            clientProfile = new DockerClientProfile();
+        String username = DockerHelper.getProperty(DockerConstants.DOCKER_USERNAME, dockerConfiguration, message, String.class, dockerConfiguration.getUsername());
+        String password = DockerHelper.getProperty(DockerConstants.DOCKER_PASSWORD, dockerConfiguration, message, String.class, dockerConfiguration.getPassword());
+        String email = DockerHelper.getProperty(DockerConstants.DOCKER_EMAIL, dockerConfiguration, message, String.class, dockerConfiguration.getEmail());
+        Integer requestTimeout = DockerHelper.getProperty(DockerConstants.DOCKER_API_REQUEST_TIMEOUT, dockerConfiguration, message, Integer.class,
+                                                          dockerConfiguration.getRequestTimeout());
+        String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message, String.class, dockerConfiguration.getServerAddress());
+        String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class, dockerConfiguration.getCertPath());
+        Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSecure());
 
-            Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, message, Integer.class, clientProfile.getPort());
-            String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, message, String.class, clientProfile.getHost());
+        clientProfile.setHost(host);
+        clientProfile.setPort(port);
+        clientProfile.setEmail(email);
+        clientProfile.setUsername(username);
+        clientProfile.setPassword(password);
+        clientProfile.setRequestTimeout(requestTimeout);
+        clientProfile.setServerAddress(serverAddress);
+        clientProfile.setCertPath(certPath);
+        clientProfile.setMaxTotalConnections(maxTotalConnections);
+        clientProfile.setMaxPerRouteConnections(maxPerRouteConnections);
+        clientProfile.setSecure(secure);
 
-            Integer maxTotalConnections = DockerHelper.getProperty(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, dockerConfiguration,
-                    message, Integer.class, clientProfile.getMaxTotalConnections());
-            Integer maxPerRouteConnections = DockerHelper.getProperty(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, dockerConfiguration,
-                    message, Integer.class, clientProfile.getMaxPerRouteConnections());
-
-            String username = DockerHelper.getProperty(DockerConstants.DOCKER_USERNAME, dockerConfiguration, message, String.class, clientProfile.getUsername());
-            String password = DockerHelper.getProperty(DockerConstants.DOCKER_PASSWORD, dockerConfiguration, message, String.class, clientProfile.getPassword());
-            String email = DockerHelper.getProperty(DockerConstants.DOCKER_EMAIL, dockerConfiguration, message, String.class, clientProfile.getEmail());
-            Integer requestTimeout = DockerHelper.getProperty(DockerConstants.DOCKER_API_REQUEST_TIMEOUT, dockerConfiguration, message, Integer.class, clientProfile.getRequestTimeout());
-            String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message, String.class, clientProfile.getServerAddress());
-            String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class, clientProfile.getCertPath());
-            Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class, clientProfile.isSecure());
-
-            clientProfile.setHost(host);
-            clientProfile.setPort(port);
-            clientProfile.setEmail(email);
-            clientProfile.setUsername(username);
-            clientProfile.setPassword(password);
-            clientProfile.setRequestTimeout(requestTimeout);
-            clientProfile.setServerAddress(serverAddress);
-            clientProfile.setCertPath(certPath);
-            clientProfile.setMaxTotalConnections(maxTotalConnections);
-            clientProfile.setMaxPerRouteConnections(maxPerRouteConnections);
-            clientProfile.setSecure(secure);
-        }
-
-        client = dockerConfiguration.getClient(clientProfile);
+        DockerClient client = dockerComponent.getClient(clientProfile);
 
         if (client != null) {
             return client;
@@ -101,10 +91,10 @@ public final class DockerClientFactory {
             sslConfig = new NoImplSslConfig();
         }
 
-        DockerClientConfig.DockerClientConfigBuilder configBuilder = new DockerClientConfig.DockerClientConfigBuilder()
-                .withUsername(clientProfile.getUsername()).withPassword(clientProfile.getPassword()).withEmail(clientProfile.getEmail()).withReadTimeout(clientProfile.getRequestTimeout())
-                .withUri(clientProfile.toUrl()).withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections()).withMaxTotalConnections(clientProfile.getMaxTotalConnections())
-                .withSSLConfig(sslConfig).withServerAddress(clientProfile.getServerAddress());
+        DockerClientConfig.DockerClientConfigBuilder configBuilder = new DockerClientConfig.DockerClientConfigBuilder().withUsername(clientProfile.getUsername())
+            .withPassword(clientProfile.getPassword()).withEmail(clientProfile.getEmail()).withReadTimeout(clientProfile.getRequestTimeout()).withUri(clientProfile.toUrl())
+            .withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections()).withMaxTotalConnections(clientProfile.getMaxTotalConnections()).withSSLConfig(sslConfig)
+            .withServerAddress(clientProfile.getServerAddress());
 
         if (clientProfile.getCertPath() != null) {
             configBuilder.withDockerCertPath(clientProfile.getCertPath());
@@ -113,7 +103,7 @@ public final class DockerClientFactory {
         DockerClientConfig config = configBuilder.build();
         DockerCmdExecFactory dockerClientFactory = new DockerCmdExecFactoryImpl();
         client = DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerClientFactory).build();
-        dockerConfiguration.setClient(clientProfile, client);
+        dockerComponent.setClient(clientProfile, client);
 
         return client;
     }

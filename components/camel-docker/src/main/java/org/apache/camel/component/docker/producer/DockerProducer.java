@@ -70,6 +70,7 @@ import com.github.dockerjava.api.model.Volumes;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.DockerClientFactory;
+import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerEndpoint;
@@ -87,10 +88,12 @@ import org.slf4j.LoggerFactory;
 public class DockerProducer extends DefaultProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerProducer.class);
     private DockerConfiguration configuration;
+    private DockerComponent component;
 
     public DockerProducer(DockerEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
+        this.component = (DockerComponent) endpoint.getComponent();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -98,7 +101,7 @@ public class DockerProducer extends DefaultProducer {
         DockerCmd<?> dockerCmd = null;
 
         Message message = exchange.getIn();
-        DockerClient client = DockerClientFactory.getDockerClient(configuration, message);
+        DockerClient client = DockerClientFactory.getDockerClient(component, configuration, message);
 
         DockerOperation operation = configuration.getOperation();
 
