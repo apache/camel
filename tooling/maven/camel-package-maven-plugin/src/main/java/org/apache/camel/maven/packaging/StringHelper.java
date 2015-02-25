@@ -16,7 +16,10 @@
  */
 package org.apache.camel.maven.packaging;
 
-public class StringHelper {
+public final class StringHelper {
+    private StringHelper() {
+        // Utils Class
+    }
 
     public static String after(String text, String after) {
         if (!text.contains(after)) {
