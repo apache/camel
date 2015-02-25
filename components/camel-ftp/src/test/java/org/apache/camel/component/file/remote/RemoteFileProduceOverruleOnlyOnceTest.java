@@ -37,6 +37,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
         template.sendBodyAndHeaders("direct:input", "Hello World", headers);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, "/sub/hello.txt");
         mock.expectedFileExists(FTP_ROOT_DIR + "/out/sub/ruled.txt", "Hello World");
         mock.expectedFileExists("target/out/sub/hello.txt", "Hello World");
 
