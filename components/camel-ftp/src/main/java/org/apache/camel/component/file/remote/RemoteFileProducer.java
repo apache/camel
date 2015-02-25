@@ -44,9 +44,22 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         return name;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
+        // store any existing file header which we want to keep and propagate
+        final String existing = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+
+        // create the target file name
         String target = createFileName(exchange);
-        processExchange(exchange, target);
+
+        try {
+            processExchange(exchange, target);
+        } finally {
+            // remove the write file name header as we only want to use it once (by design)
+            exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
+            // and restore existing file name
+            exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
+        }
     }
 
     protected RemoteFileOperations<T> getOperations() {
