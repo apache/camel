@@ -19,9 +19,7 @@ package org.apache.camel.component.docker;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dockerjava.api.DockerClient;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -32,11 +30,129 @@ public class DockerConfiguration implements Cloneable {
     @UriPath
     private DockerOperation operation;
 
+    @UriParam(defaultValue = "localhost")
+    private String host = "localhost";
+
+    @UriParam(defaultValue = "2375")
+    private Integer port = 2375;
+
     @UriParam
-    private DockerClientProfile clientProfile;
+    private String username;
+
+    @UriParam
+    private String password;
+
+    @UriParam
+    private String email;
+
+    @UriParam(defaultValue = "https://index.docker.io/v1/")
+    private String serverAddress = "https://index.docker.io/v1/";
+
+    @UriParam
+    private Integer requestTimeout;
+
+    @UriParam
+    private Boolean secure;
+
+    @UriParam
+    private String certPath;
+
+    @UriParam(defaultValue = "100")
+    private Integer maxTotalConnections = 100;
+
+    @UriParam(defaultValue = "100")
+    private Integer maxPerRouteConnections = 100;
 
     private Map<String, Object> parameters = new HashMap<String, Object>();
-    private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getServerAddress() {
+        return serverAddress;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public Integer getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public Boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(Boolean secure) {
+        this.secure = secure;
+    }
+
+    public String getCertPath() {
+        return certPath;
+    }
+
+    public void setCertPath(String certPath) {
+        this.certPath = certPath;
+    }
+
+    public Integer getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    public void setMaxTotalConnections(Integer maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public Integer getMaxPerRouteConnections() {
+        return maxPerRouteConnections;
+    }
+
+    public void setMaxPerRouteConnections(Integer maxPerRouteConnections) {
+        this.maxPerRouteConnections = maxPerRouteConnections;
+    }
+
 
     public Map<String, Object> getParameters() {
         return parameters;
@@ -52,22 +168,6 @@ public class DockerConfiguration implements Cloneable {
 
     public void setOperation(DockerOperation operation) {
         this.operation = operation;
-    }
-
-    public DockerClient getClient(DockerClientProfile clientProfile) throws DockerException {
-        return clients.get(clientProfile);
-    }
-
-    public void setClient(DockerClientProfile clientProfile, DockerClient client) {
-        clients.put(clientProfile, client);
-    }
-
-    public void setClientProfile(DockerClientProfile clientProfile) {
-        this.clientProfile = clientProfile;
-    }
-
-    public DockerClientProfile getClientProfile() {
-        return clientProfile;
     }
 
     public DockerConfiguration copy() {

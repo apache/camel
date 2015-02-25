@@ -20,38 +20,34 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The elements representing a client initiating a connection to Docker
  */
-@UriParams
 public class DockerClientProfile {
 
-    @UriParam(defaultValue = "localhost")
-    private String host = "localhost";
-    @UriParam(defaultValue = "2375")
-    private Integer port = 2375;
-    @UriParam
+    private String host;
+
+    private Integer port;
+
     private String username;
-    @UriParam
+
     private String password;
-    @UriParam
+
     private String email;
-    @UriParam
+
     private String serverAddress;
-    @UriParam
+
     private Integer requestTimeout;
-    @UriParam
+
     private Boolean secure;
-    @UriParam
+
     private String certPath;
-    @UriParam(defaultValue = "100")
-    private Integer maxTotalConnections = 100;
-    @UriParam(defaultValue = "100")
-    private Integer maxPerRouteConnections = 100;
+
+    private Integer maxTotalConnections;
+
+    private Integer maxPerRouteConnections;
 
     public String getHost() {
         return host;
