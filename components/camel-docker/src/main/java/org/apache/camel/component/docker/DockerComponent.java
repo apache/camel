@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.docker;
 
-import com.github.dockerjava.api.DockerClient;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.dockerjava.api.DockerClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.impl.DefaultComponent;
@@ -30,11 +29,10 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class DockerComponent extends DefaultComponent {
 
-    private DockerConfiguration configuration;
-    private Map<DockerClientProfile,DockerClient> clients = new HashMap<DockerClientProfile,DockerClient>();
+    private DockerConfiguration configuration = new DockerConfiguration();
+    private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
 
     public DockerComponent() {
-
     }
 
     public DockerComponent(DockerConfiguration configuration) {
@@ -68,11 +66,11 @@ public class DockerComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected DockerConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new DockerConfiguration();
-        }
+    public void setConfiguration(DockerConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
+    protected DockerConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -83,6 +81,5 @@ public class DockerComponent extends DefaultComponent {
     public void setClient(DockerClientProfile clientProfile, DockerClient client) {
         clients.put(clientProfile, client);
     }
-
 
 }
