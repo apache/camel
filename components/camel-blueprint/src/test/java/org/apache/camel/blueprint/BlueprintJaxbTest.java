@@ -21,13 +21,14 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
+import org.apache.camel.test.junit4.TestSupport;
+import org.junit.Test;
 
 public class BlueprintJaxbTest extends TestSupport {
 
