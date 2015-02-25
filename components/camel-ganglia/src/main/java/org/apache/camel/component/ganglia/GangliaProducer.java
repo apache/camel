@@ -79,8 +79,8 @@ public class GangliaProducer extends DefaultProducer {
         }
 
         String value = message.getBody(String.class);
-        if ((value == null || value.length() == 0) &&
-                (type == GMetricType.FLOAT || type == GMetricType.DOUBLE)) {
+        if ((value == null || value.length() == 0)
+            && (type == GMetricType.FLOAT || type == GMetricType.DOUBLE)) {
             log.debug("Metric {} string value was null, using NaN", metricName);
             value = "NaN";
         }

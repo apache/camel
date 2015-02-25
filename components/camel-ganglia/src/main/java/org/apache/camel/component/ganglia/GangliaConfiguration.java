@@ -65,7 +65,7 @@ public class GangliaConfiguration implements Cloneable {
     private String groupName = DEFAULT_GROUP_NAME;
 
     @UriParam
-    private String prefix = null;
+    private String prefix;
 
     @UriParam(defaultValue = "metric")
     private String metricName = DEFAULT_METRIC_NAME;
