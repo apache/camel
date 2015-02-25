@@ -441,6 +441,7 @@
     <spring4-version>4.1.4.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.2.5.RELEASE</spring-security-version>
+    <spring-ws-bundle-version>2.1.4.RELEASE</spring-ws-bundle-version>
     <spring-ws-version>2.2.0.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>

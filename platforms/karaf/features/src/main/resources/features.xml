@@ -1358,9 +1358,9 @@
     <feature version='${spring-version-range-karaf}'>spring-jms</feature>
     <feature version='${spring-version-range-karaf}'>spring-web</feature>
     <feature version='${spring-version-range-karaf}'>spring-oxm</feature>
-    <bundle dependency='true'>mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
-    <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-core/${spring-ws-version}</bundle>
-    <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-support/${spring-ws-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ws/spring-xml/${spring-ws-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-core/${spring-ws-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-support/${spring-ws-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-sql' version='${project.version}' resolver='(obr)' start-level='50'>
