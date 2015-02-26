@@ -20,10 +20,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.component.http.HttpBinding;
+import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
+@UriEndpoint(scheme = "jetty", consumerClass = HttpConsumer.class, label = "http")
 public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
     private HttpBinding binding;
 

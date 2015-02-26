@@ -117,10 +117,8 @@ public class JettyHttpComponent8 extends JettyHttpComponent {
                 }                
             }
 
-        } catch (RuntimeException rex) {
-            throw rex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         return result;
     }
