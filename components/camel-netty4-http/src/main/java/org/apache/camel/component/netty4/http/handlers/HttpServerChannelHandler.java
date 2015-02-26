@@ -124,7 +124,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
         // must include HOST header as required by HTTP 1.1
-        if (!request.headers().names().contains(HttpHeaders.Names.HOST)) {
+        if (!request.headers().contains(HttpHeaders.Names.HOST)) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             //response.setChunked(false);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
