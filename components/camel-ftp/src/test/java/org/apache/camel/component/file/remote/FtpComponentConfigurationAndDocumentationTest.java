@@ -42,7 +42,7 @@ public class FtpComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"type\": \"string\""));
+        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
         assertTrue(json.contains("\"port\": { \"kind\": \"path\", \"type\": \"integer\""));
         assertTrue(json.contains("\"maximumReconnectAttempts\": { \"kind\": \"parameter\", \"type\": \"integer\""));
         assertTrue(json.contains("\"dataTimeout\": { \"kind\": \"parameter\", \"type\": \"integer\""));

@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
@@ -39,17 +40,19 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
 
     // component name is implied as the protocol, eg ftp/ftps etc
     private String protocol;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
     @UriPath
     private int port;
+    @UriPath(name = "directoryName")
+    private String directoryName;
     @UriParam
     private String username;
     @UriParam
     private String password;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean binary;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean passiveMode;
     @UriParam(defaultValue = "10000")
     private int connectTimeout = 10000;
@@ -57,7 +60,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int timeout = 30000;
     @UriParam
     private int soTimeout;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean throwExceptionOnConnectFailed;
     @UriParam
     private String siteCommand;
@@ -65,11 +68,11 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private boolean stepwise = true;
     @UriParam(defaultValue = "Auto")
     private PathSeparator separator = PathSeparator.Auto;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean streamDownload;
     @UriParam(defaultValue = "true")
     private boolean useList = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean ignoreFileNotFoundOrPermissionError;
 
     public RemoteFileConfiguration() {
@@ -122,6 +125,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return host;
     }
 
+    /**
+     * Hostname of the FTP server
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -130,6 +136,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return port;
     }
 
+    /**
+     * Port of the FTP server
+     */
     public void setPort(int port) {
         // only set port if provided with a positive number
         if (port > 0) {
@@ -141,6 +150,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return password;
     }
 
+    /**
+     * Password to use for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -149,6 +161,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return protocol;
     }
 
+    /**
+     * The ftp protocol to use
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -157,8 +172,22 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         return username;
     }
 
+    /**
+     * Username to use for login
+     */
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDirectoryName() {
+        return directoryName;
+    }
+
+    /**
+     * The starting directory
+     */
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
     }
 
     public boolean isBinary() {

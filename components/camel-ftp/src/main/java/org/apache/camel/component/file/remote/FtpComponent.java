@@ -49,6 +49,8 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
         FtpEndpoint<FTPFile> answer = new FtpEndpoint<FTPFile>(uri, this, config);
         extractAndSetFtpClientConfigParameters(parameters, answer);
         extractAndSetFtpClientParameters(parameters, answer);
+        config.setDirectory(remaining);
+        config.setDirectoryName(remaining);
 
         return answer;
     }
