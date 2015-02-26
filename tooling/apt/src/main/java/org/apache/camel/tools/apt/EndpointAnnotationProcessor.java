@@ -238,7 +238,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), null, doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), entry.getDefaultValue(), doc,
                     entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
 
@@ -479,8 +479,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     }
                     name = prefix + name;
 
+                    String defaultValue = path.defaultValue();
+                    if (defaultValue == null && metadata != null) {
+                        defaultValue = metadata.defaultValue();
+                    }
+                    String defaultValueNote = path.defaultValueNote();
+                    String required =  metadata != null ? metadata.required() : null;
                     String label = path.label();
-                    String required = metadata != null ? metadata.required() : null;
 
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
@@ -516,7 +521,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         }
                     }
 
-                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, docComment, deprecated, label, isEnum, enums);
+                    EndpointPath ep = new EndpointPath(name, fieldTypeName, required, defaultValue, docComment, deprecated, label, isEnum, enums);
                     endpointPaths.add(ep);
                 }
 
@@ -530,6 +535,9 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     name = prefix + name;
 
                     String defaultValue = param.defaultValue();
+                    if (defaultValue == null && metadata != null) {
+                        defaultValue = metadata.defaultValue();
+                    }
                     String defaultValueNote = param.defaultValueNote();
                     String required =  metadata != null ? metadata.required() : null;
                     String label = param.label();
@@ -922,17 +930,19 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private String name;
         private String type;
         private String required;
+        private String defaultValue;
         private String documentation;
         private boolean deprecated;
         private String label;
         private boolean enumType;
         private Set<String> enums;
 
-        private EndpointPath(String name, String type, String required, String documentation, boolean deprecated,
+        private EndpointPath(String name, String type, String required, String defaultValue, String documentation, boolean deprecated,
                              String label, boolean enumType, Set<String> enums) {
             this.name = name;
             this.type = type;
             this.required = required;
+            this.defaultValue = defaultValue;
             this.documentation = documentation;
             this.deprecated = deprecated;
             this.label = label;
@@ -950,6 +960,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getRequired() {
             return required;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
         }
 
         public String getDocumentation() {

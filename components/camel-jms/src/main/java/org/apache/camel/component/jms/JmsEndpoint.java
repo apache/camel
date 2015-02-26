@@ -45,6 +45,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -72,13 +73,15 @@ import org.springframework.util.ErrorHandler;
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic")
+    private String destinationType;
+    @UriPath @Metadata(required = "true")
     private String destinationName;
-    @UriPath
     private Destination destination;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
     private String selector;
     @UriParam
@@ -91,6 +94,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public JmsEndpoint(Topic destination) throws JMSException {
         this("jms:topic:" + destination.getTopicName(), null);
         this.destination = destination;
+        this.destinationType = "topic";
     }
 
     public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain, JmsConfiguration configuration) {
@@ -98,6 +102,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
         this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
+        if (pubSubDomain) {
+            this.destinationType = "topic";
+        } else {
+            this.destinationType = "queue";
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -107,11 +116,21 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
         this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
+        if (pubSubDomain) {
+            this.destinationType = "topic";
+        } else {
+            this.destinationType = "queue";
+        }
     }
 
     public JmsEndpoint(String endpointUri, String destinationName, boolean pubSubDomain) {
         this(UnsafeUriCharactersEncoder.encode(endpointUri), null, new JmsConfiguration(), destinationName, pubSubDomain);
         this.binding = new JmsBinding(this);
+        if (pubSubDomain) {
+            this.destinationType = "topic";
+        } else {
+            this.destinationType = "queue";
+        }
     }
 
     /**
@@ -338,10 +357,25 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.binding = binding;
     }
 
+    public String getDestinationType() {
+        return destinationType;
+    }
+
+    /**
+     * The kind of destination to use
+     * @param destinationType
+     */
+    public void setDestinationType(String destinationType) {
+        this.destinationType = destinationType;
+    }
+
     public String getDestinationName() {
         return destinationName;
     }
 
+    /**
+     * Name of the queue or topic to use as destination
+     */
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
     }

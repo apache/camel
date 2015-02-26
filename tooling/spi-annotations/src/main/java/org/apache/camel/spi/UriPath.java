@@ -40,6 +40,20 @@ public @interface UriPath {
     String name() default "";
 
     /**
+     * The default value of the parameter.
+     * <p/>
+     * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
+     */
+    String defaultValue() default "";
+
+    /**
+     * A special note about the default value.
+     * <p/>
+     * This can be used to document special cases about the default value.
+     */
+    String defaultValueNote() default "";
+
+    /**
      * Returns a description of this uri path
      * <p/>
      * This is used for documentation and tooling only.
