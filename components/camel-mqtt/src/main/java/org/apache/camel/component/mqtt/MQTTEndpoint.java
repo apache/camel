@@ -167,11 +167,8 @@ public class MQTTEndpoint extends DefaultEndpoint {
             public void onSuccess(Void value) {
                 LOG.debug("Connected to {}", configuration.getHost());
 
-                String subscribeTopicName = configuration.getSubscribeTopicName();
-                subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
-
-                if (subscribeTopicName != null && !subscribeTopicName.isEmpty()) {
-                    Topic[] topics = {new Topic(subscribeTopicName, configuration.getQoS())};
+                Topic[] topics = createSubscribeTopics();
+                if (topics != null && topics.length > 0) {
                     connection.subscribe(topics, new Callback<byte[]>() {
                         public void onSuccess(byte[] value) {
                             promise.onSuccess(value);
@@ -201,7 +198,28 @@ public class MQTTEndpoint extends DefaultEndpoint {
         LOG.info("Connecting to {} using {} seconds timeout", configuration.getHost(), configuration.getConnectWaitInSeconds());
         promise.await(configuration.getConnectWaitInSeconds(), TimeUnit.SECONDS);
     }
-    
+
+    Topic[] createSubscribeTopics() {
+        String subscribeTopicList = configuration.getSubscribeTopicNames();
+        if (subscribeTopicList != null && !subscribeTopicList.isEmpty()) {
+            String[] topicNames = subscribeTopicList.split(",");
+            Topic[] topics = new Topic[topicNames.length];
+            for (int i = 0; i < topicNames.length; i++) {
+                topics[i] = new Topic(topicNames[i].trim(), configuration.getQoS());
+            }
+            return topics;
+        } else { // fall back on singular topic name
+            String subscribeTopicName = configuration.getSubscribeTopicName();
+            subscribeTopicName = subscribeTopicName != null ? subscribeTopicName.trim() : null;
+            if (subscribeTopicName != null && !subscribeTopicName.isEmpty()) {
+                Topic[] topics = {new Topic(subscribeTopicName, configuration.getQoS())};
+                return topics;
+            }
+        }
+        LOG.warn("No topic subscriptions were specified in configuration");
+        return null;
+    }
+
     boolean isConnected() {
         return connected;
     }

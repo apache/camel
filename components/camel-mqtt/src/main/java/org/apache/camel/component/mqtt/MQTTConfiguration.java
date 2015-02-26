@@ -83,6 +83,8 @@ public class MQTTConfiguration extends MQTT {
      */
     @UriParam
     private String subscribeTopicName = "";
+    @UriParam
+    private String subscribeTopicNames = "";
     @UriParam(defaultValue = "camel/mqtt/test")
     private String publishTopicName = "camel/mqtt/test";
     @UriParam(defaultValue = "10")
@@ -116,6 +118,14 @@ public class MQTTConfiguration extends MQTT {
 
     public void setSubscribeTopicName(String subscribeTopicName) {
         this.subscribeTopicName = subscribeTopicName;
+    }
+
+    public String getSubscribeTopicNames() {
+        return subscribeTopicNames;
+    }
+
+    public void setSubscribeTopicNames(String subscribeTopicNames) {
+        this.subscribeTopicNames = subscribeTopicNames;
     }
 
     public String getPublishTopicName() {
