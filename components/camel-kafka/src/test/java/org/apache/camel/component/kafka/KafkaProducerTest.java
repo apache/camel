@@ -76,7 +76,7 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
-        verifySendMessage("4", "anotherTopic", null);
+        verifySendMessage("4", "anotherTopic", "4");
     }
 
     @Test
@@ -115,7 +115,18 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
-        verifySendMessage("4", "someTopic", null);
+        verifySendMessage("4", "someTopic", "4");
+    }
+
+    @Test
+    public void processSendsMesssageWithMessageKeyHeader() throws Exception {
+        endpoint.setTopic("someTopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.KEY, "someKey");
+
+        producer.process(exchange);
+
+        verifySendMessage("someKey", "someTopic", "someKey");
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
