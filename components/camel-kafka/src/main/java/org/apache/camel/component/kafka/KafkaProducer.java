@@ -66,9 +66,21 @@ public class KafkaProducer extends DefaultProducer {
             throw new CamelExchangeException("No topic key set", exchange);
         }
         String partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, String.class);
+        boolean hasPartitionKey = partitionKey != null;
         String messageKey = exchange.getIn().getHeader(KafkaConstants.KEY, String.class);
+        boolean hasMessageKey = messageKey != null;
         String msg = exchange.getIn().getBody(String.class);
-        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
+        KeyedMessage<String, String> data;
+        if (hasPartitionKey && hasMessageKey) {
+            data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
+        } else if (hasPartitionKey) {
+            data = new KeyedMessage<String, String>(topic, partitionKey, msg);
+        } else if (hasMessageKey) {
+            data = new KeyedMessage<String, String>(topic, messageKey, msg);
+        } else {
+            log.warn("No message key or partition key set");
+            data = new KeyedMessage<String, String>(topic, messageKey, partitionKey, msg);
+        }
         producer.send(data);
     }
 
