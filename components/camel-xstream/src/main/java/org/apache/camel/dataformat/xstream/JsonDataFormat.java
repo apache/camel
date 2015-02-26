@@ -55,7 +55,11 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     @Override
     protected XStream createXStream(ClassResolver resolver) {
         XStream xs = super.createXStream(resolver);
-        xs.setMode(XStream.NO_REFERENCES);
+        if (getMode() != null) {
+            xs.setMode(getModeFromString(getMode()));
+        } else {
+            xs.setMode(XStream.NO_REFERENCES);
+        }
         return xs;
     }
 
