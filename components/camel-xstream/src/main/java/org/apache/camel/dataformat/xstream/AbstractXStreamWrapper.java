@@ -84,6 +84,10 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
             xstream = new XStream();
         }
 
+        if (mode != null) {
+            xstream.setMode(getModeFromString(mode));
+        }
+
         try {
             if (this.implicitCollections != null) {
                 for (Entry<String, String[]> entry : this.implicitCollections.entrySet()) {
@@ -116,16 +120,16 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
                     Constructor<Converter> con = null;
                     try {
-                        con = converterClass.getDeclaredConstructor(new Class[] {XStream.class});
+                        con = converterClass.getDeclaredConstructor(new Class[]{XStream.class});
                     } catch (Exception e) {
-                         //swallow as we null check in a moment.
+                        //swallow as we null check in a moment.
                     }
                     if (con != null) {
                         converter = con.newInstance(xstream);
                     } else {
                         converter = converterClass.newInstance();
-                        try { 
-                            Method method = converterClass.getMethod("setXStream", new Class[] {XStream.class});
+                        try {
+                            Method method = converterClass.getMethod("setXStream", new Class[]{XStream.class});
                             if (method != null) {
                                 ObjectHelper.invokeMethod(method, converter, xstream);
                             }
@@ -136,11 +140,8 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
                     xstream.registerConverter(converter);
                 }
-                
-                if (mode != null) {
-                    xstream.setMode(getModeFromString(mode));
-                }
             }
+                
         } catch (Exception e) {
             throw new RuntimeException("Unable to build XStream instance", e);
         }
