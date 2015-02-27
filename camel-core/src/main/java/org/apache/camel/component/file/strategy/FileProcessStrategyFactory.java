@@ -122,6 +122,10 @@ public final class FileProcessStrategyFactory {
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
+                Long minAge = (Long) params.get("readLockMinAge");
+                if (null != minAge) {
+                    readLockStrategy.setMinAge(minAge);
+                }
                 strategy = readLockStrategy;
             }
 

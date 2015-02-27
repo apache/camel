@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -38,6 +39,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private long timeout;
     private long checkInterval = 1000;
     private long minLength = 1;
+    private long minAge = 0;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
 
     @Override
@@ -55,6 +57,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
         StopWatch watch = new StopWatch();
+        long startTime = (new Date()).getTime();
 
         while (!exclusive) {
             // timeout check
@@ -70,11 +73,13 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
 
             long newLastModified = target.lastModified();
             long newLength = target.length();
+            long newOlderThan = startTime + watch.taken() - minAge;
 
             LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
+            LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (length >= minLength && (newLastModified == lastModified && newLength == length)) {
+            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length) || (minAge != 0 && newLastModified < newOlderThan))) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -133,5 +138,13 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
 
     public void setMinLength(long minLength) {
         this.minLength = minLength;
+    }
+
+    public long getMinAge() {
+        return minAge;
+    }
+
+    public void setMinAge(long minAge) {
+        this.minAge = minAge;
     }
 }
