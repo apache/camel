@@ -130,6 +130,10 @@ public final class FtpProcessStrategyFactory {
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
+                Long minAge = (Long) params.get("readLockMinAge");
+                if (null != minAge) {
+                    readLockStrategy.setMinAge(minAge);
+                }
                 Boolean fastExistsCheck = (Boolean) params.get("fastExistsCheck");
                 if (fastExistsCheck != null) {
                     readLockStrategy.setFastExistsCheck(fastExistsCheck);
