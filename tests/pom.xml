@@ -43,6 +43,17 @@
   </modules>
 
   <profiles>
+    <!-- includes these modules when doing the release -->
+    <profile>
+      <id>release</id>
+      <modules>
+        <module>camel-itest-karaf</module>
+        <module>camel-itest-osgi</module>
+        <module>camel-itest-performance</module>
+        <module>camel-performance</module>
+      </modules>
+    </profile>
+
     <!-- osgi tests -->
     <profile>
       <id>osgi.test</id>
