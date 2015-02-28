@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.krati.serializer.KratiDefaultSerializer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -39,12 +40,12 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a Krati endpoint.
  */
-@UriEndpoint(scheme = "krati", consumerClass = KratiConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "krati", syntax = "krati:path", consumerClass = KratiConsumer.class, label = "database,nosql")
 public class KratiEndpoint extends ScheduledPollEndpoint {
 
     protected static Map<String, KratiDataStoreRegistration> dataStoreRegistry = new HashMap<String, KratiDataStoreRegistration>();
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     protected String path;
     @UriParam
     protected String key;

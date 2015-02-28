@@ -21,6 +21,7 @@ import java.util.Map;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.ssl.SslHandler;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -30,13 +31,13 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 public class NettyServerBootstrapConfiguration implements Cloneable {
     public static final String DEFAULT_ENABLED_PROTOCOLS = "TLSv1,TLSv1.1,TLSv1.2";
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     protected String protocol;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     protected String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     protected int port;
-    @UriParam(defaultValue = "false")
+    @UriParam
     protected boolean broadcast;
     @UriParam(defaultValue = "65536")
     protected int sendBufferSize = 65536;
@@ -64,15 +65,15 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected NettyServerBootstrapFactory nettyServerBootstrapFactory;
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
-    @UriParam(defaultValue = "false")
+    @UriParam
     protected boolean ssl;
-    @UriParam(defaultValue = "false")
+    @UriParam
     protected boolean sslClientCertHeaders;
     @UriParam
     protected SslHandler sslHandler;
     @UriParam
     protected SSLContextParameters sslContextParameters;
-    @UriParam(defaultValue = "false")
+    @UriParam
     protected boolean needClientAuth;
     @UriParam
     protected File keyStoreFile;

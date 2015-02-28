@@ -38,7 +38,7 @@ public class KestrelConfiguration implements Cloneable {
     /**
      * The address(es) on which kestrel is running
      */
-    @UriPath
+    @UriPath(defaultValue = "localhost:22133")
     private String[] addresses = new String[]{"localhost:" + DEFAULT_KESTREL_PORT};
 
     /**

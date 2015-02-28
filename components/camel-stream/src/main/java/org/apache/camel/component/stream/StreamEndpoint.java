@@ -24,29 +24,30 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "stream", consumerClass = StreamConsumer.class, label = "file,system")
+@UriEndpoint(scheme = "stream", syntax = "stream:url", consumerClass = StreamConsumer.class, label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String url;
     @UriParam
     private String fileName;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean scanStream;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean retry;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean closeOnDone;
     @UriParam
     private long scanStreamDelay;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private long delay;
     @UriParam
     private String encoding;

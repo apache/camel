@@ -53,7 +53,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpBinding binding;
     private HttpComponent component;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", label = "producer")
     private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;

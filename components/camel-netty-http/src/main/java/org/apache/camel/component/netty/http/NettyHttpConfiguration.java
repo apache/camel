@@ -23,6 +23,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.jboss.netty.channel.ChannelHandler;
 
 /**
@@ -31,23 +32,23 @@ import org.jboss.netty.channel.ChannelHandler;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
-    @UriParam(defaultValue = "false")
+    @UriPath
+    private String path;
+    @UriParam
     private boolean urlDecodeHeaders;
     @UriParam(defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean compression;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferException;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
     @UriParam
-    private String path;
-    @UriParam(defaultValue = "false")
     private boolean disableStreamCache;
     @UriParam(defaultValue = "true")
     private boolean send503whenSuspended = true;

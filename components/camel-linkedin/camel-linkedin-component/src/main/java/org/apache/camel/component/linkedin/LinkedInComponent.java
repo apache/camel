@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link LinkedInEndpoint}.
  */
-@UriEndpoint(scheme = "linkedin", consumerClass = LinkedInConsumer.class, consumerPrefix = "consumer")
 public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, LinkedInConfiguration, LinkedInApiCollection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkedInComponent.class);

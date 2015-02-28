@@ -38,6 +38,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -45,14 +46,14 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "mongodb", consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "mongodb", syntax = "mongodb:connectionBean", consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
     private Mongo mongoConnection;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String connectionBean;
     @UriParam
     private String database;
@@ -64,16 +65,16 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbOperation operation;
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean invokeGetLastError;
     @UriParam
     private WriteConcern writeConcern;
     private WriteConcern writeConcernRef;
     @UriParam
     private ReadPreference readPreference;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean dynamicity;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean writeResultAsHeader;
     // tailable cursor consumer by default
     private MongoDbConsumerType consumerType;
@@ -83,7 +84,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackIncreasingField;
 
     // persitent tail tracking
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean persistentTailTracking;
     @UriParam
     private String persistentId;

@@ -24,6 +24,7 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -75,29 +76,29 @@ public class Jt400Configuration {
     /**
      * ID of the AS/400 user.
      */
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String userID;
 
     /**
      * Password of the AS/400 user.
      */
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String password;
 
     /**
      * Name of the AS/400 system.
      */
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String systemName;
 
     /**
      * Fully qualified integrated file system path name of the target object of
      * this endpoint (either data queue or program).
      */
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String objectPath;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private Jt400Type type;
 
     /**
@@ -109,7 +110,7 @@ public class Jt400Configuration {
     /**
      * Data format for sending messages.
      */
-    @UriParam
+    @UriParam(defaultValue = "text")
     private Format format = Format.text;
     
     /**
@@ -124,7 +125,7 @@ public class Jt400Configuration {
     @UriParam
     private String searchKey;
 
-    @UriParam
+    @UriParam(defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
     @UriParam

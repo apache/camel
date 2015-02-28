@@ -19,6 +19,7 @@ package org.apache.camel.component.ssh;
 import java.net.URI;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -29,9 +30,9 @@ import org.apache.sshd.common.KeyPairProvider;
 public class SshConfiguration implements Cloneable {
     public static final int DEFAULT_SSH_PORT = 22;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
     private int port = DEFAULT_SSH_PORT;
     @UriParam
     private String username;

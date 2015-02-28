@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -31,9 +32,9 @@ import org.apache.lucene.util.Version;
 @UriParams
 public class LuceneConfiguration {
     private URI uri;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String operation;
     @UriParam
     private String protocolType;

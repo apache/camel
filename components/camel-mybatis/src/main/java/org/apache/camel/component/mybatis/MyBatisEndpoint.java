@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -33,12 +34,12 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class, label = "database")
+@UriEndpoint(scheme = "mybatis", syntax = "mybatis:statement", consumerClass =  MyBatisConsumer.class, label = "database")
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     private ExecutorType executorType;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String statement;
     @UriParam
     private StatementType statementType;

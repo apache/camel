@@ -28,6 +28,7 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -41,13 +42,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@UriEndpoint(scheme = "jpa", consumerClass = JpaConsumer.class, label = "database")
+@UriEndpoint(scheme = "jpa", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Entity class name")
-    private Class<?> entityType;
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+
+    @UriPath(description = "Entity class name") @Metadata(required = "true")
+    private Class<?> entityType;
     @UriParam(defaultValue = "camel")
     private String persistenceUnit = "camel";
     private Expression producerExpression;
@@ -62,11 +64,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean flushOnSend = true;
     @UriParam
     private int maxMessagesPerPoll;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean usePersist;
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean usePassedInEntityManager;
 
     public JpaEndpoint() {

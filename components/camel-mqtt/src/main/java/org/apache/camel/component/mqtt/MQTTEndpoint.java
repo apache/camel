@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -44,14 +45,14 @@ import org.slf4j.LoggerFactory;
 /**
  * MQTT endpoint
  */
-@UriEndpoint(scheme = "mqtt", consumerClass = MQTTConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "mqtt", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
 
     private CallbackConnection connection;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String name;
     @UriParam
     private final MQTTConfiguration configuration;

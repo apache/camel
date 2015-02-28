@@ -22,13 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleMailEndpoint}.
  */
-@UriEndpoint(scheme = "google-mail", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer")
 public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
     private Gmail client;

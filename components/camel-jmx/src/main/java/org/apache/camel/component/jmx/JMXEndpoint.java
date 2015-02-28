@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(scheme = "jmx", consumerOnly = true, consumerClass = JMXConsumer.class, label = "monitoring")
+@UriEndpoint(scheme = "jmx", syntax = "jmx:serverURL", consumerOnly = true, consumerClass = JMXConsumer.class, label = "monitoring")
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests
@@ -100,19 +100,19 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * URI Property: [counter + gauge monitor only] If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself.  
      */
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean differenceMode;
 
     /**
      * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the high threshold is exceeded  
      */
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean notifyHigh;
 
     /**
      * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the low threshold is exceeded  
      */
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean notifyLow;
 
     /**
@@ -130,13 +130,13 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute differs from the string to compare.  
      */
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean notifyDiffer;
 
     /**
      * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute matches the string to compare.  
      */
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean notifyMatch;
 
     /**
@@ -199,7 +199,7 @@ public class JMXEndpoint extends DefaultEndpoint {
      * URI Property:  If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
      *                to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
      */
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean reconnectOnConnectionFailure;
      
      /**

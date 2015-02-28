@@ -33,7 +33,7 @@ import org.apache.mina.core.session.IoSession;
  *
  * @version 
  */
-@UriEndpoint(scheme = "mina2", consumerClass = Mina2Consumer.class, label = "networking,tcp,udp")
+@UriEndpoint(scheme = "mina2", syntax = "mina2:protocol:host:port", consumerClass = Mina2Consumer.class, label = "networking,tcp,udp")
 public class Mina2Endpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam

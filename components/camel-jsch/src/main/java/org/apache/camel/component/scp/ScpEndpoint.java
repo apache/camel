@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Secure Copy Endpoint
  */
-@UriEndpoint(scheme = "scp", producerOnly = true, label = "file")
+@UriEndpoint(scheme = "scp", syntax = "scp:host:port/directoryName", producerOnly = true, label = "file")
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @UriParam

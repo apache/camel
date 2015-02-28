@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.component.linkedin.api.OAuthScope;
 import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -31,20 +32,23 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @UriParams
 public class LinkedInConfiguration {
 
+    @UriParam
     private String userName;
+    @UriParam
     private String userPassword;
-
+    @UriParam
     private OAuthSecureStorage secureStorage;
-
+    @UriParam
     private String clientId;
+    @UriParam
     private String clientSecret;
-
+    @UriParam
     private OAuthScope[] scopes;
+    @UriParam
     private String redirectUri;
-
-
+    @UriParam
     private Map<String, Object> httpParams;
-
+    @UriParam(defaultValue = "true")
     private boolean lazyAuth = true;
 
     public String getUserName() {

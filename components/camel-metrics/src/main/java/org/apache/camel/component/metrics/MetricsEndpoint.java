@@ -23,18 +23,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "metrics", producerOnly = true, label = "monitoring")
+@UriEndpoint(scheme = "metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;
 
-    @UriPath(description = "Type of metrics")
+    @UriPath(description = "Type of metrics") @Metadata(required = "true")
     protected final MetricsType metricsType;
-    @UriPath(description = "Name of metrics")
+    @UriPath(description = "Name of metrics") @Metadata(required = "true")
     protected final String metricsName;
     @UriParam(description = "Action when using timer type")
     private MetricsTimerAction action;

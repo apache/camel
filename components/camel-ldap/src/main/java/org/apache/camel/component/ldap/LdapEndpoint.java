@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -31,14 +32,14 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents an endpoint that synchronously invokes an LDAP server when a producer sends a message to it.
  */
-@UriEndpoint(scheme = "ldap", producerOnly = true, label = "ldap")
+@UriEndpoint(scheme = "ldap", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";
     public static final String ONELEVEL_SCOPE = "onelevel";
     public static final String SUBTREE_SCOPE = "subtree";
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String dirContextName;
     @UriParam(defaultValue = SYSTEM_DN)
     private String base = SYSTEM_DN;

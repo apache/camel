@@ -27,6 +27,7 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -45,7 +46,7 @@ public class MailConfiguration implements Cloneable {
     private Properties additionalJavaMailProperties;
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
     @UriPath
     private int port = -1;
@@ -62,34 +63,34 @@ public class MailConfiguration implements Cloneable {
     private String from = MailConstants.MAIL_DEFAULT_FROM;
     @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER)
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean delete;
     @UriParam
     private String copyTo;
     @UriParam(defaultValue = "true")
     private boolean unseen = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     @UriParam
     private String replyTo;
     @UriParam(defaultValue = "-1")
     private int fetchSize = -1;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean debugMode;
     @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean dummyTrustManager;
     @UriParam(defaultValue = "text/plain")
     private String contentType = "text/plain";
     @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY)
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useInlineAttachments;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean ignoreUnsupportedCharset;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disconnect;
     @UriParam(defaultValue = "true")
     private boolean closeFolder = true;
