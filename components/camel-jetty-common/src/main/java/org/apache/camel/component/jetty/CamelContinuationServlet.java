@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.ServletException;
@@ -31,6 +32,7 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 
@@ -63,10 +65,20 @@ public class CamelContinuationServlet extends CamelServlet {
             return;
         }
 
-        if (consumer.getEndpoint().getHttpMethodRestrict() != null 
-            && !consumer.getEndpoint().getHttpMethodRestrict().equals(request.getMethod())) {
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            return;
+        if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
+            Iterator it = ObjectHelper.createIterable(consumer.getEndpoint().getHttpMethodRestrict()).iterator();
+            boolean match = false;
+            while (it.hasNext()) {
+                String method = it.next().toString();
+                if (method.equalsIgnoreCase(request.getMethod())) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                return;
+            }
         }
 
         if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
