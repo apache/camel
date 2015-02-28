@@ -105,4 +105,15 @@ public class MetricsComponent extends UriEndpointComponent {
         reporter.start(DEFAULT_REPORTING_INTERVAL_SECONDS, TimeUnit.SECONDS);
         return registry;
     }
+
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
+    }
+
+    /**
+     * To use a custom configured MetricRegistry.
+     */
+    public void setMetricRegistry(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+    }
 }
