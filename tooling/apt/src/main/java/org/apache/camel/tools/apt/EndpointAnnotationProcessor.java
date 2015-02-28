@@ -180,6 +180,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n \"component\": {");
         buffer.append("\n    \"kind\": \"").append("component").append("\",");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
+        buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         if (componentModel.isConsumerOnly()) {
@@ -330,6 +331,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
     protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
+        model.setSyntax(uriEndpoint.syntax());
         model.setLabel(label);
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
@@ -627,6 +629,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     private static final class ComponentModel {
 
         private String scheme;
+        private String syntax;
         private String javaType;
         private String description;
         private String groupId;
@@ -642,6 +645,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public String getScheme() {
             return scheme;
+        }
+
+        public String getSyntax() {
+            return syntax;
+        }
+
+        public void setSyntax(String syntax) {
+            this.syntax = syntax;
         }
 
         public String getJavaType() {

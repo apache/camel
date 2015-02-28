@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "rest", consumerOnly = true, label = "core,http,rest")
+@UriEndpoint(scheme = "rest", syntax = "rest:method:path:uriTemplate", consumerOnly = true, label = "core,http,rest")
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")

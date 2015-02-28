@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "scheduler", consumerOnly = true, consumerClass = SchedulerConsumer.class, label = "core,scheduling")
+@UriEndpoint(scheme = "scheduler", syntax = "scheduler:name", consumerOnly = true, consumerClass = SchedulerConsumer.class, label = "core,scheduling")
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")

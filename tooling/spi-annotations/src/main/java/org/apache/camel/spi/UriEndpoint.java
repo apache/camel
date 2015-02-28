@@ -41,6 +41,20 @@ public @interface UriEndpoint {
     String scheme();
 
     /**
+     * Represent the URI syntax the endpoint must use.
+     * <p/>
+     * The syntax follows the patterns such as:
+     * <ul>
+     *     <li>scheme:path[?options]</li>
+     *     <li>scheme:path:path[?options]</li>
+     *     <li>scheme:path:path/path[?options]</li>
+     *     <li>scheme:path:path/path/path[?options]</li>
+     * </ul>
+     * Where each path maps to the name of the endpoint {@link org.apache.camel.spi.UriPath} option.
+     */
+    String syntax();
+
+    /**
      * Represents the consumer class which is injected and created by consumers
      */
     Class<?> consumerClass() default Object.class;

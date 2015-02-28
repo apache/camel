@@ -39,7 +39,7 @@ import org.apache.camel.spi.UriPath;
  * @version 
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-@UriEndpoint(scheme = "timer", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
+@UriEndpoint(scheme = "timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = "true")
     private String timerName;

@@ -42,12 +42,12 @@ import org.apache.camel.util.ResourceHelper;
  *
  * @version 
  */
-@UriEndpoint(scheme = "language", producerOnly = true, label = "core,script")
+@UriEndpoint(scheme = "language", syntax = "language:languageName", producerOnly = true, label = "core,script")
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
     private boolean contentResolvedFromResource;
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "bean,constant,el,exchangeProperty,file,groovy,header,jsonpath,jxpath,mvel,ognl,ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize") @Metadata(required = "true")
     private String languageName;
     @UriParam
     private String script;

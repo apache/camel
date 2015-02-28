@@ -25,7 +25,7 @@ import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "vm", consumerClass = VmConsumer.class, label = "core,endpoint")
+@UriEndpoint(scheme = "vm", syntax = "vm:name", consumerClass = VmConsumer.class, label = "core,endpoint")
 public class VmEndpoint extends SedaEndpoint {
 
     public VmEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

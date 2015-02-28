@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class, label = "core,testing")
+@UriEndpoint(scheme = "dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing")
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
