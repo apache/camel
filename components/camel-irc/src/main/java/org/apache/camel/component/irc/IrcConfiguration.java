@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -43,7 +44,7 @@ public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
     private List<IrcChannel> channels = new ArrayList<IrcChannel>();
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String hostname;
     @UriPath
     private int port;

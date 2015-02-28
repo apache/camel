@@ -27,6 +27,7 @@ import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "http4,http4s", producerOnly = true, label = "http")
+@UriEndpoint(scheme = "http4,http4s", syntax = "http4:httpUri", producerOnly = true, label = "http")
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
@@ -55,7 +56,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private HttpBinding binding;
     private HttpContext httpContext;
     private HttpComponent component;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI httpUri;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpClientConnectionManager clientConnectionManager;
@@ -63,19 +64,19 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private HttpClient httpClient;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean matchOnUriPrefix;
     @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableStreamCache;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferException;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean traceEnabled;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean authenticationPreemptive;
     @UriParam
     private String httpMethodRestrict;

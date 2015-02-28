@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -35,14 +36,14 @@ import org.apache.hadoop.hbase.filter.Filter;
 /**
  * Represents an HBase endpoint.
  */
-@UriEndpoint(scheme = "hbase", consumerClass = HBaseConsumer.class, label = "hadoop")
+@UriEndpoint(scheme = "hbase", syntax = "hbase:tableName", consumerClass = HBaseConsumer.class, label = "hadoop")
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
     private final HTablePool tablePool;
     private HBaseAdmin admin;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private final String tableName;
     //Operation properties.
     @UriParam(defaultValue = "100")

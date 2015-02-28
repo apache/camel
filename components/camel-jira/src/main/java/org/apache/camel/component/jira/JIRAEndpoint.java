@@ -23,6 +23,7 @@ import org.apache.camel.component.jira.consumer.NewCommentConsumer;
 import org.apache.camel.component.jira.consumer.NewIssueConsumer;
 import org.apache.camel.component.jira.producer.NewIssueProducer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -42,10 +43,10 @@ import org.apache.camel.spi.UriPath;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "jira", label = "api,reporting")
+@UriEndpoint(scheme = "jira", syntax = "jira:type", label = "api,reporting")
 public class JIRAEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private JIRAType type;
     @UriParam
     private String serverUrl;

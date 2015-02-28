@@ -18,6 +18,7 @@ package org.apache.camel.component.validator.jing;
 
 import java.io.InputStream;
 
+import org.apache.camel.spi.Metadata;
 import org.xml.sax.InputSource;
 
 import com.thaiopensource.relaxng.SchemaFactory;
@@ -34,10 +35,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
-@UriEndpoint(scheme = "jing", producerOnly = true, label = "validation")
+@UriEndpoint(scheme = "jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String resourceUri;
     @UriParam
     private boolean compactSyntax;

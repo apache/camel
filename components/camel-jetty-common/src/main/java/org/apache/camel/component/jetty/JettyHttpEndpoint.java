@@ -31,7 +31,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -41,7 +40,6 @@ import org.eclipse.jetty.server.Handler;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "jetty", consumerClass = HttpConsumer.class, label = "http")
 public abstract class JettyHttpEndpoint extends HttpEndpoint {
 
     @UriParam
@@ -57,7 +55,7 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
     private boolean enableJmx;
     @UriParam
     private boolean enableMultipartFilter;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean sendServerVersion = true;
     @UriParam
     private boolean sendDateHeader;

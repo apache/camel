@@ -34,6 +34,7 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -43,12 +44,12 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 /**
  * Represents a <a href="http://camel.apache.org/gtask.html">Google App Engine Task Queueing endpoint</a>.
  */
-@UriEndpoint(scheme = "gtask", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "gtask", syntax = "gtask:queueName", producerOnly = true, label = "cloud")
 public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSupport<GTaskEndpoint, TaskOptions, Void> {
 
     private OutboundBinding<GTaskEndpoint, TaskOptions, Void> outboundBinding;
     private InboundBinding<GTaskEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String queueName;
     private Queue queue;
     @UriParam

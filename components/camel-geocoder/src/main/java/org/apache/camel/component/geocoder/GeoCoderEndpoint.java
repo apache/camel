@@ -27,12 +27,12 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a GeoCoder endpoint.
  */
-@UriEndpoint(scheme = "geocoder", producerOnly = true, label = "api,location")
+@UriEndpoint(scheme = "geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "The geo address which must prefix with address:")
     private String address;
-    @UriPath
+    @UriPath(description = "The geo coordinate which must prefix with latng:")
     private String latlng;
     @UriParam(defaultValue = "en")
     private String language = "en";
@@ -40,7 +40,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String clientId;
     @UriParam
     private String clientKey;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean headersOnly;
 
     public GeoCoderEndpoint() {

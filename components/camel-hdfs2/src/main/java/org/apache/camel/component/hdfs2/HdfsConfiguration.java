@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -32,11 +33,11 @@ import org.apache.hadoop.io.SequenceFile;
 public class HdfsConfiguration {
 
     private URI uri;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String hostName;
-    @UriPath
+    @UriPath(defaultValue = "" + HdfsConstants.DEFAULT_PORT)
     private int port = HdfsConstants.DEFAULT_PORT;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String path;
     @UriParam(defaultValue = "true")
     private boolean overwrite = true;

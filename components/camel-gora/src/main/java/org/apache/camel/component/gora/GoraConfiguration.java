@@ -18,6 +18,7 @@
 package org.apache.camel.component.gora;
 
 import com.google.common.base.Strings;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -34,7 +35,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @UriParams
 public class GoraConfiguration {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String name;
 
     /**

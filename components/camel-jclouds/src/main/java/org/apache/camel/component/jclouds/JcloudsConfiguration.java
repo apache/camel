@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jclouds;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -23,9 +24,9 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class JcloudsConfiguration {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private JcloudsCommand command;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String providerId;
 
     // compute options

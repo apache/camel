@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -31,9 +32,9 @@ import org.apache.camel.spi.UriPath;
 /**
  * @version
  */
-@UriEndpoint(scheme = "jdbc", producerOnly = true, label = "database")
+@UriEndpoint(scheme = "jdbc", syntax = "jdbc:dataSource", producerOnly = true, label = "database")
 public class JdbcEndpoint extends DefaultEndpoint {
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private DataSource dataSource;
     @UriParam
     private int readSize;

@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBindingSupport;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -34,12 +35,12 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a <a href="http://camel.apache.org/gmail.html">Google App Engine Mail endpoint</a>.
  */
-@UriEndpoint(scheme = "gmail", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(scheme = "gmail", syntax = "gmail:sender", producerOnly = true, label = "cloud,mail")
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 
     private OutboundBinding<GMailEndpoint, Message, Void> outboundBinding;
     private MailService mailService;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String sender;
     @UriParam
     private String subject;

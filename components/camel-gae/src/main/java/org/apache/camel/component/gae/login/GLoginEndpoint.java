@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -30,14 +31,14 @@ import org.apache.camel.spi.UriPath;
  * Represents a <a href="http://camel.apache.org/glogin.html">GLogin
  * Endpoint</a>.
  */
-@UriEndpoint(scheme = "glogin", producerOnly = true, label = "cloud")
+@UriEndpoint(scheme = "glogin", syntax = "glogin:hostName", producerOnly = true, label = "cloud")
 public class GLoginEndpoint extends DefaultEndpoint {
 
     private OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String hostName;
-    @UriPath
+    @UriParam
     private String clientName;
     @UriParam
     private String userName;
@@ -45,9 +46,9 @@ public class GLoginEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private int devPort;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean devAdmin;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean devMode;
     private GLoginService service;
 

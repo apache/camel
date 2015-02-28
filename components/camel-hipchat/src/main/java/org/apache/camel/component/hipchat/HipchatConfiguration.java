@@ -22,11 +22,11 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class HipchatConfiguration {
-    @UriPath
+    @UriPath(defaultValue = HipchatConstants.DEFAULT_PROTOCOL)
     private String protocol = HipchatConstants.DEFAULT_PROTOCOL;
-    @UriPath
+    @UriPath(defaultValue = HipchatConstants.DEFAULT_HOST)
     private String host = HipchatConstants.DEFAULT_HOST;
-    @UriPath
+    @UriPath(defaultValue = "" + HipchatConstants.DEFAULT_PORT)
     private Integer port = HipchatConstants.DEFAULT_PORT;
     @UriParam
     private String authToken;

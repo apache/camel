@@ -52,7 +52,7 @@ import org.apache.camel.util.ObjectHelper;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "github", label = "api,file")
+@UriEndpoint(scheme = "github", syntax = "github:type/branchName", label = "api,file")
 public class GitHubEndpoint extends DefaultEndpoint {
 
     @UriPath

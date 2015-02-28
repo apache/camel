@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -45,27 +46,27 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "http,https", producerOnly = true, label = "http")
+@UriEndpoint(scheme = "http,https", syntax = "http:httpUri", producerOnly = true, label = "http")
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpBinding binding;
     private HttpComponent component;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean matchOnUriPrefix;
     @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableStreamCache;
     @UriParam
     private String proxyHost;
@@ -75,7 +76,7 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String authMethodPriority;
     @UriParam
     private boolean transferException;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean traceEnabled;
     @UriParam
     private String httpMethodRestrict;

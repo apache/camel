@@ -26,7 +26,7 @@ import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "jetty", consumerClass = HttpConsumer.class, label = "http")
+@UriEndpoint(scheme = "jetty", syntax = "jetty:httpUri", consumerClass = HttpConsumer.class, label = "http")
 public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
     private HttpBinding binding;
 

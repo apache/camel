@@ -25,6 +25,7 @@ import org.apache.camel.component.ibatis.strategy.DefaultIBatisProcessingStategy
 import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
 import org.apache.camel.component.ibatis.strategy.TransactionIsolationLevel;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -34,11 +35,11 @@ import org.apache.camel.util.ObjectHelper;
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  */
-@UriEndpoint(scheme = "ibatis", consumerClass = IBatisConsumer.class, label = "database")
+@UriEndpoint(scheme = "ibatis", syntax = "ibatis:statement", consumerClass = IBatisConsumer.class, label = "database")
 public class IBatisEndpoint extends DefaultPollingEndpoint {
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String statement;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useTransactions;
     @UriParam
     private StatementType statementType;

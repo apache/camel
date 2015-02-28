@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A JCR endpoint
  */
-@UriEndpoint(scheme = "jcr", consumerClass = JcrConsumer.class, label = "cms,database")
+@UriEndpoint(scheme = "jcr", syntax = "jcr:host/base", consumerClass = JcrConsumer.class, label = "cms,database")
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
@@ -57,7 +57,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     private String uuids;
     @UriParam
     private String nodeTypeNames;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean noLocal;
     @UriParam(defaultValue = "3000")
     private long sessionLiveCheckIntervalOnStart = 3000L;

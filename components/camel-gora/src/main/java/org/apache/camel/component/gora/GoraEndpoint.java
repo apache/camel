@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Gora endpoint
  */
-@UriEndpoint(scheme = "gora", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
+@UriEndpoint(scheme = "gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
 public class GoraEndpoint extends DefaultEndpoint {
 
     /**

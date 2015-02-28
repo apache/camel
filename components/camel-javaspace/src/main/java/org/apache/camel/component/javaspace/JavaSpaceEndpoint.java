@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -30,12 +31,12 @@ import org.apache.camel.spi.UriPath;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "javaspace", consumerClass = JavaSpaceConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "javaspace", syntax = "javaspace:url", consumerClass = JavaSpaceConsumer.class, label = "messaging")
 public class JavaSpaceEndpoint extends DefaultEndpoint {
 
     private final Map<?, ?> parameters;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private final String url;
     @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
