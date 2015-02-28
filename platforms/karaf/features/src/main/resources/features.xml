@@ -415,7 +415,7 @@
   <feature name='camel-ganglia' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.acplt.remotetea/remotetea-oncrpc/${oncrpc-version}</bundle>
-    <bundle dependency='true'>mvn:info.ganglia.gmetric4j/gmetric4j/${gmetric4j-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:info.ganglia.gmetric4j/gmetric4j/${gmetric4j-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ganglia/${project.version}</bundle>
   </feature>
   <feature name='camel-geocoder' version='${project.version}' resolver='(obr)' start-level='50'>

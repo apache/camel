@@ -30,6 +30,9 @@
   <description>Camel Ganglia support</description>
 
   <properties>
+    <camel.osgi.import.before.defaults>
+      info.ganglia.gmetric4j.*;version="[0,2)"
+    </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>
       org.apache.camel.component.ganglia.*
     </camel.osgi.export.pkg>
