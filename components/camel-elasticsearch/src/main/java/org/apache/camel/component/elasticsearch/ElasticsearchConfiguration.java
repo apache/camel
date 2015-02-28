@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -49,7 +50,7 @@ public class ElasticsearchConfiguration {
     private static final Integer DEFAULT_PORT = 9300;
 
     private URI uri;
-    @UriPath
+    @UriPath(description = "Name of cluster or use local for local mode") @Metadata(required = "true")
     private String clusterName;
     @UriParam
     private String protocolType;

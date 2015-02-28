@@ -20,7 +20,7 @@ import org.apache.camel.component.jms.JmsConsumer;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "amqp", consumerClass = JmsConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "amqp", syntax = "amqp:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
 public class AMQPEndpoint extends JmsEndpoint {
 
 }

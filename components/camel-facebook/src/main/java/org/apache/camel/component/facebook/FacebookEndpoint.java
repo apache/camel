@@ -31,6 +31,7 @@ import org.apache.camel.component.facebook.config.FacebookNameStyle;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -38,6 +39,7 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getCandidateMethods;
@@ -47,13 +49,13 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
 /**
  * Represents a Facebook endpoint.
  */
-@UriEndpoint(scheme = "facebook", consumerClass = FacebookConsumer.class, label = "social")
+@UriEndpoint(scheme = "facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     // Facebook4J method name
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private final String methodName;
     private FacebookNameStyle nameStyle;
 

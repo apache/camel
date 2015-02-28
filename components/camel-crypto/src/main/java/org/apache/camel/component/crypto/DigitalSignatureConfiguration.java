@@ -28,6 +28,7 @@ import java.security.cert.Certificate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -38,7 +39,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
 
     private CamelContext context;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private CryptoOperation cryptoOperation;
     @UriParam
     private PrivateKey privateKey;

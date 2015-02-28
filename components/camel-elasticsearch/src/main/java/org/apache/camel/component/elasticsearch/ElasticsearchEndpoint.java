@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an Elasticsearch endpoint.
  */
-@UriEndpoint(scheme = "elasticsearch", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(scheme = "elasticsearch", syntax = "elasticsearch:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);

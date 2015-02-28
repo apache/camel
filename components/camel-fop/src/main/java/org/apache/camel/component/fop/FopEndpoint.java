@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -33,10 +34,10 @@ import org.apache.fop.apps.FopFactory;
 /**
  * Represents a Fop endpoint.
  */
-@UriEndpoint(scheme = "fop", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "fop", syntax = "fop:outputFormat", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String outputFormat;
     @UriParam
     private String userConfigURL;

@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -32,19 +33,19 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Endpoint for Camel Cometd.
  */
-@UriEndpoint(scheme = "cometd,cometds", consumerClass = CometdConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "cometd,cometds", syntax = "cometd:protocol:host:port/channelName", consumerClass = CometdConsumer.class, label = "http,websocket")
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;
 
     private URI uri;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String protocol;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private int port;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String channelName;
     @UriParam
     private String baseResource;

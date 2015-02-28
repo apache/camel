@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
  *
  */
-@UriEndpoint(scheme = "aws-sqs", consumerClass = SqsConsumer.class, label = "cloud,messaging")
+@UriEndpoint(scheme = "aws-sqs", syntax = "aws-sqs:queueName", consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
@@ -67,7 +67,6 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     private int maxMessagesPerPoll;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
-
 
     public SqsEndpoint(String uri, SqsComponent component, SqsConfiguration configuration) {
         super(uri, component);

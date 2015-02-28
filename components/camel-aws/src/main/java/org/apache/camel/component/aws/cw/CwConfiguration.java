@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.cw;
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -26,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class CwConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String namespace;
     @UriParam
     private AmazonCloudWatch amazonCwClient;

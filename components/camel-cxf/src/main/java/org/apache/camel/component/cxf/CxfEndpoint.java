@@ -111,7 +111,7 @@ import org.slf4j.LoggerFactory;
  * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat
  * mode is {@link DataFormat#POJO}.
  */
-@UriEndpoint(scheme = "cxf", consumerClass = CxfConsumer.class, label = "http,soap,webservice")
+@UriEndpoint(scheme = "cxf", syntax = "cxf:beanId:address", consumerClass = CxfConsumer.class, label = "http,soap,webservice")
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
@@ -123,7 +123,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @UriPath
     private String address;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean createBus;
     @UriParam
     private String wsdlURL;
@@ -155,19 +155,19 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private CxfBinding cxfBinding;
     private HeaderFilterStrategy headerFilterStrategy;
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean isSetDefaultBus;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean loggingFeatureEnabled;
     @UriParam
     private int loggingSizeLimit;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean mtomEnabled;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean skipPayloadMessagePartCheck;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean skipFaultLogging;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean mergeProtocolHeaders;
     private Map<String, Object> properties;
     private List<Interceptor<? extends Message>> in = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();

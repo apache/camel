@@ -20,9 +20,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
-import org.apache.camel.component.exec.impl.DefaultExecCommandExecutor;
 import org.apache.camel.component.exec.impl.ExecParseUtils;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * @see ExecCommand
  * @see ExecResult
  */
-@UriEndpoint(scheme = "exec", producerOnly = true, label = "system")
+@UriEndpoint(scheme = "exec", syntax = "exec:executable", producerOnly = true, label = "system")
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**
@@ -45,7 +45,7 @@ public class ExecEndpoint extends DefaultEndpoint {
      */
     public static final long NO_TIMEOUT = Long.MAX_VALUE;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String executable;
 
     @UriParam
@@ -66,7 +66,7 @@ public class ExecEndpoint extends DefaultEndpoint {
     @UriParam
     private ExecBinding binding;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useStderrOnEmptyStdout;
 
     public ExecEndpoint(String uri, ExecComponent component) {

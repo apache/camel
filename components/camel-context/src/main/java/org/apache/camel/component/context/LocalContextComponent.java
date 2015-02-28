@@ -92,7 +92,6 @@ public class LocalContextComponent extends DefaultComponent {
             }
         }
         throw new ResolveEndpointFailedException("Cannot find the endpoint with uri " + uri + " in the CamelContext " + getLocalCamelContext().getName());
-        
     }
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {

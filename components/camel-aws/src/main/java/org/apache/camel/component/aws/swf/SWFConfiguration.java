@@ -24,6 +24,7 @@ import com.amazonaws.services.simpleworkflow.flow.DataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -35,7 +36,7 @@ public class SWFConfiguration {
     private Map<String, Object> sWClientParameters;
     private Map<String, Object> startWorkflowOptionsParameters;
 
-    @UriPath
+    @UriPath(enums = "activity,workflow") @Metadata(required = "true")
     private String type;
     @UriParam
     private AmazonSimpleWorkflowClient amazonSWClient;

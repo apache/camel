@@ -64,12 +64,12 @@ public class AvroComponent extends UriEndpointComponent {
             config = new AvroConfiguration();
         }
 
-        URI enpointUri = new URI(URISupport.normalizeUri(remaining));
-        applyToConfiguration(config, enpointUri, parameters);
+        URI endpointUri = new URI(URISupport.normalizeUri(remaining));
+        applyToConfiguration(config, endpointUri, parameters);
 
-        if (AvroConstants.AVRO_NETTY_TRANSPORT.equals(enpointUri.getScheme())) {
+        if (AvroConstants.AVRO_NETTY_TRANSPORT.equals(endpointUri.getScheme())) {
             return new AvroNettyEndpoint(remaining, this, config);
-        } else if (AvroConstants.AVRO_HTTP_TRANSPORT.equals(enpointUri.getScheme())) {
+        } else if (AvroConstants.AVRO_HTTP_TRANSPORT.equals(endpointUri.getScheme())) {
             return new AvroHttpEndpoint(remaining, this, config);
         } else {
             throw new IllegalArgumentException("Unknown avro scheme. Should use either netty or http.");

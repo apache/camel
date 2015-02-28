@@ -24,12 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.lightcouch.CouchDbClient;
 
-@UriEndpoint(scheme = "couchdb", consumerClass = CouchDbConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "couchdb", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -38,13 +39,13 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
     private static final String URI_ERROR = "Invalid URI. Format must be of the form couchdb:http[s]://hostname[:port]/database?[options...]";
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String protocol;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath
+    @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String database;
     @UriParam(defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;

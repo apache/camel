@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.services.sns.AmazonSNS;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.UriPath;
 public class SnsConfiguration implements Cloneable {
 
     // Common properties
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String topicName;
     @UriParam
     private AmazonSNS amazonSNSClient;

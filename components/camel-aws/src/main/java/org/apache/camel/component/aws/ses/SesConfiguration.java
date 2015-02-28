@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -27,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SesConfiguration {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String from;
     @UriParam
     private AmazonSimpleEmailService amazonSESClient;

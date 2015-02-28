@@ -33,12 +33,13 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 /**
  *
  */
-@UriEndpoint(scheme = "atmosphere-websocket", consumerClass = WebsocketConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "atmosphere-websocket", syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "http,websocket")
 public class WebsocketEndpoint extends ServletEndpoint {
+
+    private WebSocketStore store;
 
     @UriPath
     private String servicePath;
-    private WebSocketStore store;
     @UriParam(defaultValue = "false")
     private boolean sendToAll;
     @UriParam(defaultValue = "false")

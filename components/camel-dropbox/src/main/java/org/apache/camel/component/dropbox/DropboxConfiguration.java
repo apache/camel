@@ -23,6 +23,7 @@ import com.dropbox.core.DbxRequestConfig;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -31,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 public class DropboxConfiguration {
 
     //specific dropbox operation for the component
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private DropboxOperation operation;
     //dropbox auth options
     @UriParam

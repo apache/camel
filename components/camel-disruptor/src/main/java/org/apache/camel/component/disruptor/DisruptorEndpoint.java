@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(scheme = "disruptor,disruptor-vm", consumerClass = DisruptorConsumer.class, label = "endpoint")
+@UriEndpoint(scheme = "disruptor,disruptor-vm", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);

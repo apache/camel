@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.avro.Protocol;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -31,20 +32,20 @@ import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SE
 @UriParams
 public class AvroConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private AvroTransport transport;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private int port;
+    @UriPath
+    private String messageName;
     @UriParam
     private String protocolLocation;
     @UriParam
     private Protocol protocol;
     @UriParam
     private String protocolClassName;
-    @UriParam
-    private String messageName;
     @UriParam
     private String uriAuthority;
     @UriParam(defaultValue = "false")

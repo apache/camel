@@ -36,12 +36,12 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 /**
  * Cassandra 2 CQL3 endpoint
  */
-@UriEndpoint(scheme = "cql", consumerClass = CassandraConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "cql", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
 public class CassandraEndpoint extends DefaultEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;
 
-    @UriPath
+    @UriPath(description = "beanRef is defined using bean:id")
     private String beanRef;
     @UriPath
     private String hosts;

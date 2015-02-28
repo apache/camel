@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -24,7 +25,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SdbConfiguration {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String domainName;
     @UriParam
     private AmazonSimpleDB amazonSDBClient;

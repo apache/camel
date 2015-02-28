@@ -42,12 +42,12 @@ import org.apache.fop.pdf.PDFEncryptionParams;
  */
 public class FopProducer extends DefaultProducer {
     private final FopFactory fopFactory;
-    private final String remaining;
+    private final String outputFormat;
 
-    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String remaining) {
+    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String outputFormat) {
         super(endpoint);
         this.fopFactory = fopFactory;
-        this.remaining = remaining;
+        this.outputFormat = outputFormat;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -68,7 +68,7 @@ public class FopProducer extends DefaultProducer {
 
     private String getOutputFormat(Exchange exchange) {
         String outputFormat = exchange.getIn()
-                .getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.remaining, String.class);
+                .getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.outputFormat, String.class);
         if (outputFormat == null) {
             throw new RuntimeExchangeException("Missing output format", exchange);
         }

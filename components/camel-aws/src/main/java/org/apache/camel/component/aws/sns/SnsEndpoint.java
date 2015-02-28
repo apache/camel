@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SNS Endpoint</a>.  
  */
-@UriEndpoint(scheme = "aws-sns", producerOnly = true, label = "cloud,mobile,messaging")
+@UriEndpoint(scheme = "aws-sns", syntax = "aws-sns:topicName", producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);

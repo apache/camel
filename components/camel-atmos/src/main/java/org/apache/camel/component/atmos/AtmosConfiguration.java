@@ -24,6 +24,7 @@ import com.emc.atmos.api.AtmosConfig;
 import com.emc.atmos.api.jersey.AtmosApiClient;
 import org.apache.camel.component.atmos.util.AtmosException;
 import org.apache.camel.component.atmos.util.AtmosOperation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -33,7 +34,7 @@ public class AtmosConfiguration {
 
     @UriPath
     private String name;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private AtmosOperation operation;
     //atmos shared secret
     @UriParam

@@ -23,6 +23,7 @@ import com.box.boxjavalibv2.IBoxConfig;
 import com.box.boxjavalibv2.authorization.IAuthSecureStorage;
 import com.box.boxjavalibv2.authorization.OAuthRefreshListener;
 import org.apache.camel.component.box.internal.BoxApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -34,10 +35,10 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 @UriParams
 public class BoxConfiguration {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private BoxApiName apiName;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String methodName;
 
     @UriParam

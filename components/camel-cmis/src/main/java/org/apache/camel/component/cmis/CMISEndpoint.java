@@ -26,11 +26,12 @@ import org.apache.camel.spi.UriParam;
 /**
  * Represents a CMIS endpoint.
  */
-@UriEndpoint(scheme = "cmis", consumerClass = CMISConsumer.class, label = "cms,database")
+@UriEndpoint(scheme = "cmis", syntax = "cmis:url", consumerClass = CMISConsumer.class, label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
 
     @UriParam
     private CMISSessionFacade sessionFacade;
+    @UriParam
     private boolean queryMode;
 
     public CMISEndpoint() {
@@ -60,6 +61,10 @@ public class CMISEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    public boolean isQueryMode() {
+        return queryMode;
     }
 
     public void setQueryMode(boolean queryMode) {

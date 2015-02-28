@@ -56,7 +56,7 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "cxfrs", consumerClass = CxfRsConsumer.class, label = "http,rest")
+@UriEndpoint(scheme = "cxfrs", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "http,rest")
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     public enum BindingStyle {
@@ -99,26 +99,26 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private CxfRsBinding binding;
     @UriParam(defaultValue = "true")
     private boolean httpClientAPI = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean ignoreDeleteMethodMessageBody;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
     @UriParam(defaultValue = "10")
     private int maxClientCacheSize = 10;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean loggingFeatureEnabled;
     @UriParam
     private int loggingSizeLimit;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean skipFaultLogging;
     @UriParam(defaultValue = "Default")
     private BindingStyle bindingStyle = BindingStyle.Default;
     // The continuation timeout value for CXF continuation to use
     @UriParam(defaultValue = "30000")
     private long continuationTimeout = 30000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean isSetDefaultBus;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean performInvocation;
     @UriParam
     private String modelRef;

@@ -27,6 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -34,10 +35,10 @@ import org.apache.camel.util.PlatformHelper;
 
 import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
-@UriEndpoint(scheme = "bean-validator", producerOnly = true, label = "validation")
+@UriEndpoint(scheme = "bean-validator", syntax = "bean-validator:label", producerOnly = true, label = "validation")
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Where label is an arbitrary text value describing the endpoint")
+    @UriPath(description = "Where label is an arbitrary text value describing the endpoint") @Metadata(required = "true")
     private String label;
     @UriParam
     private String group;

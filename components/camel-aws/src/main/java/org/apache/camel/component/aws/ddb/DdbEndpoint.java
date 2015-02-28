@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB endpoint</a>
  */
-@UriEndpoint(scheme = "aws-ddb", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(scheme = "aws-ddb", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);

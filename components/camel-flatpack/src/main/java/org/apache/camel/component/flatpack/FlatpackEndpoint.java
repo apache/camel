@@ -35,6 +35,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -47,22 +48,22 @@ import org.apache.camel.util.ResourceHelper;
  *
  * @version 
  */
-@UriEndpoint(scheme = "flatpack", consumerClass = FlatpackConsumer.class, label = "transformation")
+@UriEndpoint(scheme = "flatpack", syntax = "flatpack:type:resourceUri", consumerClass = FlatpackConsumer.class, label = "transformation")
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
-    @UriPath
-    protected String resourceUri;
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
    
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private FlatpackType type;
+    @UriPath @Metadata(required = "true")
+    protected String resourceUri;
 
     @UriParam(defaultValue = "true")
     private boolean splitRows = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowShortLines;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean ignoreExtraColumns;
 
     // delimited
