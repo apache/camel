@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -36,9 +37,9 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 /**
  * Represents a xmlrpc endpoint.
  */
-@UriEndpoint(scheme = "xmlrpc", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "xmlrpc", syntax = "xmlrpc:address", producerOnly = true, label = "transformation")
 public class XmlRpcEndpoint extends DefaultEndpoint {
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String address;
     @UriParam
     private XmlRpcConfiguration configuration;

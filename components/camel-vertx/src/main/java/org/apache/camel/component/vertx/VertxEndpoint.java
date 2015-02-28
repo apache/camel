@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -29,12 +30,12 @@ import org.vertx.java.core.eventbus.EventBus;
 /**
  * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
  */
-@UriEndpoint(scheme = "vertx", consumerClass = VertxConsumer.class, label = "eventbus")
+@UriEndpoint(scheme = "vertx", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
 public class VertxEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String address;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean pubSub;
 
     public VertxEndpoint(String uri, VertxComponent component, String address) {

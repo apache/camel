@@ -19,6 +19,7 @@ package org.apache.camel.component.weather;
 import java.net.URL;
 import java.util.Scanner;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -35,7 +36,7 @@ public class WeatherConfiguration {
 
     private final WeatherComponent component;
 
-    @UriPath(description = "The name value is not used.")
+    @UriPath(description = "The name value is not used.") @Metadata(required = "true")
     private String name;
     @UriParam
     private String location = "";

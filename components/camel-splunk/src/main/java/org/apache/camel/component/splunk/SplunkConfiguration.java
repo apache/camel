@@ -17,6 +17,7 @@
 package org.apache.camel.component.splunk;
 
 import com.splunk.Service;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -25,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class SplunkConfiguration {
 
-    @UriPath(description = "Name has no purpose")
+    @UriPath(description = "Name has no purpose") @Metadata(required = "true")
     private String name;
     @UriParam
     private String scheme = Service.DEFAULT_SCHEME;
@@ -43,7 +44,7 @@ public class SplunkConfiguration {
     private String password;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useSunHttpsHandler;
     @UriParam
     private String index;

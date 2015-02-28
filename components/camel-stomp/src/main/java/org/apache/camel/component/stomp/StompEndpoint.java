@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -44,10 +45,10 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
-@UriEndpoint(scheme = "stomp", consumerClass = StompConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String destination;
     @UriParam
     private StompConfiguration configuration;

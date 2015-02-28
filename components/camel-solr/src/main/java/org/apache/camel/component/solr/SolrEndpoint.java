@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -34,10 +35,10 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 /**
  * Represents a Solr endpoint.
  */
-@UriEndpoint(scheme = "solr", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(scheme = "solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String url;
     private String scheme = "http://";
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)

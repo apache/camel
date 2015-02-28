@@ -24,11 +24,11 @@ public class SparkConfiguration {
 
     @UriParam(defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableStreamCache;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean urlDecodeHeaders;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferException;
 
     public boolean isMapHeaders() {

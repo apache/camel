@@ -29,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -44,11 +45,11 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
-@UriEndpoint(scheme = "sql", consumerClass = SqlConsumer.class, label = "database")
+@UriEndpoint(scheme = "sql", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database")
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String query;
     @UriParam
     @Deprecated

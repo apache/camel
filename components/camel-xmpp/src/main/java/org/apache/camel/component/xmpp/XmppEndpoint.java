@@ -29,6 +29,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A XMPP Endpoint
  */
-@UriEndpoint(scheme = "xmpp", consumerClass = XmppConsumer.class, label = "chat,messaging")
+@UriEndpoint(scheme = "xmpp", syntax = "xmpp:host:port/participant", consumerClass = XmppConsumer.class, label = "chat,messaging")
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
@@ -59,9 +60,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private XmppBinding binding;
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private int port;
     @UriPath
     private String participant;
@@ -81,11 +82,11 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String nickname;
     @UriParam
     private String serviceName;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pubsub;
     //Set a doc header on the IN message containing a Document form of the incoming packet; 
     //default is true if pubsub is true, otherwise false
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean doc;
     @UriParam(defaultValue = "true")
     private boolean testConnectionOnStartup = true;

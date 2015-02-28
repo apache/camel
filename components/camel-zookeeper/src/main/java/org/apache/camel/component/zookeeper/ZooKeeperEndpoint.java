@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
  * <code>ZooKeeperEndpoint</code>
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
-@UriEndpoint(scheme = "zookeeper", consumerClass = ZooKeeperConsumer.class, label = "clustering")
+@UriEndpoint(scheme = "zookeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
 public class ZooKeeperEndpoint extends DefaultEndpoint {
     @UriParam
     private ZooKeeperConfiguration configuration;

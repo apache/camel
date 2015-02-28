@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.component.twitter.data.EndpointType;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -37,7 +38,7 @@ public class TwitterConfiguration {
     /**
      * Defines the Twitter API endpoint.
      */
-    @UriPath(description = "What kind of type to use")
+    @UriPath(description = "What kind of type to use") @Metadata(required = "true")
     private EndpointType type = EndpointType.DIRECT;
 
     /**

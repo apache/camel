@@ -25,6 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -33,7 +34,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
-@UriEndpoint(scheme = "websocket", consumerClass = WebsocketConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "http,websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private NodeSynchronization sync;
@@ -42,21 +43,21 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private URI uri;
     private List<Handler> handlers;
 
-    @UriParam(defaultValue = "false")
-    private Boolean sendToAll;
-    @UriParam(defaultValue = "false")
-    private boolean enableJmx;
-    @UriParam(defaultValue = "false")
-    private boolean sessionSupport;
-    @UriParam(defaultValue = "false")
-    private boolean crossOriginFilterOn;
-
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private Integer port;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String resourceUri;
+
+    @UriParam
+    private Boolean sendToAll;
+    @UriParam
+    private boolean enableJmx;
+    @UriParam
+    private boolean sessionSupport;
+    @UriParam
+    private boolean crossOriginFilterOn;
     @UriParam
     private SSLContextParameters sslContextParameters;
     @UriParam

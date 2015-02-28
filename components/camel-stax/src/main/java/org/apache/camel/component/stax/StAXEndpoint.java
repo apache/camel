@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.stax;
 
+import org.apache.camel.spi.Metadata;
 import org.xml.sax.ContentHandler;
 
 import org.apache.camel.CamelContext;
@@ -25,10 +26,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 
-@UriEndpoint(scheme = "stax", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "stax", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
 public class StAXEndpoint extends ProcessorEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String contentHandlerClass;
 
     public StAXEndpoint(String endpointUri, CamelContext context) {

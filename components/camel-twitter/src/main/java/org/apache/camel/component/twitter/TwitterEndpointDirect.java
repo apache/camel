@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Twitter direct endpoint
  */
-@UriEndpoint(scheme = "twitter", consumerClass = Twitter4JConsumer.class, label = "api,social")
+@UriEndpoint(scheme = "twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
 
     @UriParam

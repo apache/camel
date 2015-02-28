@@ -25,12 +25,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.springframework.ldap.core.LdapTemplate;
 
-@UriEndpoint(scheme = "spring-ldap", producerOnly = true, label = "spring,ldap")
+@UriEndpoint(scheme = "spring-ldap", syntax = "spring-ldap:templateName", producerOnly = true, label = "spring,ldap")
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";
@@ -41,7 +42,7 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     private static Map<String, Integer> scopeMap;
 
     private LdapTemplate ldapTemplate;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String templateName;
     @UriParam
     private LdapOperation operation;

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -37,10 +38,10 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     private transient boolean changed;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String serverUrls;
     private List<String> servers;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String path;
     @UriParam(defaultValue = "5000")
     private int timeout = 5000;

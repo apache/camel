@@ -26,16 +26,17 @@ import org.apache.camel.component.xmlsecurity.processor.XmlSignatureConfiguratio
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "xmlsecurity", producerOnly = true, label = "security,transformation")
+@UriEndpoint(scheme = "xmlsecurity", syntax = "xmlsecurity:command/name", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private XmlCommand command;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String name;
     // to include both kind of configuration params
     @UriParam

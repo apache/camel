@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -30,10 +31,10 @@ import org.apache.camel.util.CamelContextHelper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 
-@UriEndpoint(scheme = "spring-batch", producerOnly = true, label = "spring,batch,scheduling")
+@UriEndpoint(scheme = "spring-batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String jobName;
 
     /**

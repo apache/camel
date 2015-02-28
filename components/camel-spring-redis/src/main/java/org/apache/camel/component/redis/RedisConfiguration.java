@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.redis;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -28,9 +29,9 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 
 @UriParams
 public class RedisConfiguration {
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private Integer port;
     @UriParam
     private String command;
@@ -44,9 +45,9 @@ public class RedisConfiguration {
     private RedisConnectionFactory connectionFactory;
     @UriParam
     private RedisSerializer serializer;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean managedListenerContainer;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean managedConnectionFactory;
 
     public String getCommand() {
