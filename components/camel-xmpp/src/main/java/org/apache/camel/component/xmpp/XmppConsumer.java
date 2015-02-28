@@ -29,13 +29,12 @@ import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.MessageTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
@@ -66,20 +65,20 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     protected void doStart() throws Exception {
         try {
             connection = endpoint.createConnection();
-        } catch (XMPPException e) {
+        } catch (SmackException e) {
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeException("Could not connect to XMPP server.", e);
             } else {
-                LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+                LOG.warn(e.getMessage());
                 if (getExceptionHandler() != null) {
-                    getExceptionHandler().handleException(XmppEndpoint.getXmppExceptionLogMessage(e), e);
+                    getExceptionHandler().handleException(e.getMessage(), e);
                 }
                 scheduleDelayedStart();
                 return;
             }
         }
 
-        chatManager = connection.getChatManager();
+        chatManager = ChatManager.getInstanceFor(connection);
         chatManager.addChatListener(this);
 
         OrFilter pubsubPacketFilter = new OrFilter();
@@ -99,7 +98,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 }
                 privateChat.addMessageListener(this);
             } else {
-                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
+                privateChat = ChatManager.getInstanceFor(connection).createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Opening private chat to " + privateChat.getParticipant());
                 }
@@ -107,8 +106,8 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         } else {
             // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc
-            final ToContainsFilter toFilter = new ToContainsFilter(endpoint.getParticipant());
-            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class), toFilter);
+           
+            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class));
             connection.addPacketListener(this, packetFilter);
 
             muc = new MultiUserChat(connection, endpoint.resolveRoom(connection));
@@ -116,7 +115,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
 
-            muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
+            muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
             if (LOG.isInfoEnabled()) {
                 LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
             }
@@ -163,8 +162,8 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
             try {
                 connection.connect();
-            } catch (XMPPException e) {
-                LOG.warn(XmppEndpoint.getXmppExceptionLogMessage(e));
+            } catch (SmackException e) {
+                LOG.warn(e.getMessage());
             }
         }
     }

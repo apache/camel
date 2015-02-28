@@ -26,6 +26,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class XmppBinding {
                     message.setLanguage(language);
                 } else {
                     try {
-                        message.setProperty(name, value);
+                        JivePropertiesManager.addProperty(message, name, value);
                         LOG.trace("Added property name: {} value: {}", name, value.toString());
                     } catch (IllegalArgumentException iae) {
                         if (LOG.isDebugEnabled()) {
@@ -83,7 +84,7 @@ public class XmppBinding {
 
         String id = exchange.getExchangeId();
         if (id != null) {
-            message.setProperty("exchangeId", id);
+            JivePropertiesManager.addProperty(message, "exchangeId", id);
         }
     }
 
@@ -97,7 +98,7 @@ public class XmppBinding {
             Object value = entry.getValue();
             if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
                 try {
-                    packet.setProperty(name, value);
+                    JivePropertiesManager.addProperty(packet, name, value);
                     LOG.debug("Added property name: " + name + " value: " + value.toString());
                 } catch (IllegalArgumentException iae) {
                     LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
@@ -106,7 +107,7 @@ public class XmppBinding {
         }
         String id = exchange.getExchangeId();
         if (id != null) {
-            packet.setProperty("exchangeId", id);
+            JivePropertiesManager.addProperty(packet, "exchangeId", id);
         }
     }
 
@@ -130,8 +131,8 @@ public class XmppBinding {
     public Map<String, Object> extractHeadersFromXmpp(Packet xmppPacket, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
-        for (String name : xmppPacket.getPropertyNames()) {
-            Object value = xmppPacket.getProperty(name);
+        for (String name : JivePropertiesManager.getPropertiesNames(xmppPacket)) {
+            Object value = JivePropertiesManager.getProperty(xmppPacket, name);
 
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.put(name, value);
