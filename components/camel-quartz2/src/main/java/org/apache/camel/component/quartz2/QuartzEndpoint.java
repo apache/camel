@@ -29,6 +29,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -54,30 +55,30 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  * call back into {@link #onConsumerStart(QuartzConsumer)} to add/resume or {@link #onConsumerStop(QuartzConsumer)}
  * to pause the scheduler trigger.
  */
-@UriEndpoint(scheme = "quartz2", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
+@UriEndpoint(scheme = "quartz2", syntax = "quartz2:groupName/triggerName", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
-    @UriPath
+    @UriPath(defaultValue = "Camel")
     private String groupName;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String triggerName;
     @UriParam
     private String cron;
     private LoadBalancer consumerLoadBalancer;
     private Map<String, Object> triggerParameters;
     private Map<String, Object> jobParameters;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean stateful;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean fireNow;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pauseJob;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean durableJob;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean recoverableJob;
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
@@ -86,7 +87,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     /** If it is true, the CamelContext name is used,
      *  if it is false, use the CamelContext management name which could be changed during the deploy time 
      **/
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean usingFixedCamelContextName;
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.

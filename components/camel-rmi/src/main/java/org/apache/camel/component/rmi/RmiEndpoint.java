@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -36,13 +37,18 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "rmi", consumerClass = RmiConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "rmi", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
 public class RmiEndpoint extends DefaultEndpoint {
 
     private ClassLoader classLoader;
-    private int port;
-    @UriPath
     private URI uri;
+
+    @UriPath
+    private String hostname;
+    @UriPath
+    private int port;
+    @UriPath @Metadata(required = "true")
+    private String name;
     @UriParam
     private List<Class<?>> remoteInterfaces;
     @UriParam

@@ -29,6 +29,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import quickfix.Message;
 import quickfix.SessionID;
 
-@UriEndpoint(scheme = "quickfix", consumerClass = QuickfixjConsumer.class, label = "engine,messaging")
+@UriEndpoint(scheme = "quickfix", syntax = "quickfix:configurationName", consumerClass = QuickfixjConsumer.class, label = "engine,messaging")
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
     public static final String SESSION_ID_KEY = "SessionID";
@@ -48,7 +49,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private SessionID sessionID;
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String configurationName;
 
     private final QuickfixjEngine engine;

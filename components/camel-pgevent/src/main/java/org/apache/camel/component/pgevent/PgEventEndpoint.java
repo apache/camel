@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a PgEvent endpoint.
  */
-@UriEndpoint(scheme = "pgevent", consumerClass = PgEventConsumer.class, label = "database,sql")
+@UriEndpoint(scheme = "pgevent", syntax = "pgevent:host:port/database/channel", consumerClass = PgEventConsumer.class, label = "database,sql")
 public class PgEventEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
@@ -47,13 +48,13 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private static final String FORMAT3 = "^pgevent:///(\\w+)/(\\w+).*$";
     private static final String FORMAT4 = "^pgevent:(\\w+)/(\\w+)/(\\w+).*$";
 
-    @UriPath
+    @UriPath(defaultValue = "localhost")
     private String host = "localhost";
-    @UriPath
+    @UriPath(defaultValue = "5432")
     private Integer port = 5432;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String database;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String channel;
 
     @UriParam(defaultValue = "postgres")

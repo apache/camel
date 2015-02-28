@@ -42,18 +42,19 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "rabbitmq", consumerClass = RabbitMQConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "rabbitmq", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private int portNumber;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String exchangeName;
     @UriParam(defaultValue = ConnectionFactory.DEFAULT_USER)
     private String username = ConnectionFactory.DEFAULT_USER;
@@ -94,14 +95,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private Map<String, Object> clientProperties;
     @UriParam
     private ConnectionFactory connectionFactory;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean automaticRecoveryEnabled;
     @UriParam
     private Integer networkRecoveryInterval;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean topologyRecoveryEnabled;
     //If it is true, prefetchSize, prefetchCount, prefetchGlobal will be used for basicOqs before starting RabbitMQConsumer
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean prefetchEnabled;
     //Default in RabbitMq is 0.
     @UriParam
@@ -109,7 +110,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     @UriParam
     private int prefetchCount;
     //Default value in RabbitMQ is false.
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean prefetchGlobal;
     /**
      * Number of concurrent consumer threads

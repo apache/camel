@@ -24,25 +24,26 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "openshift", consumerClass = OpenShiftConsumer.class, label = "cloud")
+@UriEndpoint(scheme = "openshift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud")
 public class OpenShiftEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String clientId;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String username;
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String password;
     @UriParam
     private String domain;
     @UriParam
     private String server;
-    @UriParam
+    @UriParam(enums = "list,start,stop,restart,state")
     private String operation;
     @UriParam
     private String application;

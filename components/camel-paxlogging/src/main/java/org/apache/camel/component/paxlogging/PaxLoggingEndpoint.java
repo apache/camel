@@ -21,16 +21,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
  * Paxlogging endpoint.
  */
-@UriEndpoint(scheme = "paxlogging", consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
+@UriEndpoint(scheme = "paxlogging", syntax = "paxlogging:appender", consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
 public class PaxLoggingEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private final String appender;
 
     public PaxLoggingEndpoint(String uri, PaxLoggingComponent component, String appender) {

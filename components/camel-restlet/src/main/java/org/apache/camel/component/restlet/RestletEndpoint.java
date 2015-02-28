@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -39,7 +40,7 @@ import org.restlet.data.Method;
  *
  * @version 
  */
-@UriEndpoint(scheme = "restlet", consumerClass = RestletConsumer.class, label = "http,rest")
+@UriEndpoint(scheme = "restlet", syntax = "restlet:protocol:host:port/uriPattern", consumerClass = RestletConsumer.class, label = "http,rest")
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final int DEFAULT_PORT = 80;
@@ -48,13 +49,13 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
-    @UriPath
+    @UriPath(enums = "http") @Metadata(required = "true")
     private String protocol = DEFAULT_PROTOCOL;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host = DEFAULT_HOST;
-    @UriPath
+    @UriPath(defaultValue = "80")
     private int port = DEFAULT_PORT;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String uriPattern;
     @UriParam(defaultValue = "" + DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
@@ -78,7 +79,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private RestletBinding restletBinding;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableStreamCache;
     @UriParam
     private SSLContextParameters sslContextParameters;

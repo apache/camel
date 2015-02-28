@@ -26,6 +26,7 @@ import org.apache.camel.ShutdownableService;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "quartz", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
+@UriEndpoint(scheme = "quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
@@ -53,15 +54,15 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private Trigger trigger;
     private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
-    @UriPath
+    @UriPath(defaultValue = "Camel")
     private String groupName;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String timerName;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean stateful;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pauseJob;
     /** If it is true, the CamelContext name is used,
      *  if it is false, use the CamelContext management name which could be changed during the deploy time 
