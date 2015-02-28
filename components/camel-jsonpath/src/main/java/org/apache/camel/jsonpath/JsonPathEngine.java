@@ -23,9 +23,13 @@ import java.net.URL;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileConverter;
 
 public class JsonPathEngine {
 
@@ -40,7 +44,13 @@ public class JsonPathEngine {
     public Object read(Exchange exchange) throws IOException, InvalidPayloadException {
         Object json = exchange.getIn().getBody();
 
-        if (json instanceof WrappedFile) {
+        if (json instanceof GenericFile) {
+            try {
+                json = GenericFileConverter.genericFileToInputStream((GenericFile<?>)json, exchange);
+            } catch (NoTypeConversionAvailableException e) {
+                json = ((WrappedFile<?>)json).getFile();
+            }
+        } else if (json instanceof WrappedFile) {
             json = ((WrappedFile<?>) json).getFile();
         }
 
