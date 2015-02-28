@@ -26,6 +26,7 @@ import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import org.apache.camel.Component;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -34,14 +35,14 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "xquery", label = "transformation")
+@UriEndpoint(scheme = "xquery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
 
     private volatile XQueryBuilder xquery;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String resourceUri;
     @UriParam
     private Configuration configuration;
@@ -61,7 +62,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     private boolean stripsAllWhiteSpace = true;
     @UriParam
     private ModuleURIResolver moduleURIResolver;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowStAX;
     @UriParam
     private String headerName;

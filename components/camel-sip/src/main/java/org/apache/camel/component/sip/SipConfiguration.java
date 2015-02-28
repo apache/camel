@@ -46,6 +46,7 @@ import javax.sip.header.ViaHeader;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
 public class SipConfiguration {    
     private static final Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
     private static final String IMPLEMENTATION = "gov.nist";
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI uri;
     private Map<String, Object> parameters;
     private SipComponent component;

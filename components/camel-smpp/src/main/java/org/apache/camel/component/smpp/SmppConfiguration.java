@@ -41,9 +41,9 @@ import org.slf4j.LoggerFactory;
 public class SmppConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(SmppConfiguration.class);
 
-    @UriPath
+    @UriPath(defaultValue = "localhost")
     private String host = "localhost";
-    @UriPath
+    @UriPath(defaultValue = "2775")
     private Integer port = 2775;
     @UriParam(defaultValue = "smppclient")
     private String systemId = "smppclient";

@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "sip", label = "messaging")
+@UriEndpoint(scheme = "sip", syntax = "sip:uri", label = "messaging")
 public class SipEndpoint extends DefaultEndpoint {
     @UriParam
     private SipConfiguration configuration;

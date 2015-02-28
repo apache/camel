@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -39,7 +40,7 @@ public class RouteboxConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
     private URI uri;
     private String authority;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String routeboxName;
     @UriParam
     private URI consumerUri;

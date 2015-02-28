@@ -24,18 +24,20 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents a Salesforce endpoint.
  */
-@UriEndpoint(scheme = "salesforce", consumerClass = SalesforceConsumer.class)
+@UriEndpoint(scheme = "salesforce", syntax = "salesforce:operationName:topicName", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
+    @UriPath
+    private final OperationName operationName;
+    @UriPath
+    private final String topicName;
     @UriParam
     private final SalesforceEndpointConfig config;
-
-    private final OperationName operationName;
-    private final String topicName;
 
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent,
                               SalesforceEndpointConfig config, OperationName operationName, String topicName) {

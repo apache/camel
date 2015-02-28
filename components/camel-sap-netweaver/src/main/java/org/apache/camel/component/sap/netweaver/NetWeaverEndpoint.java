@@ -21,14 +21,15 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "sap-netweaver", producerOnly = true, label = "sap")
+@UriEndpoint(scheme = "sap-netweaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String url;
     @UriParam(defaultValue = "true")
     private boolean json = true;

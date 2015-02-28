@@ -31,6 +31,7 @@ import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -40,15 +41,17 @@ import org.slf4j.LoggerFactory;
 /**
  * A JMS Endpoint
  */
-@UriEndpoint(scheme = "sjms", consumerClass = SjmsConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "sjms", syntax = "sjms:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @UriPath
+    @UriPath(enums = "queue,topic", defaultValue = "queue")
+    private String destinationType;
+    @UriPath @Metadata(required = "true")
     private String destinationName;
     @UriParam(defaultValue = "true")
     private boolean synchronous = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transacted;
     @UriParam
     private String namedReplyTo;

@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -35,7 +36,7 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
-@UriEndpoint(scheme = "snmp", consumerOnly = true, label = "monitoring")
+@UriEndpoint(scheme = "snmp", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -49,12 +50,12 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     private transient String address;
 
-    @UriPath
-    private String protocol = "udp";
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private Integer port;
+    @UriParam(defaultValue = "udp")
+    private String protocol = "udp";
     @UriParam(defaultValue = "" + DEFAULT_SNMP_RETRIES)
     private int retries = DEFAULT_SNMP_RETRIES;
     @UriParam(defaultValue = "" + DEFAULT_SNMP_TIMEOUT)

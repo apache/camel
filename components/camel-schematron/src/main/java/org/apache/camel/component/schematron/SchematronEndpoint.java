@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,14 +38,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Schematron Endpoint.
  */
-@UriEndpoint(scheme = "schematron", producerOnly = true, label = "validation")
+@UriEndpoint(scheme = "schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private Logger logger = LoggerFactory.getLogger(SchematronEndpoint.class);
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String path;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean abort;
     @UriParam
     private Templates rules;

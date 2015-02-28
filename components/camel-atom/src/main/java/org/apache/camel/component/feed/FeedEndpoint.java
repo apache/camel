@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
@@ -32,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     protected String feedUri;
     @UriParam(defaultValue = "true")
     protected boolean splitEntries = true;
@@ -42,7 +43,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     protected boolean filter = true;
     @UriParam(defaultValue = "true")
     private boolean feedHeader = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean sortEntries;
     @UriParam(defaultValue = "true")
     private boolean throttleEntries = true;
