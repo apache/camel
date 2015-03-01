@@ -79,7 +79,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Set<String> injectedTypes = new HashSet<>();
+        Set<String> injectedTypes = new HashSet<String>();
         File rootDir = new File(camelCoreDir, Constants.PATH_TO_MODEL_DIR);
         DomFinder domFinder = new DomFinder();
         DocumentationEnricher documentationEnricher = new DocumentationEnricher();
@@ -104,7 +104,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
                 }
             }
             saveToFile(document, outputCamelSchemaFile, buildTransformer());
-        } catch (XPathExpressionException | IOException e) {
+        } catch (XPathExpressionException e) {
+            throw new MojoExecutionException("Error during documentation enrichment", e);
+        } catch (IOException e) {
             throw new MojoExecutionException("Error during documentation enrichment", e);
         }
     }
@@ -134,7 +136,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private Map<String, String> buildTypeToNameMap(NodeList elementsAndTypes) {
-        Map<String, String> typeToNameMap = new HashMap<>();
+        Map<String, String> typeToNameMap = new HashMap<String, String>();
         for (int i = 0; i < elementsAndTypes.getLength(); i++) {
             Element item = (Element) elementsAndTypes.item(i);
             String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
@@ -180,7 +182,11 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         try {
             builder = factory.newDocumentBuilder();
             result =  builder.parse(xml);
-        } catch (SAXException | ParserConfigurationException | IOException  e) {
+        } catch (SAXException e) {
+            throw new MojoExecutionException("Error during building a document", e);
+        } catch (ParserConfigurationException e) {
+            throw new MojoExecutionException("Error during building a document", e);
+        } catch (IOException  e) {
             throw new MojoExecutionException("Error during building a document", e);
         }
         return result;
@@ -191,7 +197,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
             StreamResult result = new StreamResult(new FileOutputStream(outputFile));
             DOMSource source = new DOMSource(document);
             transformer.transform(source, result);
-        } catch (FileNotFoundException | TransformerException e) {
+        } catch (TransformerException e) {
+            throw new MojoExecutionException("Error during saving to file", e);
+        } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Error during saving to file", e);
         }
     }
