@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -295,13 +296,31 @@ public final class URISupport {
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */
+    @SuppressWarnings("unchecked")
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getValue() != null) {
-                String value = entry.getValue().toString();
-                if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                    value = value.substring(4, value.length() - 1);
-                    entry.setValue(value);
+                // if the value is a list then we need to iterate
+                Object value = entry.getValue();
+                if (value instanceof List) {
+                    List list = (List) value;
+                    for (int i = 0; i < list.size(); i++) {
+                        Object obj = list.get(i);
+                        if (obj != null) {
+                            String str = obj.toString();
+                            if (str.startsWith(RAW_TOKEN_START) && str.endsWith(RAW_TOKEN_END)) {
+                                str = str.substring(4, str.length() - 1);
+                                // update the string in the list
+                                list.set(i, str);
+                            }
+                        }
+                    }
+                } else {
+                    String str = entry.getValue().toString();
+                    if (str.startsWith(RAW_TOKEN_START) && str.endsWith(RAW_TOKEN_END)) {
+                        str = str.substring(4, str.length() - 1);
+                        entry.setValue(str);
+                    }
                 }
             }
         }
