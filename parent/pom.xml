@@ -250,7 +250,7 @@
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
-    <jedis-client-bundle-version>2.1.0_1</jedis-client-bundle-version>
+    <jedis-client-bundle-version>2.6.2_1</jedis-client-bundle-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
     <jetty8-version>8.1.16.v20140903</jetty8-version>
@@ -359,7 +359,6 @@
     <oncrpc-version>1.1.2</oncrpc-version>
     <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
-    <opensaml-version>2.5.1_2</opensaml-version>
     <openshift-java-client-version>2.5.0.Final</openshift-java-client-version>
     <optaplanner-version>6.1.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
@@ -400,7 +399,8 @@
     <scala-maven-plugin-version>3.2.0</scala-maven-plugin-version>
     <scalatest-version>2.2.0</scalatest-version>
     <scalaxml-version>1.0.3</scalaxml-version>
-    <scribe-version>1.3.5</scribe-version>
+    <scribe-version>1.3.7</scribe-version>
+    <scribe-bundle-version>1.3.7_1</scribe-bundle-version>
     <scriptengines-version>1.1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
     <servicemix-specs-version>2.2.0</servicemix-specs-version>
