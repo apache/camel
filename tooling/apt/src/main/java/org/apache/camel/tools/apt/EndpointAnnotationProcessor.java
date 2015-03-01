@@ -331,7 +331,11 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
     protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
-        model.setSyntax(uriEndpoint.syntax());
+
+        // if the scheme is an alias then replace the scheme name from the syntax with the alias
+        String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
+
+        model.setSyntax(syntax);
         model.setLabel(label);
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());

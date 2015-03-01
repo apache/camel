@@ -48,6 +48,20 @@ final class Strings {
     }
 
     /**
+     * Returns the string after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     */
+    public static String after(String text, String after) {
+        if (!text.contains(after)) {
+            return null;
+        }
+        return text.substring(text.indexOf(after) + after.length());
+    }
+
+    /**
      * Returns the canonical class name by removing any generic type information.
      */
     public static String canonicalClassName(String className) {
