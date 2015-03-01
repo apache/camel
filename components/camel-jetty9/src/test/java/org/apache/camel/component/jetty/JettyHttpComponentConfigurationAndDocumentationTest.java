@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTestSupport {
@@ -43,16 +40,6 @@ public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-        assertTrue(json.contains("\"httpClientMaxThreads\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"sessionSupport\": { \"kind\": \"parameter\", \"type\": \"boolean\", \"javaType\": \"boolean\""));
-    }
-
-    @Test
-    @Ignore // TODO Need to investigate why this fails while html is present
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("jetty");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

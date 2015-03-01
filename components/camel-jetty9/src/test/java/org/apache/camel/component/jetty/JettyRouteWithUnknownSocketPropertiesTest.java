@@ -56,7 +56,8 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"));
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(iae.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"));
         }
     }
 
