@@ -19,11 +19,13 @@ package org.apache.camel.builder.xml;
 
 import java.io.FileNotFoundException;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.xml.sax.SAXParseException;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
@@ -32,18 +34,19 @@ public class XPathFeatureTest extends ContextTestSupport {
     
     public static final String XML_DATA = " <!DOCTYPE foo [ " 
         + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
-                                              
-    
+    public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ " 
+            + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
-  
+
     public void testXPathResult() throws Exception {
         String result = (String)xpath("/").stringResult().evaluate(createExchange(XML_DATA));
         assertEquals("Get a wrong result", "  ", result);
     }
-    
+
     public void testXPath() throws Exception {
         
         // Set this feature will enable the external general entities
@@ -52,16 +55,35 @@ public class XPathFeatureTest extends ContextTestSupport {
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
-        } catch (Exception ex) {
-            assertTrue("Get a wrong exception cause.", ex instanceof InvalidXPathExpression);
-            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof XPathExpressionException);
+        } catch (TypeConversionException ex) {
+            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof RuntimeCamelException);
             assertTrue("Get a wrong exception cause.", ex.getCause().getCause() instanceof FileNotFoundException);
         } finally {
             System.clearProperty(DOM_BUILER_FACTORY_FEATRUE + ":" 
                 + "http://xml.org/sax/features/external-general-entities");
         }
     }
-    
+
+    public void testXPathNoTypeConverter() throws Exception {
+        try {
+            // define a class without type converter as document type
+            xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
+            fail("Expect an Exception here");
+        } catch (RuntimeCamelException ex) {
+            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof NoTypeConversionAvailableException);
+        }
+    }
+
+    public void testXPathResultOnInvalidData() throws Exception {
+        try {
+            xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));
+            fail("Expect an Exception here");
+        } catch (TypeConversionException ex) {
+            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof RuntimeCamelException);
+            assertTrue("Get a wrong exception cause.", ex.getCause().getCause() instanceof SAXParseException);
+        }
+    }
+
     protected Exchange createExchange(Object xml) {
         Exchange exchange = createExchangeWithBody(context, xml);
         return exchange;
