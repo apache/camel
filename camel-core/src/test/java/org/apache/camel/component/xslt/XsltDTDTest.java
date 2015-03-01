@@ -57,19 +57,25 @@ public class XsltDTDTest extends ContextTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
         assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
-        
-        
-        
+
         try {
+            endpoint.reset();
+            endpoint.expectedMessageCount(1);
+
             template.sendBody("direct:start2", message);
-            fail("Expect an exception here");
+
+            assertMockEndpointsSatisfied();
+
+            list = endpoint.getReceivedExchanges();
+            exchange = list.get(0);
+            xml = exchange.getIn().getBody(String.class);
+            assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
         } catch (Exception ex) {
             // expect an exception here
             assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
             // the file could not be found
             assertTrue("Get a wrong exception cause", ex.getCause() instanceof TransformerException);
         }
-        
     }
     
 
