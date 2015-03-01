@@ -602,6 +602,12 @@ public class XmlConverter {
                 } catch (Exception e) {
                     LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
                 }
+                try {
+                    sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                } catch (SAXException e) {
+                    LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}."
+                            , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});                
+                }
             }
             sfactory.setNamespaceAware(true);
             SAXParser parser = sfactory.newSAXParser();
