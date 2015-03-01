@@ -25,7 +25,6 @@ import java.util.Map;
 
 import com.x5.template.Chunk;
 import com.x5.template.Theme;
-
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -92,11 +91,8 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        boolean fromTemplate = false;
+        boolean fromTemplate;
         String newResourceUri = exchange.getIn().getHeader(CHUNK_RESOURCE_URI, String.class);
-        if (theme == null) {
-            theme = getOrCreateTheme();
-        }
         if (newResourceUri == null) {
             String newTemplate = exchange.getIn().getHeader(CHUNK_TEMPLATE, String.class);
             Chunk newChunk;
@@ -172,12 +168,10 @@ public class ChunkEndpoint extends ResourceEndpoint {
             if (themeFolder == null && themeSubfolder == null) {
                 theme = new Theme(); 
             } else if (themeFolder != null && themeSubfolder == null) {
-                ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
-                URL url = apcl.getResource(themeFolder);
+                URL url = getCamelContext().getClassResolver().loadResourceAsURL(themeFolder);
                 theme = new Theme(url.getPath(), "");
             } else {
-                ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
-                URL url = apcl.getResource(themeFolder);
+                URL url = getCamelContext().getClassResolver().loadResourceAsURL(themeFolder);
                 theme = new Theme(url.getPath(), themeSubfolder);
             }
             if (encoding != null) {
@@ -241,5 +235,21 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     public void setExtension(String extension) {
         this.extension = extension;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (theme == null) {
+            theme = getOrCreateTheme();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // noop
     }
 }
