@@ -1290,6 +1290,13 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
+  <feature name='camel-spark-rest' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>The camel-spark-rest feature requires Java 8 and Jetty9</details>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-jetty9</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.sparkjava-core/${spark-rest-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-spark-rest/${project.version}</bundle>
+  </feature>
   <feature name='camel-splunk' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.splunk/${splunk-version}</bundle>
