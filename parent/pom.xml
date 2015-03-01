@@ -139,7 +139,7 @@
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-version>2.9.0</ehcache-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
-    <elasticsearch-bundle-version>1.4.1_1</elasticsearch-bundle-version>
+    <elasticsearch-bundle-version>1.4.2_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.4.2</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <embedmongo-version>1.46.4</embedmongo-version>
@@ -305,8 +305,8 @@
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
-    <lucene-bundle-version>4.10.2_1</lucene-bundle-version>
-    <lucene-version>4.10.2</lucene-version>
+    <lucene-bundle-version>4.10.3_1</lucene-bundle-version>
+    <lucene-version>4.10.3</lucene-version>
     <lucene-version-range>[4.5,5)</lucene-version-range>
     <lightcouch-version>0.1.3</lightcouch-version>
     <lightcouch-bundle-version>0.1.3_1</lightcouch-bundle-version>
@@ -414,7 +414,7 @@
     <smack-version>4.0.6</smack-version>
     <snakeyaml-version>1.14</snakeyaml-version>
     <snappy-version>1.1.0.1</snappy-version>
-    <snmp4j-version>2.3.0_1</snmp4j-version>
+    <snmp4j-version>2.3.3_1</snmp4j-version>
     <solr-bundle-version>4.9.0_1</solr-bundle-version>
     <solr-version>4.9.0</solr-version>
     <solr-version-range>[4.9,5)</solr-version-range>
@@ -451,7 +451,7 @@
     <stompjms-version>1.19</stompjms-version>
     <swagger-version>1.3.12</swagger-version>
     <swagger-guava-version>15.0</swagger-guava-version>
-    <swagger-bundle-version>1.3.11_1</swagger-bundle-version>
+    <swagger-bundle-version>1.3.12_1</swagger-bundle-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
