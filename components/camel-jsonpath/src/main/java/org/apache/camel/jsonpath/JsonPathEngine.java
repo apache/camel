@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -30,6 +28,9 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConverter;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
 
 public class JsonPathEngine {
 
@@ -60,7 +61,7 @@ public class JsonPathEngine {
             return path.read(str);
         } else if (json instanceof InputStream) {
             InputStream is = (InputStream) json;
-            return path.read(is);
+            return path.read(is, Charset.defaultCharset().displayName(), configuration);
         } else if (json instanceof File) {
             File file = (File) json;
             return path.read(file);

@@ -81,7 +81,7 @@ public final class IOConverter {
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
             final BufferedReader reader = toReader(file, charset);
-            final Charset defaultStreamCharset = Charset.forName("UTF-8");
+            final Charset defaultStreamCharset = Charset.defaultCharset();
             return new InputStream() {
                 private ByteBuffer bufferBytes;
                 private CharBuffer bufferedChars = CharBuffer.allocate(4096);
