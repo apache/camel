@@ -90,6 +90,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     @Override
     public void configure(URI uri) {
         super.configure(uri);
+        // after configure the directory has been resolved, so we can use it for directoryName
+        // (directoryName is the name we use in the other file components, to use consistent name)
+        setDirectoryName(getDirectory());
         setProtocol(uri.getScheme());
         setDefaultPort();
 
