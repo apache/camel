@@ -730,7 +730,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             public Void call() throws Exception {
                 builder.addRoutesToCamelContext(DefaultCamelContext.this);
                 return null;
-            }});
+            }
+        });
     }
 
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
