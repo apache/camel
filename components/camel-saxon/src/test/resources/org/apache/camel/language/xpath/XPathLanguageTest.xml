@@ -42,7 +42,7 @@
     <route>
       <from uri="direct:testSaxonWithFactory"/>
       <setBody>
-        <xpath factoryRef="saxonFactory" documentType="org.xml.sax.InputSource" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
+        <xpath factoryRef="saxonFactory" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
       <log message="Test Saxon with factory: ${body}"/>
       <to uri="mock:testSaxonWithFactoryResult"/>
