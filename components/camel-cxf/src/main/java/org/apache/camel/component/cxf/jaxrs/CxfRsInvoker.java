@@ -19,6 +19,10 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
@@ -26,6 +30,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
+import org.apache.cxf.jaxrs.impl.HttpHeadersImpl;
+import org.apache.cxf.jaxrs.impl.RequestImpl;
+import org.apache.cxf.jaxrs.impl.SecurityContextImpl;
+import org.apache.cxf.jaxrs.impl.UriInfoImpl;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
 import org.slf4j.Logger;
@@ -74,16 +82,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                               Object[] paramArray, final Continuation continuation, Object response) throws Exception {
         synchronized (continuation) {
             if (continuation.isNew()) {
-                ExchangePattern ep = ExchangePattern.InOut;
-                if (method.getReturnType() == Void.class) {
-                    ep = ExchangePattern.InOnly;
-                } 
-                final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
-                if (response != null) {
-                    camelExchange.getOut().setBody(response);
-                }
-                CxfRsBinding binding = endpoint.getBinding();
-                binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
+                final org.apache.camel.Exchange camelExchange = prepareExchange(cxfExchange, method, paramArray, response);
                 // we want to handle the UoW
                 cxfRsConsumer.createUoW(camelExchange);
                 // Now we don't set up the timeout value
@@ -120,17 +119,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
     private Object syncInvoke(Exchange cxfExchange, final Object serviceObject, Method method,
                               Object[] paramArray,
                               Object response) throws Exception {
-        ExchangePattern ep = ExchangePattern.InOut;
-        
-        if (method.getReturnType() == Void.class) {
-            ep = ExchangePattern.InOnly;
-        } 
-        org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
-        if (response != null) {
-            camelExchange.getOut().setBody(response);
-        }
-        CxfRsBinding binding = endpoint.getBinding();
-        binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
+        final org.apache.camel.Exchange camelExchange = prepareExchange(cxfExchange, method, paramArray, response);
         // we want to handle the UoW
         cxfRsConsumer.createUoW(camelExchange);
 
@@ -145,6 +134,31 @@ public class CxfRsInvoker extends JAXRSInvoker {
         } finally {
             cxfRsConsumer.doneUoW(camelExchange);
         }
+    }
+    
+    private org.apache.camel.Exchange prepareExchange(Exchange cxfExchange, Method method,
+            Object[] paramArray, Object response) {
+        ExchangePattern ep = ExchangePattern.InOut;
+        if (method.getReturnType() == Void.class) {
+            ep = ExchangePattern.InOnly;
+        } 
+        final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
+        if (response != null) {
+            camelExchange.getOut().setBody(response);
+        }
+        CxfRsBinding binding = endpoint.getBinding();
+        binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
+        
+        // REVISIT: It can be done inside a binding but a propagateContext would need to be passed along as
+        // the CXF in message property. Question: where should this property name be set up ? 
+        if (endpoint.isPropagateContexts()) {
+            camelExchange.setProperty(UriInfo.class.getName(), new UriInfoImpl(cxfExchange.getInMessage()));
+            camelExchange.setProperty(Request.class.getName(), new RequestImpl(cxfExchange.getInMessage()));
+            camelExchange.setProperty(HttpHeaders.class.getName(), new HttpHeadersImpl(cxfExchange.getInMessage()));
+            camelExchange.setProperty(SecurityContext.class.getName(), new SecurityContextImpl(cxfExchange.getInMessage()));
+        }
+        
+        return camelExchange;
     }
     
     private Object returnResponse(Exchange cxfExchange, org.apache.camel.Exchange camelExchange) throws Exception {

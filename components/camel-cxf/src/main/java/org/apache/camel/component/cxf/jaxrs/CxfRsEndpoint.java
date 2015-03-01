@@ -121,6 +121,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @UriParam
     private boolean performInvocation;
     @UriParam
+    private boolean propagateContexts;
+    @UriParam
     private String modelRef;
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     private InterceptorHolder interceptorHolder = new InterceptorHolder();
@@ -620,5 +622,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public void setPerformInvocation(boolean performInvocation) {
         this.performInvocation = performInvocation;
+    }
+
+    public boolean isPropagateContexts() {
+        return propagateContexts;
+    }
+
+    public void setPropagateContexts(boolean propagateContexts) {
+        this.propagateContexts = propagateContexts;
     }
 }

@@ -28,7 +28,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -65,10 +67,14 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String CXF_RS_ENDPOINT_URI4 = 
             "cxfrs://http://localhost:" + CXT + "/rest4?"
             + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
-    
+    private static final String CXF_RS_ENDPOINT_URI5 = 
+            "cxfrs://http://localhost:" + CXT + "/rest5?"
+            + "propagateContexts=true&"
+            + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new TestProcessor();
         final Processor testProcessor2 = new TestProcessor2();
+        final Processor testProcessor3 = new TestProcessor3();
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(new NoErrorHandlerBuilder());
@@ -76,6 +82,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 from(CXF_RS_ENDPOINT_URI2).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI3).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI4).process(testProcessor2);
+                from(CXF_RS_ENDPOINT_URI5).process(testProcessor3);
             }
         };
     }
@@ -121,7 +128,10 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         assertEquals(333L, c.getId());
         assertEquals("Barry", c.getName());
     }
-    
+    @Test
+    public void testGetCustomerDefaultHandlerAndModelAndContexts() throws Exception {
+        doTestGetCustomer("rest5");
+    }
     private void doTestGetCustomer(String contextUri) throws Exception {
         invokeGetCustomer("http://localhost:" + CXT + "/" + contextUri + "/customerservice/customers/126",
                           "{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}");
@@ -259,6 +269,20 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     InputStream inBody = exchange.getIn().getBody(InputStream.class);
                     exchange.getOut().setBody(Response.ok(inBody).build());
                 } 
+            }
+        }
+            
+    }
+    private static class TestProcessor3 extends AbstractTestProcessor {
+        public void process(Exchange exchange) throws Exception {
+            UriInfo ui = exchange.getProperty(UriInfo.class.getName(), UriInfo.class);
+            String path = ui.getPath();
+            
+            Request req = exchange.getProperty(Request.class.getName(), Request.class);
+            String httpMethod = req.getMethod();
+            
+            if (path.startsWith("customerservice/customers") && HttpMethod.GET.equals(httpMethod)) {
+                processGetCustomer(exchange);
             }
         }
             
