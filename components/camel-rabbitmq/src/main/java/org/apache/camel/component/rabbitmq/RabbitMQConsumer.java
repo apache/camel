@@ -184,13 +184,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             mergeAmqpProperties(exchange, properties);
 
-            Message msg;
-            if (exchange.hasOut()) {
-                msg = exchange.getOut();
-            } else {
-                msg = exchange.getIn();
-            }
-
             boolean sendReply = properties.getReplyTo() != null;
             if (sendReply && !exchange.getPattern().isOutCapable()) {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -202,6 +195,14 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 consumer.getProcessor().process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
+            }
+
+            // obtain the message after processing
+            Message msg;
+            if (exchange.hasOut()) {
+                msg = exchange.getOut();
+            } else {
+                msg = exchange.getIn();
             }
 
             if (!exchange.isFailed()) {
