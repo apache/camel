@@ -25,11 +25,12 @@ import static java.lang.System.lineSeparator;
  * This class provides utility methods for the unit tests
  */
 final class UniVocityTestHelper {
-    
+
     private UniVocityTestHelper() {
         // Helper class
     }
-     /**
+
+    /**
      * Creates a Map with the given key values
      *
      * @param keyValues the key values
@@ -40,7 +41,7 @@ final class UniVocityTestHelper {
             throw new IllegalArgumentException("You must specify key values with an even number.");
         }
 
-        Map<String, String> result = new LinkedHashMap<>(keyValues.length / 2);
+        Map<String, String> result = new LinkedHashMap<String, String>(keyValues.length / 2);
         for (int i = 0; i < keyValues.length; i += 2) {
             result.put(keyValues[i], keyValues[i + 1]);
         }

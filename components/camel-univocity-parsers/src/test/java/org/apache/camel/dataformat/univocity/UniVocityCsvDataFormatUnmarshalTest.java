@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
@@ -149,7 +148,7 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<>();
+        final Map<String, DataFormat> tests = new HashMap<String, DataFormat>();
 
         // Default reading of CSV
         tests.put("default", new UniVocityCsvDataFormat());

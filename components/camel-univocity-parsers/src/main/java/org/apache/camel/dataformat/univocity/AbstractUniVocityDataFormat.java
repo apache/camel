@@ -29,9 +29,9 @@ import com.univocity.parsers.common.CommonParserSettings;
 import com.univocity.parsers.common.CommonSettings;
 import com.univocity.parsers.common.CommonWriterSettings;
 import com.univocity.parsers.common.Format;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+
 import static org.apache.camel.util.IOHelper.getCharsetName;
 
 /**
@@ -48,7 +48,7 @@ import static org.apache.camel.util.IOHelper.getCharsetName;
  * @param <DF>  the data format class (for providing a fluent API)
  */
 public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends CommonWriterSettings<F>,
-    W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>> implements DataFormat {
+        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>, DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>> implements DataFormat {
     protected String nullValue;
     protected Boolean skipEmptyLines;
     protected Boolean ignoreTrailingWhitespaces;
@@ -83,13 +83,16 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
             synchronized (writerSettingsToken) {
                 if (writerSettings == null) {
                     writerSettings = createAndConfigureWriterSettings();
-                    marshaller = new Marshaller<>(headers, headers == null);
+                    marshaller = new Marshaller<W>(headers, headers == null);
                 }
             }
         }
 
-        try (Writer writer = new OutputStreamWriter(stream, getCharsetName(exchange))) {
+        Writer writer = new OutputStreamWriter(stream, getCharsetName(exchange));
+        try {
             marshaller.marshal(exchange, body, createWriter(writer, writerSettings));
+        } finally {
+            writer.close();
         }
     }
 
@@ -107,16 +110,19 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
                             return createAndConfigureParserSettings();
                         }
                     };
-                    unmarshaller = new Unmarshaller<>(lazyLoad, asMap);
+                    unmarshaller = new Unmarshaller<P>(lazyLoad, asMap);
                 }
             }
         }
 
-        try (Reader reader = new InputStreamReader(stream, getCharsetName(exchange))) {
+        Reader reader = new InputStreamReader(stream, getCharsetName(exchange));
+        try {
             HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
             CPS settings = parserSettings.get();
             settings.setRowProcessor(headerRowProcessor);
             return unmarshaller.unmarshal(reader, createParser(settings), headerRowProcessor);
+        } finally {
+            reader.close();
         }
     }
 

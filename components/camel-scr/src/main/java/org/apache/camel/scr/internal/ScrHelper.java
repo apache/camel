@@ -37,6 +37,8 @@ import org.w3c.dom.NodeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// CHECKSTYLE:OFF
+// turn off checkstyle as it fails internally
 
 /**
  * Helper class.
@@ -68,7 +70,6 @@ public final class ScrHelper {
                         } catch (XPathExpressionException e) {
                             // ignore
                             LOG.debug("Error evaluating xpath to obtain namespace prefix. This exception is ignored and using namespace: http://www.osgi.org/xmlns/scr/v1.1.0", e);
-
                         }
                         return "http://www.osgi.org/xmlns/scr/v1.1.0";
                     default:
@@ -108,3 +109,5 @@ public final class ScrHelper {
     }
 
 }
+// CHECKSTYLE:ON
+

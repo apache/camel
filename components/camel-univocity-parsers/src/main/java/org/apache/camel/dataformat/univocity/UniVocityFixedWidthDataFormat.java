@@ -30,7 +30,7 @@ import com.univocity.parsers.fixed.FixedWidthWriterSettings;
  * This class is the data format that uses the fixed-width uniVocity parser.
  */
 public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings,
-    FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedWidthDataFormat> {
+        FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedWidthDataFormat> {
     protected int[] fieldLengths;
     protected Boolean skipTrailingCharsUntilNewline;
     protected Boolean recordEndsOnNewline;
@@ -207,7 +207,7 @@ public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<F
         if (fieldLengths.length != headers.length) {
             throw new IllegalArgumentException("The headers and fieldLengths must have the same number of element in order to use the fixed-width format.");
         }
-        LinkedHashMap<String, Integer> fields = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> fields = new LinkedHashMap<String, Integer>();
         for (int i = 0; i < headers.length; i++) {
             fields.put(headers[i], fieldLengths[i]);
         }
