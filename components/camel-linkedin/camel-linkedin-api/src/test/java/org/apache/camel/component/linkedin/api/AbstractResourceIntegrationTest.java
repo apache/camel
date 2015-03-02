@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for resource tests.
  */
-public class AbstractResourceIntegrationTest extends Assert {
+public abstract class AbstractResourceIntegrationTest extends Assert {
 
     protected static final Logger LOG = LoggerFactory.getLogger(PeopleResourceIntegrationTest.class);
     protected static final String DEFAULT_FIELDS = "";
