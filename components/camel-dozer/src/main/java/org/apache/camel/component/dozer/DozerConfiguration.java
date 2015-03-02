@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dozer;
 
+import org.apache.camel.converter.dozer.DozerBeanMapperConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -37,10 +38,12 @@ public class DozerConfiguration {
     private String unmarshalId;
     @UriParam
     private String sourceModel;
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String targetModel;
     @UriParam(defaultValue = DEFAULT_MAPPING_FILE)
     private String mappingFile;
+    @UriParam
+    private DozerBeanMapperConfiguration mappingConfiguration;
     
     public DozerConfiguration() {
         setMappingFile(DEFAULT_MAPPING_FILE);
@@ -92,5 +95,13 @@ public class DozerConfiguration {
 
     public void setMappingFile(String mappingFile) {
         this.mappingFile = mappingFile;
+    }
+    
+    public DozerBeanMapperConfiguration getMappingConfiguration() {
+        return mappingConfiguration;
+    }
+
+    public void setMappingConfiguration(DozerBeanMapperConfiguration mappingConfiguration) {
+        this.mappingConfiguration = mappingConfiguration;
     }
 }

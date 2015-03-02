@@ -20,7 +20,7 @@ package org.apache.camel.component.dozer;
  * Used to map literal values (e.g. "ACME" or "ABC-123") to a field in the 
  * target object.
  */
-public class LiteralMapper extends BaseConverter {
+public class VariableMapper extends BaseConverter {
      
     @Override
     public Object convert(Object existingDestinationFieldValue, 

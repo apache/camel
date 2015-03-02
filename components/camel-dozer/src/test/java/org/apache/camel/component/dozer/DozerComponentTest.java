@@ -49,4 +49,16 @@ public class DozerComponentTest {
         Assert.assertEquals(TARGET_MODEL, config.getTargetModel());
         Assert.assertEquals(DOZER_CONFIG_PATH, config.getMappingFile());
     }
+    
+    @Test
+    public void requiredTargetModelMissing() throws Exception {
+        DozerComponent comp = new DozerComponent();
+        comp.setCamelContext(new DefaultCamelContext());
+        try {
+            comp.createEndpoint("dozer:noTargetModel?mappingFile=mapping.xml");
+            Assert.fail("targetModel is a required parameter");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
 }

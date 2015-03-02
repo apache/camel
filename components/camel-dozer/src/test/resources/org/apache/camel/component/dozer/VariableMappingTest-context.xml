@@ -18,20 +18,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
    <!-- Camel route -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-	  <endpoint uri="dozer:java2java?mappingConfiguration=#mapConfig&amp;targetModel=org.apache.camel.component.dozer.example.xyz.XYZOrder" id="java2java"/>
-	  <route>
-	      <from uri="direct:start"/>
-	      <to ref="java2java"/>
-	      <to uri="mock:result"/>
-	  </route>
-    </camelContext>
-    
-    <bean id="mapConfig" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">
-      <property name="mappingFiles">
-        <list>
-          <value>org/apache/camel/component/dozer/customMapping.xml</value>
-        </list>
-      </property>
-    </bean>
+   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <endpoint uri="dozer:java2java?mappingFile=org/apache/camel/component/dozer/variableMapping.xml&amp;targetModel=org.apache.camel.component.dozer.example.xyz.XYZOrder&amp;sourceModel=org.apache.camel.component.dozer.example.abc.ABCOrder" id="java2java"/>
+    <route>
+        <from uri="direct:start"/>
+        <to ref="java2java"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
 </beans>

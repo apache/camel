@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class LiteralMappingTest {
+public class VariableMappingTest {
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
@@ -61,7 +61,7 @@ public class LiteralMappingTest {
         resultEndpoint.assertIsSatisfied();
         XYZOrder result = resultEndpoint.getExchanges().get(0).getIn().getBody(XYZOrder.class);
         Assert.assertEquals(result.getPriority(), "GOLD");
-        Assert.assertEquals(result.getCustId(), "LITERAL_CUST_ID");
-        Assert.assertEquals(result.getOrderId(), "LITERAL_ORDER_ID");
+        Assert.assertEquals("ACME-SALES", result.getCustId());
+        Assert.assertEquals("W123-EG", result.getOrderId());
     }
 }
