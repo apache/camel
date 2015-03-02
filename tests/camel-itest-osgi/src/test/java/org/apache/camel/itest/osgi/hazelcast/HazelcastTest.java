@@ -120,7 +120,7 @@ public class HazelcastTest extends OSGiIntegrationTestSupport {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components
-            loadCamelFeatures("camel-hazelcast"));
+            loadCamelFeatures("camel-script", "camel-hazelcast"));
 
         return options;
     }
