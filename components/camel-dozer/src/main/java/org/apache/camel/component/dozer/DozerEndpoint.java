@@ -24,6 +24,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.converter.dozer.DozerTypeConverterLoader;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,11 +41,13 @@ public class DozerEndpoint extends DefaultEndpoint {
 
     // IDs for built-in custom converters used with the Dozer component
     private static final String CUSTOM_MAPPING_ID = "_customMapping";
-    private static final String LITERAL_MAPPING_ID = "_literalMapping";
+    private static final String VARIABLE_MAPPING_ID = "_variableMapping";
+    private static final String EXPRESSION_MAPPING_ID = "_expressionMapping";
 
     private DozerBeanMapper mapper;
-    private LiteralMapper literalMapper;
+    private VariableMapper variableMapper;
     private CustomMapper customMapper;
+    private ExpressionMapper expressionMapper;
 
     @UriParam
     private DozerConfiguration configuration;
@@ -52,8 +55,9 @@ public class DozerEndpoint extends DefaultEndpoint {
     public DozerEndpoint(String endpointUri, Component component, DozerConfiguration configuration) throws Exception {
         super(endpointUri, component);
         this.configuration = configuration;
-        literalMapper = new LiteralMapper();
+        variableMapper = new VariableMapper();
         customMapper = new CustomMapper(getCamelContext().getClassResolver());
+        expressionMapper = new ExpressionMapper();
     }
 
     @Override
@@ -87,8 +91,12 @@ public class DozerEndpoint extends DefaultEndpoint {
         return customMapper;
     }
     
-    LiteralMapper getLiteralMapper() {
-        return literalMapper;
+    VariableMapper getVariableMapper() {
+        return variableMapper;
+    }
+    
+    ExpressionMapper getExpressionMapper() {
+        return expressionMapper;
     }
 
     @Override
@@ -96,7 +104,13 @@ public class DozerEndpoint extends DefaultEndpoint {
         super.doStart();
 
         if (mapper == null) {
-            mapper = createDozerBeanMapper();
+            if (configuration.getMappingConfiguration() != null) {
+                mapper = DozerTypeConverterLoader.createDozerBeanMapper(
+                        configuration.getMappingConfiguration());
+            } else {
+                mapper = createDozerBeanMapper();
+            }
+            configureMapper(mapper);
         }
     }
 
@@ -105,7 +119,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         super.doStop();
         // noop
     }
-
+    
     private DozerBeanMapper createDozerBeanMapper() throws Exception {
         DozerBeanMapper answer = new DozerBeanMapper();
         InputStream mapStream = null;
@@ -114,18 +128,20 @@ public class DozerEndpoint extends DefaultEndpoint {
             // create the mapper instance and add the mapping file
             mapStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configuration.getMappingFile());
             answer.addMapping(mapStream);
-            
-            // add our built-in converters
-            Map<String, CustomConverter> converters = new HashMap<String, CustomConverter>();
-            converters.put(CUSTOM_MAPPING_ID, customMapper);
-            converters.put(LITERAL_MAPPING_ID, literalMapper);
-            converters.putAll(answer.getCustomConvertersWithId());
-            answer.setCustomConvertersWithId(converters);
-            
         } finally {
             IOHelper.close(mapStream);
         }
 
         return answer;
+    }
+
+    private void configureMapper(DozerBeanMapper mapper) throws Exception {
+        // add our built-in converters
+        Map<String, CustomConverter> converters = new HashMap<String, CustomConverter>();
+        converters.put(CUSTOM_MAPPING_ID, customMapper);
+        converters.put(VARIABLE_MAPPING_ID, variableMapper);
+        converters.put(EXPRESSION_MAPPING_ID, expressionMapper);
+        converters.putAll(mapper.getCustomConvertersWithId());
+        mapper.setCustomConvertersWithId(converters);
     }
 }

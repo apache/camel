@@ -16,6 +16,12 @@
   limitations under the License.
 -->
 <mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+    <configuration>
+        <variables>
+            <variable name="CUST_ID">ACME-SALES</variable>
+            <variable name="ORDER_ID">W123-EG</variable>
+        </variables>
+    </configuration>
     <mapping>
         <class-a>org.apache.camel.component.dozer.example.abc.ABCOrder</class-a>
         <class-b>org.apache.camel.component.dozer.example.xyz.XYZOrder</class-b>
@@ -29,13 +35,13 @@
         </field>
     </mapping>
     <mapping>
-        <class-a>org.apache.camel.component.dozer.LiteralMapper</class-a>
+        <class-a>org.apache.camel.component.dozer.VariableMapper</class-a>
         <class-b>org.apache.camel.component.dozer.example.xyz.XYZOrder</class-b>
-        <field custom-converter-id="_literalMapping" custom-converter-param="LITERAL_CUST_ID">
+        <field custom-converter-id="_variableMapping" custom-converter-param="${CUST_ID}">
             <a>literal</a>
             <b>custId</b>
         </field>
-        <field custom-converter-id="_literalMapping" custom-converter-param="LITERAL_ORDER_ID">
+        <field custom-converter-id="_variableMapping" custom-converter-param="${ORDER_ID}">
             <a>literal</a>
             <b>orderId</b>
         </field>

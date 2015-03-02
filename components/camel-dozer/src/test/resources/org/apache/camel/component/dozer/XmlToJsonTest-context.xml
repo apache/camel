@@ -19,7 +19,7 @@
 
    <!-- Camel route -->
    <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <endpoint uri="dozer:xml2json?mappingFile=org/apache/camel/component/dozer/dozerBeanMapping.xml&amp;marshalId=myjson&amp;unmarshalId=myjaxb&amp;targetModel=org.apache.camel.component.dozer.example.xyz.XYZOrder" id="xml2json"/>
+    <endpoint uri="dozer:xml2json?mappingFile=org/apache/camel/component/dozer/dozerBeanMapping.xml&amp;marshalId=myjson&amp;unmarshalId=myjaxb&amp;targetModel=org.apache.camel.component.dozer.example.xyz.XYZOrder&amp;sourceModel=org.apache.camel.component.dozer.example.abc.ABCOrder" id="xml2json"/>
     <dataFormats>
         <json library="Jackson" id="myjson"/>
         <jaxb contextPath="org.apache.camel.component.dozer.example.abc" id="myjaxb"/>

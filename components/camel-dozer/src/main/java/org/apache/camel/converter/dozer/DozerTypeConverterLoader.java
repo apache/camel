@@ -228,7 +228,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
      * @param configuration  the dozer bean mapper configuration.
      * @return the created mapper
      */
-    protected DozerBeanMapper createDozerBeanMapper(DozerBeanMapperConfiguration configuration) {
+    public static DozerBeanMapper createDozerBeanMapper(DozerBeanMapperConfiguration configuration) {
         DozerBeanMapper mapper;
         if (configuration.getMappingFiles() != null) {
             mapper = new DozerBeanMapper(configuration.getMappingFiles());

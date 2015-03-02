@@ -58,14 +58,30 @@ public class DozerProducer extends DefaultProducer {
         // Load the target model class
         Class<?> targetModel = endpoint.getCamelContext().getClassResolver().resolveClass(
                 endpoint.getConfiguration().getTargetModel());
-        // If an unmarshaller was used, the unmarshalled message is the OUT
-        // message.
+        
+        // If an unmarshaller was used, the unmarshalled message is the OUT message.
         Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        
+        // Convert to source model, if specified
+        String sourceType = endpoint.getConfiguration().getSourceModel();
+        if (sourceType != null) {
+            LOG.debug("Converting to source model {}.", sourceType);
+            Class<?> sourceModel = endpoint.getCamelContext()
+                    .getClassResolver().resolveClass(sourceType);
+            if (sourceModel == null) {
+                throw new Exception("Unable to load sourceModel class: " + sourceType);
+            }
+            msg.setBody(msg.getBody(sourceModel));
+        }
+        
+        // Perform mappings
         LOG.debug("Mapping to target model {}.", targetModel.getName());
-        // Trigger the Dozer mapping and set that as the content of the IN message
         Object targetObject = endpoint.getMapper().map(msg.getBody(), targetModel);
         // Second pass to process literal mappings
-        endpoint.getMapper().map(endpoint.getLiteralMapper(), targetObject);
+        endpoint.getMapper().map(endpoint.getVariableMapper(), targetObject);
+        // Third pass to process expression mappings
+        endpoint.getExpressionMapper().setCurrentExchange(exchange);
+        endpoint.getMapper().map(endpoint.getExpressionMapper(), targetObject);
         msg.setBody(targetObject);
         exchange.setIn(msg);
         
