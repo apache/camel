@@ -25,7 +25,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
     ">
 
-    <util:constant id="test" static-field="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurerTest.CONSTANT"/>  
+    <util:constant id="test" static-field="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurerUtilIssueTest.CONSTANT"/>
     
     <bean id="bridgePropertyPlaceHolder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
       <property name="locations">
