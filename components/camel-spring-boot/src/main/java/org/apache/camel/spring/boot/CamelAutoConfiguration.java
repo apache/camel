@@ -83,6 +83,8 @@ public class CamelAutoConfiguration {
         return camelContext.createConsumerTemplate(configurationProperties.getConsumerTemplateCacheSize());
     }
 
+    // SpringCamelContext integration
+
     @Bean
     PropertiesParser propertiesParser() {
         return new SpringPropertiesParser();
