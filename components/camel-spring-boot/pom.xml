@@ -88,12 +88,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
             <version>${spring-boot-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-netty-http</artifactId>
+            <artifactId>camel-netty4-http</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

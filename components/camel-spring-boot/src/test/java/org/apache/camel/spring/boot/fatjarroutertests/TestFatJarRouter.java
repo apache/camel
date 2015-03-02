@@ -25,7 +25,8 @@ public class TestFatJarRouter extends FatJarRouter {
 
     @Override
     public void configure() throws Exception {
-        from("netty-http:http://0.0.0.0:{{http.port}}").setBody().simple("ref:stringBean");
+        from("netty4-http:http://0.0.0.0:{{http.port}}").
+                setBody().simple("ref:stringBean");
     }
 
     @Bean
