@@ -42,8 +42,8 @@ public class NettyComponentConfigurationAndDocumentationTest extends CamelTestSu
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"type\": \"string\""));
+        
+        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\""));
         assertTrue(json.contains("\"producerPoolMinEvictableIdle\": { \"kind\": \"parameter\", \"type\": \"integer\""));
         assertTrue(json.contains("\"allowDefaultCodec\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
