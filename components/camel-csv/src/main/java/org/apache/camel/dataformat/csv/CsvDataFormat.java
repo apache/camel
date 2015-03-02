@@ -22,7 +22,6 @@ import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 

@@ -25,7 +25,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
@@ -41,8 +40,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(
-                String.class);
+        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
         String[] lines = body.split(System.lineSeparator());
         assertEquals(2, lines.length);
         assertEquals("123|Camel in Action|1", lines[0].trim());
@@ -50,15 +48,15 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
     }
 
     private List<Map<String, Object>> createBody() {
-        List<Map<String, Object>> data = new ArrayList<>();
+        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 
-        Map<String, Object> row1 = new LinkedHashMap<>();
+        Map<String, Object> row1 = new LinkedHashMap<String, Object>();
         row1.put("orderId", 123);
         row1.put("item", "Camel in Action");
         row1.put("amount", 1);
         data.add(row1);
 
-        Map<String, Object> row2 = new LinkedHashMap<>();
+        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
         row2.put("orderId", 124);
         row2.put("item", "ActiveMQ in Action");
         row2.put("amount", 2);
@@ -73,8 +71,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
             public void configure() throws Exception {
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|').setHeaderDisabled(true);
 
-                from("direct:start").marshal(csv).convertBodyTo(String.class)
-                        .to("mock:result");
+                from("direct:start").marshal(csv).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

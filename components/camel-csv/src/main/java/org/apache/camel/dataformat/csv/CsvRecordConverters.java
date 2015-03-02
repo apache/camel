@@ -46,7 +46,7 @@ final class CsvRecordConverters {
 
         @Override
         public List<String> convertRecord(CSVRecord record) {
-            List<String> answer = new ArrayList<>(record.size());
+            List<String> answer = new ArrayList<String>(record.size());
             for (int i = 0; i < record.size(); i++) {
                 answer.add(record.get(i));
             }

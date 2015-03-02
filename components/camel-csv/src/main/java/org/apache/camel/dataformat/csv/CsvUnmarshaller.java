@@ -41,7 +41,7 @@ abstract class CsvUnmarshaller {
         this.format = format;
         this.converter = extractConverter(dataFormat);
     }
-    
+
     public static CsvUnmarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
         // If we want to use maps, thus the header must be either fixed or automatic
         if (dataFormat.isUseMaps() && format.getHeader() == null) {
@@ -89,13 +89,16 @@ abstract class CsvUnmarshaller {
         }
 
         public Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException {
-            try (CSVParser parser = new CSVParser(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)), format)) {
+            CSVParser parser = new CSVParser(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)), format);
+            try {
                 return asList(parser.iterator(), converter);
+            } finally {
+                IOHelper.close(parser);
             }
         }
 
         private <T> List<T> asList(Iterator<CSVRecord> iterator, CsvRecordConverter<T> converter) {
-            List<T> answer = new ArrayList<>();
+            List<T> answer = new ArrayList<T>();
             while (iterator.hasNext()) {
                 answer.add(converter.convertRecord(iterator.next()));
             }
@@ -106,6 +109,7 @@ abstract class CsvUnmarshaller {
     /**
      * This class streams the content of the CSV
      */
+    @SuppressWarnings("unchecked")
     private static final class StreamCsvUnmarshaller extends CsvUnmarshaller {
         private StreamCsvUnmarshaller(CSVFormat format, CsvDataFormat dataFormat) {
             super(format, dataFormat);
@@ -117,7 +121,7 @@ abstract class CsvUnmarshaller {
             try {
                 reader = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
                 CSVParser parser = new CSVParser(reader, format);
-                return new CsvIterator<>(parser.iterator(), converter);
+                return new CsvIterator(parser.iterator(), converter);
             } catch (Exception e) {
                 IOHelper.close(reader);
                 throw e;

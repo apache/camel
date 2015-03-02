@@ -42,7 +42,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,7 @@ public class CsvRouteTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
 
         // START SNIPPET: marshalInput
-        Map<String, Object> body = new HashMap<>();
+        Map<String, Object> body = new HashMap<String, Object>();
         body.put("foo", "abc");
         body.put("bar", 123);
         // END SNIPPET: marshalInput
@@ -83,11 +82,11 @@ public class CsvRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        Map<String, Object> body1 = new HashMap<>();
+        Map<String, Object> body1 = new HashMap<String, Object>();
         body1.put("foo", "abc");
         body1.put("bar", 123);
 
-        Map<String, Object> body2 = new HashMap<>();
+        Map<String, Object> body2 = new HashMap<String, Object>();
         body2.put("foo", "def");
         body2.put("bar", 456);
         body2.put("baz", 789);
@@ -124,11 +123,11 @@ public class CsvRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        Map<String, Object> body1 = new HashMap<>();
+        Map<String, Object> body1 = new HashMap<String, Object>();
         body1.put("foo", "abc");
         body1.put("bar", 123);
 
-        Map<String, Object> body2 = new HashMap<>();
+        Map<String, Object> body2 = new HashMap<String, Object>();
         body2.put("foo", "def");
         body2.put("bar", 456);
         body2.put("baz", 789);

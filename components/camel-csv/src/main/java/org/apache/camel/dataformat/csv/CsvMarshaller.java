@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
-
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -41,7 +41,7 @@ abstract class CsvMarshaller {
     private CsvMarshaller(CSVFormat format) {
         this.format = format;
     }
-    
+
     /**
      * Creates a new instance.
      *
@@ -60,7 +60,7 @@ abstract class CsvMarshaller {
             return new FixedColumnsMarshaller(format, fixedColumns);
         }
         return new DynamicColumnsMarshaller(format);
-    }    
+    }
 
     /**
      * Marshals the given object into the given stream.
@@ -72,7 +72,8 @@ abstract class CsvMarshaller {
      * @throws IOException                        if we cannot write into the given stream
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
-        try (CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format)) {
+        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format);
+        try {
             List<?> list = ExchangeHelper.convertToType(exchange, List.class, object);
             if (list != null) {
                 for (Object child : list) {
@@ -81,6 +82,8 @@ abstract class CsvMarshaller {
             } else {
                 printer.printRecord(getRecordValues(exchange, object));
             }
+        } finally {
+            IOHelper.close(printer);
         }
     }
 
@@ -115,7 +118,7 @@ abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<>(fixedColumns.length);
+            List<Object> result = new ArrayList<Object>(fixedColumns.length);
             for (String key : fixedColumns) {
                 result.add(map.get(key));
             }
@@ -127,7 +130,7 @@ abstract class CsvMarshaller {
      * This marshaller adapts the columns but always keep them in the same order
      */
     private static final class DynamicColumnsMarshaller extends CsvMarshaller {
-        private final LinkedHashSet<Object> columns = new LinkedHashSet<>();
+        private final LinkedHashSet<Object> columns = new LinkedHashSet<Object>();
 
         private DynamicColumnsMarshaller(CSVFormat format) {
             super(format);
@@ -136,7 +139,7 @@ abstract class CsvMarshaller {
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
             columns.addAll(map.keySet());
-            List<Object> result = new ArrayList<>(columns.size());
+            List<Object> result = new ArrayList<Object>(columns.size());
             for (Object key : columns) {
                 result.add(map.get(key));
             }
