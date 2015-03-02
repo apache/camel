@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,16 +39,6 @@ public class CxfComponentConfigurationAndDocumentationTest extends CamelTestSupp
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"serviceNameString\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"isWrapped\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("cxf");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

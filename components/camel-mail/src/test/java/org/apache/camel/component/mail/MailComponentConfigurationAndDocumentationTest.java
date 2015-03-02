@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,24 +39,5 @@ public class MailComponentConfigurationAndDocumentationTest extends CamelTestSup
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"type\": \"string\""));
-        assertTrue(json.contains("\"contentType\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"debugMode\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
     }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-
-        String html = context.getComponentDocumentation("smtp");
-        assertNotNull("Should have found some auto-generated HTML", html);
-
-        html = context.getComponentDocumentation("pop3");
-        assertNotNull("Should have found some auto-generated HTML", html);
-
-        html = context.getComponentDocumentation("imap");
-        assertNotNull("Should have found some auto-generated HTML", html);
-    }
-
 }

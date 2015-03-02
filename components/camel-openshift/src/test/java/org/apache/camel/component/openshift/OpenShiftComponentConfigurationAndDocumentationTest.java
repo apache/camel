@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.openshift;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,17 +39,6 @@ public class OpenShiftComponentConfigurationAndDocumentationTest extends CamelTe
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"application\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"clientId\": { \"kind\": \"path\", \"type\": \"string\""));
-        assertTrue(json.contains("\"operation\": { \"kind\": \"parameter\", \"type\": \"string\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("openshift");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

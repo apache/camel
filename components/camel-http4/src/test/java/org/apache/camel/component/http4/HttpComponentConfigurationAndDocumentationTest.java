@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.http4;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -42,16 +40,6 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"httpMethodRestrict\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"throwExceptionOnFailure\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("http4");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

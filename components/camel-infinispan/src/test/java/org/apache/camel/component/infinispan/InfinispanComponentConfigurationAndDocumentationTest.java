@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -42,17 +40,6 @@ public class InfinispanComponentConfigurationAndDocumentationTest extends CamelT
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"host\": { \"kind\": \"path\", \"type\": \"string\""));
-        assertTrue(json.contains("\"command\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"sync\": { \"kind\": \"parameter\", \"type\": \"boolean\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("infinispan");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

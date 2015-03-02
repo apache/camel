@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.hdfs2;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -43,16 +41,6 @@ public class HdfsComponentConfigurationAndDocumentationTest extends CamelTestSup
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"initialDelay\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"checkIdleInterval\": { \"kind\": \"parameter\", \"type\": \"integer\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("hdfs2");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.sql;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,9 +39,6 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
-
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
-        assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
     }
 
     @Test
@@ -54,13 +49,6 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         assertTrue(json.contains("\"onConsumeBatchComplete\": { \"kind\": \"parameter\", \"type\": \"string\""));
         assertTrue(json.contains("\"parametersCount\": { \"kind\": \"parameter\", \"type\": \"integer\""));
         assertTrue(json.contains("\"onConsume\": { \"kind\": \"parameter\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"value\": \"foo\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("sql");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }
