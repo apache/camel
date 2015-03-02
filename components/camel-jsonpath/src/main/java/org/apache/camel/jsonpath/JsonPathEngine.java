@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -46,10 +47,10 @@ public class JsonPathEngine {
 
         if (json instanceof GenericFile) {
             try {
-				json = GenericFileConverter.genericFileToInputStream(((GenericFile<?>) json), exchange);
-			} catch (NoTypeConversionAvailableException e) {
-	            json = ((WrappedFile<?>) json).getFile();
-			}
+                json = GenericFileConverter.genericFileToInputStream((GenericFile<?>)json, exchange);
+            } catch (NoTypeConversionAvailableException e) {
+                json = ((WrappedFile<?>)json).getFile();
+            }
         } else if (json instanceof WrappedFile) {
             json = ((WrappedFile<?>) json).getFile();
         }

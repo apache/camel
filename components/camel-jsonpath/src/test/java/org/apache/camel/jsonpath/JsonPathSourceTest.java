@@ -23,72 +23,93 @@ import java.nio.charset.Charset;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Test;
 
+
 public class JsonPathSourceTest extends CamelTestSupport {
+    private static final String MESSAGE1 = "Joseph und seine Br\u00fcder";
+    private static final String MESSAGE2 = "G\u00f6tzend\u00e4mmerung";
+    private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:start")
-					.transform().jsonpath("$.store.book[0].title", String.class)
-					.to("mock:title");
+    @AfterClass
+    public static void setDefaultCharsetBack() {
+        switchToDefaultCharset(DEFAULT_CHARSET.displayName());
+    }
 
-				from("direct:second")
-					.transform().jsonpath("$.store.book[1].title", String.class)
-					.to("mock:title");
-			}
-		};
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").transform().jsonpath("$.store.book[0].title", String.class)
+                    .to("mock:title");
 
-	@Test
-	public void testPriceResultTypeOnGenericFileUTF8() throws Exception {
-		switchToDefaultCharset("UTF-8");
-		getMockEndpoint("mock:title").expectedMessageCount(2);
-		getMockEndpoint("mock:title").message(0).body().isEqualTo("Joseph und seine Brüder");
-		getMockEndpoint("mock:title").message(1).body().isEqualTo("Götzendämmerung");
+                from("direct:second").transform().jsonpath("$.store.book[1].title", String.class)
+                    .to("mock:title");
+            }
+        };
+    }
 
-		template.sendBody("direct:start", FileConsumer.asGenericFile("src/test/resources/germanbooks-utf8.json", new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
-		template.sendBody("direct:second", FileConsumer.asGenericFile("src/test/resources/germanbooks-utf8.json", new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
+    @Test
+    public void testPriceResultTypeOnGenericFileUTF8() throws Exception {
+        switchToDefaultCharset("UTF-8");
+        getMockEndpoint("mock:title").expectedMessageCount(2);
+        getMockEndpoint("mock:title").message(0).body().isEqualTo(MESSAGE1);
+        getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
-		assertMockEndpointsSatisfied();
-	}
+        template.sendBody("direct:start", FileConsumer
+            .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
+        template.sendBody("direct:second", FileConsumer
+            .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
 
-	@Test
-	public void testPriceResultTypeOnGenericFileUTF8OnWindows() throws Exception {
-		switchToDefaultCharset("windows-1252");
-		getMockEndpoint("mock:title").expectedMessageCount(2);
-		getMockEndpoint("mock:title").message(0).body().isEqualTo("Joseph und seine Brüder");
-		getMockEndpoint("mock:title").message(1).body().isEqualTo("Götzendämmerung");
+        assertMockEndpointsSatisfied();
+    }
 
-		template.sendBody("direct:start", FileConsumer.asGenericFile("src/test/resources/germanbooks-utf8.json", new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
-		template.sendBody("direct:second", FileConsumer.asGenericFile("src/test/resources/germanbooks-utf8.json", new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
+    @Test
+    public void testPriceResultTypeOnGenericFileUTF8OnWindows() throws Exception {
+        switchToDefaultCharset("windows-1252");
+        getMockEndpoint("mock:title").expectedMessageCount(2);
+        getMockEndpoint("mock:title").message(0).body().isEqualTo(MESSAGE1);
+        getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
-		assertMockEndpointsSatisfied();
-	}
+        template.sendBody("direct:start", FileConsumer
+            .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
+        template.sendBody("direct:second", FileConsumer
+            .asGenericFile("src/test/resources/germanbooks-utf8.json",
+                           new File("src/test/resources/germanbooks-utf8.json"), "UTF-8"));
 
-	@Test
-	public void testPriceResultTypeOnGenericFileISO88591() throws Exception {
-		switchToDefaultCharset("UTF-8");
-		getMockEndpoint("mock:title").expectedMessageCount(2);
-		getMockEndpoint("mock:title").message(0).body().isEqualTo("Joseph und seine Brüder");
-		getMockEndpoint("mock:title").message(1).body().isEqualTo("Götzendämmerung");
+        assertMockEndpointsSatisfied();
+    }
 
-		template.sendBody("direct:start", FileConsumer.asGenericFile("src/test/resources/germanbooks-iso-8859-1.json", new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1"));
-		template.sendBody("direct:second", FileConsumer.asGenericFile("src/test/resources/germanbooks-iso-8859-1.json", new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1"));
+    @Test
+    public void testPriceResultTypeOnGenericFileISO88591() throws Exception {
+        switchToDefaultCharset("ISO-8859-1");
+        getMockEndpoint("mock:title").expectedMessageCount(2);
+        getMockEndpoint("mock:title").message(0).body().isEqualTo(MESSAGE1);
+        getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
-		assertMockEndpointsSatisfied();
-	}
+        template.sendBody("direct:start", FileConsumer
+            .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
+                           new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1"));
+        template.sendBody("direct:second", FileConsumer
+            .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
+                           new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1"));
 
-	private void switchToDefaultCharset(String charset) {
-		try {
-			Field defaultCharset = Charset.class.getDeclaredField("defaultCharset");
-			defaultCharset.setAccessible(true);
-			defaultCharset.set(null, Charset.forName(charset));
-		} catch (Exception e) {
-		}
-	}
+        assertMockEndpointsSatisfied();
+    }
+
+    private static void switchToDefaultCharset(String charset) {
+        try {
+            Field defaultCharset = Charset.class.getDeclaredField("defaultCharset");
+            defaultCharset.setAccessible(true);
+            defaultCharset.set(null, Charset.forName(charset));
+        } catch (Exception e) {
+            // Do nothing here
+        }
+    }
 
 }
