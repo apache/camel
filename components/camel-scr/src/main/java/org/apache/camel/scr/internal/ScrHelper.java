@@ -37,9 +37,6 @@ import org.w3c.dom.NodeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// CHECKSTYLE:OFF
-// turn off checkstyle as it fails internally
-
 /**
  * Helper class.
  */
@@ -56,38 +53,10 @@ public final class ScrHelper {
 
     public static Map<String, String> getScrProperties(String xmlLocation, String componentName) throws Exception {
         Map<String, String> result = new HashMap<String, String>();
+
         final Document dom = readXML(new File(xmlLocation));
         final XPath xPath = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl", null).newXPath();
-        xPath.setNamespaceContext(new NamespaceContext() {
-            @Override
-            public String getNamespaceURI(String prefix) {
-                switch (prefix) {
-                    case "scr":
-                        try {
-                            XPathExpression scrNamespace = xPath.compile("/*/namespace::*[name()='scr']");
-                            Node node = (Node) scrNamespace.evaluate(dom, XPathConstants.NODE);
-                            return node.getNodeValue();
-                        } catch (XPathExpressionException e) {
-                            // ignore
-                            LOG.debug("Error evaluating xpath to obtain namespace prefix. This exception is ignored and using namespace: http://www.osgi.org/xmlns/scr/v1.1.0", e);
-                        }
-                        return "http://www.osgi.org/xmlns/scr/v1.1.0";
-                    default:
-                        // noop
-                }
-                return XMLConstants.NULL_NS_URI;
-            }
-
-            @Override
-            public String getPrefix(String namespaceURI) {
-                return null;
-            }
-
-            @Override
-            public Iterator<String> getPrefixes(String namespaceURI) {
-                return null;
-            }
-        });
+        xPath.setNamespaceContext(new ScrNamespaceContext(dom, xPath));
 
         String propertyListExpression = String.format("/components/scr:component[@name='%s']/property", componentName);
         XPathExpression propertyList = xPath.compile(propertyListExpression);
@@ -108,6 +77,45 @@ public final class ScrHelper {
         return builder.parse(xml);
     }
 
+    private static final class ScrNamespaceContext implements NamespaceContext {
+
+        private final Document dom;
+        private final XPath xPath;
+
+        private ScrNamespaceContext(Document dom, XPath xPath) {
+            this.dom = dom;
+            this.xPath = xPath;
+        }
+
+        @Override
+        public String getNamespaceURI(String prefix) {
+            switch (prefix) {
+            case "scr":
+                try {
+                    XPathExpression scrNamespace = xPath.compile("/*/namespace::*[name()='scr']");
+                    Node node = (Node) scrNamespace.evaluate(dom, XPathConstants.NODE);
+                    return node.getNodeValue();
+                } catch (XPathExpressionException e) {
+                    // ignore
+                    LOG.debug("Error evaluating xpath to obtain namespace prefix. This exception is ignored and using namespace: http://www.osgi.org/xmlns/scr/v1.1.0", e);
+                }
+                return "http://www.osgi.org/xmlns/scr/v1.1.0";
+            default:
+                // noop
+            }
+            return XMLConstants.NULL_NS_URI;
+        }
+
+        @Override
+        public String getPrefix(String namespaceURI) {
+            return null;
+        }
+
+        @Override
+        public Iterator<String> getPrefixes(String namespaceURI) {
+            return null;
+        }
+    }
+
 }
-// CHECKSTYLE:ON
 
