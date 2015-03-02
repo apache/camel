@@ -17,14 +17,12 @@
 package org.apache.camel.component.mail;
 
 import java.util.Date;
-
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -36,7 +34,7 @@ import org.jvnet.mock_javamail.Mailbox;
  * This is a test that checks integration of the sort term in Camel. The actual sorting logic is tested in the
  * SortUtilTest.
  */
-public class MailSortTermTest extends CamelTestSupport {
+public class MailSortTermThreeTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
@@ -58,9 +56,9 @@ public class MailSortTermTest extends CamelTestSupport {
         Mailbox mailbox = Mailbox.get("bill@localhost");
         assertEquals(3, mailbox.size());
 
-        // This one has search term *not* set
-        MockEndpoint mockAsc = getMockEndpoint("mock:resultAscending");
-        mockAsc.expectedBodiesReceived("Earlier date", "Later date");
+        // This one has search term set
+        MockEndpoint mockDescImap = getMockEndpoint("mock:resultDescendingImap");
+        mockDescImap.expectedBodiesReceived("Even later date", "Later date", "Earlier date");
 
         context.startAllRoutes();
 
@@ -103,7 +101,7 @@ public class MailSortTermTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.setAutoStartup(false);
 
-                from("pop3://bill@localhost?password=secret&searchTerm=#searchTerm&sortTerm=#sortAscendingDate").to("mock:resultAscending");
+                from("imap://bill@localhost?password=secret&sortTerm=#sortDescendingDate").to("mock:resultDescendingImap");
             }
         };
     }
