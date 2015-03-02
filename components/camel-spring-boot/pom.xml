@@ -68,7 +68,6 @@
         </dependency>
 
         <!-- Testing dependencies -->
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -82,7 +81,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons-io-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
