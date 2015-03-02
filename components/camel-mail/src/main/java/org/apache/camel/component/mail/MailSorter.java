@@ -53,14 +53,14 @@ public final class MailSorter {
     }
 
     /**
-     * Compute the potentially descendingd sort terms from the input list
+     * Compute the potentially descending sort terms from the input list
      *
      * @param sortTerm Input list
      * @return Sort terms list including if the respective sort should be sorted in descending order
      */
     private static List<SortTermWithDescending> getSortTermsWithDescending(SortTerm[] sortTerm) {
-        // List of reversable sort terms. If the boolean is true the respective sort term is descendingd
-        final List<SortTermWithDescending> sortTermsWithDescending = new ArrayList<>(sortTerm.length);
+        // List of reversable sort terms. If the boolean is true the respective sort term is descending
+        final List<SortTermWithDescending> sortTermsWithDescending = new ArrayList<SortTermWithDescending>(sortTerm.length);
         // Descending next item in input because the last item was a "descending"
         boolean descendingNext = false;
         for (SortTerm term : sortTerm) {
