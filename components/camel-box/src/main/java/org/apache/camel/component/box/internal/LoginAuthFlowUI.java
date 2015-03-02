@@ -40,15 +40,21 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ProxyConfig;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
+
 import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -95,6 +101,15 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
+        // disable default gzip compression, as htmlunit does not negotiate pages sent with no compression
+        new WebConnectionWrapper(webClient) {
+            @Override
+            public WebResponse getResponse(WebRequest request) throws IOException {
+                request.setAdditionalHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
+                return super.getResponse(request);
+            }
+        };
+
         // add HTTP proxy if set
         final Map<String, Object> httpParams = configuration.getHttpParams();
         if (httpParams != null && httpParams.get(ConnRoutePNames.DEFAULT_PROXY) != null) {
@@ -112,6 +127,16 @@ public final class LoginAuthFlowUI implements IAuthFlowUI {
             OAuthWebViewData viewData = new OAuthWebViewData(boxClient.getOAuthDataController());
             viewData.setOptionalState(String.valueOf(csrfId));
             final HtmlPage authPage = webClient.getPage(viewData.buildUrl().toString());
+
+            // look for <div role="error_message">
+            final HtmlDivision div = authPage.getFirstByXPath("//div[contains(concat(' ', @class, ' '), ' error_message ')]");
+            if (div != null) {
+                final String errorMessage = div.getTextContent()
+                    .replaceAll("\\s+", " ")
+                    .replaceAll(" Show Error Details", ":")
+                    .trim();
+                throw new IllegalArgumentException("Error authorizing application: " + errorMessage);
+            }
 
             // submit login credentials
             final HtmlForm loginForm = authPage.getFormByName("login_form");
