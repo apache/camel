@@ -48,13 +48,7 @@
             <artifactId>camel-spring</artifactId>
         </dependency>
 
-        <!-- Spring web support -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-            <optional>true</optional>
-            <version>${spring-boot-version}</version>
-        </dependency>
+        <!-- Optional Spring web support -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
