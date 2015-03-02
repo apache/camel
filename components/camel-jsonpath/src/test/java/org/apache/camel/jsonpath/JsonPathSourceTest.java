@@ -23,13 +23,20 @@ import java.nio.charset.Charset;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Test;
+
 
 public class JsonPathSourceTest extends CamelTestSupport {
     private static final String MESSAGE1 = "Joseph und seine Br\u00fcder";
     private static final String MESSAGE2 = "G\u00f6tzend\u00e4mmerung";
-       
+    private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();   
 
+    @AfterClass
+    public static void setDefaultCharsetBack() {
+        switchToDefaultCharset(DEFAULT_CHARSET.displayName());
+    }
+     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -95,12 +102,13 @@ public class JsonPathSourceTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private void switchToDefaultCharset(String charset) {
+    private static void switchToDefaultCharset(String charset) {
         try {
             Field defaultCharset = Charset.class.getDeclaredField("defaultCharset");
             defaultCharset.setAccessible(true);
             defaultCharset.set(null, Charset.forName(charset));
         } catch (Exception e) {
+            // Do nothing here
         }
     }
 
