@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.stax;
 
-import org.apache.camel.spi.Metadata;
 import org.xml.sax.ContentHandler;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;

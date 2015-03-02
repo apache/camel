@@ -22,15 +22,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConverter;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 
 public class JsonPathEngine {
 

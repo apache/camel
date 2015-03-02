@@ -30,12 +30,12 @@ import spark.route.HttpMethod;
 
 @UriEndpoint(scheme = "spark-rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
+    @UriParam
+    SparkConfiguration sparkConfiguration;
     @UriPath @Metadata(required = "true")
     private String verb;
     @UriPath @Metadata(required = "true")
     private String path;
-    @UriParam
-    SparkConfiguration sparkConfiguration;
     @UriParam
     private SparkBinding sparkBinding;
     @UriParam
