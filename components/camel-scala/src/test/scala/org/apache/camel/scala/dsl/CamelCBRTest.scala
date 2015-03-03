@@ -17,12 +17,14 @@
 package org.apache.camel.scala.dsl
 
 import org.apache.camel.test.junit4.CamelTestSupport
-import org.apache.camel.scala.dsl.builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.scala.dsl.builder.{ScalaRouteBuilder, RouteBuilder, RouteBuilderSupport}
 import org.junit.Test
 
 class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
 
-  override protected def createRouteBuilder = builder
+  override protected def createRouteBuilder = {
+    builder
+  }
 
   @Test
   def testFoo() {
@@ -45,7 +47,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
     assertMockEndpointsSatisfied()
   }
 
-  val builder = new RouteBuilder {
+  lazy val builder = new ScalaRouteBuilder(context()) {
     "direct:start" ==> {
       choice {
         when(simple("${body} == 'foo'")) to "mock:foo"

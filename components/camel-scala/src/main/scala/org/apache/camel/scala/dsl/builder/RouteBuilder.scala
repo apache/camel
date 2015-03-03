@@ -36,7 +36,10 @@ import org.slf4j.{Logger, LoggerFactory}
 
 /**
  * Scala RouteBuilder implementation
+ *
+ * @deprecated use ScalaRouteBuilder
  */
+@Deprecated
 class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages with Functions {
 
   val builder = new org.apache.camel.builder.RouteBuilder {

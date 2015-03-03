@@ -494,12 +494,13 @@ public abstract class BuilderSupport {
         return context;
     }
     
-    @Deprecated
     public void setContext(CamelContext context) {
-        this.context = (ModelCamelContext)context;
+        ObjectHelper.notNull(context, "CamelContext", this);
+        this.context = context.adapt(ModelCamelContext.class);
     }
 
     public void setContext(ModelCamelContext context) {
+        ObjectHelper.notNull(context, "CamelContext", this);
         this.context = context;
     }
 
