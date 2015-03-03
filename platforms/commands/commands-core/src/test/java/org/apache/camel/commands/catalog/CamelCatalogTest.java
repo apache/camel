@@ -37,7 +37,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames();
 
-        assertNotNull(names);
+        assertNotNull("The names should not be null", names);
 
         LOG.info("Found {} names", names.size());
         assertTrue("Should find some components", names.size() > 0);
@@ -48,7 +48,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("testing");
 
-        assertNotNull(names);
+        assertNotNull("The names should not be null", names);
 
         LOG.info("Found {} names", names.size());
         assertTrue("Should find some testing components", names.size() > 0);
@@ -59,7 +59,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("t*");
 
-        assertNotNull(names);
+        assertNotNull("The names should not be null", names);
 
         LOG.info("Found {} names", names.size());
         assertTrue("Should find some t* components", names.size() > 0);
@@ -70,7 +70,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("transformation");
 
-        assertNotNull(names);
+        assertNotNull("The names should not be null", names);
 
         LOG.info("Found {} names", names.size());
         assertTrue("Should find some transformation components", names.size() > 0);
@@ -81,7 +81,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         List<String> names = catalog.findComponentNames("cannotmatchme");
 
-        assertNotNull(names);
+        assertNotNull("The names should not be null", names);
 
         assertTrue("Should not match any components", names.size() == 0);
     }
@@ -91,7 +91,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         String json = catalog.componentJSonSchema("bean");
 
-        assertNotNull(json);
+        assertNotNull("Should find the json information about the bean component", json);
         LOG.info(json);
 
         assertTrue("Should find bean component", json.contains("bean"));
@@ -102,7 +102,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         String json = catalog.componentJSonSchema("ftp");
 
-        assertNotNull(json);
+        assertNotNull("Should find the json information about the ftp component", json);
         LOG.info(json);
 
         assertTrue("Should find ftp component", json.contains("ftp"));
@@ -113,7 +113,7 @@ public class CamelCatalogTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         Set<String> labels = catalog.findComponentLabels();
 
-        assertNotNull(labels);
+        assertNotNull("Should component labels", labels);
 
         assertTrue("Should find labels", labels.size() > 0);
         assertTrue("Should find core label", labels.contains("core"));
