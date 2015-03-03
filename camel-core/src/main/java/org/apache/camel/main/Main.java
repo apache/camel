@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
@@ -99,7 +98,20 @@ public class Main extends MainSupport {
      */
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return registry.findByTypeWithName(type);
-    }    
+    }
+
+    /**
+     * Gets or creates the {@link org.apache.camel.CamelContext} this main class is using.
+     */
+    public CamelContext getOrCreateCamelContext() {
+        // force init
+        Map<String, CamelContext> map = getCamelContextMap();
+        if (map.size() >= 1) {
+            return map.values().iterator().next();
+        } else {
+            throw new IllegalStateException("Error creating CamelContext");
+        }
+    }
     
     // Implementation methods
     // -------------------------------------------------------------------------
