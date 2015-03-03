@@ -16,13 +16,13 @@
 ## ------------------------------------------------------------------------
 package ${package}
 
-import org.apache.camel.Exchange
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.{CamelContext, Exchange}
+import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder
 
 /**
  * A Camel Router using the Scala DSL
  */
-class MyRouteBuilder extends RouteBuilder {
+class MyRouteBuilder(override val context : CamelContext) extends ScalaRouteBuilder(context) {
 
     // an example of a Processor method
    val myProcessorMethod = (exchange: Exchange) => {

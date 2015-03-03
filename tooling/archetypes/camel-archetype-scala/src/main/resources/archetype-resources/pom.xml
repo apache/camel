@@ -50,6 +50,11 @@
       <artifactId>scala-library</artifactId>
       <version>${scala-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-xml_2.11</artifactId>
+      <version>${scalaxml-version}</version>
+    </dependency>
 
     <!-- logging -->
     <dependency>
