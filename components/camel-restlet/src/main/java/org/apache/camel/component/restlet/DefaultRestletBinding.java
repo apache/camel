@@ -165,7 +165,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     } else {
                         // put the user stuff in the form
                         if (value instanceof Collection) {
-                            for (Object v: (Collection<?>) value) {
+                            for (Object v : (Collection<?>) value) {
                                 form.add(key, v.toString());
                             }
                         } else {
