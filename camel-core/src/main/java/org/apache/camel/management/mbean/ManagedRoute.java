@@ -335,7 +335,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
-        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         InFlightKey oldestInflightEntry = getOldestInflightEntry();
         if (oldestInflightEntry == null) {
             answer.append(" oldestInflightExchangeId=\"\"");
