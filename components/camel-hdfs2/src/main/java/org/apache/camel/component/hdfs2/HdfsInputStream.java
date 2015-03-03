@@ -28,6 +28,7 @@ public class HdfsInputStream implements Closeable {
     private HdfsFileType fileType;
     private String actualPath;
     private String suffixedPath;
+    private String suffixedReadPath;
     private Closeable in;
     private boolean opened;
     private int chunkSize;
@@ -42,6 +43,7 @@ public class HdfsInputStream implements Closeable {
         ret.fileType = configuration.getFileType();
         ret.actualPath = hdfsPath;
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
+        ret.suffixedReadPath = ret.actualPath + '.' + configuration.getReadSuffix();
         ret.chunkSize = configuration.getChunkSize();
         HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath);
         info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
@@ -55,7 +57,7 @@ public class HdfsInputStream implements Closeable {
         if (opened) {
             IOUtils.closeStream(in);
             HdfsInfo info = HdfsInfoFactory.newHdfsInfo(actualPath);
-            info.getFileSystem().rename(new Path(suffixedPath), new Path(actualPath + '.' + HdfsConstants.DEFAULT_READ_SUFFIX));
+            info.getFileSystem().rename(new Path(suffixedPath), new Path(suffixedReadPath));
             opened = false;
         }
     }

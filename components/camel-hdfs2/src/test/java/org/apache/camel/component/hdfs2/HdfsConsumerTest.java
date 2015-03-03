@@ -18,9 +18,19 @@ package org.apache.camel.component.hdfs2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -42,6 +52,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.hadoop.io.SequenceFile.CompressionType;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class HdfsConsumerTest extends HdfsTestSupport {
 
@@ -94,6 +105,48 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         context.start();
 
         resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testReadWithReadSuffix() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        final Path file = new Path(new File("target/test/test-camel-boolean").getAbsolutePath());
+        Configuration conf = new Configuration();
+        SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BooleanWritable.class);
+        NullWritable keyWritable = NullWritable.get();
+        BooleanWritable valueWritable = new BooleanWritable();
+        valueWritable.set(true);
+        writer.append(keyWritable, valueWritable);
+        writer.sync();
+        writer.close();
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("hdfs2:///" + file.getParent().toUri() + "?consumerProperties=#cprops&pattern=*&fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0&readSuffix=handled").to("mock:result");
+            }
+        });
+        Map<String, Object> props = new HashMap<String, Object>();
+        ScheduledExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(null, "unitTestPool", 1);
+        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(pool);
+        props.put("scheduler", scheduler);
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("cprops", props);
+        context.start();
+
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.assertIsSatisfied();
+
+        // synchronize on pool that was used to run hdfs consumer thread
+        scheduler.getScheduledExecutorService().shutdown();
+        scheduler.getScheduledExecutorService().awaitTermination(5000, TimeUnit.MILLISECONDS);
+
+        Set<String> files = new HashSet<String>(Arrays.asList(new File("target/test").list()));
+        assertThat(files.size(), equalTo(2));
+        assertTrue(files.remove("test-camel-boolean.handled"));
+        assertTrue(files.remove(".test-camel-boolean.handled.crc"));
     }
 
     @Test
