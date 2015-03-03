@@ -22,7 +22,9 @@ package org.apache.camel;
 public interface EndpointAware {
 
     /**
-     * Gets the endpoint
+     * Gets the endpoint associated with an object.
+     * It's the endpoint for sending to for components like {@link org.apache.camel.Producer}
+     * or for consuming from for components like {@link org.apache.camel.Consumer} or {@link org.apache.camel.Route}
      *
      * @return the endpoint
      */

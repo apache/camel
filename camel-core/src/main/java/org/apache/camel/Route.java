@@ -45,13 +45,6 @@ public interface Route extends EndpointAware {
     String getId();
 
     /**
-     * Gets the inbound endpoint
-     *
-     * @return the inbound endpoint
-     */
-    Endpoint getEndpoint();
-
-    /**
      * Gets the inbound {@link Consumer}
      *
      * @return the inbound consumer
