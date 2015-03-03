@@ -70,7 +70,7 @@
     <beanio-version>2.0.7</beanio-version>
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.51</bouncycastle-version>
-    <boxjavalibv2.version>3.1.7</boxjavalibv2.version>
+    <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
     <c3p0-version>0.9.1.2</c3p0-version>
     <camel-test-spring-artifactId>camel-test-spring3</camel-test-spring-artifactId>
