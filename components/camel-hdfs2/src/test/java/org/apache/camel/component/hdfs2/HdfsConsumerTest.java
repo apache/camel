@@ -130,7 +130,8 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         });
         Map<String, Object> props = new HashMap<String, Object>();
         ScheduledExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(null, "unitTestPool", 1);
-        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(pool);
+        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
+        scheduler.setScheduledExecutorService(pool);
         props.put("scheduler", scheduler);
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("cprops", props);
         context.start();
