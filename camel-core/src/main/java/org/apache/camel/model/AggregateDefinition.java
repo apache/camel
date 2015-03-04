@@ -217,6 +217,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (getCompletionPredicate() != null) {
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
+        } else if (strategy instanceof Predicate) {
+            // if aggregation strategy implements predicate and was not configured then use as fallback
+            log.debug("Using AggregationStrategy as completion predicate: {}", strategy);
+            answer.setCompletionPredicate((Predicate) strategy);
         }
         if (getCompletionTimeoutExpression() != null) {
             Expression expression = getCompletionTimeoutExpression().createExpression(routeContext);

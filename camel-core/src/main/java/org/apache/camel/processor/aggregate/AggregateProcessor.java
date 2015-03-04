@@ -610,9 +610,6 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public Predicate getCompletionPredicate() {
-        if (completionPredicate == null && aggregationStrategy instanceof Predicate) {
-            return (Predicate)aggregationStrategy;
-        }
         return completionPredicate;
     }
 
