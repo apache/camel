@@ -19,16 +19,14 @@ package org.apache.camel.spring.boot;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Ordered;
 import org.apache.camel.RoutesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.PriorityOrdered;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
-public class RoutesCollector implements BeanPostProcessor, PriorityOrdered {
+public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
@@ -48,36 +46,28 @@ public class RoutesCollector implements BeanPostProcessor, PriorityOrdered {
     // Overridden
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof CamelContext && beanName.equals("camelContext")) {
-            CamelContext camelContext = (CamelContext) bean;
-            LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
-            for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
-                try {
-                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                    camelContext.addRoutes(routesBuilder);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if (camelContextConfigurations != null) {
-                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                    LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
-                    camelContextConfiguration.beforeApplicationStart(camelContext);
-                }
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
+        LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
+        for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
+            try {
+                LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                camelContext.addRoutes(routesBuilder);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
-        return bean;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST;
+        if (camelContextConfigurations != null) {
+            for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
+                camelContextConfiguration.beforeApplicationStart(camelContext);
+            }
+        }
+        try {
+            camelContext.start();
+        } catch (Exception e) {
+            throw new CamelSpringBootInitializationException(e);
+        }
     }
 
 }

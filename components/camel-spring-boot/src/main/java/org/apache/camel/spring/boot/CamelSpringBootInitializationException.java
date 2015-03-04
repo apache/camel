@@ -14,23 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.componentroute;
+package org.apache.camel.spring.boot;
 
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+public class CamelSpringBootInitializationException extends RuntimeException {
 
-@Component
-public class ComponentRoute extends RouteBuilder {
-
-    // We inject this field to make sure that template creation doesn't affects routes collecting.
-    @Autowired
-    ProducerTemplate producerTemplate;
-
-    @Override
-    public void configure() throws Exception {
-        from("direct:componentRoute").to("mock:componentRoute");
+    public CamelSpringBootInitializationException(Throwable cause) {
+        super(cause);
     }
 
 }

@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot;
+package org.apache.camel.spring.boot.duplicatedrouteid;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.boot.CamelSpringBootInitializationException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 public class DuplicatedRouteIdTest extends Assert {
 
-    @Test(expected = BeanCreationException.class)
+    @Test(expected = CamelSpringBootInitializationException.class)
     public void shouldDetectDuplicatedRouteId() {
         new SpringApplication(DuplicatedRouteIdTestConfiguration.class).run();
     }

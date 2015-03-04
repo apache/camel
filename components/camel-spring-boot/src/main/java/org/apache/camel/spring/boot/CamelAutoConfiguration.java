@@ -46,6 +46,7 @@ public class CamelAutoConfiguration {
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties configurationProperties) {
         CamelContext camelContext = new SpringCamelContext(applicationContext);
+        SpringCamelContext.setNoStart(true);
 
         if (!configurationProperties.isJmxEnabled()) {
             camelContext.disableJMX();
