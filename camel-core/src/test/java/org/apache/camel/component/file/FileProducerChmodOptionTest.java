@@ -39,16 +39,26 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         super.setUp();
     }
 
+    private boolean canTest() {
+        // can not run on windows
+        return !isPlatform("windows");
+    }
 
     public void testWriteValidChmod0755() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         runChmodCheck("0755", "rwxr-xr-x");
     }
 
-
     public void testWriteValidChmod666() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         runChmodCheck("666", "rw-rw-rw-");
     }
-
 
     private void runChmodCheck(String routeSuffix, String expectedPermissions) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:chmod" + routeSuffix);
@@ -68,8 +78,11 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     public void testInvalidChmod() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         try {
             context.addRoutes(new RouteBuilder() {
 
@@ -87,12 +100,15 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         }
     }
 
-
     /**
      * Write a file without chmod set, should work normally and not throw an exception for invalid chmod value
      * @throws Exception
      */
     public void testWriteNoChmod() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:noChmod");
         mock.expectedMessageCount(1);
         String testFileName = "noChmod.txt";
@@ -102,7 +118,6 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:writeNoChmod", testFileContent, Exchange.FILE_NAME, testFileName);
         assertMockEndpointsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() {
