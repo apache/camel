@@ -26,7 +26,7 @@ public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
             return;
         }
 
-        getMockEndpoint("mock:a").expectedMessageCount(252);
+        getMockEndpoint("mock:a").expectedMinimumMessageCount(250);
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:b").setSleepForEmptyTest(3000);
         getMockEndpoint("mock:error").expectedMessageCount(1);
