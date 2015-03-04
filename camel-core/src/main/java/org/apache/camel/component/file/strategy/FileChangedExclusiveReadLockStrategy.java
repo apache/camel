@@ -39,7 +39,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private long timeout;
     private long checkInterval = 1000;
     private long minLength = 1;
-    private long minAge = 0;
+    private long minAge;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
 
     @Override

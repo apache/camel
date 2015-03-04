@@ -166,7 +166,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer", defaultValue = "1")
     protected long readLockMinLength = 1;
     @UriParam(label = "consumer", defaultValue = "0")
-    protected long readLockMinAge = 0;
+    protected long readLockMinAge;
     @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 

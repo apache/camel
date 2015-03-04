@@ -37,7 +37,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     private long checkInterval = 5000;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     private long minLength = 1;
-    private long minAge = 0;
+    private long minAge;
     private boolean fastExistsCheck;
 
     @Override
