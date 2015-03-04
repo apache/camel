@@ -26,13 +26,14 @@ import org.junit.Test;
  */
 public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
 
+    @Override
+    protected boolean canTest() {
+        // cannot test on windows
+        return super.canTest() && !isPlatform("windows");
+    }
+
     protected static String createAbsolutePath() {
         String answer = System.getProperty("user.dir") + "/" + FTP_ROOT_DIR + "/tmp/mytemp";
-
-        if (isPlatform("windows")) {
-            answer = answer.replace('\\', '/');
-        }
-
         return answer;
     }
 
