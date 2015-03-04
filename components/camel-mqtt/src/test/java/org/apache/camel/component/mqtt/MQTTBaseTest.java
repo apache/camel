@@ -28,9 +28,11 @@ public abstract class MQTTBaseTest extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MQTTBaseTest.class);
     protected static final String TEST_TOPIC = "ComponentTestTopic";
     protected static final String TEST_TOPIC_2 = "AnotherTestTopic";
+    protected static final String TEST_WILDCARD_TOPIC = "base/+/#";
     protected static final String TEST_TOPICS = TEST_TOPIC + "," + TEST_TOPIC_2;
+    protected static final String TEST_TOPICS_WITH_WILDCARDS = TEST_TOPICS + "," + TEST_WILDCARD_TOPIC;
     protected BrokerService brokerService;
-    protected int numberOfMessages = 100;
+    protected int numberOfMessages = 10;
 
 
     public void setUp() throws Exception {

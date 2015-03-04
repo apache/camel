@@ -45,4 +45,16 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
         assertEquals(mqttEndpoint.getConfiguration().getSubscribeTopicNames(), TEST_TOPICS);
         assertTrue(mqttEndpoint.getConfiguration().isByDefaultRetain());
     }
+
+    @Test
+    public void testWildcardSubscribeTopicsConfiguration() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS_WITH_WILDCARDS);
+        assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
+
+        assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
+        assertEquals(mqttEndpoint.getConfiguration().getPublishTopicName(), TEST_TOPIC);
+        assertEquals(mqttEndpoint.getConfiguration().getSubscribeTopicNames(), TEST_TOPICS_WITH_WILDCARDS);
+        assertTrue(mqttEndpoint.getConfiguration().isByDefaultRetain());
+    }
 }

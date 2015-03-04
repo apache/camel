@@ -54,6 +54,11 @@ public class MQTTComponent extends UriEndpointComponent {
         return endpoint;
     }
 
+    @Override
+    public boolean useRawUri() {
+        return true; // to prevent MQTT "+" wildcard from being lost
+    }
+
     public String getHost() {
         return host;
     }
