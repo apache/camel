@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hdfs2;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -100,6 +101,88 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("hdfs2:///" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
+            }
+        });
+        context.start();
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSimpleConsumerWithEmptyFile() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        final Path file = new Path(new File("target/test/test-camel-normal-file").getAbsolutePath());
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(file.toUri(), conf);
+        FSDataOutputStream out = fs.create(file);
+        out.close();
+
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("hdfs2:///" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
+            }
+        });
+        context.start();
+
+        resultEndpoint.assertIsSatisfied();
+        assertThat(resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length, equalTo(0));
+    }
+
+    @Test
+    public void testSimpleConsumerFileWithSizeEqualToNChunks() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        final Path file = new Path(new File("target/test/test-camel-normal-file").getAbsolutePath());
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(file.toUri(), conf);
+        FSDataOutputStream out = fs.create(file);
+        // size = 5 times chunk size = 210 bytes
+        for (int i = 0; i < 42; ++i) {
+            out.write(new byte[] { 0x61, 0x62, 0x63, 0x64, 0x65 });
+            out.flush();
+        }
+        out.close();
+
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(5);
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("hdfs2:///" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=42&initialDelay=0").to("mock:result");
+            }
+        });
+        context.start();
+
+        resultEndpoint.assertIsSatisfied();
+        assertThat(resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length, equalTo(42));
+    }
+
+    @Test
+    public void testSimpleConsumerWithEmptySequenceFile() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        final Path file = new Path(new File("target/test/test-camel-sequence-file").getAbsolutePath());
+        Configuration conf = new Configuration();
+        SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BooleanWritable.class);
+        writer.sync();
+        writer.close();
+
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(0);
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("hdfs2:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
         context.start();
