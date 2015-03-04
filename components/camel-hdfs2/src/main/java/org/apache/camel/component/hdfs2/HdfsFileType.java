@@ -85,7 +85,8 @@ public enum HdfsFileType {
                     return bytesRead;
                 } else {
                     key.value = null;
-                    value.value = null;
+                    // indication that we may have read from empty file
+                    value.value = bos;
                     return 0;
                 }
             } catch (IOException ex) {
