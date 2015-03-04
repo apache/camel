@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public abstract class MQTTBaseTest extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MQTTBaseTest.class);
     protected static final String TEST_TOPIC = "ComponentTestTopic";
+    protected static final String TEST_WILDCARD_TOPIC = "base/+/#";
     protected BrokerService brokerService;
     protected int numberOfMessages = 100;
 

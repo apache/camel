@@ -35,4 +35,9 @@ public class MQTTComponent extends DefaultComponent {
         MQTTEndpoint endpoint = new MQTTEndpoint(uri, this, configuration);
         return endpoint;
     }
+
+    @Override
+    public boolean useRawUri() {
+        return true; // to prevent MQTT "+" wildcard from being lost
+    }
 }
