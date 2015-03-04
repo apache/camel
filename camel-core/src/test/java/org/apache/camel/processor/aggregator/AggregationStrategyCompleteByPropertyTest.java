@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
@@ -27,7 +28,10 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 public class AggregationStrategyCompleteByPropertyTest extends ContextTestSupport {
 
     public void testAggregateCompletionAware() throws Exception {
-        getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+Y+ZZZZ");
+        MockEndpoint result = getMockEndpoint("mock:aggregated");
+        result.expectedBodiesReceived("A+B+C", "X+Y+ZZZZ");
+        result.message(0).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("strategy");
+        result.message(1).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("strategy");
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -63,7 +67,7 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
                 + newExchange.getIn().getBody(String.class);
             oldExchange.getIn().setBody(body);
             if (body.length() >= 5) {
-                oldExchange.setProperty(AggregationStrategy.IS_COMPLETE, true);
+                oldExchange.setProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, true);
             }
             return oldExchange;
         }

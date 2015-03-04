@@ -405,9 +405,6 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
      * @return <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
      */
     protected String isCompleted(String key, Exchange exchange) {
-        if (exchange.getProperty(AggregationStrategy.IS_COMPLETE) == Boolean.TRUE) {
-            return "strategy";
-        }
         // batch consumer completion must always run first
         if (isCompletionFromBatchConsumer()) {
             batchConsumerCorrelationKeys.add(key);
@@ -418,6 +415,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 batchConsumerCounter.set(0);
                 return "consumer";
             }
+        }
+
+        if (exchange.getProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, false, boolean.class)) {
+            return "strategy";
         }
 
         if (getCompletionPredicate() != null) {
