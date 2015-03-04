@@ -21,7 +21,7 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 
 public class OptimisticLockRetryPolicyTest extends TestCase {
 
-    private static long precision = 10L; // give or take 10ms
+    private static long precision = 100L; // give or take 100ms
 
     public void testRandomBackOff() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
@@ -116,7 +116,11 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
     }
 
     private void assertDelay(long expectedDelay, long actualDelay) {
-        assertTrue(actualDelay <= expectedDelay + precision);
-        assertTrue(actualDelay >= expectedDelay - precision);
+        String msg = String.format("%d <= %d", actualDelay, expectedDelay + precision);
+        assertTrue(msg, actualDelay <= expectedDelay + precision);
+
+        msg = String.format("%d >= %d", actualDelay, expectedDelay - precision);
+        assertTrue(msg, actualDelay >= expectedDelay - precision);
     }
+
 }
