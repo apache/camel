@@ -890,6 +890,20 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockMinLength = readLockMinLength;
     }
 
+    public long getReadLockMinAge() {
+        return readLockMinAge;
+    }
+
+    /**
+     * This option applied only for readLock=change.
+     * This options allows to specify a minimum age the file must be before attempting to acquire the read lock.
+     * For example use readLockMinAge=300s to require the file is at last 5 minutes old.
+     * This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age.
+     */
+    public void setReadLockMinAge(long readLockMinAge) {
+        this.readLockMinAge = readLockMinAge;
+    }
+
     public int getBufferSize() {
         return bufferSize;
     }
@@ -1081,14 +1095,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
-    }
-
-    public long getReadLockMinAge() {
-        return readLockMinAge;
-    }
-
-    public void setReadLockMinAge(long readLockMinAge) {
-        this.readLockMinAge = readLockMinAge;
     }
 
     /**
