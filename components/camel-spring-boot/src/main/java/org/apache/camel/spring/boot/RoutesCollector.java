@@ -49,11 +49,6 @@ public class RoutesCollector implements BeanPostProcessor, PriorityOrdered {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof CamelContext && beanName.equals("camelContext")) {
             CamelContext camelContext = (CamelContext) bean;
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
@@ -72,6 +67,11 @@ public class RoutesCollector implements BeanPostProcessor, PriorityOrdered {
                 }
             }
         }
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
     }
 
