@@ -203,7 +203,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 fos.write(schema.getBytes());
                                 fos.close();
 
-                                log.info("Generated " + out + " containing JSon schema for " + name + " data format");
+                                log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
                             }
                         }
                     }
