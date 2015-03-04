@@ -47,7 +47,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/file.dat");
         // We should get the file on the first poll
-        mock.expectedMessagesMatches(property(Exchange.RECEIVED_TIMESTAMP).isLessThan(new Date().getTime()+15000));
+        mock.expectedMessagesMatches(property(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime()+15000));
 
         assertMockEndpointsSatisfied();
     }
@@ -67,7 +67,8 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockMinAge=500&readLockCheckInterval=30000&readLockTimeout=90000").to("file:target/changed/out", "mock:result");
+                from("file:target/changed/in?readLock=changed&readLockMinAge=500&readLockCheckInterval=30000&readLockTimeout=90000")
+                        .to("file:target/changed/out", "mock:result");
             }
         };
     }
