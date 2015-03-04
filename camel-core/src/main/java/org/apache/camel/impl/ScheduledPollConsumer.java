@@ -458,8 +458,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     protected void doStop() throws Exception {
-        scheduler.unscheduleTask();
-        ServiceHelper.stopAndShutdownServices(scheduler);
+        if (scheduler != null) {
+            scheduler.unscheduleTask();
+            ServiceHelper.stopAndShutdownServices(scheduler);
+        }
 
         // clear counters
         backoffCounter = 0;
