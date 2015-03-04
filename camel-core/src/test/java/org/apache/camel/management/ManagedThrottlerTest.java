@@ -48,7 +48,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         // gets them.  We'll check the total time of the second and third
         // batches as it seems that there is some time required to prime
         // things, which can vary significantly... particularly on slower
-        // machines. 
+        // machines.
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message " + i);
         }
@@ -63,10 +63,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
-        
+
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
-        
+
         // send in 10 messages
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message " + i);
@@ -107,6 +107,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     public void testThrottleVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
+            return;
+        }
+        if (isPlatform("windows")) {
+            // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
             return;
         }
 
@@ -151,6 +155,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         if (isPlatform("aix")) {
             return;
         }
+        if (isPlatform("windows")) {
+            // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
+            return;
+        }
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -193,6 +201,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
+            return;
+        }
+        if (isPlatform("windows")) {
+            // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
             return;
         }
 
