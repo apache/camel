@@ -192,11 +192,11 @@ public abstract class AbstractCamelRunner implements Runnable {
             return;
         }
         try {
-            if (active) {
-                context.start();
-            } else {
-                log.info(camelContextId + " not started (active property is not true)");
+            if (!active) {
+                context.setAutoStartup(false);
+                log.info(camelContextId + " autoStartup disabled (active property is false)");
             }
+            context.start();
             started = true;
         } catch (Exception e) {
             log.warn("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
