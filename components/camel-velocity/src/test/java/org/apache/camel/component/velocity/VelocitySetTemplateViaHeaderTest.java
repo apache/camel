@@ -38,10 +38,9 @@ public class VelocitySetTemplateViaHeaderTest extends CamelTestSupport {
 
     @Test
     public void testVelocityLetter() throws Exception {
-        String msg = String.format("Dear Ibsen, Claus%s%sThanks for the order of Camel in Action.%s%sRegards Camel Riders Bookstore%sPS: Next beer is on me, James",
-                System.lineSeparator(), System.lineSeparator(), System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived(msg);
+        mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).contains("Thanks for the order of Camel in Action");
 
         template.send("direct:a", createLetter("org/apache/camel/component/velocity/letter.vm"));
 
@@ -49,9 +48,8 @@ public class VelocitySetTemplateViaHeaderTest extends CamelTestSupport {
         
         mock.reset();
 
-        String msg2 = String.format("Dear Ibsen, Claus%s%sThanks for the order of Camel in Action.%s%sRegards Apache Camel Riders Bookstore%sPS: Next beer is on me, James",
-                System.lineSeparator(), System.lineSeparator(), System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
-        mock.expectedBodiesReceived(msg2);
+        mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).contains("Regards Apache Camel Riders Bookstore");
 
         template.send("direct:a", createLetter("org/apache/camel/component/velocity/letter2.vm"));
 
