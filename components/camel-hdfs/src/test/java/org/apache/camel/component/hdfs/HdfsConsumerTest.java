@@ -169,7 +169,8 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         out.close();
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
+        // TODO: See comment from Claus at ticket: https://issues.apache.org/jira/browse/CAMEL-8434
+        resultEndpoint.expectedMinimumMessageCount(1);
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
