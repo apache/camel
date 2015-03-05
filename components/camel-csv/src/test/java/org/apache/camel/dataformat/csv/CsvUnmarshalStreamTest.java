@@ -46,7 +46,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
         String message = "";
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
-            message += i + "|\"" + i + "\n" + i + "\"\n";
+            message += i + "|\"" + i + System.lineSeparator() + i + "\"\n";
         }
 
         template.sendBody("direct:start", message);
