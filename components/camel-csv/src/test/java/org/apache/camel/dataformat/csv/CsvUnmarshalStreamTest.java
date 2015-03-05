@@ -58,7 +58,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
                     .getIn().getBody(List.class);
             assertEquals(2, body.size());
             assertEquals(String.valueOf(i), body.get(0));
-            assertEquals(String.format("%d\n%d", i, i), body.get(1));
+            assertEquals(String.format("%d%s%d", i, System.lineSeparator(), i), body.get(1));
         }
     }
 
@@ -78,7 +78,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
                     .getIn().getBody(List.class);
             assertEquals(2, body.size());
             assertEquals(String.valueOf(i), body.get(0));
-            assertEquals(String.format("%d\n%d", i, i), body.get(1));
+            assertEquals(String.format("%d%s%d", i, System.lineSeparator(), i), body.get(1));
         }
     }
 
