@@ -45,6 +45,9 @@ public class MailCopyToTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // windows need a little slack
+        Thread.sleep(500);
+
         assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
         assertEquals(5, Mailbox.get("backup-jones@localhost").getNewMessageCount());
     }
