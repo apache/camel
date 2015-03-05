@@ -112,6 +112,7 @@
     </dependency>
 
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -123,5 +124,20 @@
       </plugin>
     </plugins>
   </build>
+
+    <!-- skip tests on windows -->
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

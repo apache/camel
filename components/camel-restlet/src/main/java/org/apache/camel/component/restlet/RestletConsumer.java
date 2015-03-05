@@ -39,12 +39,19 @@ public class RestletConsumer extends DefaultConsumer {
     public RestletConsumer(Endpoint endpoint, Processor processor)
         throws Exception {
         super(endpoint, processor);
-        
-        restlet = new Restlet() {
+    }
+
+    @Override
+    public RestletEndpoint getEndpoint() {
+        return (RestletEndpoint) super.getEndpoint();
+    }
+
+    protected Restlet createRestlet() {
+        return new Restlet() {
             @Override
             public void handle(Request request, Response response) {
                 LOG.debug("Consumer restlet handle request method: {}", request.getMethod());
-                
+
                 try {
                     Exchange exchange = getEndpoint().createExchange();
 
@@ -66,19 +73,20 @@ public class RestletConsumer extends DefaultConsumer {
     }
 
     @Override
-    public RestletEndpoint getEndpoint() {
-        return (RestletEndpoint) super.getEndpoint();
-    }
-
-    @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        restlet = createRestlet();
         getEndpoint().connect(this);
+        restlet.start();
     }
 
     @Override
     public void doStop() throws Exception {
         getEndpoint().disconnect(this);
+        if (restlet != null) {
+            restlet.stop();
+        }
         super.doStop();
     }
 
