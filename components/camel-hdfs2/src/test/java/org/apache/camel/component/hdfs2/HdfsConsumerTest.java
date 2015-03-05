@@ -18,15 +18,19 @@ package org.apache.camel.component.hdfs2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
@@ -106,6 +110,51 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         context.start();
 
         resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testConcurrentConsumers() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        int ITERATIONS = 200;
+
+        final File dir = new File("target/test/multiple-consumers");
+        dir.mkdirs();
+        for (int i = 1; i <= ITERATIONS; i++) {
+            FileOutputStream fos = new FileOutputStream(new File(dir, String.format("file-%04d.txt", i)));
+            fos.write(String.format("hello (%04d)\n", i).getBytes());
+            fos.close();
+        }
+
+        final Set<String> fileNames = new HashSet<String>();
+        final CountDownLatch latch = new CountDownLatch(ITERATIONS);
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                fileNames.add(exchange.getIn().getHeader(Exchange.FILE_NAME, String.class));
+                latch.countDown();
+            }
+        });
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("hdfs2://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=100&initialDelay=0").to("mock:result");
+                from("hdfs2://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=200&initialDelay=0").to("mock:result");
+                from("hdfs2://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=300&initialDelay=0").to("mock:result");
+                from("hdfs2://" + dir.toURI() + "/?pattern=*.txt&fileSystemType=LOCAL&chunkSize=400&initialDelay=0").to("mock:result");
+            }
+        });
+        context.start();
+
+        resultEndpoint.expectedMessageCount(ITERATIONS);
+
+        latch.await(30, TimeUnit.SECONDS);
+
+        resultEndpoint.assertIsSatisfied();
+        assertThat(fileNames.size(), equalTo(ITERATIONS));
     }
 
     @Test

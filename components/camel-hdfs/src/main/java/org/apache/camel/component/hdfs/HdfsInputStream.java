@@ -46,9 +46,12 @@ public class HdfsInputStream implements Closeable {
         ret.suffixedReadPath = ret.actualPath + '.' + configuration.getReadSuffix();
         ret.chunkSize = configuration.getChunkSize();
         HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath);
-        info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
-        ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
-        ret.opened = true;
+        if (info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath))) {
+            ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
+            ret.opened = true;
+        } else {
+            ret.opened = false;
+        }
         return ret;
     }
 
@@ -96,6 +99,10 @@ public class HdfsInputStream implements Closeable {
 
     public final Closeable getIn() {
         return in;
+    }
+
+    public boolean isOpened() {
+        return opened;
     }
 
 }

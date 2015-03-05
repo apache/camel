@@ -138,6 +138,12 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             try {
                 this.rwlock.writeLock().lock();
                 this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
+                if (!this.istream.isOpened()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath().toString());
+                    }
+                    continue;
+                }
             } finally {
                 this.rwlock.writeLock().unlock();
             }
