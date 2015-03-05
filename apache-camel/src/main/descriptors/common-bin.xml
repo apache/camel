@@ -123,6 +123,7 @@
         <include>org.apache.camel:camel-kafka</include>
         <include>org.apache.camel:camel-kestrel</include>
         <include>org.apache.camel:camel-krati</include>
+        <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-leveldb</include>
         <include>org.apache.camel.component.linkedin:camel-linkedin-api</include>
