@@ -1792,7 +1792,7 @@
         <artifactId>abdera-core</artifactId>
         <version>${abdera-version}</version>
       </dependency>
-    
+
       <!-- cxf dependencies -->
       <dependency>
         <groupId>org.apache.cxf</groupId>
@@ -1834,7 +1834,7 @@
         <artifactId>cxf-services-ws-discovery-api</artifactId>
         <version>${cxf-version}</version>
       </dependency>
-      
+
       <!-- API -->
       <dependency>
         <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
@@ -1881,7 +1881,7 @@
         <artifactId>bsh</artifactId>
         <version>${bsh-version}</version>
       </dependency>
-      
+
       <!-- logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -1964,7 +1964,7 @@
         <artifactId>activemq-all</artifactId>
         <version>${activemq-version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-spring</artifactId>
@@ -2115,7 +2115,7 @@
           <artifactId>hapi-structures-v25</artifactId>
           <version>${hapi-version}</version>
       </dependency>
-        
+
       <!-- optional disruptor dependencies -->
       <dependency>
         <groupId>com.lmax</groupId>
@@ -2153,14 +2153,14 @@
         <artifactId>lucene-queryparser</artifactId>
         <version>${lucene-version}</version>
       </dependency>
-      
+
       <!-- optional mina dependencies -->
       <dependency>
         <groupId>org.apache.mina</groupId>
         <artifactId>mina-core</artifactId>
-        <version>${mina2-version}</version>
+        <version>${mina-version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
