@@ -1786,6 +1786,55 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- abdera dependencies-->
+      <dependency>
+        <groupId>org.apache.abdera</groupId>
+        <artifactId>abdera-core</artifactId>
+        <version>${abdera-version}</version>
+      </dependency>
+    
+      <!-- cxf dependencies -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-management</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-local</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-jms</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-mex</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-rm</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-security</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf.services.sts</groupId>
+        <artifactId>cxf-services-sts-core</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf.services.ws-discovery</groupId>
+        <artifactId>cxf-services-ws-discovery-api</artifactId>
+        <version>${cxf-version}</version>
+      </dependency>
+      
       <!-- API -->
       <dependency>
         <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
@@ -1826,6 +1875,13 @@
         <version>1.4.5</version>
       </dependency>
 
+      <!-- beanshell -->
+      <dependency>
+        <groupId>org.beanshell</groupId>
+        <artifactId>bsh</artifactId>
+        <version>${bsh-version}</version>
+      </dependency>
+      
       <!-- logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -1892,6 +1948,23 @@
         <artifactId>activemq-pool</artifactId>
         <version>${activemq-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-rar</artifactId>
+        <version>${activemq-version}</version>
+        <type>rar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-camel</artifactId>
+        <version>${activemq-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-all</artifactId>
+        <version>${activemq-version}</version>
+      </dependency>
+      
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-spring</artifactId>
@@ -2031,6 +2104,18 @@
         <version>${castor-bundle-version}</version>
       </dependency>
 
+      <!-- optional hapi dependencies -->
+      <dependency>
+          <groupId>ca.uhn.hapi</groupId>
+          <artifactId>hapi-structures-v24</artifactId>
+          <version>${hapi-version}</version>
+      </dependency>
+      <dependency>
+          <groupId>ca.uhn.hapi</groupId>
+          <artifactId>hapi-structures-v25</artifactId>
+          <version>${hapi-version}</version>
+      </dependency>
+        
       <!-- optional disruptor dependencies -->
       <dependency>
         <groupId>com.lmax</groupId>
@@ -2052,12 +2137,30 @@
         <version>${dropbox-version}</version>
       </dependency>
 
+      <!-- optional lucene dependencies -->
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-analyzers-common</artifactId>
+        <version>${lucene-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core</artifactId>
+        <version>${lucene-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-queryparser</artifactId>
+        <version>${lucene-version}</version>
+      </dependency>
+      
       <!-- optional mina dependencies -->
       <dependency>
         <groupId>org.apache.mina</groupId>
         <artifactId>mina-core</artifactId>
-        <version>${mina-version}</version>
+        <version>${mina2-version}</version>
       </dependency>
+      
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
