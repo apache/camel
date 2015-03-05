@@ -32,7 +32,7 @@ public class FreemarkerBodyAsDomainObjectTest extends CamelTestSupport {
     public void testWithObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hi Claus how are you? Its a nice day.\nGive my regards to the family Ibsen.");
+        mock.message(0).body().contains("Hi Claus how are you? Its a nice day.");
 
         MyPerson person = new MyPerson();
         person.setFamilyName("Ibsen");
