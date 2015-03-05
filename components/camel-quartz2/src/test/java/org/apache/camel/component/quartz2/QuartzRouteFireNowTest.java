@@ -30,7 +30,7 @@ public class QuartzRouteFireNowTest extends BaseQuartzTest {
     @Test
     public void testQuartzRoute() throws Exception {
         resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.expectedMinimumMessageCount(2);
         resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");
         resultEndpoint.message(0).header("triggerGroup").isEqualTo("myGroup");
 
