@@ -63,6 +63,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
      */
     @Test
     public void testDefaultQRCode() throws Exception {
+        out.reset();
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
 
@@ -79,6 +80,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
      */
     @Test
     public void testQRCodeWithModifiedSize() throws Exception {
+        out.reset();
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
 
@@ -95,6 +97,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
      */
     @Test
     public void testQRCodeWithJPEGType() throws Exception {
+        out.reset();
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
 
@@ -111,6 +114,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
      */
     @Test
     public void testPDF417CodeWidthModifiedSizeAndImageType() throws Exception {
+        out.reset();
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
 
@@ -128,6 +132,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
      */
     @Test
     public void testAZTECWidthModifiedSizeAndImageType() throws Exception {
+        out.reset();
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
 

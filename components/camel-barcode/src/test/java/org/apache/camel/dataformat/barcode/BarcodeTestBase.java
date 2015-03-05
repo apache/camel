@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.barcode;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -37,6 +38,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 
 
 public class BarcodeTestBase extends CamelTestSupport {
@@ -55,14 +58,18 @@ public class BarcodeTestBase extends CamelTestSupport {
     protected void checkImage(MockEndpoint mock, int height, int width, String type, BarcodeFormat format) throws IOException {
         Exchange ex = mock.getReceivedExchanges().get(0);
         File in = ex.getIn().getBody(File.class);
+        FileInputStream fis = new FileInputStream(in);
 
         // check image
-        BufferedImage i = ImageIO.read(in);
+        BufferedImage i = ImageIO.read(fis);
+        IOHelper.close(fis);
+
         assertTrue(height >= i.getHeight());
         assertTrue(width >= i.getWidth());
         this.checkType(in, type);
         this.checkFormat(in, format);
-        in.delete();
+
+        FileUtil.deleteFile(in);
     }
 
     protected void checkImage(MockEndpoint mock, String type, BarcodeFormat format) throws IOException {
@@ -70,7 +77,8 @@ public class BarcodeTestBase extends CamelTestSupport {
         File in = ex.getIn().getBody(File.class);
         this.checkType(in, type);
         this.checkFormat(in, format);
-        in.delete();
+
+        FileUtil.deleteFile(in);
     }
     
     private void checkFormat(File file, BarcodeFormat format) throws IOException {
@@ -89,6 +97,8 @@ public class BarcodeTestBase extends CamelTestSupport {
     private void checkType(File file, String type) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(file);
         ImageReader reader = ImageIO.getImageReaders(iis).next();
+        IOHelper.close(iis);
+
         String format = reader.getFormatName();
         assertEquals(type, format.toUpperCase());
     }
