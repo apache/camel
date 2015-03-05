@@ -210,6 +210,7 @@
                 <exclude>**/README</exclude>
                 <exclude>**/README.txt</exclude>
                 <exclude>**/README.md</exclude>
+                <exclude>**/ReadMe.md</exclude>
                 <exclude>**/resources/**/*.xsd</exclude>
                 <exclude>**/webapp/js/**/*</exclude>
                 <exclude>**/test/resources/**/*</exclude>
@@ -220,8 +221,10 @@
                   license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- cxf does not handle comments here -->
-                <excludes>**/src/main/resources/META-INF/cxf/cxf.extension</excludes>
-                <excludes>**/src/main/resources/META-INF/cxf/bus-extensions.txt</excludes>
+                <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
+                <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
+                <!-- ignore the api signatures files -->
+                <exclude>**/src/signatures/*.txt</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
