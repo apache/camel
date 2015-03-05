@@ -417,9 +417,9 @@
     <snakeyaml-version>1.14</snakeyaml-version>
     <snappy-version>1.1.0.1</snappy-version>
     <snmp4j-version>2.3.3_1</snmp4j-version>
-    <solr-bundle-version>4.9.0_1</solr-bundle-version>
-    <solr-version>4.9.0</solr-version>
-    <solr-version-range>[4.9,5)</solr-version-range>
+    <solr-bundle-version>4.10.2_1</solr-bundle-version>
+    <solr-version>4.10.2</solr-version>
+    <solr-version-range>[4.10,5)</solr-version-range>
     <spark-rest-version>2.0.0</spark-rest-version>
     <spark-rest-bundle-version>2.0.0_1</spark-rest-bundle-version>
     <splunk-version>1.3.2.0_1</splunk-version>
