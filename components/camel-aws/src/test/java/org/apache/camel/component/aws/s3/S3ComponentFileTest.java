@@ -41,17 +41,21 @@ import org.junit.Test;
 public class S3ComponentFileTest extends CamelTestSupport {
 
     @EndpointInject(uri = "direct:startKeep")
-    private ProducerTemplate templateKeep;
+    ProducerTemplate templateKeep;
 
     @EndpointInject(uri = "direct:startDelete")
-    private ProducerTemplate templateDelete;
+    ProducerTemplate templateDelete;
 
     @EndpointInject(uri = "mock:result")
-    private MockEndpoint result;
+    MockEndpoint result;
 
-    private AmazonS3ClientMock client;
+    AmazonS3ClientMock client;
 
-    private File testFile;
+    File testFile;
+
+    String getCamelBucket() {
+        return "mycamelbucket";
+    }
 
     @Before
     public void setup() throws Exception {
@@ -72,7 +76,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
     }
 
     @Test
-    public void sendFileAndKeep() throws Exception {
+    public void sendFile() throws Exception {
         result.expectedMessageCount(1);
 
         Exchange exchange = templateKeep.send("direct:startKeep", ExchangePattern.InOnly, new Processor() {
@@ -84,49 +88,26 @@ public class S3ComponentFileTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertResultExchange(result.getExchanges().get(0));
+        assertResultExchange(result.getExchanges().get(0), false);
 
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
-        assertEquals("mycamelbucket", putObjectRequest.getBucketName());
+        assertEquals(getCamelBucket(), putObjectRequest.getBucketName());
 
         assertResponseMessage(exchange.getIn());
 
         assertFileExists(testFile.getAbsolutePath());
     }
 
-    @Test
-    public void sendFileAndDelete() throws Exception {
-        result.expectedMessageCount(1);
-
-        Exchange exchange = templateDelete.send("direct:startDelete", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
-                exchange.getIn().setBody(testFile);
-            }
-        });
-
-        assertMockEndpointsSatisfied();
-
-        assertResultExchange(result.getExchanges().get(0));
-
-        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
-        assertEquals("mycamelbucket", putObjectRequest.getBucketName());
-
-        assertResponseMessage(exchange.getIn());
-
-        assertFileNotExists(testFile.getAbsolutePath());
-    }
-
-    private void assertResultExchange(Exchange resultExchange) {
+    void assertResultExchange(Exchange resultExchange, boolean delete) {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
 
-        if (!"sendFileAndDelete".equals(getTestMethodName())) {
+        if (!delete) {
             // assert on the file content only in case the "deleteAfterWrite" option is NOT enabled
             // in which case we would still have the file and thereby could assert on it's content
             assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         }
 
-        assertEquals("mycamelbucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
+        assertEquals(getCamelBucket(), resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
         assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not enabled on this bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
@@ -141,7 +122,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
         assertEquals(0, resultExchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class).size());
     }
 
-    private void assertResponseMessage(Message message) {
+    void assertResponseMessage(Message message) {
         assertEquals("3a5c8b1ad448bca04584ecb55b836264", message.getHeader(S3Constants.E_TAG));
         assertNull(message.getHeader(S3Constants.VERSION_ID));
     }
@@ -161,7 +142,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1";
+                String awsEndpoint = "aws-s3://" + getCamelBucket() + "?amazonS3Client=#amazonS3Client&region=us-west-1";
 
                 from("direct:startKeep")
                         .to(awsEndpoint + "&deleteAfterWrite=false");

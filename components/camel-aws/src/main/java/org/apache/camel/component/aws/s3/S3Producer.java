@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -170,6 +171,7 @@ public class S3Producer extends DefaultProducer {
         ObjectMetadata objectMetadata = determineMetadata(exchange);
 
         File filePayload = null;
+        InputStream is = null;
         Object obj = exchange.getIn().getMandatoryBody();
         PutObjectRequest putObjectRequest = null;
         // Need to check if the message body is WrappedFile
@@ -178,12 +180,12 @@ public class S3Producer extends DefaultProducer {
         }
         if (obj instanceof File) {
             filePayload = (File) obj;
-            putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), filePayload);
-            putObjectRequest.setMetadata(objectMetadata);
+            is = new FileInputStream(filePayload);
         } else {
-            putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(),
-                determineKey(exchange), exchange.getIn().getMandatoryBody(InputStream.class), objectMetadata);
+            is = exchange.getIn().getMandatoryBody(InputStream.class);
         }
+
+        putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), is, objectMetadata);
 
         String storageClass = determineStorageClass(exchange);
         if (storageClass != null) {
@@ -215,7 +217,9 @@ public class S3Producer extends DefaultProducer {
         }
 
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
+            // close streams
             IOHelper.close(putObjectRequest.getInputStream());
+            IOHelper.close(is);
             FileUtil.deleteFile(filePayload);
         }
     }
