@@ -46,6 +46,10 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testDeleteOnComplete() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         final long jobId = 111;
         final byte[] payload = Helper.stringToBytes(testMessage);
         final Job jobMock = mock(Job.class);
@@ -92,6 +96,10 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testBeanstalkException() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         shouldIdie = false;
         final Job jobMock = mock(Job.class);
         final long jobId = 111;

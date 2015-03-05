@@ -39,6 +39,10 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testReceive() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         final Job jobMock = mock(Job.class);
         final long jobId = 111;
         final byte[] payload = Helper.stringToBytes(testMessage);
@@ -62,6 +66,10 @@ public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testBeanstalkException() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         final Job jobMock = mock(Job.class);
         final long jobId = 111;
         final byte[] payload = Helper.stringToBytes(testMessage);

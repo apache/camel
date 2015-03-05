@@ -45,6 +45,10 @@ public class ImmediateConsumerTest extends BeanstalkMockTestSupport {
 
     @Test
     public void testDeleteOnSuccess() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         final Job jobMock = mock(Job.class);
         final long jobId = 111;
         final byte[] payload = Helper.stringToBytes(testMessage);

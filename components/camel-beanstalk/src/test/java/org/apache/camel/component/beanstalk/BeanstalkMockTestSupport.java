@@ -29,6 +29,11 @@ public class BeanstalkMockTestSupport extends CamelTestSupport {
     @Mock
     Client client;
 
+    public boolean canTest() {
+        // cannot test on windows
+        return !isPlatform("windows");
+    }
+
     @Before
     @Override
     public void setUp() throws Exception {
