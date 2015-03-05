@@ -817,7 +817,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 return false;
             }
 
-            EndpointOption that = (EndpointOption) o;
+            ComponentOption that = (ComponentOption) o;
 
             if (!name.equals(that.name)) {
                 return false;
