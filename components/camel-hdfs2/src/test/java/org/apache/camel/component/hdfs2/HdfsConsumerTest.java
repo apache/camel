@@ -179,6 +179,8 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         });
         context.start();
 
+        Thread.sleep(2000);
+
         resultEndpoint.assertIsSatisfied();
         assertThat(resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length, equalTo(0));
     }

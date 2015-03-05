@@ -75,7 +75,7 @@ public class HdfsInputStream implements Closeable {
         long nb = fileType.next(this, key, value);
         // when zero bytes was read from given type of file, we may still have a record (e.g., empty file)
         // null value.value is the only indication that no (new) record/chunk was read
-        if (nb == 0 && numOfReadBytes.get() > 0) {
+        if (nb == 0 && numOfReadMessages.get() > 0) {
             // we've read all chunks from file, which size is exact multiple the chunk size
             return -1;
         }
