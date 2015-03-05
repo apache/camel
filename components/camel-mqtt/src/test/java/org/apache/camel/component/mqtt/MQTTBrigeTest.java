@@ -70,9 +70,11 @@ public class MQTTBrigeTest extends MQTTBaseTest {
             public void configure() {
                 // Bridge message over two MQTT topics
                 from("direct:start").to("mqtt:foo?publishTopicName=test/topic1");
+
                 from("mqtt:foo?subscribeTopicName=test/topic1").to("log:testlogger?showAll=true")
                     .to("mqtt:foo?publishTopicName=test/resulttopic")
                     .log(LoggingLevel.ERROR, "Message processed");
+
                 // Bridge message over two MQTT topics with a seda in between
                 from("direct:startWorkaround").to("mqtt:foo?publishTopicName=test/topic2");
                 from("mqtt:foo?subscribeTopicName=test/topic2").to("log:testlogger?showAll=true")

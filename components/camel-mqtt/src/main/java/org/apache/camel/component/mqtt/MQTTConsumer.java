@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mqtt;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -44,15 +45,25 @@ public class MQTTConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    void processExchange(Exchange exchange) {
+    void processExchange(final Exchange exchange) {
+        boolean sync = true;
         try {
-            getProcessor().process(exchange);
+            sync = getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    if (exchange.getException() != null) {
+                        getExceptionHandler().handleException("Error processing exchange.", exchange, exchange.getException());
+                    }
+                }
+            });
         } catch (Throwable e) {
             exchange.setException(e);
         }
 
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange.", exchange, exchange.getException());
+        if (sync) {
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange.", exchange, exchange.getException());
+            }
         }
     }
 }
