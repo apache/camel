@@ -246,6 +246,8 @@ public class HdfsConsumerTest extends HdfsTestSupport {
             return;
         }
 
+        int before = new File("target/test").list().length;
+
         final Path file = new Path(new File("target/test/test-camel-boolean").getAbsolutePath());
         Configuration conf = new Configuration();
         SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BooleanWritable.class);
@@ -277,7 +279,8 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         scheduler.getScheduledExecutorService().awaitTermination(5000, TimeUnit.MILLISECONDS);
 
         Set<String> files = new HashSet<String>(Arrays.asList(new File("target/test").list()));
-        assertThat(files.size(), equalTo(2));
+        // there may be some leftover files before, so test that we only added 2 new files
+        assertThat(files.size() - before, equalTo(2));
         assertTrue(files.remove("test-camel-boolean.handled"));
         assertTrue(files.remove(".test-camel-boolean.handled.crc"));
     }
