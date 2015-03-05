@@ -64,12 +64,19 @@ public class GAuthPk8Loader implements GAuthKeyLoader {
             IOHelper.close(is);
         }
 
+        // replace line feeds from windows to unix style
+        if (!System.lineSeparator().equals("\n")) {
+            str = str.replaceAll(System.lineSeparator(), "\n");
+        }
+
         if (str.contains(BEGIN) && str.contains(END)) {
             str = str.substring(BEGIN.length(), str.lastIndexOf(END));
         }
 
+        byte[] decoded = Base64.decode(str);
+
         KeyFactory factory = KeyFactory.getInstance("RSA");
-        return factory.generatePrivate(new PKCS8EncodedKeySpec(Base64.decode(str)));
+        return factory.generatePrivate(new PKCS8EncodedKeySpec(decoded));
     }
     
 }
