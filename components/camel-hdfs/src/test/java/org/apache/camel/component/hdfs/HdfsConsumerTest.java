@@ -145,7 +145,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         FSDataOutputStream out = fs.create(file);
         // size = 5 times chunk size = 210 bytes
         for (int i = 0; i < 42; ++i) {
-            out.write(new byte[] { 0x61, 0x62, 0x63, 0x64, 0x65 });
+            out.write(new byte[] {0x61, 0x62, 0x63, 0x64, 0x65});
             out.flush();
         }
         out.close();
