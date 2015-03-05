@@ -34,7 +34,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "mybatis", syntax = "mybatis:statement", consumerClass =  MyBatisConsumer.class, label = "database")
+@UriEndpoint(scheme = "mybatis", syntax = "mybatis:statement", consumerClass =  MyBatisConsumer.class, label = "database,sql")
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();

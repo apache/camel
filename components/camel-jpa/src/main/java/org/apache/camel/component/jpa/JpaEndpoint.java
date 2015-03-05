@@ -42,7 +42,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@UriEndpoint(scheme = "jpa", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database")
+@UriEndpoint(scheme = "jpa", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
