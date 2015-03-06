@@ -126,6 +126,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def removeProperties(pattern: String, excludePatterns: String*) = wrap(target.removeProperties(pattern, excludePatterns:_*))
   def rollback = wrap(target.rollback)
   def routeId(routeId: String) = wrap(target.routeId(routeId))
+  def routeDescription(description: String) = wrap(target.routeDescription(description))
   @Deprecated
   def routingSlip(header: String) = wrap(target.routingSlip(header))
   @Deprecated

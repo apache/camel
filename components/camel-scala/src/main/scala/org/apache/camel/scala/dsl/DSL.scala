@@ -80,6 +80,7 @@ trait DSL {
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
   def routeId(id: String) : DSL
+  def routeDescription(description: String): DSL
   def routingSlip(header: String) : DSL
   def routingSlip(header: String, separator: String) : DSL
   def routingSlip(expression: Exchange => Any) : DSL

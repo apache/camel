@@ -176,6 +176,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def routeId(id: String) = stack.top.routeId(id)
+  def routeDescription(description: String) = stack.top.routeDescription(description)
   def routingSlip(header: String) = stack.top.routingSlip(header)
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
