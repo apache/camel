@@ -49,7 +49,7 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true", getPort()))
+                from(String.format("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true", getPort()))
                     .id("minaRoute")
                     .noAutoStartup()
                     .to("log:before?showAll=true")
@@ -70,7 +70,7 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
             acceptor = new SocketAcceptor();
             TextLineCodecFactory codecFactory = new TextLineCodecFactory(Charset.forName("UTF-8"), LineDelimiter.UNIX);
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
-            acceptor.bind(new InetSocketAddress(port), new ServerHandler());
+            acceptor.bind(new InetSocketAddress("127.0.0.1,", port), new ServerHandler());
         }
         
         public void shutdown() throws Exception {

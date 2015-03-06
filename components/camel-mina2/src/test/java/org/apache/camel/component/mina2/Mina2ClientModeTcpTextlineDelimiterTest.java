@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
@@ -50,7 +49,7 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina2:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true", getPort()))
+                from(String.format("mina2:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true", getPort()))
                     .id("minaRoute")
                     .noAutoStartup()
                     .to("log:before?showAll=true")
@@ -72,7 +71,7 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
             Mina2TextLineCodecFactory codecFactory = new Mina2TextLineCodecFactory(Charset.forName("UTF-8"), LineDelimiter.UNIX);
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
             acceptor.setHandler(new ServerHandler());
-            acceptor.bind(new InetSocketAddress(port));
+            acceptor.bind(new InetSocketAddress("127.0.0.1", port));
         }
         
         public void shutdown() throws Exception {
