@@ -636,16 +636,6 @@
               </wadl:method>
             </wadl:resource>
 
-            <wadl:resource path="update-comments">
-            <wadl:method name="POST" id="addCompanyUpdateComment">
-                <wadl:request>
-                  <wadl:param href="#company-id"/>
-                  <wadl:param href="#update-key"/>
-                  <wadl:representation href="#update-comment"/>
-                </wadl:request>
-              </wadl:method>
-            </wadl:resource>
-
             <wadl:resource path="update-comments-as-company">
               <wadl:method name="POST" id="addCompanyUpdateCommentAsCompany">
                 <wadl:request>
