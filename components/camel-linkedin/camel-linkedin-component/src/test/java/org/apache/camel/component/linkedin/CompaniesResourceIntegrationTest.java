@@ -145,7 +145,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         // parameter type is Boolean
         headers.put("CamelLinkedIn.secure_urls", null);
 
-        final org.apache.camel.component.linkedin.api.model.Comments result = requestBodyAndHeaders("direct://GETCOMPANYUPDATECOMMENTS", null, headers);
+        final org.apache.camel.component.linkedin.api.model.UpdateComments result = requestBodyAndHeaders("direct://GETCOMPANYUPDATECOMMENTS", null, headers);
 
         assertNotNull("getCompanyUpdateComments result", result);
         LOG.debug("getCompanyUpdateComments: " + result);
