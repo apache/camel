@@ -170,7 +170,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
         // parameter type is Long
         headers.put("CamelLinkedIn.start", null);
 
-        final org.apache.camel.component.linkedin.api.model.GroupMemberships result = requestBodyAndHeaders("direct://GETGROUPMEMBERSHIPSETTINGS", null, headers);
+        final org.apache.camel.component.linkedin.api.model.GroupMembership result = requestBodyAndHeaders("direct://GETGROUPMEMBERSHIPSETTINGS", null, headers);
 
         assertNotNull("getGroupMembershipSettings result", result);
         LOG.debug("getGroupMembershipSettings: " + result);
@@ -419,7 +419,7 @@ public class PeopleResourceIntegrationTest extends AbstractLinkedInTestSupport {
         // parameter type is Boolean
         headers.put("CamelLinkedIn.secure_urls", null);
 
-        final org.apache.camel.component.linkedin.api.model.Comments result = requestBodyAndHeaders("direct://GETUPDATECOMMENTS", null, headers);
+        final org.apache.camel.component.linkedin.api.model.UpdateComments result = requestBodyAndHeaders("direct://GETUPDATECOMMENTS", null, headers);
 
         assertNotNull("getUpdateComments result", result);
         LOG.debug("getUpdateComments: " + result);
