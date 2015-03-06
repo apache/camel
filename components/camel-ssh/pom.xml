@@ -43,7 +43,6 @@
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
-      <version>${mina2-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.sshd</groupId>
