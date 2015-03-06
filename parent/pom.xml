@@ -132,7 +132,7 @@
     <docker-java-version>0.10.5</docker-java-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.5.1</dozer-version>
-    <drools-version>6.1.0.Final</drools-version>
+    <drools-version>6.2.0.Final</drools-version>
     <dropbox-version>1.7.6</dropbox-version>
     <easymock-version>3.2</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
@@ -297,7 +297,7 @@
     <kafka-bundle-version>0.8.1_1</kafka-bundle-version>
     <karaf-version>2.4.1</karaf-version>
     <karaf3-version>3.0.2</karaf3-version>
-    <kie-version>6.1.0.Final</kie-version>
+    <kie-version>6.2.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
@@ -362,7 +362,7 @@
     <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
     <openshift-java-client-version>2.5.0.Final</openshift-java-client-version>
-    <optaplanner-version>6.1.0.Final</optaplanner-version>
+    <optaplanner-version>6.2.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
