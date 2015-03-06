@@ -196,6 +196,7 @@ public class DefaultRouteContext implements RouteContext {
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
+            edcr.getProperties().put(Route.DESCRIPTION_PROPERTY, route.getDescriptionText());
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
             }

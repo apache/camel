@@ -364,6 +364,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Set the route description for this route
+     *
+     * @param description the route description
+     * @return the builder
+     */
+    public RouteDefinition routeDescription(String description) {
+        DescriptionDefinition desc = new DescriptionDefinition();
+        desc.setText(description);
+        setDescription(desc);
+        return this;
+    }
+
+    /**
      * Disable stream caching for this route.
      *
      * @return the builder

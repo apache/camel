@@ -960,6 +960,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Set the route description for this route
+     *
+     * @param description the route description
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type routeDescription(String description) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            DescriptionDefinition desc = new DescriptionDefinition();
+            desc.setText(description);
+            route.setDescription(desc);
+        }
+
+        return (Type) this;
+    }
+
+    /**
      * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors

@@ -63,7 +63,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     public ManagedRoute(ModelCamelContext context, Route route) {
         this.route = route;
         this.context = context;
-        this.description = route.toString();
+        this.description = route.getDescription();
         boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }

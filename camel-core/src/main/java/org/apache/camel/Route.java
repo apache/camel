@@ -36,6 +36,7 @@ public interface Route extends EndpointAware {
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
     String REST_PROPERTY = "rest";
+    String DESCRIPTION_PROPERTY = "description";
 
     /**
      * Gets the route id
@@ -64,6 +65,15 @@ public interface Route extends EndpointAware {
      * @return properties
      */
     Map<String, Object> getProperties();
+
+    /**
+     * Gets the route description (if any has been configured).
+     * <p/>
+     * The description is configured using the {@link #DESCRIPTION_PROPERTY} as key in the {@link #getProperties()}.
+     *
+     * @return the description, or <tt>null</tt> if no description has been configured.
+     */
+    String getDescription();
 
     /**
      * Gets the route context
