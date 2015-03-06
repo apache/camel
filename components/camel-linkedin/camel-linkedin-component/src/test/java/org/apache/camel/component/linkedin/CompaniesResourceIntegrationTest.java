@@ -224,7 +224,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         // parameter type is org.apache.camel.component.linkedin.api.Timegranularity
         headers.put("CamelLinkedIn.time_granularity", null);
         // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
+        headers.put("CamelLinkedIn.statistics_update_key", null);
 
         final org.apache.camel.component.linkedin.api.model.HistoricalStatusUpdateStatistics result = requestBodyAndHeaders("direct://GETHISTORICALSTATUSUPDATESTATISTICS", null, headers);
 

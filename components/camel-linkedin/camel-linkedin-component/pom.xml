@@ -130,8 +130,17 @@
                     <nullableOption>seniorities</nullableOption>
                     <nullableOption>start</nullableOption>
                     <nullableOption>start_timestamp</nullableOption>
+                    <nullableOption>statistics_update_key</nullableOption>
                     <nullableOption>time_granularity</nullableOption>
                   </nullableOptions>
+                  <substitutions>
+                    <substitution>
+                      <method>^getHistoricalStatusUpdateStatistics$</method>
+                       <argName>update_key</argName>
+                       <argType>java.lang.String</argType>
+                       <replacement>statistics_update_key</replacement>
+                    </substitution>
+                  </substitutions>
                 </api>
                 <api>
                   <apiName>groups</apiName>
