@@ -32,12 +32,14 @@
     <jmxAgent id="agent" createConnector="true" loadStatisticsEnabled="true"/>
 
     <route>
+      <description>Route that creates input files</description>
       <from uri="timer://inbox?period=5000"/>
       <bean beanType="org.apache.camel.example.management.StockService" method="createRandomStocks"/>
       <to uri="file://target/inbox"/>
     </route>
 
     <route>
+      <description>Route that pickup incoming files and split into messages with stock prices</description>
       <from uri="file://target/inbox"/>
       <split>
         <xpath>/stocks/stock</xpath>
@@ -50,6 +52,7 @@
     </route>
 
     <route>
+      <description>Route that process stock prices and logs</description>
       <from uri="activemq:queue:stock"/>
       <delay>
         <constant>100</constant>
