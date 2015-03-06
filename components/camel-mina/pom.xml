@@ -54,6 +54,7 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+            <version>${mina-version}</version>
         </dependency>
 
         <!-- testing -->
