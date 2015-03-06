@@ -146,9 +146,6 @@ public class NettyComponent extends UriEndpointComponent {
 
     @Override
     protected void doStop() throws Exception {
-        timer.stop();
-        timer = null;
-
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
