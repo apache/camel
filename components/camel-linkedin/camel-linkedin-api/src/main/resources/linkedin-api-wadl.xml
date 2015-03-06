@@ -101,7 +101,7 @@
                 <wadl:param href="#secure-urls"/>
               </wadl:request>
               <wadl:response>
-                <wadl:representation mediaType="application/xml" element="tns:comments"/>
+                <wadl:representation href="#update-comments"/>
               </wadl:response>
             </wadl:method>
           </wadl:resource>
@@ -193,11 +193,9 @@
           <wadl:request>
             <wadl:param href="#group-id"/>
             <wadl:param href="#fields-selector"/>
-            <wadl:param href="#count"/>
-            <wadl:param href="#start"/>
           </wadl:request>
           <wadl:response>
-            <wadl:representation href="#groupmemberships"/>
+            <wadl:representation href="#groupmembership"/>
           </wadl:response>
         </wadl:method>
       </wadl:resource>
@@ -633,7 +631,7 @@
                   <wadl:param href="#secure-urls"/>
                 </wadl:request>
                 <wadl:response>
-                  <wadl:representation mediaType="application/xml" element="tns:comments"/>
+                  <wadl:representation href="#update-comments"/>
                 </wadl:response>
               </wadl:method>
             </wadl:resource>
@@ -1037,6 +1035,7 @@
   <wadl:representation mediaType="application/xml" element="tns:isfollowing" id="is-following"/>
 
   <wadl:representation mediaType="application/xml" element="tns:updatecomment" id="update-comment"/>
+  <wadl:representation mediaType="application/xml" element="tns:updatecomments" id="update-comments"/>
 
   <wadl:representation mediaType="application/xml" element="tns:jobbookmark" id="job-bookmark"/>
   <wadl:representation mediaType="application/xml" element="tns:jobbookmarks" id="job-bookmarks"/>
