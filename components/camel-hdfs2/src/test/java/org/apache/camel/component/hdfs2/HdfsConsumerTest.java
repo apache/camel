@@ -60,6 +60,7 @@ import static org.apache.hadoop.io.SequenceFile.CompressionType;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class HdfsConsumerTest extends HdfsTestSupport {
+    private static final int ITERATIONS = 200;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -117,8 +118,6 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         if (!canTest()) {
             return;
         }
-
-        int ITERATIONS = 200;
 
         final File dir = new File("target/test/multiple-consumers");
         dir.mkdirs();

@@ -29,6 +29,7 @@ import org.junit.Test;
 
 @Ignore("Must run manual")
 public class HdfsAppendTest extends CamelTestSupport {
+    private static final int ITERATIONS = 10;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -84,7 +85,6 @@ public class HdfsAppendTest extends CamelTestSupport {
 
     @Test
     public void testAppendWithDynamicFileName() throws Exception {
-        int ITERATIONS = 10;
 
         context.addRoutes(new RouteBuilder() {
             @Override
