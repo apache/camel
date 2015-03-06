@@ -247,7 +247,8 @@ public class HdfsConsumerTest extends HdfsTestSupport {
             return;
         }
 
-        int before = new File("target/test").list().length;
+        String[] beforeFiles = new File("target/test").list();
+        int before = beforeFiles != null ? beforeFiles.length : 0;
 
         final Path file = new Path(new File("target/test/test-camel-boolean").getAbsolutePath());
         Configuration conf = new Configuration();
