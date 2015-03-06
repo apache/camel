@@ -67,7 +67,7 @@ public class AvroDataFormat extends DataFormatDefinition {
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (this.instanceClassName != null) {
-            setProperty(camelContext, dataFormat, "instanceClass", instanceClassName);
+            setProperty(camelContext, dataFormat, "instanceClassName", instanceClassName);
         }
         if (this.schema != null) {
             setProperty(camelContext, dataFormat, "schema", schema);
