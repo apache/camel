@@ -48,6 +48,11 @@ public class SchedulerComponent extends UriEndpointComponent {
         return concurrentTasks;
     }
 
+    /**
+     * Number of threads used by the scheduling thread pool.
+     * <p/>
+     * Is by default using a single thread
+     */
     public void setConcurrentTasks(int concurrentTasks) {
         this.concurrentTasks = concurrentTasks;
     }

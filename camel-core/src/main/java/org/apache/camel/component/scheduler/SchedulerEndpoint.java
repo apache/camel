@@ -32,7 +32,7 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String name;
-    @UriParam
+    @UriParam(defaultValue = "1")
     private int concurrentTasks = 1;
 
     public SchedulerEndpoint(String uri, SchedulerComponent component, String remaining) {
@@ -66,6 +66,9 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         return name;
     }
 
+    /**
+     * The name of the scheduler
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -74,6 +77,11 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         return concurrentTasks;
     }
 
+    /**
+     * Number of threads used by the scheduling thread pool.
+     * <p/>
+     * Is by default using a single thread
+     */
     public void setConcurrentTasks(int concurrentTasks) {
         this.concurrentTasks = concurrentTasks;
     }
