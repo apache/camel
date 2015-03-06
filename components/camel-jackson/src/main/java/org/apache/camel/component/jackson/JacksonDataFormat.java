@@ -250,6 +250,16 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Cam
     }
 
     /**
+     * To use the custom Jackson module
+     */
+    public void addModule(Module module) {
+        if (this.modules == null) {
+            this.modules = new ArrayList<Module>();
+        }
+        this.modules.add(module);
+    }
+
+    /**
      * To use custom Jackson {@link Module}s specified as a String with FQN class names.
      * Multiple classes can be separated by comma.
      */
