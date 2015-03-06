@@ -32,6 +32,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
@@ -397,59 +398,65 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
     protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, Set<ComponentOption> componentOptions, TypeElement classElement, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
-            List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
-            for (VariableElement fieldElement : fieldElements) {
-                String fieldName = fieldElement.getSimpleName().toString();
-                boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
-                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
+            for (ExecutableElement method : methods) {
+                String methodName = method.getSimpleName().toString();
+                boolean deprecated = method.getAnnotation(Deprecated.class) != null;
+                Metadata metadata = method.getAnnotation(Metadata.class);
 
-                // skip unwanted fields as they are inherited from default component and are not intended for end users to configure
-                if ("endpointClass".equals(fieldName) || "camelContext".equals(fieldName)) {
+                // must be the setter
+                boolean isSetter = methodName.startsWith("set") && method.getParameters().size() == 1 & method.getReturnType().getKind().equals(TypeKind.VOID);
+                if (!isSetter) {
+                    continue;
+                }
+
+                // skip unwanted methods as they are inherited from default component and are not intended for end users to configure
+                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)) {
                     continue;
                 }
 
                 // must be a getter/setter pair
-                ExecutableElement getter = findGetter(fieldName, classElement);
-                ExecutableElement setter = findSetter(fieldName, classElement);
-                if (getter != null && setter != null) {
-                    String name = fieldName;
-                    name = prefix + name;
-                    TypeMirror fieldType = fieldElement.asType();
-                    String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
+                String fieldName = methodName.substring(3);
+                fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
 
-                    String required =  metadata != null ? metadata.required() : null;
-                    String label = metadata != null ? metadata.label() : null;
+                ExecutableElement setter = method;
+                String name = fieldName;
+                name = prefix + name;
+                TypeMirror fieldType = setter.getParameters().get(0).asType();
+                String fieldTypeName = fieldType.toString();
+                TypeElement fieldTypeElement = findTypeElement(roundEnv, fieldTypeName);
 
-                    // we do not yet have default values / notes / as no annotation support yet
-                    // String defaultValueNote = param.defaultValueNote();
-                    String defaultValue = metadata != null ? metadata.defaultValue() : null;
-                    String defaultValueNote = null;
+                String required = metadata != null ? metadata.required() : null;
+                String label = metadata != null ? metadata.label() : null;
 
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
-                    if (docComment == null) {
-                        docComment = "";
-                    }
+                // we do not yet have default values / notes / as no annotation support yet
+                // String defaultValueNote = param.defaultValueNote();
+                String defaultValue = metadata != null ? metadata.defaultValue() : null;
+                String defaultValueNote = null;
 
-                    // gather enums
-                    Set<String> enums = new LinkedHashSet<String>();
-                    boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                    if (isEnum) {
-                        TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
-                        // find all the enum constants which has the possible enum value that can be used
-                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                        for (VariableElement var : fields) {
-                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                String val = var.toString();
-                                enums.add(val);
-                            }
+                String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
+                if (docComment == null) {
+                    docComment = "";
+                }
+
+                // gather enums
+                Set<String> enums = new LinkedHashSet<String>();
+                boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                if (isEnum) {
+                    TypeElement enumClass = findTypeElement(roundEnv, fieldTypeElement.asType().toString());
+                    // find all the enum constants which has the possible enum value that can be used
+                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                    for (VariableElement var : fields) {
+                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                            String val = var.toString();
+                            enums.add(val);
                         }
                     }
-
-                    ComponentOption option = new ComponentOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
-                            docComment.trim(), deprecated, label, isEnum, enums);
-                    componentOptions.add(option);
                 }
+
+                ComponentOption option = new ComponentOption(name, fieldTypeName, required, defaultValue, defaultValueNote,
+                        docComment.trim(), deprecated, label, isEnum, enums);
+                componentOptions.add(option);
             }
 
             // check super classes which may also have fields
@@ -490,7 +497,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         defaultValue = metadata.defaultValue();
                     }
                     String defaultValueNote = path.defaultValueNote();
-                    String required =  metadata != null ? metadata.required() : null;
+                    String required = metadata != null ? metadata.required() : null;
                     String label = path.label();
 
                     TypeMirror fieldType = fieldElement.asType();
@@ -545,7 +552,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                         defaultValue = metadata.defaultValue();
                     }
                     String defaultValueNote = param.defaultValueNote();
-                    String required =  metadata != null ? metadata.required() : null;
+                    String required = metadata != null ? metadata.required() : null;
                     String label = param.label();
 
                     // if the field type is a nested parameter then iterate through its fields
