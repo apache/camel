@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.builder.RouteBuilder;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -32,13 +31,8 @@ public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshallT
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
 }
