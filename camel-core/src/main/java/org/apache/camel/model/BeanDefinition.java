@@ -285,7 +285,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             // to a bean name but the String is being invoke instead
             if (bean instanceof String) {
                 throw new IllegalArgumentException("The bean instance is a java.lang.String type: " + bean
-                    + ". We suppose you want to refer to a bean instance by its id instead. Please use beanRef.");
+                    + ". We suppose you want to refer to a bean instance by its id instead. Please use ref.");
             }
 
             // the holder should either be bean or type based
