@@ -60,7 +60,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def bean(bean: Any) = bean match {
     case cls: Class[_] => wrap(target.bean(cls))
-    case ref: String => wrap(target.beanRef(ref))
+    case ref: String => wrap(target.bean(ref))
     case obj: Any => wrap(target.bean(obj))
   }
 
