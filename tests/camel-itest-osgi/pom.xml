@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tests</artifactId>
-    <version>2.15-SNAPSHOT</version>
+    <version>2.15.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-itest-osgi</artifactId>
@@ -586,14 +586,14 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <!-- when the local repo location has been specified, we need to pass 
+              <!-- when the local repo location has been specified, we need to pass
                 on this information to PAX mvn url -->
               <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
               <includes>
                 <include>**/*Test.*</include>
               </includes>
               <excludes>
-                <!--There are some conflicts of the JAXB OSGi bundle and Hudson System 
+                <!--There are some conflicts of the JAXB OSGi bundle and Hudson System
                   jar so I comment out these JAXB related tests -->
                 <exclude>**/OSGiIntegrationSpringTest.*</exclude>
                 <exclude>**/JaxbFallbackConverterTest.*</exclude>
