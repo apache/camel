@@ -167,7 +167,7 @@ public class SolrProducer extends DefaultProducer {
 
                 DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(), bodyAsString);
 
-                solrServer.request(xmlRequest);                
+                solrServer.request(xmlRequest);
             } else {
                 invalid = true;
             }
