@@ -32,7 +32,7 @@ public class MyHelloRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:start")
-            .beanRef("myHelloBean", "hello")
+            .bean("myHelloBean", "hello")
             .to("mock:result");
     }
 

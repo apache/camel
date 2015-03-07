@@ -130,11 +130,11 @@ public class HL7ByteArrayRouteTest extends HL7TestSupport {
                     .choice()
                         // where we choose that A19 queries invoke the handleA19 method on our hl7service bean
                         .when(header("CamelHL7TriggerEvent").isEqualTo("A19"))
-                            .beanRef("hl7service", "handleA19")
+                            .bean("hl7service", "handleA19")
                             .to("mock:a19")
                         // and A01 should invoke the handleA01 method on our hl7service bean
                         .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01")
-                            .beanRef("hl7service", "handleA01")
+                            .bean("hl7service", "handleA01")
                             .to("mock:a19")
                         // other types should go to mock:unknown
                         .otherwise()

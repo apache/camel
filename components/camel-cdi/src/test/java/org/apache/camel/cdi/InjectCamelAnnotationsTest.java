@@ -70,7 +70,7 @@ public class InjectCamelAnnotationsTest extends CdiContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(directInjectEndpoint)
-                    .beanRef("shoppingBean", "listAllProducts")
+                    .bean("shoppingBean", "listAllProducts")
                     .to(mockResultEndpoint);
             }
         };

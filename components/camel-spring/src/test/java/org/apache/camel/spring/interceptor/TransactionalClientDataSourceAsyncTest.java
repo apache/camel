@@ -66,19 +66,19 @@ public class TransactionalClientDataSourceAsyncTest extends TransactionalClientD
 
                 from("direct:okay")
                     .policy(required)
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .setBody(constant("Tiger in Action")).bean("bookService")
                     .log("Before thread ${threadName}")
                     .to("async:bye:camel")
                     .log("After thread ${threadName}")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
                     .policy(required)
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .setBody(constant("Tiger in Action")).bean("bookService")
                     .log("Before thread ${threadName}")
                     .to("async:bye:camel")
                     .log("After thread ${threadName}")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

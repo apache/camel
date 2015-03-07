@@ -83,7 +83,7 @@ public class RegistryLookupAndInjectorTest extends CdiContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:injectByName")
-                    .beanRef("shoppingBean", "listAllProducts")
+                    .bean("shoppingBean", "listAllProducts")
                     .to("mock:result");
                 from("direct:injectByType")
                     .bean(ShoppingBean.class, "listAllProducts")

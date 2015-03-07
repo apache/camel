@@ -61,7 +61,7 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/test/filter").beanRef("foo");
+                from("netty-http:http://localhost:{{port}}/test/filter").bean("foo");
             }
         };
     }

@@ -53,8 +53,8 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om", "net.sf.saxon.xpath.XPathFactoryImpl");
-                from("direct:in1").beanRef("myBean", "readImplicit");
-                from("direct:in2").beanRef("myBean", "readExplicit");
+                from("direct:in1").bean("myBean", "readImplicit");
+                from("direct:in2").bean("myBean", "readExplicit");
             }
         };
     }

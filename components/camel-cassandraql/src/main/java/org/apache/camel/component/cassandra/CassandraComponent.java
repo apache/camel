@@ -75,7 +75,7 @@ public class CassandraComponent extends UriEndpointComponent {
             rs = ResultSetConversionStrategies.fromName(strategy);
         }
         CassandraEndpoint endpoint = new CassandraEndpoint(uri, this);
-        endpoint.setBeanRef(beanRef);
+        endpoint.setBean(beanRef);
         endpoint.setHosts(hosts);
         if (port != null) {
             int num = CamelContextHelper.parseInteger(getCamelContext(), port);

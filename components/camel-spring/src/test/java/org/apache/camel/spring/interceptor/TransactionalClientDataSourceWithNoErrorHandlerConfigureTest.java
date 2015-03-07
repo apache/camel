@@ -30,13 +30,13 @@ public class TransactionalClientDataSourceWithNoErrorHandlerConfigureTest extend
                 // START SNIPPET: e1
                 // set the required policy for this route to indicate its transactional
                 from("direct:okay").policy("PROPAGATION_REQUIRED").
-                    setBody(constant("Tiger in Action")).beanRef("bookService").
-                    setBody(constant("Elephant in Action")).beanRef("bookService");
+                    setBody(constant("Tiger in Action")).bean("bookService").
+                    setBody(constant("Elephant in Action")).bean("bookService");
 
                 // set the required policy for this route to indicate its transactional
                 from("direct:fail").policy("PROPAGATION_REQUIRED").
-                    setBody(constant("Tiger in Action")).beanRef("bookService").
-                    setBody(constant("Donkey in Action")).beanRef("bookService");
+                    setBody(constant("Tiger in Action")).bean("bookService").
+                    setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
             }
         };

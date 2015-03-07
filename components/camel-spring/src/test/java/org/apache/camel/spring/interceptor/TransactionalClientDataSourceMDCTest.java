@@ -42,9 +42,9 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
                             }
                         })
                     .to("log:foo")
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .setBody(constant("Tiger in Action")).bean("bookService")
                     .to("log:bar")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
                 from("direct:fail").routeId("route-b")
@@ -57,9 +57,9 @@ public class TransactionalClientDataSourceMDCTest extends TransactionalClientDat
                             }
                         })
                     .to("log:foo2")
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .setBody(constant("Tiger in Action")).bean("bookService")
                     .to("log:bar2")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

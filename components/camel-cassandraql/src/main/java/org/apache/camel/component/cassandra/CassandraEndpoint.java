@@ -181,10 +181,20 @@ public class CassandraEndpoint extends DefaultEndpoint {
         message.setBody(resultSetConversionStrategy.getBody(resultSet));
     }
 
+    public String getBean() {
+        return beanRef;
+    }
+
+    public void setBean(String beanRef) {
+        this.beanRef = beanRef;
+    }
+
+    @Deprecated
     public String getBeanRef() {
         return beanRef;
     }
 
+    @Deprecated
     public void setBeanRef(String beanRef) {
         this.beanRef = beanRef;
     }

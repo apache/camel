@@ -65,7 +65,7 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/test/filter").beanRef("foo");
+                from("jetty:http://localhost:{{port}}/test/filter").bean("foo");
             }
         };
     }
