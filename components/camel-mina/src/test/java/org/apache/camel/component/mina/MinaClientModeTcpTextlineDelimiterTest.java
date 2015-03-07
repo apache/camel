@@ -70,7 +70,7 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
             acceptor = new SocketAcceptor();
             TextLineCodecFactory codecFactory = new TextLineCodecFactory(Charset.forName("UTF-8"), LineDelimiter.UNIX);
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
-            acceptor.bind(new InetSocketAddress("127.0.0.1,", port), new ServerHandler());
+            acceptor.bind(new InetSocketAddress("127.0.0.1", port), new ServerHandler());
         }
         
         public void shutdown() throws Exception {
