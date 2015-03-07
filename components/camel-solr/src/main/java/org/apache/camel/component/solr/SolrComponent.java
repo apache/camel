@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
