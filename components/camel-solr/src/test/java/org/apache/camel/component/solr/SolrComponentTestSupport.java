@@ -49,7 +49,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
         solrInsertTestEntry(TEST_ID);
     }
     
-    protected static Collection secureOrNot() {
+    protected static Collection<Object[]> secureOrNot() {
         return Arrays.asList(new Object[][] {{true}, {false}});
     }
 
