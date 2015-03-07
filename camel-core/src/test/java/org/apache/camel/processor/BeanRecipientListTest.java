@@ -65,7 +65,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").beanRef("myBean", "route");
+                from("direct:in").bean("myBean", "route");
             }
         };
     }

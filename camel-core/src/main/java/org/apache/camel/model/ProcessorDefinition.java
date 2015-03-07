@@ -2456,6 +2456,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
+    public Type process(String ref) {
+        ProcessDefinition answer = new ProcessDefinition();
+        answer.setRef(ref);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds the custom processor reference to this destination which could be a final
+     * destination, or could be a transformation in a pipeline
+     *
+     * @param ref   reference to a {@link Processor} to lookup in the registry
+     * @return the builder
+     * @deprecated use {@link #process(String)}
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
     public Type processRef(String ref) {
         ProcessDefinition answer = new ProcessDefinition();
         answer.setRef(ref);
@@ -2467,13 +2485,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean  the bean to invoke
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type bean(Object bean) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBean(bean);
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
         addOutput(answer);
         return (Type) this;
     }
@@ -2482,14 +2504,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean  the bean to invoke
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type bean(Object bean, String method) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBean(bean);
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
         answer.setMethod(method);
         addOutput(answer);
         return (Type) this;
@@ -2499,18 +2525,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param bean  the bean to invoke
-     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
-     *  the multi parameter 
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     *  the multi parameter
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type bean(Object bean, String method, boolean multiParameterArray) {
+    public Type bean(Object bean, boolean cache) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBean(bean);
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
+        answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke, or a reference to a bean if the type is a String
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     *  the multi parameter
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Object bean, String method, boolean cache) {
+        BeanDefinition answer = new BeanDefinition();
+        if (bean instanceof String) {
+            answer.setRef((String) bean);
+        } else {
+            answer.setBean(bean);
+        }
         answer.setMethod(method);
-        answer.setMultiParameterArray(multiParameterArray);
+        answer.setCache(cache);
         addOutput(answer);
         return (Type) this;
     }
@@ -2556,8 +2610,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
      *  the multi parameter 
      * @return the builder
+     * @deprecated the option multiParameterArray is deprecated
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type bean(Class<?> beanType, String method, boolean multiParameterArray) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
@@ -2578,8 +2634,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
+     * @deprecated the option multiParameterArray is deprecated
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type bean(Class<?> beanType, String method, boolean multiParameterArray, boolean cache) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
@@ -2596,8 +2654,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param ref  reference to a bean to lookup in the registry
      * @return the builder
+     * @deprecated use {@link #bean(Object)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref) {
         BeanDefinition answer = new BeanDefinition(ref);
         addOutput(answer);
@@ -2611,8 +2671,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param ref  reference to a bean to lookup in the registry
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
+     * @deprecated use {@link #bean(Object, String)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, String method) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         addOutput(answer);
@@ -2627,8 +2689,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
+     * @deprecated use {@link #bean(Object, String, boolean)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, boolean cache) {
         BeanDefinition answer = new BeanDefinition(ref);
         answer.setCache(cache);
@@ -2645,8 +2709,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      * @return the builder
+     * @deprecated use {@link #bean(Object, String, boolean)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, String method, boolean cache) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         answer.setCache(cache);
@@ -2665,8 +2731,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
      *               the multi parameter 
      * @return the builder
+     * @deprecated the option multiParameterArray is deprecated
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type beanRef(String ref, String method, boolean cache, boolean multiParameterArray) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         answer.setCache(cache);

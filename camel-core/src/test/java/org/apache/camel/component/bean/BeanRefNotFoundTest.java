@@ -38,9 +38,9 @@ public class BeanRefNotFoundTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").routeId("a").beanRef("foo").to("mock:a");
+                from("direct:a").routeId("a").bean("foo").to("mock:a");
 
-                from("direct:b").routeId("b").beanRef("bar").to("mock:b");
+                from("direct:b").routeId("b").bean("bar").to("mock:b");
             }
         });
         try {

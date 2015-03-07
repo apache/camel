@@ -57,7 +57,7 @@ public class BeanExplicitMethodTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .beanRef("foo", "echo")
+                    .bean("foo", "echo")
                     .to("mock:result");
             }
         };

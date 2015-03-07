@@ -91,7 +91,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
             public void configure() {
                 onException(ValidationException.class).to("mock:invalid");
 
-                from("direct:start").beanRef("myBean").to("mock:valid");
+                from("direct:start").bean("myBean").to("mock:valid");
             }
         };
     }

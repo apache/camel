@@ -60,7 +60,7 @@ public class NewInstanceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").beanRef("myBean", false).to("mock:result");
+                from("direct:start").bean("myBean", false).to("mock:result");
             }
         };
     }

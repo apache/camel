@@ -59,7 +59,7 @@ public class MainExample {
                         System.out.println("Invoked timer at " + new Date());
                     }
                 })
-                .beanRef("foo");
+                .bean("foo");
         }
     }
 
