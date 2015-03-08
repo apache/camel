@@ -16,16 +16,19 @@
  */
 package org.apache.camel.maven;
 
+import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import org.apache.camel.util.JsonSchemaHelper;
 
 /**
  * Enriches xml document with documentation from json files.
@@ -78,12 +81,32 @@ public class DocumentationEnricher {
         Element annotation = document.createElement(Constants.XS_ANNOTATION_ELEMENT_NAME);
         Element documentation = document.createElement(Constants.XS_DOCUMENTATION_ELEMENT_NAME);
         documentation.setAttribute("xml:lang", "en");
-        documentation.setTextContent(textContent);
+        CDATASection cdataDocumentationText = document.createCDATASection(formatTextContent(item, textContent));
+        documentation.appendChild(cdataDocumentationText);
         annotation.appendChild(documentation);
         if (item.getFirstChild() != null) {
             item.insertBefore(annotation, item.getFirstChild());
         } else {
             item.appendChild(annotation);
         }
+    }
+
+    private String formatTextContent(Element item, String textContent) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(System.lineSeparator())
+                .append(WordUtils.wrap(textContent, Constants.WRAP_LENGTH))
+                .append(System.lineSeparator())
+                // Fix closing tag intention.
+                .append(StringUtils.repeat(Constants.DEFAULT_XML_INTEMSION, getNodeDepth(item)));
+        return stringBuilder.toString();
+    }
+
+    private int getNodeDepth(Node item) {
+        int depth = 1;
+        while (item.getParentNode() != null) {
+            depth++;
+            item = item.getParentNode();
+        }
+        return depth;
     }
 }
