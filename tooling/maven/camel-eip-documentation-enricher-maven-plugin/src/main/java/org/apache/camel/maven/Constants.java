@@ -23,6 +23,8 @@ public final class Constants {
 
     // Camel core constants.
     public static final String PATH_TO_MODEL_DIR = "target/classes/org/apache/camel/model";
+    public static final String DEFAULT_XML_INTEMSION = "  ";
+    public static final int WRAP_LENGTH = 80;
 
     // XML constants.
     public static final String NAME_ATTRIBUTE_NAME = "name";
@@ -36,7 +38,5 @@ public final class Constants {
     public static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
     public static final String MODEL_ATTRIBUTE_NAME = "model";
 
-    private Constants() {
-    }
-
+    private Constants() { }
 }

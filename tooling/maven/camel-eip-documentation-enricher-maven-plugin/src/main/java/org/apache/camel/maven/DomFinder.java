@@ -27,19 +27,26 @@ import org.w3c.dom.NodeList;
  * Finds xml elements where documentation can be added.
  */
 public class DomFinder {
+    private final Document document;
+    private final XPath xPath;
 
-    public NodeList findElementsAndTypes(Document document, XPath xPath) throws XPathExpressionException {
+    public DomFinder(Document document, XPath xPath) {
+        this.document = document;
+        this.xPath = xPath;
+    }
+
+    public NodeList findElementsAndTypes() throws XPathExpressionException {
         return (NodeList) xPath.compile("/xs:schema/xs:element")
                 .evaluate(document, XPathConstants.NODESET);
     }
 
-    public NodeList findAttributesElements(Document document, XPath xPath, String name) throws XPathExpressionException {
+    public NodeList findAttributesElements(String name) throws XPathExpressionException {
         return (NodeList) xPath.compile(
                 "/xs:schema/xs:complexType[@name='" + name + "']//xs:attribute")
                 .evaluate(document, XPathConstants.NODESET);
     }
 
-    public String findBaseType(Document document, XPath xPath, String name) throws XPathExpressionException {
+    public String findBaseType(String name) throws XPathExpressionException {
         return (String) xPath.compile(
                 "/xs:schema/xs:complexType[@name='" + name + "']//xs:extension/@base")
                 .evaluate(document, XPathConstants.STRING);
