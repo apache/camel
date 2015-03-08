@@ -81,14 +81,14 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<String> injectedTypes = new HashSet<String>();
         File rootDir = new File(camelCoreDir, Constants.PATH_TO_MODEL_DIR);
-        DomFinder domFinder = new DomFinder();
-        DocumentationEnricher documentationEnricher = new DocumentationEnricher();
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
-        XPath xPath = buildXPath(new CamelSpringNamespace());
         Document document = buildNamespaceAwareDocument(inputCamelSchemaFile);
+        XPath xPath = buildXPath(new CamelSpringNamespace());
+        DomFinder domFinder = new DomFinder(document, xPath);
+        DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
+        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
         try {
-            NodeList elementsAndTypes = domFinder.findElementsAndTypes(document, xPath);
-            documentationEnricher.enrichTopLevelElementsDocumentation(document, elementsAndTypes, jsonFiles);
+            NodeList elementsAndTypes = domFinder.findElementsAndTypes();
+            documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
             Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
             for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
                 String elementType = entry.getKey();
@@ -97,8 +97,6 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
                     injectAttributesDocumentation(domFinder,
                             documentationEnricher,
                             jsonFiles.get(elementName),
-                            xPath,
-                            document,
                             elementType,
                             injectedTypes);
                 }
@@ -119,18 +117,16 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     private void injectAttributesDocumentation(DomFinder domFinder,
                                                DocumentationEnricher documentationEnricher,
                                                File jsonFile,
-                                               XPath xPath,
-                                               Document document,
                                                String type,
                                                Set<String> injectedTypes) throws XPathExpressionException, IOException {
-        NodeList attributeElements = domFinder.findAttributesElements(document, xPath, type);
+        NodeList attributeElements = domFinder.findAttributesElements(type);
         if (attributeElements.getLength() > 0) {
-            documentationEnricher.enrichTypeAttributesDocumentation(document, attributeElements, jsonFile);
+            documentationEnricher.enrichTypeAttributesDocumentation(attributeElements, jsonFile);
             injectedTypes.add(type);
-            String baseType = domFinder.findBaseType(document, xPath, type);
+            String baseType = domFinder.findBaseType(type);
             baseType = truncateTypeNamespace(baseType);
             if (baseType != null && !injectedTypes.contains(baseType)) {
-                injectAttributesDocumentation(domFinder, documentationEnricher, jsonFile, xPath, document, baseType, injectedTypes);
+                injectAttributesDocumentation(domFinder, documentationEnricher, jsonFile, baseType, injectedTypes);
             }
         }
     }
