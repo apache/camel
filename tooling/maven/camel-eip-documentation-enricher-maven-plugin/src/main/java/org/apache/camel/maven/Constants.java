@@ -38,5 +38,5 @@ public final class Constants {
     public static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
     public static final String MODEL_ATTRIBUTE_NAME = "model";
 
-    private Constants() {}
+    private Constants() { }
 }

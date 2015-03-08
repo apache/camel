@@ -16,68 +16,74 @@
  */
 package org.apache.camel.maven;
 
-import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 
 /**
  * Enriches xml document with documentation from json files.
  */
 public class DocumentationEnricher {
+    private final Document document;
 
-    public void enrichTopLevelElementsDocumentation(Document document, NodeList elements, Map<String, File> jsonFiles) throws IOException {
+    public DocumentationEnricher(Document document) {
+        this.document = document;
+    }
+
+    public void enrichTopLevelElementsDocumentation(NodeList elements, Map<String, File> jsonFiles) throws IOException {
         for (int i = 0; i < elements.getLength(); i++) {
             Element item = (Element) elements.item(i);
             String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
             if (jsonFiles.containsKey(name)) {
-                addElementDocumentation(document, item, jsonFiles.get(name));
+                addElementDocumentation(item, jsonFiles.get(name));
             }
         }
     }
 
-    public void enrichTypeAttributesDocumentation(Document document, NodeList attributeElements, File jsonFile) throws IOException {
+    public void enrichTypeAttributesDocumentation(NodeList attributeElements, File jsonFile) throws IOException {
         for (int j = 0; j < attributeElements.getLength(); j++) {
             Element item = (Element) attributeElements.item(j);
-            addAttributeDocumentation(item, jsonFile, document);
+            addAttributeDocumentation(item, jsonFile);
         }
     }
 
-    private void addElementDocumentation(Document document, Element item, File jsonFile) throws IOException {
+    private void addElementDocumentation(Element item, File jsonFile) throws IOException {
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(Constants.MODEL_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), false);
         for (Map<String, String> row : rows) {
             if (row.containsKey(Constants.DESCRIPTION_ATTRIBUTE_NAME)) {
                 String descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
-                addDocumentation(document, item, descriptionText);
+                addDocumentation(item, descriptionText);
                 break;
             }
         }
     }
 
-    private void addAttributeDocumentation(Element item, File jsonFile, Document document) throws IOException {
+    private void addAttributeDocumentation(Element item, File jsonFile) throws IOException {
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(Constants.PROPERTIES_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), true);
         for (Map<String, String> row : rows) {
             if (item.getAttribute(Constants.NAME_ATTRIBUTE_NAME)
                     .equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
                 String descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
                 if (descriptionText != null) {
-                    addDocumentation(document, item, descriptionText);
+                    addDocumentation(item, descriptionText);
                     break;
                 }
             }
         }
     }
 
-    private void addDocumentation(Document document, Element item, String textContent) {
+    private void addDocumentation(Element item, String textContent) {
         Element annotation = document.createElement(Constants.XS_ANNOTATION_ELEMENT_NAME);
         Element documentation = document.createElement(Constants.XS_DOCUMENTATION_ELEMENT_NAME);
         documentation.setAttribute("xml:lang", "en");
