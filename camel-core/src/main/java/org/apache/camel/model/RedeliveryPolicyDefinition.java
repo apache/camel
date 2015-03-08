@@ -421,7 +421,7 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition logNewException(String logNewException) {
-        logNewException(logNewException);
+        setLogNewException(logNewException);
         return this;
     }
 

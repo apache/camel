@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
  *   <li>logHandled = false</li>
  *   <li>logExhausted = true</li>
  *   <li>logExhaustedMessageHistory = true</li>
+ *   <li>logNewException = true</li>
+ *   <li>allowRedeliveryWhileStopping = true</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -441,7 +443,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.
      *
-     * @param reference name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
+     * @param exchangeFormatterRef name of the instance of {@link org.apache.camel.spi.ExchangeFormatter}
      * @return the builder
      */
     public RedeliveryPolicy exchangeFormatterRef(String exchangeFormatterRef) {
