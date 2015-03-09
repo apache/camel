@@ -268,20 +268,6 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         LOG.debug("isViewerShareEnabled: " + result);
     }
 
-    // TODO provide parameter values for likeCompanyUpdate
-    @Ignore
-    @Test
-    public void testLikeCompanyUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("CamelLinkedIn.company_id", 0L);
-        // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
-        // parameter type is org.apache.camel.component.linkedin.api.model.IsLiked
-        headers.put("CamelLinkedIn.isliked", null);
-
-        requestBodyAndHeaders("direct://LIKECOMPANYUPDATE", null, headers);
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -341,10 +327,6 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
                 // test route for isViewerShareEnabled
                 from("direct://ISVIEWERSHAREENABLED")
                     .to("linkedin://" + PATH_PREFIX + "/isViewerShareEnabled?inBody=company_id");
-
-                // test route for likeCompanyUpdate
-                from("direct://LIKECOMPANYUPDATE")
-                    .to("linkedin://" + PATH_PREFIX + "/likeCompanyUpdate");
 
             }
         };
