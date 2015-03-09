@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import io.netty.handler.codec.http.HttpHeaders;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
@@ -36,7 +38,6 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     }
 
     @Test
-    @Ignore("Can fail on some CI servers")
     public void testHttpKeepAliveFalse() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
@@ -48,17 +49,36 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testConnectionClosed() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        Exchange ex = template.request("netty4-http:http://localhost:{{port}}/bar?keepAlive=false", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        assertEquals(HttpHeaders.Values.CLOSE, ex.getOut().getHeader(HttpHeaders.Names.CONNECTION));
+    }
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4-http:http://0.0.0.0:{{port}}/foo")
+                from("netty4-http:http://localhost:{{port}}/foo")
                     .to("mock:input")
                     .transform().constant("Bye World");
+                
+                from("netty4-http:http://localhost:{{port}}/bar").removeHeaders("*").to("mock:input").transform().constant("Bye World");
             }
         };
     }
+    
+    
 
 }
