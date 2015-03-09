@@ -146,6 +146,13 @@
                   <apiName>groups</apiName>
                   <proxyClass>org.apache.camel.component.linkedin.api.GroupsResource</proxyClass>
                   <fromJavadoc />
+                  <nullableOptions>
+                    <nullableOption>category</nullableOption>
+                    <nullableOption>count</nullableOption>
+                    <nullableOption>modified_since</nullableOption>
+                    <nullableOption>order</nullableOption>
+                    <nullableOption>start</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>jobs</apiName>

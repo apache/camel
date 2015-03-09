@@ -433,6 +433,7 @@
         <wadl:method name="GET" id="getGroup">
           <wadl:request>
             <wadl:param href="#group-id"/>
+            <wadl:param href="#fields-selector"/>
           </wadl:request>
           <wadl:response>
             <wadl:representation href="#group"/>
@@ -441,8 +442,22 @@
       </wadl:resource>
 
       <wadl:resource path="{group-id}">
-
-        <wadl:resource path="posts{fields}" type="tns:get-posts"/>
+        <wadl:resource path="posts{fields}">
+          <wadl:method name="GET" id="getPosts">
+            <wadl:request>
+              <wadl:param href="#group-id"/>
+              <wadl:param href="#start"/>
+              <wadl:param href="#count"/>
+              <wadl:param href="#order"/>
+              <wadl:param href="#category"/>
+              <wadl:param href="#modified-since"/>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#posts"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
 
         <wadl:resource path="posts">
           <wadl:method name="POST" id="addPost">
