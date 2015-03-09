@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 public final class ProcessorDefinitionHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorDefinitionHelper.class);
+    private static final ThreadLocal<RestoreAction> CURRENT_RESTORE_ACTION = new ThreadLocal<RestoreAction>();
 
     private ProcessorDefinitionHelper() {
     }
@@ -50,9 +51,9 @@ public final class ProcessorDefinitionHelper {
     /**
      * Looks for the given type in the list of outputs and recurring all the children as well.
      *
-     * @param outputs  list of outputs, can be null or empty.
-     * @param type     the type to look for
-     * @return         the found definitions, or <tt>null</tt> if not found
+     * @param outputs list of outputs, can be null or empty.
+     * @param type    the type to look for
+     * @return the found definitions, or <tt>null</tt> if not found
      */
     public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         return filterTypeInOutputs(outputs, type, -1);
@@ -61,10 +62,10 @@ public final class ProcessorDefinitionHelper {
     /**
      * Looks for the given type in the list of outputs and recurring all the children as well.
      *
-     * @param outputs  list of outputs, can be null or empty.
-     * @param type     the type to look for
-     * @param maxDeep  maximum levels deep to traverse
-     * @return         the found definitions, or <tt>null</tt> if not found
+     * @param outputs list of outputs, can be null or empty.
+     * @param type    the type to look for
+     * @param maxDeep maximum levels deep to traverse
+     * @return the found definitions, or <tt>null</tt> if not found
      */
     public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<T>();
@@ -76,9 +77,9 @@ public final class ProcessorDefinitionHelper {
      * Looks for the given type in the list of outputs and recurring all the children as well.
      * Will stop at first found and return it.
      *
-     * @param outputs  list of outputs, can be null or empty.
-     * @param type     the type to look for
-     * @return         the first found type, or <tt>null</tt> if not found
+     * @param outputs list of outputs, can be null or empty.
+     * @param type    the type to look for
+     * @return the first found type, or <tt>null</tt> if not found
      */
     public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
@@ -93,7 +94,7 @@ public final class ProcessorDefinitionHelper {
      * Is the given child the first in the outputs from the parent?
      *
      * @param parentType the type the parent must be
-     * @param node the node
+     * @param node       the node
      * @return <tt>true</tt> if first child, <tt>false</tt> otherwise
      */
     public static boolean isFirstChildOfType(Class<?> parentType, ProcessorDefinition<?> node) {
@@ -114,9 +115,10 @@ public final class ProcessorDefinitionHelper {
 
     /**
      * Is the given node parent(s) of the given type
-     * @param parentType   the parent type
-     * @param node         the current node
-     * @param recursive    whether or not to check grand parent(s) as well
+     *
+     * @param parentType the parent type
+     * @param node       the current node
+     * @param recursive  whether or not to check grand parent(s) as well
      * @return <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
      */
     public static boolean isParentOfType(Class<?> parentType, ProcessorDefinition<?> node, boolean recursive) {
@@ -174,9 +176,9 @@ public final class ProcessorDefinitionHelper {
     /**
      * Traverses the node, including its children (recursive), and gathers all the node ids.
      *
-     * @param node  the target node
-     * @param set   set to store ids, if <tt>null</tt> a new set will be created
-     * @param onlyCustomId  whether to only store custom assigned ids (ie. {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
+     * @param node            the target node
+     * @param set             set to store ids, if <tt>null</tt> a new set will be created
+     * @param onlyCustomId    whether to only store custom assigned ids (ie. {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
      * @param includeAbstract whether to include abstract nodes (ie. {@link org.apache.camel.model.ProcessorDefinition#isAbstract()}
      * @return the set with the found ids.
      */
@@ -257,12 +259,12 @@ public final class ProcessorDefinitionHelper {
 
                 // ensure to add ourself if we match also
                 if (type.isInstance(choice)) {
-                    found.add((T)choice);
+                    found.add((T) choice);
                 }
 
                 for (WhenDefinition when : choice.getWhenClauses()) {
                     if (type.isInstance(when)) {
-                        found.add((T)when);   
+                        found.add((T) when);
                     }
                     List<ProcessorDefinition<?>> children = when.getOutputs();
                     doFindType(children, type, found, ++current, maxDeep);
@@ -284,7 +286,7 @@ public final class ProcessorDefinitionHelper {
 
                 // ensure to add ourself if we match also
                 if (type.isInstance(doTry)) {
-                    found.add((T)doTry);
+                    found.add((T) doTry);
                 }
 
                 List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
@@ -309,7 +311,7 @@ public final class ProcessorDefinitionHelper {
 
                 // ensure to add ourself if we match also
                 if (type.isInstance(outDef)) {
-                    found.add((T)outDef);
+                    found.add((T) outDef);
                 }
 
                 List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
@@ -320,7 +322,7 @@ public final class ProcessorDefinitionHelper {
             }
 
             if (type.isInstance(out)) {
-                found.add((T)out);
+                found.add((T) out);
             }
 
             // try children as well
@@ -334,8 +336,8 @@ public final class ProcessorDefinitionHelper {
      * <p/>
      * Is used for check if the route output has any real outputs (non abstracts)
      *
-     * @param outputs           the outputs
-     * @param excludeAbstract   whether or not to exclude abstract outputs (e.g. skip onException etc.)
+     * @param outputs         the outputs
+     * @param excludeAbstract whether or not to exclude abstract outputs (e.g. skip onException etc.)
      * @return <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -364,16 +366,16 @@ public final class ProcessorDefinitionHelper {
      * This is used to know if a new thread pool will be created, and therefore is not shared by others, and therefore
      * exclusive to the definition.
      *
-     * @param routeContext   the route context
-     * @param definition     the node definition which may leverage executor service.
-     * @param useDefault     whether to fallback and use a default thread pool, if no explicit configured
+     * @param routeContext the route context
+     * @param definition   the node definition which may leverage executor service.
+     * @param useDefault   whether to fallback and use a default thread pool, if no explicit configured
      * @return <tt>true</tt> if a new thread pool will be created, <tt>false</tt> if not
      * @see #getConfiguredExecutorService(org.apache.camel.spi.RouteContext, String, ExecutorServiceAwareDefinition, boolean)
      */
     public static boolean willCreateNewThreadPool(RouteContext routeContext, ExecutorServiceAwareDefinition<?> definition, boolean useDefault) {
         ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
-        
+
         if (definition.getExecutorService() != null) {
             // no there is a custom thread pool configured
             return false;
@@ -394,14 +396,15 @@ public final class ProcessorDefinitionHelper {
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
-     *   <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     *   <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
-     * @param routeContext   the route context
-     * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
-     *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param source         the source to use the thread pool
+     *
+     * @param routeContext       the route context
+     * @param name               name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
+     *                           is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param source             the source to use the thread pool
      * @param executorServiceRef reference name of the thread pool
      * @return the executor service, or <tt>null</tt> if none was found.
      */
@@ -426,19 +429,19 @@ public final class ProcessorDefinitionHelper {
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
-     *   <li>from the definition if any explicit configured executor service.</li>
-     *   <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     *   <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
      * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
      * configured executor services in the same coherent way.
      *
-     * @param routeContext   the route context
-     * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
-     *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param definition     the node definition which may leverage executor service.
-     * @param useDefault     whether to fallback and use a default thread pool, if no explicit configured
+     * @param routeContext the route context
+     * @param name         name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
+     *                     is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param definition   the node definition which may leverage executor service.
+     * @param useDefault   whether to fallback and use a default thread pool, if no explicit configured
      * @return the configured executor service, or <tt>null</tt> if none was configured.
      * @throws IllegalArgumentException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
      */
@@ -471,14 +474,15 @@ public final class ProcessorDefinitionHelper {
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
-     *   <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     *   <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
-     * @param routeContext   the route context
-     * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
-     *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param source         the source to use the thread pool
+     *
+     * @param routeContext       the route context
+     * @param name               name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
+     *                           is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param source             the source to use the thread pool
      * @param executorServiceRef reference name of the thread pool
      * @return the executor service, or <tt>null</tt> if none was found.
      */
@@ -503,26 +507,26 @@ public final class ProcessorDefinitionHelper {
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
-     *   <li>from the definition if any explicit configured executor service.</li>
-     *   <li>from the {@link org.apache.camel.spi.Registry} if found</li>
-     *   <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
-     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
      * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
      * configured executor services in the same coherent way.
      *
-     * @param routeContext   the rout context
-     * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
-     *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
-     * @param definition     the node definition which may leverage executor service.
-     * @param useDefault     whether to fallback and use a default thread pool, if no explicit configured
+     * @param routeContext the rout context
+     * @param name         name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
+     *                     is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param definition   the node definition which may leverage executor service.
+     * @param useDefault   whether to fallback and use a default thread pool, if no explicit configured
      * @return the configured executor service, or <tt>null</tt> if none was configured.
      * @throws IllegalArgumentException is thrown if the found instance is not a ScheduledExecutorService type,
-     * or lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
+     *                                  or lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
      */
     public static ScheduledExecutorService getConfiguredScheduledExecutorService(RouteContext routeContext, String name,
-                                                               ExecutorServiceAwareDefinition<?> definition,
-                                                               boolean useDefault) throws IllegalArgumentException {
+                                                                                 ExecutorServiceAwareDefinition<?> definition,
+                                                                                 boolean useDefault) throws IllegalArgumentException {
         ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
 
@@ -544,6 +548,93 @@ public final class ProcessorDefinitionHelper {
         }
 
         return null;
+    }
+
+    /**
+     * The RestoreAction is used to track all the undo/restore actions
+     * that need to be performed to undo any resolution to property placeholders
+     * that have been applied to the camel route defs.  This class is private
+     * so it does not get used directly.  It's mainly used by the {@see createPropertyPlaceholdersChangeReverter()}
+     * method.
+     */
+    private static final class RestoreAction implements Runnable {
+
+        private final RestoreAction prevChange;
+        private final ArrayList<Runnable> actions = new ArrayList<Runnable>();
+
+        private RestoreAction(RestoreAction prevChange) {
+            this.prevChange = prevChange;
+        }
+
+        @Override
+        public void run() {
+            for (Runnable action : actions) {
+                action.run();
+            }
+            actions.clear();
+            if (prevChange == null) {
+                CURRENT_RESTORE_ACTION.remove();
+            } else {
+                CURRENT_RESTORE_ACTION.set(prevChange);
+            }
+        }
+    }
+
+    /**
+     * Creates a Runnable which when run will revert property placeholder
+     * updates to the camel route definitions that were done after this method
+     * is called.  The Runnable MUST be executed and MUST be executed in the
+     * same thread this method is called from.  Therefore it's recommend you
+     * use it in try/finally block like in the following example:
+     * <p/>
+     * <pre>
+     *   Runnable undo = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+     *   try {
+     *       // All property resolutions in this block will be reverted.
+     *   } finally {
+     *       undo.run();
+     *   }
+     * </pre>
+     *
+     * @return a Runnable that when run, will revert any property place holder
+     * changes that occurred on the current thread .
+     */
+    public static Runnable createPropertyPlaceholdersChangeReverter() {
+        RestoreAction prevChanges = CURRENT_RESTORE_ACTION.get();
+        RestoreAction rc = new RestoreAction(prevChanges);
+        CURRENT_RESTORE_ACTION.set(rc);
+        return rc;
+    }
+
+    private static void addRestoreAction(final Object target, final Map<String, Object> properties) {
+        if (properties.isEmpty()) {
+            return;
+        }
+
+        RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
+        if (restoreAction == null) {
+            return;
+        }
+
+        restoreAction.actions.add(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    IntrospectionSupport.setProperties(null, target, properties);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore definition properties", e);
+                }
+            }
+        });
+    }
+
+    public static void addPropertyPlaceholdersChangeRevertAction(Runnable action) {
+        RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
+        if (restoreAction == null) {
+            return;
+        }
+
+        restoreAction.actions.add(action);
     }
 
     /**
@@ -619,6 +710,7 @@ public final class ProcessorDefinitionHelper {
             }
         }
 
+        Map<String, Object> changedProperties = new HashMap<String, Object>();
         if (!properties.isEmpty()) {
             LOG.trace("There are {} properties on: {}", properties.size(), definition);
             // lookup and resolve properties for String based properties
@@ -636,6 +728,7 @@ public final class ProcessorDefinitionHelper {
                         if (!changed) {
                             throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
                         }
+                        changedProperties.put(name, value);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
                         }
@@ -643,6 +736,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
+        addRestoreAction(definition, changedProperties);
     }
 
     /**
@@ -651,7 +745,7 @@ public final class ProcessorDefinitionHelper {
      * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will check if it refers to a known field (such as on Exchange).
      *
-     * @param definition   the definition
+     * @param definition the definition
      */
     public static void resolveKnownConstantFields(Object definition) throws Exception {
         LOG.trace("Resolving known fields for: {}", definition);
@@ -660,6 +754,7 @@ public final class ProcessorDefinitionHelper {
         Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
+        Map<String, Object> changedProperties = new HashMap<String, Object>();
         if (!properties.isEmpty()) {
             LOG.trace("There are {} properties on: {}", properties.size(), definition);
 
@@ -678,6 +773,7 @@ public final class ProcessorDefinitionHelper {
                         if (constant != null) {
                             // invoke setter as the text has changed
                             IntrospectionSupport.setProperty(definition, name, constant);
+                            changedProperties.put(name, value);
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
                             }
@@ -688,6 +784,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
+        addRestoreAction(definition, changedProperties);
     }
 
 }
