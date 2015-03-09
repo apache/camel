@@ -44,9 +44,9 @@ import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -209,9 +209,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 }
             }
         }
-
+         
         // let Camel process this message
+        // It did the way as camel-netty component does
         super.messageReceived(ctx, messageEvent);
+        
     }
 
     protected boolean matchesRoles(String roles, String userRoles) {
@@ -285,6 +287,13 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if (consumer.getConfiguration().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
+        }
+        HttpRequest request = (HttpRequest) messageEvent.getMessage();
+        // setup the connection property in case of the message header is removed
+        boolean keepAlive = HttpHeaders.isKeepAlive(request);
+        if (!keepAlive) {
+            // Just make sure we close the connection this time.
+            exchange.setProperty(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
         }
     }
 
