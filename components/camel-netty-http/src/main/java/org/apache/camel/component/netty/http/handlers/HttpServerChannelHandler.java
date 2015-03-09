@@ -64,7 +64,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private final NettyHttpConsumer consumer;
-    private HttpRequest request;
 
     public HttpServerChannelHandler(NettyHttpConsumer consumer) {
         super(consumer);
@@ -77,8 +76,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
-        // store request, as this channel handler is created per pipeline
-        request = (HttpRequest) messageEvent.getMessage();
+        HttpRequest request = (HttpRequest) messageEvent.getMessage();
 
         LOG.debug("Message received: {}", request);
 
@@ -292,7 +290,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
-        
+
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
 
@@ -305,7 +303,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             }
         }
     }
-    
+
 
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
