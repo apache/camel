@@ -410,6 +410,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // configure connection to accordingly to keep alive configuration
         // favor using the header from the message
         String connection = message.getHeader(HttpHeaders.Names.CONNECTION, String.class);
+        // Read the connection header from the exchange property
+        if (connection == null) {
+            connection = message.getExchange().getProperty(HttpHeaders.Names.CONNECTION, String.class);
+        }
         if (connection == null) {
             // fallback and use the keep alive from the configuration
             if (configuration.isKeepAlive()) {
