@@ -182,6 +182,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bindy/${project.version}</bundle>
   </feature>
+  <feature name='camel-boon' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:io.fastjson/boon/${boon-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-boon/${project.version}</bundle>
+  </feature>
   <feature name='camel-box' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-box/${project.version}</bundle>
