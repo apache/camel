@@ -911,6 +911,9 @@
     <bundle dependency='true'>wrap:mvn:net.sourceforge.nekohtml/nekohtml/1.9.21</bundle>
     <bundle>mvn:org.apache.camel.component.linkedin/camel-linkedin-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.component.linkedin/camel-linkedin/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
   </feature>
   <feature name='camel-leveldb' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
