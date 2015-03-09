@@ -67,6 +67,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -405,6 +406,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
+        // We will save list of actions to restore the outputs back to the original state.
+        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+        try {
+            return createOutputsProcessorImpl(routeContext, outputs);
+        } finally {
+            propertyPlaceholdersChangeReverter.run();
+        }
+    }
+
+    protected Processor createOutputsProcessorImpl(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
 
@@ -471,6 +482,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Processor makeProcessor(RouteContext routeContext) throws Exception {
+        // We will save list of actions to restore the definition back to the original state.
+        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+        try {
+            return makeProcessorImpl(routeContext);
+        } finally {
+            // Lets restore
+            propertyPlaceholdersChangeReverter.run();
+        }
+    }
+
+    private Processor makeProcessorImpl(RouteContext routeContext) throws Exception {
         Processor processor = null;
 
         // allow any custom logic before we create the processor

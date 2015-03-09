@@ -14,41 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.properties;
+package org.apache.camel.util;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.SendDefinition;
 
 /**
  *
  */
-public class PropertiesRouteFromTest extends ContextTestSupport {
+public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
 
-    public void testPropertiesRouteFrom() throws Exception {
-        ProcessorDefinition out = context.getRouteDefinition("foo").getOutputs().get(0);
-        assertEquals("{{cool.end}}", ((SendDefinition) out).getUri());
-
-        String uri = context.getRouteDefinition("foo").getInputs().get(0).getUri();
-        assertEquals("{{cool.start}}", uri);
-
-        // use a routes definition to dump the routes
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("foo"));
-        assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
-        assertTrue(xml.contains("<to uri=\"{{cool.end}}\""));
+    public void testDumpModelAsXml() throws Exception {
+        assertEquals("Gouda", context.getRoutes().get(0).getId());
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
+        assertNotNull(xml);
+        log.info(xml);
+        System.out.println(xml);
+        assertTrue(xml.contains("<route customId=\"true\" id=\"Gouda\" xmlns=\"http://camel.apache.org/schema/spring\">"));
+        assertTrue(xml.contains("<from uri=\"file://inbox?include={{cheese.type}}\"/>"));
+        assertTrue(xml.contains("<to uri=\"log:foo?marker={{cheese.type}}\" customId=\"true\" id=\"log\"/>"));
     }
 
     @Override
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("{{cool.start}}").routeId("foo")
-                    .to("{{cool.end}}");
+                from("file://inbox?include={{cheese.type}}").routeId("{{cheese.type}}")
+                        .to("log:foo?marker={{cheese.type}}").id("log");
             }
         };
     }
@@ -56,7 +53,10 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties"));
+        PropertiesComponent component = new PropertiesComponent();
+        component.setCamelContext(context);
+        component.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
+        context.addComponent("properties", component);
         return context;
     }
 

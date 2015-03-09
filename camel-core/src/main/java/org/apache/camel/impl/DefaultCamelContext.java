@@ -2463,6 +2463,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         doWithDefinedClassLoader(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+//                Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
                 try {
                     doStartCamel();
                     return null;
@@ -2471,6 +2472,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     EventHelper.notifyCamelContextStartupFailed(DefaultCamelContext.this, e);
                     // rethrow cause
                     throw e;
+                } finally {
+//                    propertyPlaceholdersChangeReverter.run();
                 }
             }
         });

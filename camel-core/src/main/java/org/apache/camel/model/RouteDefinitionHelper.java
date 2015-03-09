@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -122,21 +123,27 @@ public final class RouteDefinitionHelper {
         // handle custom assigned id's first, and then afterwards assign auto generated ids
         Set<String> customIds = new HashSet<String>();
 
-        for (RouteDefinition route : routes) {
+        for (final RouteDefinition route : routes) {
             // if there was a custom id assigned, then make sure to support property placeholders
             if (route.hasCustomIdAssigned()) {
-                String id = route.getId();
-                id = context.resolvePropertyPlaceholders(id);
+                final String originalId = route.getId();
+                final String id = context.resolvePropertyPlaceholders(originalId);
                 // only set id if its changed, such as we did property placeholder
-                if (!route.getId().equals(id)) {
+                if (!originalId.equals(id)) {
                     route.setId(id);
+                    ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            route.setId(originalId);
+                        }
+                    });
                 }
                 customIds.add(id);
             }
         }
 
         // auto assign route ids
-        for (RouteDefinition route : routes) {
+        for (final RouteDefinition route : routes) {
             if (route.getId() == null) {
                 // keep assigning id's until we find a free name
                 boolean done = false;
@@ -146,6 +153,13 @@ public final class RouteDefinitionHelper {
                     done = !customIds.contains(id);
                 }
                 route.setId(id);
+                ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        route.setId(null);
+                        route.setCustomId(false);
+                    }
+                });
                 route.setCustomId(false);
                 customIds.add(route.getId());
             }
@@ -246,6 +260,35 @@ public final class RouteDefinitionHelper {
      * @param onCompletions                      optional list onCompletions
      */
     public static void prepareRoute(ModelCamelContext context, RouteDefinition route,
+                                    List<OnExceptionDefinition> onExceptions,
+                                    List<InterceptDefinition> intercepts,
+                                    List<InterceptFromDefinition> interceptFromDefinitions,
+                                    List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
+                                    List<OnCompletionDefinition> onCompletions) {
+
+        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+        try {
+            prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions, onCompletions);
+        } finally {
+            // Lets restore
+            propertyPlaceholdersChangeReverter.run();
+        }
+    }
+
+    /**
+     * Prepares the route which supports context scoped features such as onException, interceptors and onCompletions
+     * <p/>
+     * This method does <b>not</b> mark the route as prepared afterwards.
+     *
+     * @param context                            the camel context
+     * @param route                              the route
+     * @param onExceptions                       optional list of onExceptions
+     * @param intercepts                         optional list of interceptors
+     * @param interceptFromDefinitions           optional list of interceptFroms
+     * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
+     * @param onCompletions                      optional list onCompletions
+     */
+    private static void prepareRouteImp(ModelCamelContext context, RouteDefinition route,
                                     List<OnExceptionDefinition> onExceptions,
                                     List<InterceptDefinition> intercepts,
                                     List<InterceptFromDefinition> interceptFromDefinitions,
@@ -570,18 +613,24 @@ public final class RouteDefinitionHelper {
      * @param context   the camel context
      * @param processor the node
      */
-    public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {
+    public static void forceAssignIds(CamelContext context, final ProcessorDefinition processor) {
         // force id on the child
         processor.idOrCreate(context.getNodeIdFactory());
 
         // if there was a custom id assigned, then make sure to support property placeholders
         if (processor.hasCustomIdAssigned()) {
-            String id = processor.getId();
             try {
-                id = context.resolvePropertyPlaceholders(id);
+                final String originalId = processor.getId();
+                String id = context.resolvePropertyPlaceholders(originalId);
                 // only set id if its changed, such as we did property placeholder
-                if (!processor.getId().equals(id)) {
+                if (!originalId.equals(id)) {
                     processor.setId(id);
+                    ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            processor.setId(originalId);
+                        }
+                    });
                 }
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
