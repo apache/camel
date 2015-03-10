@@ -39,7 +39,10 @@ import org.slf4j.LoggerFactory;
 public class ActiveMQUuidGenerator implements UuidGenerator {
 
     // use same JVM property name as ActiveMQ
+    public static final String PROPERTY_IDGENERATOR_HOSTNAME = "activemq.idgenerator.hostname";
+    public static final String PROPERTY_IDGENERATOR_LOCALPORT = "activemq.idgenerator.localport";
     public static final String PROPERTY_IDGENERATOR_PORT = "activemq.idgenerator.port";
+
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class);
     private static final String UNIQUE_STUB;
     private static int instanceCount;
@@ -61,15 +64,25 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         }
 
         if (canAccessSystemProps) {
+            hostName = System.getProperty(PROPERTY_IDGENERATOR_HOSTNAME);
+            int localPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_LOCALPORT, "0"));
+
             int idGeneratorPort = 0;
             ServerSocket ss = null;
             try {
-                idGeneratorPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_PORT, "0"));
-                LOG.trace("Using port {}", idGeneratorPort);
-                hostName = InetAddressUtil.getLocalHostName();
-                ss = new ServerSocket(idGeneratorPort);
-                stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
-                Thread.sleep(100);
+                if (hostName == null) {
+                    hostName = InetAddressUtil.getLocalHostName();
+                }
+                if (localPort == 0) {
+                    idGeneratorPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_PORT, "0"));
+                    LOG.trace("Using port {}", idGeneratorPort);
+                    ss = new ServerSocket(idGeneratorPort);
+                    localPort = ss.getLocalPort();
+                    stub = "-" + localPort + "-" + System.currentTimeMillis() + "-";
+                    Thread.sleep(100);
+                } else {
+                    stub = "-" + localPort + "-" + System.currentTimeMillis() + "-";
+                }
             } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, e);
