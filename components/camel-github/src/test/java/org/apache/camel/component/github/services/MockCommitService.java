@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github.consumer;
+package org.apache.camel.component.github.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.egit.github.core.CommitStatus;
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.User;
@@ -33,6 +36,7 @@ public class MockCommitService extends CommitService {
 
     private List<RepositoryCommit> commitsList = new ArrayList<RepositoryCommit>();
     private AtomicLong fakeSha = new AtomicLong(System.currentTimeMillis());
+    private Map<String,CommitStatus> commitStatus = new HashMap<String,CommitStatus>();
 
     public synchronized RepositoryCommit addRepositoryCommit() {
         User author = new User();
@@ -53,5 +57,21 @@ public class MockCommitService extends CommitService {
     public synchronized List<RepositoryCommit> getCommits(IRepositoryIdProvider repository, String sha, String path) throws IOException {
         LOG.debug("Returning list of size " + commitsList.size());
         return commitsList;
+    }
+
+    @Override
+    public CommitStatus createStatus(IRepositoryIdProvider repository,
+            String sha, CommitStatus status) throws IOException {
+        commitStatus.put(sha, status);
+
+        return status;
+    }
+
+    public String getNextSha() {
+        return (fakeSha.incrementAndGet()+"");
+    }
+
+    public CommitStatus getCommitStatus(String sha) {
+        return commitStatus.get(sha);
     }
 }
