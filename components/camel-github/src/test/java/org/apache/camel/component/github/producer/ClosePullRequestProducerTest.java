@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github;
+package org.apache.camel.component.github.producer;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,15 +24,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.egit.github.core.CommitComment;
+import org.apache.camel.component.github.GitHubComponent;
+import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.PullRequest;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
-    protected static final Logger LOG = LoggerFactory.getLogger(PullRequestCommentProducerTest.class);
+public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
+    public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
+    protected static final Logger LOG = LoggerFactory.getLogger(ClosePullRequestProducerTest.class);
     private long latestPullRequestId;
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -42,9 +44,9 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("direct:validPullRequest")
-                        .process(new MockPullRequestCommentProducerProcessor())
-                        .to("github://pullRequestComment?" + GITHUB_CREDENTIALS_STRING);
+                from(PULL_REQUEST_PRODUCER_ENDPOINT)
+                        .process(new ClosePullRequestProducerProcessor())
+                        .to("github://closePullRequest?" + GITHUB_CREDENTIALS_STRING);
             } // end of configure
 
 
@@ -54,27 +56,35 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
 
     @Test
     public void testPullRequestCommentProducer() throws Exception {
+        // Create a pull request
         PullRequest pullRequest = pullRequestService.addPullRequest("testPullRequestCommentProducer");
         latestPullRequestId = pullRequest.getId();
 
-        Endpoint commentProducerEndpoint = getMandatoryEndpoint("direct:validPullRequest");
-        Exchange exchange = commentProducerEndpoint.createExchange();
-        String commentText = "Pushed this comment at " + new Date();
-        exchange.getIn().setBody(commentText);
-        template.send(commentProducerEndpoint, exchange);
+
+        // Close it
+        Endpoint closePullRequestEndpoint = getMandatoryEndpoint(PULL_REQUEST_PRODUCER_ENDPOINT);
+        Exchange exchange = closePullRequestEndpoint.createExchange();
+        template.send(closePullRequestEndpoint, exchange);
 
         Thread.sleep(1 * 1000);
 
-        // Verify that the mock pull request service received this comment.
-        List<CommitComment> commitComments = pullRequestService.getComments(null, (int) pullRequest.getId());
-        assertEquals(1, commitComments.size());
-        CommitComment commitComment = commitComments.get(0);
-        assertEquals("Commit IDs did not match ", Long.toString(pullRequest.getId()), commitComment.getCommitId());
-        assertEquals("Comment text did not match ", commentText, commitComment.getBodyText());
+        // Verify that it was closed
+
+        List<PullRequest> closedPullRequests = pullRequestService.getPullRequests(null, "closed");
+        assertNotNull(closedPullRequests);
+        boolean found = false;
+        for (PullRequest pr : closedPullRequests) {
+            if (pr.getId() == latestPullRequestId) {
+                found = true;
+                break;
+            }
+        }
+
+        assertTrue("Didn't find pull request " + latestPullRequestId, found);
     }
 
 
-    public class MockPullRequestCommentProducerProcessor implements Processor {
+    public class ClosePullRequestProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();

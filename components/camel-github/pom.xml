@@ -39,6 +39,11 @@
       <version>${egit-github-core-version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
 
     <!-- testing -->
     <dependency>

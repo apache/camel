@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github;
+package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.egit.github.core.PullRequest;
-import org.eclipse.egit.github.core.User;
+import org.apache.camel.component.github.GitHubComponent;
+import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.eclipse.egit.github.core.RepositoryTag;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PullRequestConsumerTest extends GitHubComponentTestBase {
-    protected static final Logger LOG = LoggerFactory.getLogger(PullRequestConsumerTest.class);
+public class TagConsumerTest extends GitHubComponentTestBase {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -36,8 +34,8 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://pullRequest?" + GITHUB_CREDENTIALS_STRING)
-                        .process(new MockPullRequestProcessor())
+                from("github://tag?" + GITHUB_CREDENTIALS_STRING)
+                        .process(new RepositoryTagProcessor())
                         .to(mockResultEndpoint);
             }
         };
@@ -45,28 +43,22 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
 
 
     @Test
-    public void pullRequestTest() throws Exception {
-        PullRequest pr1 = pullRequestService.addPullRequest("First add");
-        PullRequest pr2 = pullRequestService.addPullRequest("Second");
-        mockResultEndpoint.expectedMessageCount(2);
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(pr1, pr2);
+    public void tagConsumerTest() throws Exception {
+        RepositoryTag tag1 = repositoryService.addTag("TAG1");
+        RepositoryTag tag2 = repositoryService.addTag("TAG2");
+        RepositoryTag tag3 = repositoryService.addTag("TAG3");
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(tag1, tag2, tag3);
         Thread.sleep(1 * 1000);
 
         mockResultEndpoint.assertIsSatisfied();
     }
 
-    public class MockPullRequestProcessor implements Processor {
+    public class RepositoryTagProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            PullRequest pullRequest = (PullRequest) in.getBody();
-            User pullRequestUser = pullRequest.getUser();
-
-            pullRequest.getTitle();
-            pullRequest.getHtmlUrl();
-            pullRequest.getUser().getLogin();
-            pullRequest.getUser().getHtmlUrl();
-            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From " + pullRequestUser.getLogin());
+            RepositoryTag tag = (RepositoryTag) in.getBody();
+            log.debug("Got TAG  [" + tag.getName() + "]");
         }
     }
 }
