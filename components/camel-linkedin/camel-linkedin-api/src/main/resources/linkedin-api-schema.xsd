@@ -193,12 +193,12 @@
         <xs:element ref="description"/>
         <xs:element ref="relation-to-viewer"/>
         <xs:element ref="counts-by-category"/>
-        <xs:element ref="is-open-to-non-members"/>
+        <xs:element minOccurs="0" ref="is-open-to-non-members"/>
         <xs:element name="category" type="GroupCategory"/>
         <xs:element ref="site-group-url"/>
         <xs:element ref="contact-email"/>
         <xs:element ref="locale"/>
-        <xs:element ref="allow-member-invites"/>
+        <xs:element minOccurs="0" ref="allow-member-invites"/>
         <xs:element ref="small-logo-url"/>
         <xs:element ref="large-logo-url"/>
         <xs:element ref="posts"/>
@@ -2056,7 +2056,7 @@
       <xs:sequence>
         <xs:element ref="id"/>
         <xs:element ref="timestamp"/>
-        <xs:element ref="comment"/>
+        <xs:element ref="comment" type="xs:string"/>
         <xs:element ref="content"/>
         <xs:element ref="visibility"/>
         <xs:element ref="source"/>
