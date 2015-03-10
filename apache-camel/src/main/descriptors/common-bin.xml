@@ -40,6 +40,7 @@
         <include>org.apache.camel:camel-beanstalk</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
+        <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-cache</include>
