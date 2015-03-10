@@ -2252,4 +2252,40 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="order">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="recency"/>
+        <xs:enumeration value="popularity"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="post-role">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="creator"/>
+        <xs:enumeration value="commenter"/>
+        <xs:enumeration value="follower"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="event-type">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="job-posting"/>
+        <xs:enumeration value="new-product"/>
+        <xs:enumeration value="status-update"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="time-granularity">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="day"/>
+        <xs:enumeration value="month"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
 </xs:schema>

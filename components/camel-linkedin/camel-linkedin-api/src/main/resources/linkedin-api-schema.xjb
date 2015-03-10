@@ -37,6 +37,33 @@
       <package name="org.apache.camel.component.linkedin.api.model" />
     </schemaBindings>
 
+	<bindings node="//xs:element[@name='order']/xs:simpleType">
+		<typesafeEnumClass name="Order">
+			<typesafeEnumMember name="RECENCY" value="recency"/>
+			<typesafeEnumMember name="POPULARITY" value="popularity"/>
+		</typesafeEnumClass>
+	</bindings>
+	<bindings node="//xs:element[@name='post-role']/xs:simpleType">
+		<typesafeEnumClass name="PostRole">
+			<typesafeEnumMember name="CREATOR" value="creator"/>
+			<typesafeEnumMember name="COMMENTER" value="commenter"/>
+			<typesafeEnumMember name="FOLLOWER" value="follower"/>
+		</typesafeEnumClass>
+	</bindings>
+	<bindings node="//xs:element[@name='event-type']/xs:simpleType">
+		<typesafeEnumClass name="EventType">
+			<typesafeEnumMember name="JOB_POSTING" value="job-posting"/>
+			<typesafeEnumMember name="NEW_PRODUCT" value="new-product"/>
+			<typesafeEnumMember name="STATUS_UPDATE" value="status-update"/>
+		</typesafeEnumClass>
+	</bindings>
+	<bindings node="//xs:element[@name='time-granularity']/xs:simpleType">
+		<typesafeEnumClass name="TimeGranularity">
+			<typesafeEnumMember name="DAY" value="day"/>
+			<typesafeEnumMember name="MONTH" value="month"/>
+		</typesafeEnumClass>
+	</bindings>
+
 	<bindings node="//xs:element[@name='content-type']/xs:simpleType">
 		<typesafeEnumClass name="NetworkUpdateContentType">
 			<typesafeEnumMember name="LINKED_IN_HTML" value="linkedin-html"/>
@@ -52,19 +79,23 @@
 			<typesafeEnumMember name="ANSWER_UPDATE" value="ANSW"/>
 			<typesafeEnumMember name="APPLICATION_CONNECTION_UPDATE" value="APPM"/>
 			<typesafeEnumMember name="APPLICATION_TO_MEMBER_UPDATE" value="APPS"/>
+			<typesafeEnumMember name="COMPANY_UPDATED" value="CMPY"/>
 			<typesafeEnumMember name="CONNECTION_ADDED_CONNECTIONS" value="CONN"/>
 			<typesafeEnumMember name="NEW_CONNECTIONS" value="NCON"/>
 			<typesafeEnumMember name="CONTACT_JOINED" value="CCEM"/>
 			<typesafeEnumMember name="JOB_POSTED" value="JOBP"/>
 			<typesafeEnumMember name="CONNECTION_JOINED_GROUP" value="JGRP"/>
+			<typesafeEnumMember name="MEMBER_STARTS_FOLLOWING_COMPANY" value="MSFC"/>
+			<typesafeEnumMember name="PEOPLE_FOLLOW_UPDATE" value="PFOL"/>
 			<typesafeEnumMember name="CONNECTION_UPDATED_PICTURE" value="PICU"/>
 			<typesafeEnumMember name="CONNECTION_RECOMMENDED" value="PREC"/>
+			<typesafeEnumMember name="CONNECTION_PROFILE_UPDATE" value="PRFU"/>
 			<typesafeEnumMember name="CONNECTION_UPDATED_PROFILE" value="PROF"/>
 			<typesafeEnumMember name="QUESTION_UPDATED" value="QSTN"/>
 			<typesafeEnumMember name="STATUS_UPDATED" value="STAT"/>
-			<typesafeEnumMember name="SHARED_ITEM" value="SHAR"/>
+			<typesafeEnumMember name="RECOMMENDATIONS_UPDATE" value="SVPR"/>
 			<typesafeEnumMember name="EXTENDED_PROFILE_UPDATED" value="PRFX"/>
-			<typesafeEnumMember name="COMPANY_UPDATED" value="CMPY"/>
+			<typesafeEnumMember name="SHARED_ITEM" value="SHAR"/>
 			<typesafeEnumMember name="VIRAL_UPDATE" value="VIRL"/>
 		</typesafeEnumClass>
 	</bindings>

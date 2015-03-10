@@ -18,8 +18,14 @@ package org.apache.camel.component.linkedin.api;
 
 import java.util.Date;
 
+import org.apache.camel.component.linkedin.api.model.GroupMemberships;
 import org.apache.camel.component.linkedin.api.model.JobSuggestions;
+import org.apache.camel.component.linkedin.api.model.MembershipStateCode;
+import org.apache.camel.component.linkedin.api.model.Order;
 import org.apache.camel.component.linkedin.api.model.Person;
+import org.apache.camel.component.linkedin.api.model.PostCategoryCode;
+import org.apache.camel.component.linkedin.api.model.PostRole;
+import org.apache.camel.component.linkedin.api.model.Posts;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,6 +54,25 @@ public class PeopleResourceIntegrationTest extends AbstractResourceIntegrationTe
                 assertNotNull(person);
                 assertNotNull(person.getId());
                 LOG.debug("getPerson result: " + person);
+            }
+        });
+    }
+
+    @Test
+    public void testGetPosts() throws Exception {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                final GroupMemberships groupMemberships = peopleResource.getGroupMemberships(MembershipStateCode.MEMBER,
+                    "", null, null);
+                assertNotNull(groupMemberships);
+                assertNotNull(groupMemberships.getGroupMembershipList());
+                assertFalse(groupMemberships.getGroupMembershipList().isEmpty());
+                final Posts posts = peopleResource.getPosts(Long.parseLong(
+                        groupMemberships.getGroupMembershipList().get(0).getGroup().getId()), null, null,
+                    Order.RECENCY, PostRole.FOLLOWER, PostCategoryCode.DISCUSSION, null, ":(id)");
+                assertNotNull(posts);
+                LOG.debug("getPosts result: " + posts);
             }
         });
     }

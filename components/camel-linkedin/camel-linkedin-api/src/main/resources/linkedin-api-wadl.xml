@@ -167,7 +167,7 @@
       </wadl:resource>
 
       <wadl:resource path="~/group-memberships{fields}">
-        <wadl:param name="membership-state" style="query" type="tns:membershipstate"/>
+        <wadl:param name="membership-state" style="query" type="tns:membershipstatecode"/>
         <wadl:param href="#fields-selector"/>
         <wadl:method name="GET" id="getGroupMemberships">
           <wadl:request>
@@ -221,7 +221,7 @@
               <wadl:param href="#start"/>
               <wadl:param href="#count"/>
               <wadl:param href="#order"/>
-              <wadl:param href="#role"/>
+              <wadl:param href="#post-role"/>
               <wadl:param href="#category"/>
               <wadl:param href="#modified-since"/>
               <wadl:param href="#fields-selector"/>
@@ -286,7 +286,7 @@
                   <wadl:param href="#start"/>
                   <wadl:param href="#count"/>
                   <wadl:param href="#order"/>
-                  <wadl:param href="#role"/>
+                  <wadl:param href="#post-role"/>
                   <wadl:param href="#category"/>
                   <wadl:param href="#modified-since"/>
                   <wadl:param href="#fields-selector"/>
@@ -927,40 +927,17 @@
   <wadl:param name="partner-job-id" style="template" type="xsd:integer" required="true" id="partner-job-id"/>
 
   <!-- posts params -->
-  <wadl:param name="order" style="query" id="order">
-    <wadl:option value="recency"/>
-    <wadl:option value="popularity"/>
-  </wadl:param>
+  <wadl:param name="order" style="query" id="order" type="tns:order"/>
 
-  <wadl:param name="role" style="query" id="role">
-    <wadl:option value="creator"/>
-    <wadl:option value="commenter"/>
-    <wadl:option value="follower"/>
-  </wadl:param>
+  <wadl:param name="role" style="query" id="post-role" type="tns:post-role"/>
 
-  <wadl:param name="category" style="query" id="category">
-    <wadl:option value="discussion"/>
-  </wadl:param>
+  <wadl:param name="category" style="query" id="category" type="tns:postcategorycode"/>
 
   <wadl:param name="modified-since" style="query" id="modified-since" type="xsd:integer"/>
 
   <wadl:param name="scope" style="query" type="tns:scope" id="scope"/>
 
-  <wadl:param name="type" style="query" id="type">
-    <wadl:option value="APPS"/>
-    <wadl:option value="CMPY"/>
-    <wadl:option value="CONN"/>
-    <wadl:option value="JOBS"/>
-    <wadl:option value="JGRP"/>
-    <wadl:option value="PICT"/>
-    <wadl:option value="PFOL"/>
-    <wadl:option value="PRFX"/>
-    <wadl:option value="RECU"/>
-    <wadl:option value="PRFU"/>
-    <wadl:option value="SHAR"/>
-    <wadl:option value="STAT"/>
-    <wadl:option value="VIRL"/>
-  </wadl:param>
+  <wadl:param name="type" style="query" id="type" type="tns:networkupdatereturntype"/>
 
   <wadl:param name="keywords" style="query" type="tns:keywords" id="keywords"/>
 
@@ -989,18 +966,11 @@
   <!-- update-key path param -->
   <wadl:param name="update-key" style="template" id="update-key"/>
 
-  <wadl:param name="event-type" style="query" id="event-type">
-    <wadl:option value="job-posting"/>
-    <wadl:option value="new-product"/>
-    <wadl:option value="status-update"/>
-  </wadl:param>
+  <wadl:param name="event-type" style="query" id="event-type" type="tns:eventtype"/>
 
   <wadl:param name="start-timestamp" style="query" type="xsd:integer" id="start-timestamp"/>
   <wadl:param name="end-timestamp" style="query" type="xsd:integer" id="end-timestamp"/>
-  <wadl:param name="time-granularity" style="query" id="time-granularity">
-    <wadl:option value="day"/>
-    <wadl:option value="month"/>
-  </wadl:param>
+  <wadl:param name="time-granularity" style="query" id="time-granularity" type="tns:time-granularity"/>
 
   <!-- representation types -->
   <wadl:representation mediaType="application/xml" element="tns:person" id="person"/>
