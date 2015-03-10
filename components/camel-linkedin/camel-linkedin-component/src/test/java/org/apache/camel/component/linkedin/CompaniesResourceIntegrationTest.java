@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.linkedin.api.model.EventType;
 import org.apache.camel.component.linkedin.internal.CompaniesResourceApiMethod;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 
@@ -160,12 +161,11 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     public void testGetCompanyUpdates() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("CamelLinkedIn.company_id", TEST_COMPANY_ID);
-        // use defaults
-/*
         // parameter type is String
-        headers.put("CamelLinkedIn.fields", null);
-        // parameter type is org.apache.camel.component.linkedin.api.Eventtype
-        headers.put("CamelLinkedIn.event_type", null);
+//        headers.put("CamelLinkedIn.fields", null);
+        // parameter type is org.apache.camel.component.linkedin.api.model.Eventtype
+        headers.put("CamelLinkedIn.event_type", EventType.STATUS_UPDATE);
+/*
         // parameter type is Long
         headers.put("CamelLinkedIn.start", null);
         // parameter type is Long
