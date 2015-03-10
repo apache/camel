@@ -39,13 +39,13 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XStream and Jettison to marshal to and from JSON
  *
- * @version 
+ * @version
  */
 
 public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLOutputFactory mof;
     private final MappedXMLInputFactory mif;
-    
+
     public JsonDataFormat() {
         final Map<?, ?> nstjsons = new HashMap<Object, Object>();
         mof = new MappedXMLOutputFactory(nstjsons);
@@ -53,8 +53,8 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     }
 
     @Override
-    protected XStream createXStream(ClassResolver resolver) {
-        XStream xs = super.createXStream(resolver);
+    protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {
+        XStream xs = super.createXStream(resolver, classLoader);
         if (getMode() != null) {
             xs.setMode(getModeFromString(getMode()));
         } else {
@@ -63,11 +63,11 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
         return xs;
     }
 
-    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {        
+    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
         return new StaxWriter(new QNameMap(), mof.createXMLStreamWriter(stream));
     }
 
-    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {        
+    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
         return new StaxReader(new QNameMap(), mif.createXMLStreamReader(stream));
     }
 }
