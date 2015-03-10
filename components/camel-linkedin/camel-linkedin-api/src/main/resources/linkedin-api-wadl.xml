@@ -286,7 +286,6 @@
                   <wadl:param href="#start"/>
                   <wadl:param href="#count"/>
                   <wadl:param href="#order"/>
-                  <wadl:param href="#post-role"/>
                   <wadl:param href="#category"/>
                   <wadl:param href="#modified-since"/>
                   <wadl:param href="#fields-selector"/>
@@ -685,6 +684,9 @@
                 <wadl:param href="#company-id"/>
                 <wadl:representation mediaType="application/xml" element="tns:share"/>
               </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:update"/>
+              </wadl:response>
             </wadl:method>
           </wadl:resource>
 
