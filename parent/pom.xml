@@ -72,7 +72,7 @@
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bsh-version>2.0b5</bsh-version>
-    <bouncycastle-version>1.51</bouncycastle-version>
+    <bouncycastle-version>1.52</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
     <c3p0-version>0.9.1.2</c3p0-version>

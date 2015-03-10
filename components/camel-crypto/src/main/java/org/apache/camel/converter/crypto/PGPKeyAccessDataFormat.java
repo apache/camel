@@ -59,6 +59,7 @@ import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
@@ -361,7 +362,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             in = PGPUtil.getDecoderStream(encryptedStream);
             encData = getDecryptedData(exchange, in);
             uncompressedData = getUncompressedData(encData);
-            PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData);
+            PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData, new BcKeyFingerprintCalculator());
             Object object = pgpFactory.nextObject();
 
             PGPOnePassSignature signature;
@@ -418,7 +419,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     private InputStream getUncompressedData(InputStream encData) throws IOException, PGPException {
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(encData);
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(encData, new BcKeyFingerprintCalculator());
         Object compObj = pgpFactory.nextObject();
         if (!(compObj instanceof PGPCompressedData)) {
             throw getFormatException();
@@ -429,7 +430,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream);
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 
         PGPEncryptedDataList enc = getEcryptedDataList(pgpFactory, firstObject);
