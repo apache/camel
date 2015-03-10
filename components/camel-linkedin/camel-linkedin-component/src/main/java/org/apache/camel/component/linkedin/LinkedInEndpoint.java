@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.linkedin.api.CommentsResource;
 import org.apache.camel.component.linkedin.api.CompaniesResource;
+import org.apache.camel.component.linkedin.api.EnumQueryParamConverterProvider;
 import org.apache.camel.component.linkedin.api.GroupsResource;
 import org.apache.camel.component.linkedin.api.JobsResource;
 import org.apache.camel.component.linkedin.api.LinkedInOAuthRequestFilter;
@@ -125,7 +126,7 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
 
         // create endpoint proxy
         resourceProxy = JAXRSClientFactory.create(LinkedInOAuthRequestFilter.BASE_ADDRESS, proxyClass,
-            Arrays.asList(new Object[]{requestFilter}));
+            Arrays.asList(new Object[]{requestFilter, new EnumQueryParamConverterProvider()}));
     }
 
     @Override

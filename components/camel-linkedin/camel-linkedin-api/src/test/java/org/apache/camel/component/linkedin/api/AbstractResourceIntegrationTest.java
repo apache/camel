@@ -107,7 +107,7 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
         }
         final T resource = JAXRSClientFactory.create(LinkedInOAuthRequestFilter.BASE_ADDRESS, resourceClass,
 //            Arrays.asList(new Object[] { requestFilter, new LinkedInExceptionResponseFilter() } ));
-            Arrays.asList(new Object[]{requestFilter}));
+            Arrays.asList(new Object[]{requestFilter, new EnumQueryParamConverterProvider()}));
         resourceList.add(resource);
         return resource;
     }
