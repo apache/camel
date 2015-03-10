@@ -30,6 +30,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 
 /**
  * Caches a Secret Keyring. Assumes that the password for all private keys is
@@ -64,7 +65,9 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
         ObjectHelper.notNull(secretKeyRing, "secretKeyRing");
         ObjectHelper.notEmpty(password, "password");
         ObjectHelper.notEmpty(provider, "provider");
-        pgpSecretKeyring = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)));
+        pgpSecretKeyring = 
+            new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)),
+                                           new BcKeyFingerprintCalculator());
         this.password = password;
         this.provider = provider;
     }
