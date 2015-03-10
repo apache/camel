@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github.consumer;
+package org.apache.camel.component.github.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.egit.github.core.CommitComment;
+import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.User;
@@ -39,6 +40,7 @@ public class MockPullRequestService extends PullRequestService {
     private AtomicInteger pullRequestNumber = new AtomicInteger(101);
     private AtomicInteger commentId = new AtomicInteger(500);
     private Map<Long, List<CommitComment>> allComments = new HashMap<Long, List<CommitComment>>();
+    private Map<Integer,List<CommitFile>> files = new HashMap<Integer,List<CommitFile>>();
 
     public List<CommitComment> getComments(IRepositoryIdProvider repository, int pullRequestId) {
         Long id = new Long(pullRequestId);
@@ -122,5 +124,15 @@ public class MockPullRequestService extends PullRequestService {
 
         LOG.debug("Returning list of " + result.size() + " pull requests with state " + state);
         return result;
+    }
+
+    public void setFiles(int id, List<CommitFile> commitFiles) {
+        files.put(id, commitFiles);
+    }
+
+    @Override
+    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id)
+                            throws IOException {
+        return (files.get(id));
     }
 }

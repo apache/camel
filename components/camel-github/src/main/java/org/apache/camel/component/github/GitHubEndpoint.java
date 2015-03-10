@@ -24,7 +24,10 @@ import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
+import org.apache.camel.component.github.producer.GetCommitFileProducer;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
+import org.apache.camel.component.github.producer.PullRequestFilesProducer;
+import org.apache.camel.component.github.producer.PullRequestStateProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,19 +37,19 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
  * Available endpoint URIs include:
- * 
+ *
  * CONSUMERS
  * github://pullRequest (new pull requests)
  * github://pullRequestComment (new pull request comments)
  * github://commit/[branch] (new commits)
  * github://tag (new tags)
- * 
+ *
  * PRODUCERS
  * github://pullRequestComment (create a new pull request comment; see PullRequestCommentProducer for header requirements)
- * 
+ *
  * The endpoints will respond with org.eclipse.egit.github.core-provided POJOs (PullRequest, CommitComment,
  * RepositoryTag, RepositoryCommit, etc.)
- * 
+ *
  * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include:
  * - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?)
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
@@ -69,7 +72,13 @@ public class GitHubEndpoint extends DefaultEndpoint {
     private String repoOwner;
     @UriParam
     private String repoName;
-    
+    @UriParam
+    private String state;
+    @UriParam
+    private String targetUrl;
+    @UriParam
+    private String encoding;
+
     public GitHubEndpoint(String uri, GitHubComponent component) {
         super(uri, component);
     }
@@ -79,10 +88,16 @@ public class GitHubEndpoint extends DefaultEndpoint {
             return new ClosePullRequestProducer(this);
         } else if (type == GitHubType.PULLREQUESTCOMMENT) {
             return new PullRequestCommentProducer(this);
+        } else if (type == GitHubType.PULLREQUESTSTATE) {
+            return new PullRequestStateProducer(this);
+        } else if (type == GitHubType.PULLREQUESTFILES) {
+            return new PullRequestFilesProducer(this);
+        } else if (type == GitHubType.GETCOMMITFILE) {
+            return new GetCommitFileProducer(this);
         }
         throw new IllegalArgumentException("Cannot create producer with type " + type);
     }
-    
+
     public Consumer createConsumer(Processor processor) throws Exception {
         if (type == GitHubType.COMMIT) {
             ObjectHelper.notEmpty(branchName, "branchName", this);
@@ -140,7 +155,7 @@ public class GitHubEndpoint extends DefaultEndpoint {
     public void setOauthToken(String oauthToken) {
         this.oauthToken = oauthToken;
     }
-    
+
     public boolean hasOauth() {
         return oauthToken != null && oauthToken.length() > 0;
     }
@@ -159,5 +174,29 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     public void setRepoName(String repoName) {
         this.repoName = repoName;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getTargetUrl() {
+        return targetUrl;
+    }
+
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 }
