@@ -69,9 +69,16 @@ http\://camel.apache.org/schema/spring/camel-spring-2.12.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.12.2.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.12.3.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.12.4.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.12.5.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.13.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.13.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.13.2.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.13.3.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.13.4.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.14.0.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.14.1.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.14.2.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.15.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-${project.version}.xsd=camel-spring.xsd
 
 http\://camel.apache.org/schema/osgi/camel-osgi.xsd=camel-osgi.xsd
