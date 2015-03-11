@@ -85,6 +85,7 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public DataFormat getDataFormat(RouteContext routeContext) {
         if (dataFormat == null) {
+            Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
 
             // resolve properties before we create the data format
             try {
@@ -92,14 +93,17 @@ public class DataFormatDefinition extends IdentifiedType {
             } catch (Exception e) {
                 throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
             }
-
-            dataFormat = createDataFormat(routeContext);
-            if (dataFormat != null) {
-                configureDataFormat(dataFormat, routeContext.getCamelContext());
-            } else {
-                throw new IllegalArgumentException(
-                        "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
-                                + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+            try {
+                dataFormat = createDataFormat(routeContext);
+                if (dataFormat != null) {
+                    configureDataFormat(dataFormat, routeContext.getCamelContext());
+                } else {
+                    throw new IllegalArgumentException(
+                            "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
+                                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                }
+            } finally {
+                propertyPlaceholdersChangeReverter.run();
             }
         }
         return dataFormat;

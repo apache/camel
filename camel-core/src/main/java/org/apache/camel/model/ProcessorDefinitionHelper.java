@@ -546,6 +546,75 @@ public final class ProcessorDefinitionHelper {
         return null;
     }
 
+
+    static ThreadLocal<RestoreAction> CURRENT_RESTORE_ACTION = new ThreadLocal<RestoreAction>();
+
+    private static class RestoreAction implements Runnable {
+
+        private final RestoreAction prevChange;
+        ArrayList<Runnable> actions = new ArrayList<Runnable>();
+
+        private RestoreAction(RestoreAction prevChange) {
+            this.prevChange = prevChange;
+        }
+
+        @Override
+        public void run() {
+            for (Runnable action : actions) {
+                action.run();
+            }
+            actions.clear();
+            if( prevChange==null ) {
+                CURRENT_RESTORE_ACTION.remove();
+            } else {
+                CURRENT_RESTORE_ACTION.set(prevChange);
+            }
+        }
+    }
+
+    /**
+     *
+     * @return a Runnable that when run, will revert any property place holder
+     *         changes that occurred on the current thread .
+     */
+    public static Runnable createPropertyPlaceholdersChangeReverter() {
+        RestoreAction prevChanges = CURRENT_RESTORE_ACTION.get();
+        RestoreAction rc = new RestoreAction(prevChanges);
+        CURRENT_RESTORE_ACTION.set(rc);
+        return rc;
+    }
+
+    private static void addRestoreAction(final Object target, final Map<String, Object> properties) {
+        if( properties.isEmpty() ) {
+            return;
+        }
+
+        RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
+        if( restoreAction==null ) {
+            return;
+        }
+
+        restoreAction.actions.add(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    IntrospectionSupport.setProperties(null, target, properties);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore definition properties", e);
+                }
+            }
+        });
+    }
+
+    public static void addPropertyPlaceholdersChangeRevertAction(Runnable action) {
+        RestoreAction restoreAction = CURRENT_RESTORE_ACTION.get();
+        if( restoreAction==null ) {
+            return;
+        }
+
+        restoreAction.actions.add(action);
+    }
+
     /**
      * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
@@ -619,6 +688,7 @@ public final class ProcessorDefinitionHelper {
             }
         }
 
+        Map<String, Object> changedProperties  = new HashMap<String, Object>();
         if (!properties.isEmpty()) {
             LOG.trace("There are {} properties on: {}", properties.size(), definition);
             // lookup and resolve properties for String based properties
@@ -636,6 +706,7 @@ public final class ProcessorDefinitionHelper {
                         if (!changed) {
                             throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
                         }
+                        changedProperties.put(name, value);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
                         }
@@ -643,6 +714,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
+        addRestoreAction(definition, changedProperties);
     }
 
     /**
@@ -660,6 +732,7 @@ public final class ProcessorDefinitionHelper {
         Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
+        Map<String, Object>  changedProperties = new HashMap<String, Object>();
         if (!properties.isEmpty()) {
             LOG.trace("There are {} properties on: {}", properties.size(), definition);
 
@@ -678,6 +751,7 @@ public final class ProcessorDefinitionHelper {
                         if (constant != null) {
                             // invoke setter as the text has changed
                             IntrospectionSupport.setProperty(definition, name, constant);
+                            changedProperties.put(name, value);
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
                             }
@@ -688,6 +762,7 @@ public final class ProcessorDefinitionHelper {
                 }
             }
         }
+        addRestoreAction(definition, changedProperties);
     }
 
 }
