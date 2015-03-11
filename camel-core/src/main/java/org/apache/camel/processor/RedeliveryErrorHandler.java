@@ -74,6 +74,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected boolean redeliveryEnabled;
     protected volatile boolean preparingShutdown;
     protected final ExchangeFormatter exchangeFormatter;
+    protected final Processor onPrepare;
 
     /**
      * Contains the current redelivery data
@@ -91,6 +92,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Processor deadLetterProcessor;
         Processor failureProcessor;
         Processor onRedeliveryProcessor;
+        Processor onPrepareProcessor;
         Predicate handledPredicate;
         Predicate continuedPredicate;
         boolean useOriginalInMessage;
@@ -102,6 +104,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             this.currentRedeliveryPolicy = redeliveryPolicy;
             this.deadLetterProcessor = deadLetter;
             this.onRedeliveryProcessor = redeliveryProcessor;
+            this.onPrepareProcessor = onPrepare;
             this.handledPredicate = getDefaultHandledPredicate();
             this.useOriginalInMessage = useOriginalMessagePolicy;
             this.handleNewException = deadLetterHandleNewException;
@@ -196,7 +199,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
-            String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy, Predicate retryWhile, ScheduledExecutorService executorService) {
+            String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
+            Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepare) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -213,6 +217,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
+        this.onPrepare = onPrepare;
 
         if (ObjectHelper.isNotEmpty(redeliveryPolicy.getExchangeFormatterRef())) {
             ExchangeFormatter formatter = camelContext.getRegistry().lookupByNameAndType(redeliveryPolicy.getExchangeFormatterRef(), ExchangeFormatter.class);
@@ -881,6 +886,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
 
+            // invoke custom on prepare
+            if (onPrepare != null) {
+                try {
+                    log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepare, exchange);
+                    onPrepare.process(exchange);
+                } catch (Exception e) {
+                    // a new exception was thrown during prepare
+                    exchange.setException(e);
+                }
+            }
+
             log.trace("Failure processor {} is processing Exchange: {}", processor, exchange);
 
             // store the last to endpoint as the failure endpoint
@@ -910,6 +926,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             });
         } else {
             try {
+                // invoke custom on prepare
+                if (onPrepare != null) {
+                    try {
+                        log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepare, exchange);
+                        onPrepare.process(exchange);
+                    } catch (Exception e) {
+                        // a new exception was thrown during prepare
+                        exchange.setException(e);
+                    }
+                }
                 // no processor but we need to prepare after failure as well
                 prepareExchangeAfterFailure(exchange, data, isDeadLetterChannel, shouldHandle, shouldContinue);
             } finally {

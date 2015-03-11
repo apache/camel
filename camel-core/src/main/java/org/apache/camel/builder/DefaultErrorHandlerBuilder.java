@@ -54,13 +54,15 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected boolean asyncDelayedRedelivery;
     protected String executorServiceRef;
     protected ScheduledExecutorService executorService;
+    protected Processor onPrepareFailure;
 
     public DefaultErrorHandlerBuilder() {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
-            getRedeliveryPolicy(), getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()));
+            getRedeliveryPolicy(), getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()),
+                getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -375,6 +377,19 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    /**
+     * Sets a custom {@link org.apache.camel.Processor} to prepare the {@link org.apache.camel.Exchange} before
+     * handled by the failure processor / dead letter channel. This allows for example to enrich the message
+     * before sending to a dead letter queue.
+     *
+     * @param processor the processor
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder onPrepareFailure(Processor processor) {
+        setOnPrepareFailure(processor);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -495,6 +510,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
+    }
+
+    public Processor getOnPrepareFailure() {
+        return onPrepareFailure;
+    }
+
+    public void setOnPrepareFailure(Processor onPrepareFailure) {
+        this.onPrepareFailure = onPrepareFailure;
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {
