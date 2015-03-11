@@ -66,6 +66,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @XmlAttribute
     private String logExhausted;
     @XmlAttribute
+    private String logExhaustedMessageHistory;
+    @XmlAttribute
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
@@ -128,6 +130,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         }
         if (logExhausted != null) {
             answer.setLogExhausted(CamelContextHelper.parseBoolean(context, logExhausted));
+        }
+        if (logExhaustedMessageHistory != null) {
+            answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(context, logExhaustedMessageHistory));
         }
         if (disableRedelivery != null) {
             if (CamelContextHelper.parseBoolean(context, disableRedelivery)) {
@@ -277,6 +282,14 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
 
     public void setLogExhausted(String logExhausted) {
         this.logExhausted = logExhausted;
+    }
+
+    public String getLogExhaustedMessageHistory() {
+        return logExhaustedMessageHistory;
+    }
+
+    public void setLogExhaustedMessageHistory(String logExhaustedMessageHistory) {
+        this.logExhaustedMessageHistory = logExhaustedMessageHistory;
     }
 
     public String getDisableRedelivery() {
