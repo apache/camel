@@ -147,7 +147,8 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                     + type.name() + ", in error handler with id: " + id);
         }
         String onPrepareFailureRef = element.getAttribute("onPrepareFailureRef");
-        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(ErrorHandlerType.TransactionErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(ErrorHandlerType.TransactionErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler) 
+            || type.equals(ErrorHandlerType.NoErrorHandler))) {
             throw new IllegalArgumentException("Attribute onPrepareFailureRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
