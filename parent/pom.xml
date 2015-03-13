@@ -143,7 +143,7 @@
     <elasticsearch-bundle-version>1.4.2_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.4.2</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
-    <embedmongo-version>1.46.4</embedmongo-version>
+    <embedmongo-version>1.47.0</embedmongo-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>1.1.12</facebook4j-core-version>
@@ -342,7 +342,7 @@
     <minimal-json-version>0.9.1</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
-    <mongo-java-driver-version>2.12.4</mongo-java-driver-version>
+    <mongo-java-driver-version>2.13.0</mongo-java-driver-version>
     <mqtt-client-version>1.10</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.0</mustache-java-version>
