@@ -97,7 +97,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         if (this.type == SnmpActionType.TRAP) {
             SnmpTrapConsumer answer = new SnmpTrapConsumer(this, processor);
-            configureConsumer(answer);
+            // As the SnmpTrapConsumer is not a polling consumer we don't need to call the configureConsumer here.
             return answer;
         } else if (this.type == SnmpActionType.POLL) {
             SnmpOIDPoller answer = new SnmpOIDPoller(this, processor);
