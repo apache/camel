@@ -46,7 +46,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-    <jdk.version>1.7</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <compiler.fork>false</compiler.fork>
 
     <!-- use maven compiler 2.5.1 as 3.0/3.1 recompiles everything even if nothingh has changed, or only 1 file,
