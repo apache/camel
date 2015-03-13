@@ -153,8 +153,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
         } else if (role == 'C') {
             if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
-                    || readPreference != null || dynamicity || invokeGetLastError) {
-                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, readPreference, dynamicity, invokeGetLastError "
+                   || dynamicity || invokeGetLastError) {
+                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, invokeGetLastError "
                         + "options cannot appear on a consumer endpoint");
             }
 
