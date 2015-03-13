@@ -307,8 +307,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets the path separator to be used.
      * <p/>
-     * UNIX = Path separator / is used
-     * Windows = Path separator \ is used
+     * UNIX = Uses unix style path separator
+     * Windows = Uses windows style path separator
      * Auto = (is default) Use existing path separator in file name
      */
     public void setSeparator(PathSeparator separator) {
