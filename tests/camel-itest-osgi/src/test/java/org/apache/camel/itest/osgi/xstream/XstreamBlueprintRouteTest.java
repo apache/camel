@@ -27,6 +27,8 @@ import org.junit.runner.RunWith;
 
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ProbeBuilder;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
@@ -57,19 +59,24 @@ public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
         assertEquals(new SampleObject("1"), result);
     }
 
+    @ProbeBuilder
+    public TestProbeBuilder probeConfiguration(TestProbeBuilder builder) {
+        builder.setHeader(Constants.EXPORT_PACKAGE, SampleObject.class.getPackage().getName());
+        return builder;
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
                 provision(TinyBundles.bundle()
-                    .add(SampleObject.class)
                     .add(XstreamRouteBuilder.class)
                     .add("OSGI-INF/blueprint/test.xml", XstreamBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
                     .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintXstreamTestBundle")
                     .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                     .build()),
-                   
+
                 // using the features to install the camel components
                 loadCamelFeatures("xml-specs-api", "camel-blueprint", "camel-xstream"));
                 //vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
