@@ -170,6 +170,7 @@
     <module>camel-olingo2</module>
     <module>camel-openshift</module>
     <module>camel-optaplanner</module>
+    <module>camel-paho</module>
     <module>camel-paxlogging</module>
     <module>camel-pgevent</module>
     <module>camel-printer</module>
