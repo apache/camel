@@ -194,11 +194,28 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf('.');
+        name = stripPath(name);
+
+        // extension is the first dot, as a file may have double extension such as .tar.gz
+        int pos = name.indexOf('.');
         if (pos != -1) {
             return name.substring(0, pos);
         }
         return name;
+    }
+
+    public static String onlyExt(String name) {
+        if (name == null) {
+            return null;
+        }
+        name = stripPath(name);
+
+        // extension is the first dot, as a file may have double extension such as .tar.gz
+        int pos = name.indexOf('.');
+        if (pos != -1) {
+            return name.substring(pos + 1);
+        }
+        return null;
     }
 
     /**

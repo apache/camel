@@ -162,6 +162,22 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("target\\newdir\\onwindows\\${file:name}", "target\\newdir\\onwindows\\hello.txt");
     }
 
+    public void testFileNameDoubleExtension() throws Exception {
+        file = new File("target/filelanguage/test/bigfile.tar.gz");
+
+        String uri = "file://target/filelanguage?fileExist=Override";
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+
+        FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
+
+        Exchange answer = endpoint.createExchange(gf);
+        endpoint.configureMessage(gf, answer.getIn());
+
+        assertEquals("bigfile.tar.gz", file.getName());
+        assertExpression(answer, "${file:onlyname}", "bigfile.tar.gz");
+        assertExpression(answer, "${file:ext}", "tar.gz");
+    }
+
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/filelanguage?fileExist=Override";
