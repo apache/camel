@@ -443,7 +443,7 @@ public class MethodInfo {
                 // any provided parameter values in the method name
                 String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, "", String.class);
                 // the parameter values is between the parenthesis
-                String methodParameters = ObjectHelper.between(methodName, "(", ")");
+                String methodParameters = ObjectHelper.betweenOuterPair(methodName, '(', ')');
                 // use an iterator to walk the parameter values
                 Iterator<?> it = null;
                 if (methodParameters != null) {
