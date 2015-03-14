@@ -44,6 +44,9 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -54,8 +57,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * A number of useful helper methods for working with Objects
