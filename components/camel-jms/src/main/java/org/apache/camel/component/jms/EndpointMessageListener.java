@@ -185,10 +185,13 @@ public class EndpointMessageListener implements MessageListener {
                         // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
-                } else if (exchange.hasOut() && exchange.getOut().isFault()) {
-                    // a fault occurred while processing
-                    body = exchange.getOut();
-                    cause = null;
+                } else {
+                    org.apache.camel.Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                    if (msg.isFault()) {
+                        // a fault occurred while processing
+                        body = msg;
+                        cause = null;
+                    }
                 }
             } else {
                 // process OK so get the reply body if we are InOut and has a body

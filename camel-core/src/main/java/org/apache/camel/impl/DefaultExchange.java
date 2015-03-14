@@ -345,7 +345,10 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isFailed() {
-        return (hasOut() && getOut().isFault()) || getException() != null;
+        if (exception != null) {
+            return true;
+        }
+        return hasOut() ? getOut().isFault() : getIn().isFault();
     }
 
     public boolean isTransacted() {

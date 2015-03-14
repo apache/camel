@@ -408,11 +408,6 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
      */
     private void copyOutToIn(Exchange result, Exchange source) {
         result.setException(source.getException());
-
-        if (source.hasOut() && source.getOut().isFault()) {
-            result.getOut().copyFrom(source.getOut());
-        }
-
         result.setIn(getResultMessage(source));
 
         result.getProperties().clear();
