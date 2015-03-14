@@ -33,7 +33,7 @@ public class SpringSetFaultBodyTest extends SpringTestSupport {
     }
 
     public void testSetFaultBody() throws Exception {
-        Exchange out = template.send("direct:start", new Processor() {
+        Exchange out = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
@@ -41,8 +41,7 @@ public class SpringSetFaultBodyTest extends SpringTestSupport {
         });
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
-        assertEquals("Bye World", out.getOut().getBody());
-        assertTrue("Should be a fault body", out.getOut().isFault());
+        assertEquals("Bye World", out.getIn().getBody());
+        assertTrue("Should be a fault body", out.getIn().isFault());
     }
 }

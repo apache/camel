@@ -1110,7 +1110,8 @@ public final class ExpressionBuilder {
     public static Expression faultBodyExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getOut().isFault() ? exchange.getOut().getBody() : null;
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return msg.isFault() ? msg.getBody() : null;
             }
 
             @Override
@@ -1127,7 +1128,8 @@ public final class ExpressionBuilder {
     public static <T> Expression faultBodyExpression(final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getOut().isFault() ? exchange.getOut().getBody(type) : null;
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return msg.isFault() ? msg.getBody(type) : null;
             }
 
             @Override

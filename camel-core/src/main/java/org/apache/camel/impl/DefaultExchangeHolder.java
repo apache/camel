@@ -61,6 +61,7 @@ public class DefaultExchangeHolder implements Serializable {
     private String exchangeId;
     private Object inBody;
     private Object outBody;
+    private Boolean inFaultFlag = Boolean.FALSE;
     private Boolean outFaultFlag = Boolean.FALSE;
     private Map<String, Object> inHeaders;
     private Map<String, Object> outHeaders;
@@ -102,6 +103,8 @@ public class DefaultExchangeHolder implements Serializable {
             payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
             payload.outFaultFlag = exchange.getOut().isFault();
             payload.safeSetOutHeaders(exchange);
+        } else {
+            payload.inFaultFlag = exchange.getIn().isFault();
         }
         if (includeProperties) {
             payload.safeSetProperties(exchange);
@@ -125,6 +128,9 @@ public class DefaultExchangeHolder implements Serializable {
         exchange.getIn().setBody(payload.inBody);
         if (payload.inHeaders != null) {
             exchange.getIn().setHeaders(payload.inHeaders);
+        }
+        if (payload.inFaultFlag != null) {
+            exchange.getIn().setFault(payload.inFaultFlag);
         }
         if (payload.outBody != null) {
             exchange.getOut().setBody(payload.outBody);

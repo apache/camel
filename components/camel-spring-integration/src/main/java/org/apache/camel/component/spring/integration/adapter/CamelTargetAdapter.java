@@ -73,7 +73,8 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         Exchange inExchange = new DefaultExchange(getCamelContext(), pattern);
         SpringIntegrationBinding.storeToCamelMessage(message, inExchange.getIn());
         Exchange outExchange = getCamelTemplate().send(getCamelEndpointUri(), inExchange);
-        if (outExchange.getOut() != null && outExchange.getOut().isFault()) {
+        org.apache.camel.Message camelMsg = outExchange.hasOut() ? outExchange.getOut() : outExchange.getIn();
+        if (camelMsg.isFault()) {
             result = true;
         }
 

@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 
@@ -56,11 +57,16 @@ public class HandleFaultInterceptor extends DelegateAsyncProcessor {
      */
     protected void handleFault(Exchange exchange) {
         // Take the fault message out before we keep on going
-        if (exchange.hasOut() && exchange.getOut().isFault()) {
-            final Object faultBody = exchange.getOut().getBody();
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        if (msg.isFault()) {
+            final Object faultBody = msg.getBody();
             if (faultBody != null && exchange.getException() == null) {
                 // remove fault as we are converting it to an exception
-                exchange.setOut(null);
+                if (exchange.hasOut()) {
+                    exchange.setOut(null);
+                } else {
+                    exchange.setIn(null);
+                }
                 if (faultBody instanceof Throwable) {
                     exchange.setException((Throwable) faultBody);
                 } else {
