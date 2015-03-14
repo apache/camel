@@ -194,13 +194,25 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        name = stripPath(name);
 
-        // extension is the first dot, as a file may have double extension such as .tar.gz
-        int pos = name.indexOf('.');
-        if (pos != -1) {
-            return name.substring(0, pos);
+        // the name may have a leading path
+        int posUnix = name.lastIndexOf('/');
+        int posWin = name.lastIndexOf('\\');
+        int pos = Math.max(posUnix, posWin);
+
+        if (pos > 0) {
+            String onlyName = name.substring(pos + 1);
+            int pos2 = onlyName.indexOf('.');
+            if (pos2 > 0) {
+                return name.substring(0, pos + pos2 + 1);
+            }
+        } else {
+            int pos2 = name.indexOf('.');
+            if (pos2 > 0) {
+                return name.substring(0, pos2);
+            }
         }
+
         return name;
     }
 
