@@ -17,27 +17,12 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.util.Map;
 
-import org.junit.Test;
+public class ResourceUtils {
+    private ResourceUtils() { }
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-public class PackageHelperTest {
-
-    @Test
-    public void testFileToString() throws Exception {
-        assertEquals("dk19i21)@+#(OR", PackageHelper.fileToString(ResourceUtils.getResourceAsFile("filecontent/a.txt")));
+    public static File getResourceAsFile(String pathToFile) throws Exception {
+        return new File(ResourceUtils.class.getClassLoader().getResource(pathToFile).getFile());
     }
 
-    @Test
-    public void testFindJsonFiles() throws Exception {
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(ResourceUtils.getResourceAsFile("json"));
-
-        assertTrue("Files a.json must be found", jsonFiles.containsKey("a"));
-        assertTrue("Files b.json must be found", jsonFiles.containsKey("b"));
-        assertFalse("File c.txt must not be found", jsonFiles.containsKey("c"));
-    }
 }
