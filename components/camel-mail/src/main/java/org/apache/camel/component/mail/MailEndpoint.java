@@ -20,7 +20,6 @@ import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -37,10 +36,13 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
-    private MailBinding binding;
     @UriParam
     private MailConfiguration configuration;
+    @UriParam
+    private MailBinding binding;
+    @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
+    @UriParam
     private ContentTypeResolver contentTypeResolver;
     @UriParam
     private int maxMessagesPerPoll;
