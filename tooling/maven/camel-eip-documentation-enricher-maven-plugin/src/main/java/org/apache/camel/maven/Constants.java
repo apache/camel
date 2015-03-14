@@ -27,6 +27,8 @@ public final class Constants {
     public static final int WRAP_LENGTH = 80;
 
     // XML constants.
+    public static final String XML_SCHEMA_NAMESPACE_PREFIX = "xs";
+    public static final String XML_SCHEMA_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
     public static final String NAME_ATTRIBUTE_NAME = "name";
     public static final String TYPE_ATTRIBUTE_NAME = "type";
     public static final String XS_ANNOTATION_ELEMENT_NAME = "xs:annotation";

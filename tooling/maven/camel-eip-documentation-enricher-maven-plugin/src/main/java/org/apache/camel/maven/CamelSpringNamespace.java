@@ -29,8 +29,8 @@ public class CamelSpringNamespace implements NamespaceContext {
         if (prefix == null) {
             throw new IllegalArgumentException("The prefix cannot be null.");
         }
-        if ("xs".equals(prefix)) {
-            return "http://www.w3.org/2001/XMLSchema";
+        if (Constants.XML_SCHEMA_NAMESPACE_PREFIX.equals(prefix)) {
+            return Constants.XML_SCHEMA_NAMESPACE_URI;
         }
         return null;
     }
