@@ -1724,11 +1724,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-                if (name != null) {
-                    return name.substring(name.lastIndexOf('.') + 1);
-                } else {
-                    return null;
-                }
+                return FileUtil.onlyExt(name);
             }
 
             @Override
