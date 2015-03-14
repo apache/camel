@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://camel.apache.org/schema/spring" elementFormDefault="qualified" targetNamespace="http://camel.apache.org/schema/spring" version="1.0">
+
+  <xs:complexType name="keyManagersParametersFactoryBean">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractKeyManagersParametersFactoryBean">
+        <xs:sequence>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="abstractKeyManagersParametersFactoryBean">
+    <xs:sequence/>
+    <xs:attribute name="keyPassword" type="xs:string"/>
+    <xs:attribute name="provider" type="xs:string"/>
+    <xs:attribute name="algorithm" type="xs:string"/>
+  </xs:complexType>
+</xs:schema>
