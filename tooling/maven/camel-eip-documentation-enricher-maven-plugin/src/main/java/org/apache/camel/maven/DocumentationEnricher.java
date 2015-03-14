@@ -103,7 +103,7 @@ public class DocumentationEnricher {
                 .append(WordUtils.wrap(textContent, Constants.WRAP_LENGTH))
                 .append(System.lineSeparator())
                 // Fix closing tag intention.
-                .append(StringUtils.repeat(Constants.DEFAULT_XML_INTEMSION, getNodeDepth(item)));
+                .append(StringUtils.repeat(Constants.DEFAULT_XML_INTENTION, getNodeDepth(item)));
         return stringBuilder.toString();
     }
 

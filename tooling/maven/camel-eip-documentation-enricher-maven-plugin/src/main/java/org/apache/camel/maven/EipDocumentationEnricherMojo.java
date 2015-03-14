@@ -69,8 +69,17 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/../../..//camel-core")
     public File camelCoreDir;
 
+    /**
+     * Sub path from camel core directory to model directory with generated json files for components.
+     */
+    @Parameter(defaultValue = "target/classes/org/apache/camel/model")
+    public String pathToModelDir;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (pathToModelDir == null) {
+            throw new MojoExecutionException("pathToModelDir parameter must not be null");
+        }
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreDir, "camelCoreDir");
@@ -83,7 +92,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private void runPlugin() throws Exception {
-        File rootDir = new File(camelCoreDir, Constants.PATH_TO_MODEL_DIR);
+        File rootDir = new File(camelCoreDir, pathToModelDir);
         Document document = XmlHelper.buildNamespaceAwareDocument(inputCamelSchemaFile);
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         DomFinder domFinder = new DomFinder(document, xPath);

@@ -22,8 +22,7 @@ package org.apache.camel.maven;
 public final class Constants {
 
     // Camel core constants.
-    public static final String PATH_TO_MODEL_DIR = "target/classes/org/apache/camel/model";
-    public static final String DEFAULT_XML_INTEMSION = "  ";
+    public static final String DEFAULT_XML_INTENTION = "  ";
     public static final int WRAP_LENGTH = 80;
 
     // XML constants.
