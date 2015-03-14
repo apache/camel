@@ -44,9 +44,6 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -57,6 +54,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A number of useful helper methods for working with Objects
@@ -468,6 +467,69 @@ public final class ObjectHelper {
             return null;
         }
         return before(text, before);
+    }
+
+    /**
+     * Returns the string between the most outer pair of tokens
+     * <p/>
+     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise <tt>null</tt> is returned
+     * <p/>
+     * This implementation skips matching when the text is either single or double quoted.
+     * For example:
+     * <tt>${body.matches("foo('bar')")</tt>
+     * Will not match the parenthesis from the quoted text.
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     */
+    public static String betweenOuterPair(String text, char before, char after) {
+        if (text == null) {
+            return null;
+        }
+
+        int pos = -1;
+        int pos2 = -1;
+        int count = 0;
+        int count2 = 0;
+
+        boolean singleQuoted = false;
+        boolean doubleQuoted = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!doubleQuoted && ch == '\'') {
+                singleQuoted = !singleQuoted;
+            } else if (!singleQuoted && ch == '\"') {
+                doubleQuoted = !doubleQuoted;
+            }
+            if (singleQuoted || doubleQuoted) {
+                continue;
+            }
+
+            if (ch == before) {
+                count++;
+            } else if (ch == after) {
+                count2++;
+            }
+
+            if (ch == before && pos == -1) {
+                pos = i;
+            } else if (ch == after) {
+                pos2 = i;
+            }
+        }
+
+        if (pos == -1 || pos2 == -1) {
+            return null;
+        }
+
+        // must be even paris
+        if (count != count2) {
+            return null;
+        }
+
+        return text.substring(pos + 1, pos2);
     }
 
     /**
