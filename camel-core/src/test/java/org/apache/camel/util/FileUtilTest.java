@@ -110,6 +110,15 @@ public class FileUtilTest extends TestCase {
         assertEquals("/foo/bar", FileUtil.stripExt("/foo/bar.xml"));
     }
 
+    public void testOnlyExt() {
+        assertEquals(null, FileUtil.onlyExt(null));
+        assertEquals(null, FileUtil.onlyExt("foo"));
+        assertEquals("xml", FileUtil.onlyExt("foo.xml"));
+        assertEquals("xml", FileUtil.onlyExt("/foo/bar.xml"));
+        assertEquals("tar.gz", FileUtil.onlyExt("/foo/bigfile.tar.gz"));
+        assertEquals("tar.gz", FileUtil.onlyExt("/foo.bar/bigfile.tar.gz"));
+    }
+
     public void testOnlyPath() {
         assertEquals(null, FileUtil.onlyPath(null));
         assertEquals(null, FileUtil.onlyPath("foo"));
