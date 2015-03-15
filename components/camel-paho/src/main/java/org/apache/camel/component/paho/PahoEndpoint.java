@@ -16,41 +16,47 @@
  */
 package org.apache.camel.component.paho;
 
-import static java.lang.System.nanoTime;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+
+import static java.lang.System.nanoTime;
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
 
+@UriEndpoint(scheme = "paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
 
     // Configuration members
 
-    private String clientId = "camel-" + nanoTime();
-
-    private String brokerUrl = "tcp://localhost:1883";
-
+    @UriPath @Metadata(required = "true")
     private String topic;
-
+    @UriParam
+    private String clientId = "camel-" + nanoTime();
+    @UriParam(defaultValue = "tcp://localhost:1883")
+    private String brokerUrl = "tcp://localhost:1883";
+    @UriParam(defaultValue = "2")
     private int qos = 2;
-
+    @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
 
     // Collaboration members
-
+    @UriParam
     private MqttConnectOptions connectOptions;
 
     // Auto-configuration members
 
-    private MqttClient client;
+    private transient MqttClient client;
 
     public PahoEndpoint(String uri, Component component) {
         super(uri, component);

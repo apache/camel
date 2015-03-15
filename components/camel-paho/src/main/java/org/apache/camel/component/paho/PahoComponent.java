@@ -19,14 +19,18 @@ package org.apache.camel.component.paho;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-public class PahoComponent extends DefaultComponent {
+public class PahoComponent extends UriEndpointComponent {
+
+    public PahoComponent() {
+        super(PahoEndpoint.class);
+    }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String s1, Map<String, Object> options) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         PahoEndpoint pahoEndpoint = new PahoEndpoint(uri, this);
-        setProperties(pahoEndpoint, options);
+        setProperties(pahoEndpoint, parameters);
         return pahoEndpoint;
     }
 
