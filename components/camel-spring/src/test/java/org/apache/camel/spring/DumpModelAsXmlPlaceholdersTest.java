@@ -34,8 +34,8 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
         assertNotNull(xml);
-        System.out.println(xml);
         log.info(xml);
+
         assertTrue(xml.contains("<route customId=\"true\" id=\"Gouda\" xmlns=\"http://camel.apache.org/schema/spring\">"));
         assertTrue(xml.contains("<from uri=\"direct:start-{{cheese.type}}\"/>"));
         assertTrue(xml.contains("<to uri=\"direct:end-{{cheese.type}}\" customId=\"true\" id=\"log\"/>"));
