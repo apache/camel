@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.Map;
 import java.util.zip.Deflater;
 
+import org.apache.camel.model.dataformat.BoonDataFormat;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -172,6 +173,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         bindy.setType(type);
         bindy.setClassType(classType);
         return dataFormat(bindy);
+    }
+
+    /**
+     * Uses the Boon data format
+     *
+     * @param classType the POJO class type
+     */
+    public T boon(Class<?> classType) {
+        BoonDataFormat boon = new BoonDataFormat();
+        boon.setUnmarshalType(classType);
+        return dataFormat(boon);
     }
 
     /**

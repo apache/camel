@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Boon data format
@@ -35,6 +38,8 @@ import org.apache.camel.spi.Metadata;
 public class BoonDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
+    private String unmarshalTypeName;
+    @XmlTransient
     private Class<?> unmarshalType;
 
     public BoonDataFormat() {
@@ -50,15 +55,40 @@ public class BoonDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
+    /**
+     * Class name of the java type to use when unarmshalling
+     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    /**
+     * Class name of the java type to use when unarmshalling
+     */
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
+    @Override
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (unmarshalType == null && unmarshalTypeName != null) {
+            try {
+                unmarshalType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshalTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+        return super.createDataFormat(routeContext);
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        Class<?> answer = getUnmarshalType();
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "unmarshalType", answer);
+        if (unmarshalType != null) {
+            setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
         }
     }
 }
