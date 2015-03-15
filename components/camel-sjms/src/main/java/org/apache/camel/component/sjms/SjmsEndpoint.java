@@ -84,6 +84,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private boolean asyncStopListener;
     @UriParam(defaultValue = "true")
     private boolean prefillPool = true;
+    @UriParam(defaultValue = "true")
+    private boolean allowNullBody = true;
     @UriParam
     private TransactionCommitStrategy transactionCommitStrategy;
     @UriParam
@@ -503,5 +505,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
+    }
+
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
     }
 }
