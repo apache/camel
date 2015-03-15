@@ -18,8 +18,11 @@ package org.apache.camel.maven;
 
 import java.io.File;
 
-public class ResourceUtils {
-    private ResourceUtils() { }
+public final class ResourceUtils {
+
+    private ResourceUtils() {
+        // noop
+    }
 
     public static File getResourceAsFile(String pathToFile) throws Exception {
         return new File(ResourceUtils.class.getClassLoader().getResource(pathToFile).getFile());

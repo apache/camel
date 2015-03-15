@@ -88,7 +88,7 @@ public class EIPDocumentationMojoTest {
 
     private void validateElement(Document doc) {
         NodeList element = doc.getElementsByTagName("xs:element");
-        Element e = ((Element) element.item(0));
+        Element e = (Element) element.item(0);
 
         assertEquals("aop", e.getAttribute(Constants.NAME_ATTRIBUTE_NAME));
 

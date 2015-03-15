@@ -27,6 +27,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class DomFinderTest {
+
     private DomFinder domFinder;
 
     @Test
@@ -55,7 +56,6 @@ public class DomFinderTest {
         assertEquals("uri", ((Element) attributesList.item(0)).getAttribute(Constants.NAME_ATTRIBUTE_NAME));
         assertEquals("skipSendToOriginalEndpoint",
                 ((Element) attributesList.item(1)).getAttribute(Constants.NAME_ATTRIBUTE_NAME));
-
     }
 
     @Test
