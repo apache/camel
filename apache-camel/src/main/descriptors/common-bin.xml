@@ -150,6 +150,7 @@
         <include>org.apache.camel.component.olingo2:camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
         <include>org.apache.camel:camel-optaplanner</include>
+        <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
