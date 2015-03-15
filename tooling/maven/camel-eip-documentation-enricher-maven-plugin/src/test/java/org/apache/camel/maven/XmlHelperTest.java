@@ -14,30 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
 
-import java.io.File;
-import java.util.Map;
+package org.apache.camel.maven;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-public class PackageHelperTest {
+public class XmlHelperTest {
 
     @Test
-    public void testFileToString() throws Exception {
-        assertEquals("dk19i21)@+#(OR", PackageHelper.fileToString(ResourceUtils.getResourceAsFile("filecontent/a.txt")));
+    public void testBuildNamespaceAwareDocument() throws Exception {
+        assertNotNull(XmlHelper.buildNamespaceAwareDocument(ResourceUtils.getResourceAsFile("xmls/empty.xml")));
     }
 
     @Test
-    public void testFindJsonFiles() throws Exception {
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(ResourceUtils.getResourceAsFile("json"));
+    public void testBuildTransformer() throws Exception {
+        assertNotNull(XmlHelper.buildTransformer());
+    }
 
-        assertTrue("Files a.json must be found", jsonFiles.containsKey("a"));
-        assertTrue("Files b.json must be found", jsonFiles.containsKey("b"));
-        assertFalse("File c.txt must not be found", jsonFiles.containsKey("c"));
+    @Test
+    public void testBuildXPath() throws Exception {
+        assertNotNull(XmlHelper.buildXPath(new CamelSpringNamespace()));
+    }
+
+    @Test
+    public void testBuildXPathNullPointerExpected() throws Exception {
+        try {
+            XmlHelper.buildXPath(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            // Expected.
+        }
     }
 }

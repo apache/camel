@@ -24,26 +24,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -63,50 +55,68 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
      * Path to camel EIP schema.
      */
     @Parameter(required = true)
-    File inputCamelSchemaFile;
+    public File inputCamelSchemaFile;
 
     /**
      * Path to camel EIP schema with enriched documentation.
      */
     @Parameter(required = true)
-    File outputCamelSchemaFile;
+    public File outputCamelSchemaFile;
 
     /**
      * Path to camel core project root directory.
      */
     @Parameter(defaultValue = "${project.build.directory}/../../..//camel-core")
-    File camelCoreDir;
+    public File camelCoreDir;
+
+    /**
+     * Sub path from camel core directory to model directory with generated json files for components.
+     */
+    @Parameter(defaultValue = "target/classes/org/apache/camel/model")
+    public String pathToModelDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Set<String> injectedTypes = new HashSet<String>();
-        File rootDir = new File(camelCoreDir, Constants.PATH_TO_MODEL_DIR);
-        Document document = buildNamespaceAwareDocument(inputCamelSchemaFile);
-        XPath xPath = buildXPath(new CamelSpringNamespace());
+        if (pathToModelDir == null) {
+            throw new MojoExecutionException("pathToModelDir parameter must not be null");
+        }
+        validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
+        validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
+        validateExists(camelCoreDir, "camelCoreDir");
+        validateIsDirectory(camelCoreDir, "camelCoreDir");
+        try {
+            runPlugin();
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error during plugin execution", e);
+        }
+    }
+
+    private void runPlugin() throws Exception {
+        File rootDir = new File(camelCoreDir, pathToModelDir);
+        Document document = XmlHelper.buildNamespaceAwareDocument(inputCamelSchemaFile);
+        XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
         Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
-        try {
-            NodeList elementsAndTypes = domFinder.findElementsAndTypes();
-            documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
-            Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
-            for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
-                String elementType = entry.getKey();
-                String elementName = entry.getValue();
-                if (jsonFileExistsForElement(jsonFiles, elementName)) {
-                    injectAttributesDocumentation(domFinder,
-                            documentationEnricher,
-                            jsonFiles.get(elementName),
-                            elementType,
-                            injectedTypes);
-                }
+
+        NodeList elementsAndTypes = domFinder.findElementsAndTypes();
+        documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
+        Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
+        Set<String> injectedTypes = new HashSet<String>();
+
+        for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
+            String elementType = entry.getKey();
+            String elementName = entry.getValue();
+            if (jsonFileExistsForElement(jsonFiles, elementName)) {
+                injectAttributesDocumentation(domFinder,
+                        documentationEnricher,
+                        jsonFiles.get(elementName),
+                        elementType,
+                        injectedTypes);
             }
-            saveToFile(document, outputCamelSchemaFile, buildTransformer());
-        } catch (XPathExpressionException e) {
-            throw new MojoExecutionException("Error during documentation enrichment", e);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error during documentation enrichment", e);
         }
+
+        saveToFile(document, outputCamelSchemaFile, XmlHelper.buildTransformer());
     }
 
     private boolean jsonFileExistsForElement(Map<String, File> jsonFiles,
@@ -114,20 +124,28 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return jsonFiles.containsKey(elementName);
     }
 
+    /**
+     * Recursively injects documentation to complex type attributes and it's parents.
+     */
     private void injectAttributesDocumentation(DomFinder domFinder,
                                                DocumentationEnricher documentationEnricher,
                                                File jsonFile,
                                                String type,
                                                Set<String> injectedTypes) throws XPathExpressionException, IOException {
+        if (injectedTypes.contains(type)) {
+            return;
+        }
+
+        injectedTypes.add(type);
         NodeList attributeElements = domFinder.findAttributesElements(type);
         if (attributeElements.getLength() > 0) {
             documentationEnricher.enrichTypeAttributesDocumentation(attributeElements, jsonFile);
-            injectedTypes.add(type);
-            String baseType = domFinder.findBaseType(type);
+        }
+
+        String baseType = domFinder.findBaseType(type);
+        if (baseType != null && !StringUtils.isEmpty(baseType)) {
             baseType = truncateTypeNamespace(baseType);
-            if (baseType != null && !injectedTypes.contains(baseType)) {
-                injectAttributesDocumentation(domFinder, documentationEnricher, jsonFile, baseType, injectedTypes);
-            }
+            injectAttributesDocumentation(domFinder, documentationEnricher, jsonFile, baseType, injectedTypes);
         }
     }
 
@@ -152,51 +170,28 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return baseType.replaceAll("tns:", "");
     }
 
-    private XPath buildXPath(NamespaceContext namespaceContext) {
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        xPath.setNamespaceContext(namespaceContext);
-        return xPath;
+
+    private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, TransformerException {
+        StreamResult result = new StreamResult(new FileOutputStream(outputFile));
+        DOMSource source = new DOMSource(document);
+        transformer.transform(source, result);
     }
 
-    private Transformer buildTransformer() throws MojoExecutionException {
-        Transformer transformer;
-        try {
-            transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        } catch (TransformerConfigurationException e) {
-            throw new MojoExecutionException("Error during building transformer", e);
+    private void validateIsFile(File file, String name) throws MojoExecutionException {
+        if (!file.isFile()) {
+            throw new MojoExecutionException(name + "is not a file");
         }
-        return transformer;
     }
 
-    public Document buildNamespaceAwareDocument(File xml) throws MojoExecutionException {
-        Document result;
-        DocumentBuilder builder;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        try {
-            builder = factory.newDocumentBuilder();
-            result =  builder.parse(xml);
-        } catch (SAXException e) {
-            throw new MojoExecutionException("Error during building a document", e);
-        } catch (ParserConfigurationException e) {
-            throw new MojoExecutionException("Error during building a document", e);
-        } catch (IOException  e) {
-            throw new MojoExecutionException("Error during building a document", e);
+    private void validateIsDirectory(File file, String name) throws MojoExecutionException {
+        if (!file.isDirectory()) {
+            throw new MojoExecutionException(name + "is not a directory");
         }
-        return result;
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer) throws MojoExecutionException {
-        try {
-            StreamResult result = new StreamResult(new FileOutputStream(outputFile));
-            DOMSource source = new DOMSource(document);
-            transformer.transform(source, result);
-        } catch (TransformerException e) {
-            throw new MojoExecutionException("Error during saving to file", e);
-        } catch (FileNotFoundException e) {
-            throw new MojoExecutionException("Error during saving to file", e);
+    private void validateExists(File file, String name) throws MojoExecutionException {
+        if (file == null || !file.exists()) {
+            throw new MojoExecutionException(name + " does not exist");
         }
     }
 }

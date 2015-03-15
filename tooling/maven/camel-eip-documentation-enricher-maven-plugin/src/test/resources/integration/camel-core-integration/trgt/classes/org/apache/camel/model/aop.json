@@ -1,0 +1,21 @@
+{
+ "model": {
+    "kind": "model",
+    "name": "aop",
+    "title": "Aop",
+    "description": "element documentation",
+    "javaType": "org.apache.camel.model.AOPDefinition",
+    "label": "configuration",
+    "input": "true",
+    "output": "true"
+  },
+  "properties": {
+    "beforeUri": { "kind": "attribute", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "description": "beforeUri documentation" },
+    "afterUri": { "kind": "attribute", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "description": "Endpoint to call in AOP after. The difference between after and afterFinally is that afterFinally is invoked from a finally block so it will always be invoked no matter what eg also in case of an exception occur." },
+    "afterFinallyUri": { "kind": "attribute", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "description": "Endpoint to call in AOP after finally. The difference between after and afterFinally is that afterFinally is invoked from a finally block so it will always be invoked no matter what eg also in case of an exception occur." },
+    "outputs": { "kind": "element", "required": "true", "type": "array", "javaType": "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", "oneOf": [ "aggregate", "aop", "bean", "choice", "convertBodyTo", "delay", "doCatch", "doFinally", "doTry", "dynamicRouter", "enrich", "filter", "idempotentConsumer", "inOnly", "inOut", "intercept", "interceptFrom", "interceptSendToEndpoint", "loadBalance", "log", "loop", "marshal", "multicast", "onCompletion", "onException", "otherwise", "pipeline", "policy", "pollEnrich", "process", "recipientList", "removeHeader", "removeHeaders", "removeProperties", "removeProperty", "resequence", "rollback", "routingSlip", "sample", "setBody", "setExchangePattern", "setFaultBody", "setHeader", "setOutHeader", "setProperty", "sort", "split", "stop", "threads", "throttle", "throwException", "to", "transacted", "transform", "unmarshal", "validate", "when", "whenSkipSendToEndpoint", "wireTap" ], "deprecated": "false" },
+    "id": { "kind": "attribute", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "description": "id documentation" },
+    "description": { "kind": "element", "required": "false", "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": "false", "description": "Sets the description of this node" }
+  }
+}
+
