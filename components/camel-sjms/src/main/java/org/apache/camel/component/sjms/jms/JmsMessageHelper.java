@@ -153,55 +153,58 @@ public final class JmsMessageHelper implements JmsConstants {
     }
 
     public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, SjmsEndpoint endpoint) throws Exception {
-        return createMessage(session, payload, messageHeaders, endpoint.getJmsKeyFormatStrategy(), endpoint.getCamelContext().getTypeConverter());
+        return createMessage(session, payload, messageHeaders, endpoint.isAllowNullBody(), endpoint.getJmsKeyFormatStrategy(), endpoint.getCamelContext().getTypeConverter());
     }
 
-    private static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
+    private static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, boolean allowNullBody,
+                                         KeyFormatStrategy keyFormatStrategy, TypeConverter typeConverter) throws Exception {
         Message answer = null;
         JmsMessageType messageType = JmsMessageHelper.discoverMessageTypeFromPayload(payload);
-        try {
 
-            switch (messageType) {
-            case Bytes:
-                BytesMessage bytesMessage = session.createBytesMessage();
-                byte[] bytesToWrite = typeConverter.convertTo(byte[].class, payload);
-                bytesMessage.writeBytes(bytesToWrite);
-                answer = bytesMessage;
-                break;
-            case Map:
-                MapMessage mapMessage = session.createMapMessage();
-                Map objMap = (Map) payload;
-                for (final Map.Entry entry : (Set<Map.Entry>)objMap.entrySet()) {
-                    mapMessage.setObject(entry.getKey().toString(), entry.getValue());
-                }
-                answer = mapMessage;
-                break;
-            case Object:
-                ObjectMessage objectMessage = session.createObjectMessage();
-                objectMessage.setObject((Serializable) payload);
-                answer = objectMessage;
-                break;
-            case Text:
-                TextMessage textMessage = session.createTextMessage();
-                String convertedText = typeConverter.convertTo(String.class, payload);
-                textMessage.setText(convertedText);
-                answer = textMessage;
-                break;
-            case Stream:
-                StreamMessage streamMessage = session.createStreamMessage();
-                Collection collection = (Collection)payload;
-                for (final Object obj : collection) {
-                    streamMessage.writeObject(obj);
-                }
-                answer = streamMessage;
-                break;
-            default:
-                break;
+        switch (messageType) {
+        case Bytes:
+            BytesMessage bytesMessage = session.createBytesMessage();
+            byte[] bytesToWrite = typeConverter.convertTo(byte[].class, payload);
+            bytesMessage.writeBytes(bytesToWrite);
+            answer = bytesMessage;
+            break;
+        case Map:
+            MapMessage mapMessage = session.createMapMessage();
+            Map objMap = (Map) payload;
+            for (final Map.Entry entry : (Set<Map.Entry>)objMap.entrySet()) {
+                mapMessage.setObject(entry.getKey().toString(), entry.getValue());
             }
-        } catch (Exception e) {
-            LOGGER.error("Error creating a message of type: {}", messageType, e);
-            throw e;
+            answer = mapMessage;
+            break;
+        case Object:
+            ObjectMessage objectMessage = session.createObjectMessage();
+            objectMessage.setObject((Serializable) payload);
+            answer = objectMessage;
+            break;
+        case Text:
+            TextMessage textMessage = session.createTextMessage();
+            String convertedText = typeConverter.convertTo(String.class, payload);
+            textMessage.setText(convertedText);
+            answer = textMessage;
+            break;
+        case Stream:
+            StreamMessage streamMessage = session.createStreamMessage();
+            Collection collection = (Collection)payload;
+            for (final Object obj : collection) {
+                streamMessage.writeObject(obj);
+            }
+            answer = streamMessage;
+            break;
+        case Message:
+            if (allowNullBody && payload == null) {
+                answer = session.createMessage();
+            } else {
+                throw new JMSException("Null body is not allowed");
+            }
+        default:
+            break;
         }
+
         if (messageHeaders != null && !messageHeaders.isEmpty()) {
             answer = JmsMessageHelper.setJmsMessageHeaders(answer, messageHeaders, keyFormatStrategy);
         }
