@@ -47,6 +47,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,6 +199,8 @@ public final class JmsMessageHelper implements JmsConstants {
         case Message:
             if (allowNullBody && payload == null) {
                 answer = session.createMessage();
+            } else if (payload != null) {
+                throw new JMSException("Unsupported message body type " + ObjectHelper.classCanonicalName(payload));
             } else {
                 throw new JMSException("Null body is not allowed");
             }
