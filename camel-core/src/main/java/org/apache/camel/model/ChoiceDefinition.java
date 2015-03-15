@@ -48,6 +48,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     @XmlElement
     private OtherwiseDefinition otherwise;
 
+    private transient boolean onlyWhenOrOtherwise = true;
+
     public ChoiceDefinition() {
     }
     
@@ -138,6 +140,33 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
 
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
+        if (onlyWhenOrOtherwise) {
+            if (output instanceof WhenDefinition || output instanceof OtherwiseDefinition) {
+                // okay we are adding a when or otherwise so allow any kind of output after this again
+                onlyWhenOrOtherwise = false;
+            } else {
+                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). If you intend to end the entire choice and are using endChoice() then use end() instead.");
+            }
+        }
+        super.addOutput(output);
+    }
+
+    @Override
+    public ProcessorDefinition<?> end() {
+        // we end a block so only when or otherwise is supported
+        onlyWhenOrOtherwise = true;
+        return super.end();
+    }
+
+    @Override
+    public ChoiceDefinition endChoice() {
+        // we end a block so only when or otherwise is supported
+        onlyWhenOrOtherwise = true;
+        return super.endChoice();
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -164,6 +193,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     }
     
     private void addClause(ProcessorDefinition<?> when) {
+        onlyWhenOrOtherwise = true;
         popBlock();
         addOutput(when);
         pushBlock(when);
