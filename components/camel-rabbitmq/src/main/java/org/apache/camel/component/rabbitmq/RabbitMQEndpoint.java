@@ -72,6 +72,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private boolean durable = true;
     @UriParam(defaultValue = "false")
     private boolean bridgeEndpoint;
+    @UriParam
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
     @UriParam(defaultValue = "direct")
     private String exchangeType = "direct";
@@ -138,6 +139,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     //Maximum time (in milliseconds) waiting for channel
     @UriParam(defaultValue = "1000")
     private long channelPoolMaxWait = 1000;
+    @UriParam
+    private ArgsConfigurer queueArgsConfigurer;
+    @UriParam
+    private ArgsConfigurer exchangeArgsConfigurer;
 
     public RabbitMQEndpoint() {
     }
@@ -197,12 +202,13 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      * If needed, declare Exchange, declare Queue and bind them with Routing Key
      */
     public void declareExchangeAndQueue(Channel channel) throws IOException {
-        HashMap<String, Object> queueArgs = null;
+        Map<String, Object> queueArgs = new HashMap<String, Object>();
+        Map<String, Object> exchangeArgs = new HashMap<String, Object>();
+        
         if (deadLetterExchange != null) {
-            queueArgs = new HashMap<String, Object>();
             queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE, getDeadLetterExchange());
             queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY, getDeadLetterRoutingKey());
-            
+            // TODO Do we need to setup the args for the DeadLetter?
             channel.exchangeDeclare(getDeadLetterExchange(),
                     getDeadLetterExchangeType(),
                     isDurable(),
@@ -215,10 +221,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
                     getDeadLetterExchange(),
                     getDeadLetterRoutingKey() == null ? "" : getDeadLetterRoutingKey());
         }
+        
+        if (getQueueArgsConfigurer() != null) {
+            getQueueArgsConfigurer().configurArgs(queueArgs);
+        }
+        if (getExchangeArgsConfigurer() != null) {
+            getExchangeArgsConfigurer().configurArgs(exchangeArgs);
+        }
+        
         channel.exchangeDeclare(getExchangeName(),
                 getExchangeType(),
                 isDurable(),
-                isAutoDelete(), new HashMap<String, Object>());
+                isAutoDelete(), exchangeArgs);
         if (getQueue() != null) {
             // need to make sure the queueDeclare is same with the exchange declare
             channel.queueDeclare(getQueue(), isDurable(), false,
@@ -617,5 +631,37 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      */
     public void setChannelPoolMaxWait(long channelPoolMaxWait) {
         this.channelPoolMaxWait = channelPoolMaxWait;
+    }
+
+    /**
+     * Get the configurer for setting the queue args in Channel.queueDeclare
+     * @return
+     */
+    public ArgsConfigurer getQueueArgsConfigurer() {
+        return queueArgsConfigurer;
+    }
+    
+    /**
+     * Set the configurer for setting the queue args in Channel.queueDeclare
+     * @param queueArgsConfigurer the queue args configurer
+     */
+    public void setQueueArgsConfigurer(ArgsConfigurer queueArgsConfigurer) {
+        this.queueArgsConfigurer = queueArgsConfigurer;
+    }
+    
+    /**
+     * Get the configurer for setting the exchange args in Channel.exchangeDeclare
+     * @return
+     */
+    public ArgsConfigurer getExchangeArgsConfigurer() {
+        return exchangeArgsConfigurer;
+    }
+    
+    /**
+     * Set the configurer for setting the exchange args in Channel.exchangeDeclare
+     * @param queueArgsConfigurer the queue args configurer
+     */
+    public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
+        this.exchangeArgsConfigurer = exchangeArgsConfigurer;
     }
 }
