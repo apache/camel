@@ -426,6 +426,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return endpoints;
     }
 
+    public void setEndpoints(List<CamelEndpointFactoryBean> endpoints) {
+        this.endpoints = endpoints;
+    }
+
     public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {
         return redeliveryPolicies;
     }
