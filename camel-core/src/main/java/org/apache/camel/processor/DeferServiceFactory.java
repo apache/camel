@@ -21,8 +21,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DeferProducer;
 
 /**
- * Factory to create {@link org.apache.camel.DeferStartService} services such as {@link Producer}s
- * and {@link org.apache.camel.PollingConsumer}s
+ * Factory to create services such as {@link Producer}s
+ * and defer starting the created service, until {@link org.apache.camel.CamelContext} has been started.
  */
 public class DeferServiceFactory {
 
