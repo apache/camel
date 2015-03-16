@@ -219,10 +219,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
      *
      * @param object the service
-     * @param closeOnShutdown whether to close the service when this CamelContext shutdown.
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown.
      * @throws Exception can be thrown when starting the service
      */
-    void addService(Object object, boolean closeOnShutdown) throws Exception;
+    void addService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
      * Removes a service from this context.
@@ -251,6 +251,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the service instance or <tt>null</tt> if not already added.
      */
     <T> T hasService(Class<T> type);
+
+    /**
+     * Defers starting the service until {@link CamelContext} is started and has initialized all its prior services and routes.
+     * <p/>
+     * If {@link CamelContext} is already started then the service is started immediately.
+     *
+     * @param object the service
+     * @param stopOnShutdown whether to stop the service when this CamelContext shutdown. Setting this to <tt>true</tt> will keep a reference to the service in
+     *                       this {@link CamelContext} until the context is stopped. So do not use it for short lived services.
+     * @throws Exception can be thrown when starting the service, which is only attempted if {@link CamelContext} has already been started when calling this method.
+     */
+    void deferStartService(Object object, boolean stopOnShutdown) throws Exception;
 
     /**
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.

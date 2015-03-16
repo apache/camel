@@ -928,11 +928,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         @Override
         protected boolean isSingleton(Object bean, String beanName) {
-            ComponentMetadata meta = blueprintContainer.getComponentMetadata(beanName);
-            if (meta != null && meta instanceof BeanMetadata) {
-                String scope = ((BeanMetadata) meta).getScope();
-                if (scope != null) {
-                    return BeanMetadata.SCOPE_SINGLETON.equals(scope);
+            if (beanName != null) {
+                ComponentMetadata meta = blueprintContainer.getComponentMetadata(beanName);
+                if (meta != null && meta instanceof BeanMetadata) {
+                    String scope = ((BeanMetadata) meta).getScope();
+                    if (scope != null) {
+                        return BeanMetadata.SCOPE_SINGLETON.equals(scope);
+                    }
                 }
             }
             // fallback to super, which will assume singleton

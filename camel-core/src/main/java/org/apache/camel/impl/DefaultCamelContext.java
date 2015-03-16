@@ -38,7 +38,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -176,8 +175,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private final Set<Route> routes = new LinkedHashSet<Route>();
-    private final List<Service> servicesToClose = new CopyOnWriteArrayList<Service>();
+    private final List<Service> servicesToStop = new CopyOnWriteArrayList<Service>();
     private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
+    private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
     private Injector injector;
@@ -265,6 +265,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new DefaultEndpointRegistry(this);
+
+        // add the derfer service startup listener
+        this.startupListeners.add(deferStartupListener);
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -1054,11 +1057,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(object, true);
     }
 
-    public void addService(Object object, boolean closeOnShutdown) throws Exception {
-        doAddService(object, closeOnShutdown);
+    public void addService(Object object, boolean stopOnShutdown) throws Exception {
+        doAddService(object, stopOnShutdown);
     }
 
-    private void doAddService(Object object, boolean closeOnShutdown) throws Exception {
+    private void doAddService(Object object, boolean stopOnShutdown) throws Exception {
         // inject CamelContext
         if (object instanceof CamelContextAware) {
             CamelContextAware aware = (CamelContextAware) object;
@@ -1085,9 +1088,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
-                // only add to list of services to close if its not already there
-                if (closeOnShutdown && !hasService(service)) {
-                    servicesToClose.add(service);
+                // only add to list of services to stop if its not already there
+                if (stopOnShutdown && !hasService(service)) {
+                    servicesToStop.add(service);
                 }
             }
         }
@@ -1110,7 +1113,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onServiceRemove(this, service, null);
             }
-            return servicesToClose.remove(service);
+            return servicesToStop.remove(service);
         }
         return false;
     }
@@ -1118,19 +1121,45 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public boolean hasService(Object object) {
         if (object instanceof Service) {
             Service service = (Service) object;
-            return servicesToClose.contains(service);
+            return servicesToStop.contains(service);
         }
         return false;
     }
 
     @Override
     public <T> T hasService(Class<T> type) {
-        for (Service service : servicesToClose) {
+        for (Service service : servicesToStop) {
             if (type.isInstance(service)) {
                 return type.cast(service);
             }
         }
         return null;
+    }
+
+    public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
+        if (object instanceof Service) {
+            Service service = (Service) object;
+
+            // only add to services to close if its a singleton
+            // otherwise we could for example end up with a lot of prototype scope endpoints
+            boolean singleton = true; // assume singleton by default
+            if (object instanceof IsSingleton) {
+                singleton = ((IsSingleton) service).isSingleton();
+            }
+            // do not add endpoints as they have their own list
+            if (singleton && !(service instanceof Endpoint)) {
+                // only add to list of services to stop if its not already there
+                if (stopOnShutdown && !hasService(service)) {
+                    servicesToStop.add(service);
+                }
+            }
+            // are we already started?
+            if (isStarted()) {
+                ServiceHelper.startService(service);
+            } else {
+                deferStartupListener.addService(service);
+            }
+        }
     }
 
     public void addStartupListener(StartupListener listener) throws Exception {
@@ -2680,7 +2709,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // stop consumers from the services to close first, such as POJO consumer (eg @Consumer)
         // which we need to stop after the routes, as a POJO consumer is essentially a route also
-        for (Service service : servicesToClose) {
+        for (Service service : servicesToStop) {
             if (service instanceof Consumer) {
                 shutdownServices(service);
             }
@@ -2716,8 +2745,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // shutdown services as late as possible
-        shutdownServices(servicesToClose);
-        servicesToClose.clear();
+        shutdownServices(servicesToStop);
+        servicesToStop.clear();
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
