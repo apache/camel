@@ -30,8 +30,8 @@ import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -40,6 +40,18 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     private Envelope envelope = Mockito.mock(Envelope.class);
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
+    
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("argsConfigurer", new ArgsConfigurer() {
+            @Override
+            public void configurArgs(Map<String, Object> args) {
+                // do nothing here
+            }
+            
+        });
+        return registry;
+    }
 
     @Test
     public void testCreatingRabbitExchangeSetsStandardHeaders() throws Exception {
@@ -121,6 +133,13 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
 
         assertTrue(endpoint.isSingleton());
+    }
+    
+    @Test
+    public void testArgConfigurer() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgsConfigurer=#argsConfigurer", RabbitMQEndpoint.class);
+        assertNotNull("We should get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
+        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
     }
 
     @Test
