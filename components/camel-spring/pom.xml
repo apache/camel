@@ -166,6 +166,12 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <version>${xmlunit-version}</version>
+      <scope>test</scope>
+    </dependency>
 
       <!-- for testing Spring AOP at class level -->
       <dependency>
