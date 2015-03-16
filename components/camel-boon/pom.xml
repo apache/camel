@@ -31,7 +31,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-          org.boon.json.*;version="[${boon-version},)"
+          org.boon.json.*;version="[${boon-version},1)"
         </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.boon.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=json-boon</camel.osgi.export.service>
