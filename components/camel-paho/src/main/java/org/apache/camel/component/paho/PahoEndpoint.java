@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.paho;
 
+import static java.lang.System.nanoTime;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,11 +33,18 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
-import static java.lang.System.nanoTime;
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
 
 @UriEndpoint(scheme = "paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
+
+    // Constants
+
+    private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
+
+    private static final int DEFAULT_QOS = 2;
+
+    private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
 
     // Configuration members
 
@@ -43,10 +52,10 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String topic;
     @UriParam
     private String clientId = "camel-" + nanoTime();
-    @UriParam(defaultValue = "tcp://localhost:1883")
-    private String brokerUrl = "tcp://localhost:1883";
-    @UriParam(defaultValue = "2")
-    private int qos = 2;
+    @UriParam(defaultValue = DEFAULT_BROKER_URL)
+    private String brokerUrl = DEFAULT_BROKER_URL;
+    @UriParam(defaultValue = DEFAULT_QOS_STRING)
+    private int qos = DEFAULT_QOS;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = MEMORY;
 
