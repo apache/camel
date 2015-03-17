@@ -18,12 +18,14 @@ package org.apache.camel.component.paho;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Test;
 
 public class PahoComponentTest extends CamelTestSupport {
@@ -89,7 +91,7 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.expectedBodiesReceived(msg);
 
         // When
-        template.sendBody("mock:test", msg);
+        template.sendBody("direct:test", msg);
 
         // Then
         mock.assertIsSatisfied();
@@ -116,6 +118,22 @@ public class PahoComponentTest extends CamelTestSupport {
 
         // Then
         assertSame(connectOptions, pahoWithConnectOptionsFromRegistry.resolveMqttConnectOptions());
+    }
+
+    @Test
+    public void shouldKeepOriginalMessageInHeader() throws InterruptedException {
+        // Given
+        final String msg = "msg";
+        mock.expectedBodiesReceived(msg);
+
+        // When
+        template.sendBody("direct:test", msg);
+
+        // Then
+        mock.assertIsSatisfied();
+        Exchange exchange = mock.getExchanges().get(0);
+        MqttMessage message = exchange.getIn().getHeader(PahoConstants.HEADER_ORIGINAL_MESSAGE, MqttMessage.class);
+        assertEquals(msg, new String(message.getPayload()));
     }
 
 }

@@ -28,6 +28,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.paho.PahoConstants.HEADER_ORIGINAL_MESSAGE;
+
 public class PahoConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoConsumer.class);
@@ -49,7 +51,10 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                Exchange exchange = ExchangeBuilder.anExchange(getEndpoint().getCamelContext()).withBody(message.getPayload()).build();
+                Exchange exchange = ExchangeBuilder.anExchange(getEndpoint().getCamelContext()).
+                        withBody(message.getPayload()).
+                        withHeader(HEADER_ORIGINAL_MESSAGE, message).
+                        build();
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
