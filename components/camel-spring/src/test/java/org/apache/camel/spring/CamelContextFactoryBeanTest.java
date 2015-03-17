@@ -22,14 +22,13 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.IOHelper;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.context.support.StaticApplicationContext;
@@ -81,15 +80,12 @@ public class CamelContextFactoryBeanTest extends TestCase {
         // Compare the new context with our reference context
         Reader expectedContext = null;
         try {
-            expectedContext = new InputStreamReader(getClass().getResourceAsStream(
-                    "/META-INF/spring/context-with-endpoint.xml"));
+            expectedContext = new InputStreamReader(getClass().getResourceAsStream("/org/apache/camel/spring/context-with-endpoint.xml"));
             String createdContext = contextAsString(camelContext);
             XMLUnit.setIgnoreWhitespace(true);
             XMLAssert.assertXMLEqual(expectedContext, new StringReader(createdContext));
         } finally {
-            if (expectedContext != null) {
-                expectedContext.close();
-            }
+            IOHelper.close(expectedContext);
         }
     }
 
