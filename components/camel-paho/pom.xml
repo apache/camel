@@ -65,7 +65,6 @@
     </dependency>
   </dependencies>
 
-  <!-- TODO: avoid third party repos - we should only use from maven central -->
   <repositories>
     <repository>
       <id>eclipse-paho</id>
