@@ -319,6 +319,12 @@ public class BeanInfo {
         if (!javaClass) {
             // it may have duplicate methods already, even from declared or from interfaces + declared
             for (Method source : methods) {
+
+                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
+                if (source.isBridge()) {
+                    continue;
+                }
+
                 for (Method target : methods) {
                     // skip ourselves
                     if (ObjectHelper.isOverridingMethod(source, target, true)) {
