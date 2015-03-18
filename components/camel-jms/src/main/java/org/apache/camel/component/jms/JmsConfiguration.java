@@ -97,6 +97,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean pubSubNoLocal;
     @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
+    @UriParam(defaultValue = "1")
+    private int replyToConcurrentConsumers = 1;
     @UriParam(defaultValue = "-1")
     private int maxMessagesPerTask = -1;
     private int cacheLevel = -1;
@@ -116,6 +118,8 @@ public class JmsConfiguration implements Cloneable {
     private int idleConsumerLimit = 1;
     @UriParam
     private int maxConcurrentConsumers;
+    @UriParam
+    private int replyToMaxConcurrentConsumers;
     // JmsTemplate only
     @UriParam(defaultValue = "false")
     private Boolean explicitQosEnabled;
@@ -643,8 +647,24 @@ public class JmsConfiguration implements Cloneable {
         return concurrentConsumers;
     }
 
+    /**
+     * Specifies the default number of concurrent consumers when consuming from JMS (not for request/reply over JMS).
+     * See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public int getReplyToConcurrentConsumers() {
+        return replyToConcurrentConsumers;
+    }
+
+    /**
+     * Specifies the default number of concurrent consumers when doing request/reply over JMS.
+     * See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
+     */
+    public void setReplyToConcurrentConsumers(int replyToConcurrentConsumers) {
+        this.replyToConcurrentConsumers = replyToConcurrentConsumers;
     }
 
     public int getMaxMessagesPerTask() {
@@ -734,8 +754,24 @@ public class JmsConfiguration implements Cloneable {
         return maxConcurrentConsumers;
     }
 
+    /**
+     * Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS).
+     * See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
+     */
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         this.maxConcurrentConsumers = maxConcurrentConsumers;
+    }
+
+    public int getReplyToMaxConcurrentConsumers() {
+        return replyToMaxConcurrentConsumers;
+    }
+
+    /**
+     * Specifies the maximum number of concurrent consumers when using request/reply over JMS.
+     * See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.
+     */
+    public void setReplyToMaxConcurrentConsumers(int replyToMaxConcurrentConsumers) {
+        this.replyToMaxConcurrentConsumers = replyToMaxConcurrentConsumers;
     }
 
     public boolean isExplicitQosEnabled() {

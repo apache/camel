@@ -175,9 +175,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
-        if (endpoint.getMaxConcurrentConsumers() > 0) {
-            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
+        if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         String clientId = endpoint.getClientId();

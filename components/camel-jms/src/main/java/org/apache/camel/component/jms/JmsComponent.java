@@ -205,6 +205,10 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         getConfiguration().setConcurrentConsumers(concurrentConsumers);
     }
 
+    public void setReplyToConcurrentConsumers(int concurrentConsumers) {
+        getConfiguration().setReplyToConcurrentConsumers(concurrentConsumers);
+    }
+
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         getConfiguration().setConnectionFactory(connectionFactory);
     }
@@ -255,6 +259,10 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
 
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         getConfiguration().setMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    public void setReplyToMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setReplyToMaxConcurrentConsumers(maxConcurrentConsumers);
     }
 
     public void setMaxMessagesPerTask(int maxMessagesPerTask) {

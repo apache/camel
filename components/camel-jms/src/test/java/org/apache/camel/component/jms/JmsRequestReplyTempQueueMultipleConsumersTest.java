@@ -37,7 +37,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Reliability tests for JMS TempQueue Reply Manager with multiple consumers.
- * @version 
  */
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
@@ -97,7 +96,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").inOut("jms:queue:foo?concurrentConsumers=10&maxConcurrentConsumers=20&recoveryInterval=10").process(new Processor() {
+                from("seda:start").inOut("jms:queue:foo?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         String threadName = Thread.currentThread().getName();

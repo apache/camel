@@ -542,6 +542,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getConcurrentConsumers();
     }
 
+    @ManagedAttribute
+    public int getReplyToConcurrentConsumers() {
+        return getConfiguration().getReplyToConcurrentConsumers();
+    }
+
     public ConnectionFactory getConnectionFactory() {
         return getConfiguration().getConnectionFactory();
     }
@@ -598,6 +603,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public int getMaxConcurrentConsumers() {
         return getConfiguration().getMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
+    public int getReplyToMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToMaxConcurrentConsumers();
     }
 
     @ManagedAttribute
@@ -822,6 +832,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setConcurrentConsumers(concurrentConsumers);
     }
 
+    @ManagedAttribute
+    public void setReplyToConcurrentConsumers(int concurrentConsumers) {
+        getConfiguration().setReplyToConcurrentConsumers(concurrentConsumers);
+    }
+
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         getConfiguration().setConnectionFactory(connectionFactory);
     }
@@ -894,6 +909,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         getConfiguration().setMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    @ManagedAttribute
+    public void setReplyToMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setReplyToMaxConcurrentConsumers(maxConcurrentConsumers);
     }
 
     @ManagedAttribute

@@ -110,9 +110,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
-        if (endpoint.getMaxConcurrentConsumers() > 0) {
-            answer.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        answer.setConcurrentConsumers(endpoint.getReplyToConcurrentConsumers());
+        if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
+            answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         // we use CACHE_CONSUMER by default to cling to the consumer as long as we can, since we can only consume
