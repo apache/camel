@@ -16,10 +16,14 @@
  */
 package org.apache.camel.catalog;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+
+import static org.apache.camel.catalog.CatalogHelper.loadText;
 
 public class CamelCatalogTest extends TestCase {
 
@@ -86,4 +90,36 @@ public class CamelCatalogTest extends TestCase {
         String schema = catalog.archetypeCatalogAsXml();
         assertNotNull(schema);
     }
+
+    @Test
+    public void testAsEndpointUriMap() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("host", "someserver");
+        map.put("port", "21");
+        map.put("directoryName", "foo");
+        map.put("connectTimeout", "5000");
+
+        String uri = catalog.asEndpointUri("ftp", map);
+        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriJson() throws Exception {
+        String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
+        String uri = catalog.asEndpointUri("ftp", json);
+        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
+    }
+
+    @Test
+    public void testEndpointProperties() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("ftp:someserver:21/foo?connectTimeout=5000");
+        assertNotNull(map);
+        assertEquals(4, map.size());
+
+        assertEquals("someserver", map.get("host"));
+        assertEquals("21", map.get("port"));
+        assertEquals("foo", map.get("directoryName"));
+        assertEquals("5000", map.get("connectTimeout"));
+    }
+
 }

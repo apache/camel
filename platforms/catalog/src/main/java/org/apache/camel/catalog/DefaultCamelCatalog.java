@@ -16,18 +16,23 @@
  */
 package org.apache.camel.catalog;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static org.apache.camel.catalog.URISupport.createQueryString;
 
 /**
  * Default {@link CamelCatalog}.
@@ -45,6 +50,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
 
+    private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
+
     @Override
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<String>();
@@ -52,7 +59,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(COMPONENTS_CATALOG);
         if (is != null) {
             try {
-                loadLines(is, names);
+                CatalogHelper.loadLines(is, names);
             } catch (IOException e) {
                 // ignore
             }
@@ -67,7 +74,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(DATA_FORMATS_CATALOG);
         if (is != null) {
             try {
-                loadLines(is, names);
+                CatalogHelper.loadLines(is, names);
             } catch (IOException e) {
                 // ignore
             }
@@ -82,7 +89,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(LANGUAGE_CATALOG);
         if (is != null) {
             try {
-                loadLines(is, names);
+                CatalogHelper.loadLines(is, names);
             } catch (IOException e) {
                 // ignore
             }
@@ -97,7 +104,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(MODELS_CATALOG);
         if (is != null) {
             try {
-                loadLines(is, names);
+                CatalogHelper.loadLines(is, names);
             } catch (IOException e) {
                 // ignore
             }
@@ -120,7 +127,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         String[] parts = label.split(",");
                         for (String part : parts) {
                             try {
-                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
                                     answer.add(name);
                                 }
                             } catch (PatternSyntaxException e) {
@@ -150,7 +157,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         String[] parts = label.split(",");
                         for (String part : parts) {
                             try {
-                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
                                     answer.add(name);
                                 }
                             } catch (PatternSyntaxException e) {
@@ -180,7 +187,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         String[] parts = label.split(",");
                         for (String part : parts) {
                             try {
-                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
                                     answer.add(name);
                                 }
                             } catch (PatternSyntaxException e) {
@@ -210,7 +217,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         String[] parts = label.split(",");
                         for (String part : parts) {
                             try {
-                                if (part.equalsIgnoreCase(filter) || matchWildcard(part, filter) || part.matches(filter)) {
+                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
                                     answer.add(name);
                                 }
                             } catch (PatternSyntaxException e) {
@@ -232,7 +239,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -248,7 +255,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -264,7 +271,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -280,7 +287,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -392,7 +399,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -408,7 +415,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -424,7 +431,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         InputStream is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
             try {
-                return loadText(is);
+                return CatalogHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             }
@@ -433,67 +440,139 @@ public class DefaultCamelCatalog implements CamelCatalog {
         return null;
     }
 
-    /**
-     * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
-     * <p/>
-     * Warning, don't use for crazy big streams :)
-     */
-    private static void loadLines(InputStream in, List<String> lines) throws IOException {
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    lines.add(line);
-                } else {
-                    break;
-                }
-            }
-        } finally {
-            isr.close();
-            in.close();
+    @Override
+    public Map<String, String> endpointProperties(String uri) throws URISyntaxException {
+        // parse the uri
+        URI u = new URI(uri);
+        String scheme = u.getScheme();
+
+        String json = componentJSonSchema(scheme);
+        if (json == null) {
+            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
+
+        // grab the syntax
+        String syntax = null;
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("syntax")) {
+                syntax = row.get("syntax");
+                break;
+            }
+        }
+        if (syntax == null) {
+            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
+        }
+
+        // grab the json schema for the endpoint properties
+       // rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        // now parse the uri to know which part isw what
+        Map<String, String> answer = new LinkedHashMap<String, String>();
+
+        // parse the syntax and find the same group in the uri
+
+        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
+        Matcher matcher2 = SYNTAX_PATTERN.matcher(uri);
+        while (matcher.find() && matcher2.find()) {
+            String word = matcher.group(1);
+            String word2 = matcher2.group(1);
+            // skip the scheme as we know that already
+            if (!scheme.equals(word)) {
+                answer.put(word, word2);
+            }
+        }
+
+        // now parse the uri parameters
+        Map<String, Object> parameters = URISupport.parseParameters(u);
+
+        // and covert the values to String so its JMX friendly
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue() != null ? entry.getValue().toString() : "";
+            answer.put(key, value);
+        }
+
+        return answer;
     }
 
-    /**
-     * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
-     * <p/>
-     * Warning, don't use for crazy big streams :)
-     */
-    public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    builder.append(line);
-                    builder.append("\n");
-                } else {
-                    break;
+    @Override
+    public String asEndpointUri(String scheme, String json) throws URISyntaxException {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        Map<String, String> copy = new HashMap<String, String>();
+        for (Map<String, String> row : rows) {
+            String name = row.get("name");
+            String required = row.get("required");
+            String value = row.get("value");
+            String defaultValue = row.get("defaultValue");
+
+            // only add if either required, or the value is != default value
+            String valueToAdd = null;
+            if ("true".equals(required)) {
+                valueToAdd = value != null ? value : defaultValue;
+                if (valueToAdd == null) {
+                    valueToAdd = "";
+                }
+            } else {
+                // if we have a value and no default then add it
+                if (value != null && defaultValue == null) {
+                    valueToAdd = value;
+                }
+                // otherwise only add if the value is != default value
+                if (value != null && defaultValue != null && !value.equals(defaultValue)) {
+                    valueToAdd = value;
                 }
             }
-            return builder.toString();
-        } finally {
-            isr.close();
-            in.close();
+
+            if (valueToAdd != null) {
+                copy.put(name, valueToAdd);
+            }
         }
+
+        return asEndpointUri(scheme, copy);
     }
 
-    private static boolean matchWildcard(String name, String pattern) {
-        // we have wildcard support in that hence you can match with: file* to match any file endpoints
-        if (pattern.endsWith("*") && name.startsWith(pattern.substring(0, pattern.length() - 1))) {
-            return true;
+    @Override
+    public String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException {
+        String json = componentJSonSchema(scheme);
+        if (json == null) {
+            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
-        return false;
+
+        // grab the syntax
+        String syntax = null;
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("syntax")) {
+                syntax = row.get("syntax");
+                break;
+            }
+        }
+        if (syntax == null) {
+            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
+        }
+
+        // build at first according to syntax
+        Map<String, String> copy = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue() != null ? entry.getValue() : "";
+            if (syntax.contains(key)) {
+                syntax = syntax.replace(key, value);
+            } else {
+                copy.put(key, value);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder(syntax);
+        if (!copy.isEmpty()) {
+            sb.append('?');
+            String query = createQueryString(copy);
+            sb.append(query);
+        }
+
+        return sb.toString();
     }
 
 }
