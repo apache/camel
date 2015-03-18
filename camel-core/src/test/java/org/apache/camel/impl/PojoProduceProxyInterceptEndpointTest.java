@@ -89,8 +89,8 @@ public class PojoProduceProxyInterceptEndpointTest extends TestCase {
         context.stop();
     }
 
-    public static interface EchoService {
-        public String echo(String word);
+    public interface EchoService {
+        String echo(String word);
     }
 
     public static class MyBean {
