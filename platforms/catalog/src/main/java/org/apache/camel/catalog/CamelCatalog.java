@@ -16,7 +16,9 @@
  */
 package org.apache.camel.catalog;
 
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.management.MXBean;
 
@@ -146,4 +148,32 @@ public interface CamelCatalog {
      * @return the blueprint XML schema
      */
     String blueprintSchemaAsXml();
+
+    /**
+     * Parses the endpoint uri and constructs a key/value properties of each option
+     *
+     * @param uri  the endpoint uri
+     * @return properties as key value pairs of each endpoint option
+     */
+    Map<String, String> endpointProperties(String uri) throws URISyntaxException;
+
+    /**
+     * Creates an endpoint uri from the information in the json schema
+     *
+     * @param scheme the endpoint schema
+     * @param json the json schema with the endpoint properties
+     * @return the constructed endpoint uri
+     * @throws java.net.URISyntaxException is thrown if there is encoding error
+     */
+    String asEndpointUri(String scheme, String json) throws URISyntaxException;
+
+    /**
+     * Creates an endpoint uri from the information from the properties
+     *
+     * @param scheme the endpoint schema
+     * @param properties the properties as key value pairs
+     * @return the constructed endpoint uri
+     * @throws java.net.URISyntaxException is thrown if there is encoding error
+     */
+    String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException;
 }
