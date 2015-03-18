@@ -2532,6 +2532,18 @@
         <version>${felix-configadmin-version}</version>
       </dependency>
 
+      <!-- Restlet -->
+      <dependency>
+        <groupId>org.restlet.jee</groupId>
+        <artifactId>org.restlet</artifactId>
+        <version>${restlet-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.restlet.jee</groupId>
+        <artifactId>org.restlet.ext.httpclient</artifactId>
+        <version>${restlet-version}</version>
+      </dependency>
+
       <!-- need this to use the new 'maven-archetype' packaging type -->
       <dependency>
         <groupId>org.apache.maven.archetype</groupId>
