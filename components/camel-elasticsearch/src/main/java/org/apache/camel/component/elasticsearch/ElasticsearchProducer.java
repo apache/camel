@@ -28,6 +28,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
 
 /**
@@ -69,6 +70,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (request instanceof DeleteRequest) {
             return ElasticsearchConfiguration.OPERATION_DELETE;
+        } else if (request instanceof SearchRequest) {
+            return ElasticsearchConfiguration.OPERATION_SEARCH;
         }
 
         String operationConfig = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_OPERATION, String.class);
@@ -131,6 +134,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (ElasticsearchConfiguration.OPERATION_DELETE.equals(operation)) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.delete(deleteRequest).actionGet());
+        } else if (ElasticsearchConfiguration.OPERATION_SEARCH.equals(operation)) {
+            SearchRequest searchRequest = message.getBody(SearchRequest.class);
+            message.setBody(client.search(searchRequest).actionGet());
         } else {
             throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }

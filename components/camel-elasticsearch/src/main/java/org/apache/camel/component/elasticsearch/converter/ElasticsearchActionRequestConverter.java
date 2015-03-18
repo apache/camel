@@ -26,6 +26,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 @Converter
@@ -82,6 +83,16 @@ public final class ElasticsearchActionRequestConverter {
                 .type(exchange.getIn().getHeader(
                         ElasticsearchConfiguration.PARAM_INDEX_TYPE,
                         String.class)).id(id);
+    }
+
+    @Converter
+    public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) {
+        Map<?, ?> query = exchange.getContext().getTypeConverter().convertTo(Map.class, queryObject);
+        return new SearchRequest(exchange.getIn().getHeader(
+                ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class))
+                .types(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_TYPE,
+                        String.class)).source(query);
     }
 
     @Converter

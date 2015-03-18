@@ -30,6 +30,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -109,6 +110,25 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNull("response source should be null", response.getSource());
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        //first, INDEX a value
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("content", "testSearch");
+        sendBody("direct:index", map);
+
+        //now, verify GET succeeded
+        Map<String, Object> actualQuery = new HashMap<String, Object>();
+        actualQuery.put("content", "searchtest");
+        Map<String, Object> match = new HashMap<String, Object>();
+        match.put("match", actualQuery);
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("query", match);
+        SearchResponse response = template.requestBody("direct:search", query, SearchResponse.class);
+        assertNotNull("response should not be null", response);
+        assertNotNull("response hits should be == 1", response.getHits().totalHits());
     }
 
     @Test
@@ -311,6 +331,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
+                from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
                 from("direct:bulk_index").to("elasticsearch://local?operation=BULK_INDEX&indexName=twitter&indexType=tweet");
                 from("direct:bulk").to("elasticsearch://local?operation=BULK&indexName=twitter&indexType=tweet");
                 //from("direct:indexWithIp").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost");
