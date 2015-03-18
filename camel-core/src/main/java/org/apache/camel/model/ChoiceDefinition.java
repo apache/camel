@@ -147,7 +147,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
                 // okay we are adding a when or otherwise so allow any kind of output after this again
                 onlyWhenOrOtherwise = false;
             } else {
-                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). If you intend to end the entire choice and are using endChoice() then use end() instead.");
+                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). "
+                    + "If you intend to end the entire choice and are using endChoice() then use end() instead.");
             }
         }
         super.addOutput(output);
