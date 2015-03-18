@@ -16,8 +16,6 @@
  */
 package org.apache.camel.core.xml;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,6 +49,8 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
 
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
+            // resolve placeholders
+            this.uri = getCamelContext().resolvePropertyPlaceholders(uri);
             String target = createUri();
             endpoint = getCamelContext().getEndpoint(target);
             if (endpoint == null) {
@@ -112,13 +112,15 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         this.properties = properties;
     }
 
-    private String createUri() throws UnsupportedEncodingException, URISyntaxException {
+    private String createUri() throws Exception {
         if (properties == null || properties.isEmpty()) {
             return uri;
         } else {
             Map<String, Object> map = new LinkedHashMap<String, Object>();
             for (PropertyDefinition property : properties) {
-                map.put(property.getKey(), property.getValue());
+                // resolve placeholders for each value
+                String value = getCamelContext().resolvePropertyPlaceholders(property.getValue());
+                map.put(property.getKey(), value);
             }
             return URISupport.appendParametersToURI(uri, map);
         }
