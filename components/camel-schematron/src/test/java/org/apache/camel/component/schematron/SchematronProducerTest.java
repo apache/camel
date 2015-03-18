@@ -54,19 +54,20 @@ public class SchematronProducerTest extends CamelTestSupport {
 
         // assert
         assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertNotNull("We should get the report here.", exc.getOut().getHeader(Constants.VALIDATION_REPORT));
     }
 
     @Test
     public void testProcessInValidXML() throws Exception {
-        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOnly);
         exc.getIn().setBody(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
 
         // process xml payload
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
-
+        assertTrue("The validation status should be failed.", exc.getIn().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertNotNull("We should get the report here.", exc.getIn().getHeader(Constants.VALIDATION_REPORT));
     }
 
 }
