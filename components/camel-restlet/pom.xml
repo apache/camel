@@ -51,15 +51,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.restlet.osgi</groupId>
+      <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet</artifactId>
-      <version>${restlet-version}</version>
     </dependency>
 
     <dependency>
-     <groupId>org.restlet.osgi</groupId>
+     <groupId>org.restlet.jee</groupId>
      <artifactId>org.restlet.ext.httpclient</artifactId>
-     <version>${restlet-version}</version>
     </dependency>
 
     <dependency>
