@@ -508,6 +508,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             PropertiesComponent pc = new PropertiesComponent();
             pc.setLocation(def.getLocation());
+            pc.setEncoding(def.getEncoding());
 
             if (def.isCache() != null) {
                 pc.setCache(def.isCache());
