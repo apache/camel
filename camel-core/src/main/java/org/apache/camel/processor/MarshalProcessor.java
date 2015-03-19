@@ -82,7 +82,7 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
                 byte[] data = os.toByteArray();
                 out.setBody(data);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
             exchange.setException(e);
