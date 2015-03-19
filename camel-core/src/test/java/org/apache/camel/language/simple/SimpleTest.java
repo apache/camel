@@ -125,6 +125,23 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testExchangeExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${exchange}");
+        assertNotNull(exp);
+        assertEquals(exchange, exp.evaluate(exchange, Object.class));
+
+        assertExpression("exchange", exchange);
+    }
+
+    public void testExchangeOgnlExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${exchange.exchangeId}");
+        assertNotNull(exp);
+        assertEquals(exchange.getExchangeId(), exp.evaluate(exchange, Object.class));
+
+        assertExpression("exchange.exchangeId", exchange.getExchangeId());
+        assertExpression("exchange.class.name", "org.apache.camel.impl.DefaultExchange");
+    }
+
     public void testBodyExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body}");
         assertNotNull(exp);
