@@ -104,6 +104,25 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
+    public void testAsEndpointUriMapJms() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("destinationType", "queue");
+        map.put("destinationName", "foo");
+
+        String uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:queue:foo", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("destinationName", "foo");
+
+        String uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:foo", uri);
+    }
+
+    @Test
     public void testAsEndpointUriJson() throws Exception {
         String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
         String uri = catalog.asEndpointUri("ftp", json);
@@ -120,6 +139,25 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("21", map.get("port"));
         assertEquals("foo", map.get("directoryName"));
         assertEquals("5000", map.get("connectTimeout"));
+    }
+
+    @Test
+    public void testEndpointPropertiesJms() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("jms:queue:foo");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("queue", map.get("destinationType"));
+        assertEquals("foo", map.get("destinationName"));
+    }
+
+    @Test
+    public void testEndpointPropertiesJmsRequired() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("jms:foo");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
     }
 
 }
