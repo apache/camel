@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -616,8 +617,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String originalSyntax = syntax;
 
-        // build at first according to syntax
-        Map<String, String> copy = new HashMap<String, String>();
+        // build at first according to syntax (use a tree map as we want the uri options sorted)
+        Map<String, String> copy = new TreeMap<String, String>();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue() != null ? entry.getValue() : "";
@@ -627,8 +628,6 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 copy.put(key, value);
             }
         }
-
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         // the tokens between the options in the path
         String[] tokens = syntax.split("\\w+");
