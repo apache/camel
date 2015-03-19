@@ -60,6 +60,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int timeout = 30000;
     @UriParam
     private int soTimeout;
+    @UriParam(defaultValue = "32768")
+    private int receiveBufferSize = 32 * 1024;
     @UriParam
     private boolean throwExceptionOnConnectFailed;
     @UriParam
@@ -251,6 +253,19 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    public int getReceiveBufferSize() {
+        return receiveBufferSize;
+    }
+
+    /**
+     * The receive (download) buffer size
+     * <p/>
+     * Used only by FTPClient
+     */
+    public void setReceiveBufferSize(int receiveBufferSize) {
+        this.receiveBufferSize = receiveBufferSize;
     }
 
     public boolean isThrowExceptionOnConnectFailed() {
