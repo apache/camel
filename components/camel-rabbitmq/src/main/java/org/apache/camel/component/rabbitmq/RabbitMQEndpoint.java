@@ -139,6 +139,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     //Maximum time (in milliseconds) waiting for channel
     @UriParam(defaultValue = "1000")
     private long channelPoolMaxWait = 1000;
+    @UriParam(defaultValue = "false")
+    private boolean mandatory;
+    @UriParam(defaultValue = "false")
+    private boolean immediate;
     @UriParam
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam
@@ -631,6 +635,22 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      */
     public void setChannelPoolMaxWait(long channelPoolMaxWait) {
         this.channelPoolMaxWait = channelPoolMaxWait;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public boolean isImmediate() {
+        return immediate;
+    }
+
+    public void setImmediate(boolean immediate) {
+        this.immediate = immediate;
     }
 
     /**
