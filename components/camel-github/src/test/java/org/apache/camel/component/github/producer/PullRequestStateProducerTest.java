@@ -60,7 +60,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
         Exchange exchange = stateProducerEndpoint.createExchange();
         String text = "Message sent at " + new Date();
         exchange.getIn().setBody(text);
-        Exchange response=template.send(stateProducerEndpoint, exchange);
+        Exchange response = template.send(stateProducerEndpoint, exchange);
 
         assertNotNull(response.getOut().getBody());
 
@@ -68,7 +68,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             fail("Expecting CommitStatus");
         }
 
-        CommitStatus status=response.getOut().getBody(CommitStatus.class);
+        CommitStatus status = response.getOut().getBody(CommitStatus.class);
 
         // Check status set on commit service
         if (commitService.getCommitStatus(commitsha) != status) {
