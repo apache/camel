@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github;
+package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.egit.github.core.RepositoryTag;
+import org.apache.camel.component.github.GitHubComponent;
+import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.User;
 import org.junit.Test;
 
-public class TagConsumerTest extends GitHubComponentTestBase {
-
+public class CommitConsumerTest extends GitHubComponentTestBase {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -32,8 +34,8 @@ public class TagConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://tag?" + GITHUB_CREDENTIALS_STRING)
-                        .process(new RepositoryTagProcessor())
+                from("github://commit/master?" + GITHUB_CREDENTIALS_STRING).
+                        process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }
         };
@@ -41,22 +43,24 @@ public class TagConsumerTest extends GitHubComponentTestBase {
 
 
     @Test
-    public void tagConsumerTest() throws Exception {
-        RepositoryTag tag1 = repositoryService.addTag("TAG1");
-        RepositoryTag tag2 = repositoryService.addTag("TAG2");
-        RepositoryTag tag3 = repositoryService.addTag("TAG3");
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(tag1, tag2, tag3);
+    public void commitConsumerTest() throws Exception {
+        mockResultEndpoint.expectedMessageCount(2);
+        RepositoryCommit commit1 = commitService.addRepositoryCommit();
+        RepositoryCommit commit2 = commitService.addRepositoryCommit();
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commit1, commit2);
+
         Thread.sleep(1 * 1000);
 
         mockResultEndpoint.assertIsSatisfied();
     }
 
-    public class RepositoryTagProcessor implements Processor {
+    public class GitHubCommitProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            RepositoryTag tag = (RepositoryTag) in.getBody();
-            log.debug("Got TAG  [" + tag.getName() + "]");
+            RepositoryCommit commit = (RepositoryCommit) in.getBody();
+            User author = commit.getAuthor();
+            log.debug("Got commit with author: " + author.getLogin() + ": " + author.getHtmlUrl() + " SHA " + commit.getSha());
         }
     }
 }

@@ -14,17 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.github;
+package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.egit.github.core.RepositoryCommit;
-import org.eclipse.egit.github.core.User;
+import org.apache.camel.component.github.GitHubComponent;
+import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.eclipse.egit.github.core.Comment;
+import org.eclipse.egit.github.core.CommitComment;
+import org.eclipse.egit.github.core.PullRequest;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CommitConsumerTest extends GitHubComponentTestBase {
+public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
+    protected static final Logger LOG = LoggerFactory.getLogger(PullRequestCommentConsumerTest.class);
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -32,33 +39,33 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://commit/master?" + GITHUB_CREDENTIALS_STRING).
-                        process(new GitHubCommitProcessor())
+                from("github://pullRequestComment?" + GITHUB_CREDENTIALS_STRING)
+                        .process(new PullRequestCommentProcessor())
                         .to(mockResultEndpoint);
             }
         };
     }
 
-
     @Test
-    public void commitConsumerTest() throws Exception {
-        mockResultEndpoint.expectedMessageCount(2);
-        RepositoryCommit commit1 = commitService.addRepositoryCommit();
-        RepositoryCommit commit2 = commitService.addRepositoryCommit();
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commit1, commit2);
+    public void pullRequestCommentTest() throws Exception {
+        PullRequest pr1 = pullRequestService.addPullRequest("First add");
+        PullRequest pr2 = pullRequestService.addPullRequest("Second");
+        CommitComment commitComment1 = pullRequestService.addComment(pr1.getId(), "First comment");
+        CommitComment commitComment2 = pullRequestService.addComment(pr2.getId(), "Second comment");
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commitComment1, commitComment2);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1 * 1000);         // TODO do I need this?
 
         mockResultEndpoint.assertIsSatisfied();
     }
 
-    public class GitHubCommitProcessor implements Processor {
+
+    public class PullRequestCommentProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            RepositoryCommit commit = (RepositoryCommit) in.getBody();
-            User author = commit.getAuthor();
-            log.debug("Got commit with author: " + author.getLogin() + ": " + author.getHtmlUrl() + " SHA " + commit.getSha());
+            Comment comment = (Comment) in.getBody();
+            LOG.debug("Got Comment " + comment.getId() + " [" + comment.getBody() + "] from User [" + comment.getUser().getLogin() + "]");
         }
     }
 }
