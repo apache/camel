@@ -89,10 +89,13 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // start the executor before the registration
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
+
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put("org.ops4j.pax.logging.appender.name", endpoint.getName());
         registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
     }
 
     @Override
