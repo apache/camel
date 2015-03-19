@@ -35,7 +35,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
 
     private DataService dataService;
 
-    private String encoding=Blob.ENCODING_UTF8;
+    private String encoding = Blob.ENCODING_UTF8;
 
     public GetCommitFileProducer(GitHubEndpoint endpoint) throws Exception {
         super(endpoint);
@@ -55,22 +55,22 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
 
             if (!encoding.equalsIgnoreCase(Blob.ENCODING_BASE64)
                     && !encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
-                throw new IllegalArgumentException("Unknown encoding '"+encoding+"'");
+                throw new IllegalArgumentException("Unknown encoding '" + encoding + "'");
             }
         }
     }
 
     public void process(Exchange exchange) throws Exception {
-        CommitFile file=exchange.getIn().getBody(CommitFile.class);
+        CommitFile file = exchange.getIn().getBody(CommitFile.class);
 
-        Blob response=dataService.getBlob(getRepository(), file.getSha());
+        Blob response = dataService.getBlob(getRepository(), file.getSha());
 
-        String text=response.getContent();
+        String text = response.getContent();
 
         // By default, if blob encoding is base64 then we convert to UTF-8. If
         // base64 encoding is required, then must be explicitly requested
-        if (response.getEncoding().equals(Blob.ENCODING_BASE64) &&
-                encoding != null && encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
+        if (response.getEncoding().equals(Blob.ENCODING_BASE64) 
+            && encoding != null && encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
             text = new String(Base64.decodeBase64(text));
         }
 

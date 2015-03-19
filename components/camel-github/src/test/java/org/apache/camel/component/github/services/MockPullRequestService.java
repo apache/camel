@@ -40,7 +40,7 @@ public class MockPullRequestService extends PullRequestService {
     private AtomicInteger pullRequestNumber = new AtomicInteger(101);
     private AtomicInteger commentId = new AtomicInteger(500);
     private Map<Long, List<CommitComment>> allComments = new HashMap<Long, List<CommitComment>>();
-    private Map<Integer,List<CommitFile>> files = new HashMap<Integer,List<CommitFile>>();
+    private Map<Integer, List<CommitFile>> files = new HashMap<Integer, List<CommitFile>>();
 
     public List<CommitComment> getComments(IRepositoryIdProvider repository, int pullRequestId) {
         Long id = new Long(pullRequestId);
@@ -131,8 +131,7 @@ public class MockPullRequestService extends PullRequestService {
     }
 
     @Override
-    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id)
-                            throws IOException {
-        return (files.get(id));
+    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id) throws IOException {
+        return files.get(id);
     }
 }

@@ -59,7 +59,7 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
         String pullRequestNumberSHA = exchange.getIn().getHeader("GitHubPullRequestHeadCommitSHA", String.class);
         String text = exchange.getIn().getBody(String.class);
 
-        CommitStatus status=new CommitStatus();
+        CommitStatus status = new CommitStatus();
 
         if (state != null) {
             status.setState(state);
@@ -73,7 +73,7 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
             status.setDescription(text);
         }
 
-        CommitStatus response=commitService.createStatus(getRepository(), pullRequestNumberSHA, status);
+        CommitStatus response = commitService.createStatus(getRepository(), pullRequestNumberSHA, status);
 
         // copy the header of in message to the out message
         exchange.getOut().copyFrom(exchange.getIn());

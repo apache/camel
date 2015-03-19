@@ -59,10 +59,10 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
         PullRequest pullRequest = pullRequestService.addPullRequest("testPullRequestFilesProducer");
         latestPullRequestNumber = pullRequest.getNumber();
 
-        CommitFile file=new CommitFile();
+        CommitFile file = new CommitFile();
         file.setFilename("testfile");
 
-        List<CommitFile> commitFiles=new ArrayList<CommitFile>();
+        List<CommitFile> commitFiles = new ArrayList<CommitFile>();
         commitFiles.add(file);
         pullRequestService.setFiles(latestPullRequestNumber, commitFiles);
 

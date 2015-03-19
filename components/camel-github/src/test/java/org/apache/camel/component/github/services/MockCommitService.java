@@ -36,7 +36,7 @@ public class MockCommitService extends CommitService {
 
     private List<RepositoryCommit> commitsList = new ArrayList<RepositoryCommit>();
     private AtomicLong fakeSha = new AtomicLong(System.currentTimeMillis());
-    private Map<String,CommitStatus> commitStatus = new HashMap<String,CommitStatus>();
+    private Map<String, CommitStatus> commitStatus = new HashMap<String, CommitStatus>();
 
     public synchronized RepositoryCommit addRepositoryCommit() {
         User author = new User();
@@ -68,7 +68,7 @@ public class MockCommitService extends CommitService {
     }
 
     public String getNextSha() {
-        return (fakeSha.incrementAndGet()+"");
+        return fakeSha.incrementAndGet() + "";
     }
 
     public CommitStatus getCommitStatus(String sha) {
