@@ -121,6 +121,17 @@ public class PahoComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void shouldAutomaticallyUseConnectionOptionsFromRegistry() {
+        // Given
+        PahoEndpoint pahoWithConnectOptionsFromRegistry = getMandatoryEndpoint(
+                "paho:registryConnectOptions?brokerUrl=tcp://localhost:" + mqttPort,
+                PahoEndpoint.class);
+
+        // Then
+        assertSame(connectOptions, pahoWithConnectOptionsFromRegistry.resolveMqttConnectOptions());
+    }
+
+    @Test
     public void shouldKeepOriginalMessageInHeader() throws InterruptedException {
         // Given
         final String msg = "msg";
