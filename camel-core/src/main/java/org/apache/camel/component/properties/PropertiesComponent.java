@@ -72,10 +72,11 @@ public class PropertiesComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
     private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
-    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
+    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private String[] locations;
     private boolean ignoreMissingLocation;
+    private String encoding;
     private boolean cache = true;
     private String propertyPrefix;
     private String propertyPrefixResolved;
@@ -207,6 +208,20 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setLocation(String location) {
         setLocations(location.split(","));
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    /**
+     * Encoding to use when loading properties file from the file system or classpath.
+     * <p/>
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
+     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public PropertiesResolver getPropertiesResolver() {
