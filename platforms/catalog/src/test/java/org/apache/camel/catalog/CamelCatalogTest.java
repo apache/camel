@@ -117,9 +117,13 @@ public class CamelCatalogTest extends TestCase {
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("destinationName", "foo");
-
         String uri = catalog.asEndpointUri("jms", map);
         assertEquals("jms:foo", uri);
+
+        map.put("deliveryPersistent", "false");
+        map.put("allowNullBody", "true");
+        uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:foo?allowNullBody=true&deliveryPersistent=false", uri);
     }
 
     @Test
@@ -158,6 +162,14 @@ public class CamelCatalogTest extends TestCase {
         assertEquals(1, map.size());
 
         assertEquals("foo", map.get("destinationName"));
+
+        map = catalog.endpointProperties("jms:foo?allowNullBody=true&deliveryPersistent=false");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
+        assertEquals("true", map.get("allowNullBody"));
+        assertEquals("false", map.get("deliveryPersistent"));
     }
 
 }
