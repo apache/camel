@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.model.RoutesDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.Resource;
 
 public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -32,14 +34,11 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
 
     // Collaborators
 
-    private final ApplicationContext applicationContext;
-
     private final List<CamelContextConfiguration> camelContextConfigurations;
 
     // Constructors
 
-    public RoutesCollector(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations) {
-        this.applicationContext = applicationContext;
+    public RoutesCollector(List<CamelContextConfiguration> camelContextConfigurations) {
         this.camelContextConfigurations = camelContextConfigurations;
     }
 
@@ -47,6 +46,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        ApplicationContext applicationContext = contextRefreshedEvent.getApplicationContext();
         CamelContext camelContext = contextRefreshedEvent.getApplicationContext().getBean(CamelContext.class);
         LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
         for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
@@ -57,6 +57,9 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 throw new RuntimeException(e);
             }
         }
+
+        loadXmlRoutes(applicationContext, camelContext);
+
         if (camelContextConfigurations != null) {
             for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
                 LOG.debug("CamelContextConfiguration found. Invoking: {}", camelContextConfiguration);
@@ -67,6 +70,20 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             camelContext.start();
         } catch (Exception e) {
             throw new CamelSpringBootInitializationException(e);
+        }
+    }
+
+    // Helpers
+
+    private void loadXmlRoutes(ApplicationContext applicationContext, CamelContext camelContext) {
+        try {
+            Resource[] xmlRoutes = applicationContext.getResources("classpath:camel/*.xml");
+            for (Resource xmlRoute : xmlRoutes) {
+                RoutesDefinition xmlDefinition = camelContext.loadRoutesDefinition(xmlRoute.getInputStream());
+                camelContext.addRouteDefinitions(xmlDefinition.getRoutes());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

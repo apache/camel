@@ -18,10 +18,12 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,7 +67,8 @@ public class CamelAutoConfigurationTest extends Assert {
 
     // Spring context fixtures
 
-
+    @EndpointInject(uri = "mock:xmlAutoLoading")
+    MockEndpoint xmlAutoLoadingMock;
 
     // Tests
 
@@ -146,6 +149,19 @@ public class CamelAutoConfigurationTest extends Assert {
 
         // Then
         assertEquals(message, receivedMessage);
+    }
+
+    @Test
+    public void shouldLoadXmlRoutes() throws InterruptedException {
+        // Given
+        String message = "msg";
+        xmlAutoLoadingMock.expectedBodiesReceived(message);
+
+        // When
+        producerTemplate.sendBody("direct:xmlAutoLoading", message);
+
+        // Then
+        xmlAutoLoadingMock.assertIsSatisfied();
     }
 
 }
