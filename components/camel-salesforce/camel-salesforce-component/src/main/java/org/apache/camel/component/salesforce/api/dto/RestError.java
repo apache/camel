@@ -29,7 +29,6 @@ public class RestError extends AbstractDTOBase {
 
     // default ctor for unmarshalling
     public RestError() {
-        super();
     }
 
     public RestError(String errorCode, String message, List<String> fields) {
