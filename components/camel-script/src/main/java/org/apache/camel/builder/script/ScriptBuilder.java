@@ -326,9 +326,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     protected static ScriptEngine createScriptEngine(String language) {
-        ScriptEngine engine = createScriptEngine(language, ScriptBuilder.class.getClassLoader());
+        ScriptEngine engine = tryCreateScriptEngine(language, ScriptBuilder.class.getClassLoader());
         if (engine == null) {
-            engine = createScriptEngine(language, Thread.currentThread().getContextClassLoader());
+            engine = tryCreateScriptEngine(language, Thread.currentThread().getContextClassLoader());
         }
         if (engine == null) {
             throw new IllegalArgumentException("No script engine could be created for: " + language);
@@ -336,7 +336,12 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return engine;
     }
 
-    private static ScriptEngine createScriptEngine(String language, ClassLoader classLoader) {
+    /**
+     * Attemps to create the script engine for the given langauge using the classloader
+     *
+     * @return the engine, or <tt>null</tt> if not able to create
+     */
+    private static ScriptEngine tryCreateScriptEngine(String language, ClassLoader classLoader) {
         ScriptEngineManager manager = new ScriptEngineManager(classLoader);
         ScriptEngine engine = null;
 
@@ -349,17 +354,15 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                     break;
                 }
             } catch (NoClassDefFoundError ex) {
-                LOG.error("Cannot load the scriptEngine for " + name + ", the exception is " + ex
-                          + ", please ensure correct JARs is provided on classpath.");
+                LOG.warn("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath (stacktrace in DEBUG logging).");
+                // include stacktrace in debug logging
+                LOG.debug("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath.", ex);
             }
         }
         if (engine == null) {
             engine = checkForOSGiEngine(language);
         }
-        if (engine == null) {
-            throw new IllegalArgumentException("No script engine could be created for: " + language);
-        }
-        if (isPython(language)) {
+        if (engine != null && isPython(language)) {
             ScriptContext context = engine.getContext();
             context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
         }
@@ -367,19 +370,19 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     private static ScriptEngine checkForOSGiEngine(String language) {
-        LOG.debug("No script engine found for " + language + " using standard javax.script auto-registration. Checking OSGi registry...");
+        LOG.debug("No script engine found for {} using standard javax.script auto-registration. Checking OSGi registry.", language);
         try {
             // Test the OSGi environment with the Activator
             Class<?> c = Class.forName("org.apache.camel.script.osgi.Activator");
             Method mth = c.getDeclaredMethod("getBundleContext");
             Object ctx = mth.invoke(null);
-            LOG.debug("Found OSGi BundleContext " + ctx);
+            LOG.debug("Found OSGi BundleContext: {}", ctx);
             if (ctx != null) {
                 Method resolveScriptEngine = c.getDeclaredMethod("resolveScriptEngine", String.class);
                 return (ScriptEngine)resolveScriptEngine.invoke(null, language);
             }
         } catch (Throwable t) {
-            LOG.debug("Unable to load OSGi, script engine cannot be found", t);
+            LOG.debug("Unable to detect OSGi. ScriptEngine for " + language + " cannot be resolved.", t);
         }
         return null;
     }
