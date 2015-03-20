@@ -213,7 +213,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 }
 
                 // add current security token obtained from session
-                exchange.addRequestHeader(HttpHeaders.AUTHORIZATION,
+                exchange.setRequestHeader(HttpHeaders.AUTHORIZATION,
                         "OAuth " + accessToken);
             }
         };
