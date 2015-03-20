@@ -56,8 +56,8 @@ public class SalesforceSession implements Service {
     private final ObjectMapper objectMapper;
     private final Set<SalesforceSessionListener> listeners;
 
-    private String accessToken;
-    private String instanceUrl;
+    private volatile String accessToken;
+    private volatile String instanceUrl;
 
     public SalesforceSession(HttpClient httpClient, SalesforceLoginConfig config) {
         // validate parameters
@@ -198,7 +198,7 @@ public class SalesforceSession implements Service {
         return accessToken;
     }
 
-    public void logout() throws SalesforceException {
+    public synchronized void logout() throws SalesforceException {
         if (accessToken == null) {
             return;
         }
@@ -236,7 +236,7 @@ public class SalesforceSession implements Service {
                 throw new SalesforceException("Logout request TIMEOUT!", null);
 
             default:
-                throw new SalesforceException("Unknow status: " + done, null);
+                throw new SalesforceException("Unknown status: " + done, null);
             }
         } catch (SalesforceException e) {
             throw e;
@@ -247,7 +247,7 @@ public class SalesforceSession implements Service {
             // reset session
             accessToken = null;
             instanceUrl = null;
-            // notify all session listeners of the new access token and instance url
+            // notify all session listeners about logout
             for (SalesforceSessionListener listener : listeners) {
                 try {
                     listener.onLogout();
