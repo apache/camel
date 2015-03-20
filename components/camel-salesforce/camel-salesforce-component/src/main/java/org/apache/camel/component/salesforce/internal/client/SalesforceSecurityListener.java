@@ -103,8 +103,8 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
                     client.setInstanceUrl(session.getInstanceUrl());
                     client.setAccessToken(exchange);
                 } else {
-                    exchange.addRequestHeader(HttpHeaders.AUTHORIZATION,
-                            "OAuth " + currentToken);
+                    exchange.setRequestHeader(HttpHeaders.AUTHORIZATION,
+                        "OAuth " + currentToken);
                 }
 
                 // TODO handle a change in Salesforce instanceUrl, right now we retry with the same destination
