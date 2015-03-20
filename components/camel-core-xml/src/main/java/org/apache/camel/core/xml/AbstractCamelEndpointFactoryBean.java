@@ -49,10 +49,10 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
 
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
-            // resolve placeholders
-            this.uri = getCamelContext().resolvePropertyPlaceholders(uri);
-            String target = createUri();
-            endpoint = getCamelContext().getEndpoint(target);
+            // resolve placeholders (but leave the original uri unchanged)
+            String resolved = getCamelContext().resolvePropertyPlaceholders(uri);
+            String target = createUri(resolved);
+            this.endpoint = getCamelContext().getEndpoint(target);
             if (endpoint == null) {
                 throw new NoSuchEndpointException(target);
             }
@@ -112,7 +112,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         this.properties = properties;
     }
 
-    private String createUri() throws Exception {
+    private String createUri(String uri) throws Exception {
         if (properties == null || properties.isEmpty()) {
             return uri;
         } else {
