@@ -481,12 +481,24 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String uriPath = stripQuery(uri);
 
-        Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
+        // if there is only one, then use uriPath as is
         List<String> word2 = new ArrayList<String>();
-        while (matcher2.find() ) {
-            String s = matcher2.group(1);
-            if (!scheme.equals(s)) {
-                word2.add(s);
+
+        if (word.size() == 1) {
+            String s = uriPath;
+            s = URISupport.stripPrefix(s, scheme);
+            // strip any leading : or / after the scheme
+            while (s.startsWith(":") || s.startsWith("/")) {
+                s = s.substring(1);
+            }
+            word2.add(s);
+        } else {
+            Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
+            while (matcher2.find()) {
+                String s = matcher2.group(1);
+                if (!scheme.equals(s)) {
+                    word2.add(s);
+                }
             }
         }
 

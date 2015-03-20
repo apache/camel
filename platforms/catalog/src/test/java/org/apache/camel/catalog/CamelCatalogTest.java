@@ -172,4 +172,21 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("false", map.get("deliveryPersistent"));
     }
 
+    @Test
+    public void testEndpointPropertiesAtom() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("atom:file:src/test/data/feed.atom");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
+
+        map = catalog.endpointProperties("atom:file:src/test/data/feed.atom?splitEntries=false&delay=5000");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
+        assertEquals("false", map.get("splitEntries"));
+        assertEquals("5000", map.get("delay"));
+    }
+
 }
