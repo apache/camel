@@ -25,11 +25,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
+
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -38,6 +42,7 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
@@ -61,6 +66,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         this.objectMapper = new ObjectMapper();
         this.xStream = new XStream();
         xStream.processAnnotations(RestErrors.class);
+        xStream.processAnnotations(RestChoices.class);
     }
 
     @Override
@@ -75,32 +81,61 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     @Override
-    protected SalesforceException createRestException(ContentExchange httpExchange) {
+    protected SalesforceException createRestException(ContentExchange httpExchange, String reason) {
+        // get status code and reason phrase
+        final int statusCode = httpExchange.getResponseStatus();
+        if (reason == null || reason.isEmpty()) {
+            reason = HttpStatus.getMessage(statusCode);
+        }
         // try parsing response according to format
+        String responseContent = null;
         try {
-            if (PayloadFormat.JSON.equals(format)) {
-                List<RestError> restErrors = objectMapper.readValue(
-                    httpExchange.getResponseContent(), new TypeReference<List<RestError>>() {
+            responseContent = httpExchange.getResponseContent();
+            if (responseContent != null && !responseContent.isEmpty()) {
+                final List<String> choices;
+                // return list of choices as error message for 300
+                if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
+                    if (PayloadFormat.JSON.equals(format)) {
+                        choices = objectMapper.readValue(
+                            responseContent, new TypeReference<List<String>>() {
+                            }
+                        );
+                    } else {
+                        RestChoices restChoices = new RestChoices();
+                        xStream.fromXML(responseContent, restChoices);
+                        choices = restChoices.getUrls();
                     }
-                );
-                return new SalesforceException(restErrors, httpExchange.getResponseStatus());
-            } else {
-                RestErrors errors = new RestErrors();
-                xStream.fromXML(httpExchange.getResponseContent(), errors);
-                return new SalesforceException(errors.getErrors(), httpExchange.getResponseStatus());
+                    return new SalesforceMultipleChoicesException(reason, statusCode, choices);
+                } else {
+                    final List<RestError> restErrors;
+                    if (PayloadFormat.JSON.equals(format)) {
+                        restErrors = objectMapper.readValue(
+                            responseContent, new TypeReference<List<RestError>>() {
+                            }
+                        );
+                    } else {
+                        RestErrors errors = new RestErrors();
+                        xStream.fromXML(responseContent, errors);
+                        restErrors = errors.getErrors();
+                    }
+                    return new SalesforceException(restErrors, statusCode);
+                }
             }
         } catch (IOException e) {
             // log and ignore
-            String msg = "Unexpected Error parsing " + format + " error response: " + e.getMessage();
+            String msg = "Unexpected Error parsing " + format
+                    + " error response body + [" + responseContent + "] : " + e.getMessage();
             log.warn(msg, e);
         } catch (RuntimeException e) {
             // log and ignore
-            String msg = "Unexpected Error parsing " + format + " error response: " + e.getMessage();
+            String msg = "Unexpected Error parsing " + format
+                    + " error response body + [" + responseContent + "] : " + e.getMessage();
             log.warn(msg, e);
         }
 
         // just report HTTP status info
-        return new SalesforceException("Unexpected error", httpExchange.getResponseStatus());
+        return new SalesforceException("Unexpected error: " + reason + ", with content: " + responseContent,
+                statusCode);
     }
 
     @Override
@@ -355,16 +390,12 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     }
 
     private String versionUrl() {
-        if (version == null) {
-            throw new IllegalArgumentException("NULL API version", new NullPointerException("version"));
-        }
+        ObjectHelper.notNull(version, "version");
         return servicesDataUrl() + "v" + version + "/";
     }
 
     private String sobjectsUrl(String sObjectName) {
-        if (sObjectName == null) {
-            throw new IllegalArgumentException("Null SObject name", new NullPointerException("sObjectName"));
-        }
+        ObjectHelper.notNull(sObjectName, "sObjectName");
         return versionUrl() + "sobjects/" + sObjectName;
     }
 

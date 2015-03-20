@@ -150,7 +150,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                 if (responseStatus < HttpStatus.OK_200 || responseStatus >= HttpStatus.MULTIPLE_CHOICES_300) {
                     final String msg = String.format("Error {%s:%s} executing {%s:%s}",
                             responseStatus, reason, request.getMethod(), request.getRequestURI());
-                    final SalesforceException exception = new SalesforceException(msg, responseStatus, createRestException(request));
+                    final SalesforceException exception = new SalesforceException(msg, responseStatus, createRestException(request, reason));
                     callback.onResponse(null, exception);
                 } else {
                     // TODO not memory efficient for large response messages,
@@ -190,6 +190,6 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected abstract void setAccessToken(HttpExchange httpExchange);
 
-    protected abstract SalesforceException createRestException(ContentExchange httpExchange);
+    protected abstract SalesforceException createRestException(ContentExchange httpExchange, String reason);
 
 }

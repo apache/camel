@@ -386,7 +386,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     @Override
-    protected SalesforceException createRestException(ContentExchange request) {
+    protected SalesforceException createRestException(ContentExchange request, String reason) {
         // this must be of type Error
         try {
             final Error error = unmarshalResponse(new ByteArrayInputStream(request.getResponseContentBytes()),
