@@ -28,6 +28,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.dto.LoginError;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
+import org.apache.camel.util.ObjectHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
@@ -61,13 +62,13 @@ public class SalesforceSession implements Service {
 
     public SalesforceSession(HttpClient httpClient, SalesforceLoginConfig config) {
         // validate parameters
-        assertNotNull("Null httpClient", httpClient);
-        assertNotNull("Null SalesforceLoginConfig", config);
-        assertNotNull("Null loginUrl", config.getLoginUrl());
-        assertNotNull("Null clientId", config.getClientId());
-        assertNotNull("Null clientSecret", config.getClientSecret());
-        assertNotNull("Null userName", config.getUserName());
-        assertNotNull("Null password", config.getPassword());
+        ObjectHelper.notNull(httpClient, "httpClient");
+        ObjectHelper.notNull(config, "SalesforceLoginConfig");
+        ObjectHelper.notNull(config.getLoginUrl(), "loginUrl");
+        ObjectHelper.notNull(config.getClientId(), "clientId");
+        ObjectHelper.notNull(config.getClientSecret(), "clientSecret");
+        ObjectHelper.notNull(config.getUserName(), "userName");
+        ObjectHelper.notNull(config.getPassword(), "password");
 
         this.httpClient = httpClient;
         this.config = config;
@@ -78,12 +79,6 @@ public class SalesforceSession implements Service {
 
         this.objectMapper = new ObjectMapper();
         this.listeners = new CopyOnWriteArraySet<SalesforceSessionListener>();
-    }
-
-    private void assertNotNull(String s, Object o) {
-        if (o == null) {
-            throw new IllegalArgumentException(s);
-        }
     }
 
     @SuppressWarnings("unchecked")
