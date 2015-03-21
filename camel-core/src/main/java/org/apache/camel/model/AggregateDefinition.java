@@ -35,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -113,6 +114,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean discardOnCompletionTimeout;
     @XmlAttribute
     private Boolean forceCompletionOnStop;
+    @XmlTransient
+    private AggregateController aggregateController;
+    @XmlAttribute
+    private String aggregateControllerRef;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
@@ -182,12 +187,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal,
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), getId(), internal,
                 correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository(routeContext);
         if (repository != null) {
             answer.setAggregationRepository(repository);
+        }
+
+        if (getAggregateController() == null && getAggregateControllerRef() != null) {
+            setAggregateController(routeContext.mandatoryLookup(getAggregateControllerRef(), AggregateController.class));
         }
 
         // this EIP supports using a shared timeout checker thread pool or fallback to create a new thread pool
@@ -263,6 +272,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             }
         } else {
             answer.setOptimisticLockRetryPolicy(optimisticLockRetryPolicy);
+        }
+        if (getAggregateController() != null) {
+            answer.setAggregateController(getAggregateController());
         }
         return answer;
     }
@@ -613,6 +625,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
 
+    public AggregateController getAggregateController() {
+        return aggregateController;
+    }
+
+    public void setAggregateController(AggregateController aggregateController) {
+        this.aggregateController = aggregateController;
+    }
+
+    public String getAggregateControllerRef() {
+        return aggregateControllerRef;
+    }
+
+    public void setAggregateControllerRef(String aggregateControllerRef) {
+        this.aggregateControllerRef = aggregateControllerRef;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -900,7 +928,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         setTimeoutCheckerExecutorServiceRef(executorServiceRef);
         return this;
     }
-    
+
+    /**
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
+     * this aggregator.
+     */
+    public AggregateDefinition aggregateController(AggregateController aggregateController) {
+        setAggregateController(aggregateController);
+        return this;
+    }
+
     // Section - Methods from ExpressionNode
     // Needed to copy methods from ExpressionNode here so that I could specify the
     // correlation expression as optional in JAXB

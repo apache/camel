@@ -47,6 +47,7 @@ import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.ShutdownPrepared;
@@ -79,7 +80,7 @@ import org.slf4j.LoggerFactory;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared {
+public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, HasId {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -87,9 +88,11 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;
+    private final String id;
     private final Processor processor;
     private AggregationStrategy aggregationStrategy;
     private Expression correlationExpression;
+    private AggregateController aggregateController;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy = new OptimisticLockRetryPolicy();
@@ -131,21 +134,27 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     private ProducerTemplate deadLetterProducerTemplate;
 
-    public AggregateProcessor(CamelContext camelContext, Processor processor,
+    public AggregateProcessor(CamelContext camelContext, String id, Processor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
                               ExecutorService executorService, boolean shutdownExecutorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(id, "id");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(correlationExpression, "correlationExpression");
         ObjectHelper.notNull(aggregationStrategy, "aggregationStrategy");
         ObjectHelper.notNull(executorService, "executorService");
         this.camelContext = camelContext;
+        this.id = id;
         this.processor = processor;
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
         this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -773,6 +782,14 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         this.correlationExpression = correlationExpression;
     }
 
+    public AggregateController getAggregateController() {
+        return aggregateController;
+    }
+
+    public void setAggregateController(AggregateController aggregateController) {
+        this.aggregateController = aggregateController;
+    }
+
     /**
      * On completion task which keeps the booking of the in progress up to date
      */
@@ -1112,6 +1129,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             restoreTimeoutMapFromAggregationRepository();
             ServiceHelper.startService(timeoutMap);
         }
+
+        if (aggregateController != null) {
+            aggregateController.onStart(id, this);
+        }
     }
 
     @Override
@@ -1119,6 +1140,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // note: we cannot do doForceCompletionOnStop from this doStop method
         // as this is handled in the prepareShutdown method which is also invoked when stopping a route
         // and is better suited for preparing to shutdown than this doStop method is
+
+        if (aggregateController != null) {
+            aggregateController.onStop(id, this);
+        }
 
         if (recoverService != null) {
             camelContext.getExecutorServiceManager().shutdown(recoverService);
@@ -1182,6 +1207,34 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         super.doShutdown();
+    }
+
+    public int forceCompletionOfGroup(String key) {
+        // must acquire the shared aggregation lock to be able to trigger force completion
+        int total = 0;
+
+        if (!optimisticLocking) { lock.lock(); }
+        try {
+            Exchange exchange = aggregationRepository.get(camelContext, key);
+            if (exchange != null) {
+                total = 1;
+                LOG.trace("Force completion triggered for correlation key: {}", key);
+                // indicate it was completed by a force completion request
+                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+                Exchange answer = onCompletion(key, exchange, exchange, false);
+                if (answer != null) {
+                    onSubmitCompletion(key, answer);
+                }
+            }
+        } finally {
+            if (!optimisticLocking) { lock.unlock(); }
+        }
+        LOG.trace("Completed force completion of group {}", key);
+
+        if (total > 0) {
+            LOG.debug("Forcing completion of group {} with {} exchanges", key, total);
+        }
+        return total;
     }
 
     public int forceCompletionOfAllGroups() {
