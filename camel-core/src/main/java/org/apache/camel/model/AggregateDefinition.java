@@ -637,6 +637,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return aggregateControllerRef;
     }
 
+    /**
+     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
+     * this aggregator.
+     */
     public void setAggregateControllerRef(String aggregateControllerRef) {
         this.aggregateControllerRef = aggregateControllerRef;
     }
