@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import javax.mail.Flags;
@@ -54,6 +56,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     private final JavaMailSender sender;
     private Folder folder;
     private Store store;
+    private boolean skipFailedMessage;
+    private boolean handleFailedMessage;
 
     /**
      * Is true if server is an IMAP server and supports IMAP SORT extension.
@@ -251,11 +255,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             }
         } else {
             if (searchTerm != null) {
-                // Only search
-                messages = folder.search(searchTerm);
+                messages = folder.search(searchTerm, retrieveAllMessages());
             } else {
-                // No search
-                messages = folder.getMessages();
+                messages = retrieveAllMessages();
             }
             // Now we can sort (emulate email sort but restrict sort terms)
             if (sortTerm != null) {
@@ -263,6 +265,28 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             }
         }
         return messages;
+    }
+
+    private Message[] retrieveAllMessages() throws MessagingException {
+        int total = folder.getMessageCount();
+        List<Message> msgs = new ArrayList<Message>();
+
+        // Note that message * numbers start at 1, not 0
+        for (int i = 1; i <= total; i++) {
+            try {
+                Message msg = folder.getMessage(i);
+                msgs.add(msg);
+            } catch (MessagingException e) {
+                if (skipFailedMessage) {
+                    LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
+                } else if (handleFailedMessage) {
+                    handleException(e);
+                } else {
+                    throw e;
+                }
+            }
+        }
+        return msgs.toArray(new Message[msgs.size()]);
     }
 
     /**
@@ -508,4 +532,19 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         return (MailEndpoint) super.getEndpoint();
     }
 
+    public boolean isSkipFailedMessage() {
+        return skipFailedMessage;
+    }
+
+    public void setSkipFailedMessage(boolean skipFailedMessage) {
+        this.skipFailedMessage = skipFailedMessage;
+    }
+
+    public boolean isHandleFailedMessage() {
+        return handleFailedMessage;
+    }
+
+    public void setHandleFailedMessage(boolean handleFailedMessage) {
+        this.handleFailedMessage = handleFailedMessage;
+    }
 }
