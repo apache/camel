@@ -78,4 +78,41 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedOperation(description = "To force complete of all groups")
     int forceCompletionOfAllGroups();
 
+    @ManagedAttribute(description = "Total number of exchanges arrived into the aggregator")
+    long getTotalIn();
+
+    @ManagedAttribute(description = "Total number of exchanges completed and outgoing from the aggregator")
+    long getTotalCompleted();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion size trigger")
+    long getCompletedBySize();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion aggregation strategy trigger")
+    long getCompletedByStrategy();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion interval (timeout) trigger")
+    long getCompletedByInterval();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion timeout trigger")
+    long getCompletedByTimeout();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion predicate trigger")
+    long getCompletedByPredicate();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion batch consumer trigger")
+    long getCompletedByBatchConsumer();
+
+    @ManagedAttribute(description = "Total number of exchanged completed by completion force trigger")
+    long getCompletedByForce();
+
+    @ManagedOperation(description = " Reset the statistics counters")
+    void resetStatistics();
+
+    @ManagedAttribute(description = "Sets whether statistics is enabled")
+    boolean isStatisticsEnabled();
+
+    @ManagedAttribute(description = "Sets whether statistics is enabled")
+    void setStatisticsEnabled(boolean statisticsEnabled);
+
+
 }

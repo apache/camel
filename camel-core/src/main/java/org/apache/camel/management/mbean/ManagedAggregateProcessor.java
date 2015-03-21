@@ -149,4 +149,44 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
             return 0;
         }
     }
+
+    public long getTotalIn() {
+        return processor.getStatistics().getTotalIn();
+    }
+
+    public long getTotalCompleted() {
+        return processor.getStatistics().getTotalCompleted();
+    }
+
+    public long getCompletedBySize() {
+        return processor.getStatistics().getCompletedBySize();
+    }
+
+    public long getCompletedByStrategy() {
+        return processor.getStatistics().getCompletedByStrategy();
+    }
+
+    public long getCompletedByInterval() {
+        return processor.getStatistics().getCompletedByInterval();
+    }
+
+    public long getCompletedByTimeout() {
+        return processor.getStatistics().getCompletedByTimeout();
+    }
+
+    public long getCompletedByPredicate() {
+        return processor.getStatistics().getCompletedByPredicate();
+    }
+
+    public long getCompletedByBatchConsumer() {
+        return processor.getStatistics().getCompletedByBatchConsumer();
+    }
+
+    public long getCompletedByForce() {
+        return processor.getStatistics().getCompletedByForce();
+    }
+
+    public void resetStatistics() {
+        processor.getStatistics().reset();
+    }
 }

@@ -51,7 +51,7 @@ public class AggregateControllerTest extends ContextTestSupport {
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(2);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
-        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         int groups = getAggregateController().forceCompletionOfAllGroups();
         assertEquals(2, groups);
@@ -72,7 +72,7 @@ public class AggregateControllerTest extends ContextTestSupport {
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(1);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3");
-        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         int groups = getAggregateController().forceCompletionOfGroup("1");
         assertEquals(1, groups);

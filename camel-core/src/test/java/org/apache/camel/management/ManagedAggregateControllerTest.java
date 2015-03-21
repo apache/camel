@@ -54,7 +54,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(2);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
-        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(2, pending.intValue());
@@ -66,6 +66,18 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(4, completed.longValue());
+
+        completed = (Long) mbeanServer.getAttribute(on, "TotalCompleted");
+        assertEquals(2, completed.longValue());
+
+        Long in = (Long) mbeanServer.getAttribute(on, "TotalIn");
+        assertEquals(4, in.longValue());
+
+        Long byForced = (Long) mbeanServer.getAttribute(on, "CompletedByForce");
+        assertEquals(2, byForced.longValue());
+
+        Long bySize = (Long) mbeanServer.getAttribute(on, "CompletedBySize");
+        assertEquals(0, bySize.longValue());
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CompletionSize");
         assertEquals(10, size.longValue());
@@ -103,7 +115,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(1);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3");
-        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(2, pending.intValue());
@@ -115,6 +127,18 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(4, completed.longValue());
+
+        completed = (Long) mbeanServer.getAttribute(on, "TotalCompleted");
+        assertEquals(1, completed.longValue());
+
+        Long in = (Long) mbeanServer.getAttribute(on, "TotalIn");
+        assertEquals(4, in.longValue());
+
+        Long byForced = (Long) mbeanServer.getAttribute(on, "CompletedByForce");
+        assertEquals(1, byForced.longValue());
+
+        Long bySize = (Long) mbeanServer.getAttribute(on, "CompletedBySize");
+        assertEquals(0, bySize.longValue());
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CompletionSize");
         assertEquals(10, size.longValue());

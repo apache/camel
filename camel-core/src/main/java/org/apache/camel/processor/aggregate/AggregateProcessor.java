@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -106,9 +107,80 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private final Set<String> inProgressCompleteExchanges = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
 
+    private final AggregateProcessorStatistics statistics = new Statistics();
+    private final AtomicLong totalIn = new AtomicLong();
+    private final AtomicLong totalCompleted = new AtomicLong();
+    private final AtomicLong completedBySize = new AtomicLong();
+    private final AtomicLong completedByStrategy = new AtomicLong();
+    private final AtomicLong completedByInterval = new AtomicLong();
+    private final AtomicLong completedByTimeout = new AtomicLong();
+    private final AtomicLong completedByPredicate = new AtomicLong();
+    private final AtomicLong completedByBatchConsumer = new AtomicLong();
+    private final AtomicLong completedByForce = new AtomicLong();
+
     // keep booking about redelivery
     private class RedeliveryData {
         int redeliveryCounter;
+    }
+
+    private class Statistics implements AggregateProcessorStatistics {
+
+        private boolean statisticsEnabled = true;
+
+        public long getTotalIn() {
+            return totalIn.get();
+        }
+
+        public long getTotalCompleted() {
+            return totalCompleted.get();
+        }
+
+        public long getCompletedBySize() {
+            return completedBySize.get();
+        }
+
+        public long getCompletedByStrategy() {
+            return completedByStrategy.get();
+        }
+
+        public long getCompletedByInterval() {
+            return completedByInterval.get();
+        }
+
+        public long getCompletedByTimeout() {
+            return completedByTimeout.get();
+        }
+
+        public long getCompletedByPredicate() {
+            return completedByPredicate.get();
+        }
+
+        public long getCompletedByBatchConsumer() {
+            return completedByBatchConsumer.get();
+        }
+
+        public long getCompletedByForce() {
+            return completedByForce.get();
+        }
+
+        public void reset() {
+            totalIn.set(0);
+            totalCompleted.set(0);
+            completedBySize.set(0);
+            completedByStrategy.set(0);
+            completedByTimeout.set(0);
+            completedByPredicate.set(0);
+            completedByBatchConsumer.set(0);
+            completedByForce.set(0);
+        }
+
+        public boolean isStatisticsEnabled() {
+            return statisticsEnabled;
+        }
+
+        public void setStatisticsEnabled(boolean statisticsEnabled) {
+            this.statisticsEnabled = statisticsEnabled;
+        }
     }
 
     // options
@@ -186,6 +258,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     protected void doProcess(Exchange exchange) throws Exception {
+
+        if (getStatistics().isStatisticsEnabled()) {
+            totalIn.incrementAndGet();
+        }
 
         //check for the special header to force completion of all groups (and ignore the exchange otherwise)
         boolean completeAllGroups = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
@@ -541,6 +617,27 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             ((CompletionAwareAggregationStrategy) aggregationStrategy).onCompletion(exchange);
         }
 
+        if (getStatistics().isStatisticsEnabled()) {
+            totalCompleted.incrementAndGet();
+
+            String completedBy = exchange.getProperty(Exchange.AGGREGATED_COMPLETED_BY, String.class);
+            if ("interval".equals(completedBy)) {
+                completedByInterval.incrementAndGet();
+            } else if ("timeout".equals(completedBy)) {
+                completedByTimeout.incrementAndGet();
+            } else if ("force".equals(completedBy)) {
+                completedByForce.incrementAndGet();
+            } else if ("consumer".equals(completedBy)) {
+                completedByBatchConsumer.incrementAndGet();
+            } else if ("predicate".equals(completedBy)) {
+                completedByPredicate.incrementAndGet();
+            } else if ("size".equals(completedBy)) {
+                completedBySize.incrementAndGet();
+            } else if ("strategy".equals(completedBy)) {
+                completedByStrategy.incrementAndGet();
+            }
+        }
+
         // send this exchange
         executorService.submit(new Runnable() {
             public void run() {
@@ -608,6 +705,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // store the timeout value on the exchange as well, in case we need it later
         exchange.setProperty(Exchange.AGGREGATED_TIMEOUT, timeout);
         timeoutMap.put(key, exchange.getExchangeId(), timeout);
+    }
+
+    public AggregateProcessorStatistics getStatistics() {
+        return statistics;
     }
 
     public int getInProgressCompleteExchanges() {
@@ -1217,7 +1318,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 total = 1;
                 LOG.trace("Force completion triggered for correlation key: {}", key);
                 // indicate it was completed by a force completion request
-                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "force");
                 Exchange answer = onCompletion(key, exchange, exchange, false);
                 if (answer != null) {
                     onSubmitCompletion(key, answer);
@@ -1259,7 +1360,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     if (exchange != null) {
                         LOG.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
-                        exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+                        exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "force");
                         Exchange answer = onCompletion(key, exchange, exchange, false);
                         if (answer != null) {
                             onSubmitCompletion(key, answer);
