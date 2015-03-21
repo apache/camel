@@ -20,17 +20,19 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.support.SynchronizationAdapter;
 
 /**
  * Base class for remote file consumers.
  */
 public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
-    protected boolean loggedIn;
-    protected boolean loggedInWarning;
+    protected transient boolean loggedIn;
+    protected transient boolean loggedInWarning;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations) {
         super(endpoint, processor, operations);
@@ -87,10 +89,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         if (log.isTraceEnabled()) {
             log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
         }
-        if (getEndpoint().isDisconnect()) {
-            log.trace("postPollCheck disconnect from: {}", getEndpoint());
-            disconnect();
-        }
     }
 
     @Override
@@ -98,6 +96,35 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         // mark the exchange to be processed synchronously as the ftp client is not thread safe
         // and we must execute the callbacks in the same thread as this consumer
         exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
+
+        // defer disconnect til the UoW is complete - but only the last exchange from the batch should do that
+        boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, true, Boolean.class);
+        if (isLast && getEndpoint().isDisconnect()) {
+            exchange.addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                    disconnect();
+                }
+
+                @Override
+                public boolean allowHandover() {
+                    // do not allow handover as we must execute the callbacks in the same thread as this consumer
+                    return false;
+                }
+
+                @Override
+                public int getOrder() {
+                    // we want to disconnect last
+                    return Ordered.LOWEST;
+                }
+
+                public String toString() {
+                    return "Disconnect";
+                }
+            });
+        }
+
         return super.processExchange(exchange);
     }
 
