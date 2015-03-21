@@ -472,7 +472,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // parse the syntax and find the same group in the uri
         Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
         List<String> word = new ArrayList<String>();
-        while (matcher.find() ) {
+        while (matcher.find()) {
             String s = matcher.group(1);
             if (!scheme.equals(s)) {
                 word.add(s);
@@ -647,7 +647,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // parse the syntax into each options
         Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
         List<String> options = new ArrayList<String>();
-        while (matcher.find() ) {
+        while (matcher.find()) {
             String s = matcher.group(1);
             options.add(s);
         }
@@ -655,7 +655,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // parse the syntax into each options
         Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
         List<String> options2 = new ArrayList<String>();
-        while (matcher2.find() ) {
+        while (matcher2.find()) {
             String s = matcher2.group(1);
             options2.add(s);
         }
