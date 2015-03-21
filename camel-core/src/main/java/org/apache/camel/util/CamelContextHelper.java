@@ -489,15 +489,17 @@ public final class CamelContextHelper {
         // no existing properties component so lookup and add as component if possible
         PropertiesComponent answer = (PropertiesComponent) camelContext.hasComponent("properties");
         if (answer == null) {
-            answer = camelContext.getRegistry().lookupByNameAndType("properties", PropertiesComponent.class);
-            if (answer != null) {
+            // lookup what is stored under properties, as it may not be the Camel properties component
+            Object found = camelContext.getRegistry().lookupByName("properties");
+            if (found != null && found instanceof PropertiesComponent) {
+                answer = (PropertiesComponent) found;
                 camelContext.addComponent("properties", answer);
             }
         }
         if (answer == null && autoCreate) {
             // create a default properties component to be used as there may be default values we can use
             LOG.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
-            // do not auto create using getComponent as spring autowrire by constructor causes a side effect
+            // do not auto create using getComponent as spring auto-wire by constructor causes a side effect
             answer = new PropertiesComponent();
             camelContext.addComponent("properties", answer);
         }
