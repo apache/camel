@@ -59,7 +59,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
+        AggregateProcessor ap = new AggregateProcessor(context, "a", done, corr, as, executorService, true);
         // start with a high timeout so no completes before we stop
         ap.setCompletionTimeout(2000);
         ap.start();
@@ -101,7 +101,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
+        AggregateProcessor ap = new AggregateProcessor(context, "a", done, corr, as, executorService, true);
         // start with a high timeout so no completes before we stop
         ap.setCompletionTimeoutExpression(header("myTimeout"));
         ap.start();
@@ -145,7 +145,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
+        AggregateProcessor ap = new AggregateProcessor(context, "a", done, corr, as, executorService, true);
         // start with a high timeout so no completes before we stop
         ap.setCompletionTimeoutExpression(header("myTimeout"));
         ap.start();

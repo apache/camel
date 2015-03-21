@@ -134,6 +134,13 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     private ProducerTemplate deadLetterProducerTemplate;
 
+    @Deprecated
+    public AggregateProcessor(CamelContext camelContext, Processor processor,
+                              Expression correlationExpression, AggregationStrategy aggregationStrategy,
+                              ExecutorService executorService, boolean shutdownExecutorService) {
+        this(camelContext, "aggregate", processor, correlationExpression, aggregationStrategy, executorService, shutdownExecutorService);
+    }
+
     public AggregateProcessor(CamelContext camelContext, String id, Processor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
                               ExecutorService executorService, boolean shutdownExecutorService) {
@@ -616,6 +623,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // store the timeout value on the exchange as well, in case we need it later
         exchange.setProperty(Exchange.AGGREGATED_TIMEOUT, timeout);
         timeoutMap.put(key, exchange.getExchangeId(), timeout);
+    }
+
+    public int getInProgressCompleteExchanges() {
+        return inProgressCompleteExchanges.size();
     }
 
     public Predicate getCompletionPredicate() {
@@ -1130,9 +1141,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             ServiceHelper.startService(timeoutMap);
         }
 
-        if (aggregateController != null) {
-            aggregateController.onStart(id, this);
+        if (aggregateController == null) {
+            aggregateController = new DefaultAggregateController();
         }
+        aggregateController.onStart(id, this);
     }
 
     @Override
