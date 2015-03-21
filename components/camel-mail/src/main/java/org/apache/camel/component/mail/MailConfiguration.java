@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.net.ssl.SSLContext;
@@ -98,6 +97,10 @@ public class MailConfiguration implements Cloneable {
     private boolean closeFolder = true;
     @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean peek = true;
+    @UriParam @Metadata(label = "consumer")
+    private boolean skipFailedMessage;
+    @UriParam @Metadata(label = "consumer")
+    private boolean handleFailedMessage;
     @UriParam
     private SSLContextParameters sslContextParameters;
     private ClassLoader applicationClassLoader;
@@ -632,5 +635,34 @@ public class MailConfiguration implements Cloneable {
      */
     public void setPeek(boolean peek) {
         this.peek = peek;
+    }
+
+    public boolean isSkipFailedMessage() {
+        return skipFailedMessage;
+    }
+
+    /**
+     * If the mail consumer cannot retrieve a given mail message, then this option allows to skip
+     * the message and move on to retrieve the next mail message.
+     * <p/>
+     * The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel.
+     */
+    public void setSkipFailedMessage(boolean skipFailedMessage) {
+        this.skipFailedMessage = skipFailedMessage;
+    }
+
+    public boolean isHandleFailedMessage() {
+        return handleFailedMessage;
+    }
+
+    /**
+     * If the mail consumer cannot retrieve a given mail message, then this option allows to handle
+     * the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer,
+     * then the Camel routing error handler can handle the exception instead.
+     * <p/>
+     * The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel.
+     */
+    public void setHandleFailedMessage(boolean handleFailedMessage) {
+        this.handleFailedMessage = handleFailedMessage;
     }
 }
