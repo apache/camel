@@ -47,7 +47,6 @@ import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.ShutdownPrepared;
@@ -80,7 +79,7 @@ import org.slf4j.LoggerFactory;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, HasId {
+public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -88,7 +87,6 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;
-    private final String id;
     private final Processor processor;
     private AggregationStrategy aggregationStrategy;
     private Expression correlationExpression;
@@ -134,34 +132,21 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     private ProducerTemplate deadLetterProducerTemplate;
 
-    @Deprecated
     public AggregateProcessor(CamelContext camelContext, Processor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
                               ExecutorService executorService, boolean shutdownExecutorService) {
-        this(camelContext, "aggregate", processor, correlationExpression, aggregationStrategy, executorService, shutdownExecutorService);
-    }
-
-    public AggregateProcessor(CamelContext camelContext, String id, Processor processor,
-                              Expression correlationExpression, AggregationStrategy aggregationStrategy,
-                              ExecutorService executorService, boolean shutdownExecutorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
-        ObjectHelper.notNull(id, "id");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(correlationExpression, "correlationExpression");
         ObjectHelper.notNull(aggregationStrategy, "aggregationStrategy");
         ObjectHelper.notNull(executorService, "executorService");
         this.camelContext = camelContext;
-        this.id = id;
         this.processor = processor;
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
         this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
-    }
-
-    public String getId() {
-        return id;
     }
 
     @Override
@@ -1144,7 +1129,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (aggregateController == null) {
             aggregateController = new DefaultAggregateController();
         }
-        aggregateController.onStart(id, this);
+        aggregateController.onStart(this);
     }
 
     @Override
@@ -1154,7 +1139,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         // and is better suited for preparing to shutdown than this doStop method is
 
         if (aggregateController != null) {
-            aggregateController.onStop(id, this);
+            aggregateController.onStop(this);
         }
 
         if (recoverService != null) {

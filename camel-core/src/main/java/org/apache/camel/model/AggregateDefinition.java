@@ -187,7 +187,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), getId(), internal,
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal,
                 correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository(routeContext);

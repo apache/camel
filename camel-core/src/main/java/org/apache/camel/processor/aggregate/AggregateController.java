@@ -25,18 +25,16 @@ public interface AggregateController {
     /**
      * Callback when the aggregate processor is started.
      *
-     * @param id        the aggregator id
      * @param processor the aggregate processor
      */
-    void onStart(String id, AggregateProcessor processor);
+    void onStart(AggregateProcessor processor);
 
     /**
      * Callback when the aggregate processor is stopped.
      *
-     * @param id        the aggregator id
      * @param processor the aggregate processor
      */
-    void onStop(String id, AggregateProcessor processor);
+    void onStop(AggregateProcessor processor);
 
     /**
      * To force completing a specific group by its key.

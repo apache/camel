@@ -16,30 +16,21 @@
  */
 package org.apache.camel.processor.aggregate;
 
-import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.support.ServiceSupport;
-
 /**
  * A default {@link org.apache.camel.processor.aggregate.AggregateController} that offers Java and JMX API.
  */
-@ManagedResource(description = "Aggregation controller")
-public class DefaultAggregateController extends ServiceSupport implements AggregateController {
+public class DefaultAggregateController implements AggregateController {
 
     private AggregateProcessor processor;
-    private String id;
 
-    public void onStart(String id, AggregateProcessor processor) {
-        this.id = id;
+    public void onStart(AggregateProcessor processor) {
         this.processor = processor;
     }
 
-    public void onStop(String id, AggregateProcessor processor) {
-        this.id = id;
+    public void onStop(AggregateProcessor processor) {
         this.processor = null;
     }
 
-    @ManagedOperation(description = "To force completion a group on the aggregator")
     public int forceCompletionOfGroup(String key) {
         if (processor != null) {
             return processor.forceCompletionOfGroup(key);
@@ -48,7 +39,6 @@ public class DefaultAggregateController extends ServiceSupport implements Aggreg
         }
     }
 
-    @ManagedOperation(description = "To force completion all groups on the aggregator")
     public int forceCompletionOfAllGroups() {
         if (processor != null) {
             return processor.forceCompletionOfAllGroups();
@@ -57,15 +47,4 @@ public class DefaultAggregateController extends ServiceSupport implements Aggreg
         }
     }
 
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    protected void doStop() throws Exception {
-        // noop
-    }
-
-    public String toString() {
-        return "DefaultAggregateController[" + id + "]";
-    }
 }

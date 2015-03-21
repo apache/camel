@@ -29,7 +29,14 @@ import org.junit.Test;
  */
 public class AggregateControllerTest extends ContextTestSupport {
 
-    private AggregateController controller = new DefaultAggregateController();
+    private AggregateController controller;
+
+    public AggregateController getAggregateController() {
+        if (controller == null) {
+            controller = new DefaultAggregateController();
+        }
+        return controller;
+    }
 
     @Test
     public void testForceCompletionOfAll() throws Exception {
@@ -46,7 +53,7 @@ public class AggregateControllerTest extends ContextTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
 
-        int groups = controller.forceCompletionOfAllGroups();
+        int groups = getAggregateController().forceCompletionOfAllGroups();
         assertEquals(2, groups);
 
         assertMockEndpointsSatisfied();
@@ -67,7 +74,7 @@ public class AggregateControllerTest extends ContextTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
 
-        int groups = controller.forceCompletionOfGroup("1");
+        int groups = getAggregateController().forceCompletionOfGroup("1");
         assertEquals(1, groups);
 
         assertMockEndpointsSatisfied();
@@ -76,13 +83,12 @@ public class AggregateControllerTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(controller)
+                        .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(getAggregateController())
                         .completionSize(10)
-                    .to("mock:aggregated");
+                        .to("mock:aggregated");
             }
         };
     }
