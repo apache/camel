@@ -27,13 +27,11 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.MainSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.view.ModelFileGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -227,10 +225,6 @@ public class Main extends MainSupport {
             answer.put(name, camelContext);
         }
         return answer;
-    }
-
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(new SpringModelJAXBContextFactory().newJAXBContext());
     }
 
     protected AbstractApplicationContext createAdditionalLocationsFromClasspath() throws IOException {

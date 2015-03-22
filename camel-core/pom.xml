@@ -375,7 +375,7 @@
             </group>
             <group>
               <title>Utility classes</title>
-              <packages>org.apache.camel.util:org.apache.camel.util.*:org.apache.camel.view</packages>
+              <packages>org.apache.camel.util:org.apache.camel.util.*</packages>
             </group>
           </groups>
         </configuration>
@@ -463,7 +463,7 @@
                 </group>
                 <group>
                   <title>Utility classes</title>
-                  <packages>org.apache.camel.util:org.apache.camel.util.*:org.apache.camel.view</packages>
+                  <packages>org.apache.camel.util:org.apache.camel.util.*</packages>
                 </group>
               </groups>
             </configuration>
