@@ -22,6 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.IdAware;
 
 /**
@@ -45,6 +47,25 @@ public class SimpleProcessorIdAwareTest extends ContextTestSupport {
 
         assertEquals("bar", ((IdAware) bar).getId());
         assertEquals("baz", ((IdAware) baz).getId());
+
+        bar = context.getProcessor("bar");
+        assertNotNull(bar);
+
+        baz = context.getProcessor("baz");
+        assertNotNull(baz);
+
+        Processor unknown = context.getProcessor("unknown");
+        assertNull(unknown);
+
+        Processor result = context.getProcessor("result");
+        assertNotNull(result);
+
+        ProcessorDefinition def = context.getProcessorDefinition("result");
+        assertNotNull(def);
+        assertEquals("result", def.getId());
+        SendDefinition send = assertIsInstanceOf(SendDefinition.class, def);
+        assertNotNull(send);
+        assertEquals("mock:result", send.getEndpointUri());
     }
 
     @Override

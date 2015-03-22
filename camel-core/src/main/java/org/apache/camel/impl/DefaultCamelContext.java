@@ -709,6 +709,29 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
+    public Processor getProcessor(String id) {
+        for (Route route : getRoutes()) {
+            List<Processor> list = route.filter(id);
+            if (list.size() == 1) {
+                return list.get(0);
+            }
+        }
+        return null;
+    }
+
+    public ProcessorDefinition getProcessorDefinition(String id) {
+        for (RouteDefinition route : getRouteDefinitions()) {
+            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            while (it.hasNext()) {
+                ProcessorDefinition proc = it.next();
+                if (id.equals(proc.getId())) {
+                    return proc;
+                }
+            }
+        }
+        return null;
+    }
+
     @Deprecated
     public void setRoutes(List<Route> routes) {
         throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRouteCollection instead");
