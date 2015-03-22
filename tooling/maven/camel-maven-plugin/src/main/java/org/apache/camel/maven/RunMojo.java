@@ -92,23 +92,6 @@ public class RunMojo extends AbstractExecMojo {
     protected String duration;
 
     /**
-     * The DOT output directory name used to generate the DOT diagram of the
-     * route definitions
-     *
-     * @parameter default-value="${project.build.directory}/site/cameldoc"
-     * @readonly
-     */
-    protected String dotDir;
-
-    /**
-     * Allows the DOT file generation to be enabled
-     *
-     * @parameter property="camel.usdDot"
-     *            default-value="false"
-     */
-    protected boolean useDot;
-
-    /**
      * Whether to log the classpath when starting
      *
      * @parameter property="camel.logClasspath"
@@ -181,13 +164,6 @@ public class RunMojo extends AbstractExecMojo {
      */
     private boolean trace;
 
-    /**
-     * Output all routes to the specified XML file
-     *
-     * @parameter property="camel.routesOutputFile"
-     */
-    private String routesOutputFile;    
-    
     /**
      * The main class to execute.
      *
@@ -390,19 +366,10 @@ public class RunMojo extends AbstractExecMojo {
 
         // lets create the command line arguments to pass in...
         List<String> args = new ArrayList<String>();
-        if (dotDir != null && useDot) {
-            args.add("-o");
-            args.add(dotDir);
-        }
         if (trace) {
             args.add("-t");
         }
 
-        if (routesOutputFile != null) {
-            args.add("-output");
-            args.add(routesOutputFile);
-        }        
-        
         if (applicationContextUri != null) {
             args.add("-ac");
             args.add(applicationContextUri);

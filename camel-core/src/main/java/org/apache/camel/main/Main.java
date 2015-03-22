@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -26,7 +25,6 @@ import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.view.ModelFileGenerator;
 
 /**
  * A command line tool for booting up a CamelContext
@@ -164,7 +162,4 @@ public class Main extends MainSupport {
         return new DefaultCamelContext();
     }
 
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return null;
-    }
 }
