@@ -25,6 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelLogger;
@@ -37,9 +38,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class ThroughputLogger extends ServiceSupport implements AsyncProcessor {
+public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
+    private String id;
     private final AtomicInteger receivedCounter = new AtomicInteger();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private long groupReceivedCount;
@@ -74,6 +76,14 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor {
         if (groupDelay != null) {
             setGroupDelay(groupDelay);
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {

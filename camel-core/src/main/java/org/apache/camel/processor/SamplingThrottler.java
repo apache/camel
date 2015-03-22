@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +40,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class SamplingThrottler extends DelegateAsyncProcessor {
+public class SamplingThrottler extends DelegateAsyncProcessor implements Traceable, IdAware {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(SamplingThrottler.class);
+    private String id;
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;
@@ -83,6 +86,14 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
         }
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTraceLabel() {
         if (messageFrequency > 0) {
             return "samplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
@@ -106,13 +117,13 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
                 long now = System.currentTimeMillis();
                 if (now >= timeOfLastExchange + periodInMillis) {
                     doSend = true;
-                    if (log.isTraceEnabled()) {
-                        log.trace(sampled.sample());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace(sampled.sample());
                     }
                     timeOfLastExchange = now;
                 } else {
-                    if (log.isTraceEnabled()) {
-                        log.trace(sampled.drop());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace(sampled.drop());
                     }
                 }
             }

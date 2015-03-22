@@ -35,6 +35,7 @@ import org.apache.camel.processor.resequencer.ResequencerEngine;
 import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -65,11 +66,12 @@ import org.slf4j.LoggerFactory;
  * 
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
+    private String id;
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
@@ -165,6 +167,14 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     public String getTraceLabel() {
         return "streamResequence";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

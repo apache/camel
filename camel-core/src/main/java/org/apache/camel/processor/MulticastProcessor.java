@@ -50,6 +50,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
@@ -80,7 +81,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  * @see Pipeline
  */
-public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
+public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
 
@@ -144,6 +145,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     protected final Processor onPrepare;
     private final CamelContext camelContext;
+    private String id;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
@@ -196,6 +198,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     @Override
     public String toString() {
         return "Multicast[" + getProcessors() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTraceLabel() {

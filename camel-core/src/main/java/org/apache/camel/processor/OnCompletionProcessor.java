@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -45,10 +46,11 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version 
  */
-public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
     private final CamelContext camelContext;
+    private String id;
     private final Processor processor;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -93,6 +95,14 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {

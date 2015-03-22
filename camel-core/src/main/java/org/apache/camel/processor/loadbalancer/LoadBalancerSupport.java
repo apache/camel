@@ -23,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -39,10 +40,11 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor> {
+public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor>, IdAware {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final List<Processor> processors = new CopyOnWriteArrayList<Processor>();
+    private String id;
 
     public void addProcessor(Processor processor) {
         processors.add(processor);
@@ -65,6 +67,14 @@ public abstract class LoadBalancerSupport extends ServiceSupport implements Load
 
     public boolean hasNext() {
         return processors.size() > 0;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     protected void doStart() throws Exception {

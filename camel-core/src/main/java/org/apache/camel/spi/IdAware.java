@@ -14,16 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.spi;
 
-import java.util.concurrent.RejectedExecutionException;
+/**
+ * To allow objects to be injected with an id, such as EIP {@link org.apache.camel.Processor}s which has been defined from Camel routes.
+ * <p/>
+ * This allows access to the id of the processor at runtime, which makes it easier to map it to the corresponding model definition.
+ */
+public interface IdAware extends HasId {
 
-public class ThrottlerRejectedExecutionException extends RejectedExecutionException {
-    private static final long serialVersionUID = 1L;
-
-    public ThrottlerRejectedExecutionException(String message) {
-        super(message);
-    }
+    /**
+     * Sets the id
+     *
+     * @param id the id
+     */
+    void setId(String id);
 
 }
-

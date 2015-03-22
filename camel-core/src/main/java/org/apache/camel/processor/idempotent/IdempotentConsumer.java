@@ -27,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeIdempotentRepository;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -48,8 +49,9 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.spi.IdempotentRepository
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
-public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
+public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+    private String id;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;
@@ -71,6 +73,14 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     @Override
     public String toString() {
         return "IdempotentConsumer[" + messageIdExpression + " -> " + processor + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {

@@ -62,6 +62,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -444,6 +445,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
             Processor processor = createProcessor(routeContext, output);
 
+            // inject id
+            if (processor instanceof IdAware) {
+                ((IdAware) processor).setId(output.getId());
+            }
+
             if (output instanceof Channel && processor == null) {
                 continue;
             }
@@ -525,6 +531,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // fallback to default implementation if factory did not create the processor
         if (processor == null) {
             processor = createProcessor(routeContext);
+        }
+
+        // inject id
+        if (processor instanceof IdAware) {
+            ((IdAware) processor).setId(this.getId());
         }
 
         if (processor == null) {

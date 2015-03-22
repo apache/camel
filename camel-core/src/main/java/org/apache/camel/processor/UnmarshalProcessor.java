@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
@@ -40,7 +41,8 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version 
  */
-public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware {
+public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware, IdAware {
+    private String id;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
 
@@ -96,6 +98,14 @@ public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor
 
     public String getTraceLabel() {
         return "unmarshal[" + dataFormat + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public CamelContext getCamelContext() {

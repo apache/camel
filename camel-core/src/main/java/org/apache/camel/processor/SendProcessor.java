@@ -32,6 +32,7 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware {
+public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
@@ -57,6 +58,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     protected AsyncProcessor producer;
     protected Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
+    protected String id;
 
     public SendProcessor(Endpoint destination) {
         this(destination, null);
@@ -79,6 +81,14 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     @Override
     public String toString() {
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -33,9 +34,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class CatchProcessor extends DelegateAsyncProcessor implements Traceable {
+public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
+    private String id;
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
     private final Predicate handled;
@@ -50,6 +52,14 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable 
     @Override
     public String toString() {
         return "Catch[" + exceptions + " -> " + getProcessor() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTraceLabel() {

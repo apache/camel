@@ -48,6 +48,7 @@ import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.ShutdownPrepared;
@@ -80,7 +81,7 @@ import org.slf4j.LoggerFactory;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared {
+public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, IdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -89,6 +90,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;
     private final Processor processor;
+    private String id;
     private AggregationStrategy aggregationStrategy;
     private Expression correlationExpression;
     private AggregateController aggregateController;
@@ -241,6 +243,14 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean hasNext() {
         return processor != null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {

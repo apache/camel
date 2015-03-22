@@ -26,6 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -49,9 +50,10 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see PollEnricher
  */
-public class Enricher extends ServiceSupport implements AsyncProcessor, EndpointAware {
+public class Enricher extends ServiceSupport implements AsyncProcessor, EndpointAware, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
+    private String id;
     private AggregationStrategy aggregationStrategy;
     private Producer producer;
     private boolean aggregateOnException;
@@ -77,6 +79,14 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, Endpoint
     public Enricher(AggregationStrategy aggregationStrategy, Producer producer) {
         this.aggregationStrategy = aggregationStrategy;
         this.producer = producer;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**

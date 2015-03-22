@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,9 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class FilterProcessor extends DelegateAsyncProcessor implements Traceable {
+public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
+    private String id;
     private final Predicate predicate;
 
     public FilterProcessor(Predicate predicate, Processor processor) {
@@ -65,6 +67,14 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     @Override
     public String toString() {
         return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTraceLabel() {
