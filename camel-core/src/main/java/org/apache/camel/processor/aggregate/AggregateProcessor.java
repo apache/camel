@@ -422,44 +422,47 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
         List<Exchange> list = new ArrayList<Exchange>();
 
-        // only need to update aggregation repository if we are not complete
         if (complete == null) {
+            // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
-            // we are not complete so the answer should be null
-            answer = null;
         } else {
-            // if batch consumer completion is enabled then we need to complete the group
-            if ("consumer".equals(complete)) {
-                for (String batchKey : batchConsumerCorrelationKeys) {
-                    Exchange batchAnswer;
-                    if (batchKey.equals(key)) {
-                        // skip the current aggregated key as we have already aggregated it and have the answer
-                        batchAnswer = answer;
-                    } else {
-                        batchAnswer = aggregationRepository.get(camelContext, batchKey);
-                    }
-
-                    if (batchAnswer != null) {
-                        batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-                        onCompletion(batchKey, originalExchange, batchAnswer, false);
-                        list.add(batchAnswer);
-                    }
-                }
-                batchConsumerCorrelationKeys.clear();
-                // we have already submitted to completion, so answer should be null
-                answer = null;
-            } else {
-                // we are complete for this exchange
-                answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-                answer = onCompletion(key, originalExchange, answer, false);
-            }
+            // if we are complete then add the answer to the list
+            doAggregationComplete(complete, list, key, originalExchange, answer);
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
+        return list;
+    }
+
+    protected void doAggregationComplete(String complete, List<Exchange> list, String key, Exchange originalExchange, Exchange answer) {
+        if ("consumer".equals(complete)) {
+            for (String batchKey : batchConsumerCorrelationKeys) {
+                Exchange batchAnswer;
+                if (batchKey.equals(key)) {
+                    // skip the current aggregated key as we have already aggregated it and have the answer
+                    batchAnswer = answer;
+                } else {
+                    batchAnswer = aggregationRepository.get(camelContext, batchKey);
+                }
+
+                if (batchAnswer != null) {
+                    batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
+                    onCompletion(batchKey, originalExchange, batchAnswer, false);
+                    list.add(batchAnswer);
+                }
+            }
+            batchConsumerCorrelationKeys.clear();
+            // we have already submitted to completion, so answer should be null
+            answer = null;
+        } else {
+            // we are complete for this exchange
+            answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
+            answer = onCompletion(key, originalExchange, answer, false);
+        }
+
         if (answer != null) {
             list.add(answer);
         }
-        return list;
     }
 
     protected void doAggregationRepositoryAdd(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
