@@ -41,6 +41,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
+import org.apache.camel.processor.aggregate.PreCompletionAwareAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;

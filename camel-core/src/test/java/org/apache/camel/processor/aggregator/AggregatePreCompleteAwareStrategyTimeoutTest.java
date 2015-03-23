@@ -23,10 +23,10 @@ import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
 /**
  * @version 
  */
-public class AggregatePredicateAwareStrategyTest extends ContextTestSupport {
+public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSupport {
 
-    public void testAggregatePreComplete() throws Exception {
-        getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E");
+    public void testAggregatePreCompleteTimeout() throws Exception {
+        getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E", "X+F");
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -35,6 +35,7 @@ public class AggregatePredicateAwareStrategyTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
         template.sendBodyAndHeader("direct:start", "X", "id", 123);
+        template.sendBodyAndHeader("direct:start", "F", "id", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -45,7 +46,7 @@ public class AggregatePredicateAwareStrategyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionSize(5)
+                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(1000)
                         .to("mock:aggregated");
             }
         };

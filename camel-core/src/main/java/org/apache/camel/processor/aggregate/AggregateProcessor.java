@@ -92,6 +92,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private final Processor processor;
     private String id;
     private AggregationStrategy aggregationStrategy;
+    private boolean preCompletion;
     private Expression correlationExpression;
     private AggregateController aggregateController;
     private final ExecutorService executorService;
@@ -376,6 +377,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
         List<Exchange> list = new ArrayList<Exchange>();
+        String complete = null;
 
         Exchange answer;
         Exchange originalExchange = aggregationRepository.get(newExchange.getContext(), key);
@@ -396,31 +398,36 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
 
         // check if we are pre complete
-        boolean preComplete;
-        try {
-            // put the current aggregated size on the exchange so its avail during completion check
-            newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
-            preComplete = onPreCompletionAggregation(oldExchange, newExchange);
-            // remove it afterwards
-            newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
-        } catch (Throwable e) {
-            // must catch any exception from aggregation
-            throw new CamelExchangeException("Error occurred during preComplete", newExchange, e);
-        }
-
-        // check if we are complete
-        String complete = null;
-        if (!preComplete && isEagerCheckCompletion()) {
+        if (preCompletion) {
+            try {
+                // put the current aggregated size on the exchange so its avail during completion check
+                newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
+                complete = isPreCompleted(key, oldExchange, newExchange);
+                // make sure to track timeouts if not complete
+                if (complete == null) {
+                    trackTimeout(key, newExchange);
+                }
+                // remove it afterwards
+                newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
+            } catch (Throwable e) {
+                // must catch any exception from aggregation
+                throw new CamelExchangeException("Error occurred during preComplete", newExchange, e);
+            }
+        } else if (isEagerCheckCompletion()) {
             // put the current aggregated size on the exchange so its avail during completion check
             newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
             complete = isCompleted(key, newExchange);
+            // make sure to track timeouts if not complete
+            if (complete == null) {
+                trackTimeout(key, newExchange);
+            }
             // remove it afterwards
             newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
         }
 
-        if (preComplete) {
+        if (preCompletion && complete != null) {
             // need to pre complete the current group before we aggregate
-            doAggregationComplete("strategy", list, key, originalExchange, oldExchange);
+            doAggregationComplete(complete, list, key, originalExchange, oldExchange);
             // as we complete the current group eager, we should indicate the new group is not complete
             complete = null;
             // and clear old/original exchange as we start on a new group
@@ -445,8 +452,12 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         answer.setProperty(Exchange.AGGREGATED_SIZE, size);
 
         // maybe we should check completion after the aggregation
-        if (!isEagerCheckCompletion()) {
+        if (!preCompletion && !isEagerCheckCompletion()) {
             complete = isCompleted(key, answer);
+            // make sure to track timeouts if not complete
+            if (complete == null) {
+                trackTimeout(key, newExchange);
+            }
         }
 
         if (complete == null) {
@@ -515,6 +526,22 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     /**
+     * Tests whether the given exchanges is pre-complete or not
+     *
+     * @param key      the correlation key
+     * @param oldExchange   the existing exchange
+     * @param newExchange the incoming exchange
+     * @return <tt>null</tt> if not pre-completed, otherwise a String with the type that triggered the pre-completion
+     */
+    protected String isPreCompleted(String key, Exchange oldExchange, Exchange newExchange) {
+        boolean complete = false;
+        if (aggregationStrategy instanceof PreCompletionAwareAggregationStrategy) {
+            complete = ((PreCompletionAwareAggregationStrategy) aggregationStrategy).preComplete(oldExchange, newExchange);
+        }
+        return complete ? "strategy" : null;
+    }
+
+    /**
      * Tests whether the given exchange is complete or not
      *
      * @param key      the correlation key
@@ -564,6 +591,11 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             }
         }
 
+        // not complete
+        return null;
+    }
+
+    protected void trackTimeout(String key, Exchange exchange) {
         // timeout can be either evaluated based on an expression or from a fixed value
         // expression takes precedence
         boolean timeoutSet = false;
@@ -586,9 +618,6 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             }
             addExchangeToTimeoutMap(key, exchange, getCompletionTimeout());
         }
-
-        // not complete
-        return null;
     }
 
     protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
@@ -1182,11 +1211,19 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     protected void doStart() throws Exception {
-        if (getCompletionTimeout() <= 0 && getCompletionInterval() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null
-                && !isCompletionFromBatchConsumer() && getCompletionTimeoutExpression() == null
-                && getCompletionSizeExpression() == null) {
-            throw new IllegalStateException("At least one of the completions options"
-                    + " [completionTimeout, completionInterval, completionSize, completionPredicate, completionFromBatchConsumer] must be set");
+        if (aggregationStrategy instanceof PreCompletionAwareAggregationStrategy) {
+            preCompletion = true;
+            LOG.info("PreCompletionAwareAggregationStrategy detected. Aggregator {} is in pre-completion mode.", getId());
+        }
+
+        if (!preCompletion) {
+            // if not in pre completion mode then check we configured the completion required
+            if (getCompletionTimeout() <= 0 && getCompletionInterval() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null
+                    && !isCompletionFromBatchConsumer() && getCompletionTimeoutExpression() == null
+                    && getCompletionSizeExpression() == null) {
+                throw new IllegalStateException("At least one of the completions options"
+                        + " [completionTimeout, completionInterval, completionSize, completionPredicate, completionFromBatchConsumer] must be set");
+            }
         }
 
         if (getCloseCorrelationKeyOnCompletion() != null) {
