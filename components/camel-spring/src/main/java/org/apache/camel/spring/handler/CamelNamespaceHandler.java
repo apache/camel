@@ -57,7 +57,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.spring.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.spring.SSLContextParametersFactoryBean;
 import org.apache.camel.util.spring.SecureRandomParametersFactoryBean;
-import org.apache.camel.view.ModelFileGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -118,10 +117,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         for (int i = 0; i < list.getLength(); ++i) {
             doBeforeParse(list.item(i));
         }
-    }
-
-    public ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(getJaxbContext());
     }
 
     public void init() {

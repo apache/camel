@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -471,7 +472,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // parse the syntax and find the same group in the uri
         Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
         List<String> word = new ArrayList<String>();
-        while (matcher.find() ) {
+        while (matcher.find()) {
             String s = matcher.group(1);
             if (!scheme.equals(s)) {
                 word.add(s);
@@ -480,12 +481,24 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String uriPath = stripQuery(uri);
 
-        Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
+        // if there is only one, then use uriPath as is
         List<String> word2 = new ArrayList<String>();
-        while (matcher2.find() ) {
-            String s = matcher2.group(1);
-            if (!scheme.equals(s)) {
-                word2.add(s);
+
+        if (word.size() == 1) {
+            String s = uriPath;
+            s = URISupport.stripPrefix(s, scheme);
+            // strip any leading : or / after the scheme
+            while (s.startsWith(":") || s.startsWith("/")) {
+                s = s.substring(1);
+            }
+            word2.add(s);
+        } else {
+            Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
+            while (matcher2.find()) {
+                String s = matcher2.group(1);
+                if (!scheme.equals(s)) {
+                    word2.add(s);
+                }
             }
         }
 
@@ -616,8 +629,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         String originalSyntax = syntax;
 
-        // build at first according to syntax
-        Map<String, String> copy = new HashMap<String, String>();
+        // build at first according to syntax (use a tree map as we want the uri options sorted)
+        Map<String, String> copy = new TreeMap<String, String>();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue() != null ? entry.getValue() : "";
@@ -628,15 +641,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
         // the tokens between the options in the path
         String[] tokens = syntax.split("\\w+");
 
         // parse the syntax into each options
         Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
         List<String> options = new ArrayList<String>();
-        while (matcher.find() ) {
+        while (matcher.find()) {
             String s = matcher.group(1);
             options.add(s);
         }
@@ -644,7 +655,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         // parse the syntax into each options
         Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
         List<String> options2 = new ArrayList<String>();
-        while (matcher2.find() ) {
+        while (matcher2.find()) {
             String s = matcher2.group(1);
             options2.add(s);
         }

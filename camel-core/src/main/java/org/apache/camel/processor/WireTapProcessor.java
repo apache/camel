@@ -34,6 +34,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -47,8 +48,9 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware {
+public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
+    private String id;
     private final Endpoint destination;
     private final Processor processor;
     private final ExchangePattern exchangePattern;
@@ -80,6 +82,14 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     @Override
     public String getTraceLabel() {
         return "wireTap(" + destination + ")";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Endpoint getEndpoint() {

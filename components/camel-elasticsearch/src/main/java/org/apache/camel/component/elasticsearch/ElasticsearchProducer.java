@@ -17,7 +17,6 @@
 package org.apache.camel.component.elasticsearch;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.Exchange;

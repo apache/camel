@@ -91,23 +91,6 @@ public class RunMojo extends AbstractExecMojo {
     protected String duration;
 
     /**
-     * The DOT output directory name used to generate the DOT diagram of the
-     * route definitions
-     *
-     * @parameter default-value="${project.build.directory}/site/cameldoc"
-     * @readonly
-     */
-    protected String dotDir;
-
-    /**
-     * Allows the DOT file generation to be disabled
-     *
-     * @parameter property="true"
-     * @readonly
-     */
-    protected boolean dotEnabled;
-
-    /**
      * Allows to provide a custom properties file on the classpath to initialize
      * a {@link javax.naming.InitialContext} object with. This corresponds to
      * the {@link org.apache.camel.guice.Main#setJndiProperties(String)} API
@@ -172,13 +155,6 @@ public class RunMojo extends AbstractExecMojo {
      * @required
      */
     private boolean trace;
-
-    /**
-     * Output all routes to the specified XML file
-     *
-     * @parameter property="camel.routesOutputFile"
-     */
-    private String routesOutputFile;
 
     /**
      * The main class to execute.
@@ -334,10 +310,6 @@ public class RunMojo extends AbstractExecMojo {
 
         // lets create the command line arguments to pass in...
         List<String> args = new ArrayList<String>();
-        if (dotDir != null && dotEnabled) {
-            args.add("-o");
-            args.add(dotDir);
-        }
         if (jndiProperties != null) {
             args.add("-j");
             args.add(jndiProperties);
@@ -347,11 +319,6 @@ public class RunMojo extends AbstractExecMojo {
         }
         if (trace) {
             args.add("-t");
-        }
-
-        if (routesOutputFile != null) {
-            args.add("-output");
-            args.add(routesOutputFile);
         }
 
         args.add("-d");

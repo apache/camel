@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -511,6 +512,22 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the route or <tt>null</tt> if not found
      */
     Route getRoute(String id);
+
+    /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @return the processor or <tt>null</tt> if not found
+     */
+    Processor getProcessor(String id);
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @return the processor definition or <tt>null</tt> if not found
+     */
+    ProcessorDefinition getProcessorDefinition(String id);
 
     /**
      * Adds a collection of routes to this context using the given builder

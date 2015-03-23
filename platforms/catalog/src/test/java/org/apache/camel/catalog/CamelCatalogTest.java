@@ -117,9 +117,13 @@ public class CamelCatalogTest extends TestCase {
     public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("destinationName", "foo");
-
         String uri = catalog.asEndpointUri("jms", map);
         assertEquals("jms:foo", uri);
+
+        map.put("deliveryPersistent", "false");
+        map.put("allowNullBody", "true");
+        uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:foo?allowNullBody=true&deliveryPersistent=false", uri);
     }
 
     @Test
@@ -158,6 +162,31 @@ public class CamelCatalogTest extends TestCase {
         assertEquals(1, map.size());
 
         assertEquals("foo", map.get("destinationName"));
+
+        map = catalog.endpointProperties("jms:foo?allowNullBody=true&deliveryPersistent=false");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
+        assertEquals("true", map.get("allowNullBody"));
+        assertEquals("false", map.get("deliveryPersistent"));
+    }
+
+    @Test
+    public void testEndpointPropertiesAtom() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("atom:file:src/test/data/feed.atom");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
+
+        map = catalog.endpointProperties("atom:file:src/test/data/feed.atom?splitEntries=false&delay=5000");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
+        assertEquals("false", map.get("splitEntries"));
+        assertEquals("5000", map.get("delay"));
     }
 
 }

@@ -42,8 +42,8 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.castor</artifactId>
+            <groupId>org.codehaus.castor</groupId>
+            <artifactId>castor-xml</artifactId>
         </dependency>
 
         <!-- testing -->

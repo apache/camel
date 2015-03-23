@@ -42,7 +42,6 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
 
         try {
             template.requestBody("direct:start", "Hello Camel", String.class);
-            fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             RejectedExecutionException cause = assertIsInstanceOf(RejectedExecutionException.class, e.getCause());
             assertTrue(cause.getMessage().startsWith("Interrupted while waiting for asynchronous callback"));

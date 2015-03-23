@@ -110,8 +110,8 @@ public final class PackageHelper {
 
         @Override
         public boolean accept(File pathname) {
-            // skip camel-jetty8 as its a duplicate of camel-jetty9
-            if ("camel-jetty8".equals(pathname)) {
+            // skip camel-jetty9 as its a duplicate of camel-jetty
+            if ("camel-jetty9".equals(pathname)) {
                 return false;
             }
             return pathname.isDirectory() || pathname.getName().endsWith(".json");

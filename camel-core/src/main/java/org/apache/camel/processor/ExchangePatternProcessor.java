@@ -20,13 +20,15 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * Processor to set {@link org.apache.camel.ExchangePattern} on the {@link org.apache.camel.Exchange}.
  */
-public class ExchangePatternProcessor extends ServiceSupport implements AsyncProcessor {
+public class ExchangePatternProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+    private String id;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     
     public ExchangePatternProcessor() {
@@ -38,6 +40,14 @@ public class ExchangePatternProcessor extends ServiceSupport implements AsyncPro
     
     public void setExchangePattern(ExchangePattern ep) {
         exchangePattern = ep;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void process(Exchange exchange) throws Exception {

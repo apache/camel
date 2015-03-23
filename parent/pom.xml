@@ -82,6 +82,7 @@
     <cassandra-driver-guava-version>16.0.1</cassandra-driver-guava-version>
     <cassandra-version>2.1.2</cassandra-version>
     <cassandra-unit-version>2.0.2.2</cassandra-unit-version>
+    <castor-version>1.3.2</castor-version>
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
     <cdi-api-version>1.0</cdi-api-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
@@ -190,7 +191,7 @@
     <google-api-services-calendar-version>v3-rev99-1.19.0</google-api-services-calendar-version>
     <google-api-services-mail-version>v1-rev15-1.19.0</google-api-services-mail-version>
     <grizzly-websockets-version>2.3.17</grizzly-websockets-version>
-    <groovy-version>2.4.1</groovy-version>
+    <groovy-version>2.4.2</groovy-version>
     <gson-version>2.3</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
@@ -417,7 +418,7 @@
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.7.10</slf4j-version>
     <smack-bundle-version>4.0.6</smack-bundle-version>
-    <smack-version>4.0.6</smack-version>
+    <smack-version>4.0.7</smack-version>
     <snakeyaml-version>1.14</snakeyaml-version>
     <snappy-version>1.1.0.1</snappy-version>
     <snmp4j-version>2.3.3_1</snmp4j-version>
@@ -2109,6 +2110,11 @@
       </dependency>
 
       <!-- optional castor dependencies -->
+      <dependency>
+        <groupId>org.codehaus.castor</groupId>
+        <artifactId>castor-xml</artifactId>
+        <version>${castor-version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.castor</artifactId>
