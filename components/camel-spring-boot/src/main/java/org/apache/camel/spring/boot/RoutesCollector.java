@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +32,8 @@ import org.springframework.core.io.Resource;
 
 public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
 
+    // Static collaborators
+
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     // Collaborators
@@ -39,7 +43,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     // Constructors
 
     public RoutesCollector(List<CamelContextConfiguration> camelContextConfigurations) {
-        this.camelContextConfigurations = camelContextConfigurations;
+        this.camelContextConfigurations = new ArrayList<CamelContextConfiguration>(camelContextConfigurations);
     }
 
     // Overridden
@@ -76,12 +80,15 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     // Helpers
 
     private void loadXmlRoutes(ApplicationContext applicationContext, CamelContext camelContext) {
+        LOG.debug("Started XML routes detection. Scanning classpath (/camel/*.xml)...");
         try {
             Resource[] xmlRoutes = applicationContext.getResources("classpath:camel/*.xml");
             for (Resource xmlRoute : xmlRoutes) {
                 RoutesDefinition xmlDefinition = camelContext.loadRoutesDefinition(xmlRoute.getInputStream());
                 camelContext.addRouteDefinitions(xmlDefinition.getRoutes());
             }
+        } catch (FileNotFoundException e) {
+            LOG.debug("No XMl routes found in the classpath (/camel/*.xml). Skipping XML routes detection.");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
