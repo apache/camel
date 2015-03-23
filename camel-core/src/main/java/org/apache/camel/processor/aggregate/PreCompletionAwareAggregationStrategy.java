@@ -18,6 +18,15 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
 
+/**
+ * A specialized {@link org.apache.camel.processor.aggregate.AggregationStrategy} which enables the aggregator to run
+ * in pre-completion mode. This allows the {@link #preComplete(org.apache.camel.Exchange, org.apache.camel.Exchange)} method
+ * to control the completion. Only completion timeout or interval can also be used; any other completion configuration
+ * is not in use.
+ * <p/>
+ * Using this strategy supports the use-case, where an incoming Exchange has information that may trigger the completion
+ * of the current group. And then use the new incoming Exchange to start a new group thereafter from scratch.
+ */
 public interface PreCompletionAwareAggregationStrategy extends AggregationStrategy {
 
     /**
