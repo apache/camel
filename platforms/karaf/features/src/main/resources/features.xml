@@ -438,8 +438,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <!--the lastest gson version of github core supports is 2.2 -->
     <bundle dependency='true'>mvn:com.google.code.gson/gson/2.2</bundle>
-    <!--TODO use the servicesmix wrapped bundle -->
-    <bundle dependency='true'>mvn:org.eclipse.mylyn.github/org.eclipse.egit.github.core/${egit-github-core-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.egit.github.core/${egit-github-core-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-github/${project.version}</bundle>
    </feature>
