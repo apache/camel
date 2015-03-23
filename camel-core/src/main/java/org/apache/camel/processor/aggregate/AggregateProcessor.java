@@ -375,6 +375,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
+        List<Exchange> list = new ArrayList<Exchange>();
+
         Exchange answer;
         Exchange originalExchange = aggregationRepository.get(newExchange.getContext(), key);
         Exchange oldExchange = originalExchange;
@@ -390,9 +392,25 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             size++;
         }
 
+        // prepare the exchanges for aggregation
+        ExchangeHelper.prepareAggregation(oldExchange, newExchange);
+
+        // check if we are pre complete
+        boolean preComplete;
+        try {
+            // put the current aggregated size on the exchange so its avail during completion check
+            newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
+            preComplete = onPreCompletionAggregation(oldExchange, newExchange);
+            // remove it afterwards
+            newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
+        } catch (Throwable e) {
+            // must catch any exception from aggregation
+            throw new CamelExchangeException("Error occurred during preComplete", newExchange, e);
+        }
+
         // check if we are complete
         String complete = null;
-        if (isEagerCheckCompletion()) {
+        if (!preComplete && isEagerCheckCompletion()) {
             // put the current aggregated size on the exchange so its avail during completion check
             newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
             complete = isCompleted(key, newExchange);
@@ -400,12 +418,23 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
         }
 
-        // prepare the exchanges for aggregation and then aggregate them
-        ExchangeHelper.prepareAggregation(oldExchange, newExchange);
-        // must catch any exception from aggregation
+        if (preComplete) {
+            // need to pre complete the current group before we aggregate
+            doAggregationComplete("strategy", list, key, originalExchange, oldExchange);
+            // as we complete the current group eager, we should indicate the new group is not complete
+            complete = null;
+            // and clear old/original exchange as we start on a new group
+            oldExchange = null;
+            originalExchange = null;
+            // and reset the size to 1
+            size = 1;
+        }
+
+        // aggregate the exchanges
         try {
             answer = onAggregation(oldExchange, newExchange);
         } catch (Throwable e) {
+            // must catch any exception from aggregation
             throw new CamelExchangeException("Error occurred during aggregation", newExchange, e);
         }
         if (answer == null) {
@@ -419,8 +448,6 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (!isEagerCheckCompletion()) {
             complete = isCompleted(key, answer);
         }
-
-        List<Exchange> list = new ArrayList<Exchange>();
 
         if (complete == null) {
             // only need to update aggregation repository if we are not complete
@@ -566,6 +593,13 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
         return aggregationStrategy.aggregate(oldExchange, newExchange);
+    }
+
+    protected boolean onPreCompletionAggregation(Exchange oldExchange, Exchange newExchange) {
+        if (aggregationStrategy instanceof PreCompletionAwareAggregationStrategy) {
+            return ((PreCompletionAwareAggregationStrategy) aggregationStrategy).preComplete(oldExchange, newExchange);
+        }
+        return false;
     }
 
     protected Exchange onCompletion(final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout) {
