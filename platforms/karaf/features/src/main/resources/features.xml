@@ -1036,7 +1036,7 @@
   </feature>
   <feature name='camel-ognl' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/${javassist-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${project.version}</bundle>
   </feature>

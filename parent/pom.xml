@@ -361,7 +361,8 @@
     <openwebbeans-version>1.2.0</openwebbeans-version>
     <olingo2-version>2.0.0</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.0_1</olingo-odata2-core-bundle-version>
-    <ognl-version>3.0.8_1</ognl-version>
+    <ognl-version>3.0.8</ognl-version>
+    <ognl-bundle-version>3.0.8_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
     <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
@@ -2210,9 +2211,14 @@
 
       <!-- optional ognl support -->
       <dependency>
+        <groupId>ognl</groupId>
+        <artifactId>ognl</artifactId>
+        <version>${ognl-version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
-        <version>${ognl-version}</version>
+        <version>${ognl-bundle-version}</version>
       </dependency>
 
       <!-- optional Pax support -->
