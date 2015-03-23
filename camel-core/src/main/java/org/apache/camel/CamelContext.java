@@ -522,12 +522,32 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Processor getProcessor(String id);
 
     /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the processor type
+     * @return the processor or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends Processor> T getProcessor(String id, Class<T> type);
+
+    /**
      * Gets the processor definition from any of the routes which with the given id
      *
      * @param id id of the processor definition
      * @return the processor definition or <tt>null</tt> if not found
      */
     ProcessorDefinition getProcessorDefinition(String id);
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @param type the processor definition type
+     * @return the processor definition or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
 
     /**
      * Adds a collection of routes to this context using the given builder

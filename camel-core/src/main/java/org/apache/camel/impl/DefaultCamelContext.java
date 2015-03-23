@@ -719,6 +719,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
+    public <T extends Processor> T getProcessor(String id, Class<T> type) {
+        Processor answer = getProcessor(id);
+        if (answer != null) {
+            return type.cast(answer);
+        }
+        return null;
+    }
+
     public ProcessorDefinition getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
             Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
@@ -728,6 +736,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     return proc;
                 }
             }
+        }
+        return null;
+    }
+
+    public <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type) {
+        ProcessorDefinition answer = getProcessorDefinition(id);
+        if (answer != null) {
+            return type.cast(answer);
         }
         return null;
     }
