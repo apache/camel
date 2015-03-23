@@ -42,22 +42,10 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
-      <exclusions>
-         <exclusion>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-         </exclusion>
-      </exclusions>
+      <groupId>ognl</groupId>
+      <artifactId>ognl</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.javassist</artifactId>
-      <version>${javassist-bundle-version}</version>
-    </dependency>
-    
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
