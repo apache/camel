@@ -37,7 +37,12 @@ public class StandaloneFatJarRouterTest extends Assert {
         // Given
         final int port = SocketUtils.findAvailableTcpPort();
         final URL httpEndpoint = new URL("http://localhost:" + port);
-        TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests.TestFatJarRouter", "--http.port=" + port);
+        new Thread() {
+            @Override
+            public void run() {
+                TestFatJarRouter.main("--spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests.TestFatJarRouter", "--http.port=" + port);
+            }
+        }.start();
         await().atMost(1, MINUTES).until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
