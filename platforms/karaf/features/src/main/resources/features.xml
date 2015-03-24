@@ -758,6 +758,7 @@
     <bundle>mvn:org.apache.camel/camel-jetty8/${project.version}</bundle>
   </feature>
   <feature name='camel-jetty9' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-jetty9 intend to work with jetty9, so this feature only works in the karaf container which support jetty9, e.g. karaf 4.x</details>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-http</feature>
