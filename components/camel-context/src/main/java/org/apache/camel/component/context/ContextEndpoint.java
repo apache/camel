@@ -23,15 +23,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(scheme = "context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
 public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String contextId;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String localEndpointUrl;
 
     private final Endpoint delegate;

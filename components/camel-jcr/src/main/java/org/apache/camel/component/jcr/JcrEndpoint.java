@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -41,9 +42,9 @@ public class JcrEndpoint extends DefaultEndpoint {
     private Credentials credentials;
     private Repository repository;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String base;
     @UriParam
     private String username;
@@ -51,7 +52,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private int eventTypes;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean deep;
     @UriParam
     private String uuids;
