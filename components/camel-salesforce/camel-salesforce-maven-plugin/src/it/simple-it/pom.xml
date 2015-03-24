@@ -61,6 +61,20 @@
               <goal>generate</goal>
             </goals>
             <configuration>
+              <httpClientProperties>
+                <timeout>60000</timeout>
+                <maxConnectionsPerAddress>10</maxConnectionsPerAddress>
+                <removeIdleDestinations>true</removeIdleDestinations>
+              </httpClientProperties>
+              <sslContextParameters>
+                <clientParameters>
+                    <cipherSuitesFilter>
+                      <exclude>
+                        <exclude>SSL.*</exclude>
+                      </exclude>
+                    </cipherSuitesFilter>
+                </clientParameters>
+              </sslContextParameters>
               <includePattern>(.*__c)</includePattern>
               <!-- Salesforce login info -->
               <clientId>${clientId}</clientId>
