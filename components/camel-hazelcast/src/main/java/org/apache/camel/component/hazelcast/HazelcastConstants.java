@@ -100,6 +100,9 @@ public final class HazelcastConstants {
 
     // parameter names
     public static final String OPERATION_PARAM = "operation";
+    public static final String HAZELCAST_INSTANCE_NAME_PARAM = "hazelcastInstanceName";
+    public static final String HAZELCAST_INSTANCE_PARAM = "hazelcastInstance";
+
 
     private HazelcastConstants() {
     }

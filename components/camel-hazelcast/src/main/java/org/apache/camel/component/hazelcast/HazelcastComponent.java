@@ -36,6 +36,7 @@ import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.*;
 
 public class HazelcastComponent extends UriEndpointComponent {
 
@@ -54,15 +55,9 @@ public class HazelcastComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        
-        // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
-        // programmatically and cancels local instance creation as well.
-        HazelcastInstance hzInstance = resolveAndRemoveReferenceParameter(parameters, "hazelcastInstance",
-                HazelcastInstance.class);
-        // Now we use the hazelcastInstance from component
-        if (hzInstance == null) {
-            hzInstance = hazelcastInstance;
-        }
+
+        // use the given hazelcast Instance or create one if not given
+        HazelcastInstance hzInstance = getOrCreateHzInstance(parameters);
 
         int defaultOperation = -1;
         Object operation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, Object.class);
@@ -150,10 +145,6 @@ public class HazelcastComponent extends UriEndpointComponent {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        if (hazelcastInstance == null) {
-            createOwnInstance = true;
-            hazelcastInstance = createOwnInstance();
-        }
     }
 
     @Override
@@ -177,5 +168,30 @@ public class HazelcastComponent extends UriEndpointComponent {
         // Disable the version check
         config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
         return Hazelcast.newHazelcastInstance(config);
+    }
+
+    private HazelcastInstance getOrCreateHzInstance(Map<String, Object> parameters) {
+
+        // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
+        HazelcastInstance hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM,
+                HazelcastInstance.class);
+
+        // check if an already created instance is given then just get instance by its name.
+        if (hzInstance == null)
+        {
+            hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
+            parameters.remove(HAZELCAST_INSTANCE_NAME_PARAM);
+        }
+
+        // Now create onw instance component
+        if (hzInstance == null) {
+
+            if (hazelcastInstance == null) {
+                createOwnInstance = true;
+                hazelcastInstance = createOwnInstance();
+            }
+            hzInstance = hazelcastInstance;
+        }
+        return hzInstance;
     }
 }
