@@ -75,6 +75,7 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -735,9 +736,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         ProcessorDefinition def = getProcessorDefinition(id);
 
         if (processor != null && def != null) {
-            // lookup the processor in mbean
             try {
                 ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForProcessor(this, processor, def);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
+            } catch (MalformedObjectNameException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return null;
+    }
+
+    public <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type) {
+        Route route = getRoute(routeId);
+
+        if (route != null) {
+            try {
+                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForRoute(route);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);

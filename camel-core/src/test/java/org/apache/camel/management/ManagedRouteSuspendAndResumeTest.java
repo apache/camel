@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.mbean.ManagedSuspendableRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -84,6 +85,11 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
 
         // this time the file is consumed
         mock.assertIsSatisfied();
+
+        ManagedSuspendableRouteMBean route = context.getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
+        assertNotNull(route);
+
+        assertEquals(2, route.getExchangesCompleted());
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
@@ -98,7 +104,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed").to("mock:result");
+                from("file://target/managed").routeId("foo").to("mock:result");
             }
         };
     }
