@@ -486,7 +486,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hbase/${hbase-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hbase/${project.version}</bundle>
     <!-- the following bundles can be removed when osgi metadata is fixed in commons-configuration and hbase, to have resolution=:option on packages that are optional -->
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
@@ -535,7 +535,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-core/${hadoop-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
     <!-- the following bundles can be removed when osgi metadata is fixed in commons-configuration, to have resolution=:option on packages that are optional -->
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
@@ -657,7 +657,7 @@
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
   </feature>
   <feature name='camel-jcr' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jcr/${project.version}</bundle>
