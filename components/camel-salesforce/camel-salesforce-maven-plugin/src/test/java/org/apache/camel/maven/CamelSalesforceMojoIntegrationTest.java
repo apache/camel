@@ -35,6 +35,19 @@ public class CamelSalesforceMojoIntegrationTest {
 
     @Test
     public void testExecute() throws Exception {
+        CamelSalesforceMojo mojo = createMojo();
+
+        // generate code
+        mojo.execute();
+
+        // validate generated code
+        // check that it was generated
+        Assert.assertTrue("Output directory was not created", mojo.outputDirectory.exists());
+
+        // TODO check that the generated code compiles
+    }
+
+    protected CamelSalesforceMojo createMojo() throws IOException {
         CamelSalesforceMojo mojo = new CamelSalesforceMojo();
 
         mojo.setLog(new SystemStreamLog());
@@ -59,15 +72,7 @@ public class CamelSalesforceMojoIntegrationTest {
             }
             mojo.outputDirectory.delete();
         }
-
-        // generate code
-        mojo.execute();
-
-        // validate generated code
-        // check that it was generated
-        Assert.assertTrue("Output directory was not created", mojo.outputDirectory.exists());
-
-        // TODO check that the generated code compiles
+        return mojo;
     }
 
     private void setLoginProperties(CamelSalesforceMojo mojo) throws IOException {
