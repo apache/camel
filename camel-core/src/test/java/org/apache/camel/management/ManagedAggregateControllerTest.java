@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -151,6 +152,13 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
         pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(1, pending.intValue());
+
+        // we can also use the client mbean
+        ManagedAggregateProcessorMBean client = context.getManagedProcessor("myAggregator", ManagedAggregateProcessorMBean.class);
+        assertNotNull(client);
+
+        assertEquals(1, client.getCompletedByForce());
+        assertEquals(4, client.getTotalIn());
     }
 
     @Override

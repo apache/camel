@@ -391,7 +391,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
                     processors.add(processor);
                 }
             }
@@ -400,7 +400,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");
             for (ObjectName on : routes) {
-                ManagedRouteMBean route = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedRouteMBean.class, true);
+                ManagedRouteMBean route = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
                 sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);

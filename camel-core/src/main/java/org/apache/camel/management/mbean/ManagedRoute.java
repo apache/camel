@@ -288,7 +288,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
 
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {

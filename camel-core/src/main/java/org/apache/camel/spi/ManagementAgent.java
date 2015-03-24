@@ -66,6 +66,15 @@ public interface ManagementAgent extends Service {
     boolean isRegistered(ObjectName name);
 
     /**
+     * Creates a new proxy client
+     *
+     * @param name   the mbean name
+     * @param mbean  the client interface, such as from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the client or <tt>null</tt> if mbean does not exists
+     */
+    <T> T newProxyClient(ObjectName name, Class<T> mbean);
+
+    /**
      * Get the MBeanServer which hosts managed objects.
      * <p/>
      * <b>Notice:</b> If the JMXEnabled configuration is not set to <tt>true</tt>,

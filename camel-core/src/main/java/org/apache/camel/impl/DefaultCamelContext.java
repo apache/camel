@@ -38,6 +38,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -72,6 +74,7 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -724,6 +727,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (answer != null) {
             return type.cast(answer);
         }
+        return null;
+    }
+
+    public <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type) {
+        Processor processor = getProcessor(id);
+        ProcessorDefinition def = getProcessorDefinition(id);
+
+        if (processor != null && def != null) {
+            // lookup the processor in mbean
+            try {
+                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForProcessor(this, processor, def);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
+            } catch (MalformedObjectNameException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
         return null;
     }
 

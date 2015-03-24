@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -530,6 +531,16 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws java.lang.ClassCastException is thrown if the type is not correct type
      */
     <T extends Processor> T getProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the processor or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
 
     /**
      * Gets the processor definition from any of the routes which with the given id
