@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,15 +38,15 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
+    @UriPath @Metadata(required = "true")
+    private URI httpUri;
     @UriParam
     private AsyncHttpClientConfig clientConfig;
-    @UriPath
-    private URI httpUri;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferException;
     @UriParam
     private SSLContextParameters sslContextParameters;
