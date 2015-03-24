@@ -74,6 +74,7 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -760,6 +761,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         return null;
+    }
+
+    public ManagedCamelContextMBean getManagedCamelContext() {
+        try {
+            ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(this);
+            return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
+        } catch (MalformedObjectNameException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public ProcessorDefinition getProcessorDefinition(String id) {

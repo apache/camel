@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -534,7 +535,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T extends Processor> T getProcessor(String id, Class<T> type);
 
     /**
-     * Gets the managed processor from any of the routes which with the given id
+     * Gets the managed processor client api from any of the routes which with the given id
      *
      * @param id id of the processor
      * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
@@ -544,7 +545,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
 
     /**
-     * Gets the managed route with the given route id
+     * Gets the managed route client api with the given route id
      *
      * @param routeId id of the route
      * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
@@ -552,6 +553,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
+
+    /**
+     * Gets the managed Camel context client api
+     */
+    ManagedCamelContextMBean getManagedCamelContext();
 
     /**
      * Gets the processor definition from any of the routes which with the given id
