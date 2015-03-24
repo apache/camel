@@ -43,9 +43,9 @@ public class RmiEndpoint extends DefaultEndpoint {
     private ClassLoader classLoader;
     private URI uri;
 
-    @UriPath
+    @UriPath(defaultValue = "localhost")
     private String hostname;
-    @UriPath
+    @UriPath(defaultValue = "" + Registry.REGISTRY_PORT)
     private int port;
     @UriPath @Metadata(required = "true")
     private String name;

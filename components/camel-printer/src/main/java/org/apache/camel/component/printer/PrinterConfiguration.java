@@ -24,6 +24,7 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.Sides;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -33,11 +34,11 @@ import org.apache.camel.util.URISupport;
 @UriParams
 public class PrinterConfiguration {
     private URI uri;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private int port;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String printername;
     @UriParam
     private String printerPrefix;
