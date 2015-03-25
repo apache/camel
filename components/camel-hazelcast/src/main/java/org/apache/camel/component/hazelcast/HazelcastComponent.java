@@ -38,6 +38,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_PARAM;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.*;
 
 public class HazelcastComponent extends UriEndpointComponent {
 
