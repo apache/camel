@@ -31,11 +31,35 @@ import org.apache.xmlbeans.XmlObject;
 public class XmlBeansDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
         XmlObject object = ExchangeHelper.convertToMandatoryType(exchange, XmlObject.class, body);
-        object.save(stream);
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            object.save(stream);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return XmlObject.Factory.parse(stream);
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(stream);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 }
