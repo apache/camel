@@ -102,7 +102,6 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (handled) {
-                    ExchangeHelper.setFailureHandled(exchange);
                     // emit event that the failure was handled
                     EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
                 } else {
