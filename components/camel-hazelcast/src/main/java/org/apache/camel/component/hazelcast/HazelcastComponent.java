@@ -177,7 +177,7 @@ public class HazelcastComponent extends UriEndpointComponent {
                 HazelcastInstance.class);
 
         // check if an already created instance is given then just get instance by its name.
-        if (hzInstance == null)
+        if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null)
         {
             hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
             parameters.remove(HAZELCAST_INSTANCE_NAME_PARAM);
