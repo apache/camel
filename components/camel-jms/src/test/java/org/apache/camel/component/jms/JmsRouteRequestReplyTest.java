@@ -475,10 +475,10 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        return contextBuilders.get(testName.getMethodName()).buildContext(camelContext);
+        return contextBuilders.get(getTestMethodName()).buildContext(camelContext);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return routeBuilders.get(testName.getMethodName());
+        return routeBuilders.get(getTestMethodName());
     }
 }
