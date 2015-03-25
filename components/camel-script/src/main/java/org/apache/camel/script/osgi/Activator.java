@@ -19,10 +19,7 @@ package org.apache.camel.script.osgi;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.script.ScriptEngine;
@@ -30,27 +27,23 @@ import javax.script.ScriptEngineFactory;
 
 import org.apache.camel.impl.osgi.tracker.BundleTracker;
 import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.IOHelper;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Activator implements BundleActivator, BundleTrackerCustomizer {
+public class Activator implements BundleActivator, BundleTrackerCustomizer, ServiceListener {
     public static final String META_INF_SERVICES_DIR = "META-INF/services";
     public static final String SCRIPT_ENGINE_SERVICE_FILE = "javax.script.ScriptEngineFactory";
 
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
     private static BundleContext context;
     private BundleTracker tracker;
-    
+    private ServiceRegistration<LanguageResolver> registration;
+
     private Map<Long, List<BundleScriptEngineResolver>> resolvers 
         = new ConcurrentHashMap<Long, List<BundleScriptEngineResolver>>();
 
@@ -63,12 +56,17 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         LOG.info("Camel-Script activator starting");
         tracker = new BundleTracker(context, Bundle.ACTIVE, this);
         tracker.open();
+        context.addServiceListener(this, "(&(resolver=default)(objectClass=org.apache.camel.spi.LanguageResolver))");
         LOG.info("Camel-Script activator started");
     }
 
     public void stop(BundleContext context) throws Exception {
         LOG.info("Camel-Script activator stopping");
         tracker.close();
+        context.removeServiceListener(this);
+        if (registration != null) {
+            registration.unregister();
+        }
         LOG.info("Camel-Script activator stopped");
         Activator.context = null;
     }
@@ -80,6 +78,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             service.register();
         }
         resolvers.put(bundle.getBundleId(), r);
+        updateAvailableScriptLanguages();
         return bundle;
     }
 
@@ -90,9 +89,43 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         LOG.debug("Bundle stopped: {}", bundle.getSymbolicName());
         List<BundleScriptEngineResolver> r = resolvers.remove(bundle.getBundleId());
         if (r != null) {
+            updateAvailableScriptLanguages();
             for (BundleScriptEngineResolver service : r) {
                 service.unregister();
             }
+        }
+    }
+
+    private String[] getAvailableScriptNames(){
+        List<String> names = new ArrayList<String>();
+        for (List<BundleScriptEngineResolver> list : resolvers.values()) {
+            for (BundleScriptEngineResolver r : list) {
+                names.addAll(r.getScriptNames());
+            }
+        }
+        return names.toArray(new String[]{});
+    }
+
+    private void updateAvailableScriptLanguages() {
+        if (registration != null) {
+            registration.unregister();
+            registration = null;
+        }
+        ServiceReference<LanguageResolver> ref = null;
+        try {
+            Collection<ServiceReference<LanguageResolver>> references = context.getServiceReferences(LanguageResolver.class, "(resolver=default)");
+            if (references.size() == 1) {
+                ref = references.iterator().next();
+                LanguageResolver resolver = context.getService(ref);
+
+                Dictionary props = new Hashtable();
+                props.put("language", getAvailableScriptNames());
+                registration = context.registerService(LanguageResolver.class, resolver, props);
+            }
+        } catch (InvalidSyntaxException e) {
+            LOG.error("Invalid syntax for LanguageResolver service reference filter.");
+        } finally {
+            context.ungetService(ref);
         }
     }
 
@@ -126,7 +159,12 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             LOG.info("Found ScriptEngineFactory in " + bundle.getSymbolicName());
             resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
         }
-    } 
+    }
+
+    @Override
+    public void serviceChanged(ServiceEvent event) {
+        updateAvailableScriptLanguages();
+    }
 
     public interface ScriptEngineResolver {
         ScriptEngine resolveScriptEngine(String name);
@@ -150,7 +188,16 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             reg.unregister();
         }
 
-        public ScriptEngine resolveScriptEngine(String name) {
+        private List<String> getScriptNames() {
+            return getScriptNames(getFactory());
+        }
+
+        private List<String> getScriptNames(ScriptEngineFactory factory){
+            List<String> names = factory.getNames();
+            return names;
+        }
+
+        private ScriptEngineFactory getFactory() {
             try {
                 BufferedReader in = IOHelper.buffered(new InputStreamReader(configFile.openStream()));
                 String className = in.readLine();
@@ -159,8 +206,17 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {
                     throw new IllegalStateException("Invalid ScriptEngineFactory: " + cls.getName());
                 }
-                ScriptEngineFactory factory = (ScriptEngineFactory) cls.newInstance();
-                List<String> names = factory.getNames();
+                return (ScriptEngineFactory) cls.newInstance();
+            }catch (Exception e){
+                //do something
+                return null;
+            }
+        }
+
+        public ScriptEngine resolveScriptEngine(String name) {
+            try {
+                ScriptEngineFactory factory = getFactory();
+                List<String> names = getScriptNames(factory);
                 for (String test : names) {
                     if (test.equals(name)) {
                         ClassLoader old = Thread.currentThread().getContextClassLoader();
