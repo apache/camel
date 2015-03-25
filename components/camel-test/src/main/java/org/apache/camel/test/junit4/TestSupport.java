@@ -55,10 +55,7 @@ public abstract class TestSupport extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    // CHECKSTYLE:OFF
-    @Rule
-    public TestName testName = new TestName();
-    // CHECKSTYLE:ON
+    private TestName testName = new TestName();
 
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
@@ -564,6 +561,16 @@ public abstract class TestSupport extends Assert {
     public static boolean isJava18() {
         String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
         return javaVersion.startsWith("1.8");
+    }
+
+    /**
+     * Gets the current test name
+     *
+     * @return the test name
+     */
+    @Rule
+    public TestName getTestName() {
+        return testName;
     }
 
     /**
