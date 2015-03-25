@@ -73,8 +73,8 @@ public final class StringHelper {
             return s;
         }
 
-        s = s.replaceAll("'", "");
-        s = s.replaceAll("\"", "");
+        s = replaceAll(s, "'", "");
+        s = replaceAll(s, "\"", "");
         return s;
     }
 
@@ -121,7 +121,11 @@ public final class StringHelper {
             return "";
         }
         // must replace amp first, so we dont replace &lt; to amp later
-        return text.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        text = replaceAll(text, "&", "&amp;");
+        text = replaceAll(text, "\"", "&quot;");
+        text = replaceAll(text, "<", "&lt;");
+        text = replaceAll(text, ">", "&gt;");
+        return text;
     }
 
     /**
