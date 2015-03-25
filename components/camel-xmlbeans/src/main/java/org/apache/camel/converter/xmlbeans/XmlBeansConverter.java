@@ -45,48 +45,120 @@ public final class XmlBeansConverter {
     }
 
     @Converter
-    public static XmlObject toXmlObject(File value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(File value, Exchange exchange) throws IOException, XmlException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(value);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 
     @Converter
-    public static XmlObject toXmlObject(Reader value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(Reader value, Exchange exchange) throws IOException, XmlException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(value);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 
     @Converter
-    public static XmlObject toXmlObject(Node value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(Node value, Exchange exchange) throws IOException, XmlException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(value);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 
     @Converter
-    public static XmlObject toXmlObject(InputStream value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(InputStream value, Exchange exchange) throws IOException, XmlException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(value);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 
     @Converter
     public static XmlObject toXmlObject(String value, Exchange exchange) throws IOException, XmlException {
-        return toXmlObject(IOConverter.toInputStream(value, exchange));
+        return toXmlObject(IOConverter.toInputStream(value, exchange), exchange);
     }
 
     @Converter
-    public static XmlObject toXmlObject(byte[] value) throws IOException, XmlException {
-        return toXmlObject(IOConverter.toInputStream(value));
+    public static XmlObject toXmlObject(byte[] value, Exchange exchange) throws IOException, XmlException {
+        return toXmlObject(IOConverter.toInputStream(value), exchange);
     }
 
     @Converter
-    public static XmlObject toXmlObject(ByteBuffer value) throws IOException, XmlException {
-        return toXmlObject(NIOConverter.toInputStream(value));
+    public static XmlObject toXmlObject(ByteBuffer value, Exchange exchange) throws IOException, XmlException {
+        return toXmlObject(NIOConverter.toInputStream(value), exchange);
     }
 
     @Converter
-    public static XmlObject toXmlObject(XMLStreamReader value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(XMLStreamReader value, Exchange exchange) throws IOException, XmlException {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(value);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 
     @Converter
     public static XmlObject toXmlObject(Source value, Exchange exchange) throws IOException, XmlException, NoTypeConversionAvailableException {
         Reader reader = exchange.getContext().getTypeConverter().mandatoryConvertTo(Reader.class, value);
-        return XmlObject.Factory.parse(reader);
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+        try {
+            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
+            return XmlObject.Factory.parse(reader);
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
     }
 }
