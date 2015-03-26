@@ -19,7 +19,13 @@ package org.apache.camel.script.osgi;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.script.ScriptEngine;
@@ -29,9 +35,15 @@ import org.apache.camel.impl.osgi.tracker.BundleTracker;
 import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.IOHelper;
-
-import org.osgi.framework.*;
-
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +108,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
         }
     }
 
-    private String[] getAvailableScriptNames(){
+    private String[] getAvailableScriptNames() {
         List<String> names = new ArrayList<String>();
         for (List<BundleScriptEngineResolver> list : resolvers.values()) {
             for (BundleScriptEngineResolver r : list) {
@@ -107,25 +119,28 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     private void updateAvailableScriptLanguages() {
-        if (registration != null) {
-            registration.unregister();
-            registration = null;
-        }
         ServiceReference<LanguageResolver> ref = null;
         try {
             Collection<ServiceReference<LanguageResolver>> references = context.getServiceReferences(LanguageResolver.class, "(resolver=default)");
             if (references.size() == 1) {
+                // Unregistry the old language resolver first
+                if (registration != null) {
+                    registration.unregister();
+                    registration = null;
+                }
                 ref = references.iterator().next();
                 LanguageResolver resolver = context.getService(ref);
-
                 Dictionary props = new Hashtable();
+                // Just publish the language resolve with the language we found
                 props.put("language", getAvailableScriptNames());
                 registration = context.registerService(LanguageResolver.class, resolver, props);
             }
         } catch (InvalidSyntaxException e) {
             LOG.error("Invalid syntax for LanguageResolver service reference filter.");
         } finally {
-            context.ungetService(ref);
+            if (ref != null) {
+                context.ungetService(ref);
+            }
         }
     }
 
@@ -172,7 +187,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
 
     protected static class BundleScriptEngineResolver implements ScriptEngineResolver {
         protected final Bundle bundle;
-        private ServiceRegistration reg;
+        private ServiceRegistration<?> reg;
         private final URL configFile;
 
         public BundleScriptEngineResolver(Bundle bundle, URL configFile) {
@@ -192,7 +207,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
             return getScriptNames(getFactory());
         }
 
-        private List<String> getScriptNames(ScriptEngineFactory factory){
+        private List<String> getScriptNames(ScriptEngineFactory factory) {
             List<String> names = factory.getNames();
             return names;
         }
@@ -207,7 +222,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                     throw new IllegalStateException("Invalid ScriptEngineFactory: " + cls.getName());
                 }
                 return (ScriptEngineFactory) cls.newInstance();
-            }catch (Exception e){
+            } catch (Exception e) {
                 //do something
                 return null;
             }
@@ -238,19 +253,6 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                 LOG.warn("Cannot create ScriptEngineFactory: " + e.getClass().getName(), e);
                 return null;
             }
-        }
-
-        private boolean matchEngine(String name, String engineName) {
-            if (name.equals(engineName)) {
-                return true;
-            }
-
-            // javascript have many aliases
-            if (name.equals("js") || name.equals("javaScript") || name.equals("ECMAScript")) {
-                return engineName.equals("js") || engineName.equals("javaScript") || engineName.equals("ECMAScript");
-            }
-
-            return false;
         }
 
         @Override
