@@ -77,6 +77,23 @@ public class StringHelperTest extends TestCase {
 
         assertEquals(true, StringHelper.hasUpperCase("com.foo.MyClass"));
         assertEquals(true, StringHelper.hasUpperCase("com.foo.My"));
+
+        // Note, this is not a FQN
+        assertEquals(true, StringHelper.hasUpperCase("com.foo.subA"));
+    }
+
+    public void testIsClassName() throws Exception {
+        assertEquals(false, StringHelper.isClassName(null));
+        assertEquals(false, StringHelper.isClassName(""));
+        assertEquals(false, StringHelper.isClassName(" "));
+        assertEquals(false, StringHelper.isClassName("com.foo"));
+        assertEquals(false, StringHelper.isClassName("com.foo.123"));
+
+        assertEquals(true, StringHelper.isClassName("com.foo.MyClass"));
+        assertEquals(true, StringHelper.isClassName("com.foo.My"));
+
+        // Note, this is not a FQN
+        assertEquals(false, StringHelper.isClassName("com.foo.subA"));
     }
 
     public void testHasStartToken() throws Exception {
@@ -96,7 +113,7 @@ public class StringHelperTest extends TestCase {
         // $foo{ is valid because its foo language
         assertEquals(true, StringHelper.hasStartToken("$foo{body}", "foo"));
     }
-    
+
     public void testIsQuoted() throws Exception {
         assertEquals(false, StringHelper.isQuoted(null));
         assertEquals(false, StringHelper.isQuoted(""));
