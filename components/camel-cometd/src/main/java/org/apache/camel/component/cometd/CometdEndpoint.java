@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Endpoint for Camel Cometd.
  */
-@UriEndpoint(scheme = "cometd,cometds", syntax = "cometd:protocol:host:port/channelName", consumerClass = CometdConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "cometd,cometds", title = "CometD", syntax = "cometd:protocol:host:port/channelName", consumerClass = CometdConsumer.class, label = "http,websocket")
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;

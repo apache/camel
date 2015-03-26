@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Represents a CMIS endpoint.
  */
-@UriEndpoint(scheme = "cmis", syntax = "cmis:url", consumerClass = CMISConsumer.class, label = "cms,database")
+@UriEndpoint(scheme = "cmis", title = "CMIS", syntax = "cmis:url", consumerClass = CMISConsumer.class, label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
 
     @UriParam

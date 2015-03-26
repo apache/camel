@@ -35,7 +35,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 /**
  * Represents a Solr endpoint.
  */
-@UriEndpoint(scheme = "solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(scheme = "solr", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

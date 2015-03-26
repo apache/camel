@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS S3 Endpoint</a>.  
  */
-@UriEndpoint(scheme = "aws-s3", syntax = "aws-s3:bucketName", consumerClass = S3Consumer.class, label = "cloud,file")
+@UriEndpoint(scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketName", consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);

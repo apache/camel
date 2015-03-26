@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SES Endpoint</a>.  
  *
  */
-@UriEndpoint(scheme = "aws-ses", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
 public class SesEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleEmailService sesClient;

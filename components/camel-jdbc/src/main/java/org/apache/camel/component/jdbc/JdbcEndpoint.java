@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * @version
  */
-@UriEndpoint(scheme = "jdbc", syntax = "jdbc:dataSource", producerOnly = true, label = "database,sql")
+@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSource", producerOnly = true, label = "database,sql")
 public class JdbcEndpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = "true")
     private DataSource dataSource;

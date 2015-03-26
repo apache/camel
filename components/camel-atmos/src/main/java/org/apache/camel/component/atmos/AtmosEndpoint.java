@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER_DELAY;
 
-@UriEndpoint(scheme = "atmos", syntax = "atmos:name/operation", consumerClass = AtmosScheduledPollConsumer.class, label = "file,cloud")
+@UriEndpoint(scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", consumerClass = AtmosScheduledPollConsumer.class, label = "file,cloud")
 public class AtmosEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AtmosEndpoint.class);

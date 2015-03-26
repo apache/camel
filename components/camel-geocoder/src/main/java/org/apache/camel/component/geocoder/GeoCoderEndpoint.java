@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a GeoCoder endpoint.
  */
-@UriEndpoint(scheme = "geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
+@UriEndpoint(scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The geo address which must prefix with address:")

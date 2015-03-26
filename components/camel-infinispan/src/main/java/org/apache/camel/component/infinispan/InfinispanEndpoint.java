@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "infinispan", syntax = "infinispan:host", consumerClass = InfinispanConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(scheme = "infinispan", title = "Infinispan", syntax = "infinispan:host", consumerClass = InfinispanConsumer.class, label = "cache,datagrid,clustering")
 public class InfinispanEndpoint extends DefaultEndpoint {
     @UriParam
     private InfinispanConfiguration configuration;

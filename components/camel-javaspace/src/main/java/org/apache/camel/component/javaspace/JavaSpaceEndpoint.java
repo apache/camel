@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "javaspace", syntax = "javaspace:url", consumerClass = JavaSpaceConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "javaspace", title = "JavaSpace", syntax = "javaspace:url", consumerClass = JavaSpaceConsumer.class, label = "messaging")
 public class JavaSpaceEndpoint extends DefaultEndpoint {
 
     private final Map<?, ?> parameters;

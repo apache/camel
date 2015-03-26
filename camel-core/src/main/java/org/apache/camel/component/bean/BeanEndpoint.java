@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
  *
  * @version 
  */
-@UriEndpoint(scheme = "bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
+@UriEndpoint(scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;

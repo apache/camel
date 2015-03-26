@@ -30,7 +30,7 @@ import org.vertx.java.core.eventbus.EventBus;
 /**
  * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
  */
-@UriEndpoint(scheme = "vertx", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
+@UriEndpoint(scheme = "vertx", title = "Vert.x", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
 public class VertxEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

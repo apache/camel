@@ -33,7 +33,8 @@ import org.springframework.integration.MessageChannel;
  *
  * @version 
  */
-@UriEndpoint(scheme = "spring-integration", syntax = "spring-integration:defaultChannel", consumerClass = SpringIntegrationConsumer.class, label = "spring,eventbus")
+@UriEndpoint(scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
+        consumerClass = SpringIntegrationConsumer.class, label = "spring,eventbus")
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = "true")
     private String defaultChannel;

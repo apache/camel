@@ -20,7 +20,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "jclouds", syntax = "jclouds:command:providerId", consumerClass = JcloudsConsumer.class, label = "api,cloud")
+@UriEndpoint(scheme = "jclouds", title = "JClouds", syntax = "jclouds:command:providerId", consumerClass = JcloudsConsumer.class, label = "api,cloud")
 public abstract class JcloudsEndpoint extends DefaultEndpoint {
 
     @UriParam

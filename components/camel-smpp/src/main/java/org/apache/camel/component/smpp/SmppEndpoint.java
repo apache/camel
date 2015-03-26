@@ -34,7 +34,7 @@ import org.jsmpp.bean.DeliverSm;
  * 
  * @version 
  */
-@UriEndpoint(scheme = "smpp", syntax = "smpp:host:port", consumerClass = SmppConsumer.class, label = "mobile,messaging")
+@UriEndpoint(scheme = "smpp", title = "SMPP", syntax = "smpp:host:port", consumerClass = SmppConsumer.class, label = "mobile,messaging")
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;
