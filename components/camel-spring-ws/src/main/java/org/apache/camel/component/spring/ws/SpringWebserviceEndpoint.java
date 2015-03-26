@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "spring-ws", syntax = "spring-ws:type:lookupKey", consumerClass = SpringWebserviceConsumer.class, label = "http,soap,webservice")
+@UriEndpoint(scheme = "spring-ws", title = "Spring WebService", syntax = "spring-ws:type:lookupKey", consumerClass = SpringWebserviceConsumer.class, label = "http,soap,webservice")
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam

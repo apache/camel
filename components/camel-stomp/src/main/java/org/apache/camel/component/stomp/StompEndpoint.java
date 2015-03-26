@@ -45,7 +45,7 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
-@UriEndpoint(scheme = "stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

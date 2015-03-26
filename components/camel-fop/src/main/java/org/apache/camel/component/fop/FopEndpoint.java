@@ -34,7 +34,7 @@ import org.apache.fop.apps.FopFactory;
 /**
  * Represents a Fop endpoint.
  */
-@UriEndpoint(scheme = "fop", syntax = "fop:outputFormat", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "fop", title = "FOP", syntax = "fop:outputFormat", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

@@ -26,7 +26,7 @@ import org.apache.camel.component.vm.VmConsumer;
 import org.apache.camel.component.vm.VmEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "stub", syntax = "stub:name", consumerClass = VmConsumer.class, label = "core,testing")
+@UriEndpoint(scheme = "stub", title = "Stub", syntax = "stub:name", consumerClass = VmConsumer.class, label = "core,testing")
 public class StubEndpoint extends VmEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

@@ -35,7 +35,7 @@ import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
 public class DozerEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);
 

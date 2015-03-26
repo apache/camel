@@ -49,4 +49,9 @@ public @interface Metadata {
      */
     String required() default "";
 
+    /**
+     * An optional human readable title of this entity, to be used instead of a computed title.
+     */
+    String title() default "";
+
 }

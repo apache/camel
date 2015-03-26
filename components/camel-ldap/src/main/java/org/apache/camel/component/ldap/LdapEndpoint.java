@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents an endpoint that synchronously invokes an LDAP server when a producer sends a message to it.
  */
-@UriEndpoint(scheme = "ldap", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
+@UriEndpoint(scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";

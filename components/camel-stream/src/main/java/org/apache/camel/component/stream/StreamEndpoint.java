@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "stream", syntax = "stream:url", consumerClass = StreamConsumer.class, label = "file,system")
+@UriEndpoint(scheme = "stream", title = "Stream", syntax = "stream:url", consumerClass = StreamConsumer.class, label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 

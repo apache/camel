@@ -34,7 +34,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
-@UriEndpoint(scheme = "websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "http,websocket")
+@UriEndpoint(scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "http,websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private NodeSynchronization sync;

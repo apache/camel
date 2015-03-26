@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
+@UriEndpoint(scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

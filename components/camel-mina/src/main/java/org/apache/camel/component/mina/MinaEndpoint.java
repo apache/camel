@@ -41,7 +41,7 @@ import org.apache.mina.common.IoSession;
  *
  * @version 
  */
-@UriEndpoint(scheme = "mina", syntax = "mina:protocol:host:port", consumerClass = MinaConsumer.class, label = "networking,tcp,udp")
+@UriEndpoint(scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", consumerClass = MinaConsumer.class, label = "networking,tcp,udp")
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     /** The key of the IoSession which is stored in the message header*/
