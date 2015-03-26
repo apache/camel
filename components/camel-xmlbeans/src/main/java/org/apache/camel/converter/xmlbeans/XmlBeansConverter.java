@@ -44,12 +44,62 @@ public final class XmlBeansConverter {
     private XmlBeansConverter() {
     }
 
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(File value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+    
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(Reader value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+    
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(Node value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+    
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(InputStream value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+    
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(String value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+    
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(byte[] value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+    
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(ByteBuffer value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+
+    @Deprecated
+    // It will be removed in Camel 2.16.0, please use the one with Exchange parameter
+    public static XmlObject toXmlObject(XMLStreamReader value) throws IOException, XmlException {
+        return toXmlObject(value, null);
+    }
+
     @Converter
     public static XmlObject toXmlObject(File value, Exchange exchange) throws IOException, XmlException {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-
         try {
-            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            ClassLoader apcl = null;
+            if (exchange != null && exchange.getContext() != null) {
+                apcl = exchange.getContext().getApplicationContextClassLoader();
+            }
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
@@ -64,9 +114,11 @@ public final class XmlBeansConverter {
     @Converter
     public static XmlObject toXmlObject(Reader value, Exchange exchange) throws IOException, XmlException {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-
         try {
-            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            ClassLoader apcl = null;
+            if (exchange != null && exchange.getContext() != null) {
+                apcl = exchange.getContext().getApplicationContextClassLoader();
+            }
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
@@ -81,9 +133,11 @@ public final class XmlBeansConverter {
     @Converter
     public static XmlObject toXmlObject(Node value, Exchange exchange) throws IOException, XmlException {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-
         try {
-            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            ClassLoader apcl = null;
+            if (exchange != null && exchange.getContext() != null) {
+                apcl = exchange.getContext().getApplicationContextClassLoader();
+            }
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
@@ -98,9 +152,11 @@ public final class XmlBeansConverter {
     @Converter
     public static XmlObject toXmlObject(InputStream value, Exchange exchange) throws IOException, XmlException {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-
         try {
-            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            ClassLoader apcl = null;
+            if (exchange != null && exchange.getContext() != null) {
+                apcl = exchange.getContext().getApplicationContextClassLoader();
+            }
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
@@ -130,9 +186,11 @@ public final class XmlBeansConverter {
     @Converter
     public static XmlObject toXmlObject(XMLStreamReader value, Exchange exchange) throws IOException, XmlException {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-
         try {
-            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            ClassLoader apcl = null;
+            if (exchange != null && exchange.getContext() != null) {
+                apcl = exchange.getContext().getApplicationContextClassLoader();
+            }
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
@@ -148,9 +206,11 @@ public final class XmlBeansConverter {
     public static XmlObject toXmlObject(Source value, Exchange exchange) throws IOException, XmlException, NoTypeConversionAvailableException {
         Reader reader = exchange.getContext().getTypeConverter().mandatoryConvertTo(Reader.class, value);
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-
         try {
-            ClassLoader apcl = exchange.getContext().getApplicationContextClassLoader();
+            ClassLoader apcl = null;
+            if (exchange != null && exchange.getContext() != null) {
+                apcl = exchange.getContext().getApplicationContextClassLoader();
+            }
             if (apcl != null) {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
