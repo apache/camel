@@ -673,6 +673,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // build the endpoint
         StringBuilder sb = new StringBuilder();
+        int range = 0;
         for (int i = 0; i < options.size(); i++) {
             String key = options.get(i);
             String key2 = options2.get(i);
@@ -683,7 +684,17 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 sb.append(token);
                 sb.append(key2);
             }
+            range++;
         }
+        // append any extra options that was in surplus for the last
+        while (range < options2.size()) {
+            String token = tokens[range];
+            String key2 = options2.get(range);
+            sb.append(token);
+            sb.append(key2);
+            range++;
+        }
+
         if (!copy.isEmpty()) {
             sb.append('?');
             String query = createQueryString(copy);
