@@ -95,6 +95,7 @@ public abstract class AbstractCamelController implements CamelController {
             String json = catalog.componentJSonSchema(name);
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
 
+            String title = null;
             String description = null;
             String label = null;
             // the status can be:
@@ -107,7 +108,9 @@ public abstract class AbstractCamelController implements CamelController {
             String artifactId = null;
             String version = null;
             for (Map<String, String> row : rows) {
-                if (row.containsKey("description")) {
+                if (row.containsKey("title")) {
+                    title = row.get("title");
+                } else if (row.containsKey("description")) {
                     description = row.get("description");
                 } else if (row.containsKey("label")) {
                     label = row.get("label");
@@ -125,6 +128,9 @@ public abstract class AbstractCamelController implements CamelController {
             Map<String, String> row = new HashMap<String, String>();
             row.put("name", name);
             row.put("status", status);
+            if (title != null) {
+                row.put("title", title);
+            }
             if (description != null) {
                 row.put("description", description);
             }
