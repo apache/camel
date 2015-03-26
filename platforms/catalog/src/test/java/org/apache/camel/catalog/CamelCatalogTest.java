@@ -189,4 +189,10 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("5000", map.get("delay"));
     }
 
+    @Test
+    public void testEndpointComponentName() throws Exception {
+        String name = catalog.endpointComponentName("jms:queue:foo");
+        assertEquals("jms", name);
+    }
+
 }

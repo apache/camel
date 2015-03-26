@@ -571,6 +571,17 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public String endpointComponentName(String uri) {
+        if (uri != null) {
+            int idx = uri.indexOf(":");
+            if (idx > 0) {
+                return uri.substring(0, idx);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public String asEndpointUri(String scheme, String json) throws URISyntaxException {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 

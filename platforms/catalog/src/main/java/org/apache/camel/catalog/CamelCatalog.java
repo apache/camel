@@ -158,6 +158,14 @@ public interface CamelCatalog {
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
     /**
+     * Returns the component name from the given endpoint uri
+     *
+     * @param uri  the endpoint uri
+     * @return the component name (aka scheme), or <tt>null</tt> if not possible to determine
+     */
+    String endpointComponentName(String uri);
+
+    /**
      * Creates an endpoint uri from the information in the json schema
      *
      * @param scheme the endpoint schema
