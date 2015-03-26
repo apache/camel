@@ -26,8 +26,8 @@ import java.util.Map;
  */
 public class CatalogComponentListCommand extends AbstractCamelCommand {
 
-    private static final String NAME_COLUMN_LABEL = "Name";
     private static final String TITLE_COLUMN_LABEL = "Title";
+    private static final String SCHEME_COLUMN_LABEL = "Scheme";
     private static final String LABEL_COLUMN_LABEL = "Label";
     private static final String MAVEN_COLUMN_LABEL = "Maven Coordinate";
     private static final String DESCRIPTION_COLUMN_LABEL = "Description";
@@ -63,32 +63,26 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         final String rowFormat = buildFormatString(columnWidths, false);
 
         if (verbose) {
-            out.println(String.format(headerFormat, NAME_COLUMN_LABEL, TITLE_COLUMN_LABEL, LABEL_COLUMN_LABEL, MAVEN_COLUMN_LABEL, DESCRIPTION_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "----", "-----", "-----", "----------------", "-----------"));
+            out.println(String.format(headerFormat, TITLE_COLUMN_LABEL, SCHEME_COLUMN_LABEL, LABEL_COLUMN_LABEL, MAVEN_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "-----", "------", "-----", "----------------"));
         } else {
-            out.println(String.format(headerFormat, NAME_COLUMN_LABEL, TITLE_COLUMN_LABEL, LABEL_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "----", "-----", "-----"));
+            out.println(String.format(headerFormat, TITLE_COLUMN_LABEL, DESCRIPTION_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "----", "-----------"));
         }
         for (final Map<String, String> component : components) {
             if (verbose) {
-                String name = safeNull(component.get("name"));
                 String title = safeNull(component.get("title"));
+                String scheme = safeNull(component.get("name"));
                 String label = safeNull(component.get("label"));
                 String maven = "";
                 if (component.containsKey("groupId") && component.containsKey("artifactId") && component.containsKey("version")) {
                     maven = component.get("groupId") + "/" + component.get("artifactId") + "/" + component.get("version");
                 }
-                String description = safeNull(component.get("description"));
-                out.println(String.format(rowFormat, name, title, label, maven, description));
+                out.println(String.format(rowFormat, title, scheme, label, maven));
             } else {
-                String name = safeNull(component.get("name"));
                 String title = safeNull(component.get("title"));
-                String label = safeNull(component.get("label"));
-                String maven = "";
-                if (component.containsKey("groupId") && component.containsKey("artifactId") && component.containsKey("version")) {
-                    maven = component.get("groupId") + "/" + component.get("artifactId") + "/" + component.get("version");
-                }
-                out.println(String.format(rowFormat, name, title, label, maven));
+                String description = safeNull(component.get("description"));
+                out.println(String.format(rowFormat, title, description));
             }
         }
 
@@ -100,8 +94,8 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
             return null;
         } else {
             // some of the options is optional so we need to start from 1
-            int maxNameLen = NAME_COLUMN_LABEL.length();
             int maxTitleLen = TITLE_COLUMN_LABEL.length();
+            int maxSchemeLen = SCHEME_COLUMN_LABEL.length();
             int maxLabelLen = LABEL_COLUMN_LABEL.length();
             int maxMavenLen = MAVEN_COLUMN_LABEL.length();
             int maxDescriptionLen = DESCRIPTION_COLUMN_LABEL.length();
@@ -111,7 +105,7 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
                 // grab the information and compute max len
                 String name = component.get("name");
                 if (name != null) {
-                    maxNameLen = Math.max(maxNameLen, name.length());
+                    maxSchemeLen = Math.max(maxSchemeLen, name.length());
                 }
                 String title = component.get("title");
                 if (title != null) {
@@ -131,9 +125,9 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
                 }
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>(4);
-            retval.put(NAME_COLUMN_LABEL, maxNameLen);
+            final Map<String, Integer> retval = new Hashtable<String, Integer>();
             retval.put(TITLE_COLUMN_LABEL, maxTitleLen);
+            retval.put(SCHEME_COLUMN_LABEL, maxSchemeLen);
             retval.put(LABEL_COLUMN_LABEL, maxLabelLen);
             retval.put(MAVEN_COLUMN_LABEL, maxMavenLen);
             retval.put(DESCRIPTION_COLUMN_LABEL, maxDescriptionLen);
@@ -157,41 +151,32 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
         if (verbose) {
-            int nameLen = Math.min(columnWidths.get(NAME_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
             int titleLen = Math.min(columnWidths.get(TITLE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+            int schemeLen = Math.min(columnWidths.get(SCHEME_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
             int labelLen = Math.min(columnWidths.get(LABEL_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
             int mavenLen = Math.min(columnWidths.get(MAVEN_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-            int descriptionLen = Math.min(columnWidths.get(DESCRIPTION_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
 
-            nameLen = Math.max(MIN_COLUMN_WIDTH, nameLen);
             titleLen = Math.max(MIN_COLUMN_WIDTH, titleLen);
+            schemeLen = Math.max(MIN_COLUMN_WIDTH, schemeLen);
             labelLen = Math.max(MIN_COLUMN_WIDTH, labelLen);
             mavenLen = Math.max(MIN_COLUMN_WIDTH, mavenLen);
+
+            final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
+            retval.append(fieldPreamble).append("%-").append(titleLen).append('.').append(titleLen).append('s').append(fieldPostamble).append(' ');
+            retval.append(fieldPreamble).append("%-").append(schemeLen).append('.').append(schemeLen).append('s').append(fieldPostamble).append(' ');
+            retval.append(fieldPreamble).append("%-").append(labelLen).append('.').append(labelLen).append('s').append(fieldPostamble).append(' ');
+            retval.append(fieldPreamble).append("%-").append(mavenLen).append('.').append(mavenLen).append('s').append(fieldPostamble).append(' ');
+            return retval.toString();
+        } else {
+            int titleLen = Math.min(columnWidths.get(TITLE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+            int descriptionLen = Math.min(columnWidths.get(DESCRIPTION_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+
+            titleLen = Math.max(MIN_COLUMN_WIDTH, titleLen);
             descriptionLen = Math.max(MIN_COLUMN_WIDTH, descriptionLen);
 
             final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
-            retval.append(fieldPreamble).append("%-").append(nameLen).append('.').append(nameLen).append('s').append(fieldPostamble).append(' ');
             retval.append(fieldPreamble).append("%-").append(titleLen).append('.').append(titleLen).append('s').append(fieldPostamble).append(' ');
-            retval.append(fieldPreamble).append("%-").append(labelLen).append('.').append(labelLen).append('s').append(fieldPostamble).append(' ');
-            retval.append(fieldPreamble).append("%-").append(mavenLen).append('.').append(mavenLen).append('s').append(fieldPostamble).append(' ');
             retval.append(fieldPreamble).append("%-").append(descriptionLen).append('.').append(descriptionLen).append('s').append(fieldPostamble).append(' ');
-            return retval.toString();
-        } else {
-            int nameLen = Math.min(columnWidths.get(NAME_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-            int titleLen = Math.min(columnWidths.get(TITLE_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-            int labelLen = Math.min(columnWidths.get(LABEL_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-            int mavenLen = Math.min(columnWidths.get(MAVEN_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-
-            nameLen = Math.max(MIN_COLUMN_WIDTH, nameLen);
-            titleLen = Math.max(MIN_COLUMN_WIDTH, titleLen);
-            labelLen = Math.max(MIN_COLUMN_WIDTH, labelLen);
-            mavenLen = Math.max(MIN_COLUMN_WIDTH, mavenLen);
-
-            final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
-            retval.append(fieldPreamble).append("%-").append(nameLen).append('.').append(nameLen).append('s').append(fieldPostamble).append(' ');
-            retval.append(fieldPreamble).append("%-").append(titleLen).append('.').append(titleLen).append('s').append(fieldPostamble).append(' ');
-            retval.append(fieldPreamble).append("%-").append(labelLen).append('.').append(labelLen).append('s').append(fieldPostamble).append(' ');
-            retval.append(fieldPreamble).append("%-").append(mavenLen).append('.').append(mavenLen).append('s').append(fieldPostamble).append(' ');
             return retval.toString();
         }
     }
