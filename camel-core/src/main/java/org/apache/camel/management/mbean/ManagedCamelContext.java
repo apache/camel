@@ -535,6 +535,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             // gather component detail for each component
             for (Map.Entry<String, Properties> entry : components.entrySet()) {
                 String name = entry.getKey();
+                String title = null;
                 String description = null;
                 String label = null;
                 String status = context.hasComponent(name) != null ? "in use" : "on classpath";
@@ -552,7 +553,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 String json = context.getComponentParameterJsonSchema(target);
                 List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
                 for (Map<String, String> row : rows) {
-                    if (row.containsKey("description")) {
+                    if (row.containsKey("title")) {
+                        title = row.get("title");
+                    } else if (row.containsKey("description")) {
                         description = row.get("description");
                     } else if (row.containsKey("label")) {
                         label = row.get("label");
@@ -568,8 +571,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 }
 
                 CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
-                        new Object[]{name, description, label, status, type, groupId, artifactId, version});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+                        new Object[]{name, title, description, label, status, type, groupId, artifactId, version});
                 answer.put(data);
             }
             return answer;
