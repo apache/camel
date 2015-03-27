@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation", title = "Custom")
 @XmlRootElement(name = "customDataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {

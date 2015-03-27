@@ -44,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A useful base class for an expression
  */
-@Metadata(label = "language")
+@Metadata(label = "language", title = "Expression")
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)

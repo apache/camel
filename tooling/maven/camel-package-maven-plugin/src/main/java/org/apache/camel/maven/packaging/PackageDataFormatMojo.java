@@ -164,6 +164,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             if (json != null) {
                                 DataFormatModel dataFormatModel = new DataFormatModel();
                                 dataFormatModel.setName(name);
+                                dataFormatModel.setTitle(name);
                                 dataFormatModel.setModelName(modelName);
                                 dataFormatModel.setLabel("");
                                 dataFormatModel.setDescription(project.getDescription());
@@ -174,6 +175,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
+                                    if (row.containsKey("title")) {
+                                        dataFormatModel.setTitle(row.get("title"));
+                                    }
                                     if (row.containsKey("label")) {
                                         dataFormatModel.setLabel(row.get("label"));
                                     }
@@ -289,6 +293,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");
         buffer.append("\n    \"modelName\": \"").append(dataFormatModel.getModelName()).append("\",");
+        if (dataFormatModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(dataFormatModel.getTitle()).append("\",");
+        }
         if (dataFormatModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         }
@@ -309,6 +316,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static class DataFormatModel {
         private String name;
+        private String title;
         private String modelName;
         private String description;
         private String label;
@@ -324,6 +332,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getModelName() {
@@ -394,6 +410,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         public String toString() {
             return "DataFormatModel["
                     + "name='" + name + '\''
+                    + ", title='" + title + '\''
                     + ", modelName='" + modelName + '\''
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''

@@ -167,7 +167,12 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n \"model\": {");
         buffer.append("\n    \"kind\": \"").append("model").append("\",");
         buffer.append("\n    \"name\": \"").append(eipModel.getName()).append("\",");
-        buffer.append("\n    \"title\": \"").append(asTitle(eipModel.getName())).append("\",");
+        if (eipModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(eipModel.getTitle()).append("\",");
+        } else {
+            // fallback and use name as title
+            buffer.append("\n    \"title\": \"").append(asTitle(eipModel.getName())).append("\",");
+        }
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
@@ -205,6 +210,9 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
         if (metadata != null) {
             if (!Strings.isNullOrEmpty(metadata.label())) {
                 model.setLabel(metadata.label());
+            }
+            if (!Strings.isNullOrEmpty(metadata.title())) {
+                model.setTitle(metadata.title());
             }
         }
 
@@ -801,6 +809,7 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
     private static final class EipModel {
 
         private String name;
+        private String title;
         private String javaType;
         private String label;
         private String description;
@@ -813,6 +822,14 @@ public class EipAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getJavaType() {
