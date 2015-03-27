@@ -176,7 +176,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
                                     if (row.containsKey("title")) {
-                                        dataFormatModel.setTitle(row.get("title"));
+                                        String title = asModelTitle(row.get("title"));
+                                        dataFormatModel.setTitle(title);
                                     }
                                     if (row.containsKey("label")) {
                                         dataFormatModel.setLabel(row.get("label"));
@@ -258,6 +259,24 @@ public class PackageDataFormatMojo extends AbstractMojo {
         } else if ("zipfile".equals(name)) {
             // darn should have been lower case
             return "zipFile";
+        }
+        return name;
+    }
+
+    private static String asModelTitle(String name) {
+        // special for some data formats
+        if ("json-gson".equals(name)) {
+            return "JSon GSon";
+        } else if ("json-jackson".equals(name)) {
+            return "JSon Jackson";
+        } else if ("json-xstream".equals(name)) {
+            return "JSon XStream";
+        } else if ("bindy-csv".equals(name)) {
+            return "Bindy CSV";
+        } else if ("bindy-fixed".equals(name)) {
+            return "Bindy Fixed Length";
+        } else if ("bindy-kvp".equals(name)) {
+            return "Bindy Key Value Pair";
         }
         return name;
     }
