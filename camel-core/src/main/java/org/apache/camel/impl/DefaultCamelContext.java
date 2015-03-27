@@ -1089,7 +1089,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
                 for (Endpoint endpoint : toRemove) {
-                    log.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
+                    log.debug("Stopping and removing: {} which was only in use by route: {}", endpoint, routeId);
+                    ServiceHelper.stopAndShutdownService(endpoint);
                     removeEndpoint(endpoint);
                 }
                 return true;
