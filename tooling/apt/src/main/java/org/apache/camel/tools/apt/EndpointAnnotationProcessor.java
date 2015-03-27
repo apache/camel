@@ -216,8 +216,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            String defaultValue = entry.getDefaultValue();
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
                     entry.isDeprecated(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  },");
@@ -246,8 +251,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            String defaultValue = entry.getDefaultValue();
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
                     entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
 
@@ -273,8 +283,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            String defaultValue = entry.getDefaultValue();
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), entry.getDefaultValue(),
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
                     doc, entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  }");
