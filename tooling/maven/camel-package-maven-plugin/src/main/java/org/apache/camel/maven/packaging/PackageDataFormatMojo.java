@@ -164,7 +164,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             if (json != null) {
                                 DataFormatModel dataFormatModel = new DataFormatModel();
                                 dataFormatModel.setName(name);
-                                dataFormatModel.setTitle(name);
+                                dataFormatModel.setTitle("");
                                 dataFormatModel.setModelName(modelName);
                                 dataFormatModel.setLabel("");
                                 dataFormatModel.setDescription(project.getDescription());
@@ -176,8 +176,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
                                     if (row.containsKey("title")) {
-                                        String title = asModelTitle(row.get("title"));
-                                        dataFormatModel.setTitle(title);
+                                        String title = row.get("title");
+                                        dataFormatModel.setTitle(asModelTitle(name, title));
                                     }
                                     if (row.containsKey("label")) {
                                         dataFormatModel.setLabel(row.get("label"));
@@ -263,7 +263,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         return name;
     }
 
-    private static String asModelTitle(String name) {
+    private static String asModelTitle(String name, String title) {
         // special for some data formats
         if ("json-gson".equals(name)) {
             return "JSon GSon";
@@ -278,7 +278,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         } else if ("bindy-kvp".equals(name)) {
             return "Bindy Key Value Pair";
         }
-        return name;
+        return title;
     }
 
     private static Artifact findCamelCoreArtifact(MavenProject project) {
