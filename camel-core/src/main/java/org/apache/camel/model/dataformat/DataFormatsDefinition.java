@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure data formats
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation", title = "Data formats")
 @XmlRootElement(name = "dataFormats")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatsDefinition {

@@ -164,6 +164,7 @@ public class PackageLanguageMojo extends AbstractMojo {
                             if (json != null) {
                                 LanguageModel languageModel = new LanguageModel();
                                 languageModel.setName(name);
+                                languageModel.setTitle("");
                                 languageModel.setModelName(modelName);
                                 languageModel.setLabel("");
                                 languageModel.setDescription(project.getDescription());
@@ -174,6 +175,9 @@ public class PackageLanguageMojo extends AbstractMojo {
 
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
+                                    if (row.containsKey("title")) {
+                                        languageModel.setTitle(row.get("title"));
+                                    }
                                     if (row.containsKey("label")) {
                                         languageModel.setLabel(row.get("label"));
                                     }
@@ -286,6 +290,9 @@ public class PackageLanguageMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("language").append("\",");
         buffer.append("\n    \"modelName\": \"").append(languageModel.getModelName()).append("\",");
+        if (languageModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(languageModel.getTitle()).append("\",");
+        }
         if (languageModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
         }
@@ -306,6 +313,7 @@ public class PackageLanguageMojo extends AbstractMojo {
 
     private static class LanguageModel {
         private String name;
+        private String title;
         private String modelName;
         private String description;
         private String label;
@@ -321,6 +329,14 @@ public class PackageLanguageMojo extends AbstractMojo {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getModelName() {
@@ -392,6 +408,7 @@ public class PackageLanguageMojo extends AbstractMojo {
             return "LanguageModel["
                     + "name='" + name + '\''
                     + ", modelName='" + modelName + '\''
+                    + ", title='" + title + '\''
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''
                     + ", javaType='" + javaType + '\''

@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Flatpack data format
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation", title = "Flatpack")
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FlatpackDataFormat extends DataFormatDefinition {
