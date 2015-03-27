@@ -90,7 +90,10 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
             service.register();
         }
         resolvers.put(bundle.getBundleId(), r);
-        updateAvailableScriptLanguages();
+        // Only update the script language engine when the resolver is changed
+        if (r.size() > 0) {
+            updateAvailableScriptLanguages();
+        }
         return bundle;
     }
 
@@ -208,7 +211,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
         }
 
         private List<String> getScriptNames(ScriptEngineFactory factory) {
-            List<String> names = factory.getNames();
+            List<String> names = null;
+            if (factory != null) {
+                names = factory.getNames();
+            } else {
+                // return an empty script name list
+                names = new ArrayList<String>(0);
+            }
             return names;
         }
 
@@ -223,7 +232,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                 }
                 return (ScriptEngineFactory) cls.newInstance();
             } catch (Exception e) {
-                //do something
+                LOG.warn("Cannot create the ScriptEngineFactory: " + e.getClass().getName(), e);
                 return null;
             }
         }
