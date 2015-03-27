@@ -142,6 +142,11 @@ public class RouteService extends ChildServiceSupport {
             // endpoints should only be started once as they can be reused on other routes
             // and whatnot, thus their lifecycle is to start once, and only to stop when Camel shutdown
             for (Route route : routes) {
+                // ensure endpoints is registered in the registry
+                String uri = route.getEndpoint().getEndpointUri();
+                if (camelContext.hasEndpoint(uri) == null) {
+                    camelContext.addEndpoint(uri, route.getEndpoint());
+                }
                 // ensure endpoint is started first (before the route services, such as the consumer)
                 ServiceHelper.startService(route.getEndpoint());
             }
