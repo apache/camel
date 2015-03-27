@@ -273,7 +273,7 @@ public abstract class AbstractCamelController implements CamelController {
                 if (row.containsKey("modelName")) {
                     modelName = row.get("modelName");
                 } else if (row.containsKey("title")) {
-                    description = row.get("title");
+                    title = row.get("title");
                 } else if (row.containsKey("description")) {
                     description = row.get("description");
                 } else if (row.containsKey("label")) {
@@ -296,7 +296,7 @@ public abstract class AbstractCamelController implements CamelController {
             row.put("modelName", modelName);
             row.put("status", status);
             if (title != null) {
-                row.put("title", description);
+                row.put("title", title);
             }
             if (description != null) {
                 row.put("description", description);
