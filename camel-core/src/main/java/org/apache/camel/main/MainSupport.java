@@ -205,7 +205,7 @@ public abstract class MainSupport extends ServiceSupport {
         for (MainListener listener : listeners) {
             listener.afterStop(this);
         }
-   }
+    }
 
     private void internalBeforeStop() {
         try {
