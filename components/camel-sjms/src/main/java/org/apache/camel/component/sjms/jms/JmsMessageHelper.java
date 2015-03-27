@@ -204,6 +204,7 @@ public final class JmsMessageHelper implements JmsConstants {
             } else {
                 throw new JMSException("Null body is not allowed");
             }
+            break;
         default:
             break;
         }
