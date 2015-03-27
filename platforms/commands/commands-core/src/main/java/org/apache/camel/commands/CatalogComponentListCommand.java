@@ -67,7 +67,7 @@ public class CatalogComponentListCommand extends AbstractCamelCommand {
             out.println(String.format(headerFormat, "-----", "------", "-----", "----------------"));
         } else {
             out.println(String.format(headerFormat, TITLE_COLUMN_LABEL, DESCRIPTION_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "----", "-----------"));
+            out.println(String.format(headerFormat, "-----", "-----------"));
         }
         for (final Map<String, String> component : components) {
             if (verbose) {
