@@ -1918,6 +1918,12 @@
         <version>${commons-logging-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec-version}</version>
+      </dependency>
+
       <!-- optional dependencies for osgi -->
       <dependency>
         <groupId>org.osgi</groupId>
