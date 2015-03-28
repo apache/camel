@@ -167,7 +167,7 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 languageModel.setTitle("");
                                 languageModel.setModelName(modelName);
                                 languageModel.setLabel("");
-                                languageModel.setDescription(project.getDescription());
+                                languageModel.setDescription("");
                                 languageModel.setJavaType(javaType);
                                 languageModel.setGroupId(project.getGroupId());
                                 languageModel.setArtifactId(project.getArtifactId());
@@ -178,17 +178,14 @@ public class PackageLanguageMojo extends AbstractMojo {
                                     if (row.containsKey("title")) {
                                         languageModel.setTitle(row.get("title"));
                                     }
+                                    if (row.containsKey("description")) {
+                                        languageModel.setDescription(row.get("description"));
+                                    }
                                     if (row.containsKey("label")) {
                                         languageModel.setLabel(row.get("label"));
                                     }
                                     if (row.containsKey("javaType")) {
                                         languageModel.setModelJavaType(row.get("javaType"));
-                                    }
-                                    // override description for camel-core, as otherwise its too generic
-                                    if ("camel-core".equals(project.getArtifactId())) {
-                                        if (row.containsKey("description")) {
-                                            languageModel.setLabel(row.get("description"));
-                                        }
                                     }
                                 }
                                 log.debug("Model " + languageModel);
