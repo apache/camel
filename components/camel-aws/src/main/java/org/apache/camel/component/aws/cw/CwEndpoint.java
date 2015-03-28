@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Endpoint</a>
  */
-@UriEndpoint(scheme = "aws-cw", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
+@UriEndpoint(scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class CwEndpoint extends DefaultEndpoint {
 
     @UriParam

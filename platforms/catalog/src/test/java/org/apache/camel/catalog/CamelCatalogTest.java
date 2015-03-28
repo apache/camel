@@ -92,7 +92,18 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
-    public void testAsEndpointUriMap() throws Exception {
+    public void testAsEndpointUriMapFile() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("directoryName", "src/data/inbox");
+        map.put("noop", "true");
+        map.put("delay", "5000");
+
+        String uri = catalog.asEndpointUri("file", map);
+        assertEquals("file:src/data/inbox?delay=5000&noop=true", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriMapFtp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("host", "someserver");
         map.put("port", "21");
@@ -187,6 +198,12 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
         assertEquals("false", map.get("splitEntries"));
         assertEquals("5000", map.get("delay"));
+    }
+
+    @Test
+    public void testEndpointComponentName() throws Exception {
+        String name = catalog.endpointComponentName("jms:queue:foo");
+        assertEquals("jms", name);
     }
 
 }

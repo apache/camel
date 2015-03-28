@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  */
 @ManagedResource(description = "Managed SedaEndpoint")
-@UriEndpoint(scheme = "seda", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
+@UriEndpoint(scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
     private volatile BlockingQueue<Exchange> queue;

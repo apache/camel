@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Represents a Redis endpoint.
  */
-@UriEndpoint(scheme = "spring-redis", syntax = "spring-redist:host:port", consumerClass = RedisConsumer.class, label = "spring,nosql")
+@UriEndpoint(scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", consumerClass = RedisConsumer.class, label = "spring,nosql")
 public class RedisEndpoint extends DirectEndpoint {
 
     @UriParam

@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "rmi", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "rmi", title = "RMI", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
 public class RmiEndpoint extends DefaultEndpoint {
 
     private ClassLoader classLoader;

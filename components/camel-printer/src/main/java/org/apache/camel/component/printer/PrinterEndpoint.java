@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "lpr", syntax = "lpr:hostname:port/printername", producerOnly = true, label = "printing")
+@UriEndpoint(scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, label = "printing")
 public class PrinterEndpoint extends DefaultEndpoint {
     
     public static final String JOB_NAME = "PrinterJobName";

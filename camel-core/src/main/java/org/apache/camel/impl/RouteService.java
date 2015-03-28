@@ -105,6 +105,8 @@ public class RouteService extends ChildServiceSupport {
     public Set<Endpoint> gatherEndpoints() {
         Set<Endpoint> answer = new LinkedHashSet<Endpoint>();
         for (Route route : routes) {
+            // the input endpoint itself
+            answer.add(route.getEndpoint());
             Set<Service> services = gatherChildServices(route, true);
             for (Service service : services) {
                 if (service instanceof EndpointAware) {
@@ -140,6 +142,11 @@ public class RouteService extends ChildServiceSupport {
             // endpoints should only be started once as they can be reused on other routes
             // and whatnot, thus their lifecycle is to start once, and only to stop when Camel shutdown
             for (Route route : routes) {
+                // ensure endpoints is registered in the registry
+                String uri = route.getEndpoint().getEndpointUri();
+                if (camelContext.hasEndpoint(uri) == null) {
+                    camelContext.addEndpoint(uri, route.getEndpoint());
+                }
                 // ensure endpoint is started first (before the route services, such as the consumer)
                 ServiceHelper.startService(route.getEndpoint());
             }
@@ -273,9 +280,6 @@ public class RouteService extends ChildServiceSupport {
             // shutdown the route itself
             ServiceHelper.stopAndShutdownServices(route);
 
-            // endpoints should only be stopped when Camel is shutting down
-            // see more details in the warmUp method
-            ServiceHelper.stopAndShutdownServices(route.getEndpoint());
             // invoke callbacks on route policy
             if (route.getRouteContext().getRoutePolicyList() != null) {
                 for (RoutePolicy routePolicy : route.getRouteContext().getRoutePolicyList()) {

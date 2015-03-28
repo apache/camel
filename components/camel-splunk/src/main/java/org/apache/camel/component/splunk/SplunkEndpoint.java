@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a Splunk endpoint.
  */
-@UriEndpoint(scheme = "splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "monitoring")
+@UriEndpoint(scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 

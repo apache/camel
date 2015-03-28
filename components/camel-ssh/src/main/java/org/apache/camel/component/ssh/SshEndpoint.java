@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an SSH endpoint.
  */
-@UriEndpoint(scheme = "ssh", syntax = "ssh:host:port", consumerClass = SshConsumer.class, label = "file")
+@UriEndpoint(scheme = "ssh", title = "SSH", syntax = "ssh:host:port", consumerClass = SshConsumer.class, label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

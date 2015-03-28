@@ -324,7 +324,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
                 for (String pkg : packages) {
 
-                    if (StringHelper.hasUpperCase(pkg)) {
+                    if (StringHelper.isClassName(pkg)) {
                         // its a FQN class name so load it directly
                         LOG.trace("Loading {} class", pkg);
                         try {
@@ -411,7 +411,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 }
                 return answer;
             } finally {
-                Thread.currentThread().setContextClassLoader(oldClassLoader);   
+                Thread.currentThread().setContextClassLoader(oldClassLoader);
             }
         }
 

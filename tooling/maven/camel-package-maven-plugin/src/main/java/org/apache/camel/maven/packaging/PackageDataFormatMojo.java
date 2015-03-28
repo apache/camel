@@ -164,6 +164,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             if (json != null) {
                                 DataFormatModel dataFormatModel = new DataFormatModel();
                                 dataFormatModel.setName(name);
+                                dataFormatModel.setTitle("");
                                 dataFormatModel.setModelName(modelName);
                                 dataFormatModel.setLabel("");
                                 dataFormatModel.setDescription(project.getDescription());
@@ -174,6 +175,10 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
+                                    if (row.containsKey("title")) {
+                                        String title = row.get("title");
+                                        dataFormatModel.setTitle(asModelTitle(name, title));
+                                    }
                                     if (row.containsKey("label")) {
                                         dataFormatModel.setLabel(row.get("label"));
                                     }
@@ -258,6 +263,24 @@ public class PackageDataFormatMojo extends AbstractMojo {
         return name;
     }
 
+    private static String asModelTitle(String name, String title) {
+        // special for some data formats
+        if ("json-gson".equals(name)) {
+            return "JSon GSon";
+        } else if ("json-jackson".equals(name)) {
+            return "JSon Jackson";
+        } else if ("json-xstream".equals(name)) {
+            return "JSon XStream";
+        } else if ("bindy-csv".equals(name)) {
+            return "Bindy CSV";
+        } else if ("bindy-fixed".equals(name)) {
+            return "Bindy Fixed Length";
+        } else if ("bindy-kvp".equals(name)) {
+            return "Bindy Key Value Pair";
+        }
+        return title;
+    }
+
     private static Artifact findCamelCoreArtifact(MavenProject project) {
         // maybe this project is camel-core itself
         Artifact artifact = project.getArtifact();
@@ -289,6 +312,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");
         buffer.append("\n    \"modelName\": \"").append(dataFormatModel.getModelName()).append("\",");
+        if (dataFormatModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(dataFormatModel.getTitle()).append("\",");
+        }
         if (dataFormatModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         }
@@ -309,6 +335,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static class DataFormatModel {
         private String name;
+        private String title;
         private String modelName;
         private String description;
         private String label;
@@ -324,6 +351,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getModelName() {
@@ -394,6 +429,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         public String toString() {
             return "DataFormatModel["
                     + "name='" + name + '\''
+                    + ", title='" + title + '\''
                     + ", modelName='" + modelName + '\''
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''

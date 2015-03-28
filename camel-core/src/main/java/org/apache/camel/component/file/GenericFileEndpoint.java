@@ -87,11 +87,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Expression tempFileName;
     @UriParam(label = "producer", defaultValue = "true")
     protected boolean eagerDeleteTargetFile = true;
-    @UriParam(defaultValue = "false", label = "producer")
+    @UriParam(label = "producer")
     protected boolean keepLastModified;
     @UriParam(label = "producer")
     protected String doneFileName;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     protected boolean allowNullBody;
     @UriParam(label = "producer")
     protected String chmod;
@@ -106,15 +106,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
     @UriParam(label = "consumer")
     protected String localWorkDirectory;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     protected boolean startingDirectoryMustExist;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     protected boolean directoryMustExist;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     protected boolean noop;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     protected boolean recursive;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     protected boolean delete;
     @UriParam(label = "consumer")
     protected int maxMessagesPerPoll;
