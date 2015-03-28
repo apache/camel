@@ -62,6 +62,7 @@ trait DSL {
   def loop(expression: Exchange => Any) : SLoopDefinition
 
   def marshal(format : DataFormatDefinition) : DSL
+  def marshal(dataFormatRef: String) : DSL
   def multicast : SMulticastDefinition
 
   def onCompletion : SOnCompletionDefinition
@@ -104,6 +105,7 @@ trait DSL {
   def transform(expression: Exchange => Any) : DSL
 
   def unmarshal(format: DataFormatDefinition) : DSL
+  def unmarshal(dataFormatRef: String) : DSL
 
   def validate(expression: Exchange => Any) : DSL
 
