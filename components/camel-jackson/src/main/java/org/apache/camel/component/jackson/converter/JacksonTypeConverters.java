@@ -38,6 +38,7 @@ public final class JacksonTypeConverters {
                 return null;
             }
         }
+        // Just return null to let other fallback converter to do the job
         return null;
     }
 
