@@ -16,43 +16,14 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.net.URI;
-
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-
 /**
- * FTP configuration
+ * Unit test to test account option.
  */
-@UriParams
-public class FtpConfiguration extends RemoteFileConfiguration {
-
-    public static final int DEFAULT_FTP_PORT = 21;
-
-    @UriParam
-    private String account;
-
-    public FtpConfiguration() {
-        setProtocol("ftp");
-    }
-
-    public FtpConfiguration(URI uri) {
-        super(uri);
-    }
+public class FromFtpNoopAccountTest extends FromFtpNoopTest {
 
     @Override
-    protected void setDefaultPort() {
-        setPort(DEFAULT_FTP_PORT);
+    protected String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&account=me&binary=false&noop=true";
     }
 
-    public String getAccount() {
-        return account;
-    }
-
-    /**
-     * Account to use for login
-     */
-    public void setAccount(String account) {
-        this.account = account;
-    }
 }
