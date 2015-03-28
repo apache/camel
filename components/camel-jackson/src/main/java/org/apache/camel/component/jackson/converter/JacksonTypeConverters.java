@@ -31,7 +31,12 @@ public final class JacksonTypeConverters {
     @FallbackConverter
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (value instanceof Map) {
-            return new ObjectMapper().convertValue(value, type);
+            try {
+                return new ObjectMapper().convertValue(value, type);
+            } catch (Exception ex) {
+                // Just catch the exception and return null when the ObjectMapper cannot convert the value
+                return null;
+            }
         }
         return null;
     }
