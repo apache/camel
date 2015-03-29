@@ -75,6 +75,8 @@ import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
+
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 
 public class AmazonS3ClientMock extends AmazonS3Client {
@@ -83,6 +85,8 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<PutObjectRequest>();
     
     private boolean nonExistingBucketCreated;
+    
+    private int maxCapacity = 100;
     
     public AmazonS3ClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
@@ -126,9 +130,13 @@ public class AmazonS3ClientMock extends AmazonS3Client {
             ex.setStatusCode(404);
             throw ex; 
         }
-        
+        int capacity;
         ObjectListing objectListing = new ObjectListing();
-        int capacity = listObjectsRequest.getMaxKeys();
+        if (!ObjectHelper.isEmpty(listObjectsRequest.getMaxKeys()) && listObjectsRequest.getMaxKeys() != null) {
+            capacity = listObjectsRequest.getMaxKeys();
+        } else {
+        	capacity = maxCapacity;
+        }
         
         for (int index = 0; index < objects.size() && index < capacity; index++) {
             S3ObjectSummary s3ObjectSummary = new S3ObjectSummary();
