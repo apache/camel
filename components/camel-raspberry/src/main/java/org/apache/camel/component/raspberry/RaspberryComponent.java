@@ -35,6 +35,8 @@ public class RaspberryComponent extends UriEndpointComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(RaspberryComponent.class);
 
     private static final Object SYNC = RaspberryComponent.class;
+    
+    private GpioController gpio;
 
     public RaspberryComponent() {
         super(RaspberryEndpoint.class);
@@ -46,12 +48,7 @@ public class RaspberryComponent extends UriEndpointComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = null;
-        GpioController gpio = null;
-
-        synchronized (SYNC) { // Retrieve Factory
-            gpio = GpioFactory.getInstance();
-        }
-
+   
         if (RaspberryConstants.TYPE_ENDPOINT_PIN.compareTo(remaining) == 0) {
             endpoint = new RaspberryEndpoint(uri, remaining, this, gpio);
             setProperties(endpoint, parameters);
@@ -59,4 +56,13 @@ public class RaspberryComponent extends UriEndpointComponent {
 
         return endpoint;
     }
+    
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        synchronized (SYNC) {
+            gpio = GpioFactory.getInstance();
+        }
+    }
+
 }
