@@ -53,7 +53,7 @@ public class DigitalInputTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("rbpi://pin?id=0&mode=input").id("test-route").to("mock:result");
+                from("rbpi://pin?id=0&mode=DIGITAL_INPUT").id("test-route").to("mock:result");
 
             }
         };

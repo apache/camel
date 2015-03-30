@@ -14,50 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.raspberry.output;
+package org.apache.camel.test.raspberry.input;
 
 import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.raspberry.RaspberryConsumer;
 import org.apache.camel.component.raspberry.mock.RaspiGpioProviderMock;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class DigitalOutput1Test extends CamelTestSupport {
-
-    public static final RaspiGpioProviderMock MOCK_RASPI = new RaspiGpioProviderMock();
+public class DigitalInputHigh2Test extends CamelTestSupport {
 
     static {
         // Mandatory we are not inside a Real Raspberry PI
-        GpioFactory.setDefaultProvider(MOCK_RASPI);
+        GpioFactory.setDefaultProvider(new RaspiGpioProviderMock());
     }
 
     @Test
-    public void consumeAnalogEvent() throws Exception {
+    public void consumeDigitalEventWithIncorrectState() throws Exception {
+
+        RaspberryConsumer pin = (RaspberryConsumer)context.getRoute("test-route").getConsumer();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
 
-        mock.expectedMessageCount(1);
+        pin.handleGpioPinDigitalStateChangeEvent(new GpioPinDigitalStateChangeEvent("CAMEL-EVENT", (GpioPin)pin.getPin(), PinState.LOW));
+
+        mock.expectedMessageCount(0);
 
         assertMockEndpointsSatisfied();
-
-        Assert.assertEquals("", PinState.HIGH, MOCK_RASPI.getState(RaspiPin.GPIO_07));
-        Assert.assertEquals("", PinState.LOW, MOCK_RASPI.getState(RaspiPin.GPIO_08));
-        Assert.assertEquals("", PinState.HIGH, MOCK_RASPI.getState(RaspiPin.GPIO_09));
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?repeatCount=1").id("rbpi-route").to("log:org.apache.camel.component.raspberry?showAll=true&multiline=true")
-                    .to("rbpi://pin?id=7&mode=DIGITAL_OUTPUT&state=LOW&action=TOGGLE").to("rbpi://pin?id=8&mode=DIGITAL_OUTPUT&state=HIGH&action=LOW")
-                    .to("rbpi://pin?id=9&mode=DIGITAL_OUTPUT&state=LOW&action=HIGH").to("mock:result");
+                from("rbpi://pin?id=2&mode=DIGITAL_INPUT&state=HIGH").id("test-route").to("mock:result");
 
             }
         };

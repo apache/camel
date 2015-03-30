@@ -49,25 +49,11 @@ public class DigitalInputLowTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void consumeDigitalEvent() throws Exception {
-
-        RaspberryConsumer pinConsumer = (RaspberryConsumer)this.context.getRoute("test-route").getConsumer();
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-
-        pinConsumer.handleGpioPinDigitalStateChangeEvent(new GpioPinDigitalStateChangeEvent("CAMEL-EVENT", (GpioPin)pinConsumer.getPin(), PinState.LOW));
-
-        mock.expectedMessageCount(1);
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("rbpi://pin?id=3&mode=input&state=LOW").id("test-route").to("mock:result");
+                from("rbpi://pin?id=3&mode=DIGITAL_INPUT&state=LOW").id("test-route").to("mock:result");
 
             }
         };

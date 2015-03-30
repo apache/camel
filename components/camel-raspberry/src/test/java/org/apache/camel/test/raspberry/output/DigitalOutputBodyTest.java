@@ -54,7 +54,7 @@ public class DigitalOutputBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("timer://foo?repeatCount=1").id("rbpi-route").to("log:org.apache.camel.component.raspberry?showAll=true&multiline=true").transform().constant(true)
-                    .to("rbpi://pin?id=5&mode=output").transform().simple("${body} == false").to("rbpi://pin?id=6&mode=output&state=HIGH").to("mock:result");
+                    .to("rbpi://pin?id=5&mode=DIGITAL_OUTPUT").transform().simple("${body} == false").to("rbpi://pin?id=6&mode=DIGITAL_OUTPUT&state=HIGH").to("mock:result");
             }
         };
     }

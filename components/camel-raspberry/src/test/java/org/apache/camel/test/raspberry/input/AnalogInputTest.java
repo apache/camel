@@ -52,7 +52,7 @@ public class AnalogInputTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("rbpi://pin?id=1&mode=analog_input").id("test-route").to("mock:result");
+                from("rbpi://pin?id=1&mode=ANALOG_INPUT").id("test-route").to("mock:result");
 
             }
         };

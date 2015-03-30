@@ -32,16 +32,6 @@ public final class RaspberryConverter {
     }
 
     @Converter
-    public static PinMode toPinMode(String mode) {
-        for (PinMode pin : PinMode.all()) {
-            if (pin.getName().compareTo(mode) == 0) {
-                return pin;
-            }
-        }
-        return null;
-    }
-
-    @Converter
     public static PinState toPinState(String state) {
         for (PinState pin : PinState.allStates()) {
             if (pin.getName().compareTo(state) == 0) {
