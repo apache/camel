@@ -1142,6 +1142,14 @@
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rabbitmq/${project.version}</bundle>
   </feature>
+ <feature name='camel-raspberrypi' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.pi4j/pi4j-core/${pi4j-version}</bundle>
+    <bundle dependency='true'>mvn:com.pi4j/pi4j-device/${pi4j-version}</bundle>
+    <bundle dependency='true'>mvn:com.pi4j/pi4j-gpio-extension/${pi4j-version}</bundle>
+    <bundle dependency='true'>mvn:com.pi4j/pi4j-service/${pi4j-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-raspberrypi/${project.version}</bundle>
+  </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:http://maven.restlet.org!org.restlet.osgi/org.restlet/${restlet-version}</bundle>
