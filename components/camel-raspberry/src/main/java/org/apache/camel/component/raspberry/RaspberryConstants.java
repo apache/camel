@@ -19,7 +19,6 @@ package org.apache.camel.component.raspberry;
 /**
  * Constants Class
  * 
- * @author gautric
  */
 public final class RaspberryConstants {
     public static final String TYPE_ENDPOINT_PIN = "pin";

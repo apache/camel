@@ -30,7 +30,6 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * The pi4j consumer.
  * 
- * @author gautric
  */
 public class RaspberryConsumer extends DefaultConsumer implements GpioPinListenerDigital, GpioPinListenerAnalog {
 

@@ -29,7 +29,6 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * The pi4j producer.
  * 
- * @author gautric
  */
 public class RaspberryProducer extends DefaultProducer {
 

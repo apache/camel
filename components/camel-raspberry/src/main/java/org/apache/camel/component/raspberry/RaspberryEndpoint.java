@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a pi4j endpoint.
  * 
- * @author gautric
  */
 @UriEndpoint(scheme = "rbpi", syntax = "rbpi:id", consumerClass = RaspberryConsumer.class, label = "device,IoT", title = "RaspberryPi")
 public class RaspberryEndpoint extends DefaultEndpoint {

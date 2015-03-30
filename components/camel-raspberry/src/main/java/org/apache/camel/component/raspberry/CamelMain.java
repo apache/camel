@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple application to run RaspberryPi Camel
  * 
- * @author gautric
  */
 public final class CamelMain {
     
