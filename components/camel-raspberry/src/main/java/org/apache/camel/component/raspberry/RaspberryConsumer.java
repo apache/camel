@@ -75,11 +75,6 @@ public class RaspberryConsumer extends DefaultConsumer implements GpioPinListene
     @Override
     public void handleGpioPinAnalogValueChangeEvent(GpioPinAnalogValueChangeEvent event) {
         Exchange exchange = endpoint.createExchange();
-        // to check
-        // http://stackoverflow.com/questions/10330998/passing-values-between-processors-in-apache-camel
-        exchange.setProperty(RaspberryConstants.CAMEL_PI4J_PIN, event.getPin().getName());
-        exchange.setProperty(RaspberryConstants.CAMEL_PI4J_PIN_VALUE, event.getValue());
-        exchange.setProperty(RaspberryConstants.CAMEL_PI4J_PIN_TYPE, event.getEventType());
 
         exchange.getIn().setBody(event);
 
@@ -103,12 +98,6 @@ public class RaspberryConsumer extends DefaultConsumer implements GpioPinListene
         }
 
         Exchange exchange = endpoint.createExchange();
-
-        // to check
-        // http://stackoverflow.com/questions/10330998/passing-values-between-processors-in-apache-camel
-        exchange.setProperty(RaspberryConstants.CAMEL_PI4J_PIN, event.getPin().getName());
-        exchange.setProperty(RaspberryConstants.CAMEL_PI4J_PIN_STATE, event.getState().getName());
-        exchange.setProperty(RaspberryConstants.CAMEL_PI4J_PIN_TYPE, event.getEventType().name());
 
         exchange.getIn().setBody(event);
 
