@@ -50,9 +50,8 @@ public class GsonMarshalListTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(List.class);
         mock.message(0).body().equals(inList);
 
-        Object marshalled = template.requestBody("direct:inPojo", inList);
-        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        assertEquals("[{\"name\":\"Camel1\"},{\"name\":\"Camel2\"}]", marshalledAsString);
+        String marshalled = template.requestBody("direct:inPojo", inList, String.class);
+        assertEquals("[{\"name\":\"Camel1\"},{\"name\":\"Camel2\"}]", marshalled);
 
         template.sendBody("direct:backPojo", marshalled);
 
