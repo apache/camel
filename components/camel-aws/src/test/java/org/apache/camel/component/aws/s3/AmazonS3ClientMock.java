@@ -126,7 +126,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     @Override
     public ObjectListing listObjects(ListObjectsRequest listObjectsRequest) throws AmazonClientException, AmazonServiceException {
         if ("nonExistingBucket".equals(listObjectsRequest.getBucketName()) && !nonExistingBucketCreated) {
-            AmazonServiceException ex = new AmazonServiceException("Unknow bucket");
+            AmazonServiceException ex = new AmazonServiceException("Unknown bucket");
             ex.setStatusCode(404);
             throw ex; 
         }
@@ -135,7 +135,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
         if (!ObjectHelper.isEmpty(listObjectsRequest.getMaxKeys()) && listObjectsRequest.getMaxKeys() != null) {
             capacity = listObjectsRequest.getMaxKeys();
         } else {
-        	capacity = maxCapacity;
+            capacity = maxCapacity;
         }
         
         for (int index = 0; index < objects.size() && index < capacity; index++) {
