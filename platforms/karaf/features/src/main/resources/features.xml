@@ -531,6 +531,7 @@
     <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
+    <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.osgi/org.osgi.compendium/${osgi-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-interceptor_1.1_spec/1.0</bundle>
