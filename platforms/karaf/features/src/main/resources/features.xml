@@ -593,6 +593,8 @@
     <!-- see https://issues.apache.org/jira/browse/HADOOP-7101 -->
     <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-2.5-spec-version}</bundle>
+    <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
