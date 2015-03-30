@@ -33,6 +33,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class RaspberryEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(RaspberryEndpoint.class);
 
-    @UriParam(description = "PIN ID Wiring")
+    @UriPath(description = "PIN ID Wiring")
     @Metadata(required = "true")
     private String id;
 
@@ -118,7 +119,7 @@ public class RaspberryEndpoint extends DefaultEndpoint {
             }
 
         } else {
-            LOG.error("Cannot create PIN");
+            throw new IllegalArgumentException("Cannot create twice same input pin for Consumer");
         }
 
         return new RaspberryConsumer(this, processor, pin, state);
@@ -152,7 +153,7 @@ public class RaspberryEndpoint extends DefaultEndpoint {
             }
             pin.setMode(this.mode); // Force Mode to avoid NPE
         } else {
-            LOG.error("Cannot create PIN");
+            throw new IllegalArgumentException("Cannot create twice same output pin for Producer");
         }
 
         // shutdownOption(pin);
