@@ -2411,10 +2411,40 @@
 
       <!-- optional misc -->
       <dependency>
+        <groupId>com.google.code.scriptengines</groupId>
+        <artifactId>scriptengines-javascript</artifactId>
+        <version>${scriptengines-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.scriptengines</groupId>
+        <artifactId>scriptengines-jruby</artifactId>
+        <version>${scriptengines-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby</artifactId>
+        <version>${jruby-version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby-complete</artifactId>
         <version>${jruby-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.python</groupId>
+        <artifactId>jython</artifactId>
+        <version>${jython-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+        <version>${rhino-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jdom</groupId>
+        <artifactId>jdom</artifactId>
+        <version>${jdom-version}</version>
+      </dependency>            
       <dependency>
         <groupId>commons-dbcp</groupId>
         <artifactId>commons-dbcp</artifactId>
