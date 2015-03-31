@@ -44,8 +44,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
+
     public DefaultJettyHttpBinding() {
-        
     }
     
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {

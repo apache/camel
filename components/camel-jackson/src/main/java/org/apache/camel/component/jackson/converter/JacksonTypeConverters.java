@@ -30,12 +30,15 @@ public final class JacksonTypeConverters {
 
     @FallbackConverter
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+        if (type.isAssignableFrom(String.class)) {
+            // do not convert to String
+            return null;
+        }
+
         if (value instanceof Map) {
-            try {
-                return new ObjectMapper().convertValue(value, type);
-            } catch (Exception ex) {
-                // Just catch the exception and return null when the ObjectMapper cannot convert the value
-                return null;
+            ObjectMapper mapper = new ObjectMapper();
+            if (mapper.canSerialize(type)) {
+                return mapper.convertValue(value, type);
             }
         }
         // Just return null to let other fallback converter to do the job
