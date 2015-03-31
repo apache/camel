@@ -90,11 +90,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     @UriParam(defaultValue = "true")
     private boolean producerPoolEnabled = true;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean udpConnectionlessSending;
-    @UriParam
+    @UriParam(defaultValue = "false")
     private boolean clientMode;
-
+    
     /**
      * Returns a copy of this configuration
      */
