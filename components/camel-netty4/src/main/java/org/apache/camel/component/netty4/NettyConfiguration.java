@@ -96,6 +96,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean clientMode;
     @UriParam(defaultValue = "false")
     private boolean useByteBuf;
+    @UriParam(defaultValue = "false")
+    private boolean udpByteArrayCodec;
     
 
     /**
@@ -214,7 +216,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                         LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
-                } else {
+                } else if ("udp".equalsIgnoreCase(protocol) && isUdpByteArrayCodec()) {
+                    encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
+                    decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
+                }else {
                     // object serializable is then used
                     encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newObjectDecoder(protocol));
@@ -501,6 +506,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setUseByteBuf(boolean useByteBuf) {
         this.useByteBuf = useByteBuf;
+    }
+
+    public boolean isUdpByteArrayCodec() {
+        return udpByteArrayCodec;
+    }
+
+    public void setUdpByteArrayCodec(boolean udpByteArrayCodec) {
+        this.udpByteArrayCodec = udpByteArrayCodec;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
