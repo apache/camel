@@ -95,8 +95,6 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
         });
         context.start();
 
-        assertTrue("Should be static endpoint", context.getEndpointRegistry().isStatic(myendpoint.getEndpointKey()));
-
         assertEquals("EndpointProducerConsumer", order);
         order = "";
 
