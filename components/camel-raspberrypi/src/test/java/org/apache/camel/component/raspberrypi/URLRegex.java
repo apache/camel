@@ -47,7 +47,7 @@ public class URLRegex {
         Assert.assertTrue(m.matches());
         Assert.assertEquals("pin", m.group("type"));
         Assert.assertEquals("1", m.group("id"));
-        Assert.assertEquals("rbpi", m.group("scheme"));
+        Assert.assertEquals("raspberrypi", m.group("scheme"));
     }
     
     @Test
@@ -58,13 +58,24 @@ public class URLRegex {
         Assert.assertTrue(m.matches());
         Assert.assertEquals("pin", m.group("type"));
         Assert.assertEquals("1", m.group("id"));
-        Assert.assertEquals("rbpi", m.group("scheme"));
+        Assert.assertEquals("raspberrypi", m.group("scheme"));
     }
 
     @Test
-    public void test3() {
+    public void simpleTestI2C() {
 
         String url = "i2c:aze";
+        Matcher m = p.matcher(url);
+        Assert.assertTrue(m.matches());
+        Assert.assertEquals("i2c", m.group("type"));
+        Assert.assertEquals("aze", m.group("id"));
+
+    }
+    
+    @Test
+    public void simpleTestRestStyle() {
+
+        String url = "i2c/aze";
         Matcher m = p.matcher(url);
         Assert.assertTrue(m.matches());
         Assert.assertEquals("i2c", m.group("type"));
