@@ -94,6 +94,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean udpConnectionlessSending;
     @UriParam(defaultValue = "false")
     private boolean clientMode;
+    @UriParam(defaultValue = "false")
+    private boolean useByteBuf;
     
 
     /**
@@ -491,6 +493,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     
     public void setClientMode(boolean clientMode) {
         this.clientMode = clientMode;
+    }
+
+    public boolean isUseByteBuf() {
+        return useByteBuf;
+    }
+
+    public void setUseByteBuf(boolean useByteBuf) {
+        this.useByteBuf = useByteBuf;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
