@@ -230,7 +230,7 @@
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson2-version>2.4.3</jackson2-version>
-    <jackrabbit-version>2.9.1</jackrabbit-version>
+    <jackrabbit-version>2.10.0</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.36_1</jasper-bundle-version>
     <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
