@@ -62,7 +62,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean disconnect;
     @UriParam(defaultValue = "true")
     private boolean lazyChannelCreation = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferExchange;
     @UriParam(defaultValue = "true")
     private boolean disconnectOnNoReply = true;

@@ -37,7 +37,7 @@ public class SdbConfiguration {
     private String amazonSdbEndpoint;
     @UriParam
     private Integer maxNumberOfDomains;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean consistentRead;
     @UriParam(defaultValue = "PutAttributes")
     private SdbOperations operation = SdbOperations.PutAttributes;

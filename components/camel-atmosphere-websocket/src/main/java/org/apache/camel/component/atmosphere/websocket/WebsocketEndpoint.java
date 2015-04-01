@@ -40,9 +40,9 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     @UriPath
     private String servicePath;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean sendToAll;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useStreaming;
     
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,

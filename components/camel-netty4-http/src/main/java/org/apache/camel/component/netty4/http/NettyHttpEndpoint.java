@@ -46,7 +46,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean traceEnabled;
     @UriParam
     private String httpMethodRestrict;

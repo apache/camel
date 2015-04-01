@@ -70,7 +70,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private boolean autoDelete = true;
     @UriParam(defaultValue = "true")
     private boolean durable = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
     @UriParam
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());

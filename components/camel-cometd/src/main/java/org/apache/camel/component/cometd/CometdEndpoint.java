@@ -59,11 +59,11 @@ public class CometdEndpoint extends DefaultEndpoint {
     private int multiFrameInterval = 1500;
     @UriParam(defaultValue = "true")
     private boolean jsonCommented = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean sessionHeadersEnabled;
     @UriParam(defaultValue = "1")
     private int logLevel = 1;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean crossOriginFilterOn;
     @UriParam
     private String allowedOrigins;

@@ -49,13 +49,13 @@ public class ZooKeeperConfiguration implements Cloneable {
     private long backoff = 5000;
     @UriParam(defaultValue = "true")
     private boolean awaitExistence = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean repeat;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean listChildren;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean shouldCreate;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private String createMode;
     @UriParam(defaultValue = "true")
     private boolean sendEmptyMessageOnDelete = true;
