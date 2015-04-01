@@ -41,10 +41,10 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     @UriParam
     private Map<String, ?> cryptoContextProperties;
 
-    @UriParam(defaultValue = "Boolean.TRUE")
+    @UriParam(defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
 
-    @UriParam(defaultValue = "Boolean.FALSE")
+    @UriParam(defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
 
     @UriParam(defaultValue = "true")
