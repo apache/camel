@@ -39,6 +39,8 @@ public class DirectVmEndpoint extends DefaultEndpoint {
     private boolean block;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+    @UriParam(label = "producer")
+    private boolean failIfNoConsumers = true;
 
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {
         super(endpointUri, component);
@@ -96,4 +98,16 @@ public class DirectVmEndpoint extends DefaultEndpoint {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    public boolean isFailIfNoConsumers() {
+        return failIfNoConsumers;
+    }
+
+    /**
+     * Whether the producer should fail by throwing an exception, when sending to a DIRECT-VM endpoint with no active consumers.
+     */
+    public void setFailIfNoConsumers(boolean failIfNoConsumers) {
+        this.failIfNoConsumers = failIfNoConsumers;
+    }
+
 }
