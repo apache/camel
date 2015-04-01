@@ -83,7 +83,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean errorHandlerLogStackTrace = true;
     @UriParam(defaultValue = "true")
     private boolean autoStartup = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean acceptMessagesWhileStopping;
     @UriParam
     private String clientId;
@@ -93,7 +93,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam
     private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pubSubNoLocal;
     @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
@@ -121,7 +121,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam
     private int replyToMaxConcurrentConsumers;
     // JmsTemplate only
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean explicitQosEnabled;
     @UriParam(defaultValue = "true")
     private boolean deliveryPersistent = true;
@@ -141,7 +141,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "-1")
     private int priority = -1;
     // Transaction related configuration
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transacted;
     private boolean transactedInOut;
     @UriParam(defaultValue = "true")
@@ -151,16 +151,16 @@ public class JmsConfiguration implements Cloneable {
     private String transactionName;
     @UriParam(defaultValue = "-1")
     private int transactionTimeout = -1;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean preserveMessageQos;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableReplyTo;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean alwaysCopyMessage;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useMessageIDAsCorrelationID;
     private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
     private JmsOperations metadataJmsOperations;
@@ -174,26 +174,26 @@ public class JmsConfiguration implements Cloneable {
     private JmsMessageType jmsMessageType;
     @UriParam
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferExchange;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferException;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean testConnectionOnStartup;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncStartListener;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncStopListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the
     // producer to send the javax.jms.Message body to the next JMS destination
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableTimeToLive;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private ReplyToType replyToType;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
     @UriParam
@@ -201,10 +201,10 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean allowNullBody = true;
     private MessageListenerContainerFactory messageListenerContainerFactory;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean includeSentJMSMessageID;
     private DefaultTaskExecutorType defaultTaskExecutorType;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean includeAllJMSXProperties;
 
     public JmsConfiguration() {

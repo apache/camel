@@ -59,7 +59,7 @@ public class BoxConfiguration {
     @UriParam
     private OAuthRefreshListener refreshListener;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean revokeOnShutdown;
 
     @UriParam

@@ -78,9 +78,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private int transactionBatchCount = -1;
     @UriParam(defaultValue = "5000")
     private long transactionBatchTimeout = 5000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncStartListener;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncStopListener;
     @UriParam(defaultValue = "true")
     private boolean prefillPool = true;

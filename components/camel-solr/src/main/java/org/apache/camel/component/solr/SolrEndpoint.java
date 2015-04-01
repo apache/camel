@@ -55,9 +55,9 @@ public class SolrEndpoint extends DefaultEndpoint {
     private Integer defaultMaxConnectionsPerHost;
     @UriParam
     private Integer maxTotalConnections;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean followRedirects;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean allowCompression;
     @UriParam
     private String zkHost;

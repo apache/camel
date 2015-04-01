@@ -74,7 +74,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String resource = "Camel";
     @UriParam(defaultValue = "true")
     private boolean login = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean createAccount;
     @UriParam
     private String room;

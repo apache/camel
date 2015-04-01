@@ -56,13 +56,13 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     private String name;
     @UriParam(defaultValue = "1")
     private final int concurrentConsumers;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private final boolean multipleConsumers;
     @UriParam(defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean blockWhenFull;
     @UriParam(defaultValue = "Blocking")
     private DisruptorWaitStrategy waitStrategy;

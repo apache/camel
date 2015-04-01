@@ -48,9 +48,9 @@ public class AvroConfiguration implements Cloneable {
     private String protocolClassName;
     @UriParam
     private String uriAuthority;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean reflectionProtocol;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean singleParameter;
 
     public AvroConfiguration copy() {

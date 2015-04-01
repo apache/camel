@@ -75,7 +75,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean onMode = true;
     @UriParam(defaultValue = "true")
     private boolean onPart = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean onReply;
     @UriParam(defaultValue = "true")
     private boolean onTopic = true;

@@ -42,7 +42,7 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
     private int concurrentConsumers = 1;
     @UriParam
     private String spaceName;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transactional;
     @UriParam
     private long transactionTimeout = Long.MAX_VALUE;

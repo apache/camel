@@ -35,7 +35,7 @@ public class DdbConfiguration {
     private AmazonDynamoDB amazonDDBClient;
     @UriParam
     private String amazonDdbEndpoint;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean consistentRead;
     @UriParam(defaultValue = "PutItem")
     private DdbOperations operation = DdbOperations.PutItem;

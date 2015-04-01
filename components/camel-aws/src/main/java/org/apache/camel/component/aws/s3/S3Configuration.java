@@ -41,9 +41,9 @@ public class S3Configuration implements Cloneable {
     private String region;
     @UriParam(defaultValue = "true")
     private boolean deleteAfterRead = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean deleteAfterWrite;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean multiPartUpload;
     @UriParam(defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25 * 1024 * 1024;

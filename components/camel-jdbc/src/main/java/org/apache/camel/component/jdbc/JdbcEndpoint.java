@@ -38,7 +38,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private DataSource dataSource;
     @UriParam
     private int readSize;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transacted;
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
@@ -49,7 +49,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
     @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useHeadersAsParameters;
     @UriParam(defaultValue = "SelectList")
     private JdbcOutputType outputType = JdbcOutputType.SelectList;

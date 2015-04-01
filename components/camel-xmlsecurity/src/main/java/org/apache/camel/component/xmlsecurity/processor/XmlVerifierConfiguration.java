@@ -59,10 +59,10 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
     @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "Boolean.FALSE")
     private Boolean removeSignatureElements = Boolean.FALSE;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "Boolean.TRUE")
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {

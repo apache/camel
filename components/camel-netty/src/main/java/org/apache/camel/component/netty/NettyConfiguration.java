@@ -62,7 +62,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean disconnect;
     @UriParam(defaultValue = "true")
     private boolean lazyChannelCreation = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferExchange;
     @UriParam(defaultValue = "true")
     private boolean disconnectOnNoReply = true;
@@ -90,11 +90,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     @UriParam(defaultValue = "true")
     private boolean producerPoolEnabled = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean udpConnectionlessSending;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean clientMode;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean useChannelBuffer;
 
     /**

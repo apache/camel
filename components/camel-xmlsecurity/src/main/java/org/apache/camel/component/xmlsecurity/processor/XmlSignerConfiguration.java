@@ -111,7 +111,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * value can be overwritten by the header
      * {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT}.
      */
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "Boolean.FALSE")
     private Boolean plainText = Boolean.FALSE;
 
     /**

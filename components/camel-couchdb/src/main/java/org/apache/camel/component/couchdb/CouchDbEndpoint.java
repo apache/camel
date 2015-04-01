@@ -55,7 +55,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam(defaultValue = "" + DEFAULT_HEARTBEAT)
     private long heartbeat = DEFAULT_HEARTBEAT;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean createDatabase;
     @UriParam(defaultValue = "true")
     private boolean deletes = true;

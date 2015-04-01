@@ -70,7 +70,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private boolean autoDelete = true;
     @UriParam(defaultValue = "true")
     private boolean durable = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
     @UriParam
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
@@ -139,9 +139,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     //Maximum time (in milliseconds) waiting for channel
     @UriParam(defaultValue = "1000")
     private long channelPoolMaxWait = 1000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean mandatory;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean immediate;
     @UriParam
     private ArgsConfigurer queueArgsConfigurer;
