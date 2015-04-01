@@ -447,8 +447,8 @@
     <spring-version-range-karaf>[3.2,4)</spring-version-range-karaf>
     <spring-version>${spring4-version}</spring-version>
     <spring32-version>3.2.13.RELEASE</spring32-version>
-    <spring40-version>4.0.8.RELEASE</spring40-version>
-    <spring4-version>4.1.5.RELEASE</spring4-version>
+    <spring40-version>4.0.9.RELEASE</spring40-version>
+    <spring4-version>4.1.6.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.2.5.RELEASE</spring-security-version>
     <spring-ws-bundle-version>2.1.4.RELEASE</spring-ws-bundle-version>
