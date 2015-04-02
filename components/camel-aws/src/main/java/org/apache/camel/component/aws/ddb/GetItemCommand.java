@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.GetItemRequest;
-import com.amazonaws.services.dynamodb.model.GetItemResult;
-
 import org.apache.camel.Exchange;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 
 public class GetItemCommand extends AbstractDdbCommand {
     public GetItemCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {

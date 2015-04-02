@@ -18,12 +18,12 @@ package org.apache.camel.component.aws.ddb;
 
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.BatchGetItemRequest;
-import com.amazonaws.services.dynamodb.model.BatchGetItemResult;
-import com.amazonaws.services.dynamodb.model.KeysAndAttributes;
-
 import org.apache.camel.Exchange;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemResult;
+import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 
 public class BatchGetItemsCommand extends AbstractDdbCommand {
     public BatchGetItemsCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import java.util.Date;
+import static org.junit.Assert.assertEquals;
 
-import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.KeySchemaElement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -27,7 +28,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 
 public class DescribeTableCommandTest {
 
@@ -48,12 +49,16 @@ public class DescribeTableCommandTest {
     @Test
     public void testExecute() {
         command.execute();
+        
+    	List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
+    	keySchema.add(new KeySchemaElement().withAttributeName("name"));
+    	
         assertEquals("FULL_DESCRIBE_TABLE", ddbClient.describeTableRequest.getTableName());
         assertEquals("FULL_DESCRIBE_TABLE", exchange.getIn().getHeader(DdbConstants.TABLE_NAME));
         assertEquals("ACTIVE", exchange.getIn().getHeader(DdbConstants.TABLE_STATUS));
         assertEquals(new Date(AmazonDDBClientMock.NOW), exchange.getIn().getHeader(DdbConstants.CREATION_DATE));
         assertEquals(100L, exchange.getIn().getHeader(DdbConstants.ITEM_COUNT));
-        assertEquals(new KeySchema(new KeySchemaElement().withAttributeName("name")),
+        assertEquals(keySchema,
                 exchange.getIn().getHeader(DdbConstants.KEY_SCHEMA));
         assertEquals(20L, exchange.getIn().getHeader(DdbConstants.READ_CAPACITY));
         assertEquals(10L, exchange.getIn().getHeader(DdbConstants.WRITE_CAPACITY));
