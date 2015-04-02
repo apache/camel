@@ -17,8 +17,7 @@
 package org.apache.camel.dataformat.csv;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,30 +28,25 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
 
-    public static final String MESSAGE = "message";
+    private static final String CSV_SAMPLE = "A,B,C\r1,2,3\rone,two,three";
 
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint result;
+    @EndpointInject(uri = "mock:line")
+    private MockEndpoint line;
 
     @Test
     public void testCsvUnMarshal() throws Exception {
-        result.expectedMessageCount(1);
+        line.expectedMessageCount(3);
 
-        template.sendBody("direct:start", MESSAGE + "\n");
+        template.sendBody("direct:start", CSV_SAMPLE);
 
         assertMockEndpointsSatisfied();
 
-        Iterator<?> body = result.getReceivedExchanges().get(0).getIn().getBody(Iterator.class);
-        Iterator iterator = assertIsInstanceOf(Iterator.class, body);
-        assertTrue(iterator.hasNext());
-        assertEquals(Arrays.asList(MESSAGE), iterator.next());
-        assertFalse(iterator.hasNext());
-        try {
-            iterator.next();
-            fail("Should have thrown exception");
-        } catch (NoSuchElementException nsee) {
-            // expected
-        }
+        List body1 = line.getExchanges().get(0).getIn().getBody(List.class);
+        List body2 = line.getExchanges().get(1).getIn().getBody(List.class);
+        List body3 = line.getExchanges().get(2).getIn().getBody(List.class);
+        assertEquals(Arrays.asList("A", "B", "C"), body1);
+        assertEquals(Arrays.asList("1", "2", "3"), body2);
+        assertEquals(Arrays.asList("one", "two", "three"), body3);
     }
 
     @Override
