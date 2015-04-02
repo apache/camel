@@ -24,4 +24,5 @@ public interface SnsConstants {
     
     String MESSAGE_ID = "CamelAwsSnsMessageId";
     String SUBJECT = "CamelAwsSnsSubject";
+    String MESSAGE_STRUCTURE ="CamelAwsSnsMessageStructure";
 }
