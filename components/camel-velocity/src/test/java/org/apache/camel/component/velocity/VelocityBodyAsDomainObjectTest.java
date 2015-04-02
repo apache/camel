@@ -30,8 +30,7 @@ public class VelocityBodyAsDomainObjectTest extends CamelTestSupport {
 
     @Test
     public void testWithObject() throws Exception {
-        String msg = String.format("Hi Claus how are you? Its a nice day.%sGive my regards to the family Ibsen.",
-                System.lineSeparator());
+        String msg = String.format("Hi Claus how are you? Its a nice day.%sGive my regards to the family Ibsen.", LS);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
