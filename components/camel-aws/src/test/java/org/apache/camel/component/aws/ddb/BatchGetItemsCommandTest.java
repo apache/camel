@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.BatchResponse;
-import com.amazonaws.services.dynamodb.model.Key;
-import com.amazonaws.services.dynamodb.model.KeysAndAttributes;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,7 +28,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 
 public class BatchGetItemsCommandTest {
 
@@ -49,8 +48,10 @@ public class BatchGetItemsCommandTest {
 
     @Test
     public void execute() {
-        Key key = new Key(new AttributeValue("Key_1"));
-        Key unprocessedKey = new Key(new AttributeValue("UNPROCESSED_KEY"));
+    	Map<String,AttributeValue> key = new HashMap<String, AttributeValue>();
+    	key.put("1", new AttributeValue("Key_1"));
+    	Map<String,AttributeValue> unprocessedKey = new HashMap<String, AttributeValue>();
+    	unprocessedKey.put("1", new AttributeValue("UNPROCESSED_KEY"));
         Map<String, KeysAndAttributes> keysAndAttributesMap = new HashMap<String, KeysAndAttributes>();
         KeysAndAttributes keysAndAttributes = new KeysAndAttributes().withKeys(key);
         keysAndAttributesMap.put("DOMAIN1", keysAndAttributes);
@@ -61,13 +62,12 @@ public class BatchGetItemsCommandTest {
         assertEquals(keysAndAttributesMap, ddbClient.batchGetItemRequest.getRequestItems());
 
 
-        BatchResponse batchResponse = (BatchResponse)exchange.getIn()
-                .getHeader(DdbConstants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
-        AttributeValue value = batchResponse.getItems().get(0).get("attrName");
+        List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>)exchange.getIn().getHeader(DdbConstants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
+        AttributeValue value = batchResponse.get(0).get("attrName");
 
         KeysAndAttributes unProcessedAttributes = (KeysAndAttributes)exchange.getIn().getHeader(
                 DdbConstants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
-        Key next = unProcessedAttributes.getKeys().iterator().next();
+        Map<String,AttributeValue> next = unProcessedAttributes.getKeys().iterator().next();
 
         assertEquals(new AttributeValue("attrValue"), value);
         assertEquals(unprocessedKey, next);

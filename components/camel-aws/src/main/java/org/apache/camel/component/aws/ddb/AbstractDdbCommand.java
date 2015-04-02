@@ -19,13 +19,12 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Collection;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.ExpectedAttributeValue;
-import com.amazonaws.services.dynamodb.model.Key;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 
 public abstract class AbstractDdbCommand {
     protected DdbConfiguration configuration;
@@ -81,8 +80,8 @@ public abstract class AbstractDdbCommand {
         msg.setHeader(headerKey, value);
     }
 
-    protected Key determineKey() {
-        return exchange.getIn().getHeader(DdbConstants.KEY, Key.class);
+    protected Map<String, AttributeValue> determineKey() {
+        return exchange.getIn().getHeader(DdbConstants.KEY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
