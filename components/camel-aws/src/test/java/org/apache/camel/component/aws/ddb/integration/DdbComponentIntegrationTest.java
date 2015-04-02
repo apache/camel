@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,8 +32,6 @@ import org.apache.camel.component.aws.ddb.DdbOperations;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class DdbComponentIntegrationTest extends CamelTestSupport {

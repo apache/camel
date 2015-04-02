@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DescribeTableResult;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 public class DescribeTableCommand extends AbstractDdbCommand {
     public DescribeTableCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration,

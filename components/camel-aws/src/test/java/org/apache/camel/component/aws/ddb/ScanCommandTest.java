@@ -16,22 +16,21 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
+import com.amazonaws.services.dynamodbv2.model.ConsumedCapacity;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.amazonaws.services.dynamodbv2.model.ConsumedCapacity;
+import static org.junit.Assert.assertEquals;
 
 public class ScanCommandTest {
 
@@ -60,10 +59,10 @@ public class ScanCommandTest {
 
         command.execute();
 
-    	Map<String,AttributeValue> mapAssert = new HashMap<String, AttributeValue>();
-    	mapAssert.put("1", new AttributeValue("LAST_KEY"));
-    	
-    	ConsumedCapacity consumed = (ConsumedCapacity) exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY);
+        Map<String, AttributeValue> mapAssert = new HashMap<String, AttributeValue>();
+        mapAssert.put("1", new AttributeValue("LAST_KEY"));
+
+        ConsumedCapacity consumed = (ConsumedCapacity) exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY);
         assertEquals(scanFilter, ddbClient.scanRequest.getScanFilter());
         assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(DdbConstants.SCANNED_COUNT, Integer.class));
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(DdbConstants.COUNT, Integer.class));

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 
 @UriParams
 public class DdbConfiguration {

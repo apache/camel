@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import org.apache.camel.Exchange;
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+
+import org.apache.camel.Exchange;
 
 public class PutItemCommand extends AbstractDdbCommand {
     public PutItemCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {

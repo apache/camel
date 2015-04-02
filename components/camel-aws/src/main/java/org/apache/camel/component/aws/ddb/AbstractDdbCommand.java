@@ -19,12 +19,12 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 public abstract class AbstractDdbCommand {
     protected DdbConfiguration configuration;

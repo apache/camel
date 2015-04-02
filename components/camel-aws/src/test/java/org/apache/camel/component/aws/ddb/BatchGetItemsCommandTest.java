@@ -16,20 +16,19 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
+import static org.junit.Assert.assertEquals;
 
 public class BatchGetItemsCommandTest {
 
@@ -48,10 +47,10 @@ public class BatchGetItemsCommandTest {
 
     @Test
     public void execute() {
-    	Map<String,AttributeValue> key = new HashMap<String, AttributeValue>();
-    	key.put("1", new AttributeValue("Key_1"));
-    	Map<String,AttributeValue> unprocessedKey = new HashMap<String, AttributeValue>();
-    	unprocessedKey.put("1", new AttributeValue("UNPROCESSED_KEY"));
+        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put("1", new AttributeValue("Key_1"));
+        Map<String, AttributeValue> unprocessedKey = new HashMap<String, AttributeValue>();
+        unprocessedKey.put("1", new AttributeValue("UNPROCESSED_KEY"));
         Map<String, KeysAndAttributes> keysAndAttributesMap = new HashMap<String, KeysAndAttributes>();
         KeysAndAttributes keysAndAttributes = new KeysAndAttributes().withKeys(key);
         keysAndAttributesMap.put("DOMAIN1", keysAndAttributes);
@@ -67,7 +66,7 @@ public class BatchGetItemsCommandTest {
 
         KeysAndAttributes unProcessedAttributes = (KeysAndAttributes)exchange.getIn().getHeader(
                 DdbConstants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
-        Map<String,AttributeValue> next = unProcessedAttributes.getKeys().iterator().next();
+        Map<String, AttributeValue> next = unProcessedAttributes.getKeys().iterator().next();
 
         assertEquals(new AttributeValue("attrValue"), value);
         assertEquals(unprocessedKey, next);

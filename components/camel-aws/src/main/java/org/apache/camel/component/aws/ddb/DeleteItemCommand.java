@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import java.util.Map;
-
-import org.apache.camel.Exchange;
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
+
+import org.apache.camel.Exchange;
 
 public class DeleteItemCommand extends AbstractDdbCommand {
     public DeleteItemCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
