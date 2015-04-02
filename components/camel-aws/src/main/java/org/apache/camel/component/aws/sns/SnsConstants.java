@@ -18,11 +18,10 @@ package org.apache.camel.component.aws.sns;
 
 /**
  * Constants used in Camel AWS SNS module
- *
  */
 public interface SnsConstants {
     
     String MESSAGE_ID = "CamelAwsSnsMessageId";
     String SUBJECT = "CamelAwsSnsSubject";
-    String MESSAGE_STRUCTURE ="CamelAwsSnsMessageStructure";
+    String MESSAGE_STRUCTURE = "CamelAwsSnsMessageStructure";
 }
