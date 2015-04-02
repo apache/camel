@@ -187,10 +187,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
-            log.debug("Using destinationName: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else if (destination != null) {
             listenerContainer.setDestination(destination);
-            log.debug("Using destination: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destination: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else {
             DestinationResolver resolver = getDestinationResolver();
             if (resolver != null) {
