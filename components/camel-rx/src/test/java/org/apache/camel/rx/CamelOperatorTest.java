@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Subscription;
+import rx.observables.ConnectableObservable;
 
 /**
  */
@@ -39,12 +41,16 @@ public class CamelOperatorTest extends RxTestSupport {
         mockEndpoint2.expectedMessageCount(1);
         mockEndpoint3.expectedMessageCount(1);
 
-        Observable<Message> result = reactiveCamel.toObservable("direct:start")
-            .lift(new CamelOperator(camelContext, "mock:results1"))
+        ConnectableObservable<Message> route = reactiveCamel.toObservable("direct:start")
+            .lift(new CamelOperator(mockEndpoint1))
             .lift(new CamelOperator(camelContext, "log:foo"))
             .debounce(1, TimeUnit.SECONDS)
-            .lift(new CamelOperator(mockEndpoint2));
-        reactiveCamel.sendTo(result, "mock:results3");
+            .lift(reactiveCamel.to(mockEndpoint2))
+            .lift(reactiveCamel.to("mock:results3"))
+            .publish();
+
+        // Start the route
+        Subscription routeSubscription = route.connect();
 
         // Send two test messages
         producerTemplate.sendBody("direct:start", "<test/>");
@@ -53,5 +59,8 @@ public class CamelOperatorTest extends RxTestSupport {
         mockEndpoint1.assertIsSatisfied();
         mockEndpoint2.assertIsSatisfied();
         mockEndpoint3.assertIsSatisfied();
+
+        // Stop the route
+        routeSubscription.unsubscribe();
     }
 }

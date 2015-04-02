@@ -92,6 +92,20 @@ public class ReactiveCamel {
         }
     }
 
+    /**
+     * Convenience method for creating CamelOperator instances
+     */
+    public CamelOperator to(String uri) throws Exception {
+        return new CamelOperator(camelContext, uri);
+    }
+
+    /**
+     * Convenience method for creating CamelOperator instances
+     */
+    public CamelOperator to(Endpoint endpoint) throws Exception {
+        return new CamelOperator(endpoint);
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
