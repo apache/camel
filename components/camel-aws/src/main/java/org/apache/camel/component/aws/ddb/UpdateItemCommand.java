@@ -18,12 +18,12 @@ package org.apache.camel.component.aws.ddb;
 
 import java.util.Map;
 
-import org.apache.camel.Exchange;
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemResult;
+
+import org.apache.camel.Exchange;
 
 public class UpdateItemCommand extends AbstractDdbCommand {
     public UpdateItemCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {

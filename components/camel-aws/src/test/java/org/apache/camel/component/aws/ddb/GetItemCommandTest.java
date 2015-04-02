@@ -16,20 +16,19 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import static org.junit.Assert.assertEquals;
 
 public class GetItemCommandTest {
     private GetItemCommand command;
@@ -48,8 +47,8 @@ public class GetItemCommandTest {
 
     @Test
     public void execute() {
-    	Map<String,AttributeValue> key = new HashMap<String, AttributeValue>();
-    	key.put("1", new AttributeValue("Key_1"));
+        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put("1", new AttributeValue("Key_1"));
         exchange.getIn().setHeader(DdbConstants.KEY, key);
 
         List<String> attrNames = Arrays.asList("attrName");

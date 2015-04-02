@@ -165,11 +165,10 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
         List<Map<String, AttributeValue>> p = new ArrayList<Map<String, AttributeValue>>();
         p.add(getAttributes());
         responseMap.put("DOMAIN1", p);
-        Map<String,AttributeValue> keysMap = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> keysMap = new HashMap<String, AttributeValue>();
         keysMap.put("1", new AttributeValue("UNPROCESSED_KEY"));
         Map<String, KeysAndAttributes> unprocessedKeys = new HashMap<String, KeysAndAttributes>();
-        unprocessedKeys.put("DOMAIN1", new KeysAndAttributes().withKeys(
-        		keysMap));
+        unprocessedKeys.put("DOMAIN1", new KeysAndAttributes().withKeys(keysMap));
 
         return new BatchGetItemResult()
                 .withResponses(responseMap)
@@ -182,7 +181,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
         this.scanRequest = scanRequest;
         ConsumedCapacity consumed = new ConsumedCapacity();
         consumed.setCapacityUnits(1.0);
-        Map<String,AttributeValue> lastEvaluatedKey = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> lastEvaluatedKey = new HashMap<String, AttributeValue>();
         lastEvaluatedKey.put("1", new AttributeValue("LAST_KEY"));
         return new ScanResult()
                 .withConsumedCapacity(consumed)
@@ -198,7 +197,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
         this.queryRequest = queryRequest;
         ConsumedCapacity consumed = new ConsumedCapacity();
         consumed.setCapacityUnits(1.0);
-        Map<String,AttributeValue> lastEvaluatedKey = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> lastEvaluatedKey = new HashMap<String, AttributeValue>();
         lastEvaluatedKey.put("1", new AttributeValue("LAST_KEY"));
         return new QueryResult()
                 .withConsumedCapacity(consumed)
