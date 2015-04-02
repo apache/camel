@@ -361,9 +361,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the JSON data format using the XStream json library with pretty-print option on or off
+     * Uses the JSON data format using the XStream json library turning pretty printing on or off
      * 
-     * @param prettyPrint turn the pretty-print option on or off
+     * @param prettyPrint turn pretty printing on or off
      */
     public T json(boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat();
@@ -384,7 +384,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the JSON data format
      *
      * @param library     the json library to use
-     * @param prettyPrint turn the pretty-print option on or off
+     * @param prettyPrint turn pretty printing on or off
      */
     public T json(JsonLibrary library, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(library);
@@ -409,7 +409,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param type          the json type to use
      * @param unmarshalType unmarshal type for json jackson type
-     * @param prettyPrint   turn the pretty-print option on or off
+     * @param prettyPrint   turn pretty printing on or off
      */
     public T json(JsonLibrary type, Class<?> unmarshalType, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(type);
@@ -436,7 +436,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
-     * @param prettyPrint   turn the pretty-print option on or off
+     * @param prettyPrint   turn pretty printing on or off
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
@@ -467,7 +467,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
      * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
-      * @param prettyPrint  turn the pretty-print option on or off
+      * @param prettyPrint  turn pretty printing on or off
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
