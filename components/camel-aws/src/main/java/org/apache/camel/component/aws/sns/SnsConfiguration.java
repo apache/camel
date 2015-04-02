@@ -44,6 +44,8 @@ public class SnsConfiguration implements Cloneable {
     private String topicArn;
     @UriParam
     private String policy;
+    @UriParam
+    private String messageStructure;
 
     public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
         this.amazonSNSEndpoint = awsSNSEndpoint;
@@ -108,7 +110,15 @@ public class SnsConfiguration implements Cloneable {
     public void setPolicy(String policy) {
         this.policy = policy;
     }
-    
+
+    public String getMessageStructure() {
+        return messageStructure;
+    }
+
+    public void setMessageStructure(String messageStructure) {
+        this.messageStructure = messageStructure;
+    }
+
     @Override
     public String toString() {
         return "SnsConfiguration[topicName=" + topicName
@@ -118,6 +128,7 @@ public class SnsConfiguration implements Cloneable {
             + ", subject=" + subject
             + ", topicArn=" + topicArn
             + ", policy=" + policy
+            + ", messageStructure=" + messageStructure
             + "]";
     }
 }
