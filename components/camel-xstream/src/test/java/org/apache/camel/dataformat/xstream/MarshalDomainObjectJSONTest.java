@@ -17,18 +17,50 @@
 package org.apache.camel.dataformat.xstream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
     
+    @Test
+    public void testMarshalAndUnmarshalWithPrettyPrint() throws Exception {
+        PurchaseOrder order = new PurchaseOrder();
+        order.setName("pretty printed Camel");
+        order.setAmount(1);
+        order.setPrice(7.91);
+
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(PurchaseOrder.class);
+        mock.message(0).body().equals(order);
+
+        Object marshalled = template.requestBody("direct:inPretty", order);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        // the line-separator used by JsonWriter is "\n", even on windows
+        String expected = "{\"org.apache.camel.dataformat.xstream.PurchaseOrder\": {\n" +
+                          "  \"name\": \"pretty printed Camel\",\n"+
+                          "  \"price\": 7.91,\n" +
+                          "  \"amount\": 1.0\n" +
+                          "}}";
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:backPretty", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in").marshal().json().to("mock:result");
 
-                // just used for helping to marhsal
+                // just used for helping to marshal
                 from("direct:marshal").marshal().json();
 
                 from("direct:reverse").unmarshal().json().to("mock:reverse");
+
+                from("direct:inPretty").marshal().json(true);
+                from("direct:backPretty").unmarshal().json().to("mock:reverse");
             }
         };
     }

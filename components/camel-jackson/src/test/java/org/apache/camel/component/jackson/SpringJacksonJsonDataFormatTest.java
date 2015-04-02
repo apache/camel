@@ -59,7 +59,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
         mock.message(0).body().isInstanceOf(Map.class);
         mock.message(0).body().equals(in);
 
-        Object marshalled = template.requestBody("direct:pretty", in);
+        Object marshalled = template.requestBody("direct:inPretty", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         String expected = String.format("{%s  \"name\" : \"Camel\"%s}", System.lineSeparator(), System.lineSeparator());
         assertEquals(expected, marshalledAsString);

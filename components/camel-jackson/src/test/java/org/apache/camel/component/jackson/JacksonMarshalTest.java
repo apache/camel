@@ -55,7 +55,7 @@ public class JacksonMarshalTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(Map.class);
         mock.message(0).body().equals(in);
 
-        Object marshalled = template.requestBody("direct:pretty", in);
+        Object marshalled = template.requestBody("direct:inPretty", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         String expected = String.format("{%s  \"name\" : \"Camel\"%s}", System.lineSeparator(), System.lineSeparator());
         assertEquals(expected, marshalledAsString);
@@ -99,7 +99,7 @@ public class JacksonMarshalTest extends CamelTestSupport {
                 JacksonDataFormat prettyPrintDataFormat = new JacksonDataFormat();
                 prettyPrintDataFormat.setPrettyPrint(true);
 
-                from("direct:pretty").marshal(prettyPrintDataFormat);
+                from("direct:inPretty").marshal(prettyPrintDataFormat);
                 from("direct:backPretty").unmarshal(prettyPrintDataFormat).to("mock:reverse");
 
                 JacksonDataFormat formatPojo = new JacksonDataFormat(TestPojo.class);

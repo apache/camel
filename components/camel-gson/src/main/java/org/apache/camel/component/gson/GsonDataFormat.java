@@ -51,8 +51,8 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
     private LongSerializationPolicy longSerializationPolicy;
     private FieldNamingPolicy fieldNamingPolicy;
     private FieldNamingStrategy fieldNamingStrategy;
-    private Boolean serializeNulls;
-    private Boolean prettyPrinting;
+    private boolean serializeNulls;
+    private boolean prettyPrint;
     private String dateFormatPattern;
 
     public GsonDataFormat() {
@@ -154,10 +154,10 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
             if (fieldNamingStrategy != null) {
                 builder.setFieldNamingStrategy(fieldNamingStrategy);
             }
-            if (serializeNulls != null && serializeNulls) {
+            if (serializeNulls) {
                 builder.serializeNulls();
             }
-            if (prettyPrinting != null && prettyPrinting) {
+            if (prettyPrint) {
                 builder.setPrettyPrinting();
             }
             if (dateFormatPattern != null) {
@@ -223,20 +223,52 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
         this.fieldNamingStrategy = fieldNamingStrategy;
     }
 
+    /**
+     * @deprecated use {@link #isSerializeNulls()} instead
+     */
+    @Deprecated
     public Boolean getSerializeNulls() {
         return serializeNulls;
     }
 
+    public boolean isSerializeNulls() {
+        return serializeNulls;
+    }
+
+    /**
+     * @deprecated use {@link #setSerializeNulls(boolean)} instead
+     */
+    @Deprecated
     public void setSerializeNulls(Boolean serializeNulls) {
         this.serializeNulls = serializeNulls;
     }
 
-    public Boolean getPrettyPrinting() {
-        return prettyPrinting;
+    public void setSerializeNulls(boolean serializeNulls) {
+        this.serializeNulls = serializeNulls;
     }
 
+    /**
+     * @deprecated use {@link #isPrettyPrint()} instead
+     */
+    @Deprecated
+    public Boolean getPrettyPrinting() {
+        return prettyPrint;
+    }
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    /**
+     * @deprecated use {@link #setPrettyPrint(boolean)} instead
+     */
+    @Deprecated
     public void setPrettyPrinting(Boolean prettyPrinting) {
-        this.prettyPrinting = prettyPrinting;
+        this.prettyPrint = prettyPrinting;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
     }
 
     public String getDateFormatPattern() {
