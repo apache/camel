@@ -21,21 +21,26 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.ServiceHelper;
 import rx.Observable;
 import rx.Subscriber;
 
 public class CamelOperator implements Observable.Operator<Message, Message> {
 
-    private Producer producer;
+    private ProducerTemplate producerTemplate;
+    private Endpoint endpoint;
 
     public CamelOperator(CamelContext context, String uri) throws Exception {
-        this(context.getEndpoint(uri));
+        producerTemplate = context.createProducerTemplate();
+        endpoint = context.getEndpoint(uri);
+        ServiceHelper.startService(producerTemplate);
     }
 
     public CamelOperator(Endpoint endpoint) throws Exception {
-        this.producer = endpoint.createProducer();
-        ServiceHelper.startService(producer);
+        this.producerTemplate = endpoint.getCamelContext().createProducerTemplate();
+        this.endpoint = endpoint;
+        ServiceHelper.startService(producerTemplate);
     }
 
     @Override
@@ -44,11 +49,11 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
             @Override
             public void onCompleted() {
                 try {
-                    ServiceHelper.stopService(producer);
+                    ServiceHelper.stopService(producerTemplate);
                 } catch (Exception e) {
                     throw new RuntimeCamelRxException(e);
                 } finally {
-                    producer = null;
+                    producerTemplate = null;
                 }
                 if (!s.isUnsubscribed()) {
                     s.onCompleted();
@@ -57,9 +62,8 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
 
             @Override
             public void onError(Throwable e) {
-                Exchange exchange = producer.createExchange();
-                exchange.setException(e);
-                process(exchange);
+                // producer cannot handler the exception
+                // so we just pass the exchange to the subscriber 
                 if (!s.isUnsubscribed()) {
                     s.onError(e);
                 }
@@ -68,7 +72,17 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
             @Override
             public void onNext(Message item) {
                 if (!s.isUnsubscribed()) {
-                    s.onNext(process(item));
+                    Exchange exchange = process(item);
+                    if (exchange.getException() != null) {
+                        s.onError(exchange.getException());
+                    } else {
+                        if (exchange.hasOut()) {
+                            s.onNext(exchange.getOut());
+                        } else {
+                            s.onNext(exchange.getIn());
+                        }
+                    }
+
                 }
             }
         };
@@ -76,20 +90,16 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
 
     private Exchange process(Exchange exchange) {
         try {
-            producer.process(exchange);
-            if (exchange.hasOut()) {
-                exchange.setIn(exchange.getOut());
-                exchange.setOut(null);
-            }
+            exchange = producerTemplate.send(endpoint, exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelRxException(e);
+            exchange.setException(e);
         }
         return exchange;
     }
 
-    private Message process(Message message) {
-        Exchange exchange = producer.createExchange();
+    private Exchange process(Message message) {
+        Exchange exchange = endpoint.createExchange();
         exchange.setIn(message);
-        return process(exchange).getIn();
+        return process(exchange);
     }
 }
