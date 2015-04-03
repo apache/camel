@@ -82,6 +82,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
@@ -924,6 +925,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     private void setupCustomServices() {
+        ModelJAXBContextFactory modelJAXBContextFactory = getBeanForType(ModelJAXBContextFactory.class);
+        if (modelJAXBContextFactory != null) {
+            LOG.info("Using custom ModelJAXBContextFactory: {}", modelJAXBContextFactory);
+            getContext().setModelJAXBContextFactory(modelJAXBContextFactory);
+        }
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
             LOG.info("Using custom ClassResolver: {}", classResolver);
