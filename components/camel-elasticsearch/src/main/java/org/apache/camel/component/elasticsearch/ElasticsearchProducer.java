@@ -107,7 +107,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         boolean configIndexType = false;
         String indexType = message.getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            message.setHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexName());
+            message.setHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
             configIndexType = true;
         }
 
