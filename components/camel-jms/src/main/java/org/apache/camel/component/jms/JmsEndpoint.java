@@ -187,10 +187,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
-            log.debug("Using destinationName: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else if (destination != null) {
             listenerContainer.setDestination(destination);
-            log.debug("Using destination: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destination: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else {
             DestinationResolver resolver = getDestinationResolver();
             if (resolver != null) {
@@ -198,7 +198,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
             }
-            log.debug("Using destinationResolver: {} on listenerContainer: ", resolver, listenerContainer);
+            log.debug("Using destinationResolver: {} on listenerContainer: {}", resolver, listenerContainer);
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
 
