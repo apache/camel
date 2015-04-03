@@ -68,7 +68,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         documents.add(document1);
         documents.add(document2);
 
-        List indexIds = template.requestBody("direct:bulk_index", documents, List.class);
+        List<?> indexIds = template.requestBody("direct:bulk_index", documents, List.class);
         assertNotNull("indexIds should be set", indexIds);
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }

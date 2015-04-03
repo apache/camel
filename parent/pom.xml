@@ -142,8 +142,8 @@
     <ehcache-version>2.9.1</ehcache-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
-    <elasticsearch-bundle-version>1.4.2_1</elasticsearch-bundle-version>
-    <elasticsearch-version>1.4.2</elasticsearch-version>
+    <elasticsearch-bundle-version>1.4.4_1</elasticsearch-bundle-version>
+    <elasticsearch-version>1.4.4</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <embedmongo-version>1.47.0</embedmongo-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
