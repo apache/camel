@@ -103,11 +103,16 @@ public final class JcloudsPayloadConverter {
     }
 
     @Converter
-    public static Payload toPayload(InputStream is, Exchange exchange) throws IOException {
+    public static Payload toPayload(final InputStream is, Exchange exchange) throws IOException {
         InputStreamPayload payload = new InputStreamPayload(is);
         // only set the contentlength if possible
         if (is.markSupported()) {
-            long contentLength = ByteStreams.length(payload);
+            long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
+                @Override
+                public InputStream getInput() throws IOException {
+                    return is;
+                }
+            });
             is.reset();
             payload.getContentMetadata().setContentLength(contentLength);
         }
