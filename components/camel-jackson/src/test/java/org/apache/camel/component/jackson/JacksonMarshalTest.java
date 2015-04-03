@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -91,14 +90,21 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from("direct:in").marshal().json(JsonLibrary.Jackson);
-                from("direct:back").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
+                JacksonDataFormat format = new JacksonDataFormat();
 
-                from("direct:inPretty").marshal().json(JsonLibrary.Jackson, true);
-                from("direct:backPretty").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
+                from("direct:in").marshal(format);
+                from("direct:back").unmarshal(format).to("mock:reverse");
 
-                from("direct:inPojo").marshal().json(JsonLibrary.Jackson);
-                from("direct:backPojo").unmarshal().json(JsonLibrary.Jackson, TestPojo.class).to("mock:reversePojo");
+                JacksonDataFormat prettyPrintDataFormat = new JacksonDataFormat();
+                prettyPrintDataFormat.setPrettyPrint(true);
+
+                from("direct:inPretty").marshal(prettyPrintDataFormat);
+                from("direct:backPretty").unmarshal(prettyPrintDataFormat).to("mock:reverse");
+
+                JacksonDataFormat formatPojo = new JacksonDataFormat(TestPojo.class);
+
+                from("direct:inPojo").marshal(formatPojo);
+                from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
             }
         };
     }
