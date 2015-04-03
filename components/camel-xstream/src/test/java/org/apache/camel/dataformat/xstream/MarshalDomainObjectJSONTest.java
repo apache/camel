@@ -37,11 +37,11 @@ public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
         Object marshalled = template.requestBody("direct:inPretty", order);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         // the line-separator used by JsonWriter is "\n", even on windows
-        String expected = "{\"org.apache.camel.dataformat.xstream.PurchaseOrder\": {\n" +
-                          "  \"name\": \"pretty printed Camel\",\n"+
-                          "  \"price\": 7.91,\n" +
-                          "  \"amount\": 1.0\n" +
-                          "}}";
+        String expected = "{\"org.apache.camel.dataformat.xstream.PurchaseOrder\": {\n"
+                          + "  \"name\": \"pretty printed Camel\",\n" 
+                          + "  \"price\": 7.91,\n"
+                          + "  \"amount\": 1.0\n" 
+                          + "}}";
         assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:backPretty", marshalled);

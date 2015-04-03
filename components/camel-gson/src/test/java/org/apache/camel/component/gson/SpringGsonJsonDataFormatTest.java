@@ -58,9 +58,9 @@ public class SpringGsonJsonDataFormatTest extends CamelSpringTestSupport {
 
         Object marshalled = template.requestBody("direct:inPretty", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        String expected = "{\n" + 
-                          "  \"name\": \"Camel\"" +
-                          "\n}";
+        String expected = "{\n" 
+                         + "  \"name\": \"Camel\""
+                         + "\n}";
         assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:backPretty", marshalled);
