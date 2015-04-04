@@ -71,7 +71,7 @@ public abstract class TestSupport extends Assert {
      * Returns a value builder for the given property
      */
     public static ValueBuilder property(String name) {
-        return Builder.property(name);
+        return Builder.exchangeProperty(name);
     }    
     
     /**
