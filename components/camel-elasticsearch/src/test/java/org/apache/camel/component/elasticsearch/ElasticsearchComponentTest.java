@@ -64,7 +64,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         String prefix = createPrefix();
 
         // take over any potential prefixes we may have been asked for
-        if (additionalPrefixes.length > 1) {
+        if (additionalPrefixes.length > 0) {
             StringBuilder sb = new StringBuilder(prefix);
             for (String additionalPrefix : additionalPrefixes) {
                 sb.append(additionalPrefix);
@@ -74,7 +74,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
         String key = prefix + "key";
         String value = prefix + "value";
-        log.info("Creating index data using the key/value pair {} => {}", key, value);
+        log.info("Creating indexed data using the key/value pair {} => {}", key, value);
 
         Map<String, String> map = new HashMap<String, String>();
         map.put(key, value);
