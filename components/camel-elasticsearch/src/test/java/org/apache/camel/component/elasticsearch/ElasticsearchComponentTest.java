@@ -66,7 +66,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         if (additionalPrefixes.length > 0) {
             StringBuilder sb = new StringBuilder(prefix);
             for (String additionalPrefix : additionalPrefixes) {
-                sb.append(additionalPrefix);
+                sb.append(additionalPrefix).append("-");
             }
             prefix = sb.toString();
         }
@@ -77,7 +77,6 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
         Map<String, String> map = new HashMap<String, String>();
         map.put(key, value);
-
         return map;
     }
 
@@ -96,8 +95,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testBulkIndex() throws Exception {
         List<Map<String, String>> documents = new ArrayList<Map<String, String>>();
-        Map<String, String> document1 = createIndexedData("-1");
-        Map<String, String> document2 = createIndexedData("-2");
+        Map<String, String> document1 = createIndexedData("1");
+        Map<String, String> document2 = createIndexedData("2");
 
         documents.add(document1);
         documents.add(document2);
