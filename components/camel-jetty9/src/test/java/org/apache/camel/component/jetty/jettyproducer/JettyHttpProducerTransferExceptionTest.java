@@ -32,7 +32,7 @@ public class JettyHttpProducerTransferExceptionTest extends BaseJettyTest {
             template.requestBody("jetty:http://localhost:{{port}}/myapp/myservice?transferException=true", "");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertThrowable(IllegalArgumentException.class, e.getCause());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Damn", cause.getMessage());
         }
     }
