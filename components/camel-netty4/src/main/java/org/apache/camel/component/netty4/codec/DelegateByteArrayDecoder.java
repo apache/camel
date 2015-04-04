@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.netty4.codec;
 
+import java.util.List;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
-
-import java.util.List;
 
 /**
  * We need to derive from the original decoder because we need to
@@ -28,6 +28,7 @@ import java.util.List;
  * one.
  */
 public class DelegateByteArrayDecoder extends ByteArrayDecoder {
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
         super.decode(ctx, msg, out);

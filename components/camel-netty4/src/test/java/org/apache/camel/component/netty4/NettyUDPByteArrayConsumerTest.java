@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-import java.util.List;
-
 public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
+
     @Test
     public void testUDPInOnlyWithNettyConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -54,8 +55,6 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         }
         assertEquals("The strings should be the same", toSend, byteArrayToHex(out));
     }
-
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.netty4.codec;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.ChannelHandler;
@@ -23,24 +26,19 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageEncoder;
 
-import java.net.InetSocketAddress;
-import java.util.List;
-
 @ChannelHandler.Sharable
-public class DatagramPacketByteArrayEncoder extends
-        MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+public class DatagramPacketByteArrayEncoder extends MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
 
     private DelegateByteArrayEncoder delegateEncoder = new DelegateByteArrayEncoder();
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
-                          List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out) throws Exception {
         if (msg.content() instanceof byte[]) {
-            delegateEncoder.encode(ctx, (byte[])msg.content(), out);
-            ByteBuf buf = (ByteBuf)out.remove(out.size() - 1);
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                    new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf.retain(), msg.recipient(), msg.sender());
+            delegateEncoder.encode(ctx, (byte[]) msg.content(), out);
+            ByteBuf buf = (ByteBuf) out.remove(out.size() - 1);
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf.retain(), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
     }
+
 }

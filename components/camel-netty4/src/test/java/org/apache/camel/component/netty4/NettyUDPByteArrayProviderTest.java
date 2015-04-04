@@ -16,8 +16,15 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -25,9 +32,6 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.net.InetSocketAddress;
-import java.util.List;
 
 public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
     private static final String SEND_STRING = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"

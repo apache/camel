@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.netty4.codec;
 
+import java.util.List;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 
-import java.util.List;
-
 /**
- *
  * We need to derive from the original encoder because we need to
  * call the encode method directly which is protected in the original
  * one.
  */
 public class DelegateByteArrayEncoder extends ByteArrayEncoder {
+
     @Override
     protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
         super.encode(ctx, msg, out);
     }
+
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.net.InetSocketAddress;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.AddressedEnvelope;
@@ -23,8 +25,6 @@ import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.net.InetSocketAddress;
 
 public class DatagramPacketByteArrayCodecTest {
 
@@ -40,7 +40,7 @@ public class DatagramPacketByteArrayCodecTest {
         EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayDecoder("udp").newChannelHandler());
         Assert.assertTrue(channel.writeInbound(addressedEnvelop));
         Assert.assertTrue(channel.finish());
-        AddressedEnvelope<Object, InetSocketAddress> result = (AddressedEnvelope)channel.readInbound();
+        AddressedEnvelope<Object, InetSocketAddress> result = (AddressedEnvelope) channel.readInbound();
         Assert.assertEquals(result.recipient().getPort(), addressedEnvelop.recipient().getPort());
         Assert.assertTrue(result.content() instanceof byte[]);
         Assert.assertEquals(VALUE, new String((byte[]) result.content()));
@@ -58,7 +58,7 @@ public class DatagramPacketByteArrayCodecTest {
         Assert.assertTrue(channel.finish());
         AddressedEnvelope output = (AddressedEnvelope) channel.readOutbound();
         Assert.assertTrue(output.content() instanceof ByteBuf);
-        ByteBuf resultContent = (ByteBuf)output.content();
+        ByteBuf resultContent = (ByteBuf) output.content();
         Assert.assertEquals(VALUE, new String(resultContent.array()));
         Assert.assertNull(channel.readOutbound());
     }

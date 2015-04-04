@@ -20,16 +20,24 @@ import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import org.apache.camel.component.netty4.codec.*;
+import org.apache.camel.component.netty4.codec.DatagramPacketByteArrayDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketByteArrayEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketDelimiterDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketObjectDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketObjectEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketStringDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketStringEncoder;
+import org.apache.camel.component.netty4.codec.DelimiterBasedFrameDecoder;
+import org.apache.camel.component.netty4.codec.ObjectDecoder;
+import org.apache.camel.component.netty4.codec.ObjectEncoder;
 
 
 /**

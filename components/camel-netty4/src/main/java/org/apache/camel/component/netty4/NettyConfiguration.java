@@ -96,7 +96,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean clientMode;
     @UriParam
     private boolean useByteBuf;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean udpByteArrayCodec;
     
 
@@ -219,7 +219,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 } else if ("udp".equalsIgnoreCase(protocol) && isUdpByteArrayCodec()) {
                     encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
-                }else {
+                } else {
                     // object serializable is then used
                     encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newObjectDecoder(protocol));
