@@ -60,8 +60,6 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
      * indexes.
      */
     private Map<String, String> createIndexedData(String... additionalPrefixes) {
-        Map<String, String> map = new HashMap<String, String>();
-
         String prefix = createPrefix();
 
         // take over any potential prefixes we may have been asked for
@@ -76,6 +74,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         String key = prefix + "key";
         String value = prefix + "value";
         log.info("Creating index data using the key/value pair {} => {}", key, value);
+
+        Map<String, String> map = new HashMap<String, String>();
         map.put(key, value);
 
         return map;
