@@ -32,6 +32,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -42,17 +43,53 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class ElasticsearchComponentTest extends CamelTestSupport {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void cleanupOnce() {
         deleteDirectory("target/data");
-        super.setUp();
+    }
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        // let's speed up the tests using the same context
+        return true;
+    }
+
+    /**
+     * As we don't delete the {@code target/data} folder for <b>each</b> test
+     * below (otherwise they would run much slower), we need to make sure
+     * there's no side effect of the same used data through creating unique
+     * indexes.
+     */
+    private Map<String, String> createIndexedData(String... additionalPrefixes) {
+        Map<String, String> map = new HashMap<String, String>();
+
+        String prefix = createPrefix();
+
+        // take over any potential prefixes we may have been asked for
+        if (additionalPrefixes.length > 1) {
+            StringBuilder sb = new StringBuilder(prefix);
+            for (String additionalPrefix : additionalPrefixes) {
+                sb.append(additionalPrefix);
+            }
+            prefix = sb.toString();
+        }
+
+        String key = prefix + "key";
+        String value = prefix + "value";
+        log.info("Creating index data using the key/value pair {} => {}", key, value);
+        map.put(key, value);
+
+        return map;
+    }
+
+    private String createPrefix() {
+        // make use of the test method name to avoid collision
+        return getTestMethodName().toLowerCase() + "-";
     }
 
     @Test
     public void testIndex() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
+        Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
     }
@@ -60,10 +97,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testBulkIndex() throws Exception {
         List<Map<String, String>> documents = new ArrayList<Map<String, String>>();
-        Map<String, String> document1 = new HashMap<String, String>();
-        document1.put("content1", "test1");
-        Map<String, String> document2 = new HashMap<String, String>();
-        document2.put("content2", "test2");
+        Map<String, String> document1 = createIndexedData("-1");
+        Map<String, String> document2 = createIndexedData("-2");
 
         documents.add(document1);
         documents.add(document2);
@@ -76,8 +111,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testGet() throws Exception {
         //first, INDEX a value
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
+        Map<String, String> map = createIndexedData();
         sendBody("direct:index", map);
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -91,8 +125,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testDelete() throws Exception {
         //first, INDEX a value
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
+        Map<String, String> map = createIndexedData();
         sendBody("direct:index", map);
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -115,8 +148,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testSearch() throws Exception {
         //first, INDEX a value
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "testSearch");
+        Map<String, String> map = createIndexedData();
         sendBody("direct:index", map);
 
         //now, verify GET succeeded
@@ -133,9 +165,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
     @Test
     public void testIndexWithHeaders() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
-
+        Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
@@ -147,9 +177,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
     @Test
     public void testIndexWithIDInHeader() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
-
+        Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
@@ -164,8 +192,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     @Ignore("need to setup the cluster IP for this test")
     public void indexWithIp()  throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
+        Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
@@ -178,8 +205,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     @Ignore("need to setup the cluster IP/Port for this test")
     public void indexWithIpAndPort()  throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
+        Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
@@ -192,9 +218,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testGetWithHeaders() throws Exception {
         //first, INDEX a value
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
-
+        Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
@@ -212,9 +236,7 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     @Test
     public void testDeleteWithHeaders() throws Exception {
         //first, INDEX a value
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("content", "test");
-
+        Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
@@ -242,44 +264,49 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
 
     @Test
     public void indexRequestBody() throws Exception {
+        String prefix = createPrefix();
+        
         // given
-        IndexRequest request = new IndexRequest("foo", "bar", "testId");
-        request.source("{\"content\": \"hello\"}");
+        IndexRequest request = new IndexRequest(prefix + "foo", prefix + "bar", prefix + "testId");
+        request.source("{\"" + prefix + "content\": \"" + prefix + "hello\"}");
 
         // when
-        String documentId = template.requestBody("direct:index", request,
-                String.class);
+        String documentId = template.requestBody("direct:index", request, String.class);
 
         // then
-        assertThat(documentId, equalTo("testId"));
+        assertThat(documentId, equalTo(prefix + "testId"));
     }
 
     @Test
     public void getRequestBody() throws Exception {
+        String prefix = createPrefix();
+
         // given
-        GetRequest request = new GetRequest("foo").type("bar");
+        GetRequest request = new GetRequest(prefix + "foo").type(prefix + "bar");
 
         // when
         String documentId = template.requestBody("direct:index",
-                new IndexRequest("foo", "bar", "testId")
-                        .source("{\"content\": \"hello\"}"), String.class);
+                new IndexRequest(prefix + "foo", prefix + "bar", prefix + "testId")
+                        .source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"), String.class);
         GetResponse response = template.requestBody("direct:get",
                 request.id(documentId), GetResponse.class);
 
         // then
         assertThat(response, notNullValue());
-        assertThat("hello", equalTo(response.getSourceAsMap().get("content")));
+        assertThat(prefix + "hello", equalTo(response.getSourceAsMap().get(prefix + "content")));
     }
 
     @Test
     public void deleteRequestBody() throws Exception {
+        String prefix = createPrefix();
+
         // given
-        DeleteRequest request = new DeleteRequest("foo").type("bar");
+        DeleteRequest request = new DeleteRequest(prefix + "foo").type(prefix + "bar");
 
         // when
         String documentId = template.requestBody("direct:index",
-                new IndexRequest("foo", "bar", "testId")
-                        .source("{\"content\": \"hello\"}"), String.class);
+                new IndexRequest("" + prefix + "foo", "" + prefix + "bar", "" + prefix + "testId")
+                        .source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"), String.class);
         DeleteResponse response = template.requestBody("direct:delete",
                 request.id(documentId), DeleteResponse.class);
 
@@ -289,37 +316,39 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void bulkIndexRequestBody() throws Exception {
+        String prefix = createPrefix();
+
         // given
         BulkRequest request = new BulkRequest();
-        request.add(new IndexRequest("foo", "bar", "baz")
-                .source("{\"content\": \"hello\"}"));
+        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz")
+                .source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"));
 
         // when
-        List<String> indexedDocumentIds = template.requestBody(
-                "direct:bulk_index", request, List.class);
+        @SuppressWarnings("unchecked")
+        List<String> indexedDocumentIds = template.requestBody("direct:bulk_index", request, List.class);
 
         // then
         assertThat(indexedDocumentIds, notNullValue());
         assertThat(indexedDocumentIds.size(), equalTo(1));
-        assertThat(indexedDocumentIds, hasItem("baz"));
+        assertThat(indexedDocumentIds, hasItem(prefix + "baz"));
     }
 
     @Test
     public void bulkRequestBody() throws Exception {
+        String prefix = createPrefix();
+
         // given
         BulkRequest request = new BulkRequest();
-        request.add(new IndexRequest("foo", "bar", "baz")
-                .source("{\"content\": \"hello\"}"));
+        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz")
+                .source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"));
 
         // when
-        BulkResponse response = template.requestBody(
-                "direct:bulk", request, BulkResponse.class);
+        BulkResponse response = template.requestBody("direct:bulk", request, BulkResponse.class);
 
         // then
         assertThat(response, notNullValue());
-        assertEquals("baz", response.getItems()[0].getId());
+        assertEquals(prefix + "baz", response.getItems()[0].getId());
     }
 
     @Override
