@@ -342,9 +342,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public JmsBinding getBinding() {
         if (binding == null) {
-            binding = new JmsBinding(this);
+            binding = createBinding();
         }
         return binding;
+    }
+
+    /**
+     * Creates the {@link org.apache.camel.component.jms.JmsBinding} to use.
+     */
+    protected JmsBinding createBinding() {
+        return new JmsBinding(this);
     }
 
     /**
