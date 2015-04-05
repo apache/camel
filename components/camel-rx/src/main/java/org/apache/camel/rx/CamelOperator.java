@@ -19,14 +19,13 @@ package org.apache.camel.rx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.processor.PipelineHelper;
 import org.apache.camel.util.ServiceHelper;
 import rx.Observable;
 import rx.Subscriber;
 
-public class CamelOperator implements Observable.Operator<Message, Message> {
+public class CamelOperator implements Observable.Operator<Exchange, Exchange> {
 
     private ProducerTemplate producerTemplate;
     private Endpoint endpoint;
@@ -44,8 +43,8 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
     }
 
     @Override
-    public Subscriber<? super Message> call(final Subscriber<? super Message> s) {
-        return new Subscriber<Message>(s) {
+    public Subscriber<? super Exchange> call(final Subscriber<? super Exchange> s) {
+        return new Subscriber<Exchange>(s) {
             @Override
             public void onCompleted() {
                 try {
@@ -70,19 +69,14 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
             }
 
             @Override
-            public void onNext(Message item) {
+            public void onNext(Exchange item) {
                 if (!s.isUnsubscribed()) {
                     Exchange exchange = process(item);
                     if (exchange.getException() != null) {
                         s.onError(exchange.getException());
                     } else {
-                        if (exchange.hasOut()) {
-                            s.onNext(exchange.getOut());
-                        } else {
-                            s.onNext(exchange.getIn());
-                        }
+                        s.onNext(PipelineHelper.createNextExchange(exchange));
                     }
-
                 }
             }
         };
@@ -95,11 +89,5 @@ public class CamelOperator implements Observable.Operator<Message, Message> {
             exchange.setException(e);
         }
         return exchange;
-    }
-
-    private Exchange process(Message message) {
-        Exchange exchange = endpoint.createExchange();
-        exchange.setIn(message);
-        return process(exchange);
     }
 }
