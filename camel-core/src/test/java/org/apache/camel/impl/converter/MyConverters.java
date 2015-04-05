@@ -22,7 +22,7 @@ import org.apache.camel.TypeConverters;
 public class MyConverters implements TypeConverters {
 
     @Converter
-    public static Country toCountry(String iso) {
+    public Country toCountry(String iso) {
         Country answer = new Country();
         answer.setIso("en");
         answer.setName("England");
@@ -30,7 +30,7 @@ public class MyConverters implements TypeConverters {
     }
 
     @Converter
-    public static String toIso(Country country) {
+    public String toIso(Country country) {
         return country.getIso();
     }
 }
