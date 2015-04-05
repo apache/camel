@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterRegistry;
 
@@ -37,6 +38,10 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
     
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         typeConverters.add(typeConverter);
+    }
+
+    public void addTypeConverters(TypeConverters typeConverters) {
+        // noop
     }
 
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
