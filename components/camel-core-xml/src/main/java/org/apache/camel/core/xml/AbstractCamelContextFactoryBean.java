@@ -34,6 +34,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -235,6 +236,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (runtimeEndpointRegistry != null) {
             LOG.info("Using custom RuntimeEndpointRegistry: {}", runtimeEndpointRegistry);
             getContext().setRuntimeEndpointRegistry(runtimeEndpointRegistry);
+        }
+        // custom type converters defined as <bean>s
+        Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
+        if (typeConverters != null && !typeConverters.isEmpty()) {
+            for (Entry<String, TypeConverters> entry : typeConverters.entrySet()) {
+                TypeConverters converter = entry.getValue();
+                LOG.info("Adding custom TypeConverters with id: {} and implementation: {}", entry.getKey(), converter);
+                getContext().getTypeConverterRegistry().addTypeConverters(converter);
+            }
         }
         // set the event notifier strategies if defined
         Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().findByTypeWithName(EventNotifier.class);
