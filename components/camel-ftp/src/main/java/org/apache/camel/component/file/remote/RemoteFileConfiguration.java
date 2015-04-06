@@ -68,8 +68,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private String siteCommand;
     @UriParam(defaultValue = "true")
     private boolean stepwise = true;
-    @UriParam(defaultValue = "Auto")
-    private PathSeparator separator = PathSeparator.Auto;
+    @UriParam(defaultValue = "UNIX")
+    private PathSeparator separator = PathSeparator.UNIX;
     @UriParam
     private boolean streamDownload;
     @UriParam(defaultValue = "true")
