@@ -44,7 +44,14 @@ import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.eclipse.jetty.client.ContentExchange;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.client.RedirectListener;
+import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +64,29 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final String TEST_DOCUMENT_ID = "Test Document";
 
     private static String testId;
+
+    @Test
+    public void testRetry() throws Exception {
+        SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
+        String accessToken = sf.getSession().getAccessToken();
+
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
+        HttpClient httpClient = new HttpClient(sslContextFactory);
+        httpClient.setConnectTimeout(60000);
+        httpClient.setTimeout(60000);
+        httpClient.registerListener(RedirectListener.class.getName());
+        httpClient.start();
+
+        ContentExchange logoutGet = new ContentExchange(true);
+        logoutGet.setURL(sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken);
+        logoutGet.setMethod(HttpMethods.GET);
+        httpClient.send(logoutGet);
+        assertEquals(HttpExchange.STATUS_COMPLETED, logoutGet.waitForDone());
+        assertEquals(HttpStatus.OK_200, logoutGet.getResponseStatus());
+
+        doTestGetGlobalObjects("");
+    }
 
     @Test
     public void testGetVersions() throws Exception {
