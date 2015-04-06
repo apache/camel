@@ -27,8 +27,8 @@ import rx.Subscription;
 import rx.functions.Func1;
 import rx.observables.ConnectableObservable;
 
-import static com.jayway.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 
 /**
  */
