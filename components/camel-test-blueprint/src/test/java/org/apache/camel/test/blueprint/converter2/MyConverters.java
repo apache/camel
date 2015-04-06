@@ -19,8 +19,11 @@ package org.apache.camel.test.blueprint.converter2;
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverters;
 
-public class MyConverters implements TypeConverters {
-
+public final class MyConverters implements TypeConverters {
+    private MyConverters() {
+        // Helper class
+    }
+    
     @Converter
     public static Country toCountry(String iso) {
         Country answer = new Country();
