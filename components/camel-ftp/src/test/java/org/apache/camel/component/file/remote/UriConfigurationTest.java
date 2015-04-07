@@ -37,7 +37,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
     
     @Test
@@ -67,7 +67,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals(false, config.isBinary());
         assertEquals(false, config.isImplicit());
         assertEquals("TLS", config.getSecurityProtocol());
-        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
 
     @Test
