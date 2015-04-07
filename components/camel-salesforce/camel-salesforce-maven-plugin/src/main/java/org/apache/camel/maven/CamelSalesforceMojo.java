@@ -603,7 +603,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"duration", "javax.xml.datatype.Duration"},
                 {"NOTATION", "javax.xml.namespace.QName"}
 */
-                {"address", "String"}
+                {"address", "org.apache.camel.component.salesforce.api.dto.Address"},
+                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"}
             };
             LOOKUP_MAP = new HashMap<String, String>();
             for (String[] entry : typeMap) {
