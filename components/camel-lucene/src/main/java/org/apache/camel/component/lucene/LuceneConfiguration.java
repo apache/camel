@@ -47,7 +47,7 @@ public class LuceneConfiguration {
     private Analyzer analyzer;
     @UriParam
     private int maxHits;
-    private Version luceneVersion = Version.LUCENE_4_10_3; 
+    private Version luceneVersion = Version.LUCENE_5_0_0; 
 
     public LuceneConfiguration() {
     }
