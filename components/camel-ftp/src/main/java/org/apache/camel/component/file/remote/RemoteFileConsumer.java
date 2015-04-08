@@ -155,7 +155,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {
-                log.info("Connected and logged in to: " + remoteServer());
+                log.debug("Connected and logged in to: " + remoteServer());
             }
         }
     }

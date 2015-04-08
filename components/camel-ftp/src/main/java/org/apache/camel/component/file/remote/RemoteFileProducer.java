@@ -203,7 +203,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             if (!loggedIn) {
                 return;
             }
-            log.info("Connected and logged in to: " + getEndpoint());
+            log.debug("Connected and logged in to: " + getEndpoint());
         }
     }
 
