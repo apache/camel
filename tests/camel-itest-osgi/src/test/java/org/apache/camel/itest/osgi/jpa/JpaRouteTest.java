@@ -136,6 +136,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             loadCamelFeatures("camel-jpa"),
 
             // use derby as the database
+            mavenBundle().groupId("org.apache.openjpa").artifactId("openjpa").version("2.3.0"),
             mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"));
 
         return options;
