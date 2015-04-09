@@ -182,12 +182,13 @@ public final class CxfPayloadConverter {
                     payload.getBodySources().set(0, new DOMSource(d.getDocumentElement()));
                     return type.cast(d);
                 }
+                // CAMEL-8410 Just make sure we get the Source object directly from the payload body source
+                Source s = payload.getBodySources().get(0);
+                if (type.isInstance(s)) {
+                    return type.cast(s);
+                }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
-                    Source s = payload.getBodySources().get(0);
-                    if (type.isInstance(s)) {
-                        return type.cast(s);
-                    }
                     if ((s instanceof StreamSource
                         || s instanceof SAXSource) 
                         && !type.isAssignableFrom(Document.class)
