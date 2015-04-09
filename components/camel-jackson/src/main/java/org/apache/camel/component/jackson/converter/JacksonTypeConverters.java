@@ -17,13 +17,17 @@
 package org.apache.camel.component.jackson.converter;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 public final class JacksonTypeConverters {
+
+    private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
     private JacksonTypeConverters() {
     }
@@ -35,7 +39,7 @@ public final class JacksonTypeConverters {
         }
 
         if (value instanceof Map) {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
             if (mapper.canSerialize(type)) {
                 return mapper.convertValue(value, type);
             }
@@ -51,6 +55,14 @@ public final class JacksonTypeConverters {
                 || short.class.isAssignableFrom(type) || char.class.isAssignableFrom(type)
                 || float.class.isAssignableFrom(type) || double.class.isAssignableFrom(type);
         return isString || isNumber;
+    }
+
+    private static ObjectMapper resolveObjectMapper(Registry registry) {
+        Set<ObjectMapper> mappers = registry.findByType(ObjectMapper.class);
+        if (mappers.size() == 1) {
+            return mappers.iterator().next();
+        }
+        return DEFAULT_MAPPER;
     }
 
 }

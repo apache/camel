@@ -18,29 +18,52 @@ package org.apache.camel.component.jackson;
 
 import java.util.HashMap;
 
-import org.apache.camel.component.jackson.converter.JacksonTypeConverters;
+import static java.util.Collections.singleton;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.Exchange;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.apache.camel.component.jackson.converter.JacksonTypeConverters.convertTo;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class JacksonConversionsSimpleTest extends Assert {
 
     @Test
     public void shouldNotConvertMapToString() {
-        Object convertedObject = JacksonTypeConverters.convertTo(String.class, null, new HashMap<String, String>(), null);
+        Object convertedObject = convertTo(String.class, null, new HashMap<String, String>(), null);
         assertNull(convertedObject);
     }
 
     @Test
     public void shouldNotConvertMapToNumber() {
-        Object convertedObject = JacksonTypeConverters.convertTo(Long.class, null, new HashMap<String, String>(), null);
+        Object convertedObject = convertTo(Long.class, null, new HashMap<String, String>(), null);
         assertNull(convertedObject);
     }
 
     @Test
     public void shouldNotConvertMapToPrimitive() {
-        Object convertedObject = JacksonTypeConverters.convertTo(long.class, null, new HashMap<String, String>(), null);
+        Object convertedObject = convertTo(long.class, null, new HashMap<String, String>(), null);
         assertNull(convertedObject);
     }
 
+    @Test
+    public void shouldResolveMapperFromRegistry() {
+        // Given
+        Exchange exchange = mock(Exchange.class, RETURNS_DEEP_STUBS);
+        ObjectMapper mapper = mock(ObjectMapper.class);
+        given(exchange.getContext().getRegistry().findByType(eq(ObjectMapper.class))).willReturn(singleton(mapper));
+
+        // When
+        convertTo(TestPojo.class, exchange, new HashMap<String, String>(), null);
+
+        // Then
+        verify(mapper).canSerialize(TestPojo.class);
+    }
 
 }
