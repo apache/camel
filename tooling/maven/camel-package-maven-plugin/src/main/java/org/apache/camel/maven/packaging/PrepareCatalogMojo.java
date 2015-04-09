@@ -291,6 +291,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     if (dir.isDirectory() && !"camel-jetty9".equals(dir.getName()) && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
+                        // special for camel-salesforce which is in a sub dir
+                        if ("camel-salesforce".equals(dir.getName())) {
+                            target = new File(dir, "camel-salesforce-component/target/classes");
+                        } else if ("camel-linkedin".equals(dir.getName())) {
+                            target = new File(dir, "camel-linkedin-component/target/classes");
+                        }
+
                         int before = componentFiles.size();
                         int before2 = jsonFiles.size();
 
