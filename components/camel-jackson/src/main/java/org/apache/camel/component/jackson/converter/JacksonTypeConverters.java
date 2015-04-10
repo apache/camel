@@ -17,32 +17,52 @@
 package org.apache.camel.component.jackson.converter;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 public final class JacksonTypeConverters {
+
+    private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
     private JacksonTypeConverters() {
     }
 
     @FallbackConverter
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (type.isAssignableFrom(String.class)) {
-            // do not convert to String
+        if (isNotPojoType(type)) {
             return null;
         }
 
         if (value instanceof Map) {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
             if (mapper.canSerialize(type)) {
                 return mapper.convertValue(value, type);
             }
         }
         // Just return null to let other fallback converter to do the job
         return null;
+    }
+
+    private static boolean isNotPojoType(Class<?> type) {
+        boolean isString = String.class.isAssignableFrom(type);
+        boolean isNumber = Number.class.isAssignableFrom(type)
+                || int.class.isAssignableFrom(type) || long.class.isAssignableFrom(type)
+                || short.class.isAssignableFrom(type) || char.class.isAssignableFrom(type)
+                || float.class.isAssignableFrom(type) || double.class.isAssignableFrom(type);
+        return isString || isNumber;
+    }
+
+    private static ObjectMapper resolveObjectMapper(Registry registry) {
+        Set<ObjectMapper> mappers = registry.findByType(ObjectMapper.class);
+        if (mappers.size() == 1) {
+            return mappers.iterator().next();
+        }
+        return DEFAULT_MAPPER;
     }
 
 }
