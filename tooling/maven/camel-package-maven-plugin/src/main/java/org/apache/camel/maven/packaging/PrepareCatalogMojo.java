@@ -279,7 +279,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> missingComponents = new TreeSet<File>();
         Set<File> missingLabels = new TreeSet<File>();
         Set<File> missingUriPaths = new TreeSet<File>();
-        Set<File> missingJavaDoc = new TreeSet<File>();
+        Set<File> missingComponentJavaDoc = new TreeSet<File>();
+        Set<File> missingEndpointJavaDoc = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
 
         // find all json files in components and camel-core
@@ -378,7 +379,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (Map<String, String> row : rows) {
                     String doc = row.get("description");
                     if (doc == null || doc.isEmpty()) {
-                        missingJavaDoc.add(file);
+                        missingComponentJavaDoc.add(file);
                         break;
                     }
                 }
@@ -388,7 +389,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (Map<String, String> row : rows) {
                     String doc = row.get("description");
                     if (doc == null || doc.isEmpty()) {
-                        missingJavaDoc.add(file);
+                        missingEndpointJavaDoc.add(file);
                         break;
                     }
                 }
@@ -424,7 +425,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingJavaDoc, missingUriPaths, missingLabels, usedLabels);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, missingEndpointJavaDoc, missingComponentJavaDoc, missingUriPaths, missingLabels, usedLabels);
     }
 
     protected void executeDataFormats() throws MojoExecutionException, MojoFailureException {
@@ -722,7 +723,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingJavaDoc,
+    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Set<File> missingEndpointJavaDoc, Set<File> missingComponentJavaDoc,
                                        Set<File> missingUriPaths, Set<File>missingLabels, Map<String, Set<String>> usedLabels) {
         getLog().info("================================================================================");
         getLog().info("");
@@ -739,20 +740,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
-        if (!missingLabels.isEmpty()) {
-            getLog().info("");
-            getLog().warn("\tMissing labels detected: " + missingLabels.size());
-            for (File file : missingLabels) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
-        }
-        if (!missingJavaDoc.isEmpty()) {
-            getLog().info("");
-            getLog().warn("\tMissing javadoc detected: " + missingJavaDoc.size());
-            for (File file : missingJavaDoc) {
-                getLog().warn("\t\t" + asComponentName(file));
-            }
-        }
         if (!usedLabels.isEmpty()) {
             getLog().info("");
             getLog().info("\tUsed labels: " + usedLabels.size());
@@ -763,10 +750,31 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
         }
+        if (!missingLabels.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing labels detected: " + missingLabels.size());
+            for (File file : missingLabels) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
         if (!missingUriPaths.isEmpty()) {
             getLog().info("");
             getLog().warn("\tMissing @UriPath detected: " + missingUriPaths.size());
             for (File file : missingUriPaths) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!missingComponentJavaDoc.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing component options javadoc detected: " + missingComponentJavaDoc.size());
+            for (File file : missingComponentJavaDoc) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!missingEndpointJavaDoc.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing endpoint options javadoc detected: " + missingEndpointJavaDoc.size());
+            for (File file : missingEndpointJavaDoc) {
                 getLog().warn("\t\t" + asComponentName(file));
             }
         }
