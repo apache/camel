@@ -467,11 +467,11 @@
       <artifactId>camel-leveldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin</artifactId>
     </dependency>
     <dependency>

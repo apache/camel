@@ -127,8 +127,8 @@
         <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-leveldb</include>
-        <include>org.apache.camel.component.linkedin:camel-linkedin-api</include>
-        <include>org.apache.camel.component.linkedin:camel-linkedin</include>
+        <include>org.apache.camel.camel-linkedin-api</include>
+        <include>org.apache.camel.camel-linkedin</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-mail</include>
