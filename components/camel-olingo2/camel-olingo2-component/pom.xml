@@ -67,6 +67,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-olingo2-api</artifactId>
+      <version>${project.version}</version>
       <classifier>javadoc</classifier>
       <scope>provided</scope>
     </dependency>
