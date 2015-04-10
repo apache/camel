@@ -35,7 +35,10 @@ import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.apache.camel.component.linkedin.internal.LinkedInConstants;
 import org.apache.camel.component.linkedin.internal.LinkedInPropertiesHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -45,11 +48,18 @@ import org.apache.cxf.jaxrs.client.WebClient;
 /**
  * Represents a LinkedIn endpoint.
  */
-@UriEndpoint(scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", consumerClass = LinkedInConsumer.class, consumerPrefix = "consumer")
+@UriEndpoint(scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social", consumerClass = LinkedInConsumer.class)
 public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, LinkedInConfiguration> {
 
     protected static final String FIELDS_OPTION = "fields";
     private static final String DEFAULT_FIELDS_SELECTOR = "";
+
+    @UriPath @Metadata(required = "true")
+    private final LinkedInApiName apiName;
+    @UriPath @Metadata(required = "true")
+    private final String methodName;
+    @UriParam
+    private final LinkedInConfiguration configuration;
 
     // OAuth request filter
     private LinkedInOAuthRequestFilter requestFilter;
@@ -60,7 +70,9 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
     public LinkedInEndpoint(String uri, LinkedInComponent component,
                          LinkedInApiName apiName, String methodName, LinkedInConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, LinkedInApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
+        this.apiName = apiName;
+        this.methodName = methodName;
+        this.configuration = endpointConfiguration;
     }
 
     public Producer createProducer() throws Exception {
