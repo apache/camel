@@ -1057,8 +1057,8 @@
     <bundle dependency='true'>mvn:org.apache.olingo/olingo-odata2-api/${olingo2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.olingo-odata2-core/${olingo-odata2-core-bundle-version}</bundle>
     <bundle dependency='true'>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.camel.component.olingo2/camel-olingo2-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel.component.olingo2/camel-olingo2/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-olingo2-api/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-olingo2/${project.version}</bundle>
   </feature>
   <feature name='camel-openshift' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

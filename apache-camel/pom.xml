@@ -539,11 +539,11 @@
       <artifactId>camel-ognl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.olingo2</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-olingo2-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.olingo2</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-olingo2</artifactId>
     </dependency>
     <dependency>
@@ -851,6 +851,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-commands-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-commands-jolokia</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>

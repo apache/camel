@@ -1202,12 +1202,12 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.camel.component.olingo2</groupId>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.camel.component.olingo2</groupId>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2</artifactId>
         <version>${project.version}</version>
       </dependency>

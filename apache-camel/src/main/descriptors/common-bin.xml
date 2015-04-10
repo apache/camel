@@ -146,8 +146,8 @@
         <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-netty4-http</include>
         <include>org.apache.camel:camel-ognl</include>
-        <include>org.apache.camel.component.olingo2:camel-olingo2-api</include>
-        <include>org.apache.camel.component.olingo2:camel-olingo2</include>
+        <include>org.apache.camel.camel-olingo2-api</include>
+        <include>org.apache.camel.camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
@@ -224,6 +224,7 @@
         <include>org.apache.camel:camel-zookeeper</include>
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-commands-core</include>
+        <include>org.apache.camel:camel-commands-jolokia</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <!-- this jar is mandatory -->
         <include>org.slf4j:slf4j-api</include>
