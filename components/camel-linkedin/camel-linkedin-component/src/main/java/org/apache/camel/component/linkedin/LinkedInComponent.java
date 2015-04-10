@@ -27,7 +27,6 @@ import org.apache.camel.component.linkedin.api.OAuthParams;
 import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;

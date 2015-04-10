@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a Salesforce endpoint.
  */
-@UriEndpoint(scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", consumerClass = SalesforceConsumer.class)
+@UriEndpoint(scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
