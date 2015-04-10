@@ -46,9 +46,8 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- Camel annotations in runtime scope to avoid compile errors in IDEs -->
@@ -61,7 +60,7 @@
 
     <!-- Component API javadoc in provided scope to read API signatures -->
     <dependency>
-      <groupId>org.apache.camel.component.linkedin</groupId>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
       <version>${project.version}</version>
       <classifier>javadoc</classifier>
