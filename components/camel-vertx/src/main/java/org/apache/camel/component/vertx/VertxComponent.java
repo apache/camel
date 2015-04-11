@@ -38,6 +38,7 @@ import org.vertx.java.core.VertxFactory;
  */
 public class VertxComponent extends UriEndpointComponent implements EndpointCompleter {
     private static final Logger LOG = LoggerFactory.getLogger(VertxComponent.class);
+    private volatile boolean createdVertx;
     private Vertx vertx;
     private String host;
     private int port;
@@ -103,8 +104,11 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
     protected void doStart() throws Exception {
         super.doStart();
 
-
         if (vertx == null) {
+
+            // we are creating vertx so we should handle its lifecycle
+            createdVertx = true;
+
             final CountDownLatch latch = new CountDownLatch(1);
 
             // lets using a host / port if a host name is specified
@@ -147,7 +151,7 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (vertx != null) {
+        if (createdVertx && vertx != null) {
             LOG.info("Stopping Vertx {}", vertx);
             vertx.stop();
         }
