@@ -77,11 +77,6 @@ public class FacebookMethodsTypeHelperTest {
             assertFalse("No candidate methods for " + name, candidates.isEmpty());
 
             if (!name.equals(shortName) && !"search".equals(name)) {
-                if (!getExcludes.contains(shortName)) {
-                    candidates = FacebookMethodsTypeHelper.getCandidateMethods(
-                        FacebookMethodsTypeHelper.convertToGetMethod(shortName), new String[0]);
-                    assertFalse("No candidate get methods for " + shortName, candidates.isEmpty());
-                }
 
                 if (searchIncludes.contains(shortName)) {
                     candidates = FacebookMethodsTypeHelper.getCandidateMethods(
