@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.camel.component.facebook.FacebookConstants;
-
 import facebook4j.Album;
 import facebook4j.AlbumUpdate;
 import facebook4j.BackdatingPostUpdate;
@@ -70,8 +68,9 @@ import facebook4j.TestUser;
 import facebook4j.User;
 import facebook4j.Video;
 import facebook4j.VideoUpdate;
-import facebook4j.internal.http.HttpParameter;
 import facebook4j.internal.org.json.JSONArray;
+
+import org.apache.camel.component.facebook.FacebookConstants;
 
 /**
  * Enum for Facebook4J *Method interfaces.
@@ -595,7 +594,7 @@ public enum FacebookMethodsType {
     GET_TABS_WITH_READING(ResponseList.class, "getTabs", Reading.class, "reading"),
     GET_TABS_WITH_PAGEID_AND_READING(ResponseList.class, "getTabs", String.class, "pageId", Reading.class, "reading"),
     GET_INSTALLED_TABS(ResponseList.class, "getInstalledTabs", List.class, "appIds"),
-    GET_INSTALLED_TABS_WITH_PAGEID(ResponseList.class, "getInstalledTabs",String.class, "pageId",  List.class, "appIds"),
+    GET_INSTALLED_TABS_WITH_PAGEID(ResponseList.class, "getInstalledTabs", String.class, "pageId",  List.class, "appIds"),
     GET_INSTALLED_TABS_WITH_READING(ResponseList.class, "getInstalledTabs",  List.class, "appIds", Reading.class, "reading"),
     GET_INSTALLED_TABS_WITH_PAGEID_AND_READING(ResponseList.class, "getInstalledTabs", String.class, "pageId", List.class, "appIds", Reading.class, "reading"),
     INSTALL_TAB(boolean.class, "installTab", String.class, "appId"),
