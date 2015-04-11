@@ -150,8 +150,6 @@ public enum FacebookMethodsType {
     EDITEVENT(Boolean.class,  "editEvent", String.class, "eventId", EventUpdate.class, "eventUpdate"),
     GETEVENT(Event.class,  "getEvent", String.class, "eventId"),
     GETEVENT_WITH_OPTIONS(Event.class,  "getEvent", String.class, "eventId", Reading.class, FacebookConstants.READING_PPROPERTY),
-    //GETEVENTFEED(ResponseList.class, "getEventFeed", String.class, "eventId"),
-    //GETEVENTFEED_WITH_OPTIONS(ResponseList.class, "getEventFeed", String.class, "eventId", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETEVENTPHOTOS(ResponseList.class, "getEventPhotos", String.class, "eventId"),
     GETEVENTPHOTOS_WITH_OPTIONS(ResponseList.class, "getEventPhotos", String.class, "eventId", Reading.class, FacebookConstants.READING_PPROPERTY),
     GETEVENTPICTUREURL(URL.class,  "getEventPictureURL", String.class, "eventId"),
@@ -174,7 +172,6 @@ public enum FacebookMethodsType {
     GETRSVPSTATUSINMAYBE_WITH_ID(ResponseList.class, "getRSVPStatusInMaybe", String.class, "eventId", String.class, "userId"),
     INVITETOEVENT(Boolean.class,  "inviteToEvent", String.class, "eventId", String.class, "userId"),
     INVITETOEVENT_WITH_IDS(Boolean.class,  "inviteToEvent", String.class, "eventId", new String[0].getClass(), "userIds"),
-    //POSTEVENTFEED_WITH_POSTUPDATE(String.class, "postEventFeed", String.class, "eventId", PostUpdate.class, "postUpdate"),
     POSTEVENTLINK_WITH_LINK(String.class, "postEventLink", String.class, "eventId", URL.class , "link"),
     POSTEVENTLINK_WITH_LINK_MSG(String.class, "postEventLink", String.class, "eventId", URL.class , "link", String.class, "message"),
     POSTEVENTPHOTO_WITH_MEDIA(String.class, "postEventPhoto", String.class, "eventId", Media.class, "source"),
@@ -392,11 +389,8 @@ public enum FacebookMethodsType {
     GETTAGSONPHOTO_WITH_OPTIONS(ResponseList.class, "getTagsOnPhoto", String.class, "photoId", Reading.class, FacebookConstants.READING_PPROPERTY),
     LIKEPHOTO(Boolean.class,  "likePhoto", String.class, "photoId"),
     POSTPHOTO(String.class, "postPhoto", Media.class, "source"),
-    //POSTPHOTO_WITH_MSG(String.class, "postPhoto", Media.class, "source", String.class, "message", String.class, "place", boolean.class, "noStory"),
     POSTPHOTO_WITH_MEDIA(String.class, "postPhoto", String.class, "userId", Media.class, "source"),
-    //POSTPHOTO_WITH_MEDIA_MSG(String.class, "postPhoto", String.class, "userId", Media.class, "source", String.class, "message", String.class, "place", boolean.class, "noStory"),
     UNLIKEPHOTO(Boolean.class,  "unlikePhoto", String.class, "photoId"),
-    //UPDATETAGONPHOTO(Boolean.class,  "updateTagOnPhoto", String.class, "photoId", String.class, "toUserId"),
     UPDATETAGONPHOTO_WITH_TAGUPDATE(Boolean.class,  "updateTagOnPhoto", String.class, "photoId", TagUpdate.class, "tagUpdate"),
 
     // PokeMethods
@@ -449,10 +443,6 @@ public enum FacebookMethodsType {
 
     // QuestionMethods
     ADDQUESTIONOPTION(String.class, "addQuestionOption", String.class, "questionId", String.class, "optionDescription"),
-    //CREATEQUESTION(String.class, "createQuestion", String.class, "question"),
-    //CREATEQUESTION_WITH_OPTIONS(String.class, "createQuestion", String.class, "question", List.class, "options", boolean.class, "allowNewOptions"),
-    //CREATEQUESTION_WITH_ID(String.class, "createQuestion", String.class, "userId", String.class, "question"),
-    //CREATEQUESTION_WITH_ID_OPTIONS(String.class, "createQuestion", String.class, "userId", String.class, "question", List.class, "options", boolean.class, "allowNewOptions"),
     DELETEQUESTION(Boolean.class,  "deleteQuestion", String.class, "questionId"),
     GETQUESTION(Question.class,  "getQuestion", String.class, "questionId"),
     GETQUESTION_WITH_OPTIONS(Question.class,  "getQuestion", String.class, "questionId", Reading.class, FacebookConstants.READING_PPROPERTY),
@@ -512,10 +502,6 @@ public enum FacebookMethodsType {
     GETVIDEOS_WITH_ID(ResponseList.class, "getVideos", String.class, "userId"),
     GETVIDEOS_WITH_ID_OPTIONS(ResponseList.class, "getVideos", String.class, "userId", Reading.class, FacebookConstants.READING_PPROPERTY),
     LIKEVIDEO(Boolean.class,  "likeVideo", String.class, "videoId"),
-    //POSTVIDEO(String.class, "postVideo", Media.class, "source"),
-    //POSTVIDEO_WITH_TITLE(String.class, "postVideo", Media.class, "source", String.class, "title", String.class, "description"),
-    //POSTVIDEO_WITH_ID(String.class, "postVideo", String.class, "userId", Media.class, "source"),
-    //POSTVIDEO_WITH_ID_MEDIA(String.class, "postVideo", String.class, "userId", Media.class, "source", String.class, "title", String.class, "description"),
     UNLIKEVIDEO(Boolean.class,  "unlikeVideo", String.class, "videoId"),
 
     // SearchMethods get the highest priority with higher ordinal values
