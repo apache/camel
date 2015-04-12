@@ -76,7 +76,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                 new AsyncHttpClientConfig.Builder();
 
         builder.setSSLContext(new SSLContextParameters().createSSLContext());
-        builder.setHostnameVerifier(new AllowAllHostnameVerifier());
+        builder.setAcceptAnyCertificate(true);
         config = builder.build();
         c = new AsyncHttpClient(config);
 
@@ -100,7 +100,6 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
         // NOTE: Needed since the client uses a loose trust configuration when no ssl context
         // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
-        scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
