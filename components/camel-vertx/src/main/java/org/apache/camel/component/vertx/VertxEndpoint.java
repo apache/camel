@@ -63,7 +63,11 @@ public class VertxEndpoint extends DefaultEndpoint {
     }
 
     public EventBus getEventBus() {
-        return getVertx().eventBus();
+        if (getVertx() != null) {
+            return getVertx().eventBus();
+        } else {
+            return null;
+        }
     }
 
     public Vertx getVertx() {
