@@ -11,13 +11,9 @@
 
     The following commands are available:
     \u001B[36mcamel-catalog:component-list\u001B[0m Lists all Camel components
-    \u001B[36mcamel-catalog:component-label-list\u001B[0m List the labels used for categorizing the components
     \u001B[36mcamel-catalog:dataformat-list\u001B[0m Lists all Camel data formats
-    \u001B[36mcamel-catalog:dataformat-label-list\u001B[0m List the labels used for categorizing the data formats
     \u001B[36mcamel-catalog:eip-list\u001B[0m Lists all Camel EIP patterns
-    \u001B[36mcamel-catalog:eip-label-list\u001B[0m List the labels used for categorizing the EIP patterns
     \u001B[36mcamel-catalog:language-list\u001B[0m Lists all Camel languages
-    \u001B[36mcamel-catalog:language-label-list\u001B[0m List the labels used for categorizing the languages
 
 
 \u001B[1mSEE ALSO\u001B[0m
