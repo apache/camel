@@ -313,8 +313,8 @@
     <lucene-bundle-version>4.10.3_1</lucene-bundle-version>
     <lucene-version>4.10.3</lucene-version>
     <lucene-version-range>[4.5,5)</lucene-version-range>
-    <lightcouch-version>0.1.3</lightcouch-version>
-    <lightcouch-bundle-version>0.1.3_1</lightcouch-bundle-version>
+    <lightcouch-version>0.1.6</lightcouch-version>
+    <lightcouch-bundle-version>0.1.6_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
     <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
