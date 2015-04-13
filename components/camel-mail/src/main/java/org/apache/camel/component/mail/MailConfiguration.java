@@ -418,6 +418,12 @@ public class MailConfiguration implements Cloneable {
         return mapMailMessage;
     }
 
+    /**
+     * Specifies whether Camel should map the received mail message to Camel body/headers.
+     * If set to true, the body of the mail message is mapped to the body of the Camel IN message and the mail headers are mapped to IN headers.
+     * If this option is set to false then the IN message contains a raw javax.mail.Message.
+     * You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class).
+     */
     public void setMapMailMessage(boolean mapMailMessage) {
         this.mapMailMessage = mapMailMessage;
     }
