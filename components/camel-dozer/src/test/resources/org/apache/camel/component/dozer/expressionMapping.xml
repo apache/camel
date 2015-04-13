@@ -35,5 +35,9 @@
             <a>expression</a>
             <b>custId</b>
         </field>
+        <field custom-converter-id="_expressionMapping" custom-converter-param="header:orderNumber">
+            <a>expression</a>
+            <b>orderId</b>
+        </field>
     </mapping>
 </mappings>
