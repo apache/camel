@@ -81,10 +81,4 @@ public class ExpressionMapper extends BaseConverter {
     public void setCurrentExchange(Exchange exchange) {
         currentExchange.set(exchange);
     }
-    
-    @Override
-    public void done() {
-        super.done();
-        currentExchange.set(null);
-    }
 }
