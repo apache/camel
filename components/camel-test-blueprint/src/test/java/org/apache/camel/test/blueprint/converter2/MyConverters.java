@@ -19,13 +19,10 @@ package org.apache.camel.test.blueprint.converter2;
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverters;
 
-public final class MyConverters implements TypeConverters {
-    private MyConverters() {
-        // Helper class
-    }
-    
+public class MyConverters implements TypeConverters {
+
     @Converter
-    public static Country toCountry(String iso) {
+    public Country toCountry(String iso) {
         Country answer = new Country();
         answer.setIso("en");
         answer.setName("England");
@@ -33,7 +30,7 @@ public final class MyConverters implements TypeConverters {
     }
 
     @Converter
-    public static String toIso(Country country) {
+    public String toIso(Country country) {
         return country.getIso();
     }
 }
