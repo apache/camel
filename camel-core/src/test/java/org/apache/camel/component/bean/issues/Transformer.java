@@ -18,8 +18,8 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.Exchange;
 
-public interface Transformer {
+public interface Transformer<T> {
 
-    Object transform(Exchange exchange);
+    T transform(Exchange exchange);
 
 }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.bean.issues;
 
-public abstract class AbstractTransformer implements Transformer {
+public abstract class AbstractTransformer<T> implements Transformer<T> {
 
     protected String getTest() {
         return "test";
