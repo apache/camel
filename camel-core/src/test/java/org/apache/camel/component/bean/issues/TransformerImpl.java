@@ -18,7 +18,7 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.Exchange;
 
-public class TransformerImpl extends AbstractTransformer {
+public class TransformerImpl extends AbstractTransformer<String> {
 
     @Override
     public String transform(Exchange exchange) {
