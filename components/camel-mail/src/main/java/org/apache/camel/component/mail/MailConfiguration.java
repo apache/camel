@@ -531,6 +531,9 @@ public class MailConfiguration implements Cloneable {
         return dummyTrustManager;
     }
 
+    /**
+     * To use a dummy security setting for trusting all certificates. Should only be used for development mode, and not production.
+     */
     public void setDummyTrustManager(boolean dummyTrustManager) {
         this.dummyTrustManager = dummyTrustManager;
     }
@@ -563,6 +566,9 @@ public class MailConfiguration implements Cloneable {
         return useInlineAttachments;
     }
 
+    /**
+     * Whether to use disposition inline or attachment.
+     */
     public void setUseInlineAttachments(boolean useInlineAttachments) {
         this.useInlineAttachments = useInlineAttachments;
     }
@@ -607,6 +613,9 @@ public class MailConfiguration implements Cloneable {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
