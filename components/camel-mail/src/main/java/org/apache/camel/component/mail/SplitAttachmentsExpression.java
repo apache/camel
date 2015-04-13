@@ -58,7 +58,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
 
     public static final String HEADER_NAME = "CamelSplitAttachmentId";
 
-    private boolean extractAttachments = false;
+    private boolean extractAttachments;
 
     public SplitAttachmentsExpression() {
     }
@@ -98,7 +98,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
 
     private Message splitAttachment(Message inMessage, String attachmentName, DataHandler attachmentHandler) {
         final Message copy = inMessage.copy();
-         Map<String, DataHandler> attachments = copy.getAttachments();
+        Map<String, DataHandler> attachments = copy.getAttachments();
         attachments.clear();
         attachments.put(attachmentName, attachmentHandler);
         copy.setHeader(HEADER_NAME, attachmentName);
