@@ -57,6 +57,7 @@ public class FromRestGetCorsCustomTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 restConfiguration().enableCORS(true).corsHeaderProperty("Access-Control-Allow-Origin", "myserver");
                 restConfiguration().enableCORS(true).corsHeaderProperty("Access-Control-Max-Age", "180");
 
