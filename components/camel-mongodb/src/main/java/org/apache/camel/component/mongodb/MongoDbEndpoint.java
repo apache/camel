@@ -96,6 +96,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackField;
     private MongoDbTailTrackingConfig tailTrackingConfig;
 
+    @UriParam
+    private MongoDbOutputType outputType;
+
     private DBCollection dbCollection;
     private DB db;
 
@@ -143,6 +146,23 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
+    /**
+     * Check if outputType is compatible with operation. DbCursor and DBObjectList applies to findAll. DBObject applies to others.
+     */
+    private void validateOutputType(){
+        if(!ObjectHelper.isEmpty(outputType)){
+            if(MongoDbOutputType.DBObjectList.equals(outputType) && !(MongoDbOperation.findAll.equals(operation)) ){
+                throw new IllegalArgumentException("outputType DBObjectList is only compatible with operation findAll");
+            }
+            if(MongoDbOutputType.DBCursor.equals(outputType) && !(MongoDbOperation.findAll.equals(operation)) ){
+                throw new IllegalArgumentException("outputType DBCursor is only compatible with operation findAll");
+            }
+            if(MongoDbOutputType.DBObject.equals(outputType) && (MongoDbOperation.findAll.equals(operation)) ){
+                throw new IllegalArgumentException("outputType DBObject is not compatible with operation findAll");
+            }
+        }
+    }
+
     private void validateOptions(char role) throws IllegalArgumentException {
         // make our best effort to validate, options with defaults are checked against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
@@ -153,11 +173,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
         } else if (role == 'C') {
             if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
-                   || dynamicity || invokeGetLastError) {
-                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, invokeGetLastError "
+                   || dynamicity || invokeGetLastError || outputType != null) {
+                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, invokeGetLastError, outputType "
                         + "options cannot appear on a consumer endpoint");
             }
-
             if (consumerType == MongoDbConsumerType.tailable) {
                 if (tailTrackIncreasingField == null) {
                     throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
@@ -622,4 +641,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         this.writeResultAsHeader = writeResultAsHeader;
     }
 
+    public MongoDbOutputType getOutputType() {
+        return outputType;
+    }
+
+    /**
+     * Convert the output of the producer to the selected type : "DBObjectList", "DBObject" or "DBCursor".
+     * DBObjectList or DBObject applies to findAll.
+     * DBCursor applies to all other operations.
+     * @param outputType
+     */
+    public void setOutputType(MongoDbOutputType outputType) {
+        this.outputType = outputType;
+    }
 }
