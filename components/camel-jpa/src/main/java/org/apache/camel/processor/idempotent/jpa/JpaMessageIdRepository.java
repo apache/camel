@@ -50,6 +50,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private boolean joinTransaction = true;
+    private boolean sharedEntityManager = false;
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
         this(entityManagerFactory, createTransactionTemplate(entityManagerFactory), processorName);
@@ -83,7 +84,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -118,7 +119,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -147,7 +148,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
 
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
@@ -203,6 +204,10 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
         this.joinTransaction = joinTransaction;
     }
 
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
+    }
+    
     @Override
     protected void doStart() throws Exception {
         // noop
@@ -212,4 +217,5 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
     protected void doStop() throws Exception {
         // noop
     }
+
 }

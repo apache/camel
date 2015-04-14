@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -39,6 +40,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -89,6 +91,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
+        //get a fresh entity manager if closed
+        final EntityManager entityManager = createEntityManager();
+    
+        try {
         Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 if (getEndpoint().isJoinTransaction()) {
@@ -143,6 +149,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         });
 
         return getEndpoint().getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
+        } catch (PersistenceException e) {
+            closeEntityManager();
+            throw e;
+        }
     }
 
 
@@ -480,8 +490,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.entityManager = entityManagerFactory.createEntityManager();
-        LOG.trace("Created EntityManager {} on {}", entityManager, this);
+		createEntityManager(); //trigger creation 
     }
 
     @Override
@@ -492,7 +501,31 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        this.entityManager.close();
-        LOG.trace("Closed EntityManager {} on {}", entityManager, this);
+		closeEntityManager();
+    }
+
+    public void closeEntityManager() {
+        if (entityManager == null) {
+            return;
+        }
+        try {
+            entityManager.close();
+        }
+        catch (Exception e) {
+            LOG.warn("Error closing entity manager", e);
+        }
+        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
+        entityManager = null;
+    }
+
+    protected synchronized EntityManager createEntityManager() {
+        if (entityManager == null) {
+	        if (getEndpoint().isSharedEntityManager())
+	            this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
+	        else
+	            this.entityManager = entityManagerFactory.createEntityManager();
+	        LOG.trace("Created EntityManager {} on {}", entityManager, this);
+		}
+		return this.entityManager;
     }
 }
