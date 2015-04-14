@@ -125,13 +125,14 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     /**
      * Enables / disables the velocity resource loader cache which is enabled by default
-     *
-     * @param loaderCache a flag to enable/disable the cache
      */
     public void setLoaderCache(boolean loaderCache) {
         this.loaderCache = loaderCache;
     }
 
+    /**
+     * Character encoding of the resource content.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -140,6 +141,9 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
+    /**
+     * The URI of the properties file which is used for VelocityEngine initialization.
+     */
     public void setPropertiesFile(String file) {
         propertiesFile = file;
     }

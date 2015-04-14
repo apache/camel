@@ -56,6 +56,9 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
         return host;
     }
 
+    /**
+     * Hostname for creating an embedded clustered EventBus
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -64,6 +67,9 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
         return port;
     }
 
+    /**
+     * Port for creating an embedded clustered EventBus
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -72,6 +78,9 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
         return vertx;
     }
 
+    /**
+     * To use the given vertx EventBus instead of creating a new embedded EventBus
+     */
     public void setVertx(Vertx vertx) {
         this.vertx = vertx;
     }

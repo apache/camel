@@ -26,13 +26,15 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class SplunkConfiguration {
 
+    private SplunkConnectionFactory connectionFactory;
+
     @UriPath(description = "Name has no purpose") @Metadata(required = "true")
     private String name;
-    @UriParam
+    @UriParam(defaultValue = "http")
     private String scheme = Service.DEFAULT_SCHEME;
-    @UriParam
+    @UriParam(defaultValue = "localhost")
     private String host = Service.DEFAULT_HOST;
-    @UriParam
+    @UriParam(defaultValue = "8089")
     private int port = Service.DEFAULT_PORT;
     @UriParam
     private String app;
@@ -46,34 +48,29 @@ public class SplunkConfiguration {
     private int connectionTimeout = 5000;
     @UriParam
     private boolean useSunHttpsHandler;
-    @UriParam
+
+    @UriParam(label = "producer")
     private String index;
-    @UriParam
+    @UriParam(label = "producer")
     private String sourceType;
-    @UriParam
+    @UriParam(label = "producer")
     private String source;
-    @UriParam
+    @UriParam(label = "producer")
     private int tcpReceiverPort;
 
-    // consumer properties
-    @UriParam
+    @UriParam(label = "consumer")
     private int count;
-    @UriParam
+    @UriParam(label = "consumer")
     private String search;
-    @UriParam
+    @UriParam(label = "consumer")
     private String savedSearch;
-    @UriParam
+    @UriParam(label = "consumer")
     private String earliestTime;
-    @UriParam
+    @UriParam(label = "consumer")
     private String latestTime;
-    @UriParam
+    @UriParam(label = "consumer")
     private String initEarliestTime;
-    private SplunkConnectionFactory connectionFactory;
-
-    /**
-     * Streaming mode sends exchanges as they are received, rather than in a batch
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private Boolean streaming;
 
     public String getName() {
@@ -88,6 +85,9 @@ public class SplunkConfiguration {
         return initEarliestTime;
     }
 
+    /**
+     * Initial start offset of the first search
+     */
     public void setInitEarliestTime(String initEarliestTime) {
         this.initEarliestTime = initEarliestTime;
     }
@@ -96,6 +96,9 @@ public class SplunkConfiguration {
         return count;
     }
 
+    /**
+     * A number that indicates the maximum number of entities to return.
+     */
     public void setCount(int count) {
         this.count = count;
     }
@@ -104,6 +107,9 @@ public class SplunkConfiguration {
         return search;
     }
 
+    /**
+     * The Splunk query to run
+     */
     public void setSearch(String search) {
         this.search = search;
     }
@@ -112,6 +118,9 @@ public class SplunkConfiguration {
         return earliestTime;
     }
 
+    /**
+     * Earliest time of the search time window.
+     */
     public void setEarliestTime(String earliestTime) {
         this.earliestTime = earliestTime;
     }
@@ -120,6 +129,9 @@ public class SplunkConfiguration {
         return latestTime;
     }
 
+    /**
+     * Latest time of the search time window.
+     */
     public void setLatestTime(String latestTime) {
         this.latestTime = latestTime;
     }
@@ -128,6 +140,9 @@ public class SplunkConfiguration {
         return tcpReceiverPort;
     }
 
+    /**
+     * Splunk tcp receiver port
+     */
     public void setTcpReceiverPort(int tcpReceiverPort) {
         this.tcpReceiverPort = tcpReceiverPort;
     }
@@ -136,6 +151,9 @@ public class SplunkConfiguration {
         return sourceType;
     }
 
+    /**
+     * Splunk sourcetype argument
+     */
     public void setSourceType(String sourceType) {
         this.sourceType = sourceType;
     }
@@ -144,10 +162,16 @@ public class SplunkConfiguration {
         return source;
     }
 
+    /**
+     * Splunk source argument
+     */
     public void setSource(String source) {
         this.source = source;
     }
 
+    /**
+     * Splunk index to write to
+     */
     public void setIndex(String index) {
         this.index = index;
     }
@@ -160,6 +184,9 @@ public class SplunkConfiguration {
         return host;
     }
 
+    /**
+     * Splunk host.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -168,6 +195,9 @@ public class SplunkConfiguration {
         return port;
     }
 
+    /**
+     * Splunk port
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -176,6 +206,9 @@ public class SplunkConfiguration {
         return scheme;
     }
 
+    /**
+     * Splunk scheme
+     */
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }
@@ -184,6 +217,9 @@ public class SplunkConfiguration {
         return app;
     }
 
+    /**
+     * Splunk app
+     */
     public void setApp(String app) {
         this.app = app;
     }
@@ -192,6 +228,9 @@ public class SplunkConfiguration {
         return owner;
     }
 
+    /**
+     * Splunk owner
+     */
     public void setOwner(String owner) {
         this.owner = owner;
     }
@@ -200,6 +239,9 @@ public class SplunkConfiguration {
         return username;
     }
 
+    /**
+     * Username for Splunk
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -208,15 +250,13 @@ public class SplunkConfiguration {
         return password;
     }
 
+    /**
+     * Password for Splunk
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /**
-     * Returns streaming mode.
-     * <p>
-     * Streaming mode sends exchanges as they are received, rather than in a batch.
-     */
     public boolean isStreaming() {
         return streaming != null ? streaming : false;
     }
@@ -225,8 +265,6 @@ public class SplunkConfiguration {
      * Sets streaming mode.
      * <p>
      * Streaming mode sends exchanges as they are received, rather than in a batch.
-     *  
-     * @param streaming
      */
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
@@ -236,6 +274,9 @@ public class SplunkConfiguration {
         return connectionTimeout;
     }
 
+    /**
+     * Timeout in MS when connecting to Splunk server
+     */
     public void setConnectionTimeout(int timeout) {
         this.connectionTimeout = timeout;
     }
@@ -244,6 +285,10 @@ public class SplunkConfiguration {
         return useSunHttpsHandler;
     }
 
+    /**
+     * Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection.
+     * Can be useful when running in application servers to avoid app. server https handling.
+     */
     public void setUseSunHttpsHandler(boolean useSunHttpsHandler) {
         this.useSunHttpsHandler = useSunHttpsHandler;
     }
@@ -252,6 +297,9 @@ public class SplunkConfiguration {
         return this.savedSearch;
     }
 
+    /**
+     * The name of the query saved in Splunk to run
+     */
     public void setSavedSearch(String savedSearch) {
         this.savedSearch = savedSearch;
     }
@@ -260,6 +308,9 @@ public class SplunkConfiguration {
         return connectionFactory != null ? connectionFactory : createDefaultConnectionFactory();
     }
 
+    /**
+     * Splunk connection factory.
+     */
     public void setConnectionFactory(SplunkConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }

@@ -37,6 +37,9 @@ public class VelocityComponent extends UriEndpointComponent {
         return velocityEngine;
     }
 
+    /**
+     * To use the {@link VelocityEngine} otherwise a new engine is created
+     */
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
     }

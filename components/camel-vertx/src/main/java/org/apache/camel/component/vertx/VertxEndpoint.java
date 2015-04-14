@@ -78,6 +78,13 @@ public class VertxEndpoint extends DefaultEndpoint {
         return address;
     }
 
+    /**
+     * Sets the event bus address used to communicate
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public boolean isPubSub() {
         return pubSub != null && pubSub;
     }
@@ -86,14 +93,11 @@ public class VertxEndpoint extends DefaultEndpoint {
         return pubSub;
     }
 
+    /**
+     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
+     */
     public void setPubSub(Boolean pubSub) {
         this.pubSub = pubSub;
     }
 
-    /**
-     * Sets the event bus address used to communicate
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }
