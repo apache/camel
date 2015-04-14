@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 public class SplunkEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
+    private Service service;
     @UriParam
     private SplunkConfiguration configuration;
-    private Service service;
 
     public SplunkEndpoint() {
     }
