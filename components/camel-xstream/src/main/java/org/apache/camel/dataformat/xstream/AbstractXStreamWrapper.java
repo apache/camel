@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -111,8 +112,9 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
             xstream.setMode(getModeFromString(mode));
         }
 
-        if (classLoader != null) {
-            xstream.setClassLoader(classLoader);
+        ClassLoader xstreamLoader = xstream.getClassLoader();
+        if (classLoader != null && xstreamLoader instanceof CompositeClassLoader) {
+            ((CompositeClassLoader) xstreamLoader).add(classLoader);
         }
 
         try {
