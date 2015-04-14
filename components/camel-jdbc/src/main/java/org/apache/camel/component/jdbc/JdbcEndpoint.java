@@ -82,6 +82,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return readSize;
     }
 
+    /**
+     * The default maximum number of rows that can be read by a polling query. The default value is 0.
+     */
     public void setReadSize(int readSize) {
         this.readSize = readSize;
     }
@@ -90,6 +93,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return transacted;
     }
 
+    /**
+     * Whether transactions are in use.
+     */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }
@@ -98,6 +104,12 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return resetAutoCommit;
     }
 
+    /**
+     * Camel will set the autoCommit on the JDBC connection to be false, commit the change after executed the statement and reset
+     * the autoCommit flag of the connection at the end, if the resetAutoCommit is true. If the JDBC connection doesn't support
+     * to reset the autoCommit flag, you can set the resetAutoCommit flag to be false, and Camel will not try to reset the autoCommit flag.
+     * When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx.
+     */
     public void setResetAutoCommit(boolean resetAutoCommit) {
         this.resetAutoCommit = resetAutoCommit;
     }
@@ -141,8 +153,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
      * <p/>
      * This option is default <tt>true</tt>.
      *
-     * @param useJDBC4ColumnNameAndLabelSemantics
-     *         <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
+     * @param useJDBC4ColumnNameAndLabelSemantics <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
      */
     public void setUseJDBC4ColumnNameAndLabelSemantics(boolean useJDBC4ColumnNameAndLabelSemantics) {
         this.useJDBC4ColumnNameAndLabelSemantics = useJDBC4ColumnNameAndLabelSemantics;
@@ -152,6 +163,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return prepareStatementStrategy;
     }
 
+    /**
+     * Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
+     */
     public void setPrepareStatementStrategy(JdbcPrepareStatementStrategy prepareStatementStrategy) {
         this.prepareStatementStrategy = prepareStatementStrategy;
     }
@@ -160,6 +174,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return allowNamedParameters;
     }
 
+    /**
+     * Whether to allow using named parameters in the queries.
+     */
     public void setAllowNamedParameters(boolean allowNamedParameters) {
         this.allowNamedParameters = allowNamedParameters;
     }
@@ -168,6 +185,10 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return useHeadersAsParameters;
     }
 
+    /**
+     * Set this option to true to use the prepareStatementStrategy with named parameters.
+     * This allows to define queries with named placeholders, and use headers with the dynamic values for the query placeholders.
+     */
     public void setUseHeadersAsParameters(boolean useHeadersAsParameters) {
         this.useHeadersAsParameters = useHeadersAsParameters;
     }
@@ -176,6 +197,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return outputType;
     }
 
+    /**
+     * Determines the output the producer should use.
+     */
     public void setOutputType(JdbcOutputType outputType) {
         this.outputType = outputType;
     }
@@ -184,6 +208,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return outputClass;
     }
 
+    /**
+     * Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList.
+     */
     public void setOutputClass(String outputClass) {
         this.outputClass = outputClass;
     }
@@ -192,6 +219,10 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return beanRowMapper;
     }
 
+    /**
+     * To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass.
+     * The default implementation will lower case the row names and skip underscores, and dashes. For example "CUST_ID" is mapped as "custId".
+     */
     public void setBeanRowMapper(BeanRowMapper beanRowMapper) {
         this.beanRowMapper = beanRowMapper;
     }

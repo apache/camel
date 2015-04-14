@@ -38,17 +38,18 @@ import org.apache.ibatis.session.SqlSessionFactory;
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
-    private ExecutorType executorType;
     @UriPath @Metadata(required = "true")
     private String statement;
-    @UriParam
+    @UriParam(label = "producer")
     private StatementType statementType;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;
     @UriParam
     private String outputHeader;
-    @UriParam
+    @UriParam(label = "consumer")
     private String inputHeader;
+    @UriParam(label = "producer", defaultValue = "SIMPLE")
+    private ExecutorType executorType;
 
     public MyBatisEndpoint() {
     }
@@ -139,6 +140,12 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges.
+     * This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set.
+     * Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
+     * Set a value of 0 or negative to disable it.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

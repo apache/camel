@@ -48,6 +48,9 @@ public class JpaComponent extends UriEndpointComponent {
         return entityManagerFactory;
     }
 
+    /**
+     * To use the {@link EntityManagerFactory}. This is strongly recommended to configure.
+     */
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -56,8 +59,25 @@ public class JpaComponent extends UriEndpointComponent {
         return transactionManager;
     }
 
+    /**
+     * To use the {@link PlatformTransactionManager} for managing transactions.
+     */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    /**
+     * The camel-jpa component will join transaction by default.
+     * You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction
+     * doesn't work with your JPA provider. This option can also be set globally on the JpaComponent,
+     * instead of having to set it on all endpoints.
+     */
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
     }
 
     // Implementation methods
@@ -139,11 +159,4 @@ public class JpaComponent extends UriEndpointComponent {
         }
     }
 
-    public boolean isJoinTransaction() {
-        return joinTransaction;
-    }
-
-    public void setJoinTransaction(boolean joinTransaction) {
-        this.joinTransaction = joinTransaction;
-    }
 }
