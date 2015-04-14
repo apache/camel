@@ -54,6 +54,7 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 // we have logic to cleanup those paths so there is only one / between the paths
                 rest("/say/")
                     .get("/hello").to("direct:hello")

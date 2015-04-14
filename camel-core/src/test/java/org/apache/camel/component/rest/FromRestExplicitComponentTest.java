@@ -26,7 +26,7 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
             @Override
             public void configure() throws Exception {
                 // configure to use dummy-rest
-                restConfiguration().component("dummy-rest");
+                restConfiguration().component("dummy-rest").host("localhost");
 
                 rest("/say/hello")
                         .get().to("direct:hello");
