@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -38,7 +39,7 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
 
-    @UriPath
+    @UriPath(description = "Name of websocket endpoint") @Metadata(required = "true")
     private String servicePath;
     @UriParam
     private boolean sendToAll;
@@ -72,29 +73,23 @@ public class WebsocketEndpoint extends ServletEndpoint {
         return true;
     }
 
-    /**
-     * @return the sendToAll
-     */
     public boolean isSendToAll() {
         return sendToAll;
     }
 
     /**
-     * @param sendToAll the sendToAll to set
+     * Whether to send to all (broadcast) or send to a single receiver.
      */
     public void setSendToAll(boolean sendToAll) {
         this.sendToAll = sendToAll;
     }
     
-    /**
-     * @return the useStreaming
-     */
     public boolean isUseStreaming() {
         return useStreaming;
     }
 
     /**
-     * @param useStreaming the useStreaming to set
+     * To enable streaming to send data as multiple text fragments.
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
