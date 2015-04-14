@@ -87,7 +87,7 @@
         </plugins>
     </build>
 
-	  <!-- skip tests on Windows and AIX -->
+	  <!-- skip tests on Windows, AIX and HP-UX -->
     <profiles>
         <profile>
             <id>windows</id>
@@ -105,6 +105,17 @@
             <activation>
                 <os>
                     <family>AIX</family>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>hpux</id>
+            <activation>
+                <os>
+                    <family>HP-UX</family>
                 </os>
             </activation>
             <properties>
