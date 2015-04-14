@@ -56,6 +56,8 @@ import static org.apache.camel.tools.apt.Strings.safeNull;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
+    private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
+
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
             return true;
@@ -435,7 +437,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 }
 
                 // skip unwanted methods as they are inherited from default component and are not intended for end users to configure
-                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)) {
+                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName) || "setEndpointHeaderFilterStrategy".equals(methodName)) {
                     continue;
                 }
 
@@ -460,7 +462,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
                 if (docComment == null) {
-                    docComment = "";
+                    // apt cannot grab javadoc from camel-core, only from annotations
+                    if ("setHeaderFilterStrategy".equals(methodName)) {
+                        docComment = HEADER_FILTER_STRATEGY_JAVADOC;
+                    } else {
+                        docComment = "";
+                    }
                 }
 
                 // gather enums

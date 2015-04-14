@@ -160,6 +160,9 @@ public class AvroComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use a shared {@link AvroConfiguration} to configure options once
+     */
     public void setConfiguration(AvroConfiguration configuration) {
         this.configuration = configuration;
     }

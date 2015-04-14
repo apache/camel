@@ -48,7 +48,6 @@ public class WsEndpoint extends AhcEndpoint {
 
     private final Set<WsConsumer> consumers  = new HashSet<WsConsumer>();
 
-    @UriParam
     private WebSocket websocket;
     @UriParam
     private boolean useStreaming;
@@ -98,15 +97,12 @@ public class WsEndpoint extends AhcEndpoint {
         this.websocket = websocket;
     }
 
-    /**
-     * @return the useStreaming
-     */
     public boolean isUseStreaming() {
         return useStreaming;
     }
 
     /**
-     * @param useStreaming the useStreaming to set
+     * To enable streaming to send data as multiple text fragments.
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
@@ -174,8 +170,6 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-        
-
         @Override
         public void onMessage(String message) {
             LOG.debug("received message --> {}", message);
@@ -184,7 +178,6 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
-        
     }
     
     protected AsyncHttpProvider getAsyncHttpProvider(AsyncHttpClientConfig config) {

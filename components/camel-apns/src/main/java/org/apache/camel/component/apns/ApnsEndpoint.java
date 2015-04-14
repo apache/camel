@@ -55,6 +55,9 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
         return tokens;
     }
 
+    /**
+     * Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma.
+     */
     public void setTokens(String tokens) {
         this.tokens = tokens;
     }
