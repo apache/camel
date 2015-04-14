@@ -37,9 +37,11 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +102,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);
         }
@@ -120,14 +122,20 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
+                final StopWatch watch = new StopWatch();
                 try {
+                    EventHelper.notifyExchangeSending(wireTapExchange.getContext(), wireTapExchange, destination);
                     LOG.debug(">>>> (wiretap) {} {}", destination, wireTapExchange);
                     processor.process(wireTapExchange);
                 } catch (Throwable e) {
                     LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + destination + ". This exception will be ignored.", e);
+                } finally {
+                    // emit event that the exchange was sent to the endpoint
+                    long timeTaken = watch.stop();
+                    EventHelper.notifyExchangeSent(wireTapExchange.getContext(), wireTapExchange, destination, timeTaken);
                 }
                 return wireTapExchange;
-            };
+            }
         });
 
         // continue routing this synchronously
