@@ -38,6 +38,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -56,6 +57,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private String persistenceUnit = "camel";
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
+    @UriParam
+    private boolean sharedEntityManager;
     @UriParam(label = "consumer", defaultValue = "-1")
     private int maximumResults = -1;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -314,6 +317,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.usePassedInEntityManager = usePassedIn;
     }
 
+    public boolean isSharedEntityManager() {
+        return sharedEntityManager;
+    }
+
+    /**
+     * Whether to use Spring's SharedEntityManager for the consumer/producer.
+     * Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
+     */
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -340,7 +355,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     @Deprecated
     protected EntityManager createEntityManager() {
-        return getEntityManagerFactory().createEntityManager();
+        if (sharedEntityManager) {
+            return SharedEntityManagerCreator.createSharedEntityManager(getEntityManagerFactory());
+        } else {
+            return getEntityManagerFactory().createEntityManager();
+        }
     }
 
     protected TransactionTemplate createTransactionTemplate() {

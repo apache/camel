@@ -37,6 +37,7 @@ public class JpaComponent extends UriEndpointComponent {
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private boolean joinTransaction = true;
+    private boolean sharedEntityManager;
 
     public JpaComponent() {
         super(JpaEndpoint.class);
@@ -80,6 +81,18 @@ public class JpaComponent extends UriEndpointComponent {
         this.joinTransaction = joinTransaction;
     }
 
+    public boolean isSharedEntityManager() {
+        return sharedEntityManager;
+    }
+
+    /**
+     * Whether to use Spring's SharedEntityManager for the consumer/producer.
+     * Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
+     */
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -87,6 +100,7 @@ public class JpaComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String path, Map<String, Object> options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
         endpoint.setJoinTransaction(isJoinTransaction());
+        endpoint.setSharedEntityManager(isSharedEntityManager());
 
         // lets interpret the next string as a class
         if (ObjectHelper.isNotEmpty(path)) {
