@@ -61,6 +61,9 @@ public class MyBatisComponent extends UriEndpointComponent {
         return sqlSessionFactory;
     }
 
+    /**
+     * To use the {@link SqlSessionFactory}
+     */
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
@@ -69,6 +72,11 @@ public class MyBatisComponent extends UriEndpointComponent {
         return configurationUri;
     }
 
+    /**
+     * Location of MyBatis xml configuration file.
+     * <p/>
+     * The default value is: SqlMapConfig.xml loaded from the classpath
+     */
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
     }

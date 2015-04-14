@@ -59,6 +59,9 @@ public class JdbcComponent extends UriEndpointComponent {
         return jdbc;
     }
 
+    /**
+     * To use the {@link DataSource} instance instead of looking up the data source by name from the registry.
+     */
     public void setDataSource(DataSource dataSource) {
         this.ds = dataSource;
     }
