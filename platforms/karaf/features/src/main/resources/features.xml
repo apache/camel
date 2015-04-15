@@ -706,8 +706,6 @@
     <bundle>mvn:org.apache.camel/camel-ical/${project.version}</bundle>
   </feature>
   <feature name='camel-infinispan' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-infinispan feature can only run on a SUN JVM. You need to add the package sun.misc to the java platform packages in the etc/jre.properties file. It also needs libsnappyjava.dylib in java.library.path</details>
-  	<feature>transaction</feature>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-core/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
@@ -716,7 +714,6 @@
     <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-osgi/${jboss-marshalling-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${jboss-marshalling-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <feature version='${project.version}'>camel-avro</feature>
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
   <feature name='camel-irc' version='${project.version}' resolver='(obr)' start-level='50'>
