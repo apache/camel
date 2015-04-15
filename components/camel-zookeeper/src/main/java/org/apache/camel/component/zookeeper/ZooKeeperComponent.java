@@ -73,6 +73,9 @@ public class ZooKeeperComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use a shared {@link ZooKeeperConfiguration}
+     */
     public void setConfiguration(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;
     }

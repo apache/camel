@@ -45,25 +45,26 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpoint.class);
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
+    @Metadata(required = "true")
     private String resourceUri;
-    @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI)
+    @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI, description = "Configures the W3C XML Schema Namespace URI.")
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
-    @UriParam
+    @UriParam(description = "To use a custom javax.xml.validation.SchemaFactory")
     private SchemaFactory schemaFactory;
-    @UriParam
+    @UriParam(description = "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.")
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
-    @UriParam
+    @UriParam(description = "Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.")
     private boolean useDom;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
     private boolean useSharedSchema = true;
-    @UriParam
+    @UriParam(description = "To use a custom LSResourceResolver")
     private LSResourceResolver resourceResolver;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Whether to fail if no body exists.")
     private boolean failOnNullBody = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Whether to fail if no header exists when validating against a header.")
     private boolean failOnNullHeader = true;
-    @UriParam
+    @UriParam(description = "To validate against a header instead of the message body.")
     private String headerName;
 
     public ValidatorEndpoint() {

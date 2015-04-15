@@ -112,6 +112,9 @@ public class NagiosConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * This is the address of the Nagios host where checks should be send.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -120,6 +123,9 @@ public class NagiosConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * The port number of the host.
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -128,6 +134,9 @@ public class NagiosConfiguration implements Cloneable {
         return connectionTimeout;
     }
 
+    /**
+     * Connection timeout in millis.
+     */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -136,6 +145,9 @@ public class NagiosConfiguration implements Cloneable {
         return timeout;
     }
 
+    /**
+     * Sending timeout in millis.
+     */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
@@ -144,6 +156,9 @@ public class NagiosConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * Password to be authenticated when sending checks to Nagios.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -152,6 +167,9 @@ public class NagiosConfiguration implements Cloneable {
         return encryptionMethod;
     }
 
+    /**
+     * To specify an encryption method.
+     */
     public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
         this.encryptionMethod = encryptionMethod;
     }

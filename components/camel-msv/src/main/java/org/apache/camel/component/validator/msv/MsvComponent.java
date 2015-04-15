@@ -47,6 +47,9 @@ public class MsvComponent extends ValidatorComponent {
         return schemaFactory;
     }
 
+    /**
+     * To use the {@link javax.xml.validation.SchemaFactory}.
+     */
     public void setSchemaFactory(SchemaFactory schemaFactory) {
         this.schemaFactory = schemaFactory;
     }

@@ -72,6 +72,10 @@ public class NagiosEndpoint extends DefaultEndpoint {
         return sendSync;
     }
 
+    /**
+     * Whether or not to use synchronous when sending a passive check.
+     * Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
+     */
     public void setSendSync(boolean sendSync) {
         this.sendSync = sendSync;
     }

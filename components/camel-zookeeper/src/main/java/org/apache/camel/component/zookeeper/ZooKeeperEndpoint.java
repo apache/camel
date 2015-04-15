@@ -119,7 +119,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     @ManagedAttribute
     public boolean getRepeat() {
-        return getConfiguration().shouldRepeat();
+        return getConfiguration().isRepeat();
     }
 
     @ManagedAttribute
@@ -149,7 +149,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     @ManagedAttribute
     public boolean getCreate() {
-        return getConfiguration().shouldCreate();
+        return getConfiguration().isCreate();
     }
 
     @ManagedAttribute
