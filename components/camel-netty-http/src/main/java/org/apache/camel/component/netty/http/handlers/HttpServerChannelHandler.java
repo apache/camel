@@ -94,7 +94,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // if its an OPTIONS request then return which methods is allowed
-        if ("OPTIONS".equals(request.getMethod().getName())) {
+        boolean isRestrictedToOptions = consumer.getEndpoint().getHttpMethodRestrict() != null
+                && consumer.getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
+        if ("OPTIONS".equals(request.getMethod().getName()) && !isRestrictedToOptions) {
             String s;
             if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
                 s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
