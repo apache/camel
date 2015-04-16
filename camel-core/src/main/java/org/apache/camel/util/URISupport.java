@@ -452,8 +452,10 @@ public final class URISupport {
         if (value != null) {
             rc.append("=");
             if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                // do not encode RAW parameters
-                rc.append(value);
+                // do not encode RAW parameters unless it has %
+                // need to replace % with %25 to avoid losing "%" when decoding
+                String s = StringHelper.replaceAll(value, "%", "%25");
+                rc.append(s);
             } else {
                 rc.append(URLEncoder.encode(value, CHARSET));
             }
@@ -509,7 +511,7 @@ public final class URISupport {
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
 
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
+        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
         String path = u.getSchemeSpecificPart();
         String scheme = u.getScheme();
 
