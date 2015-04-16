@@ -16,19 +16,6 @@
  */
 package org.apache.camel.component.spring.ws.bean;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
@@ -37,9 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.server.EndpointInterceptor;
-import org.springframework.ws.server.EndpointInvocationChain;
-import org.springframework.ws.server.EndpointMapping;
+import org.springframework.ws.server.*;
 import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
 import org.springframework.ws.server.endpoint.support.PayloadRootUtils;
@@ -50,6 +35,18 @@ import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.context.TransportContext;
 import org.springframework.ws.transport.context.TransportContextHolder;
 import org.springframework.xml.xpath.XPathExpression;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Spring {@link EndpointMapping} for mapping messages to corresponding Camel
@@ -84,6 +81,7 @@ import org.springframework.xml.xpath.XPathExpression;
 public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping {
 
     private static final String DOUBLE_QUOTE = "\"";
+    private static final String URI_PATH_WILDCARD = "*";
     private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<EndpointMappingKey, MessageEndpoint>();
     private TransformerFactory transformerFactory;
     private XmlConverter xmlConverter;
@@ -95,7 +93,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     @Override
     protected Object getEndpointInternal(MessageContext messageContext) throws Exception {
         for (EndpointMappingKey key : endpoints.keySet()) {
-            Object messageKey = null;
+            String messageKey;
             switch (key.getType()) {
             case ROOT_QNAME:
                 messageKey = getRootQName(messageContext);
@@ -108,6 +106,18 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
                 break;
             case URI:
                 messageKey = getUri();
+                break;
+            case URI_PATH:
+                messageKey = getUriPath();
+
+                if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
+                    String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
+
+                    if (messageKey.startsWith(lookupKey)) {
+                        return endpoints.get(key);
+                    }
+                }
+
                 break;
             default:
                 throw new RuntimeCamelException("Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
@@ -145,11 +155,28 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     }
 
     private String getUri() throws URISyntaxException {
+        WebServiceConnection webServiceConnection = getWeServiceConnection();
+        if (webServiceConnection != null) {
+            return webServiceConnection.getUri().toString();
+        }
+        return null;
+    }
+
+    private String getUriPath() throws URISyntaxException {
+        WebServiceConnection webServiceConnection = getWeServiceConnection();
+        if (webServiceConnection != null) {
+            return webServiceConnection.getUri().getPath();
+        }
+
+        return null;
+    }
+
+    private WebServiceConnection getWeServiceConnection() {
         TransportContext transportContext = TransportContextHolder.getTransportContext();
         if (transportContext != null) {
             WebServiceConnection webServiceConnection = transportContext.getConnection();
             if (webServiceConnection != null) {
-                return webServiceConnection.getUri().toString();
+                return webServiceConnection;
             }
         }
         return null;
