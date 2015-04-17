@@ -470,16 +470,6 @@ public class MongoDbProducer extends DefaultProducer {
     }
     
     private void processAndTransferWriteResult(WriteResult result, Exchange exchange) {
-        // if invokeGetLastError is set, or a WriteConcern is set which implicitly calls getLastError, then we have the chance to populate 
-        // the MONGODB_LAST_ERROR header, as well as setting an exception on the Exchange if one occurred at the MongoDB server
-        if (endpoint.isInvokeGetLastError() || (endpoint.getWriteConcern() != null ? endpoint.getWriteConcern().callGetLastError() : false)) {
-            CommandResult cr = result.getCachedLastError() == null ? result.getLastError() : result.getCachedLastError();
-            exchange.getOut().setHeader(MongoDbConstants.LAST_ERROR, cr);
-            if (!cr.ok()) {
-                exchange.setException(MongoDbComponent.wrapInCamelMongoDbException(cr.getException()));
-            }
-        }
-        
         // determine where to set the WriteResult: as the OUT body or as an IN message header
         if (endpoint.isWriteResultAsHeader()) {
             exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
