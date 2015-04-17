@@ -38,11 +38,11 @@ public class JettyHttpProducerBridgePathWithSpacesAtEndTest extends BaseJettyTes
         // give Jetty time to startup properly
         Thread.sleep(2000);
 
-        String reply = template.requestBody("jetty:http://0.0.0.0:" + port1 + "/foo ", "World", String.class);
+        String reply = template.requestBody("jetty:http://127.0.0.1:" + port1 + "/foo ", "World", String.class);
         assertEquals("Bye World", reply);
 
         // and with more spaces
-        String reply2 = template.requestBody("jetty:http://0.0.0.0:" + port1 + "/foo /bar baz", "Camel", String.class);
+        String reply2 = template.requestBody("jetty:http://127.0.0.1:" + port1 + "/foo /bar baz", "Camel", String.class);
         assertEquals("Bye Camel", reply2);
     }
 
@@ -54,10 +54,10 @@ public class JettyHttpProducerBridgePathWithSpacesAtEndTest extends BaseJettyTes
                 port1 = getPort();
                 port2 = getNextPort();
 
-                from("jetty:http://0.0.0.0:" + port1 + "/foo ?matchOnUriPrefix=true")
-                    .to("jetty:http://0.0.0.0:" + port2 + "/proxy foo ?bridgeEndpoint=true&throwExceptionOnFailure=false");
+                from("jetty:http://127.0.0.1:" + port1 + "/foo ?matchOnUriPrefix=true")
+                    .to("jetty:http://127.0.0.1:" + port2 + "/proxy foo ?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
-                from("jetty:http://0.0.0.0:" + port2 + "/proxy foo ?matchOnUriPrefix=true")
+                from("jetty:http://127.0.0.1:" + port2 + "/proxy foo ?matchOnUriPrefix=true")
                     .transform().simple("Bye ${body}");
             }
         };

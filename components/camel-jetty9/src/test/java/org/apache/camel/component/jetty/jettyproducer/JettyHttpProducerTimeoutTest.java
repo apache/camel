@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/timeout?httpClient.timeout=2000";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/timeout?httpClient.timeout=2000";
 
     @Test
     public void testTimeout() throws Exception {

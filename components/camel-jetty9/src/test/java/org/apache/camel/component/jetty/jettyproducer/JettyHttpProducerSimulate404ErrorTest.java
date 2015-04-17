@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/bar";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/bar";
 
     @Test
     public void test404() throws Exception {

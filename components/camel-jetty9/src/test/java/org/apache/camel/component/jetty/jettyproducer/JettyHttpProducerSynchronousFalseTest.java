@@ -29,7 +29,7 @@ public class JettyHttpProducerSynchronousFalseTest extends BaseJettyTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/sync?synchronous=false";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/sync?synchronous=false";
 
     @Test
     public void testSynchronous() throws Exception {

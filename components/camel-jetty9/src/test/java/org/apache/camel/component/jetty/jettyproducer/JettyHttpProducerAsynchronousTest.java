@@ -33,7 +33,7 @@ public class JettyHttpProducerAsynchronousTest extends BaseJettyTest {
     private static String thread1;
     private static String thread2;
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/foo";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/foo";
 
     @Test
     public void testAsynchronous() throws Exception {
