@@ -223,10 +223,10 @@ public class FileOperations implements GenericFileOperations<File> {
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
                     body = ((WrappedFile<?>) body).getFile();
-                    fileBased = true;
                 }
                 if (body instanceof File) {
                     source = (File) body;
+                    fileBased = true;
                 }
             }
 

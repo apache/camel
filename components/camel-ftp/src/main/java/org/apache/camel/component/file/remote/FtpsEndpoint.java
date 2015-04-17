@@ -41,7 +41,7 @@ import org.apache.commons.net.ftp.FTPSClient;
  * 
  * @version 
  */
-@UriEndpoint(scheme = "ftps", syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+@UriEndpoint(scheme = "ftps", title = "FTPS", syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     @UriParam
     protected FtpsConfiguration configuration;
@@ -136,7 +136,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 client.setTrustManager(trustMgrFactory.getTrustManagers()[0]);
             }
         }
-        
+
         return client;
     }
 
@@ -150,6 +150,10 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             client = (FTPSClient) createFtpClient();
         }
 
+        // use configured buffer size which is larger and therefore faster (as the default is no buffer)
+        if (getConfiguration().getReceiveBufferSize() > 0) {
+            client.setBufferSize(getConfiguration().getReceiveBufferSize());
+        }
         // set any endpoint configured timeouts
         if (getConfiguration().getConnectTimeout() > -1) {
             client.setConnectTimeout(getConfiguration().getConnectTimeout());
@@ -188,8 +192,10 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPSClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}]: {}",
-                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client});
+            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+                            + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
+                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                            client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});
         }
 
         FtpsOperations operations = new FtpsOperations(client, getFtpClientConfig());

@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "language")
+@Metadata(label = "language", title = "JSonPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {

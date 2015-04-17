@@ -877,7 +877,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the exchanges camelContext invoking methods defined
      * in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     * @param ognl  methods to invoke on the context in a simple OGNL syntax
      */
     public static Expression camelContextOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -892,6 +892,25 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "camelContextOgnl(" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchange invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the exchange in a simple OGNL syntax
+     */
+    public static Expression exchangeOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return new MethodCallExpression(exchange, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeOgnl(" + ognl + ")";
             }
         };
     }

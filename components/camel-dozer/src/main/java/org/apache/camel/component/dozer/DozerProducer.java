@@ -80,8 +80,13 @@ public class DozerProducer extends DefaultProducer {
         // Second pass to process literal mappings
         endpoint.getMapper().map(endpoint.getVariableMapper(), targetObject);
         // Third pass to process expression mappings
-        endpoint.getExpressionMapper().setCurrentExchange(exchange);
-        endpoint.getMapper().map(endpoint.getExpressionMapper(), targetObject);
+        try {
+            endpoint.getExpressionMapper().setCurrentExchange(exchange);
+            endpoint.getMapper().map(endpoint.getExpressionMapper(), targetObject);
+        } finally {
+            // Clear out the exchange reference on the expression mapper
+            endpoint.getExpressionMapper().setCurrentExchange(null);
+        }
         msg.setBody(targetObject);
         exchange.setIn(msg);
         

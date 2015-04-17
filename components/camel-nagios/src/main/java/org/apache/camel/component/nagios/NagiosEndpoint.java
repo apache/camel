@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "nagios", syntax = "nagios:host:port", producerOnly = true, label = "monitoring")
+@UriEndpoint(scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true, label = "monitoring")
 public class NagiosEndpoint extends DefaultEndpoint {
 
     private INagiosPassiveCheckSender sender;
@@ -72,6 +72,10 @@ public class NagiosEndpoint extends DefaultEndpoint {
         return sendSync;
     }
 
+    /**
+     * Whether or not to use synchronous when sending a passive check.
+     * Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
+     */
     public void setSendSync(boolean sendSync) {
         this.sendSync = sendSync;
     }

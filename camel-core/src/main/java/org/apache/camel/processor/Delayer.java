@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which
@@ -33,7 +34,8 @@ import org.apache.camel.Traceable;
  *
  * @version 
  */
-public class Delayer extends DelayProcessorSupport implements Traceable {
+public class Delayer extends DelayProcessorSupport implements Traceable, IdAware {
+    private String id;
     private Expression delay;
     private long delayValue;
 
@@ -46,6 +48,14 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
     @Override
     public String toString() {
         return "Delayer[" + delay + " to: " + getProcessor() + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTraceLabel() {

@@ -51,7 +51,7 @@ public class CMISSessionFacade {
     private int pageSize = 100;
     @UriParam
     private int readCount;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean readContent;
     @UriParam
     private String username;

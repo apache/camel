@@ -17,13 +17,14 @@
 package org.apache.camel.management;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StringHelper;
@@ -39,6 +40,23 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         return context;
+    }
+
+    public void testManagedCamelContextClient() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        ManagedCamelContextMBean client = context.getManagedCamelContext();
+        assertNotNull(client);
+
+        assertEquals("camel-1", client.getCamelId());
+        assertEquals("Started", client.getState());
+
+        List<String> names = client.findComponentNames();
+        assertNotNull(names);
+        assertTrue(names.contains("mock"));
     }
 
     public void testManagedCamelContext() throws Exception {

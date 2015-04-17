@@ -83,7 +83,7 @@ public final class TemplatesFactory {
         try {
             for (String template : PIPELINE) {
                 Source xsl = new StreamSource(ClassLoader.getSystemResourceAsStream(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR
-                        .concat(File.separator).concat(template)));
+                        .concat("/").concat(template)));
                 Transformer t = fac.newTransformer(xsl);
                 DOMResult result = new DOMResult();
                 t.transform(source, result);

@@ -71,7 +71,7 @@ public class FreemarkerComponent extends UriEndpointComponent {
 
     public synchronized Configuration getConfiguration() {
         if (configuration == null) {
-            configuration = new Configuration();
+            configuration = new Configuration(Configuration.VERSION_2_3_21);
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {
@@ -88,6 +88,9 @@ public class FreemarkerComponent extends UriEndpointComponent {
         return (Configuration) configuration.clone();
     }
 
+    /**
+     * To use an existing {@link freemarker.template.Configuration} instance as the configuration.
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }

@@ -37,15 +37,15 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * @version 
  */
-@UriEndpoint(scheme = "rmi", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "rmi", title = "RMI", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
 public class RmiEndpoint extends DefaultEndpoint {
 
     private ClassLoader classLoader;
     private URI uri;
 
-    @UriPath
+    @UriPath(defaultValue = "localhost")
     private String hostname;
-    @UriPath
+    @UriPath(defaultValue = "" + Registry.REGISTRY_PORT)
     private int port;
     @UriPath @Metadata(required = "true")
     private String name;

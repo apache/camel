@@ -43,7 +43,10 @@ public class SplunkComponent extends UriEndpointComponent {
         return splunkConfigurationFactory;
     }
 
-    public void setSplunkConfigurationFactory(DefaultSplunkConfigurationFactory splunkConfigurationFactory) {
+    /**
+     * To use the {@link SplunkConfigurationFactory}
+     */
+    public void setSplunkConfigurationFactory(SplunkConfigurationFactory splunkConfigurationFactory) {
         this.splunkConfigurationFactory = splunkConfigurationFactory;
     }
 

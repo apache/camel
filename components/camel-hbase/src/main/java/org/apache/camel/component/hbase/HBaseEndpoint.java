@@ -36,7 +36,7 @@ import org.apache.hadoop.hbase.filter.Filter;
 /**
  * Represents an HBase endpoint.
  */
-@UriEndpoint(scheme = "hbase", syntax = "hbase:tableName", consumerClass = HBaseConsumer.class, label = "hadoop")
+@UriEndpoint(scheme = "hbase", title = "HBase", syntax = "hbase:tableName", consumerClass = HBaseConsumer.class, label = "hadoop")
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;

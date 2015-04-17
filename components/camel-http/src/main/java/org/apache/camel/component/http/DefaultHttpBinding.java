@@ -138,7 +138,7 @@ public class DefaultHttpBinding implements HttpBinding {
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
             try {
                 InputStream is = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                Object object = HttpHelper.deserializeJavaObjectFromStream(is);
+                Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
                 if (object != null) {
                     message.setBody(object);
                 }

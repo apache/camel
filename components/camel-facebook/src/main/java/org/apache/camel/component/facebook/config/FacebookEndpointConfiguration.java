@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import facebook4j.AlbumCreate;
-import facebook4j.CheckinCreate;
+import facebook4j.AlbumUpdate;
+import facebook4j.CheckinUpdate;
 import facebook4j.EventUpdate;
 import facebook4j.GeoLocation;
 import facebook4j.Media;
@@ -41,17 +41,15 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     @UriParam
     private URL achievementURL;
     @UriParam
-    private AlbumCreate albumCreate;
+    private AlbumUpdate albumUpdate;
     @UriParam
     private String albumId;
-    @UriParam
-    private Boolean allowNewOptions;
     @UriParam
     private String appId;
     @UriParam
     private GeoLocation center;
     @UriParam
-    private CheckinCreate checkinCreate;
+    private CheckinUpdate checkinUpdate;
     @UriParam
     private String checkinId;
     @UriParam
@@ -99,8 +97,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     @UriParam
     private String name;
     @UriParam
-    private Boolean noStory;
-    @UriParam
     private String noteId;
     @UriParam
     private String notificationId;
@@ -109,15 +105,11 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     @UriParam
     private String optionDescription;
     @UriParam
-    private List<String> options;
-    @UriParam
     private String permissionName;
     @UriParam
     private String permissions;
     @UriParam
     private String photoId;
-    @UriParam
-    private String place;
     @UriParam
     private String placeId;
     @UriParam
@@ -128,8 +120,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     private Map<String, String> queries;
     @UriParam
     private String query;
-    @UriParam
-    private String question;
     @UriParam
     private String questionId;
     @UriParam
@@ -177,12 +167,12 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.achievementURL = achievementURL;
     }
 
-    public AlbumCreate getAlbumCreate() {
-        return albumCreate;
+    public AlbumUpdate getAlbumUpdate() {
+        return albumUpdate;
     }
 
-    public void setAlbumCreate(AlbumCreate albumCreate) {
-        this.albumCreate = albumCreate;
+    public void setAlbumUpdate(AlbumUpdate albumUpdate) {
+        this.albumUpdate = albumUpdate;
     }
 
     public String getAlbumId() {
@@ -191,14 +181,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     public void setAlbumId(String albumId) {
         this.albumId = albumId;
-    }
-
-    public Boolean isAllowNewOptions() {
-        return allowNewOptions;
-    }
-
-    public void setAllowNewOptions(Boolean allowNewOptions) {
-        this.allowNewOptions = allowNewOptions;
     }
 
     public String getAppId() {
@@ -217,12 +199,12 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.center = center;
     }
 
-    public CheckinCreate getCheckinCreate() {
-        return checkinCreate;
+    public CheckinUpdate getCheckinUpdate() {
+        return checkinUpdate;
     }
 
-    public void setCheckinCreate(CheckinCreate checkinCreate) {
-        this.checkinCreate = checkinCreate;
+    public void setCheckinUpdate(CheckinUpdate checkinUpdate) {
+        this.checkinUpdate = checkinUpdate;
     }
 
     public String getCheckinId() {
@@ -409,14 +391,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.name = name;
     }
 
-    public Boolean isNoStory() {
-        return noStory;
-    }
-
-    public void setNoStory(Boolean noStory) {
-        this.noStory = noStory;
-    }
-
     public String getNoteId() {
         return noteId;
     }
@@ -449,14 +423,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.optionDescription = optionDescription;
     }
 
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
     public String getPermissionName() {
         return permissionName;
     }
@@ -479,14 +445,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     public void setPhotoId(String photoId) {
         this.photoId = photoId;
-    }
-
-    public String getPlace() {
-        return place;
-    }
-
-    public void setPlace(String place) {
-        this.place = place;
     }
 
     public String getPlaceId() {
@@ -527,14 +485,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
 
     public void setQuery(String query) {
         this.query = query;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
     }
 
     public String getQuestionId() {

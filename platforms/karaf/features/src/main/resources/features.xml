@@ -300,6 +300,7 @@
     <feature version='${cxf-version-range}'>cxf-http-jetty</feature>
     <feature version='${cxf-version-range}'>cxf-databinding-jaxb</feature>
     <feature version='${cxf-version-range}'>cxf-bindings-soap</feature>
+    <feature version='${project.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
@@ -438,8 +439,8 @@
     <feature version='${project.version}'>camel-core</feature>
     <!--the lastest gson version of github core supports is 2.2 -->
     <bundle dependency='true'>mvn:com.google.code.gson/gson/2.2</bundle>
-    <!--TODO use the servicesmix wrapped bundle -->
-    <bundle dependency='true'>mvn:org.eclipse.mylyn.github/org.eclipse.egit.github.core/${egit-github-core-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.egit.github.core/${egit-github-core-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-github/${project.version}</bundle>
    </feature>
    <feature name='camel-google-calendar' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -530,6 +531,7 @@
     <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
+    <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.osgi/org.osgi.compendium/${osgi-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-interceptor_1.1_spec/1.0</bundle>
@@ -565,7 +567,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hbase/${hbase-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hbase/${project.version}</bundle>
     <!-- the following bundles can be removed when osgi metadata is fixed in commons-configuration and hbase, to have resolution=:option on packages that are optional -->
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
@@ -591,6 +593,8 @@
     <!-- see https://issues.apache.org/jira/browse/HADOOP-7101 -->
     <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-2.5-spec-version}</bundle>
+    <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
@@ -614,7 +618,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-core/${hadoop-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
     <!-- the following bundles can be removed when osgi metadata is fixed in commons-configuration, to have resolution=:option on packages that are optional -->
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.5.2</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
@@ -702,17 +706,14 @@
     <bundle>mvn:org.apache.camel/camel-ical/${project.version}</bundle>
   </feature>
   <feature name='camel-infinispan' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-infinispan feature can only run on a SUN JVM. You need to add the package sun.misc to the java platform packages in the etc/jre.properties file. It also needs libsnappyjava.dylib in java.library.path</details>
-  	<feature>transaction</feature>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-core/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling/${jboss-marshalling-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-osgi/${jboss-marshalling-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${jboss-marshalling-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <feature version='${project.version}'>camel-avro</feature>
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
   <feature name='camel-irc' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -746,7 +747,7 @@
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
   </feature>
   <feature name='camel-jcr' version='${project.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jcr/${project.version}</bundle>
@@ -763,6 +764,7 @@
     <bundle>mvn:org.apache.camel/camel-jetty8/${project.version}</bundle>
   </feature>
   <feature name='camel-jetty9' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-jetty9 intend to work with jetty9, so this feature only works in the karaf container which support jetty9, e.g. karaf 4.x</details>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-http</feature>
@@ -826,7 +828,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/${serp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.xbean/xbean-asm4-shaded/${xbean-asm4-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>
     <feature version='${spring-version-range-karaf}'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jpa/${project.version}</bundle>
@@ -914,8 +915,8 @@
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.sourceforge.nekohtml/nekohtml/1.9.21</bundle>
-    <bundle>mvn:org.apache.camel.component.linkedin/camel-linkedin-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel.component.linkedin/camel-linkedin/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-linkedin-api/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-linkedin/${project.version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
@@ -982,7 +983,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/${isorelax-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-msv/${project.version}</bundle>
-  </feature> 
+  </feature>
   <feature name='camel-mustache' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mustache-compiler/${mustache-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${mustache-guava-version}</bundle>
@@ -1036,7 +1037,7 @@
   </feature>
   <feature name='camel-ognl' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/${javassist-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${project.version}</bundle>
   </feature>
@@ -1053,8 +1054,8 @@
     <bundle dependency='true'>mvn:org.apache.olingo/olingo-odata2-api/${olingo2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.olingo-odata2-core/${olingo-odata2-core-bundle-version}</bundle>
     <bundle dependency='true'>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.camel.component.olingo2/camel-olingo2-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel.component.olingo2/camel-olingo2/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-olingo2-api/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-olingo2/${project.version}</bundle>
   </feature>
   <feature name='camel-openshift' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1137,7 +1138,7 @@
   <feature name='camel-rabbitmq' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.rabbitmq/amqp-client/${rabbitmq-amqp-client-version}</bundle>
-    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>    
+    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rabbitmq/${project.version}</bundle>
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -1168,6 +1169,7 @@
     <bundle dependency='true'>mvn:org.jruby/jruby-complete/${jruby-version}</bundle>
   </feature>
   <feature name='camel-rx' version='${project.version}' start-level='50'>
+    <details>The camel-rx feature can only run on a SUN JVM. You need to add the package sun.misc to the java platform packages in the etc/jre.properties file.</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rx/${project.version}</bundle>
@@ -1375,9 +1377,9 @@
     <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
-    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-core/${smack-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-tcp/${smack-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-extensions/${smack-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-core/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-tcp/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-extensions/${smack-version}</bundle>
     <feature version='${spring-version-range-karaf}'>spring-jms</feature>
     <feature version='${spring-version-range-karaf}'>spring-web</feature>
     <feature version='${spring-version-range-karaf}'>spring-oxm</feature>
@@ -1432,6 +1434,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <!-- must use Scala 2.10 -->
     <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-2.10-version}</bundle>
+    <bundle dependency='true'>mvn:org.scala-lang/scala-reflect/${scala-2.10-version}</bundle>
     <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -1449,7 +1452,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json4s/${json4s-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-swagger/${project.version}</bundle>
-  </feature>  
+  </feature>
   <feature name='camel-syslog' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-netty</feature>

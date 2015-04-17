@@ -26,9 +26,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeExchangeException;
@@ -39,6 +41,7 @@ import org.apache.camel.component.http4.HttpMessage;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.component.http4.HttpServletUrlRewrite;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.util.CamelObjectInputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -102,14 +105,29 @@ public final class HttpHelper {
      * @return the java object, or <tt>null</tt> if input stream was <tt>null</tt>
      * @throws ClassNotFoundException is thrown if class not found
      * @throws IOException can be thrown
+     * @deprecated Camel 3.0 
+     * Please use the one which has the parameter of camel context
      */
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
+        return deserializeJavaObjectFromStream(is, null);
+    }
+    
+    /**
+     * Deserializes the input stream to a Java object
+     *
+     * @param is input stream for the Java object
+     * @param context the camel context which could help us to apply the customer classloader
+     * @return the java object, or <tt>null</tt> if input stream was <tt>null</tt>
+     * @throws ClassNotFoundException is thrown if class not found
+     * @throws IOException can be thrown
+     */
+    public static Object deserializeJavaObjectFromStream(InputStream is, CamelContext context) throws ClassNotFoundException, IOException {
         if (is == null) {
             return null;
         }
 
         Object answer = null;
-        ObjectInputStream ois = new ObjectInputStream(is);
+        ObjectInputStream ois = new CamelObjectInputStream(is, context);
         try {
             answer = ois.readObject();
         } finally {

@@ -174,12 +174,6 @@ public abstract class AbstractCamelRunner implements Runnable {
 
         cancelDelayedRun();
 
-        doDeactivate();
-
-        stopCamelContext();
-    }
-
-    protected void doDeactivate() {
         stop();
     }
 

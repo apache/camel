@@ -56,6 +56,9 @@ public class NagiosComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use a shared {@link NagiosConfiguration}
+     */
     public void setConfiguration(NagiosConfiguration configuration) {
         this.configuration = configuration;
     }

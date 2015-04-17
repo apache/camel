@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation", title = "Syslog")
 @XmlRootElement(name = "syslog")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyslogDataFormat extends DataFormatDefinition {

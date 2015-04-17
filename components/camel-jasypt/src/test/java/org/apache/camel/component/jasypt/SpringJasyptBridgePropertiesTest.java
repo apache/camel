@@ -28,7 +28,7 @@ public class SpringJasyptBridgePropertiesTest extends CamelSpringTestSupport {
 
     @Test
     public void testJasyptProperties() throws Exception {
-        getMockEndpoint("mock:tiger").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:tiger").expectedBodiesReceived("Hello World tiger");
 
         template.sendBody("direct:start", "Hello World");
 

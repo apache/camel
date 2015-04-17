@@ -497,7 +497,8 @@ public final class IntrospectionSupport {
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
-                ref = CamelContextHelper.lookup(context, refName.replaceAll("#", ""));
+                String s = StringHelper.replaceAll(refName, "#", "");
+                ref = CamelContextHelper.lookup(context, s);
                 if (ref == null) {
                     // try the next method if nothing was found
                     continue;

@@ -108,7 +108,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         base = ""
       }
       val path = translateContextPath(request)
-      if (url.getPort != 80) {
+      if (url.getPort != 80 && url.getPort != -1) {
         base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
       } else {
         base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base
@@ -123,7 +123,7 @@ abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
         base = ""
       }
       val path = translateContextPath(request)
-      if (url.getPort != 80) {
+      if (url.getPort != 80 && url.getPort != -1) {
         base = url.getProtocol + "://" + url.getHost + ":" + url.getPort + path + "/" + base
       } else {
         base = url.getProtocol + "://" + url.getHost + request.getContextPath + "/" + base

@@ -41,6 +41,20 @@ public final class URISupport {
     }
 
     /**
+     * Strips the query parameters from the uri
+     *
+     * @param uri  the uri
+     * @return the uri without the query parameter
+     */
+    public static String stripQuery(String uri) {
+        int idx = uri.indexOf('?');
+        if (idx > -1) {
+            uri = uri.substring(0, idx);
+        }
+        return uri;
+    }
+
+    /**
      * Parses the query parameters of the uri (eg the query part).
      *
      * @param uri the uri

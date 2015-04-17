@@ -40,10 +40,16 @@ public abstract class HeaderFilterStrategyComponent extends UriEndpointComponent
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }
-    
+
+    /**
+     * Sets the header filter strategy to use from the given endpoint if the endpoint is a {@link HeaderFilterStrategyAware} type.
+     */
     public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
         if (headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware)endpoint).setHeaderFilterStrategy(headerFilterStrategy);

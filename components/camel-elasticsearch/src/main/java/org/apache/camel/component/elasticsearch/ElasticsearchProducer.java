@@ -17,7 +17,6 @@
 package org.apache.camel.component.elasticsearch;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -110,7 +109,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         boolean configIndexType = false;
         String indexType = message.getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            message.setHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexName());
+            message.setHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
             configIndexType = true;
         }
 

@@ -58,13 +58,13 @@ public class SalesforceException extends CamelException {
     }
 
     public SalesforceException(List<RestError> errors, int statusCode, String message, Throwable cause) {
-        super(toErrorMessage(errors, statusCode), cause);
+        super(message == null ? toErrorMessage(errors, statusCode) : message, cause);
         this.errors = errors;
         this.statusCode = statusCode;
     }
 
     public List<RestError> getErrors() {
-        return Collections.unmodifiableList(errors);
+        return errors != null ? Collections.unmodifiableList(errors) : null;
     }
 
     public int getStatusCode() {
@@ -73,30 +73,42 @@ public class SalesforceException extends CamelException {
 
     @Override
     public String toString() {
-        if (errors != null) {
-            return toErrorMessage(errors, statusCode);
-        } else {
-            // make sure we include the custom message
-            final StringBuilder builder = new StringBuilder("{ ");
-            builder.append(getMessage());
-            builder.append(", statusCode: ");
-            builder.append(statusCode);
-            builder.append("}");
-
-            return builder.toString();
-        }
+        final StringBuilder builder = new StringBuilder("{");
+        appendFields(builder);
+        builder.append("}");
+        return builder.toString();
     }
 
-    private static String toErrorMessage(List<RestError> errors, int statusCode) {
-        StringBuilder builder = new StringBuilder("{ ");
+    protected void appendFields(StringBuilder builder) {
+        // append message
+        builder.append("message:'");
+        builder.append(getMessage());
+        builder.append("',");
+
+        // check for error
         if (errors != null) {
-            builder.append(" errors: [");
+            builder.append("errors:[");
             for (RestError error : errors) {
                 builder.append(error.toString());
             }
-            builder.append("], ");
+            builder.append("],");
+
         }
-        builder.append("statusCode: ");
+        // append statusCode
+        builder.append("statusCode:");
+        builder.append(statusCode);
+    }
+
+    private static String toErrorMessage(List<RestError> errors, int statusCode) {
+        StringBuilder builder = new StringBuilder("{");
+        if (errors != null) {
+            builder.append("errors:[");
+            for (RestError error : errors) {
+                builder.append(error.toString());
+            }
+            builder.append("],");
+        }
+        builder.append("statusCode:");
         builder.append(statusCode);
         builder.append("}");
 

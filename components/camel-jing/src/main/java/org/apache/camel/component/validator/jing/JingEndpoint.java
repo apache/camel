@@ -38,7 +38,7 @@ import org.apache.camel.util.ResourceHelper;
 
 
 
-@UriEndpoint(scheme = "jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
+@UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

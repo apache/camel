@@ -32,7 +32,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(PullRequestConsumer.class);
 
     private PullRequestService pullRequestService;
-    
+
     private int lastOpenPullRequest;
 
     public PullRequestConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
@@ -68,7 +68,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
                 break;
             }
         }
-        
+
         if (newPullRequests.size() > 0) {
             lastOpenPullRequest = openPullRequests.get(0).getNumber();
         }
@@ -76,11 +76,15 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
         while (!newPullRequests.empty()) {
             PullRequest newPullRequest = newPullRequests.pop();
             Exchange e = getEndpoint().createExchange();
+
             e.getIn().setBody(newPullRequest);
-            
+
             // Required by the producers.  Set it here for convenience.
             e.getIn().setHeader("GitHubPullRequest", newPullRequest.getNumber());
-            
+            if (newPullRequest.getHead() != null) {
+                e.getIn().setHeader("GitHubPullRequestHeadCommitSHA", newPullRequest.getHead().getSha());
+            }
+
             getProcessor().process(e);
         }
         return newPullRequests.size();

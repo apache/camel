@@ -56,6 +56,8 @@ import static org.apache.camel.tools.apt.Strings.safeNull;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
+    private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
+
     public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
             return true;
@@ -73,12 +75,16 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
+            String title = uriEndpoint.title();
             final String label = uriEndpoint.label();
             if (!isNullOrEmpty(scheme)) {
                 // support multiple schemes separated by comma, which maps to the exact same component
                 // for example camel-mail has a bunch of component schema names that does that
                 String[] schemes = scheme.split(",");
-                for (final String alias : schemes) {
+                String[] titles = title.split(",");
+                for (int i = 0; i < schemes.length; i++) {
+                    final String alias = schemes[i];
+                    final String aliasTitle = i < titles.length ? titles[i] : titles[0];
                     // write html documentation
                     String name = canonicalClassName(classElement.getQualifiedName().toString());
                     String packageName = name.substring(0, name.lastIndexOf("."));
@@ -86,7 +92,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, alias, label);
+                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, label);
                             return null;
                         }
                     };
@@ -97,7 +103,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                     handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
-                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, alias, label);
+                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, label);
                             return null;
                         }
                     };
@@ -107,14 +113,15 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String label) {
+    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
+                                          String title, String scheme, String label) {
         writer.println("<html>");
         writer.println("<header>");
-        String title = scheme + " endpoint";
         writer.println("<title>" + title  + "</title>");
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
+        writer.println("<b>Scheme: " + scheme + "</b>");
 
         if (label != null) {
             String[] labels = label.split(",");
@@ -154,9 +161,10 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         writer.println("</html>");
     }
 
-    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String label) {
+    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
+                                                String title, String scheme, String label) {
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, scheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, title, scheme, label);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
@@ -182,6 +190,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         buffer.append("\n    \"kind\": \"").append("component").append("\",");
         buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
+        buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
         if (componentModel.isConsumerOnly()) {
@@ -209,8 +218,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            String defaultValue = entry.getDefaultValue();
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
                     entry.isDeprecated(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  },");
@@ -239,8 +253,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            String defaultValue = entry.getDefaultValue();
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
                     entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
 
@@ -266,8 +285,13 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
             String doc = entry.getDocumentationWithNotes();
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            String defaultValue = entry.getDefaultValue();
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), entry.getDefaultValue(),
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
                     doc, entry.isDeprecated(), label, entry.isEnumType(), entry.getEnums(), false, null));
         }
         buffer.append("\n  }");
@@ -330,13 +354,15 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         }
     }
 
-    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String label) {
+    protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint,
+                                                     String title, String scheme, String label) {
         ComponentModel model = new ComponentModel(scheme);
 
         // if the scheme is an alias then replace the scheme name from the syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
 
         model.setSyntax(syntax);
+        model.setTitle(title);
         model.setLabel(label);
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
@@ -411,7 +437,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
                 }
 
                 // skip unwanted methods as they are inherited from default component and are not intended for end users to configure
-                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)) {
+                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName) || "setEndpointHeaderFilterStrategy".equals(methodName)) {
                     continue;
                 }
 
@@ -436,7 +462,12 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
                 String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
                 if (docComment == null) {
-                    docComment = "";
+                    // apt cannot grab javadoc from camel-core, only from annotations
+                    if ("setHeaderFilterStrategy".equals(methodName)) {
+                        docComment = HEADER_FILTER_STRATEGY_JAVADOC;
+                    } else {
+                        docComment = "";
+                    }
                 }
 
                 // gather enums
@@ -642,6 +673,7 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
         private String scheme;
         private String syntax;
         private String javaType;
+        private String title;
         private String description;
         private String groupId;
         private String artifactId;
@@ -672,6 +704,14 @@ public class EndpointAnnotationProcessor extends AbstractAnnotationProcessor {
 
         public void setJavaType(String javaType) {
             this.javaType = javaType;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getDescription() {

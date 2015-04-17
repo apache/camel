@@ -35,6 +35,8 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterLoaderException;
+import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -379,6 +381,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             typeMappings.put(key, typeConverter);
             // remove any previous misses, as we added the new type converter
             misses.remove(key);
+        }
+    }
+
+    @Override
+    public void addTypeConverters(TypeConverters typeConverters) {
+        log.trace("Adding type converters: {}", typeConverters);
+        try {
+            // scan the class for @Converter and load them into this registry
+            TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
+            loader.load(this);
+        } catch (TypeConverterLoaderException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

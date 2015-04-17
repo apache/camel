@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.paho;
 
+import java.util.Set;
+
 import static java.lang.System.nanoTime;
 
 import org.apache.camel.Component;
@@ -32,11 +34,15 @@ import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
 
-@UriEndpoint(scheme = "paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
+@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Constants
 
@@ -118,6 +124,15 @@ public class PahoEndpoint extends DefaultEndpoint {
     protected MqttConnectOptions resolveMqttConnectOptions() {
         if (connectOptions != null) {
             return connectOptions;
+        }
+        Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
+        if (connectOptions.size() == 1) {
+            LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+            return connectOptions.iterator().next();
+        } else if (connectOptions.size() > 1) {
+            LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                            + "Please use 'connectOptions' endpoint option to select one.",
+                    connectOptions.size());
         }
         return new MqttConnectOptions();
     }

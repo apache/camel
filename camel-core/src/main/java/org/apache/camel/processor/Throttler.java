@@ -26,6 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,7 +40,8 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
-public class Throttler extends DelayProcessorSupport implements Traceable {
+public class Throttler extends DelayProcessorSupport implements Traceable, IdAware {
+    private String id;
     private volatile long maximumRequestsPerPeriod;
     private Expression maxRequestsPerPeriodExpression;
     private AtomicLong timePeriodMillis = new AtomicLong(1000);
@@ -68,6 +70,14 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
 
     public String getTraceLabel() {
         return "throttle[" + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     // Properties

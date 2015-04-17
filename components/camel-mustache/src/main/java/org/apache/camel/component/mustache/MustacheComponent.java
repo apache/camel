@@ -53,6 +53,9 @@ public class MustacheComponent extends UriEndpointComponent {
         return mustacheFactory;
     }
 
+    /**
+     * To use a custom {@link MustacheFactory}
+     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }

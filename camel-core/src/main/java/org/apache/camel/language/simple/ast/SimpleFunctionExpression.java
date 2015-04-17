@@ -128,6 +128,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.systemEnvironmentExpression(remainder);
         }
 
+        // exchange OGNL
+        remainder = ifStartsWithReturnRemainder("exchange", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, token.getIndex());
+            }
+            return ExpressionBuilder.exchangeOgnlExpression(remainder);
+        }
+
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
@@ -324,6 +334,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.messageIdExpression();
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return ExpressionBuilder.exchangeIdExpression();
+        } else if (ObjectHelper.equal(expression, "exchange")) {
+            return ExpressionBuilder.exchangeExpression();
         } else if (ObjectHelper.equal(expression, "exception")) {
             return ExpressionBuilder.exchangeExceptionExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {

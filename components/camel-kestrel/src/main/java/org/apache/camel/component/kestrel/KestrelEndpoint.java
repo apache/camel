@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Camel endpoint for communication with a kestrel based queue.
  */
-@UriEndpoint(scheme = "kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "kestrel", title = "Kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
 public class KestrelEndpoint extends DefaultEndpoint {
 
     /**

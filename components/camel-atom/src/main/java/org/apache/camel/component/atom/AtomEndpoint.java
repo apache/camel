@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
  *
  * @version 
  */
-@UriEndpoint(scheme = "atom", syntax = "atom:feedUri", consumerOnly = true, consumerClass = FeedPollingConsumer.class, label = "feeds")
+@UriEndpoint(scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true, consumerClass = FeedPollingConsumer.class, label = "feeds")
 public class AtomEndpoint extends FeedEndpoint {
 
     public AtomEndpoint() {

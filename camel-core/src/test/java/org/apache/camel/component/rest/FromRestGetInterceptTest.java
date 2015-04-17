@@ -45,6 +45,7 @@ public class FromRestGetInterceptTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 intercept().to("mock:intercept");
 
                 rest("/say/hello")

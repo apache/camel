@@ -33,6 +33,7 @@ import org.junit.Test;
 public class NettyRfc5425Test extends CamelTestSupport {
 
     private static String uri;
+    private static String uriClient;
     private static int serverPort;
     private final String rfc3164Message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
                                           + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
@@ -42,6 +43,7 @@ public class NettyRfc5425Test extends CamelTestSupport {
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
         uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+        uriClient = uri + "&useChannelBuffer=true";
     }
 
     @Override
@@ -61,8 +63,8 @@ public class NettyRfc5425Test extends CamelTestSupport {
         mock2.expectedMessageCount(2);
         mock2.expectedBodiesReceived(rfc3164Message, rfc5424Message);
 
-        template.sendBody(uri, new BigEndianHeapChannelBuffer(rfc3164Message.getBytes("UTF8")));
-        template.sendBody(uri, new BigEndianHeapChannelBuffer(rfc5424Message.getBytes("UTF8")));
+        template.sendBody(uriClient , rfc3164Message.getBytes("UTF8"));
+        template.sendBody(uriClient, rfc5424Message.getBytes("UTF8"));
 
         assertMockEndpointsSatisfied();
     }

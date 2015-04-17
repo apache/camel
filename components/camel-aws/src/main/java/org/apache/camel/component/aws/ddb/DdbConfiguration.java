@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -35,7 +36,7 @@ public class DdbConfiguration {
     private AmazonDynamoDB amazonDDBClient;
     @UriParam
     private String amazonDdbEndpoint;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private Boolean consistentRead;
     @UriParam(defaultValue = "PutItem")
     private DdbOperations operation = DdbOperations.PutItem;

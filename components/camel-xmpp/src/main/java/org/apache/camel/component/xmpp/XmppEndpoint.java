@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A XMPP Endpoint
  */
-@UriEndpoint(scheme = "xmpp", syntax = "xmpp:host:port/participant", consumerClass = XmppConsumer.class, label = "chat,messaging")
+@UriEndpoint(scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", consumerClass = XmppConsumer.class, label = "chat,messaging")
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
@@ -74,7 +74,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String resource = "Camel";
     @UriParam(defaultValue = "true")
     private boolean login = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean createAccount;
     @UriParam
     private String room;

@@ -141,8 +141,8 @@ public class SalesforceConsumer extends DefaultConsumer {
         // TODO do we need to add NPE checks for message/data.get***???
         Map<String, Object> data = message.getDataAsMap();
 
-        @SuppressWarnings("unchecked") final
-        Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
         final Object eventType = event.get(TYPE_PROPERTY);
         Object createdDate = event.get(CREATED_DATE_PROPERTY);
         if (log.isDebugEnabled()) {

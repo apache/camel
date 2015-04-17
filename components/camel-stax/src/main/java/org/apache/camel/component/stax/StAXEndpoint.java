@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 
-@UriEndpoint(scheme = "stax", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath @Metadata(required = "true")

@@ -73,6 +73,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         String host = configuration.getHost();
         int port = configuration.getPort();
         String username = configuration.getUsername();
+        String account = ((FtpConfiguration) configuration).getAccount();
 
         if (clientConfig != null) {
             log.trace("Configuring FTPClient with config: {}", clientConfig);
@@ -155,11 +156,22 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             boolean login;
             if (username != null) {
-                log.trace("Attempting to login user: {} using password: {}", username, configuration.getPassword());
-                login = client.login(username, configuration.getPassword());
+                if (account != null) {
+                    log.trace("Attempting to login user: {} using password: {} and account: {}", new Object[]{username, configuration.getPassword(), account});
+                    login = client.login(username, configuration.getPassword(), account);
+                } else {
+                    log.trace("Attempting to login user: {} using password: {}", username, configuration.getPassword());
+                    login = client.login(username, configuration.getPassword());
+                }
             } else {
-                log.trace("Attempting to login anonymous");
-                login = client.login("anonymous", "");
+                if (account != null) {
+                    // not sure if it makes sense to login anonymous with account?
+                    log.trace("Attempting to login anonymous using account: {}", account);
+                    login = client.login("anonymous", "", account);
+                } else {
+                    log.trace("Attempting to login anonymous");
+                    login = client.login("anonymous", "");
+                }
             }
             log.trace("User {} logged in: {}", username != null ? username : "anonymous", login);
             if (!login) {

@@ -560,7 +560,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("B+END", "A+END");
-        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         Processor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");

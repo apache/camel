@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -40,7 +38,7 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
     protected abstract RouteBuilder doCreateRouteBuilder() throws Exception;
 
-    protected void createComponent() throws IllegalAccessException, IOException {
+    protected void createComponent() throws Exception {
         // create the component
         SalesforceComponent component = new SalesforceComponent();
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();

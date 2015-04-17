@@ -46,6 +46,9 @@ public class ApnsComponent extends UriEndpointComponent {
         return apnsService;
     }
 
+    /**
+     * To use a custom @{link ApnsService}
+     */
     public void setApnsService(ApnsService apnsService) {
         this.apnsService = apnsService;
     }

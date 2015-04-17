@@ -49,7 +49,7 @@ public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
         });
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
-        ExchangeTimedOutException cause = assertThrowable(ExchangeTimedOutException.class, e);
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e);
         assertEquals(2000, cause.getTimeout());
         assertTrue("The input stream should be closed", is.isClosed());
     }

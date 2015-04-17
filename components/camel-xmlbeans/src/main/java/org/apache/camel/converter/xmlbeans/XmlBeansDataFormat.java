@@ -18,10 +18,12 @@ package org.apache.camel.converter.xmlbeans;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.xmlbeans.XmlObject;
 
 /**
@@ -30,12 +32,24 @@ import org.apache.xmlbeans.XmlObject;
  */
 public class XmlBeansDataFormat implements DataFormat {
 
-    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
-        XmlObject object = ExchangeHelper.convertToMandatoryType(exchange, XmlObject.class, body);
-        object.save(stream);
+    public void marshal(final Exchange exchange, final Object body, final OutputStream stream) throws Exception {
+        ObjectHelper.callWithTCCL(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                XmlObject object = ExchangeHelper.convertToMandatoryType(exchange, XmlObject.class, body);
+                object.save(stream);
+                return null;
+            }
+        }, exchange);
+        
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return XmlObject.Factory.parse(stream);
+    public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
+        return ObjectHelper.callWithTCCL(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return XmlObject.Factory.parse(stream);
+            }
+        }, exchange);
     }
 }

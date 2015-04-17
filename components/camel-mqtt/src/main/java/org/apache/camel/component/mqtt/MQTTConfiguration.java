@@ -93,7 +93,7 @@ public class MQTTConfiguration extends MQTT {
     private int disconnectWaitInSeconds = 5;
     @UriParam(defaultValue = "5")
     private int sendWaitInSeconds = 5;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean byDefaultRetain;
     @UriParam
     private QoS qos = QoS.AT_LEAST_ONCE;

@@ -58,7 +58,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private String encoding;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disconnect;
     @UriParam(defaultValue = "true")
     private boolean lazyChannelCreation = true;
@@ -72,7 +72,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
     @UriParam(defaultValue = "DEBUG")
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "true")
     private boolean allowDefaultCodec = true;
     @UriParam
     private ClientInitializerFactory clientInitializerFactory;
@@ -94,6 +94,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean udpConnectionlessSending;
     @UriParam
     private boolean clientMode;
+    @UriParam
+    private boolean useByteBuf;
+    @UriParam
+    private boolean udpByteArrayCodec;
+    
 
     /**
      * Returns a copy of this configuration
@@ -211,6 +216,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                         LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
+                } else if ("udp".equalsIgnoreCase(protocol) && isUdpByteArrayCodec()) {
+                    encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
+                    decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
                 } else {
                     // object serializable is then used
                     encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
@@ -490,6 +498,22 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     
     public void setClientMode(boolean clientMode) {
         this.clientMode = clientMode;
+    }
+
+    public boolean isUseByteBuf() {
+        return useByteBuf;
+    }
+
+    public void setUseByteBuf(boolean useByteBuf) {
+        this.useByteBuf = useByteBuf;
+    }
+
+    public boolean isUdpByteArrayCodec() {
+        return udpByteArrayCodec;
+    }
+
+    public void setUdpByteArrayCodec(boolean udpByteArrayCodec) {
+        this.udpByteArrayCodec = udpByteArrayCodec;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

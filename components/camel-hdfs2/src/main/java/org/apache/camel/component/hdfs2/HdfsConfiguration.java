@@ -41,9 +41,9 @@ public class HdfsConfiguration {
     private String path;
     @UriParam(defaultValue = "true")
     private boolean overwrite = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean append;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean wantAppend;
     @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int bufferSize = HdfsConstants.DEFAULT_BUFFERSIZE;

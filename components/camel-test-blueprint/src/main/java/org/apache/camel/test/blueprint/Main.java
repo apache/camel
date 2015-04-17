@@ -21,12 +21,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
-import org.apache.camel.view.ModelFileGenerator;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -120,8 +117,6 @@ public class Main extends MainSupport {
         // call completed to properly stop as we count down the waiting latch
         completed();
     }
-    
-   
 
     @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
@@ -139,9 +134,6 @@ public class Main extends MainSupport {
     protected BundleContext createBundleContext(String name) throws Exception {
         return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle());
     }
-    
-   
-    
 
     @Override
     protected Map<String, CamelContext> getCamelContextMap() {
@@ -150,11 +142,6 @@ public class Main extends MainSupport {
             map.put(camelContext.getName(), camelContext);
         }
         return map;
-    }
-
-    @Override
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        throw new UnsupportedOperationException("This method is not supported");
     }
 
     public String getDescriptors() {

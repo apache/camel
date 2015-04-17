@@ -35,12 +35,12 @@ import org.apache.camel.util.PlatformHelper;
 
 import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
-@UriEndpoint(scheme = "bean-validator", syntax = "bean-validator:label", producerOnly = true, label = "validation")
+@UriEndpoint(scheme = "bean-validator", title = "Bean Validator", syntax = "bean-validator:label", producerOnly = true, label = "validation")
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint") @Metadata(required = "true")
     private String label;
-    @UriParam
+    @UriParam(defaultValue = "javax.validation.groups.Default")
     private String group;
     @UriParam
     private ValidationProviderResolver validationProviderResolver;
@@ -98,6 +98,9 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         return group;
     }
 
+    /**
+     * To use a custom validation group
+     */
     public void setGroup(String group) {
         this.group = group;
     }
@@ -106,6 +109,9 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         return validationProviderResolver;
     }
 
+    /**
+     * To use a a custom {@link ValidationProviderResolver}
+     */
     public void setValidationProviderResolver(ValidationProviderResolver validationProviderResolver) {
         this.validationProviderResolver = validationProviderResolver;
     }
@@ -114,6 +120,9 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         return messageInterpolator;
     }
 
+    /**
+     * To use a custom {@link MessageInterpolator}
+     */
     public void setMessageInterpolator(MessageInterpolator messageInterpolator) {
         this.messageInterpolator = messageInterpolator;
     }
@@ -122,6 +131,9 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         return traversableResolver;
     }
 
+    /**
+     * To use a custom {@link TraversableResolver}
+     */
     public void setTraversableResolver(TraversableResolver traversableResolver) {
         this.traversableResolver = traversableResolver;
     }
@@ -130,6 +142,9 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         return constraintValidatorFactory;
     }
 
+    /**
+     * To use a custom {@link ConstraintValidatorFactory}
+     */
     public void setConstraintValidatorFactory(ConstraintValidatorFactory constraintValidatorFactory) {
         this.constraintValidatorFactory = constraintValidatorFactory;
     }

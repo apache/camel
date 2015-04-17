@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(scheme = "disruptor,disruptor-vm", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
+@UriEndpoint(scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
@@ -56,13 +56,13 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     private String name;
     @UriParam(defaultValue = "1")
     private final int concurrentConsumers;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private final boolean multipleConsumers;
     @UriParam(defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean blockWhenFull;
     @UriParam(defaultValue = "Blocking")
     private DisruptorWaitStrategy waitStrategy;

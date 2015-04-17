@@ -43,10 +43,10 @@ public class GangliaConfiguration implements Cloneable {
     public static final int DEFAULT_TMAX = 60;
     public static final int DEFAULT_DMAX = 0;
 
-    @UriPath
+    @UriPath(defaultValue = DEFAULT_DESTINATION)
     private String host = DEFAULT_DESTINATION;
 
-    @UriPath
+    @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port = DEFAULT_PORT;
 
     @UriParam(defaultValue = "MULTICAST")

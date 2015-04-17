@@ -38,15 +38,15 @@ public class CacheConfiguration implements Cloneable {
     private boolean overflowToDisk = true;
     @UriParam
     private String diskStorePath;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean eternal;
     @UriParam(defaultValue = "300")
     private long timeToLiveSeconds = 300;
     @UriParam(defaultValue = "300")
     private long timeToIdleSeconds = 300;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean diskPersistent;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private long diskExpiryThreadIntervalSeconds;
     @UriParam
     private boolean objectCache;

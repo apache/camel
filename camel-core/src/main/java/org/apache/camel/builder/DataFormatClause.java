@@ -361,6 +361,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the JSON data format using the XStream json library turning pretty printing on or off
+     * 
+     * @param prettyPrint turn pretty printing on or off
+     */
+    public T json(boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat();
+        json.setPrettyPrint(prettyPrint);
+        return dataFormat(json);
+    }
+
+    /**
      * Uses the JSON data format
      *
      * @param library the json library to use
@@ -372,12 +383,38 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JSON data format
      *
+     * @param library     the json library to use
+     * @param prettyPrint turn pretty printing on or off
+     */
+    public T json(JsonLibrary library, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(library);
+        json.setPrettyPrint(prettyPrint);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the JSON data format
+     *
      * @param type          the json type to use
      * @param unmarshalType unmarshal type for json jackson type
      */
     public T json(JsonLibrary type, Class<?> unmarshalType) {
         JsonDataFormat json = new JsonDataFormat(type);
         json.setUnmarshalType(unmarshalType);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the JSON data format
+     *
+     * @param type          the json type to use
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param prettyPrint   turn pretty printing on or off
+     */
+    public T json(JsonLibrary type, Class<?> unmarshalType, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(type);
+        json.setUnmarshalType(unmarshalType);
+        json.setPrettyPrint(prettyPrint);
         return dataFormat(json);
     }
 
@@ -399,6 +436,21 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
+     * @param prettyPrint   turn pretty printing on or off
+     */
+    public T json(Class<?> unmarshalType, Class<?> jsonView, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        json.setJsonView(jsonView);
+        json.setPrettyPrint(prettyPrint);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the Jackson JSON data format
+     *
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param jsonView      the view type for json jackson type
      * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView, String include) {
@@ -406,6 +458,23 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         json.setUnmarshalType(unmarshalType);
         json.setJsonView(jsonView);
         json.setInclude(include);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the Jackson JSON data format
+     *
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param jsonView      the view type for json jackson type
+     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+      * @param prettyPrint  turn pretty printing on or off
+     */
+    public T json(Class<?> unmarshalType, Class<?> jsonView, String include, boolean prettyPrint) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        json.setJsonView(jsonView);
+        json.setInclude(include);
+        json.setPrettyPrint(prettyPrint);
         return dataFormat(json);
     }
 

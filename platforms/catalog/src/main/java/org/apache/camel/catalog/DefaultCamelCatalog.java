@@ -22,17 +22,22 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.URISupport.createQueryString;
+import static org.apache.camel.catalog.URISupport.stripQuery;
 
 /**
  * Default {@link CamelCatalog}.
@@ -464,23 +469,92 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
-        // grab the json schema for the endpoint properties
-       // rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        // parse the syntax and find the same group in the uri
+        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
+        List<String> word = new ArrayList<String>();
+        while (matcher.find()) {
+            String s = matcher.group(1);
+            if (!scheme.equals(s)) {
+                word.add(s);
+            }
+        }
+
+        String uriPath = stripQuery(uri);
+
+        // if there is only one, then use uriPath as is
+        List<String> word2 = new ArrayList<String>();
+
+        if (word.size() == 1) {
+            String s = uriPath;
+            s = URISupport.stripPrefix(s, scheme);
+            // strip any leading : or / after the scheme
+            while (s.startsWith(":") || s.startsWith("/")) {
+                s = s.substring(1);
+            }
+            word2.add(s);
+        } else {
+            Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
+            while (matcher2.find()) {
+                String s = matcher2.group(1);
+                if (!scheme.equals(s)) {
+                    word2.add(s);
+                }
+            }
+        }
+
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        boolean defaultValueAdded = false;
 
         // now parse the uri to know which part isw what
+        Map<String, String> options = new LinkedHashMap<String, String>();
+
+        // word contains the syntax path elements
+        Iterator<String> it = word2.iterator();
+        for (int i = 0; i < word.size(); i++) {
+            String key = word.get(i);
+
+            boolean allOptions = word.size() == word2.size();
+            boolean required = isPropertyRequired(rows, key);
+            String defaultValue = getPropertyDefaultValue(rows, key);
+
+            // we have all options so no problem
+            if (allOptions) {
+                String value = it.next();
+                options.put(key, value);
+            } else {
+                // we have a little problem as we do not not have all options
+                if (!required) {
+                    String value = defaultValue;
+                    options.put(key, value);
+                    defaultValueAdded = true;
+                } else {
+                    String value = it.next();
+                    options.put(key, value);
+                }
+            }
+        }
+
         Map<String, String> answer = new LinkedHashMap<String, String>();
 
-        // parse the syntax and find the same group in the uri
+        // remove all options which are using default values and are not required
+        for (Map.Entry<String, String> entry : options.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
 
-        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
-        Matcher matcher2 = SYNTAX_PATTERN.matcher(uri);
-        while (matcher.find() && matcher2.find()) {
-            String word = matcher.group(1);
-            String word2 = matcher2.group(1);
-            // skip the scheme as we know that already
-            if (!scheme.equals(word)) {
-                answer.put(word, word2);
+            if (defaultValueAdded) {
+                boolean required = isPropertyRequired(rows, key);
+                String defaultValue = getPropertyDefaultValue(rows, key);
+
+                if (!required && defaultValue != null) {
+                    if (defaultValue.equals(value)) {
+                        continue;
+                    }
+                }
             }
+
+            // we should keep this in the answer
+            answer.put(key, value);
         }
 
         // now parse the uri parameters
@@ -494,6 +568,17 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         return answer;
+    }
+
+    @Override
+    public String endpointComponentName(String uri) {
+        if (uri != null) {
+            int idx = uri.indexOf(":");
+            if (idx > 0) {
+                return uri.substring(0, idx);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -553,8 +638,10 @@ public class DefaultCamelCatalog implements CamelCatalog {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
-        // build at first according to syntax
-        Map<String, String> copy = new HashMap<String, String>();
+        String originalSyntax = syntax;
+
+        // build at first according to syntax (use a tree map as we want the uri options sorted)
+        Map<String, String> copy = new TreeMap<String, String>();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue() != null ? entry.getValue() : "";
@@ -565,7 +652,49 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
-        StringBuilder sb = new StringBuilder(syntax);
+        // the tokens between the options in the path
+        String[] tokens = syntax.split("\\w+");
+
+        // parse the syntax into each options
+        Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
+        List<String> options = new ArrayList<String>();
+        while (matcher.find()) {
+            String s = matcher.group(1);
+            options.add(s);
+        }
+
+        // parse the syntax into each options
+        Matcher matcher2 = SYNTAX_PATTERN.matcher(syntax);
+        List<String> options2 = new ArrayList<String>();
+        while (matcher2.find()) {
+            String s = matcher2.group(1);
+            options2.add(s);
+        }
+
+        // build the endpoint
+        StringBuilder sb = new StringBuilder();
+        int range = 0;
+        for (int i = 0; i < options.size(); i++) {
+            String key = options.get(i);
+            String key2 = options2.get(i);
+            String token = tokens[i];
+
+            // was the option provided?
+            if (i == 0 || properties.containsKey(key)) {
+                sb.append(token);
+                sb.append(key2);
+            }
+            range++;
+        }
+        // append any extra options that was in surplus for the last
+        while (range < options2.size()) {
+            String token = tokens[range];
+            String key2 = options2.get(range);
+            sb.append(token);
+            sb.append(key2);
+            range++;
+        }
+
         if (!copy.isEmpty()) {
             sb.append('?');
             String query = createQueryString(copy);

@@ -38,6 +38,9 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String location;
 
     @XmlAttribute
+    private String encoding;
+
+    @XmlAttribute
     private Boolean cache;
 
     @XmlAttribute
@@ -73,6 +76,14 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public Boolean isCache() {

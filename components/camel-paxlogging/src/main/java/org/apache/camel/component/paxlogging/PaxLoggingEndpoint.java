@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Paxlogging endpoint.
  */
-@UriEndpoint(scheme = "paxlogging", syntax = "paxlogging:appender", consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
+@UriEndpoint(scheme = "paxlogging", title = "OSGi PAX Logging", syntax = "paxlogging:appender", consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
 public class PaxLoggingEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

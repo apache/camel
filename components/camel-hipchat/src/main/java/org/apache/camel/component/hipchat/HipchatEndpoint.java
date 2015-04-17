@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a Hipchat endpoint.
  */
-@UriEndpoint(scheme = "hipchat", syntax = "hipchat:protocol:host:port", consumerClass = HipchatConsumer.class, label = "api,cloud")
+@UriEndpoint(scheme = "hipchat", title = "Hipchat", syntax = "hipchat:protocol:host:port", consumerClass = HipchatConsumer.class, label = "api,cloud")
 public class HipchatEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

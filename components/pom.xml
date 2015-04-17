@@ -54,7 +54,6 @@
     <module>camel-jetty</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
-    <module>camel-web-standalone</module>
     <module>camel-jms</module>
 
     <!-- regular modules in alphabetic order -->
@@ -226,7 +225,6 @@
     <module>camel-velocity</module>
     <module>camel-vertx</module>
     <module>camel-weather</module>
-    <module>camel-web</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmljson</module>

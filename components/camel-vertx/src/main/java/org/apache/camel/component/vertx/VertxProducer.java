@@ -45,6 +45,12 @@ public class VertxProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         EventBus eventBus = getEndpoint().getEventBus();
+        if (eventBus == null) {
+            exchange.setException(new IllegalStateException("EventBus is not started or not configured"));
+            callback.done(true);
+            return true;
+        }
+
         String address = getEndpoint().getAddress();
 
         boolean reply = ExchangeHelper.isOutCapable(exchange);

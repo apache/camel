@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.lightcouch.CouchDbClient;
 
-@UriEndpoint(scheme = "couchdb", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
+@UriEndpoint(scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -55,7 +55,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam(defaultValue = "" + DEFAULT_HEARTBEAT)
     private long heartbeat = DEFAULT_HEARTBEAT;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean createDatabase;
     @UriParam(defaultValue = "true")
     private boolean deletes = true;

@@ -288,7 +288,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
 
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {
@@ -417,8 +417,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public void init(ManagementStrategy strategy) {
-        super.init(strategy);
         exchangesInFlightStartTimestamps.clear();
+        super.init(strategy);
     }
 
     @Override
@@ -438,14 +438,23 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         super.completedExchange(exchange, time);
     }
 
+    @Override
+    public synchronized void failedExchange(Exchange exchange) {
+        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
+        if (key != null) {
+            exchangesInFlightStartTimestamps.remove(key);
+        }
+        super.failedExchange(exchange);
+    }
+
     private static class InFlightKey implements Comparable<InFlightKey> {
 
         private final Long timeStamp;
         private final String exchangeId;
 
         InFlightKey(Long timeStamp, String exchangeId) {
-            this.exchangeId = exchangeId;
             this.timeStamp = timeStamp;
+            this.exchangeId = exchangeId;
         }
 
         @Override

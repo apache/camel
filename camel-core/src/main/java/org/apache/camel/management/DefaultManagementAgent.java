@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
@@ -274,6 +275,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         ObjectName on = mbeansRegistered.get(name);
         return (on != null && server.isRegistered(on))
                 || server.isRegistered(name);
+    }
+
+    public <T> T newProxyClient(ObjectName name, Class<T> mbean) {
+        if (server.isRegistered(name)) {
+            return MBeanServerInvocationHandler.newProxyInstance(server, name, mbean, false);
+        } else {
+            return null;
+        }
     }
 
     protected void doStart() throws Exception {

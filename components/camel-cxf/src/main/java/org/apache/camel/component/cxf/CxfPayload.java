@@ -139,7 +139,11 @@ public class CxfPayload<T> {
     public List<T> getHeaders() {
         return headers;
     }
-    
+
+    public Map<String, String> getNsMap() {
+        return nsMap;
+    }
+
     public String toString() {
         // do not load or print the payload body etc as we do not want to load that into memory etc
         return super.toString();

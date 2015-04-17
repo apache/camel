@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
@@ -27,6 +28,9 @@ import org.apache.camel.spi.UriParams;
 public class FtpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_FTP_PORT = 21;
+
+    @UriParam
+    private String account;
 
     public FtpConfiguration() {
         setProtocol("ftp");
@@ -41,4 +45,14 @@ public class FtpConfiguration extends RemoteFileConfiguration {
         setPort(DEFAULT_FTP_PORT);
     }
 
+    public String getAccount() {
+        return account;
+    }
+
+    /**
+     * Account to use for login
+     */
+    public void setAccount(String account) {
+        this.account = account;
+    }
 }

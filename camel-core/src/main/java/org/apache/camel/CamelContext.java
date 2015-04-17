@@ -25,8 +25,12 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -511,6 +515,67 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the route or <tt>null</tt> if not found
      */
     Route getRoute(String id);
+
+    /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @return the processor or <tt>null</tt> if not found
+     */
+    Processor getProcessor(String id);
+
+    /**
+     * Gets the processor from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the processor type
+     * @return the processor or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends Processor> T getProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed processor client api from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the processor or <tt>null</tt> if not found
+     * @throws IllegalArgumentException if the type is not compliant
+     */
+    <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed route client api with the given route id
+     *
+     * @param routeId id of the route
+     * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the route or <tt>null</tt> if not found
+     * @throws IllegalArgumentException if the type is not compliant
+     */
+    <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
+
+    /**
+     * Gets the managed Camel context client api
+     */
+    ManagedCamelContextMBean getManagedCamelContext();
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @return the processor definition or <tt>null</tt> if not found
+     */
+    ProcessorDefinition getProcessorDefinition(String id);
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @param type the processor definition type
+     * @return the processor definition or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
 
     /**
      * Adds a collection of routes to this context using the given builder

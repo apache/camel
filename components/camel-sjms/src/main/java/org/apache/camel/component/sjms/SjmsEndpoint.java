@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A JMS Endpoint
  */
-@UriEndpoint(scheme = "sjms", syntax = "sjms:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -78,9 +78,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private int transactionBatchCount = -1;
     @UriParam(defaultValue = "5000")
     private long transactionBatchTimeout = 5000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncStartListener;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean asyncStopListener;
     @UriParam(defaultValue = "true")
     private boolean prefillPool = true;

@@ -92,6 +92,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def loop(expression: Exchange => Any) = SLoopDefinition(target.loop(expression))
 
   def marshal(format: DataFormatDefinition) = wrap(target.marshal(format))
+  def marshal(dataFormatRef: String) = wrap(target.marshal(dataFormatRef))
   def multicast = SMulticastDefinition(target.multicast)
 
   def onCompletion: SOnCompletionDefinition = {
@@ -152,6 +153,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def transform(expression: Exchange => Any) = wrap(target.transform(expression))
 
   def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
+  def unmarshal(dataFormatRef: String) = wrap(target.unmarshal(dataFormatRef))
 
   def validate(expression: Exchange => Any) = wrap(target.validate(predicateBuilder(expression)))
 

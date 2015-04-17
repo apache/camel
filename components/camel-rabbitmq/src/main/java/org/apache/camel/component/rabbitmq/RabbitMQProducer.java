@@ -139,8 +139,10 @@ public class RabbitMQProducer extends DefaultProducer {
         }
         byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
         AMQP.BasicProperties properties = buildProperties(exchange).build();
-
-        basicPublish(exchangeName, key, properties, messageBodyBytes);
+        Boolean mandatory = exchange.getIn().getHeader(RabbitMQConstants.MANDATORY, getEndpoint().isMandatory(), Boolean.class);
+        Boolean immediate = exchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, getEndpoint().isImmediate(), Boolean.class);
+        
+        basicPublish(exchangeName, key, mandatory, immediate, properties, messageBodyBytes);
     }
 
     /**
@@ -148,10 +150,13 @@ public class RabbitMQProducer extends DefaultProducer {
      *
      * @param exchange   Target exchange
      * @param routingKey Routing key
+     * @param mandatory  This flag tells the server how to react if the message cannot be routed to a queue.
+     * @param immediate  This flag tells the server how to react if the message cannot be routed to a queue consumer immediately.
      * @param properties Header properties
      * @param body       Body content
      */
-    private void basicPublish(final String exchange, final String routingKey, final AMQP.BasicProperties properties, final byte[] body) throws Exception {
+    private void basicPublish(final String exchange, final String routingKey, final boolean mandatory, final boolean immediate,  
+                              final AMQP.BasicProperties properties, final byte[] body) throws Exception {
         if (channelPool == null) {
             // Open connection and channel lazily
             openConnectionAndChannelPool();
@@ -159,7 +164,7 @@ public class RabbitMQProducer extends DefaultProducer {
         execute(new ChannelCallback<Void>() {
             @Override
             public Void doWithChannel(Channel channel) throws Exception {
-                channel.basicPublish(exchange, routingKey, properties, body);
+                channel.basicPublish(exchange, routingKey, mandatory, immediate, properties, body);
                 return null;
             }
         });

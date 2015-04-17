@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -40,8 +41,10 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  *
  * @version 
  */
-public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable {
+public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
+
+    private String id;
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         super(camelContext, processors);
@@ -188,5 +191,13 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     public String getTraceLabel() {
         return "pipeline";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

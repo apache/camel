@@ -179,8 +179,8 @@ public class SedaProducer extends DefaultAsyncProducer {
     }
 
     protected Exchange prepareCopy(Exchange exchange, boolean handover) {
-        // use a new copy of the exchange to route async
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover);
+        // use a new copy of the exchange to route async (and use same message id)
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
         // set a new from endpoint to be the seda queue
         copy.setFromEndpoint(endpoint);
         return copy;

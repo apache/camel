@@ -19,9 +19,12 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -43,9 +46,10 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see Enricher
  */
-public class PollEnricher extends ServiceSupport implements AsyncProcessor {
+public class PollEnricher extends ServiceSupport implements AsyncProcessor, EndpointAware, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
+    private String id;
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;
@@ -74,6 +78,18 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
         this.aggregationStrategy = aggregationStrategy;
         this.consumer = consumer;
         this.timeout = timeout;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Endpoint getEndpoint() {
+        return consumer.getEndpoint();
     }
 
     public AggregationStrategy getAggregationStrategy() {

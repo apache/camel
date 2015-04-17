@@ -44,8 +44,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
+
     public DefaultJettyHttpBinding() {
-        
     }
     
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
@@ -172,7 +172,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
             try {
                 InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
-                return HttpHelper.deserializeJavaObjectFromStream(is);
+                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
             }

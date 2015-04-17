@@ -89,13 +89,13 @@ public class SmppConfiguration implements Cloneable {
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
     @UriParam
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean usingSSL;
     @UriParam(defaultValue = "5000")
     private long initialReconnectDelay = 5000;
     @UriParam(defaultValue = "5000")
     private long reconnectDelay = 5000;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean lazySessionCreation;
     @UriParam
     private String httpProxyHost;

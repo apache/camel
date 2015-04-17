@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "apns", syntax = "apns:name", consumerClass = ApnsConsumer.class, label = "eventbus,mobile")
+@UriEndpoint(scheme = "apns", title = "APNS", syntax = "apns:name", consumerClass = ApnsConsumer.class, label = "eventbus,mobile")
 public class ApnsEndpoint extends ScheduledPollEndpoint {
 
     private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<DefaultConsumer>();
@@ -55,6 +55,9 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
         return tokens;
     }
 
+    /**
+     * Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma.
+     */
     public void setTokens(String tokens) {
         this.tokens = tokens;
     }

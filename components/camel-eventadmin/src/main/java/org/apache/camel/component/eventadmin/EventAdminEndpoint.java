@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * EventAdmin endpoint
  */
-@UriEndpoint(scheme = "eventadmin", syntax = "eventadmin:topic", consumerClass = EventAdminConsumer.class, label = "eventbus")
+@UriEndpoint(scheme = "eventadmin", title = "OSGi EventAdmin", syntax = "eventadmin:topic", consumerClass = EventAdminConsumer.class, label = "eventbus")
 public class EventAdminEndpoint extends DefaultEndpoint {
 
     @UriPath

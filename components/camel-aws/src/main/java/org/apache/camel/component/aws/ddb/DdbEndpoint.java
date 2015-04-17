@@ -19,16 +19,16 @@ package org.apache.camel.component.aws.ddb;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodb.model.CreateTableRequest;
-import com.amazonaws.services.dynamodb.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.KeySchemaElement;
-import com.amazonaws.services.dynamodb.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodb.model.ResourceNotFoundException;
-import com.amazonaws.services.dynamodb.model.TableDescription;
-import com.amazonaws.services.dynamodb.model.TableStatus;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.dynamodbv2.model.TableDescription;
+import com.amazonaws.services.dynamodbv2.model.TableStatus;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB endpoint</a>
  */
-@UriEndpoint(scheme = "aws-ddb", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
@@ -114,10 +114,10 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private TableDescription createTable(String tableName) {
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
-                .withKeySchema(new KeySchema(
+                .withKeySchema(
                         new KeySchemaElement().withAttributeName(
                                 configuration.getKeyAttributeName())
-                                .withAttributeType(configuration.getKeyAttributeType())))
+                                .withKeyType(configuration.getKeyAttributeType()))
                 .withProvisionedThroughput(
                         new ProvisionedThroughput().withReadCapacityUnits(configuration.getReadCapacity())
                                 .withWriteCapacityUnits(configuration.getWriteCapacity()));

@@ -47,7 +47,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "rabbitmq", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -70,7 +70,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private boolean autoDelete = true;
     @UriParam(defaultValue = "true")
     private boolean durable = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean bridgeEndpoint;
     @UriParam
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
@@ -139,6 +139,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     //Maximum time (in milliseconds) waiting for channel
     @UriParam(defaultValue = "1000")
     private long channelPoolMaxWait = 1000;
+    @UriParam
+    private boolean mandatory;
+    @UriParam
+    private boolean immediate;
     @UriParam
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam
@@ -631,6 +635,22 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      */
     public void setChannelPoolMaxWait(long channelPoolMaxWait) {
         this.channelPoolMaxWait = channelPoolMaxWait;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public boolean isImmediate() {
+        return immediate;
+    }
+
+    public void setImmediate(boolean immediate) {
+        this.immediate = immediate;
     }
 
     /**

@@ -34,6 +34,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -55,8 +56,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
-public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable {
+public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected String id;
     protected ProducerCache producerCache;
     protected int cacheSize;
     protected boolean ignoreInvalidEndpoints;
@@ -102,7 +104,15 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         this.uriDelimiter = uriDelimiter;
         this.header = null;
     }
-    
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setDelimiter(String delimiter) {
         this.uriDelimiter = delimiter;
     }

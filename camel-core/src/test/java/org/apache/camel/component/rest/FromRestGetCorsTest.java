@@ -57,7 +57,7 @@ public class FromRestGetCorsTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().enableCORS(true);
+                restConfiguration().host("localhost").enableCORS(true);
 
                 rest("/say/hello")
                     .get().to("direct:hello");

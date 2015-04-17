@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -31,7 +32,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A processor which sets the body on the OUT message with an {@link Expression}
  */
-public class TransformProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class TransformProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+    private String id;
     private final Expression expression;
 
     public TransformProcessor(Expression expression) {
@@ -86,6 +88,18 @@ public class TransformProcessor extends ServiceSupport implements AsyncProcessor
 
     public String getTraceLabel() {
         return "transform[" + expression + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

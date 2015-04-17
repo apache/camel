@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * MQTT endpoint
  */
-@UriEndpoint(scheme = "mqtt", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
 public class MQTTEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 

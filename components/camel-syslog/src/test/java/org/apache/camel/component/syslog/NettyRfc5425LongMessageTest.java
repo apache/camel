@@ -26,7 +26,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -70,7 +70,7 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived(MESSAGE);
 
-        template.sendBody(uri, new BigEndianHeapChannelBuffer(MESSAGE.getBytes("UTF8")));
+        template.sendBody("direct:start", MESSAGE.getBytes("UTF8"));
 
         assertMockEndpointsSatisfied();
     }
@@ -92,6 +92,8 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
                 }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
+                // Here we need to turn the request body into channelbuffer
+                from("direct:start").convertBodyTo(ChannelBuffer.class).to(uri);
             }
         };
     }

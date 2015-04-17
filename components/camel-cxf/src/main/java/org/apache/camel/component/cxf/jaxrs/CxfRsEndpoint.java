@@ -56,7 +56,7 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "cxfrs", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "http,rest")
+@UriEndpoint(scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "http,rest")
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     public enum BindingStyle {

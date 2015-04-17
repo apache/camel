@@ -92,7 +92,18 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
-    public void testAsEndpointUriMap() throws Exception {
+    public void testAsEndpointUriMapFile() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("directoryName", "src/data/inbox");
+        map.put("noop", "true");
+        map.put("delay", "5000");
+
+        String uri = catalog.asEndpointUri("file", map);
+        assertEquals("file:src/data/inbox?delay=5000&noop=true", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriMapFtp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("host", "someserver");
         map.put("port", "21");
@@ -101,6 +112,29 @@ public class CamelCatalogTest extends TestCase {
 
         String uri = catalog.asEndpointUri("ftp", map);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriMapJms() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("destinationType", "queue");
+        map.put("destinationName", "foo");
+
+        String uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:queue:foo", uri);
+    }
+
+    @Test
+    public void testAsEndpointUriMapJmsRequiredOnly() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("destinationName", "foo");
+        String uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:foo", uri);
+
+        map.put("deliveryPersistent", "false");
+        map.put("allowNullBody", "true");
+        uri = catalog.asEndpointUri("jms", map);
+        assertEquals("jms:foo?allowNullBody=true&deliveryPersistent=false", uri);
     }
 
     @Test
@@ -120,6 +154,56 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("21", map.get("port"));
         assertEquals("foo", map.get("directoryName"));
         assertEquals("5000", map.get("connectTimeout"));
+    }
+
+    @Test
+    public void testEndpointPropertiesJms() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("jms:queue:foo");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("queue", map.get("destinationType"));
+        assertEquals("foo", map.get("destinationName"));
+    }
+
+    @Test
+    public void testEndpointPropertiesJmsRequired() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("jms:foo");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
+
+        map = catalog.endpointProperties("jms:foo?allowNullBody=true&deliveryPersistent=false");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("foo", map.get("destinationName"));
+        assertEquals("true", map.get("allowNullBody"));
+        assertEquals("false", map.get("deliveryPersistent"));
+    }
+
+    @Test
+    public void testEndpointPropertiesAtom() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("atom:file:src/test/data/feed.atom");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
+
+        map = catalog.endpointProperties("atom:file:src/test/data/feed.atom?splitEntries=false&delay=5000");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
+        assertEquals("false", map.get("splitEntries"));
+        assertEquals("5000", map.get("delay"));
+    }
+
+    @Test
+    public void testEndpointComponentName() throws Exception {
+        String name = catalog.endpointComponentName("jms:queue:foo");
+        assertEquals("jms", name);
     }
 
 }

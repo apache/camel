@@ -60,10 +60,15 @@ public class CamelAutoConfiguration {
     }
 
     @Bean
+    CamelSpringBootApplicationController applicationController(ApplicationContext applicationContext, CamelContext camelContext) {
+        return new CamelSpringBootApplicationController(applicationContext, camelContext);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(RoutesCollector.class)
     RoutesCollector routesCollector(ApplicationContext applicationContext) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations));
+        return new RoutesCollector(new ArrayList<CamelContextConfiguration>(configurations));
     }
 
     /**

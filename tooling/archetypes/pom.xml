@@ -35,7 +35,6 @@
     <module>camel-archetype-api-component</module>
     <module>camel-archetype-blueprint</module>
     <module>camel-archetype-component</module>
-    <module>camel-archetype-component-scala</module>
     <module>camel-archetype-cxf-code-first-blueprint</module>
     <module>camel-archetype-cxf-contract-first-blueprint</module>
     <module>camel-archetype-dataformat</module>

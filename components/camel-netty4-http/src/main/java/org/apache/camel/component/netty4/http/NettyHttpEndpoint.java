@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * HTTP based {@link NettyEndpoint}
  */
-@UriEndpoint(scheme = "netty4-http", syntax = "netty4-http:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
+@UriEndpoint(scheme = "netty4-http", title = "Netty4 HTTP", syntax = "netty4-http:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
@@ -46,7 +46,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean traceEnabled;
     @UriParam
     private String httpMethodRestrict;

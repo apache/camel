@@ -62,7 +62,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean disconnect;
     @UriParam(defaultValue = "true")
     private boolean lazyChannelCreation = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean transferExchange;
     @UriParam(defaultValue = "true")
     private boolean disconnectOnNoReply = true;
@@ -94,6 +94,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean udpConnectionlessSending;
     @UriParam
     private boolean clientMode;
+    @UriParam
+    private boolean useChannelBuffer;
 
     /**
      * Returns a copy of this configuration
@@ -464,6 +466,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setClientMode(boolean clientMode) {
         this.clientMode = clientMode;
+    }
+
+    public boolean isUseChannelBuffer() {
+        return useChannelBuffer;
+    }
+
+    public void setUseChannelBuffer(boolean useChannelBuffer) {
+        this.useChannelBuffer = useChannelBuffer;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

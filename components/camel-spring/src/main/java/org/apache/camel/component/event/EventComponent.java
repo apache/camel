@@ -52,6 +52,9 @@ public class EventComponent extends UriEndpointComponent implements ApplicationC
         return applicationContext;
     }
 
+    /**
+     * The Spring ApplicationContext
+     */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

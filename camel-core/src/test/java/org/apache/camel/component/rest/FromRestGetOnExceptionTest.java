@@ -43,6 +43,7 @@ public class FromRestGetOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 onException(IllegalArgumentException.class).handled(true).transform().constant("Handled the error");
 
                 rest("/say/hello")

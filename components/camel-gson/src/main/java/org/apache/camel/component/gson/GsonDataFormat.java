@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -45,12 +46,13 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
 
     private Gson gson;
     private Class<?> unmarshalType;
+    private Type unmarshalGenericType;
     private List<ExclusionStrategy> exclusionStrategies;
     private LongSerializationPolicy longSerializationPolicy;
     private FieldNamingPolicy fieldNamingPolicy;
     private FieldNamingStrategy fieldNamingStrategy;
-    private Boolean serializeNulls;
-    private Boolean prettyPrinting;
+    private boolean serializeNulls;
+    private boolean prettyPrint;
     private String dateFormatPattern;
 
     public GsonDataFormat() {
@@ -92,6 +94,27 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
         this.unmarshalType = unmarshalType;
     }
 
+    /**
+     * Use the default Gson {@link Gson} and with a custom
+     * unmarshal generic type
+     *
+     * @param unmarshalGenericType the custom unmarshal generic type
+     */
+    public GsonDataFormat(Type unmarshalGenericType) {
+        this(null, unmarshalGenericType);
+    }
+
+    /**
+     * Use a custom Gson mapper and and unmarshal token type
+     *
+     * @param gson          the custom mapper
+     * @param unmarshalGenericType the custom unmarshal generic type
+     */
+    public GsonDataFormat(Gson gson, Type unmarshalGenericType) {
+        this.gson = gson;
+        this.unmarshalGenericType = unmarshalGenericType;
+    }
+
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
@@ -102,7 +125,14 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
-        Object result = gson.fromJson(reader, this.unmarshalType);
+        Object result = null;
+        
+        if (this.unmarshalGenericType != null) {
+            result = gson.fromJson(reader, this.unmarshalGenericType);
+        } else {
+            result = gson.fromJson(reader, this.unmarshalType);
+        }
+
         reader.close();
         return result;
     }
@@ -124,10 +154,10 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
             if (fieldNamingStrategy != null) {
                 builder.setFieldNamingStrategy(fieldNamingStrategy);
             }
-            if (serializeNulls != null && serializeNulls) {
+            if (serializeNulls) {
                 builder.serializeNulls();
             }
-            if (prettyPrinting != null && prettyPrinting) {
+            if (prettyPrint) {
                 builder.setPrettyPrinting();
             }
             if (dateFormatPattern != null) {
@@ -151,6 +181,14 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public Type getUnmarshalGenericType() {
+        return this.unmarshalType;
+    }
+
+    public void setUnmarshalGenericType(Type unmarshalGenericType) {
+        this.unmarshalGenericType = unmarshalGenericType;
     }
 
     public List<ExclusionStrategy> getExclusionStrategies() {
@@ -185,20 +223,52 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
         this.fieldNamingStrategy = fieldNamingStrategy;
     }
 
+    /**
+     * @deprecated use {@link #isSerializeNulls()} instead
+     */
+    @Deprecated
     public Boolean getSerializeNulls() {
         return serializeNulls;
     }
 
+    public boolean isSerializeNulls() {
+        return serializeNulls;
+    }
+
+    /**
+     * @deprecated use {@link #setSerializeNulls(boolean)} instead
+     */
+    @Deprecated
     public void setSerializeNulls(Boolean serializeNulls) {
         this.serializeNulls = serializeNulls;
     }
 
-    public Boolean getPrettyPrinting() {
-        return prettyPrinting;
+    public void setSerializeNulls(boolean serializeNulls) {
+        this.serializeNulls = serializeNulls;
     }
 
+    /**
+     * @deprecated use {@link #isPrettyPrint()} instead
+     */
+    @Deprecated
+    public Boolean getPrettyPrinting() {
+        return prettyPrint;
+    }
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    /**
+     * @deprecated use {@link #setPrettyPrint(boolean)} instead
+     */
+    @Deprecated
     public void setPrettyPrinting(Boolean prettyPrinting) {
-        this.prettyPrinting = prettyPrinting;
+        this.prettyPrint = prettyPrinting;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
     }
 
     public String getDateFormatPattern() {

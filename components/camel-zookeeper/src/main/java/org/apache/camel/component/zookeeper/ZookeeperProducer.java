@@ -172,7 +172,7 @@ public class ZookeeperProducer extends DefaultProducer {
 
         public void processResult(int rc, String node, Object ctx, Stat statistics) {
             if (Code.NONODE.equals(Code.get(rc))) {
-                if (configuration.shouldCreate()) {
+                if (configuration.isCreate()) {
                     log.warn(format("Node '%s' did not exist, creating it...", node));
                     ProductionContext context = (ProductionContext)ctx;
                     OperationResult<String> result = null;
@@ -234,7 +234,7 @@ public class ZookeeperProducer extends DefaultProducer {
 
         OperationResult result = setData.get();
 
-        if (!result.isOk() && configuration.shouldCreate() && result.failedDueTo(Code.NONODE)) {
+        if (!result.isOk() && configuration.isCreate() && result.failedDueTo(Code.NONODE)) {
             log.warn(format("Node '%s' did not exist, creating it.", ctx.node));
             result = createNode(ctx);
         }
@@ -247,7 +247,7 @@ public class ZookeeperProducer extends DefaultProducer {
 
         OperationResult result = setData.get();
 
-        if (!result.isOk() && configuration.shouldCreate() && result.failedDueTo(Code.NONODE)) {
+        if (!result.isOk() && configuration.isCreate() && result.failedDueTo(Code.NONODE)) {
             log.warn(format("Node '%s' did not exist, creating it.", ctx.node));
             result = createNode(ctx);
         }

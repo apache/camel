@@ -253,7 +253,7 @@ public class EndpointMessageListener implements MessageListener {
     // -------------------------------------------------------------------------
     public JmsBinding getBinding() {
         if (binding == null) {
-            binding = new JmsBinding(endpoint);
+            binding = endpoint.getBinding();
         }
         return binding;
     }
