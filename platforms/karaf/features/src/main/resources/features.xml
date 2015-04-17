@@ -568,8 +568,8 @@
     <bundle>mvn:org.apache.camel/camel-hbase/${project.version}</bundle>
     <!-- the following bundles can be removed when osgi metadata is fixed in commons-configuration and hbase, to have resolution=:option on packages that are optional -->
     <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.5.2</bundle>
-    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.5.2</bundle>
+    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/${jackrabbit-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-vfs2/${commons-vfs2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
@@ -619,8 +619,8 @@
     <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
     <!-- the following bundles can be removed when osgi metadata is fixed in commons-configuration, to have resolution=:option on packages that are optional -->
     <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.5.2</bundle>
-    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/2.5.2</bundle>
+    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-webdav/${jackrabbit-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-jexl/${commons-jexl2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-vfs2/${commons-vfs2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
