@@ -30,11 +30,7 @@ public class JettyHttpProducerBridgePathWithSpacesTest extends BaseJettyTest {
 
     @Test
     public void testProxy() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+        
         // give Jetty time to startup properly
         Thread.sleep(2000);
 

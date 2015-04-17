@@ -32,11 +32,6 @@ public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
 
     @Test
     public void testTimeout() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         // give Jetty time to startup properly
         Thread.sleep(1000);
         final MyInputStream is = new MyInputStream("Content".getBytes());
