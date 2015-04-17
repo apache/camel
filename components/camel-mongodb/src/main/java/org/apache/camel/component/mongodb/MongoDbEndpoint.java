@@ -66,8 +66,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
     @UriParam
-    private boolean invokeGetLastError;
-    @UriParam
     private WriteConcern writeConcern;
     private WriteConcern writeConcernRef;
     @UriParam
@@ -153,7 +151,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
         } else if (role == 'C') {
             if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
-                   || dynamicity || invokeGetLastError) {
+                   || dynamicity) {
                 throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, dynamicity, invokeGetLastError "
                         + "options cannot appear on a consumer endpoint");
             }
@@ -406,21 +404,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public WriteConcern getWriteConcern() {
         return writeConcern;
-    }
-
-    /**
-     * Instructs this endpoint to invoke {@link WriteResult#getLastError()} with every operation. By default, MongoDB does not wait
-     * for the write operation to occur before returning. If set to true, each exchange will only return after the write operation 
-     * has actually occurred in MongoDB.
-     * 
-     * @param invokeGetLastError true or false
-     */
-    public void setInvokeGetLastError(boolean invokeGetLastError) {
-        this.invokeGetLastError = invokeGetLastError;
-    }
-
-    public boolean isInvokeGetLastError() {
-        return invokeGetLastError;
     }
 
     /**
