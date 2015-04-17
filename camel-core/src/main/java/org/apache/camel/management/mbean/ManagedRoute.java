@@ -417,6 +417,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public void init(ManagementStrategy strategy) {
+        exchangesInFlightKeys.clear();
         exchangesInFlightStartTimestamps.clear();
         super.init(strategy);
     }
@@ -424,8 +425,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public synchronized void processExchange(Exchange exchange) {
         InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
-        exchangesInFlightKeys.put(exchange.getExchangeId(), key);
-        exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        InFlightKey oldKey = exchangesInFlightKeys.putIfAbsent(exchange.getExchangeId(), key);
+        // we may already have the exchange being processed so only add to timestamp if its a new exchange
+        // for example when people call the same routes recursive
+        if (oldKey == null) {
+            exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        }
         super.processExchange(exchange);
     }
 
