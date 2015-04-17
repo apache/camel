@@ -51,6 +51,11 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         return port;
     }
 
+    /**
+     * Port number.
+     * <p/>
+     * Will by default use 4567
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -59,6 +64,9 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         return ipAddress;
     }
 
+    /**
+     * Set the IP address that Spark should listen on. If not called the default address is '0.0.0.0'.
+     */
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
@@ -67,6 +75,9 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         return sparkConfiguration;
     }
 
+    /**
+     * To use the shared SparkConfiguration
+     */
     public void setSparkConfiguration(SparkConfiguration sparkConfiguration) {
         this.sparkConfiguration = sparkConfiguration;
     }
@@ -75,6 +86,9 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         return sparkBinding;
     }
 
+    /**
+     * To use a custom SparkBinding to map to/from Camel message.
+     */
     public void setSparkBinding(SparkBinding sparkBinding) {
         this.sparkBinding = sparkBinding;
     }

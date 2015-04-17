@@ -35,6 +35,12 @@ public class SparkConfiguration {
         return mapHeaders;
     }
 
+    /**
+     * If this option is enabled, then during binding from Spark to Camel Message then the headers will be mapped as well
+     * (eg added as header to the Camel Message as well). You can turn off this option to disable this.
+     * The headers can still be accessed from the org.apache.camel.component.sparkrest.SparkMessage message with the
+     * method getRequest() that returns the Spark HTTP request instance.
+     */
     public void setMapHeaders(boolean mapHeaders) {
         this.mapHeaders = mapHeaders;
     }
@@ -43,6 +49,15 @@ public class SparkConfiguration {
         return disableStreamCache;
     }
 
+    /**
+     * Determines whether or not the raw input stream from Spark HttpRequest#getContent() is cached or not
+     * (Camel will read the stream into a in light-weight memory based Stream caching) cache.
+     * By default Camel will cache the Netty input stream to support reading it multiple times to ensure Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box,
+     * and you would need manually to reset the reader index on the Spark raw stream.
+     */
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
     }
@@ -51,6 +66,9 @@ public class SparkConfiguration {
         return urlDecodeHeaders;
     }
 
+    /**
+     * If this option is enabled, then during binding from Spark to Camel Message then the header values will be URL decoded (eg %20 will be a space character.)
+     */
     public void setUrlDecodeHeaders(boolean urlDecodeHeaders) {
         this.urlDecodeHeaders = urlDecodeHeaders;
     }
@@ -59,6 +77,10 @@ public class SparkConfiguration {
         return transferException;
     }
 
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
+     * in the response as a application/x-java-serialized-object content type.
+     */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
