@@ -294,7 +294,7 @@ public class HttpProducer extends DefaultProducer {
         InputStream response = doExtractResponseBodyAsStream(is, exchange);
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(response);
+            return HttpHelper.deserializeJavaObjectFromStream(response, exchange.getContext());
         } else {
             return response;
         }
