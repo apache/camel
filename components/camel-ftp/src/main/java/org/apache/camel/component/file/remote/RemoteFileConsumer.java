@@ -85,9 +85,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     @Override
-    protected void postPollCheck() {
+    protected void postPollCheck(int polledMessages) {
         if (log.isTraceEnabled()) {
             log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+        }
+
+        // if we did not poll any messages, but are configured to disconnect then we need to do this now
+        // as there is no exchanges to be routed that otherwise will disconnect from the last UoW
+        if (polledMessages == 0) {
+            if (getEndpoint().isDisconnect()) {
+                log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                disconnect();
+            }
         }
     }
 

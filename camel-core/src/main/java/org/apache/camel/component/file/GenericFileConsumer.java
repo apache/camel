@@ -174,7 +174,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         int polledMessages = processBatch(CastUtils.cast(q));
 
-        postPollCheck();
+        postPollCheck(polledMessages);
 
         return polledMessages;
     }
@@ -284,8 +284,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     /**
      * Override if required. Perform some checks (and perhaps actions) after we have polled.
+     *
+     * @param polledMessages number of polled messages
      */
-    protected void postPollCheck() {
+    protected void postPollCheck(int polledMessages) {
         // noop
     }
 
