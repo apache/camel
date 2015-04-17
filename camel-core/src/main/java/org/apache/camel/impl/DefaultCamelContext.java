@@ -733,6 +733,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
         Processor processor = getProcessor(id);
         ProcessorDefinition def = getProcessorDefinition(id);
 
@@ -749,6 +754,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
         Route route = getRoute(routeId);
 
         if (route != null) {
@@ -764,6 +774,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagedCamelContextMBean getManagedCamelContext() {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
         try {
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(this);
             return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
