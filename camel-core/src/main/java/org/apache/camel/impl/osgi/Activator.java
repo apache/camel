@@ -64,6 +64,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,15 +77,20 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_DATAFORMAT = "META-INF/services/org/apache/camel/dataformat/";
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
+    public static final String EXTENDER_NAMESPACE = "osgi.extender";
+    public static final String CAMEL_EXTENDER = "org.apache.camel";
 
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
     private Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
+    private long bundleId;
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
-        tracker = new BundleTracker(context, Bundle.ACTIVE, this);
+        bundleId = context.getBundle().getBundleId();
+        BundleContext systemBundleContext = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).getBundleContext();
+        tracker = new BundleTracker(systemBundleContext, Bundle.ACTIVE, this);
         tracker.open();
         LOG.info("Camel activator started");
     }
@@ -96,16 +103,36 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
-        List<BaseService> r = new ArrayList<BaseService>();
-        registerComponents(bundle, r);
-        registerLanguages(bundle, r);
-        registerDataFormats(bundle, r);
-        registerTypeConverterLoader(bundle, r);
-        for (BaseService service : r) {
-            service.register();
+        if (extenderCapabilityWired(bundle)) {
+            List<BaseService> r = new ArrayList<BaseService>();
+            registerComponents(bundle, r);
+            registerLanguages(bundle, r);
+            registerDataFormats(bundle, r);
+            registerTypeConverterLoader(bundle, r);
+            for (BaseService service : r) {
+                service.register();
+            }
+            resolvers.put(bundle.getBundleId(), r);
         }
-        resolvers.put(bundle.getBundleId(), r);
+
         return bundle;
+    }
+
+    private boolean extenderCapabilityWired(Bundle bundle) {
+        BundleWiring wiring = bundle.adapt(BundleWiring.class);
+        List<BundleWire> requiredWires = wiring.getRequiredWires(EXTENDER_NAMESPACE);
+        for (BundleWire requiredWire : requiredWires) {
+            if (CAMEL_EXTENDER.equals(requiredWire.getCapability().getAttributes().get(EXTENDER_NAMESPACE))) {
+                if (this.bundleId == requiredWire.getProviderWiring().getBundle().getBundleId()) {
+                    LOG.debug("Bundle {} extender capability wired to this implementation", bundle.getBundleId());
+                    return true;
+                } else {
+                    LOG.info("Bundle {} ignored, since no extender capability is wired to this implementation", bundle.getBundleId());
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
