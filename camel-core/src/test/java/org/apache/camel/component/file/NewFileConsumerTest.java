@@ -70,7 +70,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
             return new FileConsumer(this, processor, operations) {
                 @Override
-                protected void postPollCheck() {
+                protected void postPollCheck(int polledMessages) {
                     post = true;
                 }
             };
