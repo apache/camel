@@ -120,7 +120,7 @@
     <commons-pool-version>1.6</commons-pool-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
-    <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
+    <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cxf-version>3.0.4</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>3.0.2</cxf-xjc-utils-version>
