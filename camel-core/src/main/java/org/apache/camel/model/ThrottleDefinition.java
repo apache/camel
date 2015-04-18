@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;throttle/&gt; element
@@ -112,11 +111,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     private Expression createMaxRequestsPerPeriodExpression(RouteContext routeContext) {
-        if (getExpression() != null) {
-            if (ObjectHelper.isNotEmpty(getExpression().getExpression()) || getExpression().getExpressionValue() != null) {
-                return getExpression().createExpression(routeContext);
-            } 
-        } 
+        ExpressionDefinition expr = getExpression();
+        if (expr != null) {
+            return expr.createExpression(routeContext);
+        }
         return null;
     }
     
