@@ -24,8 +24,13 @@ public interface InfinispanConstants {
     String VALUE = "CamelInfinispanValue";
     String OPERATION = "CamelInfinispanOperation";
     String PUT = "CamelInfinispanOperationPut";
+    String PUT_ALL = "CamelInfinispanOperationPutAll";
+    String PUT_IF_ABSENT = "CamelInfinispanOperationPutIfAbsent";
     String GET = "CamelInfinispanOperationGet";
+    String CONTAINS_KEY = "CamelInfinispanOperationContainsKey";
+    String CONTAINS_VALUE = "CamelInfinispanOperationContainsValue";
     String REMOVE = "CamelInfinispanOperationRemove";
+    String REPLACE = "CamelInfinispanOperationReplace";
     String CLEAR = "CamelInfinispanOperationClear";
     String RESULT = "CamelInfinispanOperationResult";
 }

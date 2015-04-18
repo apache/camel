@@ -57,6 +57,102 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Object value = currentCache().get(KEY_ONE);
         assertThat(value.toString(), is(VALUE_ONE));
     }
+    
+    @Test
+    public void putIfAbsentAlreadyExists() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        
+        template.send("direct:putifabsent", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.PUT_IF_ABSENT);
+            }
+        });
+
+        Object value = currentCache().get(KEY_ONE);
+        assertThat(value.toString(), is(VALUE_ONE));
+        assertEquals(currentCache().size(), 1);
+    }
+    
+    @Test
+    public void putIfAbsentNotExists() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        
+        template.send("direct:putifabsent", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.PUT_IF_ABSENT);
+            }
+        });
+
+        Object value = currentCache().get(KEY_TWO);
+        assertThat(value.toString(), is(VALUE_TWO));
+        assertEquals(currentCache().size(), 2);
+    }
+    
+    @Test
+    public void notContainsKeyTest() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        
+        Exchange exchange = template.request("direct:containskey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.CONTAINS_KEY);
+            }
+        });
+
+        assertThat(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), is(false));
+    }
+    
+    @Test
+    public void containsKeyTest() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        
+        Exchange exchange = template.request("direct:containskey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.CONTAINS_KEY);
+            }
+        });
+
+        assertThat(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), is(true));
+    }
+    
+    @Test
+    public void notContainsValueTest() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        
+        Exchange exchange = template.request("direct:containsvalue", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.CONTAINS_VALUE);
+            }
+        });
+
+        assertThat(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), is(false));
+    }
+    
+    @Test
+    public void containsValueTest() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        
+        Exchange exchange = template.request("direct:containsvalue", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.CONTAINS_VALUE);
+            }
+        });
+
+        assertThat(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), is(true));
+    }
 
     @Test
     public void putOperationReturnsThePreviousValue() throws Exception {
@@ -87,6 +183,23 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         assertThat(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), is(VALUE_ONE));
+    }
+    
+    @Test
+    public void replaceAValueByKey() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+
+        Exchange exchange = template.request("direct:replace", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.REPLACE);
+            }
+        });
+
+        assertThat(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), is(VALUE_ONE));
+        assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
     }
 
     @Test
@@ -174,15 +287,22 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer");
-
                 from("direct:put")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUT");
+                from("direct:putifabsent")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUTIFABSENT");
                 from("direct:get")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=GET");
                 from("direct:remove")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REMOVE");
                 from("direct:clear")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CLEAR");
+                from("direct:replace")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REPLACE");
+                from("direct:containskey")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CONTAINSKEY");
+                from("direct:containsvalue")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CONTAINSVALUE");
             }
         };
     }

@@ -56,10 +56,28 @@ public class InfinispanOperation {
                 Object result = cache.put(getKey(exchange), getValue(exchange));
                 setResult(result, exchange);
             }
+        }, PUTIFABSENT {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                Object result = cache.putIfAbsent(getKey(exchange), getValue(exchange));
+                setResult(result, exchange);
+            }
         }, GET {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.get(getKey(exchange));
+                setResult(result, exchange);
+            }
+        }, CONTAINSKEY {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                Object result = cache.containsKey(getKey(exchange));
+                setResult(result, exchange);
+            }
+        }, CONTAINSVALUE {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                Object result = cache.containsValue(getValue(exchange));
                 setResult(result, exchange);
             }
         }, REMOVE {
@@ -68,8 +86,12 @@ public class InfinispanOperation {
                 Object result = cache.remove(getKey(exchange));
                 setResult(result, exchange);
             }
-
-
+        }, REPLACE {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                Object result = cache.replace(getKey(exchange), getValue(exchange));
+                setResult(result, exchange);
+            }
         }, CLEAR {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
