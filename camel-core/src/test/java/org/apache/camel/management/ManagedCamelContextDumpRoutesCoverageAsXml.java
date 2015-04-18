@@ -19,8 +19,9 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.w3c.dom.Document;
+
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
@@ -61,13 +62,13 @@ public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                        .to("log:foo").id("a")
-                        .delay(100).id("b")
-                        .to("mock:foo").id("c");
+                        .to("log:foo")
+                        .delay(100)
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                        .to("log:bar").id("d")
-                        .to("mock:bar").id("e");
+                        .to("log:bar")
+                        .to("mock:bar");
             }
         };
     }
