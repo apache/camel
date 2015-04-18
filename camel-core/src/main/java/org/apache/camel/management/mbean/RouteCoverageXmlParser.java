@@ -59,22 +59,19 @@ public final class RouteCoverageXmlParser {
      * @throws Exception is thrown if error parsing
      */
     public static Document parseXml(final CamelContext camelContext, final InputStream is) throws Exception {
-        final Document doc;
-        SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
-        parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-        doc = docBuilder.newDocument();
+        final Document doc = docBuilder.newDocument();
 
         final Stack<Element> elementStack = new Stack<Element>();
         final StringBuilder textBuffer = new StringBuilder();
         final DefaultHandler handler = new DefaultHandler() {
-            private Locator locator;
 
             @Override
             public void setDocumentLocator(final Locator locator) {
-                this.locator = locator; // Save the locator, so that it can be used later for line tracking when traversing nodes.
+                // noop
             }
 
             @Override
@@ -125,7 +122,7 @@ public final class RouteCoverageXmlParser {
                 addTextIfNeeded();
                 final Element closedEl = elementStack.pop();
                 if (elementStack.isEmpty()) {
-                    // Is this the root element?
+                    // is this the root element?
                     doc.appendChild(closedEl);
                 } else {
                     final Element parentEl = elementStack.peek();
@@ -138,7 +135,9 @@ public final class RouteCoverageXmlParser {
                 textBuffer.append(ch, start, length);
             }
 
-            // Outputs text accumulated under the current node
+            /**
+             * outputs text accumulated under the current node
+             */
             private void addTextIfNeeded() {
                 if (textBuffer.length() > 0) {
                     final Element el = elementStack.peek();
