@@ -39,7 +39,7 @@ public class FilterTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     @Override
-    public boolean isDumpRouteStats() {
+    public boolean isDumpRouteCoverage() {
         return true;
     }
 

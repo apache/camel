@@ -102,14 +102,14 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Whether to dump route utilization stats at the end of the test.
+     * Whether to dump route coverage stats at the end of the test.
      * <p/>
      * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
      * have been in use and which have not. Similar concepts as a code coverage report.
      *
-     * @return <tt>true</tt> to write route stats in an xml file in the <tt>target</tt> directory after the test has finished.
+     * @return <tt>true</tt> to write route coverage status in an xml file in the <tt>target/camel-route-coverage</tt> directory after the test has finished.
      */
-    public boolean isDumpRouteStats() {
+    public boolean isDumpRouteCoverage() {
         return false;
     }
 
@@ -257,8 +257,8 @@ public abstract class CamelTestSupport extends TestSupport {
 
     private void doSetUp() throws Exception {
         log.debug("setUp test");
-        // jmx is enabled if we have configured to use it, or if dump route stats is enabled (it requires JMX)
-        boolean jmx = useJmx() || isDumpRouteStats();
+        // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX)
+        boolean jmx = useJmx() || isDumpRouteCoverage();
         if (jmx) {
             enableJMX();
         } else {
@@ -362,21 +362,21 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
 
         // if we should dump route stats, then write that to a file
-        if (isDumpRouteStats()) {
+        if (isDumpRouteCoverage()) {
             String className = this.getClass().getSimpleName();
-            String dir = "target/camel-route-stats";
+            String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
 
             ManagedCamelContextMBean managedCamelContext = context.getManagedCamelContext();
             if (managedCamelContext == null) {
-                log.warn("Cannot dump route stats to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
+                log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
-                String xml = managedCamelContext.dumpRoutesStatsAsXml(false, true);
+                String xml = managedCamelContext.dumpRoutesCoverageAsXml();
                 File file = new File(dir);
                 // ensure dir exists
                 file.mkdirs();
                 file = new File(dir, name);
-                log.info("Dumping route stats to file: " + file);
+                log.info("Dumping route coverage to file: " + file);
                 InputStream is = new ByteArrayInputStream(xml.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);

@@ -36,14 +36,22 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * An XML parser that uses SAX to enrich route stats in the route dump.
+ * <p/>
+ * The coverage details:
+ * <ul>
+ *     <li>exchangesTotal - Total number of exchanges</li>
+ *     <li>totalProcessingTime - Total processing time in millis</li>
+ * </ul>
+ * Is included as attributes on the route nodes.
  */
 public final class RouteCoverageXmlParser {
 
     /**
      * Parses the XML.
      *
-     * @param is the XML content as an input stream
-     * @return the DOM model
+     * @param camelContext the CamelContext
+     * @param is           the XML content as an input stream
+     * @return the DOM model of the routes with coverage information stored as attributes
      * @throws Exception is thrown if error parsing
      */
     public static Document parseXml(final CamelContext camelContext, final InputStream is) throws Exception {
@@ -86,6 +94,8 @@ public final class RouteCoverageXmlParser {
                                 long totalTime = route.getTotalProcessingTime();
                                 el.setAttribute("totalProcessingTime", "" + totalTime);
                             }
+                        } else if ("from".equals(qName)) {
+                            // TODO: include the stats from the route mbean as that would be the same
                         } else {
                             ManagedProcessorMBean processor = camelContext.getManagedProcessor(id, ManagedProcessorMBean.class);
                             if (processor != null) {
