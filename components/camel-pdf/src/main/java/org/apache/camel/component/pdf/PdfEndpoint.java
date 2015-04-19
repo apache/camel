@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "pdf", title = "Pdf", syntax = "pdf:operation", producerOnly = true, label = "pdf")
+@UriEndpoint(scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "pdf,printing")
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

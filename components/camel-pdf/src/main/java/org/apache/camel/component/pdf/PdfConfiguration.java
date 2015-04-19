@@ -35,7 +35,7 @@ import static org.apache.camel.component.pdf.PdfPageSizeConstant.*;
  */
 @UriParams
 public class PdfConfiguration {
-    private static final Map<String, PDRectangle> PAGE_MAP = new HashMap<>();
+    private static final Map<String, PDRectangle> PAGE_MAP = new HashMap<String, PDRectangle>();
 
     static {
         PAGE_MAP.put(PAGE_SIZE_A0, PDPage.PAGE_SIZE_A0);
