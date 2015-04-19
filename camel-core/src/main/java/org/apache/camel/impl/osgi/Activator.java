@@ -89,7 +89,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
         bundleId = context.getBundle().getBundleId();
-        BundleContext systemBundleContext = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).getBundleContext();
+        BundleContext systemBundleContext = context.getBundle(0).getBundleContext();
         tracker = new BundleTracker(systemBundleContext, Bundle.ACTIVE, this);
         tracker.open();
         LOG.info("Camel activator started");
@@ -120,6 +120,9 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     private boolean extenderCapabilityWired(Bundle bundle) {
         BundleWiring wiring = bundle.adapt(BundleWiring.class);
+        if (wiring == null) {
+            return true;
+        }
         List<BundleWire> requiredWires = wiring.getRequiredWires(EXTENDER_NAMESPACE);
         for (BundleWire requiredWire : requiredWires) {
             if (CAMEL_EXTENDER.equals(requiredWire.getCapability().getAttributes().get(EXTENDER_NAMESPACE))) {
