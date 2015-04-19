@@ -508,8 +508,8 @@
     <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
     <xpp3-version>1.1.4c</xpp3-version>
     <xsdlib-version>2013.2</xsdlib-version>
-    <xstream-bundle-version>1.4.7_1</xstream-bundle-version>
-    <xstream-version>1.4.7</xstream-version>
+    <xstream-bundle-version>1.4.8_1</xstream-bundle-version>
+    <xstream-version>1.4.8</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zxing-version>3.0.0</zxing-version>
