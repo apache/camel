@@ -27,6 +27,14 @@
   </parent>
 
   <artifactId>camel-pdf</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: PDF</name>
+  <description>Camel PDF support</description>
+
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.component.pdf.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=pdf</camel.osgi.export.service>
+  </properties>
 
   <dependencies>
     <dependency>
