@@ -225,7 +225,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
             @Override
             public String toString() {
-                return "Done " + this;
+                return "Done " + TransactionErrorHandler.this.toString();
             }
         });
         if (!sync) {
