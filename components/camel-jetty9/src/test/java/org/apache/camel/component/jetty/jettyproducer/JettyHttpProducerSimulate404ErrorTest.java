@@ -41,7 +41,7 @@ public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
         } catch (Exception e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(404, cause.getStatusCode());
-            assertEquals("http://0.0.0.0:" + getPort() + "/bar", cause.getUri());
+            assertEquals("http://127.0.0.1:" + getPort() + "/bar", cause.getUri());
             assertEquals("Page not found", cause.getResponseBody());
             assertNotNull(cause.getResponseHeaders());
         }
