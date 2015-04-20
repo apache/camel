@@ -140,7 +140,7 @@ public class OpenShiftProducer extends DefaultProducer {
                     sb.append("\n        {");
                     sb.append("\n         \"id\": \"" + gear.getId() + "\",");
                     sb.append("\n         \"sshUrl\": \"" + gear.getSshUrl() + "\",");
-                    sb.append("\n         \"state\": \"" + gear.getState().name().toLowerCase(Locale.ENGLISH) + "\"");
+                    sb.append("\n         \"state\": \"" + gear.getState().getState().toLowerCase(Locale.ENGLISH) + "\"");
                     sb.append("\n        }");
                 }
             }
