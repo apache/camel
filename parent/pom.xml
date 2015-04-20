@@ -218,7 +218,7 @@
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
-    <ical4j-version>1.0.5.2</ical4j-version>
+    <ical4j-version>1.0.6</ical4j-version>
     <infinispan-version>7.1.1.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
