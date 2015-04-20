@@ -143,7 +143,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         // configure component options
         RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("restle"))) {
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
             // configure additional options on spark configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
