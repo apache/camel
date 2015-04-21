@@ -22,14 +22,20 @@ public interface InfinispanConstants {
     String CACHE_NAME = "CamelInfinispanCacheName";
     String KEY = "CamelInfinispanKey";
     String VALUE = "CamelInfinispanValue";
+    String MAP = "CamelInfinispanMap";    
     String OPERATION = "CamelInfinispanOperation";
     String PUT = "CamelInfinispanOperationPut";
     String PUT_IF_ABSENT = "CamelInfinispanOperationPutIfAbsent";
     String GET = "CamelInfinispanOperationGet";
     String CONTAINS_KEY = "CamelInfinispanOperationContainsKey";
     String CONTAINS_VALUE = "CamelInfinispanOperationContainsValue";
+    String PUT_ALL = "CamelInfinispanOperationPutAll";
     String REMOVE = "CamelInfinispanOperationRemove";
     String REPLACE = "CamelInfinispanOperationReplace";
     String CLEAR = "CamelInfinispanOperationClear";
     String RESULT = "CamelInfinispanOperationResult";
+    String LIFESPAN_TIME = "CamelInfinispanLifespanTime";
+    String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
+    String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";
+    String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
 }
