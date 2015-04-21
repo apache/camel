@@ -805,6 +805,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      *     a remote file system via a mount/share unless that file system supports distributed file locks.</li>
      *     <li>rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.</li>
      * </ul>
+     * Notice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing
+     * for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file,
+     * but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks, and so on.
      */
     public void setReadLock(String readLock) {
         this.readLock = readLock;
