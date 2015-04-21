@@ -814,13 +814,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     void removeRouteCollection(Collection<Route> routes) {
-        synchronized (routes) {
+        synchronized (this.routes) {
             this.routes.removeAll(routes);
         }
     }
 
     void addRouteCollection(Collection<Route> routes) throws Exception {
-        synchronized (routes) {
+        synchronized (this.routes) {
             this.routes.addAll(routes);
         }
     }
