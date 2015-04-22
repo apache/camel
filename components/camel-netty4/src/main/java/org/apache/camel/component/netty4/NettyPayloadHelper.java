@@ -73,6 +73,8 @@ public final class NettyPayloadHelper {
             }
             // setup the sender address here for sending the response message back
             exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
+            // setup the remote address to the message header at the same time
+            exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
             // normal transfer using the body only
             exchange.getIn().setBody(payload);
