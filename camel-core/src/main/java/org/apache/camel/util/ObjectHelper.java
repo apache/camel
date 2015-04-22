@@ -1707,6 +1707,13 @@ public final class ObjectHelper {
         if (exception == null) {
             return null;
         }
+        
+        //check the suppressed exception first
+        for (Throwable throwable: exception.getSuppressed()) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
+            }
+        }
 
         // walk the hierarchy and look for it
         for (final Throwable throwable : createExceptionIterable(exception)) {
