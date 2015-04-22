@@ -75,6 +75,10 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
             consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
         }
 
+        if (matchOnUriPrefix && (requestPath.startsWith(consumerPath) || consumerPath.isEmpty())) {
+            return true;
+        }
+
         // split using single char / is optimized in the jdk
         String[] requestPaths = requestPath.split("/");
         String[] consumerPaths = consumerPath.split("/");
