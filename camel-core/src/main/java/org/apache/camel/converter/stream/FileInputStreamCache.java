@@ -150,7 +150,6 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
      * at the end of the route.
      * 
      * @see CachedOutputStream
-     * 
      */
     static class FileInputStreamCloser {
         
@@ -161,7 +160,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
          * <p>
          * Must be synchronized, because can be accessed by several threads. 
          */
-        synchronized void  add(FileInputStreamCache fileInputStreamCache) {
+        synchronized void add(FileInputStreamCache fileInputStreamCache) {
             if (fileInputStreamCaches == null) {
                 fileInputStreamCaches = new ArrayList<FileInputStreamCache>(3);
             }
