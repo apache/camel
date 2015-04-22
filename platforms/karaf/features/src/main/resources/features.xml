@@ -196,8 +196,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.box/boxjavalibv2/${boxjavalibv2.version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.htmlunit/htmlunit/${htmlunit.version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.htmlunit/htmlunit-core-js/${htmlunit.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.htmlunit/${htmlunit-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.sourceforge.cssparser/cssparser/0.9.14</bundle>
     <bundle dependency='true'>wrap:mvn:org.w3c.css/sac/1.3</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
@@ -904,9 +903,7 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <!-- TODO need to replace it with org.apache.servicemix.bundles.httpunit -->
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.htmlunit/htmlunit/${htmlunit.version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.htmlunit/htmlunit-core-js/${htmlunit.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.htmlunit/${htmlunit-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.sourceforge.cssparser/cssparser/0.9.14</bundle>
     <bundle dependency='true'>wrap:mvn:org.w3c.css/sac/1.3</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
