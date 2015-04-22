@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http.handlers;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -176,18 +177,26 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         }
 
         // then see if we got a direct match
-        Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
-        while (it.hasNext()) {
-            Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+        List<HttpServerChannelHandler> directMatches = new LinkedList<HttpServerChannelHandler>();
+        for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : candidates) {
             if (entry.getKey().matchesRest(path, false)) {
-                answer = entry.getValue();
-                break;
+                directMatches.add(entry.getValue());
+            }
+        }
+        if (directMatches.size() == 1) { // Single match found, just return it without any further analysis.
+            answer = directMatches.get(0);
+        } else if (directMatches.size() > 1) { // possible if the prefix match occurred
+            List<HttpServerChannelHandler> directMatchesWithOptions = handlersWithExplicitOptionsMethod(directMatches);
+            if (!directMatchesWithOptions.isEmpty()) { // prefer options matches
+                answer = handlerWithTheLongestMatchingPrefix(directMatchesWithOptions);
+            } else {
+                answer = handlerWithTheLongestMatchingPrefix(directMatches);
             }
         }
 
         // then match by non wildcard path
         if (answer == null) {
-            it = candidates.iterator();
+            Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
             while (it.hasNext()) {
                 Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
                 if (!entry.getKey().matchesRest(path, true)) {
@@ -232,6 +241,29 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         }
 
         return UnsafeUriCharactersEncoder.encodeHttpURI(path);
+    }
+
+    private static List<HttpServerChannelHandler> handlersWithExplicitOptionsMethod(Iterable<HttpServerChannelHandler> handlers) {
+        List<HttpServerChannelHandler> handlersWithOptions = new LinkedList<HttpServerChannelHandler>();
+        for (HttpServerChannelHandler handler : handlers) {
+            String consumerMethod = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
+            if (consumerMethod != null && consumerMethod.contains("OPTIONS")) {
+                handlersWithOptions.add(handler);
+            }
+        }
+        return handlersWithOptions;
+    }
+
+    private static HttpServerChannelHandler handlerWithTheLongestMatchingPrefix(Iterable<HttpServerChannelHandler> handlers) {
+        HttpServerChannelHandler handlerWithTheLongestPrefix = handlers.iterator().next();
+        for (HttpServerChannelHandler handler : handlers) {
+            String consumerPath = handler.getConsumer().getConfiguration().getPath();
+            String longestPath = handlerWithTheLongestPrefix.getConsumer().getConfiguration().getPath();
+            if (consumerPath.length() > longestPath.length()) {
+                handlerWithTheLongestPrefix = handler;
+            }
+        }
+        return handlerWithTheLongestPrefix;
     }
 
 }
