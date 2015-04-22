@@ -28,6 +28,8 @@ import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ModelChannel;
+import org.apache.camel.model.OnCompletionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -155,7 +157,25 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output, errorHandler);
+        if (!isContextScoped()) {
+            // only stop services if not context scoped (as context scoped is reused by others)
+            ServiceHelper.stopServices(output, errorHandler);
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(output, errorHandler);
+    }
+
+    private boolean isContextScoped() {
+        if (definition instanceof OnExceptionDefinition) {
+            return !((OnExceptionDefinition) definition).isRouteScoped();
+        } else if (definition instanceof OnCompletionDefinition) {
+            return !((OnCompletionDefinition) definition).isRouteScoped();
+        }
+
+        return false;
     }
 
     @SuppressWarnings("deprecation")
