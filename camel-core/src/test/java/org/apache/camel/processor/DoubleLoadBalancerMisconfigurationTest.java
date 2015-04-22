@@ -41,7 +41,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer[[]]. Cannot set it to: RoundRobinLoadBalancer", e.getMessage());
+            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RoundRobinLoadBalancer", e.getMessage());
         }
     }
 
@@ -57,7 +57,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer[[]]. Cannot set it to: RandomLoadBalancer", e.getMessage());
+            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RandomLoadBalancer", e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: FailoverLoadBalancer[[]]", e.getMessage());
+            assertEquals("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: FailoverLoadBalancer", e.getMessage());
         }
     }
 }

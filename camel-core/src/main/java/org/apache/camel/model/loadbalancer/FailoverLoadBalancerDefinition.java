@@ -23,12 +23,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Failover load balancer
@@ -42,6 +44,8 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
+    @XmlTransient
+    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
@@ -56,18 +60,25 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         FailOverLoadBalancer answer;
 
-        if (!exceptions.isEmpty()) {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!exceptionTypes.isEmpty()) {
+            classes.addAll(exceptionTypes);
+        } else if (!exceptions.isEmpty()) {
             for (String name : exceptions) {
                 Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
                 if (type == null) {
                     throw new IllegalArgumentException("Cannot find class: " + name + " in the classpath");
                 }
+                if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
+                    throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
+                }
                 classes.add(type);
             }
-            answer = new FailOverLoadBalancer(classes);
-        } else {
+        }
+        if (classes.isEmpty()) {
             answer = new FailOverLoadBalancer();
+        } else {
+            answer = new FailOverLoadBalancer(classes);
         }
 
         if (getMaximumFailoverAttempts() != null) {
@@ -90,6 +101,18 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
      */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
+    }
+
+    public List<Class<?>> getExceptionTypes() {
+        return exceptionTypes;
+    }
+
+    /**
+     * A list of specific exceptions to monitor.
+     * If no exceptions is configured then all exceptions is monitored
+     */
+    public void setExceptionTypes(List<Class<?>> exceptionTypes) {
+        this.exceptionTypes = exceptionTypes;
     }
 
     public Boolean getRoundRobin() {
