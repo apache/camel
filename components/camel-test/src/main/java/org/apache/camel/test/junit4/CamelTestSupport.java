@@ -82,11 +82,12 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
+    protected boolean dumpRouteStats;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
-    protected boolean dumpRouteStats;
+
 
     /**
      * Use the RouteBuilder or not
