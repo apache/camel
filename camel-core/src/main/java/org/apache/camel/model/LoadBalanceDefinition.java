@@ -38,16 +38,7 @@ import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
-import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
-import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -204,10 +195,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, Class<?>... exceptions) {
-        FailOverLoadBalancer failover = new FailOverLoadBalancer(Arrays.asList(exceptions));
-        failover.setMaximumFailoverAttempts(maximumFailoverAttempts);
-        failover.setRoundRobin(roundRobin);
-        setLoadBalancerType(new LoadBalancerDefinition(failover));
+        FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
+        def.setExceptionTypes(Arrays.asList(exceptions));
+        def.setMaximumFailoverAttempts(maximumFailoverAttempts);
+        def.setRoundRobin(roundRobin);
+        setLoadBalancerType(def);
         this.setInheritErrorHandler(inheritErrorHandler);
         return this;
     }
@@ -232,11 +224,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition circuitBreaker(int threshold, long halfOpenAfter, Class<?>... exceptions) {
-        CircuitBreakerLoadBalancer breakerLoadBalancer = new CircuitBreakerLoadBalancer(Arrays.asList(exceptions));
-        breakerLoadBalancer.setThreshold(threshold);
-        breakerLoadBalancer.setHalfOpenAfter(halfOpenAfter);
-
-        setLoadBalancerType(new LoadBalancerDefinition(breakerLoadBalancer));
+        CircuitBreakerLoadBalancerDefinition def = new CircuitBreakerLoadBalancerDefinition();
+        def.setExceptionTypes(Arrays.asList(exceptions));
+        def.setThreshold(threshold);
+        def.setHalfOpenAfter(halfOpenAfter);
+        setLoadBalancerType(def);
         return this;
     }
     
@@ -249,20 +241,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
-        WeightedLoadBalancer weighted;
-        List<Integer> distributionRatioList = new ArrayList<Integer>();
-        
-        String[] ratios = distributionRatio.split(distributionRatioDelimiter);
-        for (String ratio : ratios) {
-            distributionRatioList.add(new Integer(ratio.trim()));
-        }
-        
-        if (!roundRobin) {
-            weighted = new WeightedRandomLoadBalancer(distributionRatioList);
-        } else {
-            weighted = new WeightedRoundRobinLoadBalancer(distributionRatioList);
-        }
-        setLoadBalancerType(new LoadBalancerDefinition(weighted));
+        WeightedLoadBalancerDefinition def = new WeightedLoadBalancerDefinition();
+        def.setRoundRobin(roundRobin);
+        def.setDistributionRatio(distributionRatio);
+        def.setDistributionRatioDelimiter(distributionRatioDelimiter);
+        setLoadBalancerType(def);
         return this;
     }
     
@@ -272,7 +255,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition roundRobin() {
-        setLoadBalancerType(new LoadBalancerDefinition(new RoundRobinLoadBalancer()));
+        setLoadBalancerType(new RoundRobinLoadBalancerDefinition());
         return this;
     }
 
@@ -282,7 +265,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition random() {
-        setLoadBalancerType(new LoadBalancerDefinition(new RandomLoadBalancer()));
+        setLoadBalancerType(new RandomLoadBalancerDefinition());
         return this;
     }
 
@@ -306,7 +289,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return  the builder
      */
     public LoadBalanceDefinition sticky(Expression correlationExpression) {
-        setLoadBalancerType(new LoadBalancerDefinition(new StickyLoadBalancer(correlationExpression)));
+        StickyLoadBalancerDefinition def = new StickyLoadBalancerDefinition();
+        def.setCorrelationExpression(new ExpressionSubElementDefinition(correlationExpression));
+        setLoadBalancerType(def);
         return this;
     }
 
@@ -316,7 +301,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition topic() {
-        setLoadBalancerType(new LoadBalancerDefinition(new TopicLoadBalancer()));
+        setLoadBalancerType(new TopicLoadBalancerDefinition());
         return this;
     }
 

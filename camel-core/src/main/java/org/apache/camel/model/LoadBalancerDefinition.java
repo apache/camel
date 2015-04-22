@@ -16,15 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -37,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalancerDefinition extends IdentifiedType implements LoadBalancer {
+public class LoadBalancerDefinition extends IdentifiedType {
     @XmlTransient
     private LoadBalancer loadBalancer;
     @XmlTransient
@@ -106,41 +102,6 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
             return (LoadBalancer) ObjectHelper.newInstance(type);
         }
         return null;
-    }
-
-
-    public void addProcessor(Processor processor) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        loadBalancer.addProcessor(processor);
-    }
-
-    public List<Processor> getProcessors() {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        return loadBalancer.getProcessors();
-    }
-
-    public void removeProcessor(Processor processor) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        loadBalancer.removeProcessor(processor);
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
-        loadBalancer.process(exchange);
-    }
-
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
-        return loadBalancer.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // only handle the async case
-                if (doneSync) {
-                    return;
-                } else {
-                    callback.done(false);
-                }
-            }
-        });
     }
 
     @Override
