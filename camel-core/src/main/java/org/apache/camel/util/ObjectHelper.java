@@ -1709,7 +1709,7 @@ public final class ObjectHelper {
         }
         
         //check the suppressed exception first
-        for (Throwable throwable: exception.getSuppressed()) {
+        for (Throwable throwable : exception.getSuppressed()) {
             if (type.isInstance(throwable)) {
                 return type.cast(throwable);
             }
