@@ -50,20 +50,6 @@ public class LoadBalancerDefinition extends IdentifiedType {
         this.loadBalancerTypeName = loadBalancerTypeName;
     }
 
-    public static LoadBalancer getLoadBalancer(RouteContext routeContext, LoadBalancerDefinition type, String ref) {
-        if (type == null) {
-            ObjectHelper.notNull(ref, "ref or loadBalancer");
-            LoadBalancer loadBalancer = routeContext.mandatoryLookup(ref, LoadBalancer.class);
-            if (loadBalancer instanceof LoadBalancerDefinition) {
-                type = (LoadBalancerDefinition) loadBalancer;
-            } else {
-                return loadBalancer;
-            }
-        }
-        return type.getLoadBalancer(routeContext);
-    }
-
-
     /**
      * Sets a named property on the data format instance using introspection
      */
@@ -82,26 +68,30 @@ public class LoadBalancerDefinition extends IdentifiedType {
     }
 
     public LoadBalancer getLoadBalancer(RouteContext routeContext) {
-        if (loadBalancer == null) {
-            loadBalancer = createLoadBalancer(routeContext);
-            ObjectHelper.notNull(loadBalancer, "loadBalancer");
-            configureLoadBalancer(loadBalancer);
-        }
         return loadBalancer;
     }
 
+    public void setLoadBalancer(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
+    }
+
     /**
-     * Factory method to create the load balancer instance
+     * Factory method to create the load balancer from the loadBalancerTypeName
      */
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
+        ObjectHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
+
+        LoadBalancer answer = null;
         if (loadBalancerTypeName != null) {
-            Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName);
+            Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName, LoadBalancer.class);
             if (type == null) {
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }
-            return (LoadBalancer) ObjectHelper.newInstance(type);
+            answer = (LoadBalancer) routeContext.getCamelContext().getInjector().newInstance(type);
+            configureLoadBalancer(answer);
         }
-        return null;
+
+        return answer;
     }
 
     @Override

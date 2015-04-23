@@ -18,11 +18,9 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
@@ -50,9 +48,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {
-    @XmlAttribute
-    @Deprecated
-    private String ref;
     @XmlElements({
             @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
@@ -88,21 +83,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return true;
     }
 
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * To use a custom load balancer.
-     * This option is deprecated, use the custom load balancer type instead.
-     *
-     * @deprecated use custom load balancer
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
     public LoadBalancerDefinition getLoadBalancerType() {
         return loadBalancerType;
     }
@@ -117,30 +97,26 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         loadBalancerType = loadbalancer;
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext,
-        Collection<ProcessorDefinition<?>> outputs) throws Exception {
-
-        LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
-        for (ProcessorDefinition<?> processorType : outputs) {
-            Processor processor = createProcessor(routeContext, processorType);
-            loadBalancer.addProcessor(processor);
-        }
-        return loadBalancer;
-    }
-    
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
-        for (ProcessorDefinition<?> processorType : getOutputs()) {
-            // output must not be another load balancer
-            // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
-            // on Windows boxes or with IBM JDKs etc.
-            if (LoadBalanceDefinition.class.isInstance(processorType)) {
-                throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
+        // the load balancer is stateful so we should only create it once in case its used from a context scoped error handler
+
+        LoadBalancer loadBalancer = loadBalancerType.getLoadBalancer(routeContext);
+        if (loadBalancer == null) {
+            // then create it and reuse it
+            loadBalancer = loadBalancerType.createLoadBalancer(routeContext);
+            loadBalancerType.setLoadBalancer(loadBalancer);
+            for (ProcessorDefinition<?> processorType : getOutputs()) {
+                // output must not be another load balancer
+                // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
+                // on Windows boxes or with IBM JDKs etc.
+                if (LoadBalanceDefinition.class.isInstance(processorType)) {
+                    throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
+                }
+                Processor processor = createProcessor(routeContext, processorType);
+                processor = wrapChannel(routeContext, processor, processorType);
+                loadBalancer.addProcessor(processor);
             }
-            Processor processor = createProcessor(routeContext, processorType);
-            processor = wrapChannel(routeContext, processor, processorType);
-            loadBalancer.addProcessor(processor);
         }
         return loadBalancer;
     }
@@ -155,7 +131,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
-        setLoadBalancerType(new LoadBalancerDefinition(loadBalancer));
+        CustomLoadBalancerDefinition def = new CustomLoadBalancerDefinition();
+        def.setLoadBalancer(loadBalancer);
+        setLoadBalancerType(def);
         return this;
     }
     
@@ -318,10 +296,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
 
     @Override
     public String toString() {
-        if (loadBalancerType != null) {
-            return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
-        } else {
-            return "LoadBalanceType[ref:" + ref + ", " + getOutputs() + "]";
-        }
+        return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
     }
 }
