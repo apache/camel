@@ -64,7 +64,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         if (!encodedUri.equals(uri)) {
             // uri supplied is not really valid
-            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", uri);
+            // we just don't want to log the password setting here
+            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", URISupport.sanitizeUri(uri));
         }
         return encodedUri;
     }
