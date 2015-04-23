@@ -63,6 +63,12 @@ public class DockerConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
+    
+    @UriParam
+    private Boolean loggingFilterEnabled;
+    
+    @UriParam
+    private Boolean followRedirectFilterEnabled;
 
     private Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -185,6 +191,22 @@ public class DockerConfiguration implements Cloneable {
      */
     public void setMaxPerRouteConnections(Integer maxPerRouteConnections) {
         this.maxPerRouteConnections = maxPerRouteConnections;
+    }
+
+    public Boolean isLoggingFilterEnabled() {
+        return loggingFilterEnabled;
+    }
+
+    public void setLoggingFilter(Boolean loggingFilterEnabled) {
+        this.loggingFilterEnabled = loggingFilterEnabled;
+    }
+
+    public Boolean isFollowRedirectFilterEnabled() {
+        return followRedirectFilterEnabled;
+    }
+
+    public void setFollowRedirectFilter(Boolean followRedirectFilterEnabled) {
+        this.followRedirectFilterEnabled = followRedirectFilterEnabled;
     }
 
     public Map<String, Object> getParameters() {
