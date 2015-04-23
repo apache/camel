@@ -39,6 +39,14 @@
             <to uri="responseProcessor"/>
         </route>
         <route>
+            <from uri="spring-ws:uripath:/stockquote3/service?endpointMapping=#endpointMapping"/>
+            <to uri="responseProcessor"/>
+        </route>
+        <route>
+            <from uri="spring-ws:uripath:/stockquote4/service*?endpointMapping=#endpointMapping"/>
+            <to uri="responseProcessor"/>
+        </route>
+        <route>
             <from uri="spring-ws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
             <to uri="responseProcessor"/>
         </route>
