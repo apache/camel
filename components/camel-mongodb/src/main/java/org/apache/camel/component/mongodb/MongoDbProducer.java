@@ -331,9 +331,9 @@ public class MongoDbProducer extends DefaultProducer {
             }
 
             Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.findAll);
-            if(MongoDbOutputType.DBCursor.equals(endpoint.getOutputType())){
+            if (MongoDbOutputType.DBCursor.equals(endpoint.getOutputType())) {
                 resultMessage.setBody(ret.iterator());
-            }else{
+            } else {
                 resultMessage.setBody(ret.toArray());
                 resultMessage.setHeader(MongoDbConstants.RESULT_TOTAL_SIZE, ret.count());
                 resultMessage.setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ret.size());

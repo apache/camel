@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
 
@@ -44,7 +44,7 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             Object result = template.requestBodyAndHeaders("direct:findAllDBCursor", (Object) null, headers);
             assertTrue("Result is not of type DBCursor", result instanceof DBCursor);
 
-            DBCursor resultCursor = ((DBCursor) result);
+            DBCursor resultCursor = (DBCursor) result;
             // Ensure that all returned documents contain all fields
             while (resultCursor.hasNext()) {
                 DBObject dbObject = resultCursor.next();
@@ -55,7 +55,6 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
 
             numToSkip = numToSkip + limit;
         }
-
     }
 
     @Test

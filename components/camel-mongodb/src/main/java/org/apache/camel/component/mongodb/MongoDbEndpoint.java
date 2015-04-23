@@ -147,15 +147,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Check if outputType is compatible with operation. DbCursor and DBObjectList applies to findAll. DBObject applies to others.
      */
-    private void validateOutputType(){
-        if(!ObjectHelper.isEmpty(outputType)){
-            if(MongoDbOutputType.DBObjectList.equals(outputType) && !(MongoDbOperation.findAll.equals(operation)) ){
+    private void validateOutputType() {
+        if (!ObjectHelper.isEmpty(outputType)) {
+            if (MongoDbOutputType.DBObjectList.equals(outputType) && !(MongoDbOperation.findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType DBObjectList is only compatible with operation findAll");
             }
-            if(MongoDbOutputType.DBCursor.equals(outputType) && !(MongoDbOperation.findAll.equals(operation)) ){
+            if (MongoDbOutputType.DBCursor.equals(outputType) && !(MongoDbOperation.findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType DBCursor is only compatible with operation findAll");
             }
-            if(MongoDbOutputType.DBObject.equals(outputType) && (MongoDbOperation.findAll.equals(operation)) ){
+            if (MongoDbOutputType.DBObject.equals(outputType) && (MongoDbOperation.findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType DBObject is not compatible with operation findAll");
             }
         }
@@ -323,7 +323,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the name of the MongoDB collection to bind to this endpoint
-     * 
+     *
      * @param collection collection name
      */
     public void setCollection(String collection) {
@@ -347,8 +347,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the operation this endpoint will execute against MongoDB. For possible values, see {@link MongoDbOperation}.
+     *
      * @param operation name of the operation as per catalogued values
-     * 
      * @throws CamelMongoDbException
      */
     public void setOperation(String operation) throws CamelMongoDbException {
