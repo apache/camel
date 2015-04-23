@@ -46,6 +46,9 @@
       org.apache.hadoop.hdfs.protocol.proto,
       org.apache.hadoop.hdfs.protocol.datatransfer
     </camel.osgi.import.additional>
+    <camel.osgi.activator>
+      org.apache.camel.component.hdfs2.HdfsActivator
+    </camel.osgi.activator>
   </properties>
 
   <dependencies>
@@ -126,6 +129,13 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
 
   </dependencies>
