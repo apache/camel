@@ -26,13 +26,13 @@ import org.dozer.util.MappingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadContextClassLoader implements DozerClassLoader {
+public class DozerThreadContextClassLoader implements DozerClassLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ThreadContextClassLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DozerThreadContextClassLoader.class);
     
-    private DozerClassLoader delegate;
+    private final DozerClassLoader delegate;
 
-    public ThreadContextClassLoader(DozerClassLoader delegate) {
+    public DozerThreadContextClassLoader(DozerClassLoader delegate) {
         this.delegate = delegate;
     }
     

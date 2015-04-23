@@ -105,9 +105,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapperConfiguration configuration) {
         GlobalSettings settings = GlobalSettings.getInstance();
         try {
-            log.info("Configuring GlobalSettings to use Camel classloader: {}", ThreadContextClassLoader.class.getName());
+            log.info("Configuring GlobalSettings to use Camel classloader: {}", DozerThreadContextClassLoader.class.getName());
             Field field = settings.getClass().getDeclaredField("classLoaderBeanName");
-            ReflectionHelper.setField(field, settings, ThreadContextClassLoader.class.getName());
+            ReflectionHelper.setField(field, settings, DozerThreadContextClassLoader.class.getName());
         } catch (Exception e) {
             throw new IllegalStateException("Cannot configure Dozer GlobalSettings to use CamelToDozerClassResolverAdapter as classloader due " + e.getMessage(), e);
         }
@@ -366,8 +366,8 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
         
         // if the classloader we're replacing is not a ThreadContextClassLoader, pass it on as delegate target
         // otherwise, don't do anything as we have
-        if (!(oldCl instanceof ThreadContextClassLoader)) {
-            ThreadContextClassLoader newCl = new ThreadContextClassLoader(oldCl);
+        if (!(oldCl instanceof DozerThreadContextClassLoader)) {
+            DozerThreadContextClassLoader newCl = new DozerThreadContextClassLoader(oldCl);
             BeanContainer.getInstance().setClassLoader(newCl);
             log.info("Switched Dozer container-wide classloader from: {} to {} (where the latter delegates to former).", oldCl, newCl);
         } else {
