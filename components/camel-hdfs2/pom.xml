@@ -47,7 +47,7 @@
       org.apache.hadoop.hdfs.protocol.datatransfer
     </camel.osgi.import.additional>
     <camel.osgi.activator>
-      org.apache.camel.component.hdfs2.HdfsActivator
+      org.apache.camel.component.hdfs2.osgi.HdfsActivator
     </camel.osgi.activator>
   </properties>
 

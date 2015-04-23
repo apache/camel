@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hdfs2;
+package org.apache.camel.component.hdfs2.osgi;
 
 import org.apache.hadoop.util.ShutdownHookManager;
 import org.osgi.framework.BundleActivator;
