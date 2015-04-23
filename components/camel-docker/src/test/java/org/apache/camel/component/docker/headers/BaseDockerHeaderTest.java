@@ -125,6 +125,8 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setServerAddress(getServerAddress());
         clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(getMaxTotalConnections());
+        clientProfile.setLoggingFilter(false);
+        clientProfile.setFollowRedirectFilter(false);
 
         return clientProfile;
 
