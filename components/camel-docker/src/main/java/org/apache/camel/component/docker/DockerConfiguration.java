@@ -30,45 +30,32 @@ public class DockerConfiguration implements Cloneable {
 
     @UriPath @Metadata(required = "true")
     private DockerOperation operation;
-
     @UriParam(defaultValue = "localhost") @Metadata(required = "true")
     private String host = "localhost";
-
     @UriParam(defaultValue = "2375") @Metadata(required = "true")
     private Integer port = 2375;
-
     @UriParam
     private String username;
-
     @UriParam
     private String password;
-
     @UriParam
     private String email;
-
     @UriParam(defaultValue = "https://index.docker.io/v1/")
     private String serverAddress = "https://index.docker.io/v1/";
-
     @UriParam
     private Integer requestTimeout;
-
     @UriParam
-    private Boolean secure;
-
+    private boolean secure;
     @UriParam
     private String certPath;
-
     @UriParam(defaultValue = "100")
     private Integer maxTotalConnections = 100;
-
     @UriParam(defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
-    
     @UriParam
-    private Boolean loggingFilterEnabled;
-    
+    private boolean loggingFilter;
     @UriParam
-    private Boolean followRedirectFilterEnabled;
+    private boolean followRedirectFilter;
 
     private Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -149,14 +136,14 @@ public class DockerConfiguration implements Cloneable {
         this.requestTimeout = requestTimeout;
     }
 
-    public Boolean isSecure() {
+    public boolean isSecure() {
         return secure;
     }
 
     /**
      * Use HTTPS communication
      */
-    public void setSecure(Boolean secure) {
+    public void setSecure(boolean secure) {
         this.secure = secure;
     }
 
@@ -193,20 +180,26 @@ public class DockerConfiguration implements Cloneable {
         this.maxPerRouteConnections = maxPerRouteConnections;
     }
 
-    public Boolean isLoggingFilterEnabled() {
-        return loggingFilterEnabled;
+    public boolean isLoggingFilterEnabled() {
+        return loggingFilter;
     }
 
-    public void setLoggingFilter(Boolean loggingFilterEnabled) {
-        this.loggingFilterEnabled = loggingFilterEnabled;
+    /**
+     * Whether to use logging filter
+     */
+    public void setLoggingFilter(boolean loggingFilterEnabled) {
+        this.loggingFilter = loggingFilterEnabled;
     }
 
-    public Boolean isFollowRedirectFilterEnabled() {
-        return followRedirectFilterEnabled;
+    public boolean isFollowRedirectFilterEnabled() {
+        return followRedirectFilter;
     }
 
-    public void setFollowRedirectFilter(Boolean followRedirectFilterEnabled) {
-        this.followRedirectFilterEnabled = followRedirectFilterEnabled;
+    /**
+     * Whether to follow redirect filter
+     */
+    public void setFollowRedirectFilter(boolean followRedirectFilterEnabled) {
+        this.followRedirectFilter = followRedirectFilterEnabled;
     }
 
     public Map<String, Object> getParameters() {
@@ -238,6 +231,5 @@ public class DockerConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 
 }
