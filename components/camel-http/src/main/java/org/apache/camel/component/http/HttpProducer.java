@@ -83,7 +83,7 @@ public class HttpProducer extends DefaultProducer {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                skipRequestHeaders = URISupport.parseQuery(queryString);
+                skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
             // Need to remove the Host key as it should be not used 
             exchange.getIn().getHeaders().remove("host");

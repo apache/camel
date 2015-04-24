@@ -179,7 +179,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // add uri parameters as headers to the Camel message
         if (request.getUri().contains("?")) {
             String query = ObjectHelper.after(request.getUri(), "?");
-            Map<String, Object> uriParameters = URISupport.parseQuery(query);
+            Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
                 String name = entry.getKey();
@@ -483,7 +483,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         if (configuration.isBridgeEndpoint()) {
             String queryString = message.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                skipRequestHeaders = URISupport.parseQuery(queryString);
+                skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
             // Need to remove the Host key as it should be not used
             message.getHeaders().remove("host");
