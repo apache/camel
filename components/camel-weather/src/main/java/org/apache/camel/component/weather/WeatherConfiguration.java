@@ -61,6 +61,10 @@ public class WeatherConfiguration {
         return period;
     }
 
+    /**
+     * If null, the current weather will be returned, else use values of 5, 7, 14 days.
+     * Only the numeric value for the forecast period is actually parsed, so spelling, capitalisation of the time period is up to you (its ignored)
+     */
     public void setPeriod(String period) {
         notNull(period, "period");
         int result = 0;
@@ -86,6 +90,9 @@ public class WeatherConfiguration {
         return mode;
     }
 
+    /**
+     * The output format of the weather data.
+     */
     public void setMode(WeatherMode mode) {
         this.mode = notNull(mode, "mode");
     }
@@ -94,6 +101,9 @@ public class WeatherConfiguration {
         return units;
     }
 
+    /**
+     * The units for temperature measurement.
+     */
     public void setUnits(WeatherUnits units) {
         this.units = notNull(units, "units");
     }
@@ -102,6 +112,13 @@ public class WeatherConfiguration {
         return location;
     }
 
+    /**
+     * If null Camel will try and determine your current location using the geolocation of your ip address,
+     * else specify the city,country. For well known city names, Open Weather Map will determine the best fit,
+     * but multiple results may be returned. Hence specifying and country as well will return more accurate data.
+     * If you specify "current" as the location then the component will try to get the current latitude and longitude
+     * and use that to get the weather details. You can use lat and lon options instead of location.
+     */
     public void setLocation(String location) {
         this.location = location;
     }
@@ -110,6 +127,9 @@ public class WeatherConfiguration {
         return headerName;
     }
 
+    /**
+     * To store the weather result in this header instead of the message body. This is useable if you want to keep current message body as-is.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
@@ -118,6 +138,9 @@ public class WeatherConfiguration {
         return lat;
     }
 
+    /**
+     * Latitude of location. You can use lat and lon options instead of location.
+     */
     public void setLat(String lat) {
         this.lat = lat;
     }
@@ -126,6 +149,9 @@ public class WeatherConfiguration {
         return lon;
     }
 
+    /**
+     * Longitude of location. You can use lat and lon options instead of location.
+     */
     public void setLon(String lon) {
         this.lon = lon;
     }
