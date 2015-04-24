@@ -26,6 +26,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -67,12 +68,12 @@ public class NettyRfc5425Test extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testStructuredData() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         mock.expectedMessageCount(1);
-        
+
         template.sendBody("direct:checkStructuredData", rfc5424WithStructuredData);
     }
 
@@ -93,8 +94,8 @@ public class NettyRfc5425Test extends CamelTestSupport {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
                 }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
-                
-                
+
+
                 from("direct:checkStructuredData").unmarshal(syslogDataFormat).process(new Processor() {
                     @Override
                     public void process(Exchange ex) {
