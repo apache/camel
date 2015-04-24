@@ -88,7 +88,7 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
         if (query == null) {
             parameters = URISupport.parseParameters(uriObj);
         } else {
-            parameters = URISupport.parseQuery(query);
+            parameters = URISupport.parseQuery(query, false, true);
         }
         if (uriObj.getScheme().equals(GHTTPS_SCHEME)) {
             uriObj = new URI(HTTPS_SCHEME + ":" + uriObj.getRawSchemeSpecificPart());
