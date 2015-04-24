@@ -47,25 +47,18 @@ public class ExecEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String executable;
-
     @UriParam
     private String args;
-
     @UriParam
     private String workingDir;
-
     @UriParam
     private long timeout;
-
     @UriParam
     private String outFile;
-
     @UriParam
     private ExecCommandExecutor commandExecutor;
-
     @UriParam
     private ExecBinding binding;
-
     @UriParam
     private boolean useStderrOnEmptyStdout;
 
@@ -87,11 +80,6 @@ public class ExecEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    /**
-     * @return the executable to be executed; that is the remaining part of the
-     *         endpoint URI
-     * @see ExecBinding#EXEC_COMMAND_EXECUTABLE
-     */
     public String getExecutable() {
         return executable;
     }
@@ -99,77 +87,40 @@ public class ExecEndpoint extends DefaultEndpoint {
     /**
      * Sets the executable to be executed. The executable must not be empty or
      * <code>null</code>.
-     * 
-     * @param executable Sets the executable to be executed.
      */
     public void setExecutable(String executable) {
         ObjectHelper.notEmpty(executable, "executable");
         this.executable = executable;
     }
 
-    /**
-     * The arguments may be one or many whitespace-separated tokens, that can be
-     * quoted with ", e.g. <code>args="arg 1" arg2"</code> will use two arguments
-     * <code>arg 1</code> and <code>arg2</code>. To include the quotes use
-     * <code>""</code><br>
-     * , e.g. <code>args=""arg 1"" arg2</code> will use the arguments
-     * <code>"arg 1"</code> and <code>arg2</code>.
-     * 
-     * @return the arguments of the executable application, as configured from
-     *         the endpoint URI.
-     * @see ExecBinding#EXEC_COMMAND_ARGS
-     * @see ExecParseUtils#splitToWhiteSpaceSeparatedTokens(String)
-     */
     public String getArgs() {
         return args;
     }
 
     /**
-     * Sets the arguments of the executable application
-     * 
-     * @param args Returns <code>null</code> value if no arguments are
-     *            configured in the endpoint URI
-     * @see #getArgs()
-     * @see ExecBinding#EXEC_COMMAND_ARGS
+     * The arguments may be one or many whitespace-separated tokens.
      */
     public void setArgs(String args) {
         this.args = args;
     }
 
-    /**
-     * @return the working directory of the executable, or <code>null</code> is
-     *         such is not set.
-     * @see ExecBinding#EXEC_COMMAND_WORKING_DIR
-     */
     public String getWorkingDir() {
         return workingDir;
     }
 
     /**
-     * Sets the working directory of the executable.
-     * 
-     * @param dir the working directory of the executable. <code>null</code>
-     *            values indicates that the current working directory will be
-     *            used.
+     * The directory in which the command should be executed. If null, the working directory of the current process will be used.
      */
     public void setWorkingDir(String dir) {
         this.workingDir = dir;
     }
 
-    /**
-     * @return The returned value is always a positive <code>long</code>. The
-     *         default value is {@link ExecEndpoint#NO_TIMEOUT}
-     * @see ExecBinding#EXEC_COMMAND_TIMEOUT
-     */
     public long getTimeout() {
         return timeout;
     }
 
     /**
-     * Sets the timeout.
-     * 
-     * @param timeout The <code>timeout</code> must be a positive long
-     * @see ExecBinding#EXEC_COMMAND_TIMEOUT
+     * The timeout, in milliseconds, after which the executable should be terminated. If execution has not completed within the timeout, the component will send a termination request.
      */
     public void setTimeout(long timeout) {
         if (timeout <= 0) {
@@ -178,36 +129,26 @@ public class ExecEndpoint extends DefaultEndpoint {
         this.timeout = timeout;
     }
 
-    /**
-     * @return <code>null</code> if no out file is set, otherwise returns the
-     *         value of the outFile
-     * @see ExecBinding#EXEC_COMMAND_OUT_FILE
-     */
     public String getOutFile() {
         return outFile;
     }
 
     /**
-     * @param outFile a not-empty file path
-     * @see ExecBinding#EXEC_COMMAND_OUT_FILE
+     * The name of a file, created by the executable, that should be considered as its output.
+     * If no outFile is set, the standard output (stdout) of the executable will be used instead.
      */
     public void setOutFile(String outFile) {
         ObjectHelper.notEmpty(outFile, "outFile");
         this.outFile = outFile;
     }
 
-    /**
-     * @return The command executor used to execute commands. Defaults to
-     *         {@link org.apache.camel.component.exec.impl.DefaultExecCommandExecutor}
-     */
     public ExecCommandExecutor getCommandExecutor() {
         return commandExecutor;
     }
 
     /**
-     * Sets a custom executor to execute commands.
-     * 
-     * @param commandExecutor a not-null instance of {@link ExecCommandExecutor}
+     * A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution.
+     * The default command executor utilizes the commons-exec library, which adds a shutdown hook for every executed command.
      */
     public void setCommandExecutor(ExecCommandExecutor commandExecutor) {
         ObjectHelper.notNull(commandExecutor, "commandExecutor");
@@ -218,6 +159,9 @@ public class ExecEndpoint extends DefaultEndpoint {
         return binding;
     }
 
+    /**
+     * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
+     */
     public void setBinding(ExecBinding binding) {
         ObjectHelper.notNull(binding, "binding");
         this.binding = binding;
@@ -227,6 +171,9 @@ public class ExecEndpoint extends DefaultEndpoint {
         return useStderrOnEmptyStdout;
     }
 
+    /**
+     * A boolean indicating that when stdout is empty, this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default.
+     */
     public void setUseStderrOnEmptyStdout(boolean useStderrOnEmptyStdout) {
         this.useStderrOnEmptyStdout = useStderrOnEmptyStdout;
     }

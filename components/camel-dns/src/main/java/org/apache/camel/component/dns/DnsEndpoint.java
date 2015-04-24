@@ -64,6 +64,9 @@ public class DnsEndpoint extends DefaultEndpoint {
         return dnsType;
     }
 
+    /**
+     * The type of the lookup.
+     */
     public void setDnsType(DnsType dnsType) {
         this.dnsType = dnsType;
     }
