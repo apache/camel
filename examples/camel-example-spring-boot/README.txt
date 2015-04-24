@@ -10,11 +10,19 @@ This example exposes Jolokia API and Spring Boot actuators endpoints (like metri
 this as the best practice - Spring Boot applications with these API exposed can be easily monitored and managed by the
 3rd parties tools.
 
+We recommend to package your application as a fat WAR. Fat WARs can be executed just as regular fat jars, but you can also
+deploy them to the servlet containers like Tomcat. Fat WAR approach gives you the deployment flexibility, so we highly
+recommend it.
+
 You will need to compile this example first:
   mvn install
 
 To run the example type
   mvn spring-boot:run
+
+You can also execute the fat WAR directly:
+
+  java -jar target/camel-example-spring-boot-2.x-SNAPSHOT.war
 
 You will see the message printed to the console every second.
 
