@@ -48,7 +48,7 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 @UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Name of the queue") @Metadata(required = "true")
     private String destination;
     @UriParam
     private StompConfiguration configuration;

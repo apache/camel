@@ -17,13 +17,14 @@
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
 public class StompConfiguration implements Cloneable {
 
-    @UriParam(defaultValue = "tcp://localhost:61613")
+    @UriParam(defaultValue = "tcp://localhost:61613") @Metadata(required = "true")
     private String brokerURL = "tcp://localhost:61613";
     @UriParam
     private String login;
@@ -46,6 +47,9 @@ public class StompConfiguration implements Cloneable {
         return brokerURL;
     }
 
+    /**
+     * The URI of the Stomp broker to connect to
+     */
     public void setBrokerURL(String brokerURL) {
         this.brokerURL = brokerURL;
     }
@@ -54,6 +58,9 @@ public class StompConfiguration implements Cloneable {
         return login;
     }
 
+    /**
+     * The username
+     */
     public void setLogin(String login) {
         this.login = login;
     }
@@ -62,6 +69,9 @@ public class StompConfiguration implements Cloneable {
         return passcode;
     }
 
+    /**
+     * The password
+     */
     public void setPasscode(String passcode) {
         this.passcode = passcode;
     }

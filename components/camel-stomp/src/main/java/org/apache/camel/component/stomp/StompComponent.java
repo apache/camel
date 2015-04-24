@@ -48,18 +48,30 @@ public class StompComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared stomp configuration
+     */
     public void setConfiguration(StompConfiguration configuration) {
         this.configuration = configuration;
     }
 
+    /**
+     * The URI of the Stomp broker to connect to
+     */
     public void setBrokerURL(String brokerURL) {
         getConfiguration().setBrokerURL(brokerURL);
     }
 
+    /**
+     * The username
+     */
     public void setLogin(String login) {
         getConfiguration().setLogin(login);
     }
 
+    /**
+     * The password
+     */
     public void setPasscode(String passcode) {
         getConfiguration().setPasscode(passcode);
     }
