@@ -53,6 +53,9 @@ public class GangliaComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared configuration
+     */
     public void setConfiguration(GangliaConfiguration configuration) {
         this.configuration = configuration;
     }
