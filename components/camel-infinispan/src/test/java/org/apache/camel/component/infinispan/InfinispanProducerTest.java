@@ -46,6 +46,22 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Object value = currentCache().get(KEY_ONE);
         assertEquals(value.toString(), VALUE_ONE);
     }
+    
+    @Test
+    public void cacheSizeTest() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+        currentCache().put(KEY_TWO, VALUE_TWO);
+
+        Exchange exchange = template.request("direct:size", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.SIZE);
+            }
+        });
+
+        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Integer.class), new Integer(2));
+        assertNotEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Integer.class), new Integer(4));
+    }
 
     @Test
     public void publishKeyAndValueByExplicitlySpecifyingTheOperation() throws Exception {
@@ -509,6 +525,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CONTAINSKEY");
                 from("direct:containsvalue")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CONTAINSVALUE");
+                from("direct:size")
+                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=SIZE");
             }
         };
     }

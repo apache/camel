@@ -156,6 +156,12 @@ public class InfinispanOperation {
                 }
                 setResult(result, exchange);
             }
+        }, SIZE {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                Object result = cache.size();
+                setResult(result, exchange);
+            }
         }, CLEAR {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
