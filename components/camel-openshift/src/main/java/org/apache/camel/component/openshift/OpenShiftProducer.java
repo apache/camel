@@ -25,11 +25,16 @@ import com.openshift.client.IApplication;
 import com.openshift.client.IDomain;
 import com.openshift.client.IGear;
 import com.openshift.client.IGearGroup;
+import com.openshift.client.cartridge.IDeployedStandaloneCartridge;
+import com.openshift.client.cartridge.IEmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
+import com.openshift.client.cartridge.query.LatestEmbeddableCartridge;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class OpenShiftProducer extends DefaultProducer {
 
@@ -66,6 +71,18 @@ public class OpenShiftProducer extends DefaultProducer {
             break;
         case state:
             doState(exchange, domain);
+            break;
+        case getStandaloneCartridge:
+            doGetStandaloneCartridge(exchange, domain);
+            break;
+        case getEmbeddedCartridges:
+            doGetEmbeddedCartridges(exchange, domain);
+            break;
+        case addEmbeddedCartridge:
+            doAddEmbeddedCartridge(exchange, domain);
+            break;
+        case removeEmbeddedCartridge:
+            doRemoveEmbeddedCartridge(exchange, domain);
             break;
         case list:
         default:
@@ -213,5 +230,79 @@ public class OpenShiftProducer extends DefaultProducer {
             exchange.getIn().setBody(state);
         }
     }
+    
+    protected void doGetStandaloneCartridge(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
 
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            IDeployedStandaloneCartridge p = app.getCartridge();
+            exchange.getIn().setBody(p.getDisplayName());
+        }
+    }
+
+    protected void doGetEmbeddedCartridges(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            List<IEmbeddedCartridge> p = app.getEmbeddedCartridges();
+            exchange.getIn().setBody(p);
+        }
+    }
+    
+    protected void doAddEmbeddedCartridge(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String embeddedCartridgeName = exchange.getIn().getHeader(OpenShiftConstants.EMBEDDED_CARTRIDGE_NAME, getEndpoint().getApplication(), String.class);
+            if (!ObjectHelper.isEmpty(embeddedCartridgeName) && embeddedCartridgeName != null) {
+                IEmbeddedCartridge p = app.addEmbeddableCartridge((new LatestEmbeddableCartridge(embeddedCartridgeName)).get(app));
+                exchange.getIn().setBody(p.getDisplayName());
+            } else {
+                throw new CamelExchangeException("Cartridge not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doRemoveEmbeddedCartridge(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String embeddedCartridgeName = exchange.getIn().getHeader(OpenShiftConstants.EMBEDDED_CARTRIDGE_NAME, getEndpoint().getApplication(), String.class);
+            if (!ObjectHelper.isEmpty(embeddedCartridgeName) && embeddedCartridgeName != null) {
+                IEmbeddableCartridge removingCartridge = (new LatestEmbeddableCartridge(embeddedCartridgeName)).get(app);
+                for (IEmbeddedCartridge cartridge : app.getEmbeddedCartridges()) {
+                    if (cartridge.equals(removingCartridge)) {
+                        cartridge.destroy();
+                        exchange.getIn().setBody(cartridge.getDisplayName());
+                    }
+                }
+            } else {
+                throw new CamelExchangeException("Cartridge not specified", exchange);
+            }
+        }
+    }
 }

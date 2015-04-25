@@ -23,6 +23,7 @@ public final class OpenShiftConstants {
     public static final String EVENT_TYPE = "CamelOpenShiftEventType";
     public static final String EVENT_OLD_STATE = "CamelOpenShiftEventOldState";
     public static final String EVENT_NEW_STATE = "CamelOpenShiftEventNewState";
+    public static final String EMBEDDED_CARTRIDGE_NAME = "CamelOpenShiftEmbeddedCartridgeName";
 
     private OpenShiftConstants() {
     }
