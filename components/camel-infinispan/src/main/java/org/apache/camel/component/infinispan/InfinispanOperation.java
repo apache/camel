@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
+import org.infinispan.commons.util.concurrent.NotifyingFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,26 @@ public class InfinispanOperation {
                 }
                 setResult(result, exchange);
             }
+        }, PUTASYNC {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
+                    long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
+                    String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                        && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
+                        long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
+                        String maxIdleTimeUnit =  (String) exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
+                        result = cache.putAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                    } else {
+                        result = cache.putAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                    }
+                } else {
+                    result = cache.putAsync(getKey(exchange), getValue(exchange));
+                }
+                setResult(result, exchange);
+            }
         }, PUTALL {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
@@ -92,6 +113,26 @@ public class InfinispanOperation {
                     cache.putAll(getMap(exchange));
                 }
             }
+        }, PUTALLASYNC {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
+                    long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
+                    String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                        && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
+                        long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
+                        String maxIdleTimeUnit =  (String) exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
+                        result = cache.putAllAsync(getMap(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                    } else {
+                        result = cache.putAllAsync(getMap(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                    }
+                } else {
+                    result = cache.putAllAsync(getMap(exchange));
+                }
+                setResult(result, exchange);
+            }
         }, PUTIFABSENT {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
@@ -109,6 +150,26 @@ public class InfinispanOperation {
                     }
                 } else {
                     result = cache.putIfAbsent(getKey(exchange), getValue(exchange));
+                }
+                setResult(result, exchange);
+            }
+        }, PUTIFABSENTASYNC {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
+                    long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
+                    String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                        && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
+                        long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
+                        String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
+                        result = cache.putIfAbsentAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                    } else {
+                        result = cache.putIfAbsentAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                    }
+                } else {
+                    result = cache.putIfAbsentAsync(getKey(exchange), getValue(exchange));
                 }
                 setResult(result, exchange);
             }
@@ -136,6 +197,12 @@ public class InfinispanOperation {
                 Object result = cache.remove(getKey(exchange));
                 setResult(result, exchange);
             }
+        }, REMOVEASYNC {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                NotifyingFuture result = cache.removeAsync(getKey(exchange));
+                setResult(result, exchange);
+            }
         }, REPLACE {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
@@ -153,6 +220,26 @@ public class InfinispanOperation {
                     }
                 } else {
                     result = cache.replace(getKey(exchange), getValue(exchange));
+                }
+                setResult(result, exchange);
+            }
+        }, REPLACEASYNC {
+            @Override
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
+                NotifyingFuture result;
+                if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME)) && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT))) {
+                    long lifespan = exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME, long.class);
+                    String timeUnit =  exchange.getIn().getHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, String.class);
+                    if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME)) 
+                        && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
+                        long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
+                        String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
+                        result = cache.replaceAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                    } else {
+                        result = cache.replaceAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                    }
+                } else {
+                    result = cache.replaceAsync(getKey(exchange), getValue(exchange));
                 }
                 setResult(result, exchange);
             }
