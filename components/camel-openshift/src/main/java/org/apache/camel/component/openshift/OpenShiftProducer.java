@@ -21,10 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import com.openshift.client.ApplicationScale;
 import com.openshift.client.IApplication;
 import com.openshift.client.IDomain;
 import com.openshift.client.IGear;
 import com.openshift.client.IGearGroup;
+import com.openshift.client.OpenShiftException;
 import com.openshift.client.cartridge.IDeployedStandaloneCartridge;
 import com.openshift.client.cartridge.IEmbeddableCartridge;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
@@ -78,11 +80,20 @@ public class OpenShiftProducer extends DefaultProducer {
         case getEmbeddedCartridges:
             doGetEmbeddedCartridges(exchange, domain);
             break;
+        case getGitUrl:
+            doGetGitUrl(exchange, domain);
+            break;
         case addEmbeddedCartridge:
             doAddEmbeddedCartridge(exchange, domain);
             break;
         case removeEmbeddedCartridge:
             doRemoveEmbeddedCartridge(exchange, domain);
+            break;
+        case scaleUp:
+            doScaleUp(exchange, domain);
+            break;
+        case scaleDown:
+            doScaleDown(exchange, domain);
             break;
         case list:
         default:
@@ -303,6 +314,62 @@ public class OpenShiftProducer extends DefaultProducer {
             } else {
                 throw new CamelExchangeException("Cartridge not specified", exchange);
             }
+        }
+    }
+    
+    protected void doScaleUp(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            try {
+                app.scaleUp();
+                ApplicationScale result = app.getApplicationScale();
+                exchange.getIn().setBody(result.getValue());
+            } catch (OpenShiftException e) {
+                throw new CamelExchangeException("Application with id " + name + " is not scalable", exchange);
+            }
+        }
+    }
+    
+    protected void doScaleDown(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            ApplicationScale scale = app.getApplicationScale();
+            if (scale.getValue().equals(ApplicationScale.NO_SCALE.getValue())) {
+                log.info("Scaling on application with id " + name + " is not enabled");
+            } else {
+                app.scaleDown();
+                ApplicationScale result = app.getApplicationScale();
+                exchange.getIn().setBody(result.getValue());
+            }
+        }
+    }
+    
+    protected void doGetGitUrl(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String gitUrl = app.getGitUrl();
+            exchange.getIn().setBody(gitUrl);
         }
     }
 }

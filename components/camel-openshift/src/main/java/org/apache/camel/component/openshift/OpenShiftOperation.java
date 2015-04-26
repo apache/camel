@@ -18,6 +18,16 @@ package org.apache.camel.component.openshift;
 
 public enum OpenShiftOperation {
 
-    list, start, stop, restart, state, getStandaloneCartridge, getEmbeddedCartridges, addEmbeddedCartridge, removeEmbeddedCartridge
-
+    list,
+    start,
+    stop,
+    restart,
+    state,
+    getStandaloneCartridge,
+    getEmbeddedCartridges,
+    addEmbeddedCartridge,
+    removeEmbeddedCartridge,
+    scaleUp,
+    scaleDown,
+    getGitUrl
 }
