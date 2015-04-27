@@ -91,7 +91,9 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
     @UriParam
     protected String passphrase;
+    @UriParam
     protected EventLoopGroup bossGroup;
+    @UriParam
     protected EventLoopGroup workerGroup;
     @UriParam
     protected String networkInterface;
@@ -360,14 +362,22 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         return bossGroup;
     }
 
+    /**
+     * Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint 
+     * @param bossGroup
+     */
     public void setBossGroup(EventLoopGroup bossGroup) {
         this.bossGroup = bossGroup;
     }
-
+    
     public EventLoopGroup getWorkerGroup() {
         return workerGroup;
     }
 
+    /**
+     * Set the WorkerGroup which could be used for handling selector eventloop across the NettyEndpoint 
+     * @param workerGroup
+     */
     public void setWorkerGroup(EventLoopGroup workerGroup) {
         this.workerGroup = workerGroup;
     }
