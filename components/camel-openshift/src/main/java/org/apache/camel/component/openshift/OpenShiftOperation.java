@@ -29,5 +29,13 @@ public enum OpenShiftOperation {
     removeEmbeddedCartridge,
     scaleUp,
     scaleDown,
-    getGitUrl
+    getGitUrl,
+    getDeploymentType,
+    setDeploymentType,
+    getAllEnvironmentVariables,
+    addEnvironmentVariable,
+    updateEnvironmentVariable,
+    getEnvironmentVariableValue,
+    removeEnvironmentVariable,
+    getGearProfile
 }
