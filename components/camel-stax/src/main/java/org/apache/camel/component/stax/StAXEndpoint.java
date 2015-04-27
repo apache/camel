@@ -40,6 +40,9 @@ public class StAXEndpoint extends ProcessorEndpoint {
         return contentHandlerClass;
     }
 
+    /**
+     * The FQN class name for the ContentHandler implementation to use.
+     */
     public void setContentHandlerClass(String contentHandlerClass) {
         this.contentHandlerClass = contentHandlerClass;
     }

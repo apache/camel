@@ -34,6 +34,10 @@ import org.apache.camel.util.URISupport;
 @UriParams
 public class PrinterConfiguration {
     private URI uri;
+    private MediaSizeName mediaSizeName;
+    private Sides internalSides;
+    private OrientationRequested internalOrientation;
+
     @UriPath @Metadata(required = "true")
     private String hostname;
     @UriPath @Metadata(required = "true")
@@ -52,16 +56,10 @@ public class PrinterConfiguration {
     private String mimeType;
     @UriParam(defaultValue = "na-letter")
     private String mediaSize;
-    @UriParam
-    private MediaSizeName mediaSizeName;
-    @UriParam(defaultValue = "one-sided")
+    @UriParam(defaultValue = "one-sided", enums = "one-sided,duplex,tumble,two-sided-short-edge,two-sided-long-edge")
     private String sides;
-    @UriParam
-    private Sides internalSides;
-    @UriParam(defaultValue = "portrait")
+    @UriParam(defaultValue = "portrait", enums = "portrait,landscape,reverse-portrait,reverse-landscape")
     private String orientation;
-    @UriParam
-    private OrientationRequested internalOrientation;
     @UriParam(defaultValue = "true")
     private boolean sendToPrinter = true;
     @UriParam
@@ -257,6 +255,9 @@ public class PrinterConfiguration {
         return hostname;
     }
 
+    /**
+     * Hostname of the printer
+     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -265,6 +266,9 @@ public class PrinterConfiguration {
         return port;
     }
 
+    /**
+     * Port number of the printer
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -273,6 +277,9 @@ public class PrinterConfiguration {
         return printername;
     }
 
+    /**
+     * Name of the printer
+     */
     public void setPrintername(String printername) {
         this.printername = printername;
     }
@@ -281,6 +288,9 @@ public class PrinterConfiguration {
         return copies;
     }
 
+    /**
+     * Number of copies to print
+     */
     public void setCopies(int copies) {
         this.copies = copies;
     }
@@ -289,6 +299,9 @@ public class PrinterConfiguration {
         return flavor;
     }
 
+    /**
+     * Sets DocFlavor to use.
+     */
     public void setFlavor(String flavor) {
         this.flavor = flavor;
     }
@@ -297,6 +310,9 @@ public class PrinterConfiguration {
         return docFlavor;
     }
 
+    /**
+     * Sets DocFlavor to use.
+     */
     public void setDocFlavor(DocFlavor docFlavor) {
         this.docFlavor = docFlavor;
     }
@@ -305,6 +321,11 @@ public class PrinterConfiguration {
         return mediaSize;
     }
 
+    /**
+     * Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API.
+     * The default setting is to use North American Letter sized stationary.
+     * The value's case is ignored, e.g. values of iso_a4 and ISO_A4 may be used.
+     */
     public void setMediaSize(String mediaSize) {
         this.mediaSize = mediaSize;
     }
@@ -313,6 +334,9 @@ public class PrinterConfiguration {
         return sides;
     }
 
+    /**
+     * Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API
+     */
     public void setSides(String sides) {
         this.sides = sides;
     }
@@ -345,6 +369,9 @@ public class PrinterConfiguration {
         return orientation;
     }
 
+    /**
+     * Sets the page orientation.
+     */
     public void setOrientation(String orientation) {
         this.orientation = orientation;
     }
@@ -353,6 +380,9 @@ public class PrinterConfiguration {
         return mimeType;
     }
 
+    /**
+     * Sets mimeTypes supported by the javax.print.DocFlavor API
+     */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
@@ -361,6 +391,9 @@ public class PrinterConfiguration {
         return sendToPrinter;
     }
 
+    /**
+     * etting this option to false prevents sending of the print data to the printer
+     */
     public void setSendToPrinter(boolean sendToPrinter) {
         this.sendToPrinter = sendToPrinter;
     }
@@ -369,6 +402,9 @@ public class PrinterConfiguration {
         return mediaTray;
     }
 
+    /**
+     * Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc.
+     */
     public void setMediaTray(String mediaTray) {
         this.mediaTray = mediaTray;
     }
@@ -377,6 +413,9 @@ public class PrinterConfiguration {
         return printerPrefix;
     }
 
+    /**
+     * Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer
+     */
     public void setPrinterPrefix(String printerPrefix) {
         this.printerPrefix = printerPrefix;
     }
