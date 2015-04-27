@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
 import org.apache.camel.component.apns.model.ApnsConstants;
+import org.apache.camel.component.apns.model.MessageType;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
@@ -65,6 +66,23 @@ public class ApnsProducerTest extends CamelTestSupport {
         assertArrayEquals(apnsNotification.marshall(), server.received.toByteArray());
     }
 
+
+    @Test(timeout = 5000)
+    public void testProducerWithApnsNotification() throws InterruptedException {
+        String message = "Hello World";
+        String messagePayload = APNS.newPayload().alertBody(message).build();
+
+        final EnhancedApnsNotification apnsNotification =
+                new EnhancedApnsNotification(14, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        server.stopAt(apnsNotification.length());
+
+        template.sendBody("direct:testWithApnsNotification", apnsNotification);
+
+        server.messages.acquire();
+        assertArrayEquals(apnsNotification.marshall(), server.received.toByteArray());
+
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -81,6 +99,9 @@ public class ApnsProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:test").setHeader(ApnsConstants.HEADER_TOKENS, constant(FAKE_TOKEN)).to("apns:notify");
+                from("direct:testWithApnsNotification")
+                        .setHeader(ApnsConstants.HEADER_MESSAGE_TYPE, constant(MessageType.APNS_NOTIFICATION.name()))
+                        .to("apns:notify");
             }
         };
     }
