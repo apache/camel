@@ -22,11 +22,13 @@ import java.util.Map;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConfiguration;
+import org.elasticsearch.action.WriteConsistencyLevel;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.support.replication.ReplicationType;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 @Converter
@@ -50,13 +52,15 @@ public final class ElasticsearchActionRequestConverter {
             return null;
         }
 
-        return indexRequest.index(
-                exchange.getIn().getHeader(
-                        ElasticsearchConfiguration.PARAM_INDEX_NAME,
-                        String.class)).type(
-                exchange.getIn().getHeader(
-                        ElasticsearchConfiguration.PARAM_INDEX_TYPE,
-                        String.class));
+        return indexRequest
+                .consistencyLevel(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
+                .replicationType(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_REPLICATION_TYPE, ReplicationType.class))
+                .index(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class))
+                .type(exchange.getIn().getHeader(
+                        ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class));
     }
 
     @Converter

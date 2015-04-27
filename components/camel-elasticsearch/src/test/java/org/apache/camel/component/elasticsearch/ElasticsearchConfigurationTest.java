@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
+import org.elasticsearch.action.WriteConsistencyLevel;
+import org.elasticsearch.action.support.replication.ReplicationType;
 
 import org.junit.Test;
 
@@ -90,6 +92,112 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         assertEquals("twitter", conf.getIndexName());
         assertEquals("tweet", conf.getIndexType());
         assertTrue(conf.isData());
+        assertNull(conf.getClusterName());
+    }
+
+    @Test
+    public void writeConsistencyLevelDefaultConfTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertTrue(conf.isLocal());
+        assertEquals("INDEX", conf.getOperation());
+        assertEquals("twitter", conf.getIndexName());
+        assertEquals("tweet", conf.getIndexType());
+        assertEquals(WriteConsistencyLevel.DEFAULT, conf.getConsistencyLevel());
+        assertNull(conf.getClusterName());
+    }
+
+    @Test
+    public void writeConsistencyLevelConfTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&consistencyLevel=QUORUM");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertTrue(conf.isLocal());
+        assertEquals("INDEX", conf.getOperation());
+        assertEquals("twitter", conf.getIndexName());
+        assertEquals("tweet", conf.getIndexType());
+        assertEquals(WriteConsistencyLevel.QUORUM, conf.getConsistencyLevel());
+        assertNull(conf.getClusterName());
+    }
+
+    @Test
+    public void replicationTypeConfTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&replicationType=ASYNC");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertDefaultConfigurationParameters(conf);
+        assertEquals(ReplicationType.ASYNC, conf.getReplicationType());
+    }
+
+    @Test
+    public void replicationTypeDefaultConfTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertDefaultConfigurationParameters(conf);
+        assertEquals(ReplicationType.DEFAULT, conf.getReplicationType());
+    }
+
+    @Test
+    public void transportAddressesSimpleHostnameTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
+                "indexType=tweet&transportAddresses=127.0.0.1");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertDefaultConfigurationParameters(conf);
+        assertEquals(1, conf.getTransportAddresses().size());
+        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
+        assertEquals(9300, conf.getTransportAddresses().get(0).address().getPort());
+    }
+
+    @Test
+    public void transportAddressesMultipleHostnameTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
+                "indexType=tweet&transportAddresses=127.0.0.1,127.0.0.2");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertDefaultConfigurationParameters(conf);
+        assertEquals(2, conf.getTransportAddresses().size());
+        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
+        assertEquals(9300, conf.getTransportAddresses().get(0).address().getPort());
+        assertEquals("127.0.0.2", conf.getTransportAddresses().get(1).address().getHostString());
+        assertEquals(9300, conf.getTransportAddresses().get(1).address().getPort());
+    }
+
+    @Test
+    public void transportAddressesSimpleHostnameAndPortTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
+                "indexType=tweet&transportAddresses=127.0.0.1:9305");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertDefaultConfigurationParameters(conf);
+        assertEquals(1, conf.getTransportAddresses().size());
+        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
+        assertEquals(9305, conf.getTransportAddresses().get(0).address().getPort());
+    }
+
+    @Test
+    public void transportAddressesMultipleHostnameAndPortTest() throws Exception {
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
+                "indexType=tweet&transportAddresses=127.0.0.1:9400,127.0.0.2,127.0.0.3:9401");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertDefaultConfigurationParameters(conf);
+        assertEquals(3, conf.getTransportAddresses().size());
+        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
+        assertEquals(9400, conf.getTransportAddresses().get(0).address().getPort());
+        assertEquals("127.0.0.2", conf.getTransportAddresses().get(1).address().getHostString());
+        assertEquals(9300, conf.getTransportAddresses().get(1).address().getPort());
+        assertEquals("127.0.0.3", conf.getTransportAddresses().get(2).address().getHostString());
+        assertEquals(9401, conf.getTransportAddresses().get(2).address().getPort());
+    }
+
+    private void assertDefaultConfigurationParameters(ElasticsearchConfiguration conf) {
+        assertTrue(conf.isLocal());
+        assertEquals("INDEX", conf.getOperation());
+        assertEquals("twitter", conf.getIndexName());
+        assertEquals("tweet", conf.getIndexType());
         assertNull(conf.getClusterName());
     }
 

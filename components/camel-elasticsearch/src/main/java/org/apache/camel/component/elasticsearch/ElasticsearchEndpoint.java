@@ -18,6 +18,8 @@ package org.apache.camel.component.elasticsearch;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,6 +32,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,25 +76,35 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
         }
         if (configuration.getIp() != null) {
-            LOG.info("REMOTE ELASTICSEARCH: {}", configuration.getIp());
-            Settings settings = ImmutableSettings.settingsBuilder()
-                    // setting the classloader here will allow the underlying elasticsearch-java
-                    // class to find its names.txt in an OSGi environment (otherwise the thread
-                    // classloader is used, which won't be able to see the file causing a startup
-                    // exception).
-                    .classLoader(Settings.class.getClassLoader())
-                    .put("cluster.name", configuration.getClusterName())
-                    .put("client.transport.ignore_cluster_name", false)
-                    .put("node.client", true)
-                    .put("client.transport.sniff", true)
-                    .build();
-            Client client = new TransportClient(settings)
+            this.client = new TransportClient(getSettings())
                     .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
-            this.client = client;
+
+        } else if (configuration.getTransportAddresses() != null &&
+                !configuration.getTransportAddresses().isEmpty()) {
+            List<TransportAddress> addresses = new ArrayList<>(configuration.getTransportAddresses().size());
+            for (TransportAddress address : configuration.getTransportAddresses()) {
+                addresses.add(address);
+            }
+            this.client = new TransportClient(getSettings())
+                   .addTransportAddresses(addresses.toArray(new TransportAddress[0]));
         } else {
             node = configuration.buildNode();
             client = node.client();
         }
+    }
+
+    private Settings getSettings() {
+        return ImmutableSettings.settingsBuilder()
+                        // setting the classloader here will allow the underlying elasticsearch-java
+                        // class to find its names.txt in an OSGi environment (otherwise the thread
+                        // classloader is used, which won't be able to see the file causing a startup
+                // exception).
+                .classLoader(Settings.class.getClassLoader())
+                .put("cluster.name", configuration.getClusterName())
+                .put("client.transport.ignore_cluster_name", false)
+                        .put("node.client", true)
+                .put("client.transport.sniff", true)
+                        .build();
     }
 
     @Override
