@@ -43,7 +43,7 @@ public class LdapEndpoint extends DefaultEndpoint {
     private String dirContextName;
     @UriParam(defaultValue = SYSTEM_DN)
     private String base = SYSTEM_DN;
-    @UriParam(defaultValue = SUBTREE_SCOPE)
+    @UriParam(defaultValue = SUBTREE_SCOPE, enums = "object,onelevel,subtree")
     private String scope = SUBTREE_SCOPE;
     @UriParam
     private Integer pageSize;
@@ -84,14 +84,25 @@ public class LdapEndpoint extends DefaultEndpoint {
         this.dirContextName = dirContextName;
     }
 
+    /**
+     * When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query).
+     * To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown)
+     */
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public int getPageSize() {
+        return pageSize;
     }
 
     public String getBase() {
         return base;
     }
 
+    /**
+     * The base DN for searches.
+     */
     public void setBase(String base) {
         this.base = base;
     }
@@ -100,22 +111,20 @@ public class LdapEndpoint extends DefaultEndpoint {
         return scope;
     }
 
+    /**
+     * Specifies how deeply to search the tree of entries, starting at the base DN.
+     */
     public void setScope(String scope) {
         this.scope = scope;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
     }
 
     public String getReturnedAttributes() {
         return returnedAttributes;
     }
 
+    /**
+     * Comma-separated list of attributes that should be set in each entry of the result
+     */
     public void setReturnedAttributes(String returnedAttributes) {
         this.returnedAttributes = returnedAttributes;
     }
