@@ -18,12 +18,18 @@ package org.apache.camel.component.elasticsearch;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.elasticsearch.action.WriteConsistencyLevel;
+import org.elasticsearch.action.support.replication.ReplicationType;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
@@ -44,14 +50,22 @@ public class ElasticsearchConfiguration {
     public static final String PARAM_DATA = "data";
     public static final String PARAM_INDEX_NAME = "indexName";
     public static final String PARAM_INDEX_TYPE = "indexType";
+    public static final String PARAM_CONSISTENCY_LEVEL = "consistencyLevel";
+    public static final String PARAM_REPLICATION_TYPE = "replicationType";
+    public static final String TRANSPORT_ADDRESSES = "transportAddresses";
     public static final String PROTOCOL = "elasticsearch";
     private static final String LOCAL_NAME = "local";
     private static final String IP = "ip";
     private static final String PORT = "port";
     private static final Integer DEFAULT_PORT = 9300;
+    private static final WriteConsistencyLevel DEFAULT_CONSISTENCY_LEVEL = WriteConsistencyLevel.DEFAULT;
+    private static final ReplicationType DEFAULT_REPLICATION_TYPE = ReplicationType.DEFAULT;
+    private static final String TRANSPORT_ADDRESSES_SEPARATOR_REGEX = ",";
+    private static final String IP_PORT_SEPARATOR_REGEX = ":";
 
     private URI uri;
-    @UriPath(description = "Name of cluster or use local for local mode") @Metadata(required = "true")
+    @UriPath(description = "Name of cluster or use local for local mode")
+    @Metadata(required = "true")
     private String clusterName;
     @UriParam
     private String protocolType;
@@ -62,6 +76,10 @@ public class ElasticsearchConfiguration {
     @UriParam
     private String indexType;
     @UriParam
+    private WriteConsistencyLevel consistencyLevel;
+    @UriParam
+    private ReplicationType replicationType;
+    @UriParam
     private boolean local;
     @UriParam
     private Boolean data;
@@ -69,6 +87,8 @@ public class ElasticsearchConfiguration {
     private String operation;
     @UriParam
     private String ip;
+    @UriParam
+    private List<InetSocketTransportAddress> transportAddresses;
     @UriParam
     private Integer port;
 
@@ -106,9 +126,51 @@ public class ElasticsearchConfiguration {
         indexName = (String)parameters.remove(PARAM_INDEX_NAME);
         indexType = (String)parameters.remove(PARAM_INDEX_TYPE);
         operation = (String)parameters.remove(PARAM_OPERATION);
+        consistencyLevel = parseConsistencyLevel(parameters);
+        replicationType = parseReplicationType(parameters);
+
         ip = (String)parameters.remove(IP);
+        transportAddresses = parseTransportAddresses((String) parameters.remove(TRANSPORT_ADDRESSES));
+
         String portParam = (String) parameters.remove(PORT);
         port = portParam == null ? DEFAULT_PORT : Integer.valueOf(portParam);
+    }
+
+    private ReplicationType parseReplicationType(Map<String, Object> parameters) {
+        Object replicationTypeParam = parameters.remove(PARAM_REPLICATION_TYPE);
+        if (replicationTypeParam != null) {
+            return ReplicationType.valueOf(replicationTypeParam.toString());
+        } else {
+            return DEFAULT_REPLICATION_TYPE;
+        }
+    }
+
+    private WriteConsistencyLevel parseConsistencyLevel(Map<String, Object> parameters) {
+        Object consistencyLevelParam = parameters.remove(PARAM_CONSISTENCY_LEVEL);
+        if (consistencyLevelParam != null) {
+            return WriteConsistencyLevel.valueOf(consistencyLevelParam.toString());
+        } else {
+            return DEFAULT_CONSISTENCY_LEVEL;
+        }
+    }
+
+    private List<InetSocketTransportAddress> parseTransportAddresses(String ipsString) {
+        if (ipsString == null || ipsString.isEmpty()) {
+            return null;
+        }
+        List<String> addressesStr = Arrays.asList(ipsString.split(TRANSPORT_ADDRESSES_SEPARATOR_REGEX));
+        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<>(addressesStr.size());
+        for (String address : addressesStr) {
+            String[] split = address.split(IP_PORT_SEPARATOR_REGEX);
+            String hostname;
+            if (split.length > 0)
+                hostname = split[0];
+            else
+                throw new IllegalArgumentException();
+            Integer port = (split.length > 1 ? Integer.parseInt(split[1]) : DEFAULT_PORT);
+            addressesTrAd.add(new InetSocketTransportAddress(hostname, port));
+        }
+        return addressesTrAd;
     }
 
     protected Boolean toBoolean(Object string) {
@@ -217,12 +279,36 @@ public class ElasticsearchConfiguration {
         this.ip = ip;
     }
 
+    public List<InetSocketTransportAddress> getTransportAddresses() {
+        return transportAddresses;
+    }
+
+    public void setTransportAddresses(List<InetSocketTransportAddress> transportAddresses) {
+        this.transportAddresses = transportAddresses;
+    }
+
     public Integer getPort() {
         return port;
     }
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
+        this.consistencyLevel = consistencyLevel;
+    }
+
+    public WriteConsistencyLevel getConsistencyLevel() {
+        return consistencyLevel;
+    }
+
+    public void setReplicationType(ReplicationType replicationType) {
+        this.replicationType = replicationType;
+    }
+
+    public ReplicationType getReplicationType() {
+        return replicationType;
     }
 
 }

@@ -113,6 +113,20 @@ public class ElasticsearchProducer extends DefaultProducer {
             configIndexType = true;
         }
 
+        boolean configConsistencyLevel = false;
+        String consistencyLevel = message.getHeader(ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL, String.class);
+        if (consistencyLevel == null) {
+            message.setHeader(ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL, getEndpoint().getConfig().getConsistencyLevel());
+            configConsistencyLevel = true;
+        }
+
+        boolean configReplicationType = false;
+        String replicationType = message.getHeader(ElasticsearchConfiguration.PARAM_REPLICATION_TYPE, String.class);
+        if (replicationType == null) {
+            message.setHeader(ElasticsearchConfiguration.PARAM_REPLICATION_TYPE, getEndpoint().getConfig().getReplicationType());
+            configReplicationType = true;
+        }
+
         Client client = getEndpoint().getClient();
         if (ElasticsearchConfiguration.OPERATION_INDEX.equals(operation)) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
@@ -155,5 +169,14 @@ public class ElasticsearchProducer extends DefaultProducer {
         if (configIndexType) {
             message.removeHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE);
         }
+
+        if (configConsistencyLevel) {
+            message.removeHeader(ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL);
+        }
+
+        if (configReplicationType) {
+            message.removeHeader(ElasticsearchConfiguration.PARAM_REPLICATION_TYPE);
+        }
+
     }
 }

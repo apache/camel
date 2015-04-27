@@ -94,6 +94,20 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testIndexWithReplication() throws Exception {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:indexWithReplication", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    public void testIndexWithWriteConsistency() throws Exception {
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:indexWithWriteConsistency", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
     public void testBulkIndex() throws Exception {
         List<Map<String, String>> documents = new ArrayList<Map<String, String>>();
         Map<String, String> document1 = createIndexedData("1");
@@ -211,6 +225,33 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    @Ignore("need to setup the cluster with multiple nodes for this test")
+    public void indexWithTransportAddresses()  throws Exception {
+        Map<String, String> map = createIndexedData();
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+
+        String indexId = template.requestBodyAndHeaders("direct:indexWithTransportAddresses", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    @Ignore("need to setup the cluster with multiple nodes for this test")
+    public void indexWithIpAndTransportAddresses()  throws Exception {
+        Map<String, String> map = createIndexedData();
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+
+        //should ignore transport addresses configuration
+        String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndTransportAddresses", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
     }
 
@@ -357,6 +398,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start").to("elasticsearch://local");
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
+                from("direct:indexWithReplication").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&replicationType=SYNC");
+                from("direct:indexWithWriteConsistency").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet&consistencyLevel=ONE");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
                 from("direct:search").to("elasticsearch://local?operation=SEARCH&indexName=twitter&indexType=tweet");
@@ -364,6 +407,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
                 from("direct:bulk").to("elasticsearch://local?operation=BULK&indexName=twitter&indexType=tweet");
                 //from("direct:indexWithIp").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost");
                 //from("direct:indexWithIpAndPort").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                //from("direct:indexWithTransportAddresses").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&transportAddresses=localhost:9300,localhost:9301");
+                //from("direct:indexWithIpAndTransportAddresses").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300&transportAddresses=localhost:4444,localhost:5555");
             }
         };
     }
