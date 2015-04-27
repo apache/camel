@@ -17,9 +17,9 @@
 package org.apache.camel.component.elasticsearch;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -79,9 +79,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             this.client = new TransportClient(getSettings())
                     .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
 
-        } else if (configuration.getTransportAddresses() != null &&
-                !configuration.getTransportAddresses().isEmpty()) {
-            List<TransportAddress> addresses = new ArrayList<>(configuration.getTransportAddresses().size());
+        } else if (configuration.getTransportAddresses() != null 
+               && !configuration.getTransportAddresses().isEmpty()) {
+            List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddresses().size());
             for (TransportAddress address : configuration.getTransportAddresses()) {
                 addresses.add(address);
             }

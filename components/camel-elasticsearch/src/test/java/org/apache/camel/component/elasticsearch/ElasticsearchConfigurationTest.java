@@ -141,8 +141,8 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
 
     @Test
     public void transportAddressesSimpleHostnameTest() throws Exception {
-        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
-                "indexType=tweet&transportAddresses=127.0.0.1");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" 
+              + "indexType=tweet&transportAddresses=127.0.0.1");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
@@ -153,8 +153,8 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
 
     @Test
     public void transportAddressesMultipleHostnameTest() throws Exception {
-        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
-                "indexType=tweet&transportAddresses=127.0.0.1,127.0.0.2");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" 
+                + "indexType=tweet&transportAddresses=127.0.0.1,127.0.0.2");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
@@ -167,8 +167,8 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
 
     @Test
     public void transportAddressesSimpleHostnameAndPortTest() throws Exception {
-        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
-                "indexType=tweet&transportAddresses=127.0.0.1:9305");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&"
+                + "indexType=tweet&transportAddresses=127.0.0.1:9305");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
@@ -179,8 +179,8 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
 
     @Test
     public void transportAddressesMultipleHostnameAndPortTest() throws Exception {
-        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&" +
-                "indexType=tweet&transportAddresses=127.0.0.1:9400,127.0.0.2,127.0.0.3:9401");
+        URI uri = new URI("elasticsearch://local?operation=INDEX&indexName=twitter&"
+                + "indexType=tweet&transportAddresses=127.0.0.1:9400,127.0.0.2,127.0.0.3:9401");
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);

@@ -159,15 +159,16 @@ public class ElasticsearchConfiguration {
             return null;
         }
         List<String> addressesStr = Arrays.asList(ipsString.split(TRANSPORT_ADDRESSES_SEPARATOR_REGEX));
-        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<>(addressesStr.size());
+        List<InetSocketTransportAddress> addressesTrAd = new ArrayList(addressesStr.size());
         for (String address : addressesStr) {
             String[] split = address.split(IP_PORT_SEPARATOR_REGEX);
             String hostname;
-            if (split.length > 0)
+            if (split.length > 0) {
                 hostname = split[0];
-            else
+            } else {
                 throw new IllegalArgumentException();
-            Integer port = (split.length > 1 ? Integer.parseInt(split[1]) : DEFAULT_PORT);
+            }
+            Integer port = split.length > 1 ? Integer.parseInt(split[1]) : DEFAULT_PORT;
             addressesTrAd.add(new InetSocketTransportAddress(hostname, port));
         }
         return addressesTrAd;
