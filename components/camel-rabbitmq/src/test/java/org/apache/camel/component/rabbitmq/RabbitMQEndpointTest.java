@@ -18,6 +18,7 @@ package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,16 +26,17 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Address;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Address;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.impl.LongStringHelper;
 
 public class RabbitMQEndpointTest extends CamelTestSupport {
 
@@ -107,6 +109,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         customHeaders.put("dateHeader", new Date(0));
         customHeaders.put("byteArrayHeader", "foo".getBytes());
         customHeaders.put("longStringHeader", LongStringHelper.asLongString("Some really long string"));
+        customHeaders.put("timestampHeader", new Timestamp(4200));
+        customHeaders.put("byteHeader", new Byte((byte) 0));
+        customHeaders.put("floatHeader", new Float(42.4242));
+        customHeaders.put("longHeader", new Long(420000000000000000L));
         Mockito.when(properties.getHeaders()).thenReturn(customHeaders);
 
         byte[] body = new byte[20];
@@ -122,6 +128,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(new Date(0), exchange.getIn().getHeader("dateHeader"));
         assertArrayEquals("foo".getBytes(), (byte[]) exchange.getIn().getHeader("byteArrayHeader"));
         assertEquals("Some really long string", exchange.getIn().getHeader("longStringHeader"));
+        assertEquals(new Timestamp(4200), exchange.getIn().getHeader("timestampHeader"));
+        assertEquals(new Byte((byte) 0), exchange.getIn().getHeader("byteHeader"));
+        assertEquals(new Float(42.4242), exchange.getIn().getHeader("floatHeader"));
+        assertEquals(new Long(420000000000000000L), exchange.getIn().getHeader("longHeader"));
         assertEquals(body, exchange.getIn().getBody());
     }
 
@@ -218,5 +228,23 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertTrue(connectionFactory.isAutomaticRecoveryEnabled());
         assertEquals(654, connectionFactory.getNetworkRecoveryInterval());
         assertFalse(connectionFactory.isTopologyRecoveryEnabled());
+    }
+
+    @Test
+    public void createEndpointWithTransferExceptionEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?transferException=true", RabbitMQEndpoint.class);
+        assertEquals(true, endpoint.isTransferException());
+    }
+
+    @Test
+    public void createEndpointWithReplyTimeout() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeout=2000", RabbitMQEndpoint.class);
+        assertEquals(2000, endpoint.getRequestTimeout());
+    }
+
+    @Test
+    public void createEndpointWithRequestTimeoutCheckerInterval() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?requestTimeoutCheckerInterval=1000", RabbitMQEndpoint.class);
+        assertEquals(1000, endpoint.getRequestTimeoutCheckerInterval());
     }
 }

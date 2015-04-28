@@ -51,6 +51,7 @@ public class RabbitMQProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(null);
+        Mockito.when(endpoint.getMessageConverter()).thenReturn(new RabbitMQMessageConverter());
     }
 
     @Test
