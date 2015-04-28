@@ -34,10 +34,10 @@ public class CommandDispatcher {
         this.exchange = exchange;
     }
 
-    // TODO: This method is longer than maximally allowed 200 lines
     // CHECKSTYLE:OFF
     public void execute(final RedisClient redisClient) {
-        switch (determineCommand()) {
+        final Command command = determineCommand();
+        switch (command) {
 
         case PING:
             setResult(redisClient.ping());
@@ -337,20 +337,20 @@ public class CommandDispatcher {
             setResult(redisClient.getrange(getKey(), getStart(), getEnd()));
             break;
         default:
-            throw new RuntimeExchangeException("Unsupported command", exchange);
+            throw new RuntimeExchangeException("Unsupported command: " + command, exchange);
         }
     }
     // CHECKSTYLE:ON
 
     private Command determineCommand() {
-        String command = exchange.getIn().getHeader(RedisConstants.COMMAND, String.class);
+        Command command = exchange.getIn().getHeader(RedisConstants.COMMAND, Command.class);
         if (command == null) {
             command = configuration.getCommand();
         }
         if (command == null) {
-            return Command.SET;
+            command = Command.SET;
         }
-        return Command.valueOf(command);
+        return command;
     }
 
     private static <T> T getInHeaderValue(Exchange exchange, String key, Class<T> aClass) {
