@@ -33,7 +33,7 @@ import org.jboss.netty.util.Timer;
 
 public class NettyComponent extends UriEndpointComponent {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
-    private static volatile Timer timer;
+    private Timer timer;
     private NettyConfiguration configuration;
     private int maximumPoolSize = 16;
     private OrderedMemoryAwareThreadPoolExecutor executorService;
@@ -104,7 +104,7 @@ public class NettyComponent extends UriEndpointComponent {
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public static Timer getTimer() {
+    public Timer getTimer() {
         return timer;
     }
 
@@ -146,6 +146,10 @@ public class NettyComponent extends UriEndpointComponent {
 
     @Override
     protected void doStop() throws Exception {
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+        }
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;

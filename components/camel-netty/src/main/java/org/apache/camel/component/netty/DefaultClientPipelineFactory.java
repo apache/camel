@@ -85,7 +85,7 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
             }
-            ChannelHandler timeout = new ReadTimeoutHandler(NettyComponent.getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            ChannelHandler timeout = new ReadTimeoutHandler(producer.getEndpoint().getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             addToPipeline("timeout", channelPipeline, timeout);
         }
 
