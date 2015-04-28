@@ -99,28 +99,28 @@ public class OpenShiftProducer extends DefaultProducer {
             doScaleDown(exchange, domain);
             break;
         case getDeploymentType:
-        	doGetDeploymentType(exchange, domain);
+            doGetDeploymentType(exchange, domain);
             break;
         case setDeploymentType:
-        	doSetDeploymentType(exchange, domain);
+            doSetDeploymentType(exchange, domain);
             break;
         case addEnvironmentVariable:
-        	doAddEnvironmentVariable(exchange, domain);
+            doAddEnvironmentVariable(exchange, domain);
             break;
         case updateEnvironmentVariable:
-        	doUpdateEnvironmentVariable(exchange, domain);
+            doUpdateEnvironmentVariable(exchange, domain);
             break;
         case getAllEnvironmentVariables:
-        	doGetAllEnvironmentVariables(exchange, domain);
+            doGetAllEnvironmentVariables(exchange, domain);
             break;
         case getEnvironmentVariableValue:
-        	doGetEnvironmentVariableValue(exchange, domain);
+            doGetEnvironmentVariableValue(exchange, domain);
             break;
         case removeEnvironmentVariable:
-        	doRemoveEnvironmentVariable(exchange, domain);
+            doRemoveEnvironmentVariable(exchange, domain);
             break;
         case getGearProfile:
-        	doGetGearProfile(exchange, domain);
+            doGetGearProfile(exchange, domain);
             break;            
         case list:
         default:
@@ -447,8 +447,8 @@ public class OpenShiftProducer extends DefaultProducer {
         } else {
             String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
             String variableValue = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_VALUE, getEndpoint().getApplication(), String.class);
-            if ((!app.canUpdateEnvironmentVariables())) {
-            	throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
+            if (!app.canUpdateEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
             }
             if ((!ObjectHelper.isEmpty(variableName) && variableName != null) || (!ObjectHelper.isEmpty(variableValue) && variableValue != null)) {
                 IEnvironmentVariable result = app.addEnvironmentVariable(variableName, variableValue);
@@ -471,8 +471,8 @@ public class OpenShiftProducer extends DefaultProducer {
         } else {
             String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
             String variableValue = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_VALUE, getEndpoint().getApplication(), String.class);
-            if ((!app.canUpdateEnvironmentVariables())) {
-            	throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
+            if (!app.canUpdateEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
             }
             if ((!ObjectHelper.isEmpty(variableName) && variableName != null) || (!ObjectHelper.isEmpty(variableValue) && variableValue != null)) {
                 IEnvironmentVariable result = app.updateEnvironmentVariable(variableName, variableValue);
@@ -494,10 +494,10 @@ public class OpenShiftProducer extends DefaultProducer {
             throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
         } else {
             String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
-            if ((!app.canGetEnvironmentVariables())) {
-            	throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
             }
-            if ((!ObjectHelper.isEmpty(variableName) && variableName != null)) {
+            if (!ObjectHelper.isEmpty(variableName) && variableName != null) {
                 IEnvironmentVariable result = app.getEnvironmentVariable(variableName);
                 exchange.getIn().setBody(result.getValue());
             } else {
@@ -516,8 +516,8 @@ public class OpenShiftProducer extends DefaultProducer {
         if (app == null) {
             throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
         } else {
-        	Map<String, IEnvironmentVariable> result = app.getEnvironmentVariables();
-        	exchange.getIn().setBody(result);
+            Map<String, IEnvironmentVariable> result = app.getEnvironmentVariables();
+            exchange.getIn().setBody(result);
         }
     }
     
@@ -532,10 +532,10 @@ public class OpenShiftProducer extends DefaultProducer {
             throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
         } else {
             String variableName = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_NAME, getEndpoint().getApplication(), String.class);
-            if ((!app.canGetEnvironmentVariables())) {
-            	throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
             }
-            if ((!ObjectHelper.isEmpty(variableName) && variableName != null)) {
+            if (!ObjectHelper.isEmpty(variableName) && variableName != null) {
                 app.removeEnvironmentVariable(variableName);
                 exchange.getIn().setBody(variableName);
             } else {
