@@ -114,4 +114,12 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
     }
+    
+    public GoogleMailClientFactory getClientFactory() {
+        return ((GoogleMailComponent)getComponent()).getClientFactory();
+    }
+
+    public void setClientFactory(GoogleMailClientFactory clientFactory) {
+        ((GoogleMailComponent)getComponent()).setClientFactory(clientFactory);
+    }
 }
