@@ -109,5 +109,6 @@ public class CamelContextFactoryBeanTest extends TestCase {
         assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
     }
 
-    private static class CustomModelJAXBContextFactory extends DefaultModelJAXBContextFactory {}
+    private static class CustomModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
+    }
 }
