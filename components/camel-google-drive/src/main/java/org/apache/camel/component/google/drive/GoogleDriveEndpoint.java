@@ -129,5 +129,11 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
         return apiProxy;
     }
 
+    public GoogleDriveClientFactory getClientFactory() {
+        return ((GoogleDriveComponent)getComponent()).getClientFactory();
+    }
 
+    public void setClientFactory(GoogleDriveClientFactory clientFactory) {
+        ((GoogleDriveComponent)getComponent()).setClientFactory(clientFactory);
+    }
 }
