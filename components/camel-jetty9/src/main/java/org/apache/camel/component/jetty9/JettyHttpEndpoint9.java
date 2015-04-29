@@ -37,7 +37,9 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint {
     @Override
     public HttpBinding getBinding() {
         if (this.binding == null) {
-            this.binding = new AttachmentHttpBinding(this);
+            this.binding = new AttachmentHttpBinding();
+            this.binding.setTransferException(isTransferException());
+            this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         return this.binding;
     }
