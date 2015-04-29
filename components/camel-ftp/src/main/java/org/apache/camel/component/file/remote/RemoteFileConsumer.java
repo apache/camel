@@ -162,7 +162,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
         try {
             // we may as well be connected, but not logged in. let's disconnect to prevent connection leak
-            if (getOperations().isConnected()) {
+            if (!isConnected && getOperations().isConnected()) {
                 getOperations().disconnect();
             }
         } catch (Exception ex) {
