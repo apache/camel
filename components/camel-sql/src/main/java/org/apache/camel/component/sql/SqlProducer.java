@@ -32,6 +32,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 
+import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
+
 public class SqlProducer extends DefaultProducer {
     private String query;
     private JdbcTemplate jdbcTemplate;
@@ -89,91 +91,96 @@ public class SqlProducer extends DefaultProducer {
 
         jdbcTemplate.execute(statementCreator, new PreparedStatementCallback<Map<?, ?>>() {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
-                int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+                ResultSet rs = null;
+                try {
+                    int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
 
-                // only populate if really needed
-                if (alwaysPopulateStatement || expected > 0) {
-                    // transfer incoming message body data to prepared statement parameters, if necessary
-                    if (batch) {
-                        Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
-                        while (iterator != null && iterator.hasNext()) {
-                            Object value = iterator.next();
-                            Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
-                            sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
-                            ps.addBatch();
-                        }
-                    } else {
-                        Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
-                        sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
-                    }
-                }
-
-                boolean isResultSet = false;
-
-                // execute the prepared statement and populate the outgoing message
-                if (batch) {
-                    int[] updateCounts = ps.executeBatch();
-                    int total = 0;
-                    for (int count : updateCounts) {
-                        total += count;
-                    }
-                    exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
-                } else {
-                    isResultSet = ps.execute();
-                    if (isResultSet) {
-                        // preserve headers first, so we can override the SQL_ROW_COUNT header
-                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-
-                        ResultSet rs = ps.getResultSet();
-                        SqlOutputType outputType = getEndpoint().getOutputType();
-                        log.trace("Got result list from query: {}, outputType={}", rs, outputType);
-                        if (outputType == SqlOutputType.SelectList) {
-                            List<?> data = getEndpoint().queryForList(rs, true);
-                            // for noop=true we still want to enrich with the row count header
-                            if (getEndpoint().isNoop()) {
-                                exchange.getOut().setBody(exchange.getIn().getBody());
-                            } else {
-                                exchange.getOut().setBody(data);
+                    // only populate if really needed
+                    if (alwaysPopulateStatement || expected > 0) {
+                        // transfer incoming message body data to prepared statement parameters, if necessary
+                        if (batch) {
+                            Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
+                            while (iterator != null && iterator.hasNext()) {
+                                Object value = iterator.next();
+                                Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, value);
+                                sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
+                                ps.addBatch();
                             }
-                            exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
-                        } else if (outputType == SqlOutputType.SelectOne) {
-                            Object data = getEndpoint().queryForObject(rs);
-                            if (data != null) {
+                        } else {
+                            Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected, exchange, exchange.getIn().getBody());
+                            sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
+                        }
+                    }
+
+                    boolean isResultSet = false;
+
+                    // execute the prepared statement and populate the outgoing message
+                    if (batch) {
+                        int[] updateCounts = ps.executeBatch();
+                        int total = 0;
+                        for (int count : updateCounts) {
+                            total += count;
+                        }
+                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
+                    } else {
+                        isResultSet = ps.execute();
+                        if (isResultSet) {
+                            // preserve headers first, so we can override the SQL_ROW_COUNT header
+                            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+
+                            rs = ps.getResultSet();
+                            SqlOutputType outputType = getEndpoint().getOutputType();
+                            log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                            if (outputType == SqlOutputType.SelectList) {
+                                List<?> data = getEndpoint().queryForList(rs, true);
                                 // for noop=true we still want to enrich with the row count header
                                 if (getEndpoint().isNoop()) {
                                     exchange.getOut().setBody(exchange.getIn().getBody());
                                 } else {
                                     exchange.getOut().setBody(data);
                                 }
-                                exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
+                                exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
+                            } else if (outputType == SqlOutputType.SelectOne) {
+                                Object data = getEndpoint().queryForObject(rs);
+                                if (data != null) {
+                                    // for noop=true we still want to enrich with the row count header
+                                    if (getEndpoint().isNoop()) {
+                                        exchange.getOut().setBody(exchange.getIn().getBody());
+                                    } else {
+                                        exchange.getOut().setBody(data);
+                                    }
+                                    exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
+                                }
+                            } else {
+                                throw new IllegalArgumentException("Invalid outputType=" + outputType);
                             }
                         } else {
-                            throw new IllegalArgumentException("Invalid outputType=" + outputType);
+                            exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                         }
-                    } else {
-                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                     }
+
+                    if (shouldRetrieveGeneratedKeys) {
+                        // if no OUT message yet then create one and propagate headers
+                        if (!exchange.hasOut()) {
+                            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                        }
+
+                        if (isResultSet) {
+                            // we won't return generated keys for SELECT statements
+                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
+                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
+                        } else {
+                            List<?> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys(), false);
+                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
+                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, generatedKeys.size());
+                        }
+                    }
+
+                    // data is set on exchange so return null
+                    return null;
+                } finally {
+                    closeResultSet(rs);
                 }
-
-                if (shouldRetrieveGeneratedKeys) {
-                    // if no OUT message yet then create one and propagate headers
-                    if (!exchange.hasOut()) {
-                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                    }
-
-                    if (isResultSet) {
-                        // we won't return generated keys for SELECT statements
-                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
-                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
-                    } else {
-                        List<?> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys(), false);
-                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
-                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, generatedKeys.size());
-                    }
-                }
-
-                // data is set on exchange so return null
-                return null;
             }
         });
     }

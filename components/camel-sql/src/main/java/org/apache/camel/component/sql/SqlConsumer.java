@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
@@ -35,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+
+import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 
 public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
@@ -110,7 +111,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                         throw new IllegalArgumentException("Invalid outputType=" + outputType);
                     }
                 } finally {
-                    rs.close();
+                    closeResultSet(rs);
                 }
 
                 // process all the exchanges in this batch
