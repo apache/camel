@@ -874,6 +874,7 @@
     <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.yammer.metrics/metrics-core/${yammer-metrics-version}$Bundle-Version=${yammer-metrics-version}&amp;Export-Package=*;-noimport:=true;version="${yammer-metrics-version}"</bundle>
     <bundle dependency='true'>wrap:mvn:com.yammer.metrics/metrics-annotation/${yammer-metrics-version}$Bundle-Version=${yammer-metrics-version}&amp;Export-Package=*;-noimport:=true;version="${yammer-metrics-version}"</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kafka-clients/${kafka-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kafka_2.10/${kafka-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-kafka/${project.version}</bundle>
