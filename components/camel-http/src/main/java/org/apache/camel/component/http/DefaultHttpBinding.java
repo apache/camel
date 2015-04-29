@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
+ * <p/>
+ * Uses by default the {@link org.apache.camel.component.http.HttpHeaderFilterStrategy}
  *
  * @version 
  */
@@ -59,7 +61,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
     private boolean transferException;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultHttpBinding() {
     }

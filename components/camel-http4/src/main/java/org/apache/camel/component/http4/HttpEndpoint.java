@@ -52,16 +52,21 @@ import org.slf4j.LoggerFactory;
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpBinding binding;
     private HttpContext httpContext;
     private HttpComponent component;
-    @UriPath @Metadata(required = "true")
-    private URI httpUri;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpClientConnectionManager clientConnectionManager;
     private HttpClientBuilder clientBuilder;
     private HttpClient httpClient;
+    private UrlRewrite urlRewrite;
+    private CookieStore cookieStore = new BasicCookieStore();
+
+    @UriPath @Metadata(required = "true")
+    private URI httpUri;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    @UriParam
+    private HttpBinding binding;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
     @UriParam
@@ -80,11 +85,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean authenticationPreemptive;
     @UriParam
     private String httpMethodRestrict;
-    private UrlRewrite urlRewrite;
     @UriParam(defaultValue = "true")
     private boolean clearExpiredCookies = true;
-    private CookieStore cookieStore = new BasicCookieStore();
-    
+
     public HttpEndpoint() {
     }
 
@@ -252,7 +255,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public HttpBinding getBinding() {
         if (binding == null) {
-            binding = new DefaultHttpBinding(this);
+            // create a new binding and use the options from this endpoint
+            binding = new DefaultHttpBinding();
+            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            binding.setTransferException(isTransferException());
         }
         return binding;
     }
