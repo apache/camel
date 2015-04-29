@@ -33,10 +33,12 @@ public class InfinispanConfiguration {
     private String host;
     @UriParam
     private String cacheName;
-    @UriParam
+    @UriParam(label = "producer", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync," 
+           + "replace,replaceAsync,clear,size")
     private String command;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
+    @UriParam(label = "consumer")
     private Set<String> eventTypes;
 
     public String getCommand() {
@@ -47,6 +49,9 @@ public class InfinispanConfiguration {
         this.command = command;
     }
 
+    /**
+     * Specifies the host of the cache on Infinispan instance
+     */
     public String getHost() {
         return host;
     }
@@ -55,6 +60,9 @@ public class InfinispanConfiguration {
         this.host = host;
     }
 
+    /**
+     * Specifies the cache Container to connect
+     */   
     public BasicCacheContainer getCacheContainer() {
         return cacheContainer;
     }
@@ -63,6 +71,10 @@ public class InfinispanConfiguration {
         this.cacheContainer = cacheContainer;
     }
 
+
+    /**
+     * Specifies the cache name
+     */  
     public String getCacheName() {
         return cacheName;
     }
@@ -71,6 +83,9 @@ public class InfinispanConfiguration {
         this.cacheName = cacheName;
     }
 
+    /**
+    * If true, the consumer will receive notifications synchronously
+    */
     public boolean isSync() {
         return sync;
     }
@@ -79,6 +94,9 @@ public class InfinispanConfiguration {
         this.sync = sync;
     }
 
+    /**
+    * Specifies the set of event types to register by the consumer 
+    */
     public Set<String> getEventTypes() {
         return eventTypes;
     }
