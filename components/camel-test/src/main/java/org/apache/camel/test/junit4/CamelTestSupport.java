@@ -62,6 +62,7 @@ import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +88,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
-
+    private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
     /**
      * Use the RouteBuilder or not
@@ -373,12 +374,15 @@ public abstract class CamelTestSupport extends TestSupport {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 String xml = managedCamelContext.dumpRoutesCoverageAsXml();
+                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml() + xml + "\n</camelRouteCoverage>";
+
                 File file = new File(dir);
                 // ensure dir exists
                 file.mkdirs();
                 file = new File(dir, name);
+
                 log.info("Dumping route coverage to file: " + file);
-                InputStream is = new ByteArrayInputStream(xml.getBytes());
+                InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);
                 IOHelper.close(os);
@@ -402,6 +406,19 @@ public abstract class CamelTestSupport extends TestSupport {
         LOG.debug("tearDownAfterClass test");
         doStopTemplates(threadConsumer.get(), threadTemplate.get());
         doStopCamelContext(threadCamelContext.get(), threadService.get());
+    }
+
+    /**
+     * Gathers test details as xml
+     */
+    private String gatherTestDetailsAsXml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<test>\n");
+        sb.append("  <class>").append(getClass().getName()).append("</class>\n");
+        sb.append("  <method>").append(getTestMethodName()).append("</method>\n");
+        sb.append("  <time>").append(getCamelTestWatcher().timeTaken()).append("</time>\n");
+        sb.append("</test>\n");
+        return sb.toString();
     }
 
     /**
@@ -442,6 +459,11 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected Properties useOverridePropertiesWithPropertiesComponent() {
         return null;
+    }
+
+    @Rule
+    public CamelTestWatcher getCamelTestWatcher() {
+        return camelTestWatcher;
     }
 
     /**
