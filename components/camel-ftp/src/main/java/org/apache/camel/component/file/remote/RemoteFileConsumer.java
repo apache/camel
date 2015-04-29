@@ -190,9 +190,23 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         try {
             isConnected = getOperations().sendNoop();
         } catch (Exception ex) {
-            // here we just ignore the exception and try to reconnect 
+            // here we just ignore the exception and try to reconnect
+            if (log.isDebugEnabled()) {
+                log.debug("Exception checking connection status: " + ex.getMessage());
+            }
         }
-        
+
+        try {
+            // we may as well be connected, but not logged in. let's disconnect to prevent connection leak
+            if (getOperations().isConnected()) {
+                getOperations().disconnect();
+            }
+        } catch (Exception ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception during disconnect: " + ex.getMessage());
+            }
+        }
+
         if (!loggedIn || !isConnected) {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to: {}", remoteServer());
