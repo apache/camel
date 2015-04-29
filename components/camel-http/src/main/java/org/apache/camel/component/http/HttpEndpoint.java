@@ -50,14 +50,19 @@ import org.slf4j.LoggerFactory;
 public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpBinding binding;
+
     private HttpComponent component;
-    @UriPath @Metadata(required = "true", label = "producer")
-    private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
+    private UrlRewrite urlRewrite;
+
+    @UriPath @Metadata(required = "true", label = "producer")
+    private URI httpUri;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    @UriParam
+    private HttpBinding binding;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
     @UriParam
@@ -80,7 +85,6 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean traceEnabled;
     @UriParam
     private String httpMethodRestrict;
-    private UrlRewrite urlRewrite;
     @UriParam
     private Integer responseBufferSize;
 
@@ -227,7 +231,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public HttpBinding getBinding() {
         if (binding == null) {
-            binding = new DefaultHttpBinding(this);
+            // create a new binding and use the options from this endpoint
+            binding = new DefaultHttpBinding();
+            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            binding.setTransferException(isTransferException());
         }
         return binding;
     }
