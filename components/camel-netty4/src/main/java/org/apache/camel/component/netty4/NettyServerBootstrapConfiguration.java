@@ -57,12 +57,10 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String securityProvider;
     protected String enabledProtocols = defaultEnabledProtocols;
     protected String passphrase;
-    @UriParam
     protected EventLoopGroup bossGroup;
-    @UriParam
     protected EventLoopGroup workerGroup;
     protected String networkInterface;
-    
+
     // setup the default value of TLS
     static {
         // JDK6 doesn't support TLSv1.1,TLSv1.2
@@ -323,19 +321,19 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint 
+     * Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint
      * @param bossGroup
      */
     public void setBossGroup(EventLoopGroup bossGroup) {
         this.bossGroup = bossGroup;
     }
-    
+
     public EventLoopGroup getWorkerGroup() {
         return workerGroup;
     }
 
     /**
-     * Set the WorkerGroup which could be used for handling selector eventloop across the NettyEndpoint 
+     * Set the WorkerGroup which could be used for handling selector eventloop across the NettyEndpoint
      * @param workerGroup
      */
     public void setWorkerGroup(EventLoopGroup workerGroup) {
