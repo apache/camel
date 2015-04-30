@@ -38,6 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
@@ -169,6 +170,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected long readLockMinAge;
     @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
+    @UriParam(label = "consumer")
+    protected ExceptionHandler onCompletionExceptionHandler;
 
     public GenericFileEndpoint() {
     }
@@ -1098,6 +1101,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
+    }
+
+    public ExceptionHandler getOnCompletionExceptionHandler() {
+        return onCompletionExceptionHandler;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.ExceptionHandler} to handle any thrown exceptions that happens
+     * during the file on completion process where the consumer does either a commit or rollback. The default
+     * implementation will log any exception at WARN level and ignore.
+     */
+    public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
+        this.onCompletionExceptionHandler = onCompletionExceptionHandler;
     }
 
     /**
