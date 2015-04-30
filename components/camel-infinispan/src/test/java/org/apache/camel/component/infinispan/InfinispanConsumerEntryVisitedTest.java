@@ -21,26 +21,28 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class InfinispanConsumerTest extends InfinispanTestSupport {
+public class InfinispanConsumerEntryVisitedTest extends InfinispanTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mockResult;
 
     @Test
-    public void consumerReceivedPreAndPostEntryCreatedEventNotifications() throws Exception {
+    public void consumerReceivedPreAndPostEntryVisitedEventNotifications() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+
         mockResult.expectedMessageCount(2);
 
-        mockResult.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResult.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_VISITED");
         mockResult.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(true);
         mockResult.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
         mockResult.message(0).outHeader(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
 
-        mockResult.message(1).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResult.message(1).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_VISITED");
         mockResult.message(1).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
         mockResult.message(1).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
         mockResult.message(1).outHeader(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
 
-        currentCache().put(KEY_ONE, VALUE_ONE);
+        currentCache().get(KEY_ONE);
         mockResult.assertIsSatisfied();
     }
 
@@ -49,7 +51,7 @@ public class InfinispanConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://localhost?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan://localhost?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_VISITED")
                         .to("mock:result");
             }
         };
