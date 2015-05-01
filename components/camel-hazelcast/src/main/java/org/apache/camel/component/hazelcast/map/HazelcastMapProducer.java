@@ -116,7 +116,6 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
 
         // finally copy headers
         HazelcastComponentHelper.copyHeaders(exchange);
-
     }
 
     /**
