@@ -242,6 +242,11 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
+        // the loggerName option should come before the groupDelay option
+        int pos = json.indexOf("loggerName");
+        int pos2 = json.indexOf("groupDelay");
+        assertTrue("LoggerName should come before groupDelay", pos < pos2);
+
         assertEquals(8, StringHelper.countChar(json, '{'));
         assertEquals(8, StringHelper.countChar(json, '}'));
 
@@ -249,7 +254,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
-                + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
+                + " \"description\": \"Set the initial delay for stats (in millis)\" }"));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
@@ -272,6 +277,11 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
                 new String[]{"java.lang.String", "boolean"});
         assertNotNull(json);
 
+        // the loggerName option should come before the groupDelay option
+        int pos = json.indexOf("loggerName");
+        int pos2 = json.indexOf("groupDelay");
+        assertTrue("LoggerName should come before groupDelay", pos < pos2);
+
         assertEquals(14, StringHelper.countChar(json, '{'));
         assertEquals(14, StringHelper.countChar(json, '}'));
 
@@ -279,7 +289,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"groupDelay\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Long\", \"deprecated\": \"false\", \"value\": \"2000\","
-                + " \"description\": \"Set the initial delay for stats (in millis)\" },"));
+                + " \"description\": \"Set the initial delay for stats (in millis)\" }"));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"type\": \"integer\", \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\","
                 + " \"description\": \"An integer that specifies a group size for throughput logging.\" }"));
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\","
