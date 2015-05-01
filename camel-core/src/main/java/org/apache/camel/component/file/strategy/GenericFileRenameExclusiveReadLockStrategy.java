@@ -88,8 +88,17 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
-                                         Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
         // noop
     }
 

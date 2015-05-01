@@ -154,7 +154,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Comparator<GenericFile<T>> sorter;
     @UriParam(label = "consumer")
     protected Comparator<Exchange> sortBy;
-    @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed")
+    @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed,idempotent")
     protected String readLock = "none";
     @UriParam(label = "consumer", defaultValue = "1000")
     protected long readLockCheckInterval = 1000;
@@ -168,6 +168,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected long readLockMinLength = 1;
     @UriParam(label = "consumer", defaultValue = "0")
     protected long readLockMinAge;
+    @UriParam(label = "consumer", defaultValue = "true")
+    protected boolean readLockRemoveOnRollback = true;
     @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     @UriParam(label = "consumer")
@@ -1210,6 +1212,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLock != null) {
             params.put("readLock", readLock);
         }
+        if ("idempotent".equals(readLock)) {
+            params.put("readLockIdempotentRepository", idempotentRepository);
+        }
         if (readLockCheckInterval > 0) {
             params.put("readLockCheckInterval", readLockCheckInterval);
         }
@@ -1220,7 +1225,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         params.put("readLockMinLength", readLockMinLength);
         params.put("readLockLoggingLevel", readLockLoggingLevel);
         params.put("readLockMinAge", readLockMinAge);
-
+        params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
         return params;
     }
 
@@ -1331,14 +1336,21 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                         + " to ensure that the read lock procedure has enough time to acquire the lock.");
             }
         }
+        if ("idempotent".equals(readLock) && idempotentRepository == null) {
+            throw new IllegalArgumentException("IdempotentRepository must be configured when using readLock=idempotent");
+        }
 
-        ServiceHelper.startServices(inProgressRepository, idempotentRepository);
+        // idempotent repository may be used by others, so add it as a service so its stopped when CamelContext stops
+        if (idempotentRepository != null) {
+            getCamelContext().addService(idempotentRepository, true);
+        }
+        ServiceHelper.startServices(inProgressRepository);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopServices(inProgressRepository, idempotentRepository);
+        ServiceHelper.stopServices(inProgressRepository);
     }
 }
