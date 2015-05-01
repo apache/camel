@@ -19,11 +19,16 @@ package org.apache.camel.component.hazelcast;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-
 import com.hazelcast.query.SqlPredicate;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hazelcast.testutil.Dummy;
@@ -93,6 +98,33 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verify(map).get("4711");
         assertEquals("my-foo", body);
     }
+    
+    @Test
+    public void testGetAllEmptySet() {
+        Set<Object> l = new HashSet<Object>();
+        Map t = new HashMap();
+        t.put("key1", "value1");
+        t.put("key2", "value2");
+        t.put("key3", "value3");
+        when(map.getAll(anySet())).thenReturn(t);
+        template.sendBodyAndHeader("direct:getAll", null, HazelcastConstants.OBJECT_ID, l);
+        String body = consumer.receiveBody("seda:out", 5000, String.class);
+        verify(map).getAll(l);
+        assertEquals("{key3=value3, key2=value2, key1=value1}", body);
+    }
+    
+    @Test
+    public void testGetAllOnlyOneKey() {
+        Set<Object> l = new HashSet<Object>();
+        l.add("key1");
+        Map t = new HashMap();
+        t.put("key1", "value1");
+        when(map.getAll(l)).thenReturn(t);
+        template.sendBodyAndHeader("direct:getAll", null, HazelcastConstants.OBJECT_ID, l);
+        String body = consumer.receiveBody("seda:out", 5000, String.class);
+        verify(map).getAll(l);
+        assertEquals("{key1=value1}", body);
+    }
 
     @Test
     public void testDelete() {
@@ -113,6 +145,18 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         assertNotNull(b1);
         assertEquals(2, b1.size());
     }
+    
+    @Test
+    public void testEmptyQuery() {
+        when(map.values()).thenReturn(Arrays.<Object>asList(new Dummy("beta", 2000), new Dummy("gamma", 3000), new Dummy("delta", 4000)));
+        template.sendBody("direct:query", null);
+        verify(map).values();
+
+        Collection<?> b1 = consumer.receiveBody("seda:out", 5000, Collection.class);
+
+        assertNotNull(b1);
+        assertEquals(3, b1.size());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -129,6 +173,9 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
                 from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
+                from("direct:getAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_ALL_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                        .to("seda:out");
+                
                 from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
                 from("direct:query").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.QUERY_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
@@ -136,8 +183,6 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
 
                 from("direct:putWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);
-
-
             }
         };
     }

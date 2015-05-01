@@ -55,6 +55,7 @@ public final class HazelcastConstants {
     public static final int GET_OPERATION = 3;
     public static final int UPDATE_OPERATION = 4;
     public static final int QUERY_OPERATION = 5;
+    public static final int GET_ALL_OPERATION = 6;
 
     // multimap
     public static final int REMOVEVALUE_OPERATION = 10;

@@ -92,6 +92,7 @@ public final class HazelcastComponentHelper {
         addMapping("get", HazelcastConstants.GET_OPERATION);
         addMapping("update", HazelcastConstants.UPDATE_OPERATION);
         addMapping("query", HazelcastConstants.QUERY_OPERATION);
+        addMapping("getAll", HazelcastConstants.GET_ALL_OPERATION);
 
         // multimap
         addMapping("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);

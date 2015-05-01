@@ -18,6 +18,7 @@ package org.apache.camel.component.hazelcast.map;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -27,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class HazelcastMapProducer extends HazelcastDefaultProducer {
 
@@ -63,6 +65,10 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.GET_OPERATION:
             this.get(oid, exchange);
             break;
+            
+        case HazelcastConstants.GET_ALL_OPERATION:
+            this.getAll(oid, exchange);
+            break;
 
         case HazelcastConstants.DELETE_OPERATION:
             this.delete(oid);
@@ -89,7 +95,12 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      * query map with a sql like syntax (see http://www.hazelcast.com/)
      */
     private void query(String query, Exchange exchange) {
-        Collection<Object> result = this.cache.values(new SqlPredicate(query));
+        Collection<Object> result;
+        if (ObjectHelper.isNotEmpty(query) && query != null) {
+            result = this.cache.values(new SqlPredicate(query));
+        } else {
+            result = this.cache.values();
+        }
         exchange.getOut().setBody(result);
     }
 
@@ -115,6 +126,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      */
     private void get(Object oid, Exchange exchange) {
         exchange.getOut().setBody(this.cache.get(oid));
+    }
+    
+    
+    /**
+     * get All objects and give it back
+     */
+    private void getAll(Object oid, Exchange exchange) {
+        exchange.getOut().setBody(this.cache.getAll((Set<Object>) oid));
     }
 
     /**
