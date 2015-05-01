@@ -107,6 +107,9 @@ public class OpenShiftProducer extends DefaultProducer {
         case addEnvironmentVariable:
             doAddEnvironmentVariable(exchange, domain);
             break;
+        case addMultipleEnvironmentVariables:
+            doAddMultipleEnvironmentVariables(exchange, domain);
+            break;
         case updateEnvironmentVariable:
             doUpdateEnvironmentVariable(exchange, domain);
             break;
@@ -455,6 +458,29 @@ public class OpenShiftProducer extends DefaultProducer {
                 exchange.getIn().setBody(result.getName());
             } else {
                 throw new CamelExchangeException("Environment variable not correctly specified", exchange);
+            }
+        }
+    }
+    
+    protected void doAddMultipleEnvironmentVariables(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            Map environmentVariables = exchange.getIn().getHeader(OpenShiftConstants.ENVIRONMENT_VARIABLE_MAP, getEndpoint().getApplication(), Map.class);
+            if (!app.canUpdateEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
+            }
+            if ((!ObjectHelper.isEmpty(environmentVariables) && environmentVariables != null)) {
+                Map<String, IEnvironmentVariable> result = app.addEnvironmentVariables(environmentVariables);
+                exchange.getIn().setBody(result);
+            } else {
+                throw new CamelExchangeException("Environment variables not correctly specified", exchange);
             }
         }
     }

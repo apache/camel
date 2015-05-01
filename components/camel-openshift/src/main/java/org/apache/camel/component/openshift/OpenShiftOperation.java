@@ -34,6 +34,7 @@ public enum OpenShiftOperation {
     setDeploymentType,
     getAllEnvironmentVariables,
     addEnvironmentVariable,
+    addMultipleEnvironmentVariables,
     updateEnvironmentVariable,
     getEnvironmentVariableValue,
     removeEnvironmentVariable,
