@@ -96,7 +96,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      */
     private void query(String query, Exchange exchange) {
         Collection<Object> result;
-        if (ObjectHelper.isNotEmpty(query) && query != null) {
+        if (ObjectHelper.isNotEmpty(query)) {
             result = this.cache.values(new SqlPredicate(query));
         } else {
             result = this.cache.values();
