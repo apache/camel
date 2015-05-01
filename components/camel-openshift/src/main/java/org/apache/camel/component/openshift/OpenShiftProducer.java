@@ -476,7 +476,7 @@ public class OpenShiftProducer extends DefaultProducer {
             if (!app.canUpdateEnvironmentVariables()) {
                 throw new CamelExchangeException("The application with id " + name + " can't update Environment Variables", exchange);
             }
-            if ((!ObjectHelper.isEmpty(environmentVariables) && environmentVariables != null)) {
+            if (!ObjectHelper.isEmpty(environmentVariables) && environmentVariables != null) {
                 Map<String, IEnvironmentVariable> result = app.addEnvironmentVariables(environmentVariables);
                 exchange.getIn().setBody(result);
             } else {
