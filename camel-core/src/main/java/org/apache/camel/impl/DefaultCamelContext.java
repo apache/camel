@@ -1795,6 +1795,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> uriOptions = new LinkedHashMap<String, String[]>();
 
             // insert values from uri
             Map<String, Object> options = URISupport.parseParameters(u);
@@ -1835,8 +1836,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                // add as selected row
-                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                // remember this option from the uri
+                uriOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
@@ -1859,11 +1860,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     value = URISupport.sanitizePath(value);
                 }
 
-                // always include path options
-                if (includeAllOptions || "path".equals(kind)) {
-                    // add as selected row
+                boolean isUriOption = uriOptions.containsKey(name);
+
+                // always include from uri or path options
+                if (includeAllOptions || isUriOption || "path".equals(kind)) {
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        // add as selected row, but take the value from uri options if it was from there
+                        if (isUriOption) {
+                            selected.put(name, uriOptions.get(name));
+                        } else {
+                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        }
                     }
                 }
             }
