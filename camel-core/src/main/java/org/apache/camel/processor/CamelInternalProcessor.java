@@ -16,7 +16,14 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.*;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.MessageHistory;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.StatefulService;
+import org.apache.camel.StreamCache;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.impl.DefaultMessageHistory;
 import org.apache.camel.management.DelegatePerformanceCounter;
@@ -26,7 +33,11 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
-import org.apache.camel.spi.*;
+import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.UnitOfWorkHelper;
