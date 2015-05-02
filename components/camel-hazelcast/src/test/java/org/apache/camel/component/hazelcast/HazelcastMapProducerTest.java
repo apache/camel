@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -172,6 +171,12 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         template.sendBodyAndHeaders("direct:replace", "replaced", headers);
         verify(map).replace("4711", "my-foo", "replaced");
     }
+    
+    @Test
+    public void testClear() throws InterruptedException {
+        template.sendBody("direct:clear", "test");
+        verify(map).clear();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -198,6 +203,8 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
                 
                 from("direct:replace").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REPLACE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                
                 from("direct:putWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);
             }

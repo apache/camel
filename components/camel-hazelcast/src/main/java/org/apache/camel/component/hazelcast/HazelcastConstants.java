@@ -49,7 +49,7 @@ public final class HazelcastConstants {
     public static final String CACHE_NAME = "CamelHazelcastCacheName";
     public static final String CACHE_TYPE = "CamelHazelcastCacheType";
 
-    // actions (put, delete, get, getAll, replace, update)
+    // actions (put, delete, get, getAll, replace, update, clear)
     public static final String OPERATION = "CamelHazelcastOperationType";
     public static final int PUT_OPERATION = 1;
     public static final int DELETE_OPERATION = 2;
@@ -58,6 +58,7 @@ public final class HazelcastConstants {
     public static final int QUERY_OPERATION = 5;
     public static final int GET_ALL_OPERATION = 6;
     public static final int REPLACE_OPERATION = 7;
+    public static final int CLEAR_OPERATION = 8;
 
     // multimap
     public static final int REMOVEVALUE_OPERATION = 10;

@@ -94,6 +94,10 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
                 this.replace(oid, ovalue, exchange);
             }
             break;
+
+        case HazelcastConstants.CLEAR_OPERATION:
+            this.clear(exchange);
+            break;
             
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MAP cache.", operation, HazelcastConstants.OPERATION));
@@ -171,5 +175,12 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     private void replace(Object oid, Object ovalue, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.replace(oid, ovalue, body);
+    }
+    
+    /**
+     * Clear all the entries
+     */
+    private void clear(Exchange exchange) {
+        this.cache.clear();
     }
 }
