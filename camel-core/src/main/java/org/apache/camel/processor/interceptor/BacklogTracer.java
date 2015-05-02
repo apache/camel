@@ -153,9 +153,12 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
             return;
         }
 
-        // ensure there is space on the queue and we need room for ourselves and possible also a first pseudo message as well
-        if (queue.size() >= backlogSize) {
-            queue.poll();
+        // ensure there is space on the queue by polling until at least single slot is free
+        int drain = queue.size() - backlogSize + 1;
+        if (drain > 0) {
+            for (int i = 0; i < drain; i++) {
+                queue.poll();
+            }
         }
 
         queue.add(event);
