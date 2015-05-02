@@ -16,12 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -36,6 +30,12 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -52,7 +52,7 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     // use a queue with a upper limit to avoid storing too many messages
-    private final Queue<DefaultBacklogTracerEventMessage> queue = new ArrayBlockingQueue<DefaultBacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
+    private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 1000;
     private boolean removeOnDump = true;
@@ -65,12 +65,8 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     private String traceFilter;
     private Predicate predicate;
 
-    public BacklogTracer(CamelContext camelContext) {
+    private BacklogTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    public Queue<DefaultBacklogTracerEventMessage> getQueue() {
-        return queue;
     }
 
     @Override
@@ -86,8 +82,7 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
      * @return a new backlog tracer
      */
     public static BacklogTracer createTracer(CamelContext context) {
-        BacklogTracer tracer = new BacklogTracer(context);
-        return tracer;
+        return new BacklogTracer(context);
     }
 
     /**
@@ -151,6 +146,19 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         }
         // not matched the pattern
         return false;
+    }
+
+    public void traceEvent(DefaultBacklogTracerEventMessage event) {
+        if (!enabled) {
+            return;
+        }
+
+        // ensure there is space on the queue and we need room for ourselves and possible also a first pseudo message as well
+        if (queue.size() >= backlogSize) {
+            queue.poll();
+        }
+
+        queue.add(event);
     }
 
     private boolean shouldTraceFilter(Exchange exchange) {
@@ -251,9 +259,9 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     }
 
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
-        List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
+        List<BacklogTracerEventMessage> answer = new ArrayList<>();
         if (nodeId != null) {
-            for (DefaultBacklogTracerEventMessage message : queue) {
+            for (BacklogTracerEventMessage message : queue) {
                 if (nodeId.equals(message.getToNode()) || nodeId.equals(message.getRouteId())) {
                     answer.add(message);
                 }
@@ -280,7 +288,7 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     }
 
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
-        List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
+        List<BacklogTracerEventMessage> answer = new ArrayList<>();
         answer.addAll(queue);
         if (isRemoveOnDump()) {
             queue.clear();
