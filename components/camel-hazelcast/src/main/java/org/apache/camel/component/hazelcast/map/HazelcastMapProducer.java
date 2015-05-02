@@ -45,10 +45,15 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
 
         // get header parameters
         Object oid = null;
+        Object ovalue = null;
         String query = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
             oid = headers.get(HazelcastConstants.OBJECT_ID);
+        }
+        
+        if (headers.containsKey(HazelcastConstants.OBJECT_VALUE)) {
+            ovalue = headers.get(HazelcastConstants.OBJECT_VALUE);
         }
 
         if (headers.containsKey(HazelcastConstants.QUERY)) {
@@ -82,6 +87,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             this.query(query, exchange);
             break;
 
+        case HazelcastConstants.REPLACE_OPERATION:
+            if (ObjectHelper.isEmpty(ovalue)) {
+                this.replace(oid, exchange);
+            } else {
+                this.replace(oid, ovalue, exchange);
+            }
+            break;
+            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MAP cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -142,5 +155,21 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     private void put(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.put(oid, body);
+    }
+    
+    /**
+     * replace a value related to a specific key
+     */
+    private void replace(Object oid, Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        this.cache.replace(oid, body);
+    }
+    
+    /**
+     * Replaces the entry for given id with a specific value in the body, only if currently mapped to a given value
+     */
+    private void replace(Object oid, Object ovalue, Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        this.cache.replace(oid, ovalue, body);
     }
 }

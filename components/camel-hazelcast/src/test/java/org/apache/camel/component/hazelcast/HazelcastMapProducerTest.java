@@ -157,6 +157,21 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         assertNotNull(b1);
         assertEquals(3, b1.size());
     }
+    
+    @Test
+    public void testReplace() throws InterruptedException {
+        template.sendBodyAndHeader("direct:replace", "replaced", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).replace("4711", "replaced");
+    }
+    
+    @Test
+    public void testReplaceOldValue() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        headers.put(HazelcastConstants.OBJECT_VALUE, "my-foo");
+        template.sendBodyAndHeaders("direct:replace", "replaced", headers);
+        verify(map).replace("4711", "my-foo", "replaced");
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -180,6 +195,8 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
 
                 from("direct:query").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.QUERY_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
+                
+                from("direct:replace").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REPLACE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
                 from("direct:putWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
                 from("direct:putWithOperationName").toF("hazelcast:%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);
