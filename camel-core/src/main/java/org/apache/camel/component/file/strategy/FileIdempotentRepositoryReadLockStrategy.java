@@ -43,7 +43,7 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepositoryReadLockStrategy.class);
 
     private GenericFileEndpoint<File> endpoint;
-    private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;
@@ -57,10 +57,17 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
 
     @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        // in clustered mode then another node may have processed the file so we must check here again if the file exists
+        File path = file.getFile();
+        if (!path.exists()) {
+            return false;
+        }
+
         // check if we can begin on this file
         String key = asKey(file);
         boolean answer = idempotentRepository.add(key);
         if (!answer) {
+            // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
         }
         return answer;
@@ -98,16 +105,6 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         // noop
     }
 
-    /**
-     * Sets logging level used when a read lock could not be acquired.
-     * <p/>
-     * Logging level used when a read lock could not be acquired.
-     * <p/>
-     * The default logging level is DEBUG as it may be more common not to be able to acquire a read lock
-     * when using idempotent repository in a clustered setup, as another node may be processing the file.
-     *
-     * @param readLockLoggingLevel LoggingLevel
-     */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
@@ -159,7 +156,7 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     /**
      * Whether to remove the file from the idempotent repository when doing a commit.
      * <p/>
-     * By default this is commit.
+     * By default this is true.
      */
     public boolean isRemoveOnCommit() {
         return removeOnCommit;
@@ -168,7 +165,7 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     /**
      * Whether to remove the file from the idempotent repository when doing a commit.
      * <p/>
-     * By default this is commit.
+     * By default this is true.
      */
     public void setRemoveOnCommit(boolean removeOnCommit) {
         this.removeOnCommit = removeOnCommit;
