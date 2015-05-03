@@ -42,13 +42,16 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
 
     private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepositoryReadLockStrategy.class);
 
+    private GenericFileEndpoint<File> endpoint;
     private LoggingLevel loggingLevel = LoggingLevel.TRACE;
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;
+    private boolean removeOnCommit = true;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
+        this.endpoint = endpoint;
         LOG.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
     }
 
@@ -80,7 +83,12 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
         CamelLogger.log(LOG, loggingLevel, "releaseExclusiveReadLockOnCommit: " + key);
-        idempotentRepository.contains(key);
+        if (removeOnCommit) {
+            idempotentRepository.remove(key);
+        } else {
+            // if not remove then confirm
+            idempotentRepository.confirm(key);
+        }
     }
 
     public void setTimeout(long timeout) {
@@ -139,8 +147,32 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         this.removeOnRollback = removeOnRollback;
     }
 
+    /**
+     * Whether to remove the file from the idempotent repository when doing a commit.
+     * <p/>
+     * By default this is commit.
+     */
+    public boolean isRemoveOnCommit() {
+        return removeOnCommit;
+    }
+
+    /**
+     * Whether to remove the file from the idempotent repository when doing a commit.
+     * <p/>
+     * By default this is commit.
+     */
+    public void setRemoveOnCommit(boolean removeOnCommit) {
+        this.removeOnCommit = removeOnCommit;
+    }
+
     protected String asKey(GenericFile<File> file) {
-        return file.getAbsoluteFilePath();
+        // use absolute file path as default key, but evaluate if an expression key was configured
+        String key = file.getAbsoluteFilePath();
+        if (endpoint.getIdempotentKey() != null) {
+            Exchange dummy = endpoint.createExchange(file);
+            key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+        }
+        return key;
     }
 
     @Override

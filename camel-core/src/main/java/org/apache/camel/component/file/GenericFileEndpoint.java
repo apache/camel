@@ -169,6 +169,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer", defaultValue = "0")
     protected long readLockMinAge;
     @UriParam(label = "consumer", defaultValue = "true")
+    protected boolean readLockRemoveOnCommit = true;
+    @UriParam(label = "consumer", defaultValue = "true")
     protected boolean readLockRemoveOnRollback = true;
     @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
@@ -904,12 +906,40 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * This option applied only for readLock=change.
-     * This options allows to specify a minimum age the file must be before attempting to acquire the read lock.
+     * This option allows to specify a minimum age the file must be before attempting to acquire the read lock.
      * For example use readLockMinAge=300s to require the file is at last 5 minutes old.
      * This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age.
      */
     public void setReadLockMinAge(long readLockMinAge) {
         this.readLockMinAge = readLockMinAge;
+    }
+
+    public boolean isReadLockRemoveOnCommit() {
+        return readLockRemoveOnCommit;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when the file was processed successfully and is committed. Setting this to <tt>false</tt> allows
+     * to use the read lock as both read lock and idempotent consumer at the same time, as previously
+     * processed file will be kept in the idempotent repository so the same file is not processed again.
+     */
+    public void setReadLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
+        this.readLockRemoveOnCommit = readLockRemoveOnCommit;
+    }
+
+    public boolean isReadLockRemoveOnRollback() {
+        return readLockRemoveOnRollback;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when processing the file failed and a rollback happens.
+     */
+    public void setReadLockRemoveOnRollback(boolean readLockRemoveOnRollback) {
+        this.readLockRemoveOnRollback = readLockRemoveOnRollback;
     }
 
     public int getBufferSize() {
@@ -1225,6 +1255,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         params.put("readLockMinLength", readLockMinLength);
         params.put("readLockLoggingLevel", readLockLoggingLevel);
         params.put("readLockMinAge", readLockMinAge);
+        params.put("readLockRemoveOnCommit", readLockRemoveOnCommit);
         params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
         return params;
     }

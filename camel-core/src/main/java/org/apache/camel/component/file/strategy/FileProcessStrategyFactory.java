@@ -130,6 +130,10 @@ public final class FileProcessStrategyFactory {
                 strategy = readLockStrategy;
             } else if ("idempotent".equals(readLock)) {
                 FileIdempotentRepositoryReadLockStrategy readLockStrategy = new FileIdempotentRepositoryReadLockStrategy();
+                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                if (readLockRemoveOnCommit != null) {
+                    readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
+                }
                 Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
                 if (readLockRemoveOnRollback != null) {
                     readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
