@@ -3461,7 +3461,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public InterceptStrategy getDefaultBacklogTracer() {
         if (defaultBacklogTracer == null) {
-            defaultBacklogTracer = new BacklogTracer(this);
+            defaultBacklogTracer = BacklogTracer.createTracer(this);
         }
         return defaultBacklogTracer;
     }
