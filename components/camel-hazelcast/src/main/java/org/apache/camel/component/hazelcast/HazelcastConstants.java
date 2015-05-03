@@ -36,6 +36,8 @@ public final class HazelcastConstants {
     public static final String OBJECT_ID = "CamelHazelcastObjectId";
     public static final String OBJECT_POS = "CamelHazelcastObjectIndex";
     public static final String OBJECT_VALUE = "CamelHazelcastObjectValue";
+    public static final String TTL_VALUE = "CamelHazelcastObjectTtlValue";
+    public static final String TTL_UNIT = "CamelHazelcastObjectTtlUnit";
     public static final String QUERY = "CamelHazelcastQuery";
 
     /*
@@ -49,7 +51,7 @@ public final class HazelcastConstants {
     public static final String CACHE_NAME = "CamelHazelcastCacheName";
     public static final String CACHE_TYPE = "CamelHazelcastCacheType";
 
-    // actions (put, delete, get, getAll, replace, update, clear)
+    // actions (put, delete, get, getAll, update, clear)
     public static final String OPERATION = "CamelHazelcastOperationType";
     public static final int PUT_OPERATION = 1;
     public static final int DELETE_OPERATION = 2;

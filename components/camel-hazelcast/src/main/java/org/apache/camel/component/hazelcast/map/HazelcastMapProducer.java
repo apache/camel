@@ -19,6 +19,7 @@ package org.apache.camel.component.hazelcast.map;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -46,6 +47,8 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         // get header parameters
         Object oid = null;
         Object ovalue = null;
+        Object ttl = null;
+        Object ttlUnit = null;
         String query = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
@@ -56,6 +59,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             ovalue = headers.get(HazelcastConstants.OBJECT_VALUE);
         }
 
+        if (headers.containsKey(HazelcastConstants.TTL_VALUE)) {
+            ttl = headers.get(HazelcastConstants.TTL_VALUE);
+        }
+
+        if (headers.containsKey(HazelcastConstants.TTL_UNIT)) {
+        	ttlUnit = headers.get(HazelcastConstants.TTL_UNIT);
+        }
+        
         if (headers.containsKey(HazelcastConstants.QUERY)) {
             query = (String) headers.get(HazelcastConstants.QUERY);
         }
@@ -64,7 +75,11 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         switch (operation) {
 
         case HazelcastConstants.PUT_OPERATION:
-            this.put(oid, exchange);
+            if (ObjectHelper.isEmpty(ttl) && ObjectHelper.isEmpty(ttlUnit)) {
+                this.put(oid, exchange);
+            } else {
+                this.put(oid, ttl, ttlUnit, exchange);            	
+            }
             break;
 
         case HazelcastConstants.GET_OPERATION:
@@ -165,6 +180,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     private void put(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.put(oid, body);
+    }
+    
+    /**
+     * put a new object into the cache with a specific time to live
+     */
+    private void put(Object oid, Object ttl, Object ttlUnit, Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        this.cache.put(oid, body, (long) ttl, (TimeUnit) ttlUnit);
     }
     
     /**

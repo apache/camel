@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -81,6 +82,16 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verify(map).put("4711", "my-foo");
     }
 
+    @Test
+    public void testPutWithTTL() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
+        template.sendBodyAndHeaders("direct:put", "test", headers);
+        verify(map).put("4711", "test", 1, TimeUnit.MINUTES);
+    }
+    
     @Test
     public void testUpdate() {
         template.sendBodyAndHeader("direct:update", "my-fooo", HazelcastConstants.OBJECT_ID, "4711");
