@@ -229,7 +229,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                 first = route.getOutputs().get(0) == definition;
             }
 
-            addAdvice(new BacklogTracerAdvice(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
+            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
 
             // add debugger as well so we have both tracing and debugging out of the box
             InterceptStrategy debugger = getOrCreateBacklogDebugger();
