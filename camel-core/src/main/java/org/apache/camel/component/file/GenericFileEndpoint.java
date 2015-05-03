@@ -154,6 +154,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Comparator<GenericFile<T>> sorter;
     @UriParam(label = "consumer")
     protected Comparator<Exchange> sortBy;
+    @UriParam(label = "consumer")
+    protected boolean shuffle;
     @UriParam(label = "consumer", enums = "none,markerFile,fileLock,rename,changed,idempotent")
     protected String readLock = "none";
     @UriParam(label = "consumer", defaultValue = "1000")
@@ -720,6 +722,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public void setSortBy(String expression, boolean reverse) {
         setSortBy(GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), expression, reverse));
+    }
+
+    public boolean isShuffle() {
+        return shuffle;
+    }
+
+    /**
+     * To shuffle the list of files (sort in random order)
+     */
+    public void setShuffle(boolean shuffle) {
+        this.shuffle = shuffle;
     }
 
     public String getTempPrefix() {

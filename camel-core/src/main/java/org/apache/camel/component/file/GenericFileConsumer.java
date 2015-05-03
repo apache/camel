@@ -153,6 +153,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (endpoint.getSortBy() != null) {
             Collections.sort(exchanges, endpoint.getSortBy());
         }
+        if (endpoint.isShuffle()) {
+            Collections.shuffle(exchanges);
+        }
 
         // use a queue for the exchanges
         Deque<Exchange> q = exchanges;
