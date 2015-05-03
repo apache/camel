@@ -63,8 +63,9 @@ public class FileIdempotentReadLockTest extends ContextTestSupport {
 
         assertTrue(notify.matches(5, TimeUnit.SECONDS));
 
-        // they are removed with commit
-        assertEquals(0, myRepo.getCacheSize());
+        // the files are kept on commit
+        // if you want to remove them then the idempotent repo need some way to evict idle keys
+        assertEquals(2, myRepo.getCacheSize());
     }
 
     @Override
@@ -77,7 +78,8 @@ public class FileIdempotentReadLockTest extends ContextTestSupport {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             // we are in progress
-                            assertEquals(1, myRepo.getCacheSize());
+                            int size = myRepo.getCacheSize();
+                            assertTrue(size == 1 || size == 2);
                         }
                     })
                     .to("mock:result");

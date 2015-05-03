@@ -47,7 +47,6 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;
-    private boolean removeOnCommit = true;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
@@ -80,21 +79,20 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
 
     @Override
     public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        String key = asKey(file);
         if (removeOnRollback) {
-            String key = asKey(file);
             idempotentRepository.remove(key);
+        } else {
+            // okay we should not remove then confirm it instead
+            idempotentRepository.confirm(key);
         }
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
-        if (removeOnCommit) {
-            idempotentRepository.remove(key);
-        } else {
-            // if not remove then confirm
-            idempotentRepository.confirm(key);
-        }
+        // confirm on commit
+        idempotentRepository.confirm(key);
     }
 
     public void setTimeout(long timeout) {
@@ -151,24 +149,6 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
      */
     public void setRemoveOnRollback(boolean removeOnRollback) {
         this.removeOnRollback = removeOnRollback;
-    }
-
-    /**
-     * Whether to remove the file from the idempotent repository when doing a commit.
-     * <p/>
-     * By default this is true.
-     */
-    public boolean isRemoveOnCommit() {
-        return removeOnCommit;
-    }
-
-    /**
-     * Whether to remove the file from the idempotent repository when doing a commit.
-     * <p/>
-     * By default this is true.
-     */
-    public void setRemoveOnCommit(boolean removeOnCommit) {
-        this.removeOnCommit = removeOnCommit;
     }
 
     protected String asKey(GenericFile<File> file) {
