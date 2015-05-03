@@ -80,21 +80,17 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             break;
 
         case HazelcastConstants.UPDATE_OPERATION:
-            this.update(oid, exchange);
+            if (ObjectHelper.isEmpty(ovalue)) {
+                this.update(oid, exchange);
+            } else {
+                this.update(oid, ovalue, exchange);
+            }
             break;
 
         case HazelcastConstants.QUERY_OPERATION:
             this.query(query, exchange);
             break;
-
-        case HazelcastConstants.REPLACE_OPERATION:
-            if (ObjectHelper.isEmpty(ovalue)) {
-                this.replace(oid, exchange);
-            } else {
-                this.replace(oid, ovalue, exchange);
-            }
-            break;
-
+            
         case HazelcastConstants.CLEAR_OPERATION:
             this.clear(exchange);
             break;
@@ -130,6 +126,16 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         this.cache.replace(oid, body);
         this.cache.unlock(oid);
     }
+    
+    /**
+     * Replaces the entry for given id with a specific value in the body, only if currently mapped to a given value
+     */
+    private void update(Object oid, Object ovalue, Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        this.cache.lock(oid);
+        this.cache.replace(oid, ovalue, body);
+        this.cache.unlock(oid);
+    }
 
     /**
      * remove an object from the cache
@@ -159,22 +165,6 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     private void put(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.put(oid, body);
-    }
-    
-    /**
-     * replace a value related to a specific key
-     */
-    private void replace(Object oid, Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        this.cache.replace(oid, body);
-    }
-    
-    /**
-     * Replaces the entry for given id with a specific value in the body, only if currently mapped to a given value
-     */
-    private void replace(Object oid, Object ovalue, Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        this.cache.replace(oid, ovalue, body);
     }
     
     /**
