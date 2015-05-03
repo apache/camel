@@ -64,7 +64,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         }
 
         if (headers.containsKey(HazelcastConstants.TTL_UNIT)) {
-        	ttlUnit = headers.get(HazelcastConstants.TTL_UNIT);
+            ttlUnit = headers.get(HazelcastConstants.TTL_UNIT);
         }
         
         if (headers.containsKey(HazelcastConstants.QUERY)) {
@@ -78,7 +78,15 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
             if (ObjectHelper.isEmpty(ttl) && ObjectHelper.isEmpty(ttlUnit)) {
                 this.put(oid, exchange);
             } else {
-                this.put(oid, ttl, ttlUnit, exchange);            	
+                this.put(oid, ttl, ttlUnit, exchange);
+            }
+            break;
+            
+        case HazelcastConstants.PUT_IF_ABSENT_OPERATION:
+            if (ObjectHelper.isEmpty(ttl) && ObjectHelper.isEmpty(ttlUnit)) {
+                this.putIfAbsent(oid, exchange);
+            } else {
+                this.putIfAbsent(oid, ttl, ttlUnit, exchange);
             }
             break;
 
@@ -187,6 +195,22 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     private void put(Object oid, Object ttl, Object ttlUnit, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.put(oid, body, (long) ttl, (TimeUnit) ttlUnit);
+    }
+    
+    /**
+     * if the specified key is not already associated with a value, associate it with the given value.
+     */
+    private void putIfAbsent(Object oid, Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        this.cache.putIfAbsent(oid, body);
+    }
+    
+    /**
+     * Puts an entry into this map with a given ttl (time to live) value if the specified key is not already associated with a value.
+     */
+    private void putIfAbsent(Object oid, Object ttl, Object ttlUnit, Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        this.cache.putIfAbsent(oid, body, (long) ttl, (TimeUnit) ttlUnit);
     }
     
     /**

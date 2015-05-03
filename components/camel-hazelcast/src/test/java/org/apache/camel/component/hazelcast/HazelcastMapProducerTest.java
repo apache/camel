@@ -180,6 +180,24 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     }
     
     @Test
+    public void testPutIfAbsent() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
+        verify(map).putIfAbsent("4711", "replaced");
+    }
+    
+    @Test
+    public void testPutIfAbsentWithTtl() throws InterruptedException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HazelcastConstants.OBJECT_ID, "4711");
+        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
+        template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
+        verify(map).putIfAbsent("4711", "replaced", new Long(1), TimeUnit.MINUTES);
+    }
+    
+    @Test
     public void testClear() throws InterruptedException {
         template.sendBody("direct:clear", "test");
         verify(map).clear();
@@ -194,6 +212,9 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
                 from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
                 from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                
+                from("direct:putIfAbsent").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_IF_ABSENT_OPERATION))
+                         .to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
                 from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.UPDATE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
