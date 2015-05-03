@@ -68,7 +68,12 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
 
     @Override
     public boolean contains(String key) {
-        return this.repo.containsKey(key);
+        repo.lock(key);
+        try {
+            return this.repo.containsKey(key);
+        } finally {
+            repo.unlock(key);
+        }
     }
 
     @Override
