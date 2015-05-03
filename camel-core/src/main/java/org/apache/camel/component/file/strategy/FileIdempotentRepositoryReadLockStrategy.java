@@ -43,7 +43,7 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepositoryReadLockStrategy.class);
 
     private GenericFileEndpoint<File> endpoint;
-    private LoggingLevel loggingLevel = LoggingLevel.TRACE;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;
@@ -60,21 +60,21 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         // check if we can begin on this file
         String key = asKey(file);
         boolean answer = idempotentRepository.add(key);
-        CamelLogger.log(LOG, loggingLevel, "acquireExclusiveReadLock: " + key + " -> " + answer);
+        if (!answer) {
+            CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
+        }
         return answer;
     }
 
     @Override
     public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
-        String key = asKey(file);
-        CamelLogger.log(LOG, loggingLevel, "releaseExclusiveReadLockOnAbort: " + key);
+        // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         if (removeOnRollback) {
             String key = asKey(file);
-            CamelLogger.log(LOG, loggingLevel, "releaseExclusiveReadLockOnRollback: " + key);
             idempotentRepository.remove(key);
         }
     }
@@ -82,7 +82,6 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     @Override
     public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
-        CamelLogger.log(LOG, loggingLevel, "releaseExclusiveReadLockOnCommit: " + key);
         if (removeOnCommit) {
             idempotentRepository.remove(key);
         } else {
@@ -99,8 +98,18 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         // noop
     }
 
+    /**
+     * Sets logging level used when a read lock could not be acquired.
+     * <p/>
+     * Logging level used when a read lock could not be acquired.
+     * <p/>
+     * The default logging level is DEBUG as it may be more common not to be able to acquire a read lock
+     * when using idempotent repository in a clustered setup, as another node may be processing the file.
+     *
+     * @param readLockLoggingLevel LoggingLevel
+     */
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
-        this.loggingLevel = readLockLoggingLevel;
+        this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
     public void setMarkerFiler(boolean markerFile) {
