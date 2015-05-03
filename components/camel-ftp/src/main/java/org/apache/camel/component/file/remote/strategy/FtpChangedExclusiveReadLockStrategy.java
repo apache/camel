@@ -127,7 +127,17 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         // noop
     }
 

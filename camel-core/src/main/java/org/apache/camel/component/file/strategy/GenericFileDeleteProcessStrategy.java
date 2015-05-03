@@ -55,7 +55,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         boolean releaseEager = exclusiveReadLockStrategy instanceof FileLockExclusiveReadLockStrategy;
 
         if (releaseEager) {
-            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+            exclusiveReadLockStrategy.releaseExclusiveReadLockOnCommit(operations, file, exchange);
         }
 
         try {
@@ -91,7 +91,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         } finally {
             // must release lock last
             if (!releaseEager && exclusiveReadLockStrategy != null) {
-                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+                exclusiveReadLockStrategy.releaseExclusiveReadLockOnCommit(operations, file, exchange);
             }
         }
     }
@@ -117,7 +117,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         } finally {
             // must release lock last
             if (exclusiveReadLockStrategy != null) {
-                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+                exclusiveReadLockStrategy.releaseExclusiveReadLockOnRollback(operations, file, exchange);
             }
         }
     }

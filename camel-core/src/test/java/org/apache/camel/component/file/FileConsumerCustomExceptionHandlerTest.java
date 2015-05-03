@@ -154,7 +154,17 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         }
 
         @Override
-        public void releaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+            // noop
+        }
+
+        @Override
+        public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+            // noop
+        }
+
+        @Override
+        public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
             // noop
         }
 
