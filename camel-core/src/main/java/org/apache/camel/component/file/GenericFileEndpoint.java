@@ -173,6 +173,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer", defaultValue = "true")
     protected boolean readLockRemoveOnRollback = true;
     @UriParam(label = "consumer")
+    protected boolean readLockRemoveOnCommit;
+    @UriParam(label = "consumer")
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     @UriParam(label = "consumer")
     protected ExceptionHandler onCompletionExceptionHandler;
@@ -942,6 +944,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockRemoveOnRollback = readLockRemoveOnRollback;
     }
 
+    public boolean isReadLockRemoveOnCommit() {
+        return readLockRemoveOnCommit;
+    }
+
+    /**
+     * This option applied only for readLock=idempotent.
+     * This option allows to specify whether to remove the file name entry from the idempotent repository
+     * when processing the file is succeeded and a commit happens.
+     * <p/>
+     * By default the file is not removed which ensures that any race-condition do not occur so another active
+     * node may attempt to grab the file. Instead the idempotent repository may support eviction strategies
+     * that you can configure to evict the file name entry after X minutes - this ensures no problems with race conditions.
+     */
+    public void setReadLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
+        this.readLockRemoveOnCommit = readLockRemoveOnCommit;
+    }
+
     public int getBufferSize() {
         return bufferSize;
     }
@@ -1256,6 +1275,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         params.put("readLockLoggingLevel", readLockLoggingLevel);
         params.put("readLockMinAge", readLockMinAge);
         params.put("readLockRemoveOnRollback", readLockRemoveOnRollback);
+        params.put("readLockRemoveOnCommit", readLockRemoveOnCommit);
         return params;
     }
 

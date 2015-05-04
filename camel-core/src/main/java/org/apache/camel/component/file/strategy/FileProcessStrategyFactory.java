@@ -134,6 +134,10 @@ public final class FileProcessStrategyFactory {
                 if (readLockRemoveOnRollback != null) {
                     readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
                 }
+                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                if (readLockRemoveOnCommit != null) {
+                    readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
+                }
                 IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
                 if (repo != null) {
                     readLockStrategy.setIdempotentRepository(repo);
