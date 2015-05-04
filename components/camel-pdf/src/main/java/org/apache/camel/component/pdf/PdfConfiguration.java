@@ -28,7 +28,14 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-import static org.apache.camel.component.pdf.PdfPageSizeConstant.*;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A0;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A1;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A2;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A3;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A4;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A5;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A6;
+import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_LETTER;
 
 /**
  * Handles pdf component configuration values.
@@ -48,23 +55,24 @@ public class PdfConfiguration {
         PAGE_MAP.put(PAGE_SIZE_LETTER, PDPage.PAGE_SIZE_LETTER);
     }
 
-    @UriPath(description = "Operation type") @Metadata(required = "true")
+    @UriPath(description = "Operation type")
+    @Metadata(required = "true")
     private PdfOperation operation;
-    @UriParam
+    @UriParam(defaultValue = "20")
     private int marginTop = 20;
-    @UriParam
+    @UriParam(defaultValue = "20")
     private int marginBottom = 20;
-    @UriParam
+    @UriParam(defaultValue = "20")
     private int marginLeft = 20;
-    @UriParam
+    @UriParam(defaultValue = "40")
     private int marginRight = 40;
-    @UriParam
+    @UriParam(defaultValue = "14")
     private float fontSize = 14;
-    @UriParam
+    @UriParam(defaultValue = "PAGE_SIZE_A4", enums = "PAGE_SIZE_A0,PAGE_SIZE_A1,PAGE_SIZE_A2,PAGE_SIZE_A3,PAGE_SIZE_A4,PAGE_SIZE_A5,PAGE_SIZE_A6,PAGE_SIZE_LETTER")
     private PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
-    @UriParam
+    @UriParam(defaultValue = "Helvetica")
     private PDFont font = PDType1Font.HELVETICA;
-    @UriParam
+    @UriParam(defaultValue = "lineTermination")
     private TextProcessingFactory textProcessingFactory = TextProcessingFactory.lineTermination;
 
     public PdfOperation getOperation() {
@@ -83,6 +91,9 @@ public class PdfConfiguration {
         return marginTop;
     }
 
+    /**
+     * Margin top in pixels
+     */
     public void setMarginTop(int marginTop) {
         this.marginTop = marginTop;
     }
@@ -91,6 +102,9 @@ public class PdfConfiguration {
         return marginBottom;
     }
 
+    /**
+     * Margin bottom in pixels
+     */
     public void setMarginBottom(int marginBottom) {
         this.marginBottom = marginBottom;
     }
@@ -99,6 +113,9 @@ public class PdfConfiguration {
         return marginLeft;
     }
 
+    /**
+     * Margin left in pixels
+     */
     public void setMarginLeft(int marginLeft) {
         this.marginLeft = marginLeft;
     }
@@ -107,6 +124,9 @@ public class PdfConfiguration {
         return marginRight;
     }
 
+    /**
+     * Margin right in pixels
+     */
     public void setMarginRight(int marginRight) {
         this.marginRight = marginRight;
     }
@@ -115,6 +135,9 @@ public class PdfConfiguration {
         return fontSize;
     }
 
+    /**
+     * Font size in pixels
+     */
     public void setFontSize(float fontSize) {
         this.fontSize = fontSize;
     }
@@ -123,6 +146,9 @@ public class PdfConfiguration {
         return pageSize;
     }
 
+    /**
+     * Page size
+     */
     public void setPageSize(PDRectangle pageSize) {
         this.pageSize = pageSize;
     }
@@ -135,6 +161,9 @@ public class PdfConfiguration {
         return font;
     }
 
+    /**
+     * Font
+     */
     public void setFont(PDFont font) {
         this.font = font;
     }
@@ -147,6 +176,15 @@ public class PdfConfiguration {
         return textProcessingFactory;
     }
 
+    /**
+     * Text processing to use.
+     * <ul>
+     *   <li>autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will
+     *   be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line.</li>
+     *   <li>lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol
+     *   and then it will be written regardless it fits in the line or not.</li>
+     * </ul>
+     */
     public void setTextProcessingFactory(TextProcessingFactory textProcessingFactory) {
         this.textProcessingFactory = textProcessingFactory;
     }
