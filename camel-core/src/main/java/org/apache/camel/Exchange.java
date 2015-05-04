@@ -559,6 +559,5 @@ public interface Exchange {
      * @return the on completions
      */
     List<Synchronization> handoverCompletions();
-    
 
 }
