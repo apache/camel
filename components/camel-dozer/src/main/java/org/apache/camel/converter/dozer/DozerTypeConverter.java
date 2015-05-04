@@ -23,6 +23,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>DozerTypeConverter</code> is a standard {@link TypeConverter} that
@@ -36,6 +38,8 @@ import org.dozer.Mapper;
  */
 public class DozerTypeConverter extends TypeConverterSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DozerTypeConverter.class);
+    
     private final DozerBeanMapper mapper;
 
     public DozerTypeConverter(DozerBeanMapper mapper) {
@@ -48,6 +52,23 @@ public class DozerTypeConverter extends TypeConverterSupport {
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
-        return mapper.map(value, type);
+        // if the exchange is null, we have no chance to ensure that the TCCL is the one from the CamelContext
+        if (exchange == null) {
+            return mapper.map(value, type);
+        }
+        
+        // otherwise, we ensure that the TCCL is the correct one
+        T answer;
+        ClassLoader prev = Thread.currentThread().getContextClassLoader();
+        ClassLoader contextCl = exchange.getContext().getApplicationContextClassLoader();
+        LOG.debug("Switching TCCL to: {}.", contextCl);
+        try {
+            Thread.currentThread().setContextClassLoader(contextCl);
+            answer = mapper.map(value, type);
+        } finally {
+            LOG.debug("Restored TCCL to: {}.", prev);
+            Thread.currentThread().setContextClassLoader(prev);
+        }
+        return answer;
     }
 }
