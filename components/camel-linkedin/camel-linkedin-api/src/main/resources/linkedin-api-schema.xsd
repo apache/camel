@@ -987,7 +987,7 @@
       <xs:sequence>
         <xs:element ref="id"/>
         <xs:element ref="timestamp"/>
-        <xs:element ref="comment"/>
+        <xs:element name="comment" type="xs:string"/>
         <xs:element ref="content"/>
         <xs:element ref="visibility"/>
         <xs:element ref="source"/>
@@ -2056,7 +2056,7 @@
       <xs:sequence>
         <xs:element ref="id"/>
         <xs:element ref="timestamp"/>
-        <xs:element ref="comment" type="xs:string"/>
+        <xs:element name="comment" type="xs:string"/>
         <xs:element ref="content"/>
         <xs:element ref="visibility"/>
         <xs:element ref="source"/>
