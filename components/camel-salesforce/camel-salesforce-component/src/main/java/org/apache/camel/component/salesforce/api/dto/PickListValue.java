@@ -25,7 +25,7 @@ public class PickListValue {
     private String label;
     private Boolean active;
     private Boolean defaultValue;
-    private String validFor;
+    private byte[] validFor;
 
     public String getValue() {
         return value;
@@ -59,11 +59,11 @@ public class PickListValue {
         this.defaultValue = defaultValue;
     }
 
-    public String getValidFor() {
+    public byte[] getValidFor() {
         return validFor;
     }
 
-    public void setValidFor(String validFor) {
+    public void setValidFor(byte[] validFor) {
         this.validFor = validFor;
     }
 
