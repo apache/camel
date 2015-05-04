@@ -104,10 +104,16 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return clientConfigurer;
     }
 
+    /**
+     * To use a custom XmlRpcClientConfigurer to configure the client
+     */
     public void setClientConfigurer(XmlRpcClientConfigurer configurer) {
         this.clientConfigurer = configurer;
     }
-    
+
+    /**
+     * To use the given XmlRpcClientConfigImpl as configuration for the client.
+     */
     public void setClientConfig(XmlRpcClientConfigImpl config) {
         this.clientConfig = config;
     }
@@ -120,6 +126,9 @@ public class XmlRpcEndpoint extends DefaultEndpoint {
         return defaultMethodName;
     }
 
+    /**
+     * The method name which would be used for the xmlrpc requests by default, if the Message header CamelXmlRpcMethodName is not set.
+     */
     public void setDefaultMethodName(String defaultMethodName) {
         this.defaultMethodName = defaultMethodName;
     }
