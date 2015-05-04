@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.util.List;
+
 public class FilteredLookupInfo extends AbstractDTOBase {
 
-    private String controllingFields;
+    private List<String> controllingFields;
     private Boolean dependent;
     private Boolean optionalFilter;
 
-    public String getControllingFields() {
+    public List<String> getControllingFields() {
         return controllingFields;
     }
 
-    public void setControllingFields(String controllingFields) {
+    public void setControllingFields(List<String> controllingFields) {
         this.controllingFields = controllingFields;
     }
 
