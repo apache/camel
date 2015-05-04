@@ -92,14 +92,14 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
         }
     }
 
-    private CachedCxfPayload(CachedCxfPayload<T> orig) throws IOException {
+    private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
         super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
         this.xml = orig.xml;
         while (li.hasNext()) {
             Source source = li.next();
             if (source instanceof StreamCache) {
-                li.set((Source) (((StreamCache) source)).copy());
+                li.set((Source) (((StreamCache) source)).copy(exchange));
             }
         }
     }
@@ -149,8 +149,8 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     }
 
     @Override
-    public StreamCache copy() throws IOException {
-        return new CachedCxfPayload<T>(this);
+    public StreamCache copy(Exchange exchange) throws IOException {
+        return new CachedCxfPayload<T>(this, exchange);
     }
 
     private static class DelegatingXMLStreamReader implements XMLStreamReader {
