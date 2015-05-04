@@ -180,7 +180,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         if (msg.getBody() instanceof StreamCache) {
             // in parallel processing case, the stream must be copied, therefore get the stream
             StreamCache cache = (StreamCache) msg.getBody();
-            StreamCache copied = cache.copy();
+            StreamCache copied = cache.copy(answer);
             if (copied != null) {
                 msg.setBody(copied);
             }

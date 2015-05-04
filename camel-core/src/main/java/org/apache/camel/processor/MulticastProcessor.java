@@ -953,7 +953,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 if (index > 0) {
                     // copy it otherwise parallel processing is not possible,
                     // because streams can only be read once
-                    StreamCache copiedStreamCache = streamCache.copy();
+                    StreamCache copiedStreamCache = streamCache.copy(copy);
                     if (copiedStreamCache != null) {
                         copy.getIn().setBody(copiedStreamCache);  
                     }

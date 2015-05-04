@@ -63,7 +63,7 @@ public class MessageHelperTest extends TestCase {
                 // noop
             }
 
-            public StreamCache copy() throws IOException {
+            public StreamCache copy(Exchange exchange) throws IOException {
                 return null;
             }
 
