@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+// CHECKSTYLE:OFF
+// we want to use the code as-is as that is how end users may code
 public class Constants {
 
     public static String BAR = "456";
@@ -26,3 +28,4 @@ public class Constants {
 
     }
 }
+// CHECKSTYLE:ON
