@@ -22,6 +22,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberEndpoint;
@@ -30,6 +31,7 @@ import org.apache.camel.component.hazelcast.list.HazelcastListEndpoint;
 import org.apache.camel.component.hazelcast.map.HazelcastMapEndpoint;
 import org.apache.camel.component.hazelcast.multimap.HazelcastMultimapEndpoint;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueEndpoint;
+import org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmapEndpoint;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
@@ -130,10 +132,17 @@ public class HazelcastComponent extends UriEndpointComponent {
             endpoint.setCommand(HazelcastCommand.list);
         }
 
+        if (remaining.startsWith(HazelcastConstants.REPLICATEDMAP_PREFIX)) {
+            // remaining is anything (name it foo ;)
+            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.REPLICATEDMAP_PREFIX.length()), '/');
+            endpoint = new HazelcastReplicatedmapEndpoint(hzInstance, uri, remaining, this);
+            endpoint.setCommand(HazelcastCommand.replicatedmap);
+        }        
+        
         if (endpoint == null) {
-            throw new IllegalArgumentException(String.format("Your URI does not provide a correct 'type' prefix. It should be anything like 'hazelcast:[%s|%s|%s|%s|%s|%s|%s]name' but is '%s'.",
+            throw new IllegalArgumentException(String.format("Your URI does not provide a correct 'type' prefix. It should be anything like 'hazelcast:[%s|%s|%s|%s|%s|%s|%s|%s]name' but is '%s'.",
                     HazelcastConstants.MAP_PREFIX, HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastConstants.INSTANCE_PREFIX, HazelcastConstants.QUEUE_PREFIX,
-                    HazelcastConstants.SEDA_PREFIX, HazelcastConstants.LIST_PREFIX, uri));
+                    HazelcastConstants.SEDA_PREFIX, HazelcastConstants.LIST_PREFIX, HazelcastConstants.REPLICATEDMAP_PREFIX, uri));
         }
 
         if (defaultOperation != -1) {

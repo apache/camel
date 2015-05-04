@@ -23,6 +23,7 @@ public final class HazelcastConstants {
     */
     public static final String MAP_PREFIX = "map:";
     public static final String MULTIMAP_PREFIX = "multimap:";
+    public static final String REPLICATEDMAP_PREFIX = "replicatedmap:";
     public static final String ATOMICNUMBER_PREFIX = "atomicvalue:";
     public static final String INSTANCE_PREFIX = "instance:";
     public static final String QUEUE_PREFIX = "queue:";
