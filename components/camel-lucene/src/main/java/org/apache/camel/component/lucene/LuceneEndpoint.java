@@ -52,7 +52,7 @@ public class LuceneEndpoint extends DefaultEndpoint {
     public LuceneEndpoint(String endpointUri, LuceneComponent component, LuceneConfiguration config) throws Exception {
         this(endpointUri, component);
         this.config = config;
-        if (config.getOperation().equalsIgnoreCase("insert")) {
+        if (config.getOperation() == LuceneOperation.insert) {
             this.indexer = new LuceneIndexer(config.getSourceDirectory(), config.getIndexDirectory(), config.getAnalyzer());  
             insertFlag = true;
         }

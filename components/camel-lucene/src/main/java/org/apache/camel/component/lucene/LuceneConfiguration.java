@@ -32,13 +32,13 @@ import org.apache.lucene.util.Version;
 @UriParams
 public class LuceneConfiguration {
     private URI uri;
+    private String authority;
+    private Version luceneVersion = Version.LUCENE_4_10_3;
+
     @UriPath @Metadata(required = "true")
     private String host;
     @UriPath @Metadata(required = "true")
-    private String operation;
-    @UriParam
-    private String protocolType;
-    private String authority;
+    private LuceneOperation operation;
     @UriParam(name = "srcDir")
     private File sourceDirectory;
     @UriParam(name = "indexDir")
@@ -47,7 +47,6 @@ public class LuceneConfiguration {
     private Analyzer analyzer;
     @UriParam
     private int maxHits;
-    private Version luceneVersion = Version.LUCENE_4_10_3; 
 
     public LuceneConfiguration() {
     }
@@ -70,7 +69,12 @@ public class LuceneConfiguration {
                     + "Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\""); 
         }
         setHost(retrieveTokenFromAuthority("hostname"));
-        setOperation(retrieveTokenFromAuthority("operation"));
+
+        String op = retrieveTokenFromAuthority("operation");
+        if (op != null) {
+            op = op.toLowerCase();
+        }
+        setOperation(LuceneOperation.valueOf(op));
 
         sourceDirectory = component.resolveAndRemoveReferenceParameter(
                 parameters, "srcDir", File.class, null);
@@ -111,27 +115,25 @@ public class LuceneConfiguration {
         this.uri = uri;
     }
 
-    public String getProtocolType() {
-        return protocolType;
-    }
-
-    public void setProtocolType(String protocolType) {
-        this.protocolType = protocolType;
-    }
-
     public String getHost() {
         return host;
     }
 
+    /**
+     * The URL to the lucene server
+     */
     public void setHost(String host) {
         this.host = host;
     }
 
-    public String getOperation() {
+    public LuceneOperation getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    /**
+     * Operation to do such as insert or query.
+     */
+    public void setOperation(LuceneOperation operation) {
         this.operation = operation;
     }
 
@@ -147,6 +149,9 @@ public class LuceneConfiguration {
         return sourceDirectory;
     }
 
+    /**
+     * An optional directory containing files to be used to be analyzed and added to the index at producer startup.
+     */
     public void setSourceDirectory(File sourceDirectory) {
         this.sourceDirectory = sourceDirectory;
     }
@@ -155,6 +160,9 @@ public class LuceneConfiguration {
         return indexDirectory;
     }
 
+    /**
+     * A file system directory in which index files are created upon analysis of the document by the specified analyzer
+     */
     public void setIndexDirectory(File indexDirectory) {
         this.indexDirectory = indexDirectory;
     }
@@ -163,6 +171,11 @@ public class LuceneConfiguration {
         return analyzer;
     }
 
+    /**
+     * An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text.
+     * The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer.
+     * Lucene also offers a rich set of analyzers out of the box
+     */
     public void setAnalyzer(Analyzer analyzer) {
         this.analyzer = analyzer;
     }
@@ -171,6 +184,9 @@ public class LuceneConfiguration {
         return maxHits;
     }
 
+    /**
+     * An integer value that limits the result set of the search operation
+     */
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
     }
@@ -178,7 +194,7 @@ public class LuceneConfiguration {
     public void setLuceneVersion(Version luceneVersion) {
         this.luceneVersion = luceneVersion;
     }
-    
+
     public Version getLuceneVersion() {
         return luceneVersion;
     }

@@ -100,6 +100,9 @@ public class SchematronEndpoint extends DefaultEndpoint {
         return rules;
     }
 
+    /**
+     * To use the given schematron rules instead of loading from the path
+     */
     public void setRules(Templates rules) {
         this.rules = rules;
     }
@@ -127,6 +130,6 @@ public class SchematronEndpoint extends DefaultEndpoint {
                 throw new SchematronConfigException("Failed to load rules: " + path);
             }
         }
-
     }
+
 }
