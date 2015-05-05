@@ -28,7 +28,7 @@ public final class KratiConstants {
 
     //Operation Types
     public static final String KRATI_OPERATION = "CamelKratiOperation";
-    public static final String KRATI_OPERATION_ADD = "CamelKratiAdd";
+    public static final String KRATI_OPERATION_PUT = "CamelKratiPut";
     public static final String KRATI_OPERATION_UPDATE = "CamelKratiUpdate";
     public static final String KRATI_OPERATION_DELETE = "CamelKratiDelete";
     public static final String KRATI_OPERATION_DELETEALL = "CamelKratiDeleteAll";
