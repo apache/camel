@@ -907,6 +907,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
             }
 
+            // fire event as we had a failure processor to handle it, which there is a event for
+            final boolean deadLetterChannel = processor == data.deadLetterProcessor;
+
+            EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
+
             // the failure processor could also be asynchronous
             AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
             sync = afp.process(exchange, new AsyncCallback() {
@@ -915,7 +920,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     try {
                         prepareExchangeAfterFailure(exchange, data, isDeadLetterChannel, shouldHandle, shouldContinue);
                         // fire event as we had a failure processor to handle it, which there is a event for
-                        boolean deadLetterChannel = processor == data.deadLetterProcessor;
                         EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
