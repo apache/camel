@@ -45,7 +45,7 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     private String server;
     @UriParam(label = "producer", enums = "list,start,stop,restart,state,getStandaloneCartridge,getEmbeddedCartridges,addEmbeddedCartridge,removeEmbeddedCartridge,"
             + "scaleUp,scaleDown,getGitUrl,getDeploymentType,setDeploymentType,getAllEnvironmentVariables,addEnvironmentVariable,addMultipleEnvironmentVariables,"
-            + "updateEnvironmentVariable,getEnvironmentVariableValue,removeEnvironmentVariable,getGearProfile")
+            + "updateEnvironmentVariable,getEnvironmentVariableValue,removeEnvironmentVariable,getGearProfile,addAlias,removeAlias,getAliases")
     private String operation;
     @UriParam(label = "producer")
     private String application;
