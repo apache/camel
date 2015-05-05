@@ -38,5 +38,8 @@ public enum OpenShiftOperation {
     updateEnvironmentVariable,
     getEnvironmentVariableValue,
     removeEnvironmentVariable,
-    getGearProfile
+    getGearProfile,
+    addAlias,
+    removeAlias,
+    getAliases
 }

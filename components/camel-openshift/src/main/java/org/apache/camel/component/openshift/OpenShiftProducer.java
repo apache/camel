@@ -124,7 +124,16 @@ public class OpenShiftProducer extends DefaultProducer {
             break;
         case getGearProfile:
             doGetGearProfile(exchange, domain);
-            break;            
+            break;
+        case addAlias:
+            doAddAlias(exchange, domain);
+            break;
+        case removeAlias:
+            doRemoveAlias(exchange, domain);
+            break;
+        case getAliases:
+            doGetAliases(exchange, domain);
+            break; 
         case list:
         default:
             // and do list by default
@@ -582,6 +591,67 @@ public class OpenShiftProducer extends DefaultProducer {
         } else {
             IGearProfile result = app.getGearProfile();
             exchange.getIn().setBody(result.getName());
+        }
+    }
+    
+    protected void doAddAlias(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String alias = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION_ALIAS, getEndpoint().getApplication(), String.class);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(alias)) {
+                app.addAlias(alias);
+                exchange.getIn().setBody(alias);
+            } else {
+                throw new CamelExchangeException("Application Alias name not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doRemoveAlias(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            String alias = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION_ALIAS, getEndpoint().getApplication(), String.class);
+            if (!app.canGetEnvironmentVariables()) {
+                throw new CamelExchangeException("The application with id " + name + " can't get Environment Variables", exchange);
+            }
+            if (ObjectHelper.isNotEmpty(alias)) {
+                app.removeAlias(alias);
+                exchange.getIn().setBody(alias);
+            } else {
+                throw new CamelExchangeException("Application Alias not specified", exchange);
+            }
+        }
+    }
+    
+    protected void doGetAliases(Exchange exchange, IDomain domain) throws CamelExchangeException {
+        String name = exchange.getIn().getHeader(OpenShiftConstants.APPLICATION, getEndpoint().getApplication(), String.class);
+        if (name == null) {
+            throw new CamelExchangeException("Application not specified", exchange);
+        }
+
+        IApplication app = domain.getApplicationByName(name);
+        if (app == null) {
+            throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
+        } else {
+            List<String> aliases = app.getAliases();
+            exchange.getIn().setBody(aliases);
         }
     }
 }

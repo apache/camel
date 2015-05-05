@@ -28,6 +28,7 @@ public final class OpenShiftConstants {
     public static final String ENVIRONMENT_VARIABLE_NAME = "CamelOpenShiftEnvironmentVariableName";
     public static final String ENVIRONMENT_VARIABLE_VALUE = "CamelOpenShiftEnvironmentVariableValue";
     public static final String ENVIRONMENT_VARIABLE_MAP = "CamelOpenShiftEnvironmentVariableMap";
+    public static final String APPLICATION_ALIAS = "CamelOpenShiftApplicationAlias";
 
     private OpenShiftConstants() {
     }
