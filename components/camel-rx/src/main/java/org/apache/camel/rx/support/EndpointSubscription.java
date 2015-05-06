@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,11 @@ public class EndpointSubscription<T> implements Subscription {
 
         // lets create the consumer
         Processor processor = new ProcessorToObserver<T>(func, observer);
+        // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
+        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
         try {
-            this.consumer = endpoint.createConsumer(processor);
+            this.consumer = endpoint.createConsumer(internal);
             ServiceHelper.startService(consumer);
         } catch (Exception e) {
             observer.onError(e);

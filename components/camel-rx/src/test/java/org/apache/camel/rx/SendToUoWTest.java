@@ -16,12 +16,17 @@
  */
 package org.apache.camel.rx;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Assert;
 import org.junit.Test;
-
 import rx.Observable;
 
-public class SendToTest extends RxTestSupport {
+public class SendToUoWTest extends RxTestSupport {
+
+    private MyOnCompletion onCompletion = new MyOnCompletion();
 
     @Test
     public void testSendObservableToEndpoint() throws Exception {
@@ -31,9 +36,32 @@ public class SendToTest extends RxTestSupport {
         final MockEndpoint mockEndpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedBodiesReceived((Object[]) expectedBodies);
 
+        mockEndpoint.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.addOnCompletion(onCompletion);
+            }
+        });
+
         // lets send events on the observable to the camel endpoint
         reactiveCamel.sendTo(someObservable, "mock:results");
 
         mockEndpoint.assertIsSatisfied();
+
+        Assert.assertEquals(3, onCompletion.getDone());
+    }
+
+    private static class MyOnCompletion extends SynchronizationAdapter {
+
+        private int done;
+
+        @Override
+        public void onComplete(Exchange exchange) {
+            done++;
+        }
+
+        public int getDone() {
+            return done;
+        }
     }
 }
