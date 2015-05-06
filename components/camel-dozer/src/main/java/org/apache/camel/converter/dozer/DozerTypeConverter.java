@@ -57,18 +57,26 @@ public class DozerTypeConverter extends TypeConverterSupport {
             return mapper.map(value, type);
         }
         
-        // otherwise, we ensure that the TCCL is the correct one
-        T answer;
+        T answer = null;
+
         ClassLoader prev = Thread.currentThread().getContextClassLoader();
         ClassLoader contextCl = exchange.getContext().getApplicationContextClassLoader();
-        LOG.debug("Switching TCCL to: {}.", contextCl);
-        try {
-            Thread.currentThread().setContextClassLoader(contextCl);
+        if (contextCl != null) {
+            // otherwise, we ensure that the TCCL is the correct one
+            LOG.debug("Switching TCCL to: {}.", contextCl);
+            try {
+                Thread.currentThread().setContextClassLoader(contextCl);
+                answer = mapper.map(value, type);
+            } finally {
+                LOG.debug("Restored TCCL to: {}.", prev);
+                Thread.currentThread().setContextClassLoader(prev);
+            }
+        } else {
+            // just try with the current TCCL as-is
             answer = mapper.map(value, type);
-        } finally {
-            LOG.debug("Restored TCCL to: {}.", prev);
-            Thread.currentThread().setContextClassLoader(prev);
         }
+
         return answer;
     }
+
 }
