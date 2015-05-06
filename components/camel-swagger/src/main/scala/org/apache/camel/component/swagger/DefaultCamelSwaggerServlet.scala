@@ -39,7 +39,10 @@ class DefaultCamelSwaggerServlet extends RestSwaggerApiDeclarationServlet {
     val names = server.queryNames(new ObjectName("*:type=context,*"), null)
     for (name <- names.asScala) {
       val on = name.asInstanceOf[ObjectName]
-      val id: String = on.getKeyProperty("name")
+      var id: String = on.getKeyProperty("name")
+      if (id.startsWith("\"") && id.endsWith("\"")) {
+         id = id.substring(1, id.length() - 1);
+      }
       if (camelId == null || camelId.equals(id)) {
         found = on
       }
