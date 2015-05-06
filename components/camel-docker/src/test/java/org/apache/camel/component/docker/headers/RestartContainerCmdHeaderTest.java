@@ -19,8 +19,10 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.RestartContainerCmd;
+
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -34,6 +36,7 @@ public class RestartContainerCmdHeaderTest extends BaseDockerHeaderTest<RestartC
     @Mock
     private RestartContainerCmd mockObject;
 
+    @Ignore
     @Test
     public void restartContainerHeaderTest() {
 

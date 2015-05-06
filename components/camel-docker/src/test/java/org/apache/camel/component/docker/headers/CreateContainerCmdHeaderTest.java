@@ -27,6 +27,7 @@ import com.github.dockerjava.api.model.VolumesFrom;
 
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -41,6 +42,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
     @Mock
     private CreateContainerCmd mockObject;
 
+    @Ignore
     @Test
     public void createContainerHeaderTest() {
 

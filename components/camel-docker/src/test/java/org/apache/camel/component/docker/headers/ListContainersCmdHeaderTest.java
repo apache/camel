@@ -19,8 +19,10 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.ListContainersCmd;
+
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -34,6 +36,7 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
     @Mock
     private ListContainersCmd mockObject;
 
+    @Ignore
     @Test
     public void listContainerHeaderTest() {
 

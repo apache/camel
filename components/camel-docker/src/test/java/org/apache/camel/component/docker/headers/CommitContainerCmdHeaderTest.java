@@ -23,8 +23,10 @@ import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
+
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -39,6 +41,7 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
     @Mock
     private CommitCmd mockObject;
 
+    @Ignore
     @Test
     public void commitContainerHeaderTest() {
 

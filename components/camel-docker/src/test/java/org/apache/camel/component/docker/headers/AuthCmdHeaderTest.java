@@ -20,9 +20,11 @@ import java.util.Map;
 
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.model.AuthConfig;
+
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -40,6 +42,7 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
     private String email = "jdoe@example.com";
     private String serverAddress = "http://docker.io/v1";
 
+    @Ignore
     @Test
     public void authHeaderTest() {
         String userName = "jdoe";
