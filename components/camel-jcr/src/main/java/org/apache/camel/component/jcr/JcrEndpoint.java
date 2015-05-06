@@ -155,6 +155,9 @@ public class JcrEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for login
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -163,6 +166,9 @@ public class JcrEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
