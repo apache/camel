@@ -33,6 +33,7 @@ import org.jsmpp.bean.MessageMode;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.RawDataCoding;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SubmitMulti;
@@ -72,7 +73,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
                         submitMulti.getValidityPeriod(),
                         new RegisteredDelivery(submitMulti.getRegisteredDelivery()),
                         new ReplaceIfPresentFlag(submitMulti.getReplaceIfPresentFlag()),
-                        DataCoding.newInstance(submitMulti.getDataCoding()),
+                        new RawDataCoding(submitMulti.getDataCoding()),
                         submitMulti.getSmDefaultMsgId(),
                         submitMulti.getShortMessage(),
                         submitMulti.getOptionalParameters());

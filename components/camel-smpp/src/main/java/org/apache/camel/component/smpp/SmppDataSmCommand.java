@@ -34,6 +34,7 @@ import org.jsmpp.bean.OptionalParameter.Null;
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.OptionalParameter.Short;
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.bean.RawDataCoding;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.DataSmResult;
@@ -65,8 +66,8 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
                     dataSm.getDestAddress(),
                     new ESMClass(dataSm.getEsmClass()),
                     new RegisteredDelivery(dataSm.getRegisteredDelivery()),
-                    DataCoding.newInstance(dataSm.getDataCoding()),
-                    dataSm.getOptionalParametes());
+                    new RawDataCoding(dataSm.getDataCoding()),
+                    dataSm.getOptionalParameters());
         } catch (Exception e) {
             throw new SmppException(e);
         }
@@ -199,14 +200,14 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         if (optinalParamater != null) {
             List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
-            dataSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+            dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
         } else {
             Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
             if (optinalParamaters != null) {
                 List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
-                dataSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+                dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
             } else {
-                dataSm.setOptionalParametes();
+                dataSm.setOptionalParameters();
             }
         }
 

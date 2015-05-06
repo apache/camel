@@ -129,7 +129,7 @@ public class SmppBindingTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
-        deliverSm.setOptionalParametes(
+        deliverSm.setOptionalParameters(
             new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "OctetString"),
             new OptionalParameter.COctetString((short) 0x001D, "COctetString"),
             new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 0x01),
@@ -216,7 +216,7 @@ public class SmppBindingTest {
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
-        deliverSm.setOptionalParametes(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
+        deliverSm.setOptionalParameters(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());

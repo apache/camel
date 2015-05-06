@@ -33,6 +33,7 @@ import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.bean.RawDataCoding;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
@@ -95,7 +96,7 @@ public class SmppSubmitMultiCommandTest {
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 aryEq(new Address[]{new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717")}),
                 eq(new ESMClass()), eq((byte) 0), eq((byte) 1), (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq(ReplaceIfPresentFlag.DEFAULT), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
+                eq(ReplaceIfPresentFlag.DEFAULT), eq(new RawDataCoding((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1", new UnsuccessDelivery(new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717"), 0)));
 
@@ -131,7 +132,7 @@ public class SmppSubmitMultiCommandTest {
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
-                eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
+                eq(ReplaceIfPresentFlag.REPLACE), eq(new RawDataCoding((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1"));
 
@@ -167,7 +168,7 @@ public class SmppSubmitMultiCommandTest {
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("000003000000000R"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
-                eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
+                eq(ReplaceIfPresentFlag.REPLACE), eq(new RawDataCoding((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1"));
 
@@ -184,7 +185,7 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void bodyWithSmscDefaultDataCodingNarrowedToCharset() throws Exception {
-        final int dataCoding = 0x00; /* SMSC-default */
+        final byte dataCoding = (byte)0x00; /* SMSC-default */
         byte[] body = {(byte)0xFF, 'A', 'B', (byte)0x00, (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF};
         byte[] bodyNarrowed = {'?', 'A', 'B', '\0', '?', (byte)0x7F, 'C', '?'};
 
@@ -210,7 +211,7 @@ public class SmppSubmitMultiCommandTest {
                                       (String) isNull(),
                                       eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                                       eq(ReplaceIfPresentFlag.DEFAULT),
-                                      eq(DataCoding.newInstance(dataCoding)),
+                                      eq(new RawDataCoding(dataCoding)),
                                       eq((byte) 0),
                                       aryEq(bodyNarrowed),
                                       aryEq(new OptionalParameter[0])))
@@ -225,7 +226,7 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void bodyWithLatin1DataCodingNarrowedToCharset() throws Exception {
-        final int dataCoding = 0x03; /* ISO-8859-1 (Latin1) */
+        final byte dataCoding = (byte)0x03; /* ISO-8859-1 (Latin1) */
         byte[] body = {(byte)0xFF, 'A', 'B', (byte)0x00, (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF};
         byte[] bodyNarrowed = {'?', 'A', 'B', '\0', '?', (byte)0x7F, 'C', '?'};
 
@@ -251,7 +252,7 @@ public class SmppSubmitMultiCommandTest {
                                       (String) isNull(),
                                       eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                                       eq(ReplaceIfPresentFlag.DEFAULT),
-                                      eq(DataCoding.newInstance(dataCoding)),
+                                      eq(new RawDataCoding(dataCoding)),
                                       eq((byte) 0),
                                       aryEq(bodyNarrowed),
                                       aryEq(new OptionalParameter[0])))
@@ -266,7 +267,7 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void bodyWithSMPP8bitDataCodingNotModified() throws Exception {
-        final int dataCoding = 0x04; /* SMPP 8-bit */
+        final byte dataCoding = (byte)0x04; /* SMPP 8-bit */
         byte[] body = {(byte)0xFF, 'A', 'B', (byte)0x00, (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -291,7 +292,7 @@ public class SmppSubmitMultiCommandTest {
                                       (String) isNull(),
                                       eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                                       eq(ReplaceIfPresentFlag.DEFAULT),
-                                      eq(DataCoding.newInstance(dataCoding)),
+                                      eq(new RawDataCoding(dataCoding)),
                                       eq((byte) 0),
                                       aryEq(body),
                                       aryEq(new OptionalParameter[0])))
@@ -306,7 +307,7 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void bodyWithGSM8bitDataCodingNotModified() throws Exception {
-        final int dataCoding = 0xF7; /* GSM 8-bit class 3 */
+        final byte dataCoding = (byte)0xF7; /* GSM 8-bit class 3 */
         byte[] body = {(byte)0xFF, 'A', 'B', (byte)0x00, (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -331,7 +332,7 @@ public class SmppSubmitMultiCommandTest {
                                       (String) isNull(),
                                       eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                                       eq(ReplaceIfPresentFlag.DEFAULT),
-                                      eq(DataCoding.newInstance(dataCoding)),
+                                      eq(new RawDataCoding(dataCoding)),
                                       eq((byte) 0),
                                       aryEq(body),
                                       aryEq(new OptionalParameter[0])))
@@ -346,7 +347,7 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void eightBitDataCodingOverridesDefaultAlphabet() throws Exception {
-        final int binDataCoding = 0x04; /* SMPP 8-bit */
+        final byte binDataCoding = (byte)0x04; /* SMPP 8-bit */
         byte[] body = {(byte)0xFF, 'A', 'B', (byte)0x00, (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -372,7 +373,7 @@ public class SmppSubmitMultiCommandTest {
                                       (String) isNull(),
                                       eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                                       eq(ReplaceIfPresentFlag.DEFAULT),
-                                      eq(DataCoding.newInstance(binDataCoding)),
+                                      eq(new RawDataCoding(binDataCoding)),
                                       eq((byte) 0),
                                       aryEq(body),
                                       aryEq(new OptionalParameter[0])))
@@ -387,7 +388,7 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void latin1DataCodingOverridesEightBitAlphabet() throws Exception {
-        final int latin1DataCoding = 0x03; /* ISO-8859-1 (Latin1) */
+        final byte latin1DataCoding = (byte)0x03; /* ISO-8859-1 (Latin1) */
         byte[] body = {(byte)0xFF, 'A', 'B', (byte)0x00, (byte)0xFF, (byte)0x7F, 'C', (byte)0xFF};
         byte[] bodyNarrowed = {'?', 'A', 'B', '\0', '?', (byte)0x7F, 'C', '?'};
 
@@ -414,7 +415,7 @@ public class SmppSubmitMultiCommandTest {
                                       (String) isNull(),
                                       eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                                       eq(ReplaceIfPresentFlag.DEFAULT),
-                                      eq(DataCoding.newInstance(latin1DataCoding)),
+                                      eq(new RawDataCoding(latin1DataCoding)),
                                       eq((byte) 0),
                                       aryEq(bodyNarrowed),
                                       aryEq(new OptionalParameter[0])))
@@ -456,7 +457,7 @@ public class SmppSubmitMultiCommandTest {
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
-                eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
+                eq(ReplaceIfPresentFlag.REPLACE), eq(new RawDataCoding((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[]{new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292"),
                     new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent"), new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4),
                     new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2), new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000),
@@ -511,7 +512,7 @@ public class SmppSubmitMultiCommandTest {
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
-                eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
+                eq(ReplaceIfPresentFlag.REPLACE), eq(new RawDataCoding((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[]{
                     new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292"),
                     new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent"),
