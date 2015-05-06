@@ -214,12 +214,24 @@ public class InfinispanOperation {
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
-                        result = cache.replace(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                        if (ObjectHelper.isEmpty(getOldValue(exchange))) {
+                            result = cache.replace(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                        } else {
+                            result = cache.replace(getKey(exchange), getOldValue(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                        } 
                     } else {
-                        result = cache.replace(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                        if (ObjectHelper.isEmpty(getOldValue(exchange))) {
+                            result = cache.replace(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                        } else {
+                            result = cache.replace(getKey(exchange), getOldValue(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                        }
                     }
                 } else {
-                    result = cache.replace(getKey(exchange), getValue(exchange));
+                    if (ObjectHelper.isEmpty(getOldValue(exchange))) {
+                        result = cache.replace(getKey(exchange), getValue(exchange));
+                    } else {
+                        result = cache.replace(getKey(exchange), getOldValue(exchange), getValue(exchange));
+                    }
                 }
                 setResult(result, exchange);
             }
@@ -234,12 +246,24 @@ public class InfinispanOperation {
                         && !ObjectHelper.isEmpty(exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT))) {
                         long maxIdle = exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME, long.class);
                         String maxIdleTimeUnit =  exchange.getIn().getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, String.class);
-                        result = cache.replaceAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                        if (ObjectHelper.isEmpty(getOldValue(exchange))) {
+                            result = cache.replaceAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                        } else {
+                            result = cache.replaceAsync(getKey(exchange), getOldValue(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit), maxIdle, TimeUnit.valueOf(maxIdleTimeUnit));
+                        }
                     } else {
-                        result = cache.replaceAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                        if (ObjectHelper.isEmpty(getOldValue(exchange))) {
+                            result = cache.replaceAsync(getKey(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                        } else {
+                            result = cache.replaceAsync(getKey(exchange), getOldValue(exchange), getValue(exchange), lifespan, TimeUnit.valueOf(timeUnit));
+                        }
                     }
                 } else {
-                    result = cache.replaceAsync(getKey(exchange), getValue(exchange));
+                    if (ObjectHelper.isEmpty(getOldValue(exchange))) {
+                        result = cache.replaceAsync(getKey(exchange), getValue(exchange));
+                    } else {
+                        result = cache.replaceAsync(getKey(exchange), getOldValue(exchange), getValue(exchange));
+                    }
                 }
                 setResult(result, exchange);
             }
@@ -266,6 +290,10 @@ public class InfinispanOperation {
 
         Object getValue(Exchange exchange) {
             return exchange.getIn().getHeader(InfinispanConstants.VALUE);
+        }
+        
+        Object getOldValue(Exchange exchange) {
+            return exchange.getIn().getHeader(InfinispanConstants.OLD_VALUE);
         }
         
         Map<? extends Object, ? extends Object>  getMap(Exchange exchange) {
