@@ -43,6 +43,11 @@ public class JmsMessage extends DefaultMessage {
     private Session jmsSession;
     private JmsBinding binding;
 
+    @Deprecated
+    public JmsMessage(Message jmsMessage, JmsBinding binding) {
+        this(jmsMessage, null, binding);
+    }
+
     public JmsMessage(Message jmsMessage, Session jmsSession, JmsBinding binding) {
         setJmsMessage(jmsMessage);
         setJmsSession(jmsSession);
