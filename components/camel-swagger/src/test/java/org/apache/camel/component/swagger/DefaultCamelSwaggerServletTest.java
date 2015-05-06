@@ -53,9 +53,25 @@ public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
     @Test
     public void testServlet() throws Exception {
         DefaultCamelSwaggerServlet servlet = new DefaultCamelSwaggerServlet();
+        
         Buffer<RestDefinition> list = servlet.getRestDefinitions(null);
         assertEquals(1, list.size());
         RestDefinition rest = list.iterator().next();
+        checkRestDefinition(rest);
+
+        // get the RestDefinition by using the camel context id
+        System.out.println(context.getName());
+        list = servlet.getRestDefinitions(context.getName());
+        assertEquals(1, list.size());
+        rest = list.iterator().next();
+        checkRestDefinition(rest);
+        
+        RestDefinition rest2 = context.getRestDefinitions().get(0);
+        checkRestDefinition(rest2);
+    }
+    
+    private void checkRestDefinition(RestDefinition rest) {
+        assertNotNull(rest);
         assertEquals("/hello", rest.getPath());
         assertEquals("/hi", rest.getVerbs().get(0).getUri());
         assertEquals("get", rest.getVerbs().get(0).asVerb());
@@ -63,16 +79,6 @@ public class DefaultCamelSwaggerServletTest extends CamelTestSupport {
         assertEquals("get", rest.getVerbs().get(1).asVerb());
         assertEquals("/bye", rest.getVerbs().get(2).getUri());
         assertEquals("post", rest.getVerbs().get(2).asVerb());
-
-        RestDefinition rest2 = context.getRestDefinitions().get(0);
-        assertNotNull(rest2);
-        assertEquals("/hello", rest2.getPath());
-        assertEquals("/hi", rest2.getVerbs().get(0).getUri());
-        assertEquals("get", rest2.getVerbs().get(0).asVerb());
-        assertEquals("/bye", rest2.getVerbs().get(1).getUri());
-        assertEquals("get", rest2.getVerbs().get(1).asVerb());
-        assertEquals("/bye", rest2.getVerbs().get(2).getUri());
-        assertEquals("post", rest2.getVerbs().get(2).asVerb());
     }
 
 }
