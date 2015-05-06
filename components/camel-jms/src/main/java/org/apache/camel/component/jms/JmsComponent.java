@@ -55,6 +55,7 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     private QueueBrowseStrategy queueBrowseStrategy;
     private HeaderFilterStrategy headerFilterStrategy;
     private ExecutorService asyncStartStopExecutorService;
+    private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsComponent() {
         super(JmsEndpoint.class);
@@ -445,6 +446,18 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
+    }
+
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return messageCreatedStrategy;
+    }
+
+    /**
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
+     * objects when Camel is sending a JMS message.
+     */
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
     // Implementation methods

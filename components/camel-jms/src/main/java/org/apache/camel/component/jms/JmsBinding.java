@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -75,24 +74,34 @@ public class JmsBinding {
     private final JmsEndpoint endpoint;
     private final HeaderFilterStrategy headerFilterStrategy;
     private final JmsKeyFormatStrategy jmsKeyFormatStrategy;
+    private final MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsBinding() {
         this.endpoint = null;
-        headerFilterStrategy = new JmsHeaderFilterStrategy(false);
-        jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        this.headerFilterStrategy = new JmsHeaderFilterStrategy(false);
+        this.jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        this.messageCreatedStrategy = null;
     }
 
     public JmsBinding(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
         if (endpoint.getHeaderFilterStrategy() != null) {
-            headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+            this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         } else {
-            headerFilterStrategy = new JmsHeaderFilterStrategy(endpoint.isIncludeAllJMSXProperties());
+            this.headerFilterStrategy = new JmsHeaderFilterStrategy(endpoint.isIncludeAllJMSXProperties());
         }
         if (endpoint.getJmsKeyFormatStrategy() != null) {
-            jmsKeyFormatStrategy = endpoint.getJmsKeyFormatStrategy();
+            this.jmsKeyFormatStrategy = endpoint.getJmsKeyFormatStrategy();
         } else {
-            jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+            this.jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        }
+        if (endpoint.getMessageCreatedStrategy() != null) {
+            this.messageCreatedStrategy = endpoint.getMessageCreatedStrategy();
+        } else if (endpoint.getComponent() != null) {
+            // fallback and use from component
+            this.messageCreatedStrategy = endpoint.getComponent().getMessageCreatedStrategy();
+        } else {
+            this.messageCreatedStrategy = null;
         }
     }
 
@@ -234,7 +243,11 @@ public class JmsBinding {
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
-        return makeJmsMessage(exchange, exchange.getIn(), session, null);
+        Message answer = makeJmsMessage(exchange, exchange.getIn(), session, null);
+        if (answer != null && messageCreatedStrategy != null) {
+            messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
+        }
+        return answer;
     }
 
     /**
@@ -291,6 +304,9 @@ public class JmsBinding {
             }
         }
 
+        if (answer != null && messageCreatedStrategy != null) {
+            messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
+        }
         return answer;
     }
 

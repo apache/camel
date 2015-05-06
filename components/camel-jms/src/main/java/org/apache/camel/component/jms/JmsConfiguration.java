@@ -206,6 +206,8 @@ public class JmsConfiguration implements Cloneable {
     private DefaultTaskExecutorType defaultTaskExecutorType;
     @UriParam
     private boolean includeAllJMSXProperties;
+    @UriParam
+    private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsConfiguration() {
     }
@@ -1456,5 +1458,17 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
         this.includeAllJMSXProperties = includeAllJMSXProperties;
+    }
+
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return messageCreatedStrategy;
+    }
+
+    /**
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
+     * objects when Camel is sending a JMS message.
+     */
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        this.messageCreatedStrategy = messageCreatedStrategy;
     }
 }
