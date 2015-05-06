@@ -136,7 +136,10 @@ public class JmsMessage extends DefaultMessage {
     }
 
     /**
-     * Returns the underlying JMS session
+     * Returns the underlying JMS session.
+     * <p/>
+     * This may be <tt>null</tt> if using {@link org.apache.camel.component.jms.JmsPollingConsumer},
+     * or the broker component from Apache ActiveMQ 5.11.x or older.
      */
     public Session getJmsSession() {
         return jmsSession;
