@@ -18,12 +18,9 @@ package org.apache.camel.component.validator.jing;
 
 import java.io.InputStream;
 
-import org.xml.sax.InputSource;
-
 import com.thaiopensource.relaxng.SchemaFactory;
 import com.thaiopensource.validate.Schema;
 import com.thaiopensource.xml.sax.Jaxp11XMLReaderCreator;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,8 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-
-
+import org.xml.sax.InputSource;
 
 @UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
@@ -75,6 +71,9 @@ public class JingEndpoint extends DefaultEndpoint {
         return resourceUri;
     }
 
+    /**
+     * URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against.
+     */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
@@ -83,6 +82,12 @@ public class JingEndpoint extends DefaultEndpoint {
         return compactSyntax;
     }
 
+    /**
+     * Whether to validate using RelaxNG compact syntax or not.
+     * <p/>
+     * By default this is <tt>false</tt> for using RelaxNG XML Syntax (rng)
+     * And <tt>true</tt> is for using  RelaxNG Compact Syntax (rnc)
+     */
     public void setCompactSyntax(boolean compactSyntax) {
         this.compactSyntax = compactSyntax;
     }
