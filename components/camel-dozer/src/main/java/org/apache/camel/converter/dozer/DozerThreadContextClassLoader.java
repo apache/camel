@@ -55,11 +55,16 @@ public class DozerThreadContextClassLoader implements DozerClassLoader {
 
     @Override
     public URL loadResource(String uri) {
-        LOG.debug("Loading resource from classloader: {}.", Thread.currentThread().getContextClassLoader());
-        URL answer = Thread.currentThread().getContextClassLoader().getResource(uri);
+        URL answer = null;
+
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if (cl != null) {
+            LOG.debug("Loading resource from classloader: {}.", cl);
+            answer = cl.getResource(uri);
+        }
 
         // try loading it from the delegate
-        if (answer == null) {
+        if (answer == null && delegate != null) {
             answer = delegate.loadResource(uri);
         }
         
