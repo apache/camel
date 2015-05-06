@@ -194,13 +194,23 @@ public class InfinispanOperation {
         }, REMOVE {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
-                Object result = cache.remove(getKey(exchange));
+                Object result;
+                if (ObjectHelper.isEmpty(getValue(exchange))) {
+                    result = cache.remove(getKey(exchange));
+                } else {
+                    result = cache.remove(getKey(exchange), getValue(exchange));
+                }
                 setResult(result, exchange);
             }
         }, REMOVEASYNC {
             @Override
             void execute(BasicCache<Object, Object> cache, Exchange exchange) {
-                NotifyingFuture result = cache.removeAsync(getKey(exchange));
+                NotifyingFuture result;
+                if (ObjectHelper.isEmpty(getValue(exchange))) {
+                    result = cache.removeAsync(getKey(exchange));
+                } else {
+                    result = cache.removeAsync(getKey(exchange), getValue(exchange));
+                }
                 setResult(result, exchange);
             }
         }, REPLACE {

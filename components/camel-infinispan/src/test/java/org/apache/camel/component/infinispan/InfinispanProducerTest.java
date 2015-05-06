@@ -964,6 +964,46 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Object value = currentCache().get(KEY_ONE);
         assertEquals(value, null);
     }
+    
+    @Test
+    public void deletesExistingValueByKeyWithValue() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+
+        Exchange exchange = template.request("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.REMOVE);
+            }
+        });
+
+        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class), true);
+
+        Object value = currentCache().get(KEY_ONE);
+        assertEquals(value, null);
+    }
+    
+    @Test
+    public void deletesExistingValueByKeyAsyncWithValue() throws Exception {
+        currentCache().put(KEY_ONE, VALUE_ONE);
+
+        Exchange exchange = template.request("direct:removeasync", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanConstants.REMOVE_ASYNC);
+            }
+        });
+
+        Thread.sleep(100);
+        NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+        assertEquals(fut.isDone(), Boolean.TRUE);
+
+        Object value = currentCache().get(KEY_ONE);
+        assertEquals(value, null);
+    }
 
     @Test
     public void clearsAllValues() throws Exception {
