@@ -56,7 +56,6 @@ public class JmsPollingConsumer extends PollingConsumerSupport implements Servic
     }
 
     public Exchange receive(long timeout) {
-        // TODO: use api so we can get hold of session
         setReceiveTimeout(timeout);
         Message message;
         // using the selector

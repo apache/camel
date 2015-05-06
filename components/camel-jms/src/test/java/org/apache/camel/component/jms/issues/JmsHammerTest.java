@@ -53,8 +53,7 @@ public class JmsHammerTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        // TODO: MR-170
-        ActiveMQComponent activemq = 
+        ActiveMQComponent activemq =
             activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false&jms.redeliveryPolicy.maximumRedeliveries=0" 
                               + "&jms.redeliveryPolicy.initialRedeliveryDelay=500&jms.useAsyncSend=false&jms.sendTimeout=10000"
                               + "&jms.maxReconnectAttempts=1&jms.timeout=3000");

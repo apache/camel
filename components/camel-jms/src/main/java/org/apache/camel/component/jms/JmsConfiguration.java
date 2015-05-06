@@ -1133,10 +1133,6 @@ public class JmsConfiguration implements Cloneable {
             listener.setReplyToDestination(getReplyTo());
         }
 
-        // TODO: REVISIT: We really ought to change the model and let JmsProducer
-        // and JmsConsumer have their own JmsConfiguration instance
-        // This way producer's and consumer's QoS can differ and be
-        // independently configured
         JmsOperations operations = listener.getTemplate();
         if (operations instanceof JmsTemplate) {
             JmsTemplate template = (JmsTemplate) operations;
