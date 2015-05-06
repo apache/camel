@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.jms.listener.SessionAwareMessageListener;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -46,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * @version 
  */
-public class EndpointMessageListener implements MessageListener {
+public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
@@ -62,7 +63,8 @@ public class EndpointMessageListener implements MessageListener {
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
-    public void onMessage(final Message message) {
+    @Override
+    public void onMessage(Message message, Session session) throws JMSException {
         LOG.trace("onMessage START");
 
         LOG.debug("{} consumer received JMS message: {}", endpoint, message);
@@ -75,7 +77,7 @@ public class EndpointMessageListener implements MessageListener {
             // and disableReplyTo hasn't been explicit enabled
             sendReply = replyDestination != null && !disableReplyTo;
 
-            final Exchange exchange = createExchange(message, replyDestination);
+            final Exchange exchange = createExchange(message, session, replyDestination);
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
             }
@@ -233,11 +235,11 @@ public class EndpointMessageListener implements MessageListener {
         }
     }
 
-    public Exchange createExchange(Message message, Object replyDestination) {
+    public Exchange createExchange(Message message, Session session, Object replyDestination) {
         Exchange exchange = endpoint.createExchange();
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
-        exchange.setIn(new JmsMessage(message, binding));
+        exchange.setIn(new JmsMessage(message, session, binding));
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {

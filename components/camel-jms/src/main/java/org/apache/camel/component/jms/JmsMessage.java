@@ -22,6 +22,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.camel.RuntimeExchangeException;
@@ -39,10 +40,12 @@ import org.slf4j.LoggerFactory;
 public class JmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
     private Message jmsMessage;
+    private Session jmsSession;
     private JmsBinding binding;
 
-    public JmsMessage(Message jmsMessage, JmsBinding binding) {
+    public JmsMessage(Message jmsMessage, Session jmsSession, JmsBinding binding) {
         setJmsMessage(jmsMessage);
+        setJmsSession(jmsSession);
         setBinding(binding);
     }
 
@@ -98,13 +101,6 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
-    /**
-     * Returns the underlying JMS message
-     */
-    public Message getJmsMessage() {
-        return jmsMessage;
-    }
-
     public JmsBinding getBinding() {
         if (binding == null) {
             binding = ExchangeHelper.getBinding(getExchange(), JmsBinding.class);
@@ -116,6 +112,13 @@ public class JmsMessage extends DefaultMessage {
         this.binding = binding;
     }
 
+    /**
+     * Returns the underlying JMS message
+     */
+    public Message getJmsMessage() {
+        return jmsMessage;
+    }
+
     public void setJmsMessage(Message jmsMessage) {
         if (jmsMessage != null) {
             try {
@@ -125,6 +128,17 @@ public class JmsMessage extends DefaultMessage {
             }
         }
         this.jmsMessage = jmsMessage;
+    }
+
+    /**
+     * Returns the underlying JMS session
+     */
+    public Session getJmsSession() {
+        return jmsSession;
+    }
+
+    public void setJmsSession(Session jmsSession) {
+        this.jmsSession = jmsSession;
     }
 
     @Override
@@ -186,7 +200,7 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public JmsMessage newInstance() {
-        return new JmsMessage(null, binding);
+        return new JmsMessage(null, null, binding);
     }
 
     /**

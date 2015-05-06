@@ -25,6 +25,7 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
@@ -292,9 +293,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return exchange;
     }
 
-    public Exchange createExchange(Message message) {
+    public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new JmsMessage(message, getBinding()));
+        exchange.setIn(new JmsMessage(message, session, getBinding()));
         return exchange;
     }
 
