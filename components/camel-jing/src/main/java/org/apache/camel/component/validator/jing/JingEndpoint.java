@@ -18,9 +18,12 @@ package org.apache.camel.component.validator.jing;
 
 import java.io.InputStream;
 
+import org.xml.sax.InputSource;
+
 import com.thaiopensource.relaxng.SchemaFactory;
 import com.thaiopensource.validate.Schema;
 import com.thaiopensource.xml.sax.Jaxp11XMLReaderCreator;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -32,7 +35,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.xml.sax.InputSource;
 
 @UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
