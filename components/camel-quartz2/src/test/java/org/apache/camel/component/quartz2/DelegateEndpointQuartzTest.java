@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.quartz;
+package org.apache.camel.component.quartz2;
 
 import java.util.Map;
 
@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.quartz.QuartzConstants;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -54,7 +53,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("my:quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("mock:result");
+                from("my:quartz2://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("mock:result");
             }
         };
     }
