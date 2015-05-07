@@ -213,7 +213,7 @@ public class HdfsConfiguration {
     public void parseURI(URI uri) throws URISyntaxException {
         String protocol = uri.getScheme();
         if (!protocol.equalsIgnoreCase("hdfs")) {
-            throw new IllegalArgumentException("Unrecognized Cache protocol: " + protocol + " for uri: " + uri);
+            throw new IllegalArgumentException("Unrecognized protocol: " + protocol + " for uri: " + uri);
         }
         hostName = uri.getHost();
         if (hostName == null) {
