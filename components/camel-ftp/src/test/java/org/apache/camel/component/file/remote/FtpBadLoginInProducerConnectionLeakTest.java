@@ -24,12 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.net.SocketFactory;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
+public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSupport {
 
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
@@ -37,7 +36,7 @@ public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
     private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber" +
+        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3" +
                 "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
@@ -52,29 +51,22 @@ public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
 
     @Test
     public void testConnectionLeak() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
+        for (String filename : new String[] { "claus.txt", "grzegorz.txt" }) {
+            try {
+                sendFile(getFtpUrl(), "Hello World", filename);
+            } catch (Exception ignored) {
+                // expected
+            }
+        }
 
-        // let's have several login attempts
-        Thread.sleep(3000L);
-
-        stopCamelContext();
+        // maximumReconnectAttempts is related to TCP connects, not to FTP login attempts
+        // but having this parameter > 0 leads to two connection attempts
+        assertEquals("Expected 4 socket connections to be created", 4, socketAudits.size());
 
         for (Map.Entry<Integer, boolean[]> socketStats : socketAudits.entrySet()) {
             assertTrue("Socket should be connected", socketStats.getValue()[0]);
             assertEquals("Socket should be closed", socketStats.getValue()[0], socketStats.getValue()[1]);
         }
-
-        mock.assertIsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-            }
-        };
     }
 
     /**
