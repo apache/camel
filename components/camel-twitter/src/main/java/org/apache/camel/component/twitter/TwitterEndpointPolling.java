@@ -129,16 +129,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     }
 
     @ManagedAttribute
-    public void setDate(String date) {
-        getProperties().setDate(date);
-    }
-
-    @ManagedAttribute
-    public String getDate() {
-        return getProperties().getDate();
-    }
-
-    @ManagedAttribute
     public void setSinceId(long sinceId) {
         getProperties().setSinceId(sinceId);
     }

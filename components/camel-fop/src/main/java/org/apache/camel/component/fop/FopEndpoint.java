@@ -65,6 +65,9 @@ public class FopEndpoint extends DefaultEndpoint {
         return outputFormat;
     }
 
+    /**
+     * The primary output format is PDF but other output formats are also supported.
+     */
     public void setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
     }
@@ -73,6 +76,9 @@ public class FopEndpoint extends DefaultEndpoint {
         return userConfigURL;
     }
 
+    /**
+     * The location of a configuration file which can be loaded from classpath or file system.
+     */
     public void setUserConfigURL(String userConfigURL) {
         this.userConfigURL = userConfigURL;
     }
@@ -81,6 +87,9 @@ public class FopEndpoint extends DefaultEndpoint {
         return fopFactory;
     }
 
+    /**
+     * Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
+     */
     public void setFopFactory(FopFactory fopFactory) {
         this.fopFactory = fopFactory;
     }
