@@ -56,9 +56,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
     private XMPPConnection connection;
-
     private XmppBinding binding;
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     @UriPath @Metadata(required = "true")
     private String host;
@@ -84,14 +82,14 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String serviceName;
     @UriParam
     private boolean pubsub;
-    //Set a doc header on the IN message containing a Document form of the incoming packet; 
-    //default is true if pubsub is true, otherwise false
     @UriParam
     private boolean doc;
     @UriParam(defaultValue = "true")
     private boolean testConnectionOnStartup = true;
     @UriParam(defaultValue = "10")
     private int connectionPollDelay = 10;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public XmppEndpoint() {
     }
@@ -282,6 +280,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return host;
     }
 
+    /**
+     * Hostname for the chat server
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -290,6 +291,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return port;
     }
 
+    /**
+     * Port number for the chat server
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -298,6 +302,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return user;
     }
 
+    /**
+     * User name (without server name). If not specified, anonymous login will be attempted.
+     */
     public void setUser(String user) {
         this.user = user;
     }
@@ -306,6 +313,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return password;
     }
 
+    /**
+     * Password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -314,6 +324,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return resource;
     }
 
+    /**
+     * XMPP resource. The default is Camel.
+     */
     public void setResource(String resource) {
         this.resource = resource;
     }
@@ -322,6 +335,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return login;
     }
 
+    /**
+     * Whether to login the user.
+     */
     public void setLogin(boolean login) {
         this.login = login;
     }
@@ -330,6 +346,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return createAccount;
     }
 
+    /**
+     * If true, an attempt to create an account will be made. Default is false.
+     */
     public void setCreateAccount(boolean createAccount) {
         this.createAccount = createAccount;
     }
@@ -338,6 +357,14 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return room;
     }
 
+    /**
+     * If this option is specified, the component will connect to MUC (Multi User Chat).
+     * Usually, the domain name for MUC is different from the login domain.
+     * For example, if you are superman@jabber.org and want to join the krypton room, then the room URL is
+     * krypton@conference.jabber.org. Note the conference part.
+     * It is not a requirement to provide the full room JID. If the room parameter does not contain the @ symbol,
+     * the domain part will be discovered and added by Camel
+     */
     public void setRoom(String room) {
         this.room = room;
     }
@@ -347,6 +374,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return participant != null ? participant : user;
     }
 
+    /**
+     * JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
+     */
     public void setParticipant(String participant) {
         this.participant = participant;
     }
@@ -355,10 +385,16 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return nickname != null ? nickname : getUser();
     }
 
+    /**
+     * Use nickname when joining room. If room is specified and nickname is not, user will be used for the nickname.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    /**
+     * The name of the service you are connecting to. For Google Talk, this would be gmail.com.
+     */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
@@ -371,6 +407,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -379,6 +418,12 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return testConnectionOnStartup;
     }
 
+    /**
+     * Specifies whether to test the connection on startup. This is used to ensure that the XMPP client has a valid
+     * connection to the XMPP server when the route starts. Camel throws an exception on startup if a connection
+     * cannot be established. When this option is set to false, Camel will attempt to establish a "lazy" connection
+     * when needed by a producer, and will poll for a consumer connection until the connection is established. Default is true.
+     */
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
@@ -387,10 +432,18 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return connectionPollDelay;
     }
 
+    /**
+     * The amount of time in seconds between polls (in seconds) to verify the health of the XMPP connection, or between attempts
+     * to establish an initial consumer connection. Camel will try to re-establish a connection if it has become inactive.
+     * Default is 10 seconds.
+     */
     public void setConnectionPollDelay(int connectionPollDelay) {
         this.connectionPollDelay = connectionPollDelay;
     }
 
+    /**
+     * Accept pubsub packets on input, default is false
+     */
     public void setPubsub(boolean pubsub) {
         this.pubsub = pubsub;
         if (pubsub) {
@@ -402,6 +455,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return pubsub;
     }
 
+    /**
+     * Set a doc header on the IN message containing a Document form of the incoming packet;
+     * default is true if presence or pubsub are true, otherwise false
+     */
     public void setDoc(boolean doc) {
         this.doc = doc;
     }
