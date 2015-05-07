@@ -18,7 +18,9 @@ package org.apache.camel.component.fop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -29,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.component.fop.utils.OutputFormatEnum;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.fop.apps.FOPException;
@@ -67,12 +70,14 @@ public class FopProducer extends DefaultProducer {
     }
 
     private String getOutputFormat(Exchange exchange) {
-        String outputFormat = exchange.getIn()
-                .getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.outputFormat, String.class);
-        if (outputFormat == null) {
+        String headerOutputFormat = exchange.getIn().getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.outputFormat, String.class);
+        if (headerOutputFormat == null) {
             throw new RuntimeExchangeException("Missing output format", exchange);
         }
-
+        if (!isOutputFormatDefined(headerOutputFormat)) {
+            throw new RuntimeExchangeException("The output format is not valid", exchange);
+        }
+        String outputFormat = OutputFormatEnum.valueOf(headerOutputFormat).getFormatExtended();
         return outputFormat;
     }
 
@@ -106,5 +111,15 @@ public class FopProducer extends DefaultProducer {
         if (!parameters.isEmpty()) {
             IntrospectionSupport.setProperties(userAgent, parameters);
         }
+    }
+    
+    private static boolean isOutputFormatDefined(String test) {
+
+        for (OutputFormatEnum c : OutputFormatEnum.values()) {
+            if (c.name().equals(test)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
