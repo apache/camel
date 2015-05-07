@@ -46,7 +46,7 @@ public class HazelcastComponent extends UriEndpointComponent {
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
     private HazelcastInstance hazelcastInstance;
-    private boolean createOwnInstance;
+    private transient boolean createOwnInstance;
 
     public HazelcastComponent() {
         super(HazelcastDefaultEndpoint.class);
@@ -169,6 +169,10 @@ public class HazelcastComponent extends UriEndpointComponent {
         return hazelcastInstance;
     }
 
+    /**
+     * The hazelcast instance reference which can be used for hazelcast endpoint.
+     * If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance.
+     */
     public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
     }
@@ -188,7 +192,6 @@ public class HazelcastComponent extends UriEndpointComponent {
         // check if an already created instance is given then just get instance by its name.
         if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
             hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
-            parameters.remove(HAZELCAST_INSTANCE_NAME_PARAM);
         }
 
         // Now create onw instance component

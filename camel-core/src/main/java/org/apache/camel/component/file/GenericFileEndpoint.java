@@ -1066,7 +1066,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Tlo define a maximum messages to gather per poll.
+     * To define a maximum messages to gather per poll.
      * By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
      * Set a value of 0 or negative to disabled it.
      * Notice: If this option is in use then the File and FTP components will limit before any sorting.

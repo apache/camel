@@ -98,6 +98,9 @@ public class HBaseComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared configuration
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
@@ -106,6 +109,10 @@ public class HBaseComponent extends UriEndpointComponent {
         return poolMaxSize;
     }
 
+    /**
+     * Maximum number of references to keep for each table in the HTable pool.
+     * The default value is 10.
+     */
     public void setPoolMaxSize(int poolMaxSize) {
         this.poolMaxSize = poolMaxSize;
     }
