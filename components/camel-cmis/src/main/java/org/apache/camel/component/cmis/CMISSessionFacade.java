@@ -45,7 +45,7 @@ public class CMISSessionFacade {
 
     private transient Session session;
 
-    @UriPath
+    @UriPath(description = "URL to CMIS server")
     private final String url;
     @UriParam(defaultValue = "100")
     private int pageSize = 100;
@@ -59,7 +59,7 @@ public class CMISSessionFacade {
     private String password;
     @UriParam
     private String repositoryId;
-    @UriParam
+    @UriParam(label = "consumer")
     private String query;
 
     public CMISSessionFacade(String url) {
@@ -212,30 +212,52 @@ public class CMISSessionFacade {
         return session.createOperationContext();
     }
 
+    /**
+     * Username for the cmis repository
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Password for the cmis repository
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * The Id of the repository to use. If not specified the first available repository is used
+     */
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
     }
 
+    /**
+     * If set to true, the content of document node will be retrieved in addition to the properties
+     */
     public void setReadContent(boolean readContent) {
         this.readContent = readContent;
     }
 
+    /**
+     * Max number of nodes to read
+     */
     public void setReadCount(int readCount) {
         this.readCount = readCount;
     }
 
+    /**
+     * The cmis query to execute against the repository.
+     * If not specified, the consumer will retrieve every node from the content repository by iterating the content tree recursively
+     */
     public void setQuery(String query) {
         this.query = query;
     }
 
+    /**
+     * Number of nodes to retrieve per page
+     */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
