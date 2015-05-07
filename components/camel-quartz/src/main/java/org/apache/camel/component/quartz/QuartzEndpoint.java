@@ -60,6 +60,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     @UriPath @Metadata(required = "true")
     private String timerName;
     @UriParam
+    private String cron;
+    @UriParam
     private boolean stateful;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
@@ -210,6 +212,17 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
      */
     public void setTimerName(String timerName) {
         this.timerName = timerName;
+    }
+
+    public String getCron() {
+        return cron;
+    }
+
+    /**
+     * Specifies a cron expression to define when to trigger.
+     */
+    public void setCron(String cron) {
+        this.cron = cron;
     }
 
     public void setLoadBalancer(final LoadBalancer loadBalancer) {

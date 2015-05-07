@@ -161,6 +161,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         QuartzEndpoint answer = new QuartzEndpoint(uri, this);
         answer.setGroupName(group);
         answer.setTimerName(name);
+        answer.setCron(cron);
 
         setProperties(answer.getJobDetail(), jobParameters);
 

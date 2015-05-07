@@ -59,15 +59,19 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
-    @UriPath(defaultValue = "Camel")
+    private LoadBalancer consumerLoadBalancer;
+    private Map<String, Object> triggerParameters;
+    private Map<String, Object> jobParameters;
+    // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
+    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
+    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
+
+    @UriPath(description = "The quartz group name to use. The combination of group name and timer name should be unique.", defaultValue = "Camel")
     private String groupName;
     @UriPath @Metadata(required = "true")
     private String triggerName;
     @UriParam
     private String cron;
-    private LoadBalancer consumerLoadBalancer;
-    private Map<String, Object> triggerParameters;
-    private Map<String, Object> jobParameters;
     @UriParam
     private boolean stateful;
     @UriParam
@@ -80,20 +84,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean durableJob;
     @UriParam
     private boolean recoverableJob;
-    /** In case of scheduler has already started, we want the trigger start slightly after current time to
-     * ensure endpoint is fully started before the job kicks in. */
     @UriParam(defaultValue = "500")
-    private long triggerStartDelay = 500; // in millis second
-    /** If it is true, the CamelContext name is used,
-     *  if it is false, use the CamelContext management name which could be changed during the deploy time 
-     **/
+    private long triggerStartDelay = 500;
     @UriParam
     private boolean usingFixedCamelContextName;
 
-    // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
-    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
-    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
-    
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
     }
@@ -106,6 +101,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return triggerKey.getName();
     }
 
+    /**
+     * The quartz timer name to use. The combination of group name and timer name should be unique.
+     */
     public void setTriggerName(String triggerName) {
         this.triggerName = triggerName;
     }
@@ -134,22 +132,44 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return pauseJob;
     }
 
+    /**
+     * If set to true, then the trigger automatically pauses when route stop.
+     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
+     * pre-configured trigger with camel Uri. Just ensure the names match.
+     * Notice you cannot have both deleteJob and pauseJob set to true.
+     */
     public void setPauseJob(boolean pauseJob) {
         this.pauseJob = pauseJob;
     }
 
+    /**
+     * In case of scheduler has already started, we want the trigger start slightly after current time to
+     * ensure endpoint is fully started before the job kicks in.
+     */
     public void setTriggerStartDelay(long triggerStartDelay) {
         this.triggerStartDelay = triggerStartDelay;
     }
 
+    /**
+     * If set to true, then the trigger automatically delete when route stop.
+     * Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse
+     * pre-configured trigger with camel Uri. Just ensure the names match.
+     * Notice you cannot have both deleteJob and pauseJob set to true.
+     */
     public void setDeleteJob(boolean deleteJob) {
         this.deleteJob = deleteJob;
     }
 
+    /**
+     * If it is true will fire the trigger when the route is start when using SimpleTrigger.
+     */
     public void setFireNow(boolean fireNow) {
         this.fireNow = fireNow;
     }
 
+    /**
+     * Uses a Quartz @PersistJobDataAfterExecution and @DisallowConcurrentExecution instead of the default job.
+     */
     public void setStateful(boolean stateful) {
         this.stateful = stateful;
     }
@@ -158,6 +178,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return durableJob;
     }
 
+    /**
+     * Whether or not the job should remain stored after it is orphaned (no triggers point to it).
+     */
     public void setDurableJob(boolean durableJob) {
         this.durableJob = durableJob;
     }
@@ -166,6 +189,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return recoverableJob;
     }
 
+    /**
+     * Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered.
+     */
     public void setRecoverableJob(boolean recoverableJob) {
         this.recoverableJob = recoverableJob;
     }
@@ -174,6 +200,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return usingFixedCamelContextName;
     }
 
+    /**
+     * If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext,
+     * if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time.
+     */
     public void setUsingFixedCamelContextName(boolean usingFixedCamelContextName) {
         this.usingFixedCamelContextName = usingFixedCamelContextName;
     }
@@ -197,6 +227,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         this.consumerLoadBalancer = consumerLoadBalancer;
     }
 
+    /**
+     * Specifies a cron expression to define when to trigger.
+     */
     public void setCron(String cron) {
         this.cron = cron;
     }
