@@ -46,6 +46,13 @@ public class JasyptPropertiesParserTest {
     }
 
     @Test
+    public void testNullPropertyIsUntouched() {
+        String expected = null;
+        String result = jasyptPropertiesParser.parseProperty(KEY, expected, null);
+        assertThat(result, is(expected));
+    }
+
+    @Test
     public void testPlainPropertyIsUntouched() {
         String expected = "http://somehost?1=someval1&2=someval2";
         String result = jasyptPropertiesParser.parseProperty(KEY, expected, null);
