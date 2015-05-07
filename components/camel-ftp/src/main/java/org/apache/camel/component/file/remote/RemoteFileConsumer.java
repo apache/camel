@@ -196,17 +196,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         }
 
-        try {
-            // we may as well be connected, but not logged in. let's disconnect to prevent connection leak
-            if (!isConnected && getOperations().isConnected()) {
-                getOperations().disconnect();
-            }
-        } catch (Exception ex) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception during disconnect: " + ex.getMessage());
-            }
-        }
-
         if (!loggedIn || !isConnected) {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to: {}", remoteServer());
