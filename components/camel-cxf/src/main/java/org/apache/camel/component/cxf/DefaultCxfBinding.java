@@ -55,6 +55,7 @@ import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
+import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
@@ -751,14 +752,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     protected static List<Source> getPayloadBodyElements(Message message, Map<String, String> nsMap) {
         // take the namespace attribute from soap envelop
-        Document soapEnv = (Document) message.getContent(Node.class);
-        if (soapEnv != null) {
-            NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
-            for (int i = 0; i < attrs.getLength(); i++) {
-                Node node = attrs.item(i);
-                if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
-                      && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
-                    nsMap.put(node.getLocalName(), node.getNodeValue());
+        Map<String, String> bodyNC = CastUtils.cast((Map<?, ?>)message.get("soap.body.ns.context"));
+        if (bodyNC != null) {
+            // if there is no Node and the addNamespaceContext option is enabled, this map is available
+            nsMap.putAll(bodyNC);
+        } else {
+            Document soapEnv = (Document) message.getContent(Node.class);
+            if (soapEnv != null) {
+                NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    Node node = attrs.item(i);
+                    if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
+                        && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
+                        nsMap.put(node.getLocalName(), node.getNodeValue());
+                    }
                 }
             }
         }
