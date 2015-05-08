@@ -50,17 +50,17 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     private transient String address;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = "true")
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Port number of the SNMP enabled device") @Metadata(required = "true")
     private Integer port;
-    @UriParam(defaultValue = "udp")
+    @UriParam(defaultValue = "udp", enums = "tcp,udp")
     private String protocol = "udp";
     @UriParam(defaultValue = "" + DEFAULT_SNMP_RETRIES)
     private int retries = DEFAULT_SNMP_RETRIES;
     @UriParam(defaultValue = "" + DEFAULT_SNMP_TIMEOUT)
     private int timeout = DEFAULT_SNMP_TIMEOUT;
-    @UriParam(defaultValue = "" + DEFAULT_SNMP_VERSION)
+    @UriParam(defaultValue = "" + DEFAULT_SNMP_VERSION, enums = "0,1,3")
     private int snmpVersion = DEFAULT_SNMP_VERSION;
     @UriParam(defaultValue = DEFAULT_COMMUNITY)
     private String snmpCommunity = DEFAULT_COMMUNITY;
@@ -68,11 +68,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private SnmpActionType type;
     @UriParam(label = "consumer", defaultValue = "60000")
     private long delay = 60000;
-    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV)
+    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
     @UriParam
     private String securityName;
-    @UriParam
+    @UriParam(enums = "MD5,SHA1")
     private String authenticationProtocol;
     @UriParam
     private String authenticationPassphrase;
@@ -193,6 +193,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.type;
     }
 
+    /**
+     * Which operation to perform such as poll, trap, etc.
+     */
     public void setType(SnmpActionType type) {
         this.type = type;
     }
@@ -201,6 +204,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.oids;
     }
 
+    /**
+     * Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding.
+     * You may provide a single OID or a coma separated list of OIDs.
+     * Example: oids="1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1"
+     */
     public void setOids(OIDList oids) {
         this.oids = oids;
     }
@@ -217,6 +225,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.retries;
     }
 
+    /**
+     * Defines how often a retry is made before canceling the request.
+     */
     public void setRetries(int retries) {
         this.retries = retries;
     }
@@ -225,6 +236,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.timeout;
     }
 
+    /**
+     * Sets the timeout value for the request in millis.
+     */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
@@ -233,6 +247,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.snmpVersion;
     }
 
+    /**
+     * Sets the snmp version for the request.
+     * <p/>
+     * The value 0 means SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3
+     */
     public void setSnmpVersion(int snmpVersion) {
         this.snmpVersion = snmpVersion;
     }
@@ -241,6 +260,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.snmpCommunity;
     }
 
+    /**
+     * Sets the community octet string for the snmp request.
+     */
     public void setSnmpCommunity(String snmpCommunity) {
         this.snmpCommunity = snmpCommunity;
     }
@@ -249,6 +271,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return this.protocol;
     }
 
+    /**
+     * Here you can select which protocol to use. You can use either udp or tcp.
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -282,6 +307,17 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return securityLevel;
     }
 
+    /**
+     * Sets the security level for this target. The supplied security level must
+     * be supported by the security model dependent information associated with
+     * the security name set for this target.
+     * <p/>
+     * The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level
+     * The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create
+     * messages with this security level, but anyone can read the contents of the message.
+     * The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages
+     * with this security level, and only the one with the right encryption/decryption key can read the contents of the message.
+     */
     public void setSecurityLevel(int securityLevel) {
         this.securityLevel = securityLevel;
     }
@@ -290,6 +326,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return securityName;
     }
 
+    /**
+     * Sets the security name to be used with this target.
+     */
     public void setSecurityName(String securityName) {
         this.securityName = securityName;
     }
@@ -298,6 +337,10 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return authenticationProtocol;
     }
 
+    /**
+     * Authentication protocol to use if security level is set to enable authentication
+     * The possible values are: MD5, SHA1
+     */
     public void setAuthenticationProtocol(String authenticationProtocol) {
         this.authenticationProtocol = authenticationProtocol;
     }
@@ -306,6 +349,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return authenticationPassphrase;
     }
 
+    /**
+     * The authentication passphrase. If not <code>null</code>, <code>authenticationProtocol</code> must also be not
+     * <code>null</code>. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes.
+     * If the length of <code>authenticationPassphrase</code> is less than 8 bytes an <code>IllegalArgumentException</code> is thrown.
+     */
     public void setAuthenticationPassphrase(String authenticationPassphrase) {
         this.authenticationPassphrase = authenticationPassphrase;
     }
@@ -314,6 +362,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return privacyProtocol;
     }
 
+    /**
+     * The privacy protocol ID to be associated with this user. If set to <code>null</code>, this user only supports unencrypted messages.
+     */
     public void setPrivacyProtocol(String privacyProtocol) {
         this.privacyProtocol = privacyProtocol;
     }
@@ -322,6 +373,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return privacyPassphrase;
     }
 
+    /**
+     * The privacy passphrase. If not <code>null</code>, <code>privacyProtocol</code> must also be not <code>null</code>.
+     * RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of
+     * <code>authenticationPassphrase</code> is less than 8 bytes an <code>IllegalArgumentException</code> is thrown.
+     */
     public void setPrivacyPassphrase(String privacyPassphrase) {
         this.privacyPassphrase = privacyPassphrase;
     }
@@ -330,6 +386,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return snmpContextName;
     }
 
+    /**
+     * Sets the context name field of this scoped PDU.
+     */
     public void setSnmpContextName(String snmpContextName) {
         this.snmpContextName = snmpContextName;
     }
@@ -338,6 +397,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         return snmpContextEngineId;
     }
 
+    /**
+     * Sets the context engine ID field of the scoped PDU.
+     */
     public void setSnmpContextEngineId(String snmpContextEngineId) {
         this.snmpContextEngineId = snmpContextEngineId;
     }
