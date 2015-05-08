@@ -50,7 +50,7 @@ public class BoxConfiguration {
     @UriParam
     private IAuthSecureStorage authSecureStorage;
 
-    @UriParam
+    @UriParam @Metadata(required = "true")
     private String userName;
 
     @UriParam
@@ -80,9 +80,6 @@ public class BoxConfiguration {
     @UriParam
     private SSLContextParameters sslContextParameters;
 
-    /**
-     * Box.com login timeout in seconds, defaults to 30.
-     */
     @UriParam(defaultValue = "30")
     private int loginTimeout = 30;
 
@@ -90,6 +87,9 @@ public class BoxConfiguration {
         return apiName;
     }
 
+    /**
+     * What kind of operation to perform
+     */
     public void setApiName(BoxApiName apiName) {
         this.apiName = apiName;
     }
@@ -98,6 +98,9 @@ public class BoxConfiguration {
         return methodName;
     }
 
+    /**
+     * What sub operation to use for the selected operation
+     */
     public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
@@ -106,6 +109,9 @@ public class BoxConfiguration {
         return clientId;
     }
 
+    /**
+     * Box application client ID
+     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -114,6 +120,9 @@ public class BoxConfiguration {
         return clientSecret;
     }
 
+    /**
+     * Box application client secret
+     */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
@@ -122,6 +131,12 @@ public class BoxConfiguration {
         return authSecureStorage;
     }
 
+    /**
+     * OAuth Secure Storage callback, can be used to provide and or save OAuth tokens.
+     * The callback may return null on first call to allow the component to login and authorize application
+     * and obtain an OAuth token, which can then be saved in the secure storage.
+     * For the component to be able to create a token automatically a user password must be provided.
+     */
     public void setAuthSecureStorage(IAuthSecureStorage authSecureStorage) {
         this.authSecureStorage = authSecureStorage;
     }
@@ -130,6 +145,9 @@ public class BoxConfiguration {
         return userName;
     }
 
+    /**
+     * Box user name, MUST be provided
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -138,6 +156,9 @@ public class BoxConfiguration {
         return userPassword;
     }
 
+    /**
+     * Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call
+     */
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
@@ -146,6 +167,9 @@ public class BoxConfiguration {
         return refreshListener;
     }
 
+    /**
+     * OAuth listener for token updates, if the Camel application needs to use the access token outside the route
+     */
     public void setRefreshListener(OAuthRefreshListener refreshListener) {
         this.refreshListener = refreshListener;
     }
@@ -154,6 +178,11 @@ public class BoxConfiguration {
         return revokeOnShutdown;
     }
 
+    /**
+     * Flag to revoke OAuth refresh token on route shutdown, default false.
+     * Will require a fresh refresh token on restart using either a custom IAuthSecureStorage
+     * or automatic component login by providing a user password
+     */
     public void setRevokeOnShutdown(boolean revokeOnShutdown) {
         this.revokeOnShutdown = revokeOnShutdown;
     }
@@ -162,6 +191,9 @@ public class BoxConfiguration {
         return sharedLink;
     }
 
+    /**
+     * Box shared link for shared endpoints, can be a link for a shared comment, file or folder
+     */
     public void setSharedLink(String sharedLink) {
         this.sharedLink = sharedLink;
     }
@@ -170,6 +202,9 @@ public class BoxConfiguration {
         return sharedPassword;
     }
 
+    /**
+     * Password associated with the shared link, MUST be provided with sharedLink
+     */
     public void setSharedPassword(String sharedPassword) {
         this.sharedPassword = sharedPassword;
     }
@@ -178,6 +213,9 @@ public class BoxConfiguration {
         return boxConfig;
     }
 
+    /**
+     * Custom Box SDK configuration, not required normally
+     */
     public void setBoxConfig(IBoxConfig boxConfig) {
         this.boxConfig = boxConfig;
     }
@@ -186,6 +224,9 @@ public class BoxConfiguration {
         return connectionManagerBuilder;
     }
 
+    /**
+     * Custom Box connection manager builder, used to override default settings like max connections for underlying HttpClient.
+     */
     public void setConnectionManagerBuilder(BoxConnectionManagerBuilder connectionManagerBuilder) {
         this.connectionManagerBuilder = connectionManagerBuilder;
     }
@@ -194,6 +235,9 @@ public class BoxConfiguration {
         return httpParams;
     }
 
+    /**
+     * Custom HTTP params for settings like proxy host
+     */
     public void setHttpParams(Map<String, Object> httpParams) {
         this.httpParams = httpParams;
     }
@@ -202,6 +246,9 @@ public class BoxConfiguration {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -210,6 +257,9 @@ public class BoxConfiguration {
         return loginTimeout;
     }
 
+    /**
+     * Amount of time the component will wait for a response from Box.com, default is 30 seconds
+     */
     public void setLoginTimeout(int loginTimeout) {
         this.loginTimeout = loginTimeout;
     }

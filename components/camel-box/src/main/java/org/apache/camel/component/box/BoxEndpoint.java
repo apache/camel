@@ -60,7 +60,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     private boolean boxClientShared;
 
     public BoxEndpoint(String uri, BoxComponent component,
-                         BoxApiName apiName, String methodName, BoxConfiguration endpointConfiguration) {
+                       BoxApiName apiName, String methodName, BoxConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, BoxApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
