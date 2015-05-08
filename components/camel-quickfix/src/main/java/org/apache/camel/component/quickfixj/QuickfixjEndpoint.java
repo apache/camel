@@ -31,6 +31,7 @@ import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +47,15 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
 
-    private SessionID sessionID;
+    private final QuickfixjEngine engine;
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
 
     @UriPath @Metadata(required = "true")
     private String configurationName;
-
-    private final QuickfixjEngine engine;
+    @UriParam
+    private SessionID sessionID;
+    @UriParam
+    private boolean lazyCreateEngine;
 
     @Deprecated
     public QuickfixjEndpoint(QuickfixjEngine engine, String uri, CamelContext context) {
@@ -69,6 +72,10 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         return sessionID;
     }
 
+    /**
+     * The optional sessionID identifies a specific FIX session. The format of the sessionID is:
+     * (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]->(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]]
+     */
     public void setSessionID(SessionID sessionID) {
         this.sessionID = sessionID;
     }
@@ -77,8 +84,25 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         return configurationName;
     }
 
+    /**
+     * The configFile is the name of the QuickFIX/J configuration to use for the FIX engine (located as a resource found in your classpath).
+     */
     public void setConfigurationName(String configurationName) {
         this.configurationName = configurationName;
+    }
+
+    public boolean isLazyCreateEngine() {
+        return lazyCreateEngine;
+    }
+
+    /**
+     * This option allows to create QuickFIX/J engine on demand.
+     * Value true means the engine is started when first message is send or there's consumer configured in route definition.
+     * When false value is used, the engine is started at the endpoint creation.
+     * When this parameter is missing, the value of component's property lazyCreateEngines is being used.
+     */
+    public void setLazyCreateEngine(boolean lazyCreateEngine) {
+        this.lazyCreateEngine = lazyCreateEngine;
     }
 
     @Override
