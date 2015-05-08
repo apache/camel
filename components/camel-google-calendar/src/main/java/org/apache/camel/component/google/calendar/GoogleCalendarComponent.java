@@ -59,7 +59,24 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
         }
         return clientFactory;
     }
-    
+
+    @Override
+    public GoogleCalendarConfiguration getConfiguration() {
+        return super.getConfiguration();
+    }
+
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(GoogleCalendarConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
+    /**
+     * To use the GoogleCalendarClientFactory as factory for creating the client.
+     * Will by default use {@link BatchGoogleCalendarClientFactory}
+     */
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
