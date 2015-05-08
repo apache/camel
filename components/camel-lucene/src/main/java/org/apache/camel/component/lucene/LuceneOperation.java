@@ -18,6 +18,6 @@ package org.apache.camel.component.lucene;
 
 public enum LuceneOperation {
 
-    insert,query
+    insert, query
 
 }
