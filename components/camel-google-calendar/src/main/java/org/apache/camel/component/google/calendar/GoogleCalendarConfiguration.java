@@ -36,7 +36,7 @@ public class GoogleCalendarConfiguration {
     @UriPath @Metadata(required = "true")
     private GoogleCalendarApiName apiName;
 
-    @UriPath(enums = "calendarId,calendarImport,clear,content,contentChannel,delete,destination,eventId,get,insert,instances,list,move,patch,query,quickAdd,ruleId,setting,stop,text,update,watch")
+    @UriPath(enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
     @Metadata(required = "true")
     private String methodName;
 
