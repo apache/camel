@@ -29,8 +29,6 @@ import org.junit.Before;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-
 public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport {
     /*
      * The request message is generated directly. The issue here is that the xsi
@@ -42,14 +40,13 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport 
      * If some CXF proxy is used to send the message the namespaces will be
      * defined within the payload (and everything works fine).
      */
-    private static final String RESPONSE_PAYLOAD = "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\""
-        + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-        + " xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse>";
-    private static final String REQUEST_MESSAGE  = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
-        + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
-        + "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken>"
-        + "</soap:Body></soap:Envelope>";
-    
+    protected static final String RESPONSE_PAYLOAD = 
+        "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+        + "<return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse>";
+    protected static final String REQUEST_MESSAGE =
+        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+        + "<soap:Body><ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken></soap:Body></soap:Envelope>";
+
     private AbstractXmlApplicationContext applicationContext;
 
     // Don't remove this, it initializes the CXFTestSupport class

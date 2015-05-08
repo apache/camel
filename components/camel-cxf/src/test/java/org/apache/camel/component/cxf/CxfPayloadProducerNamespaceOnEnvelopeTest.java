@@ -29,7 +29,6 @@ import org.junit.Before;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport {
     /*
      * The response message is generated directly. The issue here is that the
@@ -41,11 +40,11 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
      * If some CXF implementation bean is used as the service the namespaces
      * will be defined within the payload (and everything works fine).
      */
-    private static final String RESPONSE_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
-        + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
-        + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse>"
-        + "</soap:Body></soap:Envelope>";
-    private static final String REQUEST_PAYLOAD = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
+
+    protected static final String RESPONSE_MESSAGE = 
+        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
+        + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse></soap:Body></soap:Envelope>";
+    protected static final String REQUEST_PAYLOAD = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
 
     private AbstractXmlApplicationContext applicationContext;
     

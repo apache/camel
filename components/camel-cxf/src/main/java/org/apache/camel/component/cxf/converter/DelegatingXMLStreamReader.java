@@ -17,11 +17,16 @@
 
 package org.apache.camel.component.cxf.converter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -30,13 +35,12 @@ import javax.xml.stream.XMLStreamReader;
  */
 class DelegatingXMLStreamReader implements XMLStreamReader {
     private XMLStreamReader reader;
-    private final Map<String, String> nsmap;
-    private final String[] prefixes;
+    private final String[] xprefixes;
+    private int depth;
 
     public DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
         this.reader = reader;
-        this.nsmap = nsmap;
-        this.prefixes = nsmap.keySet().toArray(new String[0]);
+        this.xprefixes = nsmap.keySet().toArray(new String[0]);
     }
 
     @Override
@@ -46,7 +50,14 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
 
     @Override
     public int next() throws XMLStreamException {
-        return reader.next();
+        // only inject namespaces at the root level
+        final int c = reader.next();
+        if (c == XMLStreamConstants.START_ELEMENT) {
+            depth++;
+        } else if (c == XMLStreamConstants.END_ELEMENT) {
+            depth--;
+        }
+        return c;
     }
 
     @Override
@@ -76,11 +87,7 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
 
     @Override
     public String getNamespaceURI(String prefix) {
-        String nsuri = reader.getNamespaceURI();
-        if (nsuri == null) {
-            nsuri = nsmap.get(prefix);
-        }
-        return nsuri;
+        return reader.getNamespaceURI(prefix);
     }
 
     @Override
@@ -139,22 +146,22 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     }
 
     public int getNamespaceCount() {
-        return prefixes.length + reader.getNamespaceCount();
+        return (depth == 1 ? xprefixes.length : 0) + reader.getNamespaceCount();
     }
 
     public String getNamespacePrefix(int index) {
-        if (index < prefixes.length) {
-            return prefixes[index];
+        if (depth == 1) {
+            return index < xprefixes.length ? xprefixes[index] : reader.getNamespacePrefix(index - xprefixes.length);
         } else {
-            return reader.getNamespacePrefix(index - prefixes.length);
+            return reader.getNamespacePrefix(index);
         }
     }
 
     public String getNamespaceURI(int index) {
-        if (index < prefixes.length) {
-            return nsmap.get(prefixes[index]);
+        if (depth == 1) {
+            return index < xprefixes.length ? getNamespaceURI(xprefixes[index]) : reader.getNamespaceURI(index - xprefixes.length);
         } else {
-            return reader.getNamespaceURI(index - prefixes.length);
+            return reader.getNamespaceURI(index);
         }
     }
 

@@ -53,7 +53,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
     
-    private StreamSourceCache(StreamCache streamCache) {
+    public StreamSourceCache(StreamCache streamCache) {
         this.streamCache = streamCache;
         if (streamCache instanceof InputStream) {
             setInputStream((InputStream) streamCache);

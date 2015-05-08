@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.converter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
@@ -37,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.cxf.staxutils.StaxSource;
 import org.slf4j.Logger;
@@ -67,17 +66,18 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
             }
             if (reader != null) {
                 Map<String, String> nsmap = getNsMap();
-                if (nsmap == null) {
-                    nsmap = Collections.emptyMap();
+                if (nsmap != null && !(reader instanceof DelegatingXMLStreamReader)) {
+                    source = new StAXSource(new DelegatingXMLStreamReader(reader, nsmap));
                 }
-                source = new StAXSource(new DelegatingXMLStreamReader(reader, nsmap));
-                StreamSource streamSource = exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, source);
-                if (streamSource != null) {
-                    try {
-                        li.set(new StreamSourceCache(streamSource, exchange));
-                    } catch (IOException e) {
-                        LOG.error("Cannot Create StreamSourceCache ", e);
-                    }
+                CachedOutputStream cos = new CachedOutputStream(exchange);
+                StreamResult sr = new StreamResult(cos);
+                try {
+                    xml.toResult(source, sr);
+                    li.set(new StreamSourceCache(cos.newStreamCache()));
+                } catch (TransformerException e) {
+                    LOG.error("Transformation failed ", e);
+                } catch (IOException e) {
+                    LOG.error("Cannot Create StreamSourceCache ", e);
                 }
             } else if (!(source instanceof DOMSource)) {
                 Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, source);

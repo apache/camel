@@ -30,10 +30,5 @@
     <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/GetToken/SoapContext/SoapPort"
         wsdlURL="GetToken.wsdl"
         serviceName="s:GetTokenService"
-        xmlns:s="http://camel.apache.org/cxf/namespace">
-      <cxf:properties>
-		<entry key="org.apache.cxf.binding.soap.addNamespaceContext" value="true"/>
-      </cxf:properties>
-
-	</cxf:cxfEndpoint>
+        xmlns:s="http://camel.apache.org/cxf/namespace"/>
 </beans>
