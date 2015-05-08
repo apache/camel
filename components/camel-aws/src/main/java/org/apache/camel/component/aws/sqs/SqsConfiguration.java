@@ -42,28 +42,29 @@ public class SqsConfiguration {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
+
     // consumer properties
-    @UriParam(defaultValue = "true")
-    private Boolean deleteAfterRead = Boolean.TRUE;
-    @UriParam(defaultValue = "true")
-    private Boolean deleteIfFiltered = Boolean.TRUE;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean deleteAfterRead = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean deleteIfFiltered = true;
+    @UriParam(label = "consumer")
     private Integer visibilityTimeout;
-    @UriParam
+    @UriParam(label = "consumer")
     private Collection<String> attributeNames;
-    @UriParam
+    @UriParam(label = "consumer")
     private Collection<String> messageAttributeNames;
-    @UriParam
+    @UriParam(label = "consumer")
     private Integer waitTimeSeconds;
-    @UriParam
+    @UriParam(label = "consumer")
     private Integer defaultVisibilityTimeout;
-    @UriParam(defaultValue = "false")
-    private Boolean extendMessageVisibility = Boolean.FALSE;
-    @UriParam(defaultValue = "1")
-    private Integer concurrentConsumers = 1;
+    @UriParam(label = "consumer")
+    private boolean extendMessageVisibility;
+    @UriParam(label = "consumer", defaultValue = "1")
+    private int concurrentConsumers = 1;
 
     // producer properties
-    @UriParam
+    @UriParam(label = "producer")
     private Integer delaySeconds;
 
     // queue properties
@@ -80,6 +81,11 @@ public class SqsConfiguration {
     @UriParam
     private String redrivePolicy;
 
+    /**
+     * The region with which the AWS-SQS client wants to work with.
+     * Only works if Camel creates the AWS-SQS client, i.e., if you explicitly set amazonSQSClient,
+     * then this setting will have no effect. You would have to set it on the client you create directly
+     */
     public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
         this.amazonSQSEndpoint = amazonSQSEndpoint;
     }
@@ -92,6 +98,9 @@ public class SqsConfiguration {
         return queueName;
     }
 
+    /**
+     * Name of queue. The queue will be created if they don't already exists.
+     */
     public void setQueueName(String queueName) {
         this.queueName = queueName;
     }
@@ -100,6 +109,9 @@ public class SqsConfiguration {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -108,15 +120,21 @@ public class SqsConfiguration {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
 
-    public Boolean isDeleteAfterRead() {
+    public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }
 
-    public void setDeleteAfterRead(Boolean deleteAfterRead) {
+    /**
+     * Delete message from SQS after it has been read
+     */
+    public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
     }
 
@@ -124,6 +142,9 @@ public class SqsConfiguration {
         return amazonSQSClient;
     }
 
+    /**
+     * To use the AmazonSQS as client
+     */
     public void setAmazonSQSClient(AmazonSQS amazonSQSClient) {
         this.amazonSQSClient = amazonSQSClient;
     }
@@ -132,6 +153,12 @@ public class SqsConfiguration {
         return visibilityTimeout;
     }
 
+    /**
+     * The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved
+     * by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest.
+     * This only make sense if its different from defaultVisibilityTimeout.
+     * It changes the queue visibility timeout attribute permanently.
+     */
     public void setVisibilityTimeout(Integer visibilityTimeout) {
         this.visibilityTimeout = visibilityTimeout;
     }
@@ -140,6 +167,9 @@ public class SqsConfiguration {
         return attributeNames;
     }
 
+    /**
+     * A list of attribute names to receive when consuming
+     */
     public void setAttributeNames(Collection<String> attributeNames) {
         this.attributeNames = attributeNames;
     }
@@ -148,6 +178,9 @@ public class SqsConfiguration {
         return messageAttributeNames;
     }
 
+    /**
+     * A list of message attribute names to receive when consuming
+     */
     public void setMessageAttributeNames(Collection<String> messageAttributeNames) {
         this.messageAttributeNames = messageAttributeNames;
     }
@@ -156,6 +189,9 @@ public class SqsConfiguration {
         return defaultVisibilityTimeout;
     }
 
+    /**
+     * The default visibility timeout (in seconds)
+     */
     public void setDefaultVisibilityTimeout(Integer defaultVisibilityTimeout) {
         this.defaultVisibilityTimeout = defaultVisibilityTimeout;
     }
@@ -164,6 +200,9 @@ public class SqsConfiguration {
         return delaySeconds;
     }
 
+    /**
+     * Delay sending messages for a number of seconds.
+     */
     public void setDelaySeconds(Integer delaySeconds) {
         this.delaySeconds = delaySeconds;
     }
@@ -172,6 +211,9 @@ public class SqsConfiguration {
         return maximumMessageSize;
     }
 
+    /**
+     * The maximumMessageSize (in bytes) an SQS message can contain for this queue.
+     */
     public void setMaximumMessageSize(Integer maximumMessageSize) {
         this.maximumMessageSize = maximumMessageSize;
     }
@@ -180,6 +222,9 @@ public class SqsConfiguration {
         return messageRetentionPeriod;
     }
 
+    /**
+     * The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue.
+     */
     public void setMessageRetentionPeriod(Integer messageRetentionPeriod) {
         this.messageRetentionPeriod = messageRetentionPeriod;
     }
@@ -188,6 +233,9 @@ public class SqsConfiguration {
         return policy;
     }
 
+    /**
+     * The policy for this queue
+     */
     public void setPolicy(String policy) {
         this.policy = policy;
     }
@@ -196,6 +244,9 @@ public class SqsConfiguration {
         return redrivePolicy;
     }
 
+    /**
+     * Specify the policy that send message to DeadLetter queue. See detail at Amazon docs.
+     */
     public void setRedrivePolicy(String redrivePolicy) {
         this.redrivePolicy = redrivePolicy;
     }
@@ -204,7 +255,12 @@ public class SqsConfiguration {
         return this.extendMessageVisibility;
     }
 
-    public void setExtendMessageVisibility(Boolean extendMessageVisibility) {
+    /**
+     * If enabled then a scheduled background task will keep extending the message visibility on SQS.
+     * This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set.
+     * See details at Amazon docs.
+     */
+    public void setExtendMessageVisibility(boolean extendMessageVisibility) {
         this.extendMessageVisibility = extendMessageVisibility;
     }
 
@@ -212,6 +268,9 @@ public class SqsConfiguration {
         return receiveMessageWaitTimeSeconds;
     }
 
+    /**
+     * If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait.
+     */
     public void setReceiveMessageWaitTimeSeconds(Integer receiveMessageWaitTimeSeconds) {
         this.receiveMessageWaitTimeSeconds = receiveMessageWaitTimeSeconds;
     }
@@ -220,6 +279,9 @@ public class SqsConfiguration {
         return waitTimeSeconds;
     }
 
+    /**
+     * Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response.
+     */
     public void setWaitTimeSeconds(Integer waitTimeSeconds) {
         this.waitTimeSeconds = waitTimeSeconds;
     }
@@ -228,15 +290,22 @@ public class SqsConfiguration {
         return queueOwnerAWSAccountId;
     }
 
+    /**
+     * Specify the queue owner aws account id when you need to connect the queue with different account owner.
+     */
     public void setQueueOwnerAWSAccountId(String queueOwnerAWSAccountId) {
         this.queueOwnerAWSAccountId = queueOwnerAWSAccountId;
     }
 
-    public Boolean isDeleteIfFiltered() {
+    public boolean isDeleteIfFiltered() {
         return deleteIfFiltered;
     }
 
-    public void setDeleteIfFiltered(Boolean deleteIfFiltered) {
+    /**
+     * Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter.
+     * If 'false' and exchange does not make it through a Camel filter upstream in the route, then don't send DeleteMessage.
+     */
+    public void setDeleteIfFiltered(boolean deleteIfFiltered) {
         this.deleteIfFiltered = deleteIfFiltered;
     }
 
@@ -244,15 +313,21 @@ public class SqsConfiguration {
         return region;
     }
 
+    /**
+     * Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL.
+     */
     public void setRegion(String region) {
         this.region = region;
     }
 
-    public Integer getConcurrentConsumers() {
+    /**
+     * Allows you to use multiple threads to poll the sqs queue to increase throughput
+     */
+    public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
-    public void setConcurrentConsumers(Integer concurrentConsumers) {
+    public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 

@@ -90,7 +90,6 @@ public abstract class AbstractDdbCommand {
     }
 
     protected Boolean determineConsistentRead() {
-        Boolean consistentRead = exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, Boolean.class);
-        return consistentRead != null ? consistentRead : configuration.getConsistentRead();
+        return exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, configuration.isConsistentRead(), Boolean.class);
     }
 }

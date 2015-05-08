@@ -35,7 +35,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.PutAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
-        assertNull(endpoint.getConfiguration().getConsistentRead());
+        assertNull(endpoint.getConfiguration().isConsistentRead());
         assertNull(endpoint.getConfiguration().getMaxNumberOfDomains());
     }
     
@@ -56,7 +56,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         assertSame(mock, endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.PutAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
-        assertNull(endpoint.getConfiguration().getConsistentRead());
+        assertNull(endpoint.getConfiguration().isConsistentRead());
         assertNull(endpoint.getConfiguration().getMaxNumberOfDomains());
     }
 
@@ -73,7 +73,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.DeleteAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
-        assertTrue(endpoint.getConfiguration().getConsistentRead());
+        assertTrue(endpoint.getConfiguration().isConsistentRead());
         assertEquals(new Integer(5), endpoint.getConfiguration().getMaxNumberOfDomains());
     }
     

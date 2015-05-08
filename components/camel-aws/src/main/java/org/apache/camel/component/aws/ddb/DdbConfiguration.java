@@ -37,7 +37,7 @@ public class DdbConfiguration {
     @UriParam
     private String amazonDdbEndpoint;
     @UriParam
-    private Boolean consistentRead;
+    private boolean consistentRead;
     @UriParam(defaultValue = "PutItem")
     private DdbOperations operation = DdbOperations.PutItem;
     @UriParam
@@ -49,6 +49,9 @@ public class DdbConfiguration {
     @UriParam
     private String keyAttributeType;
 
+    /**
+     * The region with which the AWS-DDB client wants to work with.
+     */
     public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
         this.amazonDdbEndpoint = amazonDdbEndpoint;
     }
@@ -61,6 +64,9 @@ public class DdbConfiguration {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -69,6 +75,9 @@ public class DdbConfiguration {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -77,6 +86,9 @@ public class DdbConfiguration {
         return amazonDDBClient;
     }
 
+    /**
+     * To use the AmazonDynamoDB as the client
+     */
     public void setAmazonDDBClient(AmazonDynamoDB amazonDDBClient) {
         this.amazonDDBClient = amazonDDBClient;
     }
@@ -85,6 +97,9 @@ public class DdbConfiguration {
         return tableName;
     }
 
+    /**
+     * The name of the table currently worked with.
+     */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
@@ -93,15 +108,21 @@ public class DdbConfiguration {
         return operation;
     }
 
+    /**
+     * What operation to perform
+     */
     public void setOperation(DdbOperations operation) {
         this.operation = operation;
     }
 
-    public Boolean getConsistentRead() {
+    public boolean isConsistentRead() {
         return consistentRead;
     }
 
-    public void setConsistentRead(Boolean consistentRead) {
+    /**
+     * Determines whether or not strong consistency should be enforced when data is read.
+     */
+    public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
     }
 
@@ -109,6 +130,9 @@ public class DdbConfiguration {
         return readCapacity;
     }
 
+    /**
+     * The provisioned throughput to reserve for reading resources from your table
+     */
     public void setReadCapacity(Long readCapacity) {
         this.readCapacity = readCapacity;
     }
@@ -117,6 +141,9 @@ public class DdbConfiguration {
         return writeCapacity;
     }
 
+    /**
+     * The provisioned throughput to reserved for writing resources to your table
+     */
     public void setWriteCapacity(Long writeCapacity) {
         this.writeCapacity = writeCapacity;
     }
@@ -125,6 +152,9 @@ public class DdbConfiguration {
         return keyAttributeName;
     }
 
+    /**
+     * Attribute name when creating table
+     */
     public void setKeyAttributeName(String keyAttributeName) {
         this.keyAttributeName = keyAttributeName;
     }
@@ -133,6 +163,9 @@ public class DdbConfiguration {
         return keyAttributeType;
     }
 
+    /**
+     * Attribute type when creating table
+     */
     public void setKeyAttributeType(String keyAttributeType) {
         this.keyAttributeType = keyAttributeType;
     }
