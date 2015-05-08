@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.cxf;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
@@ -24,13 +26,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.w3c.dom.Document;
+
 
 public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport {
-    private AbstractXmlApplicationContext applicationContext;
     /*
      * The response message is generated directly. The issue here is that the
      * xsi and xs namespaces are defined on the SOAP envelope but are used
@@ -41,11 +41,14 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
      * If some CXF implementation bean is used as the service the namespaces
      * will be defined within the payload (and everything works fine).
      */
-    private static final String responseMessage = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
-            + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse>"
-            + "</soap:Body></soap:Envelope>";
-    private static final String requestPayload = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
+    private static final String RESPONSE_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
+        + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
+        + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse>"
+        + "</soap:Body></soap:Envelope>";
+    private static final String REQUEST_PAYLOAD = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
 
+    private AbstractXmlApplicationContext applicationContext;
+    
     // Don't remove this, it initializes the CXFTestSupport class
     static {
         CXFTestSupport.getPort1();
@@ -87,15 +90,15 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
                         // easier
                         .convertBodyTo(String.class);
                 // This route just returns the test message
-                from("cxf:bean:serviceEndpoint?DataFormat=MESSAGE").setBody().constant(responseMessage);
+                from("cxf:bean:serviceEndpoint?DataFormat=MESSAGE").setBody().constant(RESPONSE_MESSAGE);
             }
         };
     }
 
 // need cxf-3.0.6
 //    @Test
-     public void testInvokeRouter() {
-        Object returnValue = template.requestBody("direct:router", requestPayload);
+    public void testInvokeRouter() {
+        Object returnValue = template.requestBody("direct:router", REQUEST_PAYLOAD);
         assertNotNull(returnValue);
         assertTrue(returnValue instanceof String);
         assertTrue(((String) returnValue).contains("Return Value"));
