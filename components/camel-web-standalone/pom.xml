@@ -43,7 +43,7 @@
       <!-- not org.eclipse.jetty at present -->
       <groupId>${jetty-runner-groupId}</groupId>
       <artifactId>jetty-runner</artifactId>
-      <version>${jetty-version}</version>
+      <version>8.1.16.v20140903</version>
     </dependency>
 
     <dependency>
