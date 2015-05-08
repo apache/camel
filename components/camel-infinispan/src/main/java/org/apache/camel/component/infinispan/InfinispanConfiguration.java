@@ -33,7 +33,7 @@ public class InfinispanConfiguration {
     private String host;
     @UriParam
     private String cacheName;
-    @UriParam(label = "producer", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync," 
+    @UriParam(label = "producer", defaultValue = "put", enums = "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,get,containsKey,containsValue,remove,removeAsync,"
            + "replace,replaceAsync,clear,size")
     private String command;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -45,6 +45,9 @@ public class InfinispanConfiguration {
         return command;
     }
 
+    /**
+     * The operation to perform.
+     */
     public void setCommand(String command) {
         this.command = command;
     }
@@ -71,7 +74,6 @@ public class InfinispanConfiguration {
         this.cacheContainer = cacheContainer;
     }
 
-
     /**
      * Specifies the cache name
      */  
@@ -94,17 +96,28 @@ public class InfinispanConfiguration {
         this.sync = sync;
     }
 
-    /**
-    * Specifies the set of event types to register by the consumer 
-    */
     public Set<String> getEventTypes() {
         return eventTypes;
     }
 
+    /**
+     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
+     * <p/>
+     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
+     * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
+     */
     public void setEventTypes(Set<String> eventTypes) {
         this.eventTypes = eventTypes;
     }
 
+    /**
+     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
+     * <p/>
+     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
+     * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
+     */
     public void setEventTypes(String eventTypes) {
         this.eventTypes = new HashSet<String>(Arrays.asList(eventTypes.split(",")));
     }
