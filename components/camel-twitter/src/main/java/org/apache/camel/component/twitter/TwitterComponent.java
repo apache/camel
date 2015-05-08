@@ -52,7 +52,9 @@ public class TwitterComponent extends UriEndpointComponent {
         properties.setHttpProxyHost(httpProxyHost);
         properties.setHttpProxyUser(httpProxyUser);
         properties.setHttpProxyPassword(httpProxyPassword);
-        properties.setHttpProxyPort(httpProxyPort);
+        if (httpProxyPort != null) {
+            properties.setHttpProxyPort(httpProxyPort);
+        }
 
         // and then override from parameters
         setProperties(properties, parameters);
