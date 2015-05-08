@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.fop.utils;
+package org.apache.camel.component.fop;
 
-public enum OutputFormatEnum {
+public enum FopOutputType {
 
     pdf("application/pdf"),
     ps("application/postscript"),
@@ -30,12 +30,38 @@ public enum OutputFormatEnum {
     txt("text/plain");
     
     private final String outputFormatExtended;
-    
-    OutputFormatEnum(String outputFormatExtended) {
+
+    FopOutputType(String outputFormatExtended) {
         this.outputFormatExtended = outputFormatExtended;
     }
     
     public String getFormatExtended() {
         return outputFormatExtended;
+    }
+
+    public static FopOutputType asFooOutputType(String outputFormatExtended) {
+        if ("application/pdf".equalsIgnoreCase(outputFormatExtended)) {
+            return pdf;
+        } else if ("application/postscript".equalsIgnoreCase(outputFormatExtended)) {
+            return ps;
+        } else if ("application/x-pcl".equalsIgnoreCase(outputFormatExtended)) {
+            return pcl;
+        } else if ("image/png".equalsIgnoreCase(outputFormatExtended)) {
+            return png;
+        } else if ("image/jpeg".equalsIgnoreCase(outputFormatExtended)) {
+            return jpeg;
+        } else if ("image/svg+xml".equalsIgnoreCase(outputFormatExtended)) {
+            return svg;
+        } else if ("application/X-fop-areatree".equalsIgnoreCase(outputFormatExtended)) {
+            return xml;
+        } else if ("application/mif".equalsIgnoreCase(outputFormatExtended)) {
+            return mif;
+        } else if ("application/rtf".equalsIgnoreCase(outputFormatExtended)) {
+            return rtf;
+        } else if ("text/plain".equalsIgnoreCase(outputFormatExtended)) {
+            return txt;
+        }
+
+        return null;
     }
 }

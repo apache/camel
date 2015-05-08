@@ -18,7 +18,6 @@ package org.apache.camel.component.fop;
 
 import java.io.FileInputStream;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -38,9 +37,6 @@ public class FopComponentTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
     
-    @Produce(uri = "direct:error")
-    protected ProducerTemplate templateError;
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -67,36 +63,17 @@ public class FopComponentTest extends CamelTestSupport {
         assertEquals("Header value is lost!", "bar", exchange.getIn().getHeader("foo"));
     }
     
-    @Test
-    public void testEnumError() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
-        FileInputStream inputStream = new FileInputStream("src/test/data/xml/data.xml");
-
-        try { 
-            templateError.sendBody(inputStream);
-        } catch (CamelExecutionException e) { 
-            assertTrue(e.getCause().getMessage().contains("The output format is not valid on the exchange"));
-        }
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("xslt:xslt/template.xsl")
-                        .setHeader("foo", constant("bar"))
-                        .to("fop:pdf")
-                        .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
-                        .to("file:target/data")
-                        .to("mock:result");
-                from("direct:error")
-                        .to("xslt:xslt/template.xsl")
-                        .setHeader("foo", constant("bar"))
-                         .to("fop:test")
-                         .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
-                         .to("file:target/data")
-                         .to("mock:result");
+                    .to("xslt:xslt/template.xsl")
+                    .setHeader("foo", constant("bar"))
+                    .to("fop:pdf")
+                    .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
+                    .to("file:target/data")
+                    .to("mock:result");
             }
         };
     }

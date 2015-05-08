@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.fop.utils;
+package org.apache.camel.component.fop;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-
-public final class OutputFormatEnumTest {
+public class FopOutputTypeTest {
 
     @Test
     public void testOutputFormatEnum() {
-        String pdfExtended = OutputFormatEnum.valueOf("pdf").getFormatExtended();
+        String pdfExtended = FopOutputType.valueOf("pdf").getFormatExtended();
         assertEquals("application/pdf", pdfExtended);
-        String pngExtended = OutputFormatEnum.valueOf("png").getFormatExtended();
+        String pngExtended = FopOutputType.valueOf("png").getFormatExtended();
         assertEquals("image/png", pngExtended);
     }
 }
