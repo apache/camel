@@ -85,6 +85,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @deprecated use {@link #getExchangesInflight()}
      */
     @ManagedAttribute(description = "Current number of inflight Exchanges")
+    @Deprecated
     Integer getInflightExchanges();
 
     @ManagedAttribute(description = "Total number of routes")

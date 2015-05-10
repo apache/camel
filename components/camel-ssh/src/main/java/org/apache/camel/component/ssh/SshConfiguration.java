@@ -205,6 +205,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
      */
+    @Deprecated
     public String getCertFilename() {
         return ((certResource != null) && certResource.startsWith("file:")) ? certResource.substring(5) : null;
     }
@@ -212,6 +213,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
+    @Deprecated
     public void setCertFilename(String certFilename) {
         this.certResource = "file:" + certFilename;
     }

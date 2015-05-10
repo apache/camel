@@ -255,6 +255,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     /**
      * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
      */
+    @Deprecated
     public String getCertFilename() {
         return getConfiguration().getCertFilename();
     }
@@ -262,6 +263,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     /**
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
+    @Deprecated
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
     }

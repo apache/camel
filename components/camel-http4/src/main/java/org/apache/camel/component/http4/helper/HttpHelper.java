@@ -108,6 +108,7 @@ public final class HttpHelper {
      * @deprecated Camel 3.0 
      * Please use the one which has the parameter of camel context
      */
+    @Deprecated
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
         return deserializeJavaObjectFromStream(is, null);
     }

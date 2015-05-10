@@ -97,6 +97,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     /**
      * @deprecated Use {@link #createXStream(ClassResolver, ClassLoader)}
      */
+    @Deprecated
     protected XStream createXStream(ClassResolver resolver) {
         return createXStream(resolver, null);
     }
