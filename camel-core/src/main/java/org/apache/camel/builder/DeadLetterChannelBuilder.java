@@ -23,7 +23,6 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelLogger;
@@ -94,14 +93,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
                 throw new NoSuchEndpointException(deadLetterUri);
             }
         }
-    }
-
-    @Override
-    protected RedeliveryPolicy createRedeliveryPolicy() {
-        RedeliveryPolicy answer = new RedeliveryPolicy();
-        // do not log exhausted message history by default for DLC
-        answer.setLogExhaustedMessageHistory(false);
-        return answer;
     }
 
     protected CamelLogger createLogger() {
