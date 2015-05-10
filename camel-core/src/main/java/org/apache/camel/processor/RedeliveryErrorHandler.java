@@ -41,6 +41,7 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
@@ -952,7 +953,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
         msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
         if (processor != null) {
-            msg = msg + ". Processed by failure processor: " + processor;
+            if (isDeadLetterChannel && deadLetterUri != null) {
+                msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+            } else {
+                msg = msg + ". Processed by failure processor: " + processor;
+            }
         }
 
         // log that we failed delivery as we are exhausted
@@ -1052,8 +1057,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // if we should not rollback, then check whether logging is enabled
-            if (!newException && handled && !data.currentRedeliveryPolicy.isLogHandled()) {
-                // do not log handled
+            if (!newException && handled && (!data.currentRedeliveryPolicy.isLogHandled() && !data.currentRedeliveryPolicy.isLogExhaustedMessageHistory())) {
+                // do not log handled (but log exhausted message history can overrule log handled)
                 return;
             }
 

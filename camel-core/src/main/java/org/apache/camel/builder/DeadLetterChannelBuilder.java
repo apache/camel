@@ -98,7 +98,10 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     @Override
     protected RedeliveryPolicy createRedeliveryPolicy() {
-        return new RedeliveryPolicy();
+        RedeliveryPolicy answer = new RedeliveryPolicy();
+        // do not log exhausted message history by default for DLC
+        answer.setLogExhaustedMessageHistory(false);
+        return answer;
     }
 
     protected CamelLogger createLogger() {
