@@ -35,8 +35,7 @@ import org.springframework.util.StringUtils;
  * The DefinitionParser to deal with the ErrorHandler
  */
 public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
-    protected BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(CamelRedeliveryPolicyFactoryBean.class);
-    
+
     public ErrorHandlerDefinitionParser() {
         // need to override the default
         super(null, false);
@@ -94,6 +93,8 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                             throw new IllegalArgumentException("Cannot set both redeliveryPolicyRef and redeliveryPolicy,"
                                     + " only one allowed, in error handler with id: " + id);
                         }
+                        boolean deadLetter = type.equals(ErrorHandlerType.DeadLetterChannel);
+                        BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(CamelRedeliveryPolicyFactoryBean.class, deadLetter);
                         BeanDefinition redeliveryPolicyDefinition = redeliveryPolicyParser.parse(childElement, parserContext);
                         builder.addPropertyValue(localName, redeliveryPolicyDefinition);
                     }
@@ -194,13 +195,27 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     
     protected class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
 
-        public RedeliveryPolicyDefinitionParser(Class<?> type) {
+        private final boolean deadLetter;
+
+        public RedeliveryPolicyDefinitionParser(Class<?> type, boolean deadLetter) {
             super(type, false);
+            this.deadLetter = deadLetter;
         }
 
         protected boolean shouldGenerateId() {
             return true;
         }
+
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            super.doParse(element, parserContext, builder);
+
+            // if dead letter then set logExhaustedMessageHistory default false if not explicit configured
+            boolean hasLogExhaustedMessageHistory = element.hasAttribute("logExhaustedMessageHistory");
+            if (deadLetter && !hasLogExhaustedMessageHistory) {
+                builder.addPropertyValue("logExhaustedMessageHistory", "false");
+            }
+        }
+
     }
     
 }
