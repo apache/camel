@@ -91,7 +91,7 @@ public class NettyComponent extends UriEndpointComponent {
         this.configuration = configuration;
     }
     
-    public void setExecutorService(EventExecutorGroup executorServcie) {
+    public void setExecutorService(EventExecutorGroup executorService) {
         this.executorService = executorService;
     }
 
