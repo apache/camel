@@ -479,9 +479,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // need to setup entity manager first
         this.entityManager = entityManagerFactory.createEntityManager();
         LOG.trace("Created EntityManager {} on {}", entityManager, this);
+
+        super.doStart();
     }
 
     @Override
@@ -491,8 +493,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         this.entityManager.close();
         LOG.trace("Closed EntityManager {} on {}", entityManager, this);
+
+        super.doShutdown();
     }
 }
