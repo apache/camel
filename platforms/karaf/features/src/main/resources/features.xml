@@ -1350,6 +1350,7 @@
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.data/spring-data-redis/${spring-data-redis-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-redis/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-security' version='${project.version}' resolver='(obr)' start-level='50'>
