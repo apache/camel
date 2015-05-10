@@ -301,8 +301,6 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      * Sets whether to use NOWAIT on lock and silently skip the entity. This
      * allows different instances to process entities at the same time but not
      * processing the same entity.
-     * 
-     * @param skipLockedEntity
      */
     public void setSkipLockedEntity(boolean skipLockedEntity) {
         this.skipLockedEntity = skipLockedEntity;
@@ -501,14 +499,15 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
+        // need to setup entity manager first
         if (getEndpoint().isSharedEntityManager()) {
             this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
         } else {
             this.entityManager = entityManagerFactory.createEntityManager();
         }
         LOG.trace("Created EntityManager {} on {}", entityManager, this);
+
+        super.doStart();
     }
 
     @Override
@@ -518,11 +517,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
-
         if (entityManager != null) {
             this.entityManager.close();
             LOG.trace("Closed EntityManager {} on {}", entityManager, this);
         }
+
+        super.doShutdown();
     }
 }
