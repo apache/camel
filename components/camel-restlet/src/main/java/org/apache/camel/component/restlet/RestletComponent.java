@@ -451,6 +451,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return controllerDaemon;
     }
 
+    /**
+     * Indicates if the controller thread should be a daemon (not blocking JVM exit).
+     */
     public void setControllerDaemon(Boolean controllerDaemon) {
         this.controllerDaemon = controllerDaemon;
     }
@@ -459,6 +462,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return controllerSleepTimeMs;
     }
 
+    /**
+     * Time for the controller thread to sleep between each control.
+     */
     public void setControllerSleepTimeMs(Integer controllerSleepTimeMs) {
         this.controllerSleepTimeMs = controllerSleepTimeMs;
     }
@@ -467,6 +473,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return inboundBufferSize;
     }
 
+    /**
+     * The size of the buffer when reading messages.
+     */
     public void setInboundBufferSize(Integer inboundBufferSize) {
         this.inboundBufferSize = inboundBufferSize;
     }
@@ -475,6 +484,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxConnectionsPerHost;
     }
 
+    /**
+     * Maximum number of concurrent connections per host (IP address).
+     */
     public void setMaxConnectionsPerHost(Integer maxConnectionsPerHost) {
         this.maxConnectionsPerHost = maxConnectionsPerHost;
     }
@@ -483,6 +495,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxThreads;
     }
 
+    /**
+     * Maximum threads that will service requests.
+     */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
@@ -491,6 +506,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return lowThreads;
     }
 
+    /**
+     * Number of worker threads determining when the connector is considered overloaded.
+     */
     public void setLowThreads(Integer lowThreads) {
         this.lowThreads = lowThreads;
     }
@@ -499,6 +517,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxTotalConnections;
     }
 
+    /**
+     * Maximum number of concurrent connections in total.
+     */
     public void setMaxTotalConnections(Integer maxTotalConnections) {
         this.maxTotalConnections = maxTotalConnections;
     }
@@ -507,6 +528,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return minThreads;
     }
 
+    /**
+     * Minimum threads waiting to service requests.
+     */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
     }
@@ -515,6 +539,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return outboundBufferSize;
     }
 
+    /**
+     * The size of the buffer when writing messages.
+     */
     public void setOutboundBufferSize(Integer outboundBufferSize) {
         this.outboundBufferSize = outboundBufferSize;
     }
@@ -523,6 +550,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return persistingConnections;
     }
 
+    /**
+     * Indicates if connections should be kept alive after a call.
+     */
     public void setPersistingConnections(Boolean persistingConnections) {
         this.persistingConnections = persistingConnections;
     }
@@ -531,6 +561,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return pipeliningConnections;
     }
 
+    /**
+     * Indicates if pipelining connections are supported.
+     */
     public void setPipeliningConnections(Boolean pipeliningConnections) {
         this.pipeliningConnections = pipeliningConnections;
     }
@@ -539,6 +572,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return threadMaxIdleTimeMs;
     }
 
+    /**
+     * Time for an idle thread to wait for an operation before being collected.
+     */
     public void setThreadMaxIdleTimeMs(Integer threadMaxIdleTimeMs) {
         this.threadMaxIdleTimeMs = threadMaxIdleTimeMs;
     }
@@ -547,6 +583,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return useForwardedForHeader;
     }
 
+    /**
+     * Lookup the "X-Forwarded-For" header supported by popular proxies and caches and uses it to populate the Request.getClientAddresses()
+     * method result. This information is only safe for intermediary components within your local network.
+     * Other addresses could easily be changed by setting a fake header and should not be trusted for serious security checks.
+     */
     public void setUseForwardedForHeader(Boolean useForwardedForHeader) {
         this.useForwardedForHeader = useForwardedForHeader;
     }
@@ -555,6 +596,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return reuseAddress;
     }
 
+    /**
+     * Enable/disable the SO_REUSEADDR socket option.
+     * See java.io.ServerSocket#reuseAddress property for additional details.
+     */
     public void setReuseAddress(Boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
     }
@@ -563,6 +608,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return maxQueued;
     }
 
+    /**
+     * Maximum number of calls that can be queued if there aren't any worker thread available to service them.
+     * If the value is '0', then no queue is used and calls are rejected if no worker thread is immediately available.
+     * If the value is '-1', then an unbounded queue is used and calls are never rejected.
+     */
     public void setMaxQueued(Integer maxQueued) {
         this.maxQueued = maxQueued;
     }
@@ -571,6 +621,15 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return disableStreamCache;
     }
 
+    /**
+     * Determines whether or not the raw input stream from Restlet is cached or not
+     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
+     * By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body
+     * if this option is false to support reading the stream multiple times.
+     */
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
     }
@@ -579,6 +638,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return port;
     }
 
+    /**
+     * To configure the port number for the restlet consumer routes.
+     * This allows to configure this once to reuse the same port for these consumers.
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -587,6 +650,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         return synchronous;
     }
 
+    /**
+     * Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance
+     * as it seems the Restlet synchronous Client works better.
+     */
     public void setSynchronous(Boolean synchronous) {
         this.synchronous = synchronous;
     }
