@@ -49,9 +49,9 @@ public class CacheComponent extends UriEndpointComponent {
         ObjectHelper.notNull(configuration, "configuration");
 
         CacheConfiguration config = configuration.copy();
-        config.parseURI(new URI(uri));
         setProperties(this, parameters);
         setProperties(config, parameters);
+        config.setCacheName(remaining);
 
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
         setProperties(cacheEndpoint, parameters);

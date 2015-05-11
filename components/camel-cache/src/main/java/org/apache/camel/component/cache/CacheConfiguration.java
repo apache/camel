@@ -60,10 +60,6 @@ public class CacheConfiguration implements Cloneable {
     public CacheConfiguration() {
     }
 
-    public CacheConfiguration(URI uri) throws Exception {
-        parseURI(uri);
-    }
-
     public CacheConfiguration copy() {
         try {
             CacheConfiguration copy = (CacheConfiguration) clone();
@@ -71,55 +67,6 @@ public class CacheConfiguration implements Cloneable {
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
-        }
-    }
-
-    public void parseURI(URI uri) throws Exception {
-        String protocol = uri.getScheme();
-        
-        if (!protocol.equalsIgnoreCase("cache")) {
-            throw new IllegalArgumentException("Unrecognized Cache protocol: " + protocol + " for uri: " + uri);
-        }
-        
-        setCacheName(uri.getHost());
-        
-        Map<String, Object> cacheSettings = URISupport.parseParameters(uri);
-        if (cacheSettings.containsKey("maxElementsInMemory")) {
-            setMaxElementsInMemory(Integer.valueOf((String) cacheSettings.get("maxElementsInMemory")));
-        }
-        if (cacheSettings.containsKey("overflowToDisk")) {
-            setOverflowToDisk(Boolean.valueOf((String) cacheSettings.get("overflowToDisk")));
-        }
-        if (cacheSettings.containsKey("diskStorePath")) {
-            setDiskStorePath((String)cacheSettings.get("diskStorePath"));
-        }
-        if (cacheSettings.containsKey("eternal")) {
-            setEternal(Boolean.valueOf((String) cacheSettings.get("eternal")));
-        }
-        if (cacheSettings.containsKey("timeToLiveSeconds")) {
-            setTimeToLiveSeconds(Long.valueOf((String) cacheSettings.get("timeToLiveSeconds")));
-        }
-        if (cacheSettings.containsKey("timeToIdleSeconds")) {
-            setTimeToIdleSeconds(Long.valueOf((String) cacheSettings.get("timeToIdleSeconds")));
-        }
-        if (cacheSettings.containsKey("diskPersistent")) {
-            setDiskPersistent(Boolean.valueOf((String) cacheSettings.get("diskPersistent")));
-        }
-        if (cacheSettings.containsKey("diskExpiryThreadIntervalSeconds")) {
-            setDiskExpiryThreadIntervalSeconds(Long.valueOf((String) cacheSettings.get("diskExpiryThreadIntervalSeconds")));
-        }
-        if (cacheSettings.containsKey("memoryStoreEvictionPolicy")) {
-            String policy = (String) cacheSettings.get("memoryStoreEvictionPolicy");
-            // remove leading if any given as fromString uses LRU, LFU or FIFO
-            policy = policy.replace("MemoryStoreEvictionPolicy.", "");
-            setMemoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.fromString(policy));
-        }
-        if (cacheSettings.containsKey("objectCache")) {
-            setObjectCache(Boolean.valueOf((String) cacheSettings.get("objectCache")));
-        }
-
-        if (isObjectCache() && (isOverflowToDisk() || isDiskPersistent())) {
-            throw new IllegalArgumentException("Unable to create object cache with disk access");
         }
     }
     
