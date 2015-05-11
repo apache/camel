@@ -129,8 +129,8 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         if (filteredMethods.isEmpty()) {
             throw new IllegalArgumentException(
                 String.format("Missing properties for %s, need one or more from %s",
-                    endpoint.getMethodName(),
-                    getMissingProperties(endpoint.getMethodName(), endpoint.getNameStyle(), argNames)));
+                    endpoint.getMethod(),
+                    getMissingProperties(endpoint.getMethod(), endpoint.getNameStyle(), argNames)));
         } else if (filteredMethods.size() == 1) {
             // single match
             result = filteredMethods.get(0);
