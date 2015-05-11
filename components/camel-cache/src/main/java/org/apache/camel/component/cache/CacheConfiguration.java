@@ -21,6 +21,7 @@ import java.util.Map;
 
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -28,15 +29,16 @@ import org.apache.camel.util.URISupport;
 
 @UriParams
 public class CacheConfiguration implements Cloneable {
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String cacheName;
     @UriParam(defaultValue = "1000")
     private int maxElementsInMemory = 1000;
-    @UriParam(defaultValue = "LFU", enums = "LRU,LFU,FIFO,CLOCK")
+    @UriParam(defaultValue = "LFU", enums = "LRU,LFU,FIFO")
     private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy = MemoryStoreEvictionPolicy.LFU;
     @UriParam(defaultValue = "true")
     private boolean overflowToDisk = true;
     @UriParam
+    @Deprecated
     private String diskStorePath;
     @UriParam
     private boolean eternal;
@@ -125,6 +127,9 @@ public class CacheConfiguration implements Cloneable {
         return cacheName;
     }
 
+    /**
+     * Name of the cache
+     */
     public void setCacheName(String cacheName) {
         this.cacheName = cacheName;
     }
@@ -133,6 +138,9 @@ public class CacheConfiguration implements Cloneable {
         return maxElementsInMemory;
     }
 
+    /**
+     * The number of elements that may be stored in the defined cache in memory.
+     */
     public void setMaxElementsInMemory(int maxElementsInMemory) {
         this.maxElementsInMemory = maxElementsInMemory;
     }
@@ -141,8 +149,16 @@ public class CacheConfiguration implements Cloneable {
         return memoryStoreEvictionPolicy;
     }
 
-    public void setMemoryStoreEvictionPolicy(
-            MemoryStoreEvictionPolicy memoryStoreEvictionPolicy) {
+    /**
+     * Which eviction strategy to use when maximum number of elements in memory is reached. The strategy defines
+     * which elements to be removed.
+     * <ul>
+     *     <li>LRU - Lest Recently Used</li>
+     *     <li>LFU - Lest Frequently Used</li>
+     *     <li>FIFO - First In First Out</li>
+     * </ul>
+     */
+    public void setMemoryStoreEvictionPolicy(MemoryStoreEvictionPolicy memoryStoreEvictionPolicy) {
         this.memoryStoreEvictionPolicy = memoryStoreEvictionPolicy;
     }
 
@@ -150,14 +166,22 @@ public class CacheConfiguration implements Cloneable {
         return overflowToDisk;
     }
 
+    /**
+     * Specifies whether cache may overflow to disk
+     */
     public void setOverflowToDisk(boolean overflowToDisk) {
         this.overflowToDisk = overflowToDisk;
     }
 
+    @Deprecated
     public String getDiskStorePath() {
         return diskStorePath;
     }
 
+    /**
+     * This parameter is ignored. CacheManager sets it using setter injection.
+     */
+    @Deprecated
     public void setDiskStorePath(String diskStorePath) {
         this.diskStorePath = diskStorePath;
     }
@@ -166,6 +190,9 @@ public class CacheConfiguration implements Cloneable {
         return eternal;
     }
 
+    /**
+     * Sets whether elements are eternal. If eternal, timeouts are ignored and the element never expires.
+     */
     public void setEternal(boolean eternal) {
         this.eternal = eternal;
     }
@@ -174,6 +201,9 @@ public class CacheConfiguration implements Cloneable {
         return timeToLiveSeconds;
     }
 
+    /**
+     * The maximum time between creation time and when an element expires. Is used only if the element is not eternal
+     */
     public void setTimeToLiveSeconds(long timeToLiveSeconds) {
         this.timeToLiveSeconds = timeToLiveSeconds;
     }
@@ -182,6 +212,9 @@ public class CacheConfiguration implements Cloneable {
         return timeToIdleSeconds;
     }
 
+    /**
+     * The maximum amount of time between accesses before an element expires
+     */
     public void setTimeToIdleSeconds(long timeToIdleSeconds) {
         this.timeToIdleSeconds = timeToIdleSeconds;
     }
@@ -190,6 +223,9 @@ public class CacheConfiguration implements Cloneable {
         return diskPersistent;
     }
 
+    /**
+     * Whether the disk store persists between restarts of the application.
+     */
     public void setDiskPersistent(boolean diskPersistent) {
         this.diskPersistent = diskPersistent;
     }
@@ -198,10 +234,16 @@ public class CacheConfiguration implements Cloneable {
         return diskExpiryThreadIntervalSeconds;
     }
 
+    /**
+     * The number of seconds between runs of the disk expiry thread.
+     */
     public void setDiskExpiryThreadIntervalSeconds(long diskExpiryThreadIntervalSeconds) {
         this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
     }
 
+    /**
+     * To configure event listeners using the CacheEventListenerRegistry
+    */
     public void setEventListenerRegistry(CacheEventListenerRegistry eventListenerRegistry) {
         this.eventListenerRegistry = eventListenerRegistry;
     }
@@ -210,6 +252,9 @@ public class CacheConfiguration implements Cloneable {
         return eventListenerRegistry;
     }
 
+    /**
+     * To configure cache loader using the CacheLoaderRegistry
+     */
     public void setCacheLoaderRegistry(CacheLoaderRegistry cacheLoaderRegistry) {
         this.cacheLoaderRegistry = cacheLoaderRegistry;
     }
@@ -222,6 +267,10 @@ public class CacheConfiguration implements Cloneable {
         return objectCache;
     }
 
+    /**
+     * Whether to turn on allowing to store non serializable objects in the cache.
+     * If this option is enabled then overflow to disk cannot be enabled as well.
+     */
     public void setObjectCache(boolean objectCache) {
         this.objectCache = objectCache;
     }

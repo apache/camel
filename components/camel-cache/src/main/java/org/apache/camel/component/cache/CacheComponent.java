@@ -62,6 +62,11 @@ public class CacheComponent extends UriEndpointComponent {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use the given CacheManagerFactory for creating the CacheManager.
+     * <p/>
+     * By default the DefaultCacheManagerFactory is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
