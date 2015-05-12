@@ -62,172 +62,99 @@ public class ElasticsearchConfiguration {
     @UriParam(defaultValue = "9300")
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     
-
-
-
-	public boolean isLocal() {
-		return local;
-	}
-
-
-
-
-	public void setLocal(boolean local) {
-		this.local = local;
-	}
-
-
-
-
-	public List<InetSocketTransportAddress> getTransportAddressesList() {
-		return transportAddressesList;
-	}
-
-
-
-
-	public void setTransportAddressesList(
-			List<InetSocketTransportAddress> transportAddressesList) {
-		this.transportAddressesList = transportAddressesList;
-	}
-
-
-
-
-	public String getClusterName() {
-		return clusterName;
-	}
-
-
-
-
-	public void setClusterName(String clusterName) {
-		this.clusterName = clusterName;
-	}
-
-
-
-
-	public String getOperation() {
-		return operation;
-	}
-
-
-
-
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
-
-
-
-
-	public String getIndexName() {
-		return indexName;
-	}
-
-
-
-
-	public void setIndexName(String indexName) {
-		this.indexName = indexName;
-	}
-
-
-
-
-	public String getIndexType() {
-		return indexType;
-	}
-
-
-
-
-	public void setIndexType(String indexType) {
-		this.indexType = indexType;
-	}
-
-
-
-
-	public WriteConsistencyLevel getConsistencyLevel() {
-		return consistencyLevel;
-	}
-
-
-
-
-	public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
-		this.consistencyLevel = consistencyLevel;
-	}
-
-
-
-
-	public ReplicationType getReplicationType() {
-		return replicationType;
-	}
-
-
-
-
-	public void setReplicationType(ReplicationType replicationType) {
-		this.replicationType = replicationType;
-	}
-
-
-
-
-	public Boolean getData() {
-		return data;
-	}
-
-
-
-
-	public void setData(Boolean data) {
-		this.data = data;
-	}
-
-
-
-
-	public String getIp() {
-		return ip;
-	}
-
-
-
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
-
-
-
-	public String getTransportAddresses() {
-		return transportAddresses;
-	}
-
-
-
-
-	public void setTransportAddresses(String transportAddresses) {
-		this.transportAddresses = transportAddresses;
-	}
-
-
-
-
-	public int getPort() {
-		return port;
-	}
-
-
-
-
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public boolean isLocal() {
+        return local;
+    }
+
+    public void setLocal(boolean local) {
+        this.local = local;
+    }
+
+    public List<InetSocketTransportAddress> getTransportAddressesList() {
+        return transportAddressesList;
+    }
+
+    public void setTransportAddressesList(List<InetSocketTransportAddress> transportAddressesList) {
+        this.transportAddressesList = transportAddressesList;
+    }
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getIndexType() {
+        return indexType;
+    }
+
+    public void setIndexType(String indexType) {
+        this.indexType = indexType;
+    }
+
+    public WriteConsistencyLevel getConsistencyLevel() {
+        return consistencyLevel;
+    }
+
+    public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
+        this.consistencyLevel = consistencyLevel;
+    }
+
+    public ReplicationType getReplicationType() {
+        return replicationType;
+    }
+
+    public void setReplicationType(ReplicationType replicationType) {
+        this.replicationType = replicationType;
+    }
+
+    public Boolean getData() {
+        return data;
+    }
+
+    public void setData(Boolean data) {
+        this.data = data;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getTransportAddresses() {
+        return transportAddresses;
+    }
+
+    public void setTransportAddresses(String transportAddresses) {
+        this.transportAddresses = transportAddresses;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 }

@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -40,6 +36,7 @@ import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 /**
  * Represents an Elasticsearch endpoint.
  */

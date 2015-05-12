@@ -46,12 +46,12 @@ public class ElasticsearchComponent extends UriEndpointComponent {
             config.setLocal(true);
             config.setClusterName(null);
         } else {
-        	config.setLocal(false);
+            config.setLocal(false);
             config.setClusterName(remaining);
         }
         
         if (config.getData() == null) {
-        	config.setData(config.isLocal());
+            config.setData(config.isLocal());
         }
 
         if (config.isLocal() && !config.getData()) {

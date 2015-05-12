@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
-import org.apache.camel.component.elasticsearch.ElasticsearchConfiguration;
 import org.elasticsearch.action.WriteConsistencyLevel;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -55,13 +54,13 @@ public final class ElasticsearchActionRequestConverter {
 
         return indexRequest
                 .consistencyLevel(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
+                        ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, WriteConsistencyLevel.class))
                 .replicationType(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
+                        ElasticsearchConstants.PARAM_REPLICATION_TYPE, ReplicationType.class))
                 .index(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                        ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .type(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
+                        ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
     }
 
     @Converter
@@ -73,9 +72,9 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static GetRequest toGetRequest(String id, Exchange exchange) {
         return new GetRequest(exchange.getIn().getHeader(
-        		ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .type(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_INDEX_TYPE,
+                        ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
     }
 
@@ -83,10 +82,10 @@ public final class ElasticsearchActionRequestConverter {
     public static DeleteRequest toDeleteRequest(String id, Exchange exchange) {
         return new DeleteRequest()
                 .index(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_INDEX_NAME,
+                        ElasticsearchConstants.PARAM_INDEX_NAME,
                         String.class))
                 .type(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_INDEX_TYPE,
+                        ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
     }
 
@@ -94,9 +93,9 @@ public final class ElasticsearchActionRequestConverter {
     public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) {
         Map<?, ?> query = exchange.getContext().getTypeConverter().convertTo(Map.class, queryObject);
         return new SearchRequest(exchange.getIn().getHeader(
-        		ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .types(exchange.getIn().getHeader(
-                		ElasticsearchConstants.PARAM_INDEX_TYPE,
+                        ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).source(query);
     }
 
