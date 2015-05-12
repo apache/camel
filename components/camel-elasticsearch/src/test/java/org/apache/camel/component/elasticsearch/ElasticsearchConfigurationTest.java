@@ -79,7 +79,7 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         assertFalse(conf.isLocal());
         assertFalse(conf.isData());
         assertEquals("127.0.0.1", conf.getIp());
-        assertEquals(9300, conf.getPort().intValue());
+        assertEquals(9300, conf.getPort());
     }
 
     @Test
@@ -146,9 +146,9 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
-        assertEquals(1, conf.getTransportAddresses().size());
-        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
-        assertEquals(9300, conf.getTransportAddresses().get(0).address().getPort());
+        assertEquals(1, conf.getTransportAddressesList().size());
+        assertEquals("127.0.0.1", conf.getTransportAddressesList().get(0).address().getHostString());
+        assertEquals(9300, conf.getTransportAddressesList().get(0).address().getPort());
     }
 
     @Test
@@ -158,11 +158,11 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
-        assertEquals(2, conf.getTransportAddresses().size());
-        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
-        assertEquals(9300, conf.getTransportAddresses().get(0).address().getPort());
-        assertEquals("127.0.0.2", conf.getTransportAddresses().get(1).address().getHostString());
-        assertEquals(9300, conf.getTransportAddresses().get(1).address().getPort());
+        assertEquals(2, conf.getTransportAddressesList().size());
+        assertEquals("127.0.0.1", conf.getTransportAddressesList().get(0).address().getHostString());
+        assertEquals(9300, conf.getTransportAddressesList().get(0).address().getPort());
+        assertEquals("127.0.0.2", conf.getTransportAddressesList().get(1).address().getHostString());
+        assertEquals(9300, conf.getTransportAddressesList().get(1).address().getPort());
     }
 
     @Test
@@ -172,9 +172,9 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
-        assertEquals(1, conf.getTransportAddresses().size());
-        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
-        assertEquals(9305, conf.getTransportAddresses().get(0).address().getPort());
+        assertEquals(1, conf.getTransportAddressesList().size());
+        assertEquals("127.0.0.1", conf.getTransportAddressesList().get(0).address().getHostString());
+        assertEquals(9305, conf.getTransportAddressesList().get(0).address().getPort());
     }
 
     @Test
@@ -184,13 +184,13 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         Map<String, Object> parameters = URISupport.parseParameters(uri);
         ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
         assertDefaultConfigurationParameters(conf);
-        assertEquals(3, conf.getTransportAddresses().size());
-        assertEquals("127.0.0.1", conf.getTransportAddresses().get(0).address().getHostString());
-        assertEquals(9400, conf.getTransportAddresses().get(0).address().getPort());
-        assertEquals("127.0.0.2", conf.getTransportAddresses().get(1).address().getHostString());
-        assertEquals(9300, conf.getTransportAddresses().get(1).address().getPort());
-        assertEquals("127.0.0.3", conf.getTransportAddresses().get(2).address().getHostString());
-        assertEquals(9401, conf.getTransportAddresses().get(2).address().getPort());
+        assertEquals(3, conf.getTransportAddressesList().size());
+        assertEquals("127.0.0.1", conf.getTransportAddressesList().get(0).address().getHostString());
+        assertEquals(9400, conf.getTransportAddressesList().get(0).address().getPort());
+        assertEquals("127.0.0.2", conf.getTransportAddressesList().get(1).address().getHostString());
+        assertEquals(9300, conf.getTransportAddressesList().get(1).address().getPort());
+        assertEquals("127.0.0.3", conf.getTransportAddressesList().get(2).address().getHostString());
+        assertEquals(9401, conf.getTransportAddressesList().get(2).address().getPort());
     }
 
     private void assertDefaultConfigurationParameters(ElasticsearchConfiguration conf) {

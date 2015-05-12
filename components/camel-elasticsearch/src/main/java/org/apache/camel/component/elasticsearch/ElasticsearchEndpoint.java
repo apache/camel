@@ -20,10 +20,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -60,7 +60,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new RuntimeCamelException("Cannot consume to a ElasticsearchEndpoint: " + getEndpointUri());
+        throw new UnsupportedOperationException("Cannot consume from an ElasticsearchEndpoint: " + getEndpointUri());
     }
 
     public boolean isSingleton() {
@@ -68,6 +68,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         super.doStart();
         if (configuration.isLocal()) {
@@ -79,14 +80,14 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             this.client = new TransportClient(getSettings())
                     .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
 
-        } else if (configuration.getTransportAddresses() != null 
-               && !configuration.getTransportAddresses().isEmpty()) {
-            List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddresses().size());
-            for (TransportAddress address : configuration.getTransportAddresses()) {
+        } else if (configuration.getTransportAddressesList() != null
+               && !configuration.getTransportAddressesList().isEmpty()) {
+            List<TransportAddress> addresses = new ArrayList(configuration.getTransportAddressesList().size());
+            for (TransportAddress address : configuration.getTransportAddressesList()) {
                 addresses.add(address);
             }
             this.client = new TransportClient(getSettings())
-                   .addTransportAddresses(addresses.toArray(new TransportAddress[0]));
+                   .addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
         } else {
             node = configuration.buildNode();
             client = node.client();
@@ -95,16 +96,16 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private Settings getSettings() {
         return ImmutableSettings.settingsBuilder()
-                        // setting the classloader here will allow the underlying elasticsearch-java
-                        // class to find its names.txt in an OSGi environment (otherwise the thread
-                        // classloader is used, which won't be able to see the file causing a startup
+                // setting the classloader here will allow the underlying elasticsearch-java
+                // class to find its names.txt in an OSGi environment (otherwise the thread
+                // classloader is used, which won't be able to see the file causing a startup
                 // exception).
                 .classLoader(Settings.class.getClassLoader())
                 .put("cluster.name", configuration.getClusterName())
                 .put("client.transport.ignore_cluster_name", false)
-                        .put("node.client", true)
+                .put("node.client", true)
                 .put("client.transport.sniff", true)
-                        .build();
+                .build();
     }
 
     @Override

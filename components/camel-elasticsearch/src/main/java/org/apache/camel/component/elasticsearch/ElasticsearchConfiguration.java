@@ -35,7 +35,6 @@ import org.elasticsearch.node.NodeBuilder;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
-
 @UriParams
 public class ElasticsearchConfiguration {
 
@@ -64,33 +63,29 @@ public class ElasticsearchConfiguration {
     private static final String IP_PORT_SEPARATOR_REGEX = ":";
 
     private URI uri;
-    @UriPath(description = "Name of cluster or use local for local mode")
-    @Metadata(required = "true")
+    private boolean local;
+    private List<InetSocketTransportAddress> transportAddressesList;
+
+    @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam
-    private String protocolType;
-    @UriParam
-    private String authority;
+    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE") @Metadata(required = "true")
+    private String operation;
     @UriParam
     private String indexName;
     @UriParam
     private String indexType;
-    @UriParam
-    private WriteConsistencyLevel consistencyLevel;
-    @UriParam
-    private ReplicationType replicationType;
-    @UriParam
-    private boolean local;
+    @UriParam(defaultValue = "DEFAULT")
+    private WriteConsistencyLevel consistencyLevel = DEFAULT_CONSISTENCY_LEVEL;
+    @UriParam(defaultValue = "DEFAULT")
+    private ReplicationType replicationType = DEFAULT_REPLICATION_TYPE;
     @UriParam
     private Boolean data;
-    @UriParam(enums = "INDEX,BULK,BULK_INDEX,GET_BY_ID,DELETE")
-    private String operation;
     @UriParam
     private String ip;
     @UriParam
-    private List<InetSocketTransportAddress> transportAddresses;
-    @UriParam
-    private Integer port;
+    private String transportAddresses;
+    @UriParam(defaultValue = "9300")
+    private int port = DEFAULT_PORT;
 
     public ElasticsearchConfiguration(URI uri, Map<String, Object> parameters) throws Exception {
         String protocol = uri.getScheme();
@@ -99,18 +94,17 @@ public class ElasticsearchConfiguration {
             throw new IllegalArgumentException("unrecognized elasticsearch protocol: " + protocol + " for uri: " + uri);
         }
         setUri(uri);
-        setAuthority(uri.getAuthority());
-        if (!isValidAuthority()) {
+        if (!isValidAuthority(uri.getAuthority())) {
             throw new URISyntaxException(uri.toASCIIString(), "incorrect URI syntax specified for the elasticsearch endpoint."
                                                               + "please specify the syntax as \"elasticsearch:[Cluster Name | 'local']?[Query]\"");
         }
 
-        if (LOCAL_NAME.equals(getAuthority())) {
+        if (LOCAL_NAME.equals(uri.getAuthority())) {
             setLocal(true);
             setClusterName(null);
         } else {
             setLocal(false);
-            setClusterName(getAuthority());
+            setClusterName(uri.getAuthority());
         }
 
         data = toBoolean(parameters.remove(PARAM_DATA));
@@ -130,10 +124,18 @@ public class ElasticsearchConfiguration {
         replicationType = parseReplicationType(parameters);
 
         ip = (String)parameters.remove(IP);
-        transportAddresses = parseTransportAddresses((String) parameters.remove(TRANSPORT_ADDRESSES));
+        transportAddresses = (String) parameters.remove(TRANSPORT_ADDRESSES);
+        transportAddressesList = parseTransportAddresses(transportAddresses);
 
         String portParam = (String) parameters.remove(PORT);
         port = portParam == null ? DEFAULT_PORT : Integer.valueOf(portParam);
+    }
+
+    private static boolean isValidAuthority(String authority) throws URISyntaxException {
+        if (authority.contains(":")) {
+            return false;
+        }
+        return true;
     }
 
     private ReplicationType parseReplicationType(Map<String, Object> parameters) {
@@ -159,7 +161,7 @@ public class ElasticsearchConfiguration {
             return null;
         }
         List<String> addressesStr = Arrays.asList(ipsString.split(TRANSPORT_ADDRESSES_SEPARATOR_REGEX));
-        List<InetSocketTransportAddress> addressesTrAd = new ArrayList(addressesStr.size());
+        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<InetSocketTransportAddress>(addressesStr.size());
         for (String address : addressesStr) {
             String[] split = address.split(IP_PORT_SEPARATOR_REGEX);
             String hostname;
@@ -192,14 +194,6 @@ public class ElasticsearchConfiguration {
         return builder.node();
     }
 
-    private boolean isValidAuthority() throws URISyntaxException {
-        if (authority.contains(":")) {
-            return false;
-        }
-        return true;
-
-    }
-
     public URI getUri() {
         return uri;
     }
@@ -208,34 +202,24 @@ public class ElasticsearchConfiguration {
         this.uri = uri;
     }
 
-    public String getProtocolType() {
-        return protocolType;
-    }
-
-    public void setProtocolType(String protocolType) {
-        this.protocolType = protocolType;
-    }
-
     public String getClusterName() {
         return clusterName;
     }
 
+    /**
+     * Name of cluster or use local for local mode
+     */
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
     }
 
     public String getIndexName() {
         return indexName;
     }
 
+    /**
+     * The name of the index to act against
+     */
     public void setIndexName(String indexName) {
         this.indexName = indexName;
     }
@@ -244,6 +228,9 @@ public class ElasticsearchConfiguration {
         return indexType;
     }
 
+    /**
+     * The type of the index to act against
+     */
     public void setIndexType(String indexType) {
         this.indexType = indexType;
     }
@@ -260,10 +247,16 @@ public class ElasticsearchConfiguration {
         return data;
     }
 
+    /**
+     * Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the <tt>node.data</tt> setting.
+     */
     public void setData(boolean data) {
         this.data = data;
     }
 
+    /**
+     * What operation to perform
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -276,26 +269,44 @@ public class ElasticsearchConfiguration {
         return ip;
     }
 
+    /**
+     * The TransportClient remote host ip to use
+     */
     public void setIp(String ip) {
         this.ip = ip;
     }
 
-    public List<InetSocketTransportAddress> getTransportAddresses() {
+    public List<InetSocketTransportAddress> getTransportAddressesList() {
+        return transportAddressesList;
+    }
+
+    public String getTransportAddresses() {
         return transportAddresses;
     }
 
-    public void setTransportAddresses(List<InetSocketTransportAddress> transportAddresses) {
+    /**
+     * Comma separated list with ip:port formatted remote transport addresses to use.
+     * The ip and port options must be left blank for transportAddresses to be considered instead.
+     */
+    public void setTransportAddresses(String transportAddresses) {
         this.transportAddresses = transportAddresses;
+        this.transportAddressesList = parseTransportAddresses(transportAddresses);
     }
 
-    public Integer getPort() {
+    public int getPort() {
         return port;
     }
 
-    public void setPort(Integer port) {
+    /**
+     * The TransportClient remote port to use (defaults to 9300)
+     */
+    public void setPort(int port) {
         this.port = port;
     }
 
+    /**
+     * The write consistency level to use with INDEX and BULK operations (can be any of ONE, QUORUM, ALL or DEFAULT)
+     */
     public void setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
         this.consistencyLevel = consistencyLevel;
     }
@@ -304,6 +315,9 @@ public class ElasticsearchConfiguration {
         return consistencyLevel;
     }
 
+    /**
+     * The replication type to use with INDEX and BULK operations (can be any of SYNC, ASYNC or DEFAULT)
+     */
     public void setReplicationType(ReplicationType replicationType) {
         this.replicationType = replicationType;
     }
