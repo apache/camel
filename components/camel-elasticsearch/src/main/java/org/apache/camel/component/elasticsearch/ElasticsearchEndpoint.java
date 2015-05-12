@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +53,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     @UriParam
     private ElasticsearchConfiguration configuration;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, Map<String, Object> parameters) throws Exception {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config) throws Exception {
         super(uri, component);
-        this.configuration = new ElasticsearchConfiguration(new URI(uri), parameters);
+        this.configuration = config;
     }
 
     public Producer createProducer() throws Exception {
@@ -89,7 +92,11 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             this.client = new TransportClient(getSettings())
                    .addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
         } else {
-            node = configuration.buildNode();
+            NodeBuilder builder = nodeBuilder().local(configuration.isLocal()).data(configuration.getData());
+            if (!configuration.isLocal() && configuration.getClusterName() != null) {
+                builder.clusterName(configuration.getClusterName());
+            }
+            node = builder.node();
             client = node.client();
         }
     }

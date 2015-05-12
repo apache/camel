@@ -57,28 +57,28 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         Object request = exchange.getIn().getBody();
         if (request instanceof IndexRequest) {
-            return ElasticsearchConfiguration.OPERATION_INDEX;
+            return ElasticsearchConstants.OPERATION_INDEX;
         } else if (request instanceof GetRequest) {
-            return ElasticsearchConfiguration.OPERATION_GET_BY_ID;
+            return ElasticsearchConstants.OPERATION_GET_BY_ID;
         } else if (request instanceof BulkRequest) {
             // do we want bulk or bulk_index?
             if ("BULK_INDEX".equals(getEndpoint().getConfig().getOperation())) {
-                return ElasticsearchConfiguration.OPERATION_BULK_INDEX;
+                return ElasticsearchConstants.OPERATION_BULK_INDEX;
             } else {
-                return ElasticsearchConfiguration.OPERATION_BULK;
+                return ElasticsearchConstants.OPERATION_BULK;
             }
         } else if (request instanceof DeleteRequest) {
-            return ElasticsearchConfiguration.OPERATION_DELETE;
+            return ElasticsearchConstants.OPERATION_DELETE;
         } else if (request instanceof SearchRequest) {
-            return ElasticsearchConfiguration.OPERATION_SEARCH;
+            return ElasticsearchConstants.OPERATION_SEARCH;
         }
 
-        String operationConfig = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_OPERATION, String.class);
+        String operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, String.class);
         if (operationConfig == null) {
             operationConfig = getEndpoint().getConfig().getOperation();
         }
         if (operationConfig == null) {
-            throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
+            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
         }
         return operationConfig;
     }
@@ -100,58 +100,58 @@ public class ElasticsearchProducer extends DefaultProducer {
         // Set the index/type headers on the exchange if necessary. This is used
         // for type conversion.
         boolean configIndexName = false;
-        String indexName = message.getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
+        String indexName = message.getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
         if (indexName == null) {
-            message.setHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, getEndpoint().getConfig().getIndexName());
+            message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, getEndpoint().getConfig().getIndexName());
             configIndexName = true;
         }
 
         boolean configIndexType = false;
-        String indexType = message.getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
+        String indexType = message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            message.setHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
+            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
             configIndexType = true;
         }
 
         boolean configConsistencyLevel = false;
-        String consistencyLevel = message.getHeader(ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL, String.class);
+        String consistencyLevel = message.getHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, String.class);
         if (consistencyLevel == null) {
-            message.setHeader(ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL, getEndpoint().getConfig().getConsistencyLevel());
+            message.setHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL, getEndpoint().getConfig().getConsistencyLevel());
             configConsistencyLevel = true;
         }
 
         boolean configReplicationType = false;
-        String replicationType = message.getHeader(ElasticsearchConfiguration.PARAM_REPLICATION_TYPE, String.class);
+        String replicationType = message.getHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, String.class);
         if (replicationType == null) {
-            message.setHeader(ElasticsearchConfiguration.PARAM_REPLICATION_TYPE, getEndpoint().getConfig().getReplicationType());
+            message.setHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE, getEndpoint().getConfig().getReplicationType());
             configReplicationType = true;
         }
 
         Client client = getEndpoint().getClient();
-        if (ElasticsearchConfiguration.OPERATION_INDEX.equals(operation)) {
+        if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
             message.setBody(client.index(indexRequest).actionGet().getId());
-        } else if (ElasticsearchConfiguration.OPERATION_GET_BY_ID.equals(operation)) {
+        } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
             GetRequest getRequest = message.getBody(GetRequest.class);
             message.setBody(client.get(getRequest));
-        } else if (ElasticsearchConfiguration.OPERATION_BULK.equals(operation)) {
+        } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             message.setBody(client.bulk(bulkRequest).actionGet());
-        } else if (ElasticsearchConfiguration.OPERATION_BULK_INDEX.equals(operation)) {
+        } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             List<String> indexedIds = new ArrayList<String>();
             for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
                 indexedIds.add(response.getId());
             }
             message.setBody(indexedIds);
-        } else if (ElasticsearchConfiguration.OPERATION_DELETE.equals(operation)) {
+        } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.delete(deleteRequest).actionGet());
-        } else if (ElasticsearchConfiguration.OPERATION_SEARCH.equals(operation)) {
+        } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
             message.setBody(client.search(searchRequest).actionGet());
         } else {
-            throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " value '" + operation + "' is not supported");
+            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
 
         // If we set params via the configuration on this exchange, remove them
@@ -163,19 +163,19 @@ public class ElasticsearchProducer extends DefaultProducer {
         // elasticsearch endpoints would have the effect overriding any
         // subsequent endpoint index/type with the first endpoint index/type.
         if (configIndexName) {
-            message.removeHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME);
+            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
         }
 
         if (configIndexType) {
-            message.removeHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE);
+            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
         }
 
         if (configConsistencyLevel) {
-            message.removeHeader(ElasticsearchConfiguration.PARAM_CONSISTENCY_LEVEL);
+            message.removeHeader(ElasticsearchConstants.PARAM_CONSISTENCY_LEVEL);
         }
 
         if (configReplicationType) {
-            message.removeHeader(ElasticsearchConfiguration.PARAM_REPLICATION_TYPE);
+            message.removeHeader(ElasticsearchConstants.PARAM_REPLICATION_TYPE);
         }
 
     }

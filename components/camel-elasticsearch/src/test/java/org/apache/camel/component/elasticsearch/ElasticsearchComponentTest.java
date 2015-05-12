@@ -180,9 +180,9 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void testIndexWithHeaders() throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -192,10 +192,10 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void testIndexWithIDInHeader() throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_ID, "123");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -207,9 +207,9 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void indexWithIp()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithIp", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -220,9 +220,9 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void indexWithIpAndPort()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -233,9 +233,9 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void indexWithTransportAddresses()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithTransportAddresses", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -246,9 +246,9 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     public void indexWithIpAndTransportAddresses()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         //should ignore transport addresses configuration
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndTransportAddresses", map, headers, String.class);
@@ -260,14 +260,14 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_GET_BY_ID);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_GET_BY_ID);
         GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
@@ -278,25 +278,25 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_GET_BY_ID);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_GET_BY_ID);
         GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
 
         //now, perform DELETE
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_DELETE);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_DELETE);
         DeleteResponse deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers, DeleteResponse.class);
         assertNotNull("response should not be null", deleteResponse);
 
         //now, verify GET fails to find the indexed value
-        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_GET_BY_ID);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_GET_BY_ID);
         response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNull("response source should be null", response.getSource());
