@@ -30,6 +30,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
 
+/**
+ * Collects routes from the various sources (like Spring application context beans registry or opinionated classpath
+ * locations) and injects these into the Camel context.
+ */
 public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
 
     // Static collaborators
