@@ -367,7 +367,7 @@
     <ognl-version>3.0.9</ognl-version>
     <ognl-bundle-version>3.0.9_1</ognl-bundle-version>
     <oncrpc-version>1.1.2</oncrpc-version>
-    <openejb-version>4.6.0.2</openejb-version>
+    <openejb-version>4.7.1</openejb-version>
     <openjpa-version>2.4.0</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <optaplanner-version>6.2.0.Final</optaplanner-version>
