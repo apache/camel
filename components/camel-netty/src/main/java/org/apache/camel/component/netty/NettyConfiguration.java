@@ -90,6 +90,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     @UriParam
     private boolean producerPoolEnabled = true;
+    @UriParam
+    private long maxChannelMemorySize = 10 * 1024 * 1024L;
+    @UriParam
+    private long maxTotalMemorySize = 200 * 1024 * 1024L;
 
     /**
      * Returns a copy of this configuration
@@ -197,7 +201,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
+                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
                 } else {
@@ -444,6 +448,22 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
+    }
+
+    public long getMaxChannelMemorySize() {
+        return maxChannelMemorySize;
+    }
+
+    public void setMaxChannelMemorySize(long maxChannelMemorySize) {
+        this.maxChannelMemorySize = maxChannelMemorySize;
+    }
+
+    public long getMaxTotalMemorySize() {
+        return maxTotalMemorySize;
+    }
+
+    public void setMaxTotalMemorySize(long maxTotalMemorySize) {
+        this.maxTotalMemorySize = maxTotalMemorySize;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {

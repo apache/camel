@@ -138,10 +138,15 @@ public class NettyComponent extends UriEndpointComponent {
         // replies in the expected order. eg this is required by TCP.
         // and use a Camel thread factory so we have consistent thread namings
         // we should use a shared thread pool as recommended by Netty
+        
+        // NOTE: if we don't specify the MaxChannelMemorySize and MaxTotalMemorySize, the thread pool
+        // could eat up all the heap memory when the tasks are added very fast
+        
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
         return new OrderedMemoryAwareThreadPoolExecutor(getMaximumPoolSize(),
-                0L, 0L, 30, TimeUnit.SECONDS, factory);
+                configuration.getMaxChannelMemorySize(), configuration.getMaxTotalMemorySize(),
+                30, TimeUnit.SECONDS, factory);
     }
 
     @Override
