@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,18 +16,16 @@
  */
 package org.apache.camel.model.rest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.FileUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Rest command
@@ -40,6 +38,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String method;
 
+    @XmlElementRef
+    private List<RestOperationParam> params = new ArrayList<RestOperationParam>();
+
     @XmlAttribute
     private String uri;
 
@@ -49,7 +50,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute
+    @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -89,6 +91,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         }
     }
 
+    public List<RestOperationParam> getParams() {
+        return params;
+    }
+
     public String getMethod() {
         return method;
     }
@@ -109,6 +115,29 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setUri(String uri) {
         this.uri = uri;
+        String path = this.rest.getPath();
+
+        String s1 = FileUtil.stripTrailingSeparator(path);
+        String s2 = FileUtil.stripLeadingSeparator(uri);
+        String allPath;
+        if (s1 != null && s2 != null) {
+            allPath = s1 + "/" + s2;
+        } else if (path != null) {
+            allPath = path;
+        } else {
+            allPath = uri;
+        }
+
+        // each {} is a parameter
+        String[] arr = allPath.split("\\/");
+        for (String a: arr) {
+            if (a.startsWith("{") && a.endsWith("}")) {
+                String key = a.substring(1, a.length() - 1);
+                rest.restParam().name(key).type("path").endParam();
+            }
+        }
+
+
     }
 
     public String getConsumes() {
@@ -186,6 +215,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setType(String type) {
         this.type = type;
+        String bodyType = type;
+        if (type.endsWith("[]")) {
+            bodyType = "List[" + bodyType.substring(0, type.length() - 2) + "]";
+        }
+        rest.restParam().name("body").type("body").dataType(bodyType).endParam();
     }
 
     public String getOutType() {
