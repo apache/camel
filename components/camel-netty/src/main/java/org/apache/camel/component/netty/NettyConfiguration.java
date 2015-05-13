@@ -96,6 +96,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean clientMode;
     @UriParam
     private boolean useChannelBuffer;
+    @UriParam(defaultValue = "" + 10 * 1024 * 1024L)
+    private long maxChannelMemorySize = 10 * 1024 * 1024L; 
+    @UriParam(defaultValue = "" + 200 * 1024 * 1024L)
+    private long maxTotalMemorySize = 200 * 1024 * 1024L;
 
     /**
      * Returns a copy of this configuration
@@ -474,6 +478,22 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setUseChannelBuffer(boolean useChannelBuffer) {
         this.useChannelBuffer = useChannelBuffer;
+    }
+
+    public long getMaxChannelMemorySize() {
+        return maxChannelMemorySize;
+    }
+
+    public void setMaxChannelMemorySize(long maxChannelMemorySize) {
+        this.maxChannelMemorySize = maxChannelMemorySize;
+    }
+
+    public long getMaxTotalMemorySize() {
+        return maxTotalMemorySize;
+    }
+
+    public void setMaxTotalMemorySize(long maxTotalMemorySize) {
+        this.maxTotalMemorySize = maxTotalMemorySize;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
