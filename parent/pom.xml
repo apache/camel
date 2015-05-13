@@ -144,7 +144,7 @@
     <elasticsearch-bundle-version>1.4.4_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.4.4</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
-    <embedmongo-version>1.47.2</embedmongo-version>
+    <embedmongo-version>1.47.3</embedmongo-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>2.2.2</facebook4j-core-version>
