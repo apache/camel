@@ -94,6 +94,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private boolean udpConnectionlessSending;
     @UriParam
     private boolean clientMode;
+    @UriParam(defaultValue = "" + 10 * 1024 * 1024L)
+    private long maxChannelMemorySize = 10 * 1024 * 1024L;
+    @UriParam(defaultValue = "" + 200 * 1024 * 1024L)
+    private long maxTotalMemorySize = 200 * 1024 * 1024L;
 
     /**
      * Returns a copy of this configuration
@@ -201,7 +205,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
+                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
                 } else {
@@ -449,7 +453,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
     }
-    
+
     public boolean isUdpConnectionlessSending() {
         return udpConnectionlessSending;
     }
@@ -457,13 +461,29 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public void setUdpConnectionlessSending(boolean udpConnectionlessSending) {
         this.udpConnectionlessSending = udpConnectionlessSending;
     }
-    
+
     public boolean isClientMode() {
         return clientMode;
     }
 
     public void setClientMode(boolean clientMode) {
         this.clientMode = clientMode;
+    }
+
+    public long getMaxChannelMemorySize() {
+        return maxChannelMemorySize;
+    }
+
+    public void setMaxChannelMemorySize(long maxChannelMemorySize) {
+        this.maxChannelMemorySize = maxChannelMemorySize;
+    }
+
+    public long getMaxTotalMemorySize() {
+        return maxTotalMemorySize;
+    }
+
+    public void setMaxTotalMemorySize(long maxTotalMemorySize) {
+        this.maxTotalMemorySize = maxTotalMemorySize;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
