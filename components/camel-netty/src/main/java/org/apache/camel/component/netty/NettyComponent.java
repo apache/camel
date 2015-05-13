@@ -36,7 +36,7 @@ public class NettyComponent extends UriEndpointComponent {
     private Timer timer;
     private NettyConfiguration configuration;
     private int maximumPoolSize = 16;
-    private OrderedMemoryAwareThreadPoolExecutor executorService;
+    private volatile OrderedMemoryAwareThreadPoolExecutor executorService;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
