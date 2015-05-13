@@ -80,7 +80,7 @@
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>2.1.5</cassandra-driver-version>
     <cassandra-driver-guava-version>16.0.1</cassandra-driver-guava-version>
-    <cassandra-version>2.1.4</cassandra-version>
+    <cassandra-version>2.1.5</cassandra-version>
     <cassandra-unit-version>2.1.3.1</cassandra-unit-version>
     <castor-version>1.3.3</castor-version>
     <castor-bundle-version>1.3.3_1</castor-bundle-version>
