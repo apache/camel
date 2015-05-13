@@ -316,6 +316,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
 
         });
+
+        // set the SO_TIMEOUT for the time after the connect phase
+        if (configuration.getSoTimeout() > 0) {
+            session.setTimeout(configuration.getSoTimeout());
+        }
         
         // set proxy if configured
         if (proxy != null) {
