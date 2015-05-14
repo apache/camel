@@ -29,7 +29,7 @@ public class TypeConverterAwareTest extends ContextTestSupport {
         assertNotNull(order);
 
         assertEquals("AKC4433", order.getName());
-        assertEquals("179", order.getPrice().toString());
+        assertEquals("179.00", order.getPrice().toString());
         assertEquals(3, order.getAmount());
     }
 
