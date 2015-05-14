@@ -38,10 +38,13 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends ExpressionNode {
+
     @XmlAttribute(required = true)
     private String messageIdRepositoryRef;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean eager;
+    @XmlAttribute @Metadata(defaultValue = "OnCompletion")
+    private IdempotentConsumerScope scope;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean skipDuplicate;
     @XmlAttribute @Metadata(defaultValue = "true")
@@ -102,6 +105,57 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      */
     public IdempotentConsumerDefinition eager(boolean eager) {
         setEager(eager);
+        return this;
+    }
+
+    /**
+     * Sets the scope of this idempotent consumer when its boundaries ends.
+     * <p/>
+     * The default mode is <tt>onCompletion</tt> which means the idempotent consumer will
+     * only trigger its completion at the end of the routing of the exchange, when the exchange completes.
+     * So if the exchange is continued routed after the block ends, then whatever happens there <b>also</b> affect the state.
+     * For example if the exchange failed due to an exception, then the state of the idempotent consumer will be a rollback.
+     * <p/>
+     * The other mode <tt>blockOnly</tt> means that the idempotent consumer will trigger its completion
+     * when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange
+     * is continued routed after the block ends, then whatever happens there does not affect the state.
+     *
+     * @param scope   the scope to use
+     * @return builder
+     */
+    public IdempotentConsumerDefinition scope(IdempotentConsumerScope scope) {
+        setScope(scope);
+        return this;
+    }
+
+    /**
+     * Sets the scope of this idempotent consumer where its boundaries ends to <tt>blockOnly</tt>.
+     * <p/>
+     * The <tt>blockOnly</tt> mode means that the idempotent consumer will trigger its completion
+     * when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange
+     * is continued routed after the block ends, then whatever happens there does not affect the state.
+     *
+     * @see #scope(IdempotentConsumerScope)
+     * @return builder
+     */
+    public IdempotentConsumerDefinition scopeBlockOnly() {
+        setScope(IdempotentConsumerScope.BlockOnly);
+        return this;
+    }
+
+    /**
+     * Sets the scope of this idempotent consumer where its boundaries ends to <tt>onCompletion</tt>.
+     * <p/>
+     * The <tt>onCompletion</tt> mode means the idempotent consumer will
+     * only trigger its completion at the end of the routing of the exchange, when the exchange completes.
+     * So if the exchange is continued routed after the block ends, then whatever happens there <b>also</b> affect the state.
+     * For example if the exchange failed due to an exception, then the state of the idempotent consumer will be a rollback.
+     *
+     * @see #scope(IdempotentConsumerScope)
+     * @return builder
+     */
+    public IdempotentConsumerDefinition scopeOnCompletion() {
+        setScope(IdempotentConsumerScope.OnCompletion);
         return this;
     }
 
@@ -185,6 +239,14 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.removeOnFailure = removeOnFailure;
     }
 
+    public IdempotentConsumerScope getScope() {
+        return scope;
+    }
+
+    public void setScope(IdempotentConsumerScope scope) {
+        this.scope = scope;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -203,8 +265,10 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         boolean eager = getEager() == null || getEager();
         boolean duplicate = getSkipDuplicate() == null || getSkipDuplicate();
         boolean remove = getRemoveOnFailure() == null || getRemoveOnFailure();
+        // and this is not true by default
+        boolean scopeBlockOnly = getScope() != null && IdempotentConsumerScope.BlockOnly == getScope();
 
-        return new IdempotentConsumer(expression, idempotentRepository, eager, duplicate, remove, childProcessor);
+        return new IdempotentConsumer(expression, idempotentRepository, eager, duplicate, remove, scopeBlockOnly, childProcessor);
     }
 
     /**

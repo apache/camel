@@ -31,6 +31,7 @@ FilterDefinition
 FinallyDefinition
 FromDefinition
 IdempotentConsumerDefinition
+IdempotentConsumerScope
 InOnlyDefinition
 InOutDefinition
 InterceptDefinition
