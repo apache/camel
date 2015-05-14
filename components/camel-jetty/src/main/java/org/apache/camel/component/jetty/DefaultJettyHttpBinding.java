@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
@@ -115,7 +115,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        MessageHelper.copyHeaders(exchange.getIn(), answer, strategy, false);
 
         // extract body after headers has been set as we want to ensure content-type from Jetty HttpExchange
         // has been populated first
