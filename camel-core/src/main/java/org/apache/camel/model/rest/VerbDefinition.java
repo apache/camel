@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,18 @@
  */
 package org.apache.camel.model.rest;
 
-import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -24,8 +35,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FileUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Rest command
@@ -50,7 +60,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String produces;
 
-    @XmlAttribute @Metadata(defaultValue = "auto")
+    @XmlAttribute
+    @Metadata(defaultValue = "auto")
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -129,10 +140,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
         // each {} is a parameter
         String[] arr = allPath.split("\\/");
-        for (String a: arr) {
+        for (String a : arr) {
             if (a.startsWith("{") && a.endsWith("}")) {
                 String key = a.substring(1, a.length() - 1);
-                rest.restParam().name(key).type("path").endParam();
+                rest.restParam().name(key).type(RestParamType.path).endParam();
             }
         }
 
@@ -218,7 +229,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         if (type.endsWith("[]")) {
             bodyType = "List[" + bodyType.substring(0, type.length() - 2) + "]";
         }
-        rest.restParam().name("body").type("body").dataType(bodyType).endParam();
+        rest.restParam().name("body").type(RestParamType.body).dataType(bodyType).endParam();
     }
 
     public String getOutType() {

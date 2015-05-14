@@ -190,7 +190,7 @@ class RestSwaggerReader {
         param.getAllowMultiple.booleanValue(),
         param.getDataType,
         allowValues,
-        param.getParamType,
+        param.getParamType.toString,
         Some(param.getParamAccess)
       )
     }

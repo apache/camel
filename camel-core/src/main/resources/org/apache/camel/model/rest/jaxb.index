@@ -27,3 +27,5 @@ RestHostNameResolver
 RestPropertyDefinition
 RestsDefinition
 VerbDefinition
+RestOperationParam
+RestParamDefinition
