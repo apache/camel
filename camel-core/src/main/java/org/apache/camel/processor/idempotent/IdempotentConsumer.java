@@ -236,7 +236,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
                 }
                 // if scope is not block only then the onCompletion is invoked as part of the UoW of the Exchange
             } finally {
-                 callback.done(doneSync);
+                callback.done(doneSync);
             }
         }
 
