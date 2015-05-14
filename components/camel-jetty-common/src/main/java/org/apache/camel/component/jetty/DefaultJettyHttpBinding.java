@@ -119,10 +119,11 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                 }
             }
         }
-
+        
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        // We also need to apply the HeaderFilterStrategy here
+        MessageHelper.copyHeaders(exchange.getIn(), answer, strategy, false);
 
         // extract body after headers has been set as we want to ensure content-type from Jetty HttpExchange
         // has been populated first
