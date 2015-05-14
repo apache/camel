@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,57 +16,63 @@
  */
 package org.apache.camel.model.rest;
 
-import org.apache.camel.spi.Metadata;
-
-import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by seb on 5/13/15.
- */
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.camel.spi.Metadata;
+
+
+
+
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestOperationParam {
     @XmlAttribute
-    String paramType="query";
+    RestParamType paramType = RestParamType.query;
 
     @XmlAttribute
     String name;
 
     @XmlAttribute
-    String description="";
+    String description = "";
 
     @XmlAttribute
-    String defaultValue="";
+    String defaultValue = "";
 
     @XmlAttribute
-    Boolean required=true;
+    Boolean required = true;
 
     @XmlAttribute
-    Boolean allowMultiple=false;
+    Boolean allowMultiple = false;
 
     @XmlAttribute
-    String dataType="string";
+    String dataType = "string";
 
-    @XmlElementWrapper( name="allowableValues" )
-    @XmlElement( name="value" )
-    List<String> allowableValues=new ArrayList<String>();
+    @XmlElementWrapper(name = "allowableValues")
+    @XmlElement(name = "value")
+    List<String> allowableValues = new ArrayList<String>();
 
     @XmlAttribute
-    String paramAccess=null;
+    String paramAccess;
 
 
     public RestOperationParam() {
-    
+
     }
 
-    public String getParamType() {
+    public RestParamType getParamType() {
         return paramType;
     }
 
-    public void setParamType(String paramType) {
+    public void setParamType(RestParamType paramType) {
         this.paramType = paramType;
     }
 
