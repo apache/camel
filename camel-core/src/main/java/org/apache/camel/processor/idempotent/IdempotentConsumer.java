@@ -57,19 +57,19 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
+    private final boolean completionEager;
     private final boolean skipDuplicate;
     private final boolean removeOnFailure;
-    private final boolean scopeBlockOnly;
     private final AtomicLong duplicateMessageCount = new AtomicLong();
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
-                              boolean eager, boolean skipDuplicate, boolean removeOnFailure, boolean scopeBlockOnly, Processor processor) {
+                              boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
+        this.completionEager = completionEager;
         this.skipDuplicate = skipDuplicate;
         this.removeOnFailure = removeOnFailure;
-        this.scopeBlockOnly = scopeBlockOnly;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
@@ -132,8 +132,8 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         }
 
         final Synchronization onCompletion = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
-        final AsyncCallback target = new IdempotentConsumerCallback(exchange, onCompletion, callback, scopeBlockOnly);
-        if (!scopeBlockOnly) {
+        final AsyncCallback target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
+        if (!completionEager) {
             // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
             exchange.addOnCompletion(onCompletion);
         }
@@ -215,26 +215,26 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         private final Exchange exchange;
         private final Synchronization onCompletion;
         private final AsyncCallback callback;
-        private final boolean scopeBlockOnly;
+        private final boolean completionEager;
 
-        public IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean scopeBlockOnly) {
+        public IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
             this.exchange = exchange;
             this.onCompletion = onCompletion;
             this.callback = callback;
-            this.scopeBlockOnly = scopeBlockOnly;
+            this.completionEager = completionEager;
         }
 
         @Override
         public void done(boolean doneSync) {
             try {
-                if (scopeBlockOnly) {
+                if (completionEager) {
                     if (exchange.isFailed()) {
                         onCompletion.onFailure(exchange);
                     } else {
                         onCompletion.onComplete(exchange);
                     }
                 }
-                // if scope is not block only then the onCompletion is invoked as part of the UoW of the Exchange
+                // if completion is not eager then the onCompletion is invoked as part of the UoW of the Exchange
             } finally {
                 callback.done(doneSync);
             }

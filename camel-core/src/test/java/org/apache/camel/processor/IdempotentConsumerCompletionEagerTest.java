@@ -29,7 +29,7 @@ import org.apache.camel.spi.IdempotentRepository;
 /**
  * @version 
  */
-public class IdempotentConsumerScopeTest extends ContextTestSupport {
+public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     protected MockEndpoint a;
@@ -42,7 +42,7 @@ public class IdempotentConsumerScopeTest extends ContextTestSupport {
         return false;
     }
 
-    public void testScopeBlockOnly() throws Exception {
+    public void testCompletionEager() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -50,7 +50,7 @@ public class IdempotentConsumerScopeTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo).scopeBlockOnly()
+                    .idempotentConsumer(header("messageId"), repo).completionEager(true)
                         .to("log:a", "mock:a")
                         .to("log:b", "mock:b")
                     .end()
@@ -79,7 +79,7 @@ public class IdempotentConsumerScopeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testScopeOnCompletion() throws Exception {
+    public void testNotCompletionEager() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -87,7 +87,7 @@ public class IdempotentConsumerScopeTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo).scopeOnCompletion()
+                    .idempotentConsumer(header("messageId"), repo).completionEager(false)
                         .to("log:a", "mock:a")
                         .to("log:b", "mock:b")
                     .end()
