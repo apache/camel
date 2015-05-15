@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 
+import javax.xml.bind.annotation.XmlTransient;
 
 
+@XmlTransient
 public class RestParamDefinition extends OptionalIdentifiedDefinition<RestParamDefinition> {
 
     private RestOperationParam parameter = new RestOperationParam();
