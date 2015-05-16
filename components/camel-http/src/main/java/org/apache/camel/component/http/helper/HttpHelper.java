@@ -404,7 +404,7 @@ public final class HttpHelper {
                 newUrl = endpoint.getUrlRewrite().rewrite(url, relativeUrl, producer);
             }
 
-            if (ObjectHelper.isNotEmpty(newUrl) && newUrl != url) {
+            if (ObjectHelper.isNotEmpty(newUrl) && !newUrl.equals(url)) {
                 // we got a new url back, that can either be a new absolute url
                 // or a new relative url
                 if (newUrl.startsWith("http:") || newUrl.startsWith("https:")) {

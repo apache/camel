@@ -17,6 +17,7 @@
 package org.apache.camel.component.box;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.box.boxjavalibv2.BoxConnectionManagerBuilder;
 import com.box.boxjavalibv2.IBoxConfig;
@@ -277,8 +278,8 @@ public class BoxConfiguration {
             return boxConfig == other.boxConfig
                 && connectionManagerBuilder == other.connectionManagerBuilder
                 && httpParams == other.httpParams
-                && clientId == other.clientId
-                && clientSecret == other.clientSecret
+                && Objects.equals(clientId, other.clientId)
+                && Objects.equals(clientSecret, other.clientSecret)
                 && authSecureStorage == other.authSecureStorage;
         }
         return false;
