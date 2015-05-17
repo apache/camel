@@ -128,7 +128,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
-   
+
     public Boolean getSkipBindingOnErrorCode() {
         return skipBindingOnErrorCode;
     }
@@ -265,6 +265,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         return this;
+    }
+
+    public RestParamDefinition restParam() {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return new RestParamDefinition(verb);
     }
 
     public RestDefinition produces(String mediaType) {
@@ -416,10 +424,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new VerbDefinition();
             answer.setMethod(verb);
         }
-
+        getVerbs().add(answer);
         answer.setRest(this);
         answer.setUri(uri);
-        getVerbs().add(answer);
         return this;
     }
 
