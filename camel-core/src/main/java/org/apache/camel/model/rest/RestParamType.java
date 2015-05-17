@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.rest;
 
-
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
@@ -26,6 +25,7 @@ import org.apache.camel.spi.Metadata;
 @XmlType
 @XmlEnum(String.class)
 public enum RestParamType {
-    header, query, body, path, form
+
+    body, form, header, path, query
 
 }

@@ -28,8 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
-
-
+// TODO: rename to Definition as this is what this is
+// TODO: Do not set default values, but infer those
+// TODO: add javadoc on the setter methods
+// TODO: add @Metadata to define the default values
+// TODO: add required=true if its required (such as name and paramType I would assume)
 
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
@@ -63,9 +66,7 @@ public class RestOperationParam {
     @XmlAttribute
     String paramAccess;
 
-
     public RestOperationParam() {
-
     }
 
     public RestParamType getParamType() {

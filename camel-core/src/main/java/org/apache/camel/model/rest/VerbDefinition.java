@@ -35,8 +35,6 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FileUtil;
 
-
-
 /**
  * Rest command
  */
@@ -127,6 +125,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         this.uri = uri;
         String path = this.rest.getPath();
 
+        // TODO: The setter should be a plain setter.
+        // this logic should be moved to
+        // org.apache.camel.model.rest.RestDefinition.asRouteDefinition()
+
         String s1 = FileUtil.stripTrailingSeparator(path);
         String s2 = FileUtil.stripLeadingSeparator(uri);
         String allPath;
@@ -146,8 +148,6 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
                 rest.restParam().name(key).type(RestParamType.path).endParam();
             }
         }
-
-
     }
 
     public String getConsumes() {
