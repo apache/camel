@@ -309,6 +309,34 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-disruptor/${project.version}</bundle>
   </feature>
+  <feature name='camel-docker' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.docker-java/${docker-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
+    <bundle dependency='true'>mvn:org.bouncycastle/bcmail-jdk15on/${bouncycastle-version}</bundle>
+    <bundle dependency='true'>mvn:org.bouncycastle/bcpkix-jdk15on/${bouncycastle-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.jersey.core/jersey-client/${jersey-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.jersey.core/jersey-common/${jersey-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.jersey.bundles.repackaged/jersey-guava/${jersey-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-api/${hk2-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-utils/${hk2-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.hk2/osgi-resource-locator/${hk2-osgi-resource-version}</bundle>
+    <bundle dependency="true">wrap:mvn:org.glassfish.jersey.connectors/jersey-apache-connector/${jersey-version}$Bundle-SymbolicName=org.glassfish.jersey.connectors&amp;Bundle-Version=${jersey-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:de.gesellix/unix-socket-factory/${unix-socket-factory-version}$Bundle-SymbolicName=de.gesellix.unix-socket-factory&amp;Bundle-Version=${unix-socket-factory-bundle-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-docker/${project.version}</bundle>
+  </feature>
   <feature name='camel-dns' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dnsjava/${dnsjava-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
