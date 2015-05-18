@@ -104,6 +104,11 @@ public class PackageLanguageMojo extends AbstractMojo {
     }
 
     public static void prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir, File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+
+        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
+            return;
+        }
+
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
 
         Map<String, String> javaTypes = new HashMap<String, String>();
