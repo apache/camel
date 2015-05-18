@@ -45,6 +45,9 @@ public class GoogleCalendarConfiguration {
     
     @UriParam
     private String clientId;
+    
+    @UriParam
+    private String emailAddress;
 
     @UriParam
     private String clientSecret;
@@ -57,6 +60,9 @@ public class GoogleCalendarConfiguration {
 
     @UriParam
     private String applicationName;
+    
+    @UriParam
+    private String p12FileName;
 
     public GoogleCalendarApiName getApiName() {
         return apiName;
@@ -64,6 +70,7 @@ public class GoogleCalendarConfiguration {
 
     /**
      * What kind of operation to perform
+     * @param apiName
      */
     public void setApiName(GoogleCalendarApiName apiName) {
         this.apiName = apiName;
@@ -75,6 +82,7 @@ public class GoogleCalendarConfiguration {
 
     /**
      * What sub operation to use for the selected operation
+     * @param methodName
      */
     public void setMethodName(String methodName) {
         this.methodName = methodName;
@@ -86,17 +94,29 @@ public class GoogleCalendarConfiguration {
 
     /**
      * Client ID of the calendar application
+     * @param clientId
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    
+    
     public String getClientSecret() {
         return clientSecret;
     }
 
     /**
      * Client secret of the calendar application
+     * @param clientSecret
      */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
@@ -108,6 +128,7 @@ public class GoogleCalendarConfiguration {
 
     /**
      * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
+     * @param accessToken
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -119,6 +140,7 @@ public class GoogleCalendarConfiguration {
 
     /**
      * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * @param refreshToken
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -130,6 +152,7 @@ public class GoogleCalendarConfiguration {
 
     /**
      * Google calendar application name. Example would be "camel-google-calendar/1.0"
+     * @param applicationName
      */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
@@ -141,9 +164,18 @@ public class GoogleCalendarConfiguration {
 
     /**
      * Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/google-apps/calendar/auth for more info.
+     * @param scopes
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
+    }
+
+    public String getP12FileName() {
+        return p12FileName;
+    }
+
+    public void setP12FileName(String p12FileName) {
+        this.p12FileName = p12FileName;
     }
 
 }
