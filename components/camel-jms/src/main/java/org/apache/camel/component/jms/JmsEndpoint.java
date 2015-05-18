@@ -337,6 +337,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
@@ -358,8 +361,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     /**
      * Sets the binding used to convert from a Camel message to and from a JMS
      * message
-     *
-     * @param binding the binding to use
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -371,7 +372,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     /**
      * The kind of destination to use
-     * @param destinationType
      */
     public void setDestinationType(String destinationType) {
         this.destinationType = destinationType;
