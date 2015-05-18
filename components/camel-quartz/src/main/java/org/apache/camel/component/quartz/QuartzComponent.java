@@ -399,6 +399,9 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         return factory;
     }
 
+    /**
+     * To use the custom SchedulerFactory which is used to create the Scheduler.
+     */
     public void setFactory(SchedulerFactory factory) {
         this.factory = factory;
     }
