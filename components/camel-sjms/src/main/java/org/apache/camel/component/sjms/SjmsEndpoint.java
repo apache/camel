@@ -45,46 +45,47 @@ import org.slf4j.LoggerFactory;
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @UriPath(enums = "queue,topic", defaultValue = "queue")
+    private boolean topic;
+
+    @UriPath(enums = "queue,topic", defaultValue = "queue", description = "The kind of destination to use")
     private String destinationType;
     @UriPath @Metadata(required = "true")
     private String destinationName;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean synchronous = true;
     @UriParam
     private boolean transacted;
-    @UriParam
+    @UriParam(label = "producer")
     private String namedReplyTo;
-    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE")
+    @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
-    private boolean topic;
     @UriParam(defaultValue = "1")
     private int sessionCount = 1;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "producer", defaultValue = "1")
     private int producerCount = 1;
     @UriParam(defaultValue = "1")
     private int consumerCount = 1;
     @UriParam(defaultValue = "-1")
     private long ttl = -1;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean persistent = true;
-    @UriParam
+    @UriParam(label = "consumer")
     private String durableSubscriptionId;
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "producer", defaultValue = "5000")
     private long responseTimeOut = 5000;
-    @UriParam
+    @UriParam(label = "consumer")
     private String messageSelector;
-    @UriParam(defaultValue = "-1")
+    @UriParam(label = "consumer", defaultValue = "-1")
     private int transactionBatchCount = -1;
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "consumer", defaultValue = "5000")
     private long transactionBatchTimeout = 5000;
     @UriParam
     private boolean asyncStartListener;
     @UriParam
     private boolean asyncStopListener;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean prefillPool = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean allowNullBody = true;
     @UriParam
     private TransactionCommitStrategy transactionCommitStrategy;
@@ -175,38 +176,23 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return getComponent().getKeyFormatStrategy();
     }
 
-    /**
-     * Use to determine whether or not to process exchanges synchronously.
-     *
-     * @return true if endoint is synchronous, otherwise false
-     */
     public boolean isSynchronous() {
         return synchronous;
     }
 
     /**
-     * Flag can be set to enable/disable synchronous exchange processing.
-     *
-     * @param synchronous true to process synchronously, default is true
+     * Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
     }
 
-    /**
-     * Returns the configured acknowledgementMode.
-     *
-     * @return the acknowledgementMode
-     */
     public SessionAcknowledgementType getAcknowledgementMode() {
         return acknowledgementMode;
     }
 
     /**
-     * Sets the acknowledgementMode configured on this endpoint.
-     *
-     * @param acknowledgementMode default is
-     *                            SessionAcknowledgementType.AUTO_ACKNOWLEDGE
+     * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE
      */
     public void setAcknowledgementMode(SessionAcknowledgementType acknowledgementMode) {
         this.acknowledgementMode = acknowledgementMode;
@@ -215,8 +201,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     /**
      * Flag set by the endpoint used by consumers and producers to determine if
      * the endpoint is a JMS Topic.
-     *
-     * @return the topic true if endpoint is a JMS Topic, default is false
      */
     public boolean isTopic() {
         return topic;
@@ -224,8 +208,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     /**
      * Returns the number of Session instances expected on this endpoint.
-     *
-     * @return the sessionCount
      */
     @Deprecated
     public int getSessionCount() {
@@ -244,171 +226,100 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         this.sessionCount = sessionCount;
     }
 
-    /**
-     * Returns the number of consumer listeners for this endpoint.
-     *
-     * @return the producerCount
-     */
     public int getProducerCount() {
         return producerCount;
     }
 
     /**
      * Sets the number of producers used for this endpoint.
-     *
-     * @param producerCount the number of producers for this endpoint, default
-     *                      is 1
      */
     public void setProducerCount(int producerCount) {
         this.producerCount = producerCount;
     }
 
-    /**
-     * Returns the number of consumer listeners for this endpoint.
-     *
-     * @return the consumerCount
-     */
     public int getConsumerCount() {
         return consumerCount;
     }
 
     /**
      * Sets the number of consumer listeners used for this endpoint.
-     *
-     * @param consumerCount the number of consumers for this endpoint, default
-     *                      is 1
      */
     public void setConsumerCount(int consumerCount) {
         this.consumerCount = consumerCount;
     }
 
-    /**
-     * Returns the Time To Live set on this endpoint.
-     *
-     * @return the ttl
-     */
     public long getTtl() {
         return ttl;
     }
 
     /**
      * Flag used to adjust the Time To Live value of produced messages.
-     *
-     * @param ttl a new TTL, default is -1 (disabled)
      */
     public void setTtl(long ttl) {
         this.ttl = ttl;
     }
 
-    /**
-     * Use to determine if the enpoint has message persistence enabled or
-     * disabled.
-     *
-     * @return true if persistent, otherwise false
-     */
     public boolean isPersistent() {
         return persistent;
     }
 
     /**
      * Flag used to enable/disable message persistence.
-     *
-     * @param persistent true if persistent, default is true
      */
     public void setPersistent(boolean persistent) {
         this.persistent = persistent;
     }
 
-    /**
-     * Gets the durable subscription Id.
-     *
-     * @return the durableSubscriptionId
-     */
     public String getDurableSubscriptionId() {
         return durableSubscriptionId;
     }
 
     /**
      * Sets the durable subscription Id required for durable topics.
-     *
-     * @param durableSubscriptionId durable subscription Id or null
      */
     public void setDurableSubscriptionId(String durableSubscriptionId) {
         this.durableSubscriptionId = durableSubscriptionId;
     }
 
-    /**
-     * Returns the InOut response timeout.
-     *
-     * @return the responseTimeOut
-     */
     public long getResponseTimeOut() {
         return responseTimeOut;
     }
 
     /**
-     * Sets the amount of time we should wait before timing out a InOut
-     * response.
-     *
-     * @param responseTimeOut response timeout
+     * Sets the amount of time we should wait before timing out a InOut response.
      */
     public void setResponseTimeOut(long responseTimeOut) {
         this.responseTimeOut = responseTimeOut;
     }
 
-    /**
-     * Returns the JMS Message selector syntax used to refine the messages being
-     * consumed.
-     *
-     * @return the messageSelector
-     */
     public String getMessageSelector() {
         return messageSelector;
     }
 
     /**
      * Sets the JMS Message selector syntax.
-     *
-     * @param messageSelector Message selector syntax or null
      */
     public void setMessageSelector(String messageSelector) {
         this.messageSelector = messageSelector;
     }
 
-    /**
-     * If transacted, returns the nubmer of messages to be processed before
-     * committing the transaction.
-     *
-     * @return the transactionBatchCount
-     */
     public int getTransactionBatchCount() {
         return transactionBatchCount;
     }
 
     /**
-     * If transacted sets the number of messages to process before committing a
-     * transaction.
-     *
-     * @param transactionBatchCount number of messages to process before
-     *                              committing, default is 1
+     * If transacted sets the number of messages to process before committing a transaction.
      */
     public void setTransactionBatchCount(int transactionBatchCount) {
         this.transactionBatchCount = transactionBatchCount;
     }
 
-    /**
-     * Returns the timeout value for batch transactions.
-     *
-     * @return long
-     */
     public long getTransactionBatchTimeout() {
         return transactionBatchTimeout;
     }
 
     /**
-     * Sets timeout value for batch transactions.
-     *
-     * @param transactionBatchTimeout
+     * Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.
      */
     public void setTransactionBatchTimeout(long transactionBatchTimeout) {
         if (transactionBatchTimeout >= 1000) {
@@ -416,38 +327,23 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         }
     }
 
-    /**
-     * Gets the commit strategy.
-     *
-     * @return the transactionCommitStrategy
-     */
     public TransactionCommitStrategy getTransactionCommitStrategy() {
         return transactionCommitStrategy;
     }
 
     /**
      * Sets the commit strategy.
-     *
-     * @param transactionCommitStrategy commit strategy to use when processing
-     *                                  transacted messages
      */
     public void setTransactionCommitStrategy(TransactionCommitStrategy transactionCommitStrategy) {
         this.transactionCommitStrategy = transactionCommitStrategy;
     }
 
-    /**
-     * Use to determine if transactions are enabled or disabled.
-     *
-     * @return true if transacted, otherwise false
-     */
     public boolean isTransacted() {
         return transacted;
     }
 
     /**
-     * Enable/disable flag for transactions
-     *
-     * @param transacted true if transacted, otherwise false
+     * Specifies whether to use transacted mode
      */
     public void setTransacted(boolean transacted) {
         if (transacted) {
@@ -456,29 +352,34 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         this.transacted = transacted;
     }
 
-    /**
-     * Returns the reply to destination name used for InOut producer endpoints.
-     *
-     * @return the namedReplyTo
-     */
     public String getNamedReplyTo() {
         return namedReplyTo;
     }
 
     /**
      * Sets the reply to destination name used for InOut producer endpoints.
-     *
-     * @param namedReplyTo the JMS reply to destination name
      */
     public void setNamedReplyTo(String namedReplyTo) {
         this.namedReplyTo = namedReplyTo;
         this.setExchangePattern(ExchangePattern.InOut);
     }
 
+    /**
+     * Whether to startup the consumer message listener asynchronously, when starting a route.
+     * For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying
+     * and/or failover. This will cause Camel to block while starting routes. By setting this option to true,
+     * you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread
+     * in asynchronous mode. If this option is used, then beware that if the connection could not be established,
+     * then an exception is logged at WARN level, and the consumer will not be able to receive messages;
+     * You can then restart the route to retry.
+     */
     public void setAsyncStartListener(boolean asyncStartListener) {
         this.asyncStartListener = asyncStartListener;
     }
 
+    /**
+     * Whether to stop the consumer message listener asynchronously, when stopping a route.
+     */
     public void setAsyncStopListener(boolean asyncStopListener) {
         this.asyncStopListener = asyncStopListener;
     }
@@ -495,6 +396,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return prefillPool;
     }
 
+    /**
+     * Whether to prefill the producer connection pool on startup, or create connections lazy when needed.
+     */
     public void setPrefillPool(boolean prefillPool) {
         this.prefillPool = prefillPool;
     }
@@ -503,6 +407,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return destinationCreationStrategy;
     }
 
+    /**
+     * To use a custom DestinationCreationStrategy.
+     */
     public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
     }
@@ -511,6 +418,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         return allowNullBody;
     }
 
+    /**
+     * Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.
+     */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
     }
