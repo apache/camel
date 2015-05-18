@@ -37,19 +37,14 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
-    @UriPath @Metadata(required = "true")
-    private String brokers;
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
 
     public KafkaEndpoint() {
     }
 
-    public KafkaEndpoint(String endpointUri,
-                         String remaining,
-                         KafkaComponent component) throws URISyntaxException {
+    public KafkaEndpoint(String endpointUri, KafkaComponent component) {
         super(endpointUri, component);
-        this.brokers = remaining.split("\\?")[0];
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -156,7 +151,11 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public String getBrokers() {
-        return brokers;
+        return configuration.getBrokers();
+    }
+
+    public void setBrokers(String brokers) {
+        configuration.setBrokers(brokers);
     }
 
     public int getConsumerStreams() {
