@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecCommandExecutor;
 import org.apache.camel.component.exec.ExecDefaultExecutor;
