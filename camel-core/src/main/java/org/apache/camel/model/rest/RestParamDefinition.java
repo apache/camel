@@ -18,9 +18,9 @@ package org.apache.camel.model.rest;
 
 import java.util.List;
 
-import org.apache.camel.model.OptionalIdentifiedDefinition;
-
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 
 // TODO: Should not be a Definition as its a builder for Java DSL instead.
 // instead the builder methods should be on RestOperationParam
