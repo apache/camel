@@ -31,9 +31,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-/**
- * <code>DigitalSignatureEndpoint</code>
- */
 @UriEndpoint(scheme = "crypto", title = "Crypto (Java Cryptographic Extension)", syntax = "crypto:cryptoOperation", producerOnly = true, label = "security,transformation")
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
     @UriParam

@@ -74,7 +74,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     @UriParam
     private String keystoreName;
     @UriParam
-    private String randomName;
+    private String secureRandomName;
     @UriParam(defaultValue = "true")
     private boolean clearHeaders = true;
 
@@ -98,7 +98,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         setPublicKeyName(publicKeyName);
         setPrivateKeyName(privateKeyName);
         setCertificateName(certificateName);
-        setSecureRandomName(randomName);
+        setSecureRandomName(secureRandomName);
     }
 
     /**
@@ -349,7 +349,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
             }
         }
         if (randomName != null) {
-            this.randomName = randomName;
+            this.secureRandomName = randomName;
         }
     }
 
