@@ -240,7 +240,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public int getQueuedMaxMessages() {
-        return configuration.getQueuedMaxMessages();
+        return configuration.getQueuedMaxMessageChunks();
     }
 
     public int getAutoCommitIntervalMs() {
@@ -416,7 +416,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public void setQueuedMaxMessages(int queuedMaxMessages) {
-        configuration.setQueuedMaxMessages(queuedMaxMessages);
+        configuration.setQueuedMaxMessageChunks(queuedMaxMessages);
     }
 
     public void setRetryBackoffMs(int retryBackoffMs) {
