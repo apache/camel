@@ -105,17 +105,10 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir, File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
-        boolean changed = false;
-        for (Resource r : project.getBuild().getResources()) {
-            if (buildContext.hasDelta(r.getDirectory() + "/META-INF/services/org/apache/camel/dataformat")) {
-                changed = true;
-            }
-        }
-
-        if (!changed) {
+        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
             return;
         }
-        
+
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
 
         Map<String, String> javaTypes = new HashMap<String, String>();
