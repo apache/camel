@@ -32,6 +32,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -267,12 +268,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestParamDefinition restParam() {
+    public RestOperationParamDefinition restParam() {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        return new RestParamDefinition(verb);
+        return new RestOperationParamDefinition(verb);
     }
 
     public RestDefinition produces(String mediaType) {
@@ -538,6 +539,35 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
                 from = from + "?" + query;
+            }
+
+            String path = getPath();
+            String s1 = FileUtil.stripTrailingSeparator(path);
+            String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
+            String allPath;
+            if (s1 != null && s2 != null) {
+                allPath = s1 + "/" + s2;
+            } else if (path != null) {
+                allPath = path;
+            } else {
+                allPath = verb.getUri();
+            }
+
+            // each {} is a parameter
+            String[] arr = allPath.split("\\/");
+            for (String a : arr) {
+                if (a.startsWith("{") && a.endsWith("}")) {
+                    String key = a.substring(1, a.length() - 1);
+                    restParam().name(key).type(RestParamType.path).endParam();
+                }
+            }
+
+            if( verb.getType() != null ) {
+                String bodyType = verb.getType();
+                if (bodyType.endsWith("[]")) {
+                    bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
+                }
+                restParam().name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
             }
 
             // the route should be from this rest endpoint
