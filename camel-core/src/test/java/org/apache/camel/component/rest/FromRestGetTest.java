@@ -21,6 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestParamType;
+
+import java.util.Arrays;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -51,6 +54,35 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
+
+        assertEquals(2, rest.getVerbs().get(0).getParams().size());
+        assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getParamType());
+        assertEquals(RestParamType.query, rest.getVerbs().get(0).getParams().get(1).getParamType());
+
+        assertEquals("header param description1", rest.getVerbs().get(0).getParams().get(0).getDescription());
+        assertEquals("header param description2", rest.getVerbs().get(0).getParams().get(1).getDescription());
+
+        assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
+        assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
+        assertEquals(Arrays.asList("1","2","3","4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
+        assertEquals(Arrays.asList("a","b","c","d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
+        assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
+        assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
+
+        assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(0).getAllowMultiple());
+        assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(1).getAllowMultiple());
+
+        assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());
+        assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
+        assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(0).getRequired());
+        assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(1).getRequired());
+        assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getParamAccess());
+        assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getParamAccess());
+
+        assertEquals(300, rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
+        assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
+
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:bye", to.getUri());
 
@@ -75,7 +107,15 @@ public class FromRestGetTest extends ContextTestSupport {
                     .get().to("direct:hello");
 
                 rest("/say/bye")
-                    .get().consumes("application/json").to("direct:bye")
+                    .get().consumes("application/json")
+                        .restParam().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1","2","3","4"))
+                            .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
+                        .endParam().
+                        restParam().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a","b","c","d"))
+                            .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
+                        .endParam()
+                        .restResponseMsg().code(300).message("test msg").responseModel(Integer.class).endResponseMsg()
+                        .to("direct:bye")
                     .post().to("mock:update");
 
                 from("direct:hello")

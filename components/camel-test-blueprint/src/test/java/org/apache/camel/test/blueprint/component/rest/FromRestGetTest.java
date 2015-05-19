@@ -18,8 +18,11 @@ package org.apache.camel.test.blueprint.component.rest;
 
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class FromRestGetTest extends CamelBlueprintTestSupport {
 
@@ -49,6 +52,35 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
+
+        assertEquals(2, rest.getVerbs().get(0).getParams().size());
+        assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getParamType());
+        assertEquals(RestParamType.query, rest.getVerbs().get(0).getParams().get(1).getParamType());
+
+        assertEquals("header param description1", rest.getVerbs().get(0).getParams().get(0).getDescription());
+        assertEquals("header param description2", rest.getVerbs().get(0).getParams().get(1).getDescription());
+
+        assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
+        assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
+        assertEquals(Arrays.asList("1", "2", "3", "4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
+        assertEquals(Arrays.asList("a","b","c","d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
+        assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
+        assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
+
+        assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(0).getAllowMultiple());
+        assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(1).getAllowMultiple());
+
+        assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());
+        assertEquals("header_letter", rest.getVerbs().get(0).getParams().get(1).getName());
+        assertEquals(Boolean.TRUE, rest.getVerbs().get(0).getParams().get(0).getRequired());
+        assertEquals(Boolean.FALSE, rest.getVerbs().get(0).getParams().get(1).getRequired());
+        assertEquals("acc1", rest.getVerbs().get(0).getParams().get(0).getParamAccess());
+        assertEquals("acc2", rest.getVerbs().get(0).getParams().get(1).getParamAccess());
+
+        assertEquals(300, rest.getVerbs().get(0).getResponseMsgs().get(0).getCode());
+        assertEquals("test msg", rest.getVerbs().get(0).getResponseMsgs().get(0).getMessage());
+        assertEquals(Integer.class.getCanonicalName(), rest.getVerbs().get(0).getResponseMsgs().get(0).getResponseModel());
+        
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:bye", to.getUri());
 

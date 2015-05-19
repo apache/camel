@@ -355,6 +355,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             RouteBuilder builder = (RouteBuilder) routes;
             builder.setContext(this.getContext());
             builder.setRouteCollection(this.getRouteCollection());
+            builder.setRestCollection(this.getRestCollection());
             builder.setErrorHandlerBuilder(this.getErrorHandlerBuilder());
             // must invoke configure on the original builder so it adds its configuration to me
             builder.configure();
