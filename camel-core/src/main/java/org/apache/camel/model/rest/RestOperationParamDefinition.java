@@ -25,23 +25,30 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 
 import org.apache.camel.spi.Metadata;
 
-// TODO: rename to Definition as this is what this is
-// TODO: Do not set default values, but infer those
-// TODO: add javadoc on the setter methods
-// TODO: add @Metadata to define the default values
-// TODO: add required=true if its required (such as name and paramType I would assume)
-
+/**
+ * This maps to the Swagger Parameter Object.
+ * see com.wordnik.swagger.model.Parameter
+ * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#524-parameter-object.
+ */
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestOperationParam {
-    @XmlAttribute
-    RestParamType paramType = RestParamType.query;
+public class RestOperationParamDefinition {
+
+    @XmlTransient
+    private VerbDefinition verb;
 
     @XmlAttribute
+    @Metadata(required = "true")
+    RestParamType paramType;
+
+    @XmlAttribute
+    @Metadata(required = "true")
     String name;
 
     @XmlAttribute
@@ -57,22 +64,32 @@ public class RestOperationParam {
     Boolean allowMultiple = false;
 
     @XmlAttribute
-    String dataType = "string";
+    @Metadata(defaultValue = "string")
+    String dataType;
 
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
-    List<String> allowableValues = new ArrayList<String>();
+    List<String> allowableValues;
 
     @XmlAttribute
     String paramAccess;
 
-    public RestOperationParam() {
+
+    public RestOperationParamDefinition(VerbDefinition verb) {
+        this.verb = verb;
+    }
+
+    public RestOperationParamDefinition() {
     }
 
     public RestParamType getParamType() {
-        return paramType;
+        if (paramType != null)
+            return paramType;
+        return RestParamType.path;
     }
-
+    /**
+     * Sets the Swagger Parameter type.
+     */
     public void setParamType(RestParamType paramType) {
         this.paramType = paramType;
     }
@@ -80,7 +97,9 @@ public class RestOperationParam {
     public String getName() {
         return name;
     }
-
+    /**
+     * Sets the Swagger Parameter name.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -89,10 +108,16 @@ public class RestOperationParam {
         return description;
     }
 
+    /**
+     * Sets the Swagger Parameter description.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Sets the Swagger Parameter default value.
+     */
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -105,6 +130,9 @@ public class RestOperationParam {
         return required;
     }
 
+    /**
+     * Sets the Swagger Parameter required flag.
+     */
     public void setRequired(Boolean required) {
         this.required = required;
     }
@@ -113,22 +141,38 @@ public class RestOperationParam {
         return allowMultiple;
     }
 
+    /**
+     * Sets the Swagger Parameter allowMultiple flag.
+     */
     public void setAllowMultiple(Boolean allowMultiple) {
         this.allowMultiple = allowMultiple;
     }
 
     public String getDataType() {
-        return dataType;
+        if(dataType!=null) {
+            return dataType;
+        }
+        return "string";
     }
 
+    /**
+     * Sets the Swagger Parameter data type.
+     */
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
 
     public List<String> getAllowableValues() {
-        return allowableValues;
+        if (allowableValues != null) {
+            return allowableValues;
+        }
+
+        return new ArrayList<String>();
     }
 
+    /**
+     * Sets the Swagger Parameter alist of allowable values.
+     */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;
     }
@@ -137,7 +181,61 @@ public class RestOperationParam {
         return paramAccess;
     }
 
+    /**
+     * Sets the Swagger Parameter paramAccess flag.
+     */
     public void setParamAccess(String paramAccess) {
         this.paramAccess = paramAccess;
     }
+
+    public RestOperationParamDefinition name(String name) {
+        setName(name);
+        return this;
+    }
+
+    public RestOperationParamDefinition description(String name) {
+        setDescription(name);
+        return this;
+    }
+
+    public RestOperationParamDefinition defaultValue(String name) {
+        setDefaultValue(name);
+        return this;
+    }
+
+    public RestOperationParamDefinition required(Boolean required) {
+        setRequired(required);
+        return this;
+    }
+
+    public RestOperationParamDefinition allowMultiple(Boolean allowMultiple) {
+        setAllowMultiple(allowMultiple);
+        return this;
+    }
+
+    public RestOperationParamDefinition dataType(String type) {
+        setDataType(type);
+        return this;
+    }
+
+    public RestOperationParamDefinition allowableValues(List<String> allowableValues) {
+        setAllowableValues(allowableValues);
+        return this;
+    }
+
+    public RestOperationParamDefinition type(RestParamType type) {
+        setParamType(type);
+        return this;
+    }
+
+    public RestOperationParamDefinition paramAccess(String paramAccess) {
+        setParamAccess(paramAccess);
+        return this;
+    }
+
+    public RestDefinition endParam() {
+        verb.getParams().add(this);
+        return verb.getRest();
+    }
+
 }

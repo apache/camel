@@ -23,7 +23,7 @@ import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.util.ModelUtil
 import com.wordnik.swagger.core.SwaggerSpec
 
-import org.apache.camel.model.rest.{RestOperationParam, VerbDefinition, RestDefinition}
+import org.apache.camel.model.rest.{RestOperationParamDefinition, VerbDefinition, RestDefinition}
 import org.apache.camel.util.FileUtil
 import org.slf4j.LoggerFactory
 
@@ -176,7 +176,7 @@ class RestSwaggerReader {
   def createParameters(verb: VerbDefinition): List[Parameter] = {
     val parameters = new ListBuffer[Parameter]
 
-    for (param:RestOperationParam <- verb.getParams.asScala) {
+    for (param:RestOperationParamDefinition <- verb.getParams.asScala) {
       var allowValues=AnyAllowableValues
 
       if(!param.getAllowableValues.isEmpty){
