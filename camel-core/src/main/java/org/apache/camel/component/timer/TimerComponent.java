@@ -94,9 +94,13 @@ public class TimerComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
 
+        /**
+         * added support for reference configuration parameters 
+         */
+        
         // convert time from String to a java.util.Date using the supported patterns
-        String time = getAndRemoveParameter(parameters, "time", String.class);
-        String pattern = getAndRemoveParameter(parameters, "pattern", String.class);
+        String time = getAndRemoveOrResolveReferenceParameter(parameters, "time", String.class);
+        String pattern = getAndRemoveOrResolveReferenceParameter(parameters, "pattern", String.class);
         if (time != null) {
             SimpleDateFormat sdf;
             if (pattern != null) {
@@ -109,11 +113,36 @@ public class TimerComponent extends UriEndpointComponent {
             Date date = sdf.parse(time);
             answer.setTime(date);
         }
-
+         
+        Long period = getAndRemoveOrResolveReferenceParameter(parameters, "period", Long.class);
+        if(period != null){
+            answer.setPeriod(period);
+        }
+        
+        Long delay = getAndRemoveOrResolveReferenceParameter(parameters, "delay", Long.class);
+        if(delay != null){
+            answer.setDelay(delay);
+        }
+        
+        Boolean fixedRate = getAndRemoveOrResolveReferenceParameter(parameters, "fixedRate", Boolean.class);
+        if(fixedRate != null){
+            answer.setFixedRate(fixedRate);
+        }
+        
+        Boolean daemon = getAndRemoveOrResolveReferenceParameter(parameters, "daemon", Boolean.class);
+        if(daemon != null){
+            answer.setDaemon(daemon);
+        }
+        
+        Long repeatCount = getAndRemoveOrResolveReferenceParameter(parameters, "repeatCount", Long.class);
+        if(repeatCount != null){
+            answer.setRepeatCount(repeatCount);
+        }
+        
         setProperties(answer, parameters);
         return answer;
     }
-
+    
     @Override
     protected void doStop() throws Exception {
         Collection<Timer> collection = timers.values();
