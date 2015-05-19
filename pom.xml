@@ -180,6 +180,9 @@
                 <excludes>**/src/main/resources/META-INF/cxf/cxf.extension</excludes>
                 <excludes>**/src/main/resources/META-INF/cxf/bus-extensions.txt</excludes>
                 <exclude>**/src/signatures/*.txt</exclude>
+                <exclude>**/file-sig-api.txt</exclude>
+                <exclude>**/MerchandiseRestResource.apxc</exclude>
+                <exclude>components/camel-dropbox/src/main/resources/META-INF/Dropbox_API_Terms_and_Conditions.txt</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
