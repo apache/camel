@@ -1825,7 +1825,7 @@ public final class ObjectHelper {
     }
     
     /**
-     * Calling the Callable with the setting of TCCL with the camel context application classloader;
+     * Calling the Callable with the setting of TCCL with the camel context application classloader.
      * 
      * @param call the Callable instance
      * @param exchange the exchange 
@@ -1840,10 +1840,10 @@ public final class ObjectHelper {
     }
     
     /**
-     * Calling the Callable with the setting of TCCL with a given classloader;
-     * 
-     * @param call the Callable instance
-     * @param  the exchange 
+     * Calling the Callable with the setting of TCCL with a given classloader.
+     *
+     * @param call        the Callable instance
+     * @param classloader the class loader
      * @return the result of Callable return  
      */
     public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
