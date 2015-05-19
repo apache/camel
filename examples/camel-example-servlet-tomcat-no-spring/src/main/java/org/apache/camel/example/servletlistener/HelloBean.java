@@ -17,11 +17,12 @@
 package org.apache.camel.example.servletlistener;
 
 import org.apache.camel.Header;
+import org.apache.camel.language.Simple;
 
 public class HelloBean {
     
-    public String sayHello(@Header("name")String name) {
-        return "Hello " + name + ", how are you?";
+    public String sayHello(@Header("name") String name, @Simple("${sysenv.HOSTNAME}") String host) {
+        return "Hello " + name + ", how are you? You are from host: " + host;
     }
 
 }
