@@ -273,7 +273,23 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return restParam(verb);
+    }
+
+    public RestOperationParamDefinition restParam(VerbDefinition verb) {
         return new RestOperationParamDefinition(verb);
+    }
+
+    public RestOperationResponseMsgDefinition restResponseMsg() {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return restResponseMsg(verb);
+    }
+
+    public RestOperationResponseMsgDefinition restResponseMsg(VerbDefinition verb) {
+        return new RestOperationResponseMsgDefinition(verb);
     }
 
     public RestDefinition produces(String mediaType) {
@@ -558,7 +574,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             for (String a : arr) {
                 if (a.startsWith("{") && a.endsWith("}")) {
                     String key = a.substring(1, a.length() - 1);
-                    restParam().name(key).type(RestParamType.path).endParam();
+                    //  merge if exists
+                    boolean found=false;
+                    for(RestOperationParamDefinition param: verb.getParams()){
+                        if(param.getName().equalsIgnoreCase(key)){
+                            param.type(RestParamType.path);
+                            found=true;
+                            break;
+                        }
+                    }
+                    if(!found) {
+                        restParam(verb).name(key).type(RestParamType.path).endParam();
+                    }
                 }
             }
 
@@ -567,8 +594,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
                 }
-                restParam().name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                restParam(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
             }
+
+
 
             // the route should be from this rest endpoint
             route.fromRest(from);

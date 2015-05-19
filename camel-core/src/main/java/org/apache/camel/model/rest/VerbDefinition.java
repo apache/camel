@@ -48,6 +48,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlElementRef
     private List<RestOperationParamDefinition> params = new ArrayList<RestOperationParamDefinition>();
 
+    @XmlElementRef
+    private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<RestOperationResponseMsgDefinition>();
+
     @XmlAttribute
     private String uri;
 
@@ -107,6 +110,17 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setParams(List<RestOperationParamDefinition> params) {
         this.params = params;
+    }
+
+    public List<RestOperationResponseMsgDefinition> getResponseMsgs() {
+        return responseMsgs;
+    }
+
+    /**
+     * Sets swagger operation response messages
+     */
+    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
+        this.responseMsgs = responseMsgs;
     }
 
     public String getMethod() {

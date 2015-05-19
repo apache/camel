@@ -35,6 +35,7 @@ public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final RouteBuilder lowerR=super.createRouteBuilder();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -44,18 +45,8 @@ public class FromRestConfigurationTest extends FromRestGetTest {
                     .endpointProperty("size", "200")
                     .consumerProperty("pollTimeout", "1000");
 
-                rest("/say/hello")
-                        .get().to("direct:hello");
+                includeRoutes(lowerR);
 
-                rest("/say/bye")
-                        .get().consumes("application/json").to("direct:bye")
-                        .post().to("mock:update");
-
-                from("direct:hello")
-                    .transform().constant("Hello World");
-
-                from("direct:bye")
-                    .transform().constant("Bye World");
             }
         };
     }

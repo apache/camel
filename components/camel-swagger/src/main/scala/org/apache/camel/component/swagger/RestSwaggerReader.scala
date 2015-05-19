@@ -23,7 +23,7 @@ import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.util.ModelUtil
 import com.wordnik.swagger.core.SwaggerSpec
 
-import org.apache.camel.model.rest.{RestOperationParamDefinition, VerbDefinition, RestDefinition}
+import org.apache.camel.model.rest.{RestOperationResponseMsgDefinition, RestOperationParamDefinition, VerbDefinition, RestDefinition}
 import org.apache.camel.util.FileUtil
 import org.slf4j.LoggerFactory
 
@@ -121,7 +121,7 @@ class RestSwaggerReader {
         List(),
         List(),
         createParameters(verb),
-        List(),
+        createResponseMessages(verb),
         None)
     }
 
@@ -173,6 +173,20 @@ class RestSwaggerReader {
     else None
   }
 
+  def createResponseMessages(verb: VerbDefinition): List[ResponseMessage] = {
+    val responseMsgs = new ListBuffer[ResponseMessage]
+
+    for (param:RestOperationResponseMsgDefinition <- verb.getResponseMsgs.asScala) {
+      responseMsgs += ResponseMessage(
+        param.getCode,
+        param.getMessage,
+        Option( param.getResponseModel )
+      )
+    }
+
+    responseMsgs.toList
+  }
+
   def createParameters(verb: VerbDefinition): List[Parameter] = {
     val parameters = new ListBuffer[Parameter]
 
@@ -182,6 +196,7 @@ class RestSwaggerReader {
       if(!param.getAllowableValues.isEmpty){
         AllowableListValues(param.getAllowableValues.asScala.toList)
       }
+
       parameters += Parameter(
         param.getName,
         Some( param.getDescription ),
