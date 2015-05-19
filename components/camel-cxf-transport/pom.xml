@@ -44,7 +44,6 @@
       org.springframework*;version="${spring-version-range}";resolution:=optional,
       ${camel.osgi.import.defaults},
       ${camel.osgi.import.additional},
-      org.osgi.framework;resolution:=optional,
       org.apache.aries.blueprint*;resolution:=optional,
       org.osgi.service.blueprint*;resolution:=optional,
       *
