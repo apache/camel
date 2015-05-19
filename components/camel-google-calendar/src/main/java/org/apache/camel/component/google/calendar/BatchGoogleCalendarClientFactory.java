@@ -30,62 +30,73 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFactory {
+public class BatchGoogleCalendarClientFactory
+    implements GoogleCalendarClientFactory
+{
 
-    private static final Logger LOG = LoggerFactory.getLogger(BatchGoogleCalendarClientFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger( BatchGoogleCalendarClientFactory.class );
+
     private NetHttpTransport transport;
+
     private JacksonFactory jsonFactory;
 
-    public BatchGoogleCalendarClientFactory() {
+    public BatchGoogleCalendarClientFactory()
+    {
         this.transport = new NetHttpTransport();
         this.jsonFactory = new JacksonFactory();
     }
 
     @Override
-    public Calendar makeClient(String clientId, String clientSecret,
-            Collection<String> scopes, String applicationName, String refreshToken,
-            String accessToken, String emailAddress, String p12FileName) {
+    public Calendar makeClient( String clientId, String clientSecret, Collection<String> scopes,
+                                String applicationName, String refreshToken, String accessToken, String emailAddress,
+                                String p12FileName )
+    {
         Credential credential;
-        try {
+        try
+        {
             // if emailAddress and p12FileName values are present, assume Google Service Account
-            if (null != emailAddress && !"".equals(emailAddress) && null != p12FileName && !"".equals(p12FileName)) {
-                credential = authorizeServiceAccount(emailAddress, p12FileName, scopes);
-            } else {
-                credential = authorize(clientId, clientSecret, scopes);
+            if ( null != emailAddress && !"".equals( emailAddress ) && null != p12FileName && !"".equals( p12FileName ) )
+            {
+                credential = authorizeServiceAccount( emailAddress, p12FileName, scopes );
+            }
+            else
+            {
+                credential = authorize( clientId, clientSecret, scopes );
 
-                if (refreshToken != null && !"".equals(refreshToken)) {
-                    credential.setRefreshToken(refreshToken);
+                if ( refreshToken != null && !"".equals( refreshToken ) )
+                {
+                    credential.setRefreshToken( refreshToken );
                 }
-                if (accessToken != null && !"".equals(accessToken)) {
-                    credential.setAccessToken(accessToken);
+                if ( accessToken != null && !"".equals( accessToken ) )
+                {
+                    credential.setAccessToken( accessToken );
                 }
             }
-            return new Calendar.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
-        } catch (Exception e) {
-            LOG.error("Could not create Google Drive client.", e);
+            return new Calendar.Builder( transport, jsonFactory, credential ).setApplicationName( applicationName ).build();
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Could not create Google Drive client.", e );
         }
         return null;
     }
 
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
+    private Credential authorize( String clientId, String clientSecret, Collection<String> scopes )
+        throws Exception
+    {
         // authorize
-        return new GoogleCredential.Builder()
-                .setJsonFactory(jsonFactory)
-                .setTransport(transport)
-                .setClientSecrets(clientId, clientSecret)
-                .build();
+        return new GoogleCredential.Builder().setJsonFactory( jsonFactory ).setTransport( transport ).setClientSecrets( clientId,
+                                                                                                                        clientSecret ).build();
     }
 
-    private Credential authorizeServiceAccount(String emailAddress, String p12FileName, Collection<String> scopes) throws Exception {
+    private Credential authorizeServiceAccount( String emailAddress, String p12FileName, Collection<String> scopes )
+        throws Exception
+    {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        GoogleCredential credential = new GoogleCredential.Builder()
-                .setTransport(httpTransport)
-                .setJsonFactory(jsonFactory)
-                .setServiceAccountId(emailAddress)
-                .setServiceAccountPrivateKeyFromP12File(new File(p12FileName))
-                .setServiceAccountScopes(scopes)
-                .build();
+        GoogleCredential credential =
+            new GoogleCredential.Builder().setTransport( httpTransport ).setJsonFactory( jsonFactory ).setServiceAccountId( emailAddress ).setServiceAccountPrivateKeyFromP12File( new File(
+                                                                                                                                                                                             p12FileName ) ).setServiceAccountScopes( scopes ).build();
         return credential;
     }
 }
