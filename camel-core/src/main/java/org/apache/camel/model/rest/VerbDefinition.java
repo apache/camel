@@ -102,6 +102,13 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         return params;
     }
 
+    /**
+     * To specify the REST operation parameters using Swagger.
+     */
+    public void setParams(List<RestOperationParamDefinition> params) {
+        this.params = params;
+    }
+
     public String getMethod() {
         return method;
     }
