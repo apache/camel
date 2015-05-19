@@ -18,7 +18,6 @@ package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,10 +26,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-
 import org.apache.camel.spi.Metadata;
 
 /**
+ * To specify the rest operation parameters using Swagger.
+ * <p/>
  * This maps to the Swagger Parameter Object.
  * see com.wordnik.swagger.model.Parameter
  * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#524-parameter-object.
@@ -43,37 +43,36 @@ public class RestOperationParamDefinition {
     @XmlTransient
     private VerbDefinition verb;
 
-    @XmlAttribute
-    @Metadata(required = "true")
-    RestParamType paramType;
+    @XmlAttribute(required = true)
+    @Metadata(defaultValue = "path")
+    private RestParamType paramType = RestParamType.path;
+
+    @XmlAttribute(required = true)
+    private String name;
 
     @XmlAttribute
-    @Metadata(required = "true")
-    String name;
+    private String description;
 
     @XmlAttribute
-    String description = "";
+    private String defaultValue;
 
     @XmlAttribute
-    String defaultValue = "";
+    @Metadata(defaultValue = "true")
+    private Boolean required = true;
 
     @XmlAttribute
-    Boolean required = true;
-
-    @XmlAttribute
-    Boolean allowMultiple = false;
+    private Boolean allowMultiple;
 
     @XmlAttribute
     @Metadata(defaultValue = "string")
-    String dataType;
+    private String dataType;
 
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
-    List<String> allowableValues;
+    private List<String> allowableValues;
 
     @XmlAttribute
-    String paramAccess;
-
+    private String paramAccess;
 
     public RestOperationParamDefinition(VerbDefinition verb) {
         this.verb = verb;
@@ -83,10 +82,9 @@ public class RestOperationParamDefinition {
     }
 
     public RestParamType getParamType() {
-        if (paramType != null)
-            return paramType;
-        return RestParamType.path;
+        return paramType;
     }
+
     /**
      * Sets the Swagger Parameter type.
      */
@@ -97,6 +95,7 @@ public class RestOperationParamDefinition {
     public String getName() {
         return name;
     }
+
     /**
      * Sets the Swagger Parameter name.
      */
@@ -149,10 +148,7 @@ public class RestOperationParamDefinition {
     }
 
     public String getDataType() {
-        if(dataType!=null) {
-            return dataType;
-        }
-        return "string";
+        return dataType != null ? dataType : "string";
     }
 
     /**
@@ -171,7 +167,7 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Sets the Swagger Parameter alist of allowable values.
+     * Sets the Swagger Parameter list of allowable values.
      */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;

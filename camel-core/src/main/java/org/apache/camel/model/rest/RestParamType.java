@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
 
+/**
+ * Rest parameter types
+ */
 @Metadata(label = "rest")
 @XmlType
 @XmlEnum(String.class)
