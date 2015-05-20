@@ -182,7 +182,7 @@
                 <exclude>**/src/signatures/*.txt</exclude>
                 <exclude>**/file-sig-api.txt</exclude>
                 <exclude>**/MerchandiseRestResource.apxc</exclude>
-                <exclude>components/camel-dropbox/src/main/resources/META-INF/Dropbox_API_Terms_and_Conditions.txt</exclude>
+                <exclude>**/META-INF/Dropbox_API_Terms_and_Conditions.txt</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
@@ -193,7 +193,7 @@
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
-                <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
+                <exclude>**/src/**/data/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
