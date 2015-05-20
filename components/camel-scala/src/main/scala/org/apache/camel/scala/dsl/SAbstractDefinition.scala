@@ -18,14 +18,12 @@ package org.apache.camel
 package scala
 package dsl
 
-import org.apache.camel.Exchange
 import org.apache.camel.model._
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import spi.Policy
 
 import reflect.{ClassTag, classTag}
-import java.lang.String
 import java.util.Comparator
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
@@ -50,6 +48,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     block
     this
   }
+
 
   // EIPs
   //-----------------------------------------------------------------
@@ -108,7 +107,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def otherwise: SChoiceDefinition = throw new Exception("otherwise is only supported in a choice block or after a when statement")
 
   def pipeline = SPipelineDefinition(target.pipeline)
-  def policy(policy: Policy) = wrap(target.policy(policy))
+  def policy(policy: Policy) = SPolicyDefinition(target.policy(policy))
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) =
     wrap(target.pollEnrich(uri, timeout, strategy))
   def pollEnrich(uri: String, strategy: AggregationStrategy, timeout: Long, aggregateOnException: Boolean) =
@@ -146,11 +145,11 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
 
-  def validate(expression: Exchange => Any) = wrap(target.validate(predicateBuilder(expression)))
+  def validate(expression: Exchange => Any) = SValidateDefinition(target.validate(predicateBuilder(expression)))
 
   def when(filter: Exchange => Any): DSL with Block = SChoiceDefinition(target.choice).when(filter)
-  def wireTap(uri: String) = wrap(target.wireTap(uri))
-  def wireTap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri).newExchangeBody(expression))
+  def wireTap(uri: String) = SWireTapDefinition(target.wireTap(uri))
+  def wireTap(uri: String, expression: Exchange => Any) = SWireTapDefinition(target.wireTap(uri).newExchangeBody(expression))
 
   def -->(pattern: ExchangePattern, uri: String) = wrap(target.to(pattern, uri))
   def -->(uris: String*) = to(uris:_*)
