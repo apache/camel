@@ -56,6 +56,12 @@ class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
   }
 }
 
+class SValidateSimpleBuilderTest extends SValidateSimpleTest with RouteBuilderSupport {
+  override def createRouteBuilder = new RouteBuilder {
+    from("direct:start").validate(simple("${body} contains 'Camel'")).to("mock:result")
+  }
+}
+
 /**
  * Scala DSL equivalent for the ValidateRegExpTest, using the Scala DSL block syntax
  */
