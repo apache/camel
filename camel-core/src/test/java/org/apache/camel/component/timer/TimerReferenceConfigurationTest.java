@@ -1,9 +1,10 @@
-/*
- * Copyright 2015 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -17,17 +18,14 @@ package org.apache.camel.component.timer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
-/**
- *
- * @author JCostello
- */
-public class TimerReferenceConfigurationTest extends ContextTestSupport{
-    
+public class TimerReferenceConfigurationTest extends ContextTestSupport {
+
     /**
      * reference params
      */
@@ -38,7 +36,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
     final boolean refExpectedFixedRate = true;
     final boolean refExpectedDaemon = false;
     final long refExpectedRepeatCount = 11;
-    
+
     /**
      * value params
      */
@@ -49,7 +47,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
     final boolean valExpectedFixedRate = false;
     final boolean valExpectedDaemon = true;
     final long valExpectedRepeatCount = 13;
-    
+
     final String refTimerUri = "timer://passByRefTimer?"
             + "time=#refExpectedTimeString"
             + "&pattern=#refExpectedPattern"
@@ -58,18 +56,18 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
             + "&fixedRate=#refExpectedFixedRate"
             + "&daemon=#refExpectedDaemon"
             + "&repeatCount=#refExpectedRepeatCount";
-    
+
     final String valueTimerUri = "timer://passByValueTimer?"
-            + "time="+valExpectedTimeString
-            + "&pattern="+valExpectedPattern
-            + "&period="+valExpectedPeriod
-            + "&delay="+valExpectedDelay
-            + "&fixedRate="+valExpectedFixedRate
-            + "&daemon="+valExpectedDaemon
-            + "&repeatCount="+valExpectedRepeatCount;
-    
+            + "time=" + valExpectedTimeString
+            + "&pattern=" + valExpectedPattern
+            + "&period=" + valExpectedPeriod
+            + "&delay=" + valExpectedDelay
+            + "&fixedRate=" + valExpectedFixedRate
+            + "&daemon=" + valExpectedDaemon
+            + "&repeatCount=" + valExpectedRepeatCount;
+
     final String mockEndpointUri = "mock:result";
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry reg = super.createRegistry();
@@ -81,7 +79,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
         reg.bind("refExpectedDaemon", refExpectedDaemon);
         reg.bind("refExpectedRepeatCount", refExpectedRepeatCount);
         return reg;
-    } 
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -96,12 +94,13 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
 
     /**
      * Test that the reference configuration params are correct
-     * @throws Exception 
+     *
+     * @throws Exception
      */
-    public void testReferenceConfiguration()throws Exception{
-        
+    public void testReferenceConfiguration() throws Exception {
+
         Endpoint e = context.getEndpoint(refTimerUri);
-        TimerEndpoint timer = (TimerEndpoint)e;
+        TimerEndpoint timer = (TimerEndpoint) e;
         final Date expectedTimeObject = new SimpleDateFormat(refExpectedPattern).parse(refExpectedTimeString);
         final Date time = timer.getTime();
         final long period = timer.getPeriod();
@@ -109,7 +108,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
         final boolean fixedRate = timer.isFixedRate();
         final boolean daemon = timer.isDaemon();
         final long repeatCount = timer.getRepeatCount();
-        
+
         assertEquals(refExpectedDelay, delay);
         assertEquals(refExpectedPeriod, period);
         assertEquals(expectedTimeObject, time);
@@ -117,14 +116,15 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
         assertEquals(refExpectedDaemon, daemon);
         assertEquals(refExpectedRepeatCount, repeatCount);
     }
-    
+
     /**
      * Test that the 'value' configuration params are correct
-     * @throws Exception 
+     *
+     * @throws Exception
      */
-    public void testValueConfiguration()throws Exception{
+    public void testValueConfiguration() throws Exception {
         Endpoint e = context.getEndpoint(valueTimerUri);
-        TimerEndpoint timer = (TimerEndpoint)e;
+        TimerEndpoint timer = (TimerEndpoint) e;
         final Date expectedTimeObject = new SimpleDateFormat(valExpectedPattern).parse(valExpectedTimeString);
         final Date time = timer.getTime();
         final long period = timer.getPeriod();
@@ -132,7 +132,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
         final boolean fixedRate = timer.isFixedRate();
         final boolean daemon = timer.isDaemon();
         final long repeatCount = timer.getRepeatCount();
-        
+
         assertEquals(valExpectedDelay, delay);
         assertEquals(valExpectedPeriod, period);
         assertEquals(expectedTimeObject, time);
@@ -140,5 +140,5 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport{
         assertEquals(valExpectedDaemon, daemon);
         assertEquals(valExpectedRepeatCount, repeatCount);
     }
-    
+
 }
