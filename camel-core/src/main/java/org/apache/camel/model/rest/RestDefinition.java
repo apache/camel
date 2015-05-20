@@ -562,7 +562,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 }
             }
 
-            if( verb.getType() != null ) {
+            if (verb.getType() != null) {
                 String bodyType = verb.getType();
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
