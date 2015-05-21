@@ -30,21 +30,26 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleCalendar component.
  */
 @UriParams
-public class GoogleCalendarConfiguration {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(CalendarScopes.CALENDAR); 
+public class GoogleCalendarConfiguration
+{
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList( CalendarScopes.CALENDAR );
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata( required = "true" )
     private GoogleCalendarApiName apiName;
 
-    @UriPath(enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
-    @Metadata(required = "true")
+    @UriPath( enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch" )
+    @Metadata( required = "true" )
     private String methodName;
 
-    @UriParam(defaultValue = CalendarScopes.CALENDAR)
+    @UriParam( defaultValue = CalendarScopes.CALENDAR )
     private List<String> scopes = DEFAULT_SCOPES;
-    
+
     @UriParam
     private String clientId;
+
+    @UriParam
+    private String emailAddress;
 
     @UriParam
     private String clientSecret;
@@ -58,92 +63,149 @@ public class GoogleCalendarConfiguration {
     @UriParam
     private String applicationName;
 
-    public GoogleCalendarApiName getApiName() {
+    @UriParam
+    private String p12FileName;
+
+    public GoogleCalendarApiName getApiName()
+    {
         return apiName;
     }
 
     /**
      * What kind of operation to perform
+     * 
+     * @param apiName
      */
-    public void setApiName(GoogleCalendarApiName apiName) {
+    public void setApiName( GoogleCalendarApiName apiName )
+    {
         this.apiName = apiName;
     }
 
-    public String getMethodName() {
+    public String getMethodName()
+    {
         return methodName;
     }
 
     /**
      * What sub operation to use for the selected operation
+     * 
+     * @param methodName
      */
-    public void setMethodName(String methodName) {
+    public void setMethodName( String methodName )
+    {
         this.methodName = methodName;
     }
 
-    public String getClientId() {
+    public String getClientId()
+    {
         return clientId;
     }
 
     /**
      * Client ID of the calendar application
+     * 
+     * @param clientId
      */
-    public void setClientId(String clientId) {
+    public void setClientId( String clientId )
+    {
         this.clientId = clientId;
     }
 
-    public String getClientSecret() {
+    public String getEmailAddress()
+    {
+        return emailAddress;
+    }
+
+    public void setEmailAddress( String emailAddress )
+    {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getClientSecret()
+    {
         return clientSecret;
     }
 
     /**
      * Client secret of the calendar application
+     * 
+     * @param clientSecret
      */
-    public void setClientSecret(String clientSecret) {
+    public void setClientSecret( String clientSecret )
+    {
         this.clientSecret = clientSecret;
     }
 
-    public String getAccessToken() {
+    public String getAccessToken()
+    {
         return accessToken;
     }
 
     /**
      * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
+     * 
+     * @param accessToken
      */
-    public void setAccessToken(String accessToken) {
+    public void setAccessToken( String accessToken )
+    {
         this.accessToken = accessToken;
     }
 
-    public String getRefreshToken() {
+    public String getRefreshToken()
+    {
         return refreshToken;
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
+     * 
+     * @param refreshToken
      */
-    public void setRefreshToken(String refreshToken) {
+    public void setRefreshToken( String refreshToken )
+    {
         this.refreshToken = refreshToken;
     }
 
-    public String getApplicationName() {
+    public String getApplicationName()
+    {
         return applicationName;
     }
 
     /**
      * Google calendar application name. Example would be "camel-google-calendar/1.0"
+     * 
+     * @param applicationName
      */
-    public void setApplicationName(String applicationName) {
+    public void setApplicationName( String applicationName )
+    {
         this.applicationName = applicationName;
     }
-    
-    public List<String> getScopes() {
+
+    public List<String> getScopes()
+    {
         return scopes;
     }
 
     /**
-     * Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/google-apps/calendar/auth for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account. See
+     * https://developers.google.com/google-apps/calendar/auth for more info.
+     * 
+     * @param scopes
      */
-    public void setScopes(List<String> scopes) {
+    public void setScopes( List<String> scopes )
+    {
         this.scopes = scopes;
+    }
+
+    public String getP12FileName()
+    {
+        return p12FileName;
+    }
+
+    public void setP12FileName( String p12FileName )
+    {
+        this.p12FileName = p12FileName;
     }
 
 }

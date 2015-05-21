@@ -20,8 +20,10 @@ import java.util.Collection;
 
 import com.google.api.services.calendar.Calendar;
 
-public interface GoogleCalendarClientFactory {
+public interface GoogleCalendarClientFactory
+{
 
-    Calendar makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken);
+    Calendar makeClient( String clientId, String clientSecret, Collection<String> scopes, String applicationName,
+                         String refreshToken, String accessToken, String emailAddress, String p12FileName );
 
 }

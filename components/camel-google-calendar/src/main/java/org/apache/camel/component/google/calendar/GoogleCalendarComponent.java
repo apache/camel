@@ -27,65 +27,88 @@ import org.apache.camel.util.component.AbstractApiComponent;
 /**
  * Represents the component that manages {@link GoogleCalendarEndpoint}.
  */
-public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
+public class GoogleCalendarComponent
+    extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection>
+{
 
     private Calendar client;
+
     private GoogleCalendarClientFactory clientFactory;
 
-    public GoogleCalendarComponent() {
-        super(GoogleCalendarEndpoint.class, GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
+    public GoogleCalendarComponent()
+    {
+        super( GoogleCalendarEndpoint.class, GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection() );
     }
 
-    public GoogleCalendarComponent(CamelContext context) {
-        super(context, GoogleCalendarEndpoint.class, GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
+    public GoogleCalendarComponent( CamelContext context )
+    {
+        super( context, GoogleCalendarEndpoint.class, GoogleCalendarApiName.class,
+               GoogleCalendarApiCollection.getCollection() );
     }
 
     @Override
-    protected GoogleCalendarApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleCalendarApiName.fromValue(apiNameStr);
+    protected GoogleCalendarApiName getApiName( String apiNameStr )
+        throws IllegalArgumentException
+    {
+        return GoogleCalendarApiName.fromValue( apiNameStr );
     }
 
-    public Calendar getClient() {
-        if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), 
-                configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
+    public Calendar getClient()
+    {
+        if ( client == null )
+        {
+            client =
+                getClientFactory().makeClient( configuration.getClientId(), configuration.getClientSecret(),
+                                               configuration.getScopes(), configuration.getApplicationName(),
+                                               configuration.getRefreshToken(), configuration.getAccessToken(),
+                                               configuration.getEmailAddress(), configuration.getP12FileName() );
         }
         return client;
     }
-    
-    public GoogleCalendarClientFactory getClientFactory() {
-        if (clientFactory == null) {
+
+    public GoogleCalendarClientFactory getClientFactory()
+    {
+        if ( clientFactory == null )
+        {
             clientFactory = new BatchGoogleCalendarClientFactory();
         }
         return clientFactory;
     }
 
     @Override
-    public GoogleCalendarConfiguration getConfiguration() {
+    public GoogleCalendarConfiguration getConfiguration()
+    {
         return super.getConfiguration();
     }
 
     /**
      * To use the shared configuration
+     * 
+     * @param configuration
      */
     @Override
-    public void setConfiguration(GoogleCalendarConfiguration configuration) {
-        super.setConfiguration(configuration);
+    public void setConfiguration( GoogleCalendarConfiguration configuration )
+    {
+        super.setConfiguration( configuration );
     }
 
     /**
-     * To use the GoogleCalendarClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleCalendarClientFactory}
+     * To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleCalendarClientFactory}
+     * 
+     * @param clientFactory
      */
-    public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
+    public void setClientFactory( GoogleCalendarClientFactory clientFactory )
+    {
         this.clientFactory = clientFactory;
     }
-    
+
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, GoogleCalendarApiName apiName,
-                                      GoogleCalendarConfiguration endpointConfiguration) {
-        endpointConfiguration.setApiName(apiName);
-        endpointConfiguration.setMethodName(methodName);
-        return new GoogleCalendarEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    protected Endpoint createEndpoint( String uri, String methodName, GoogleCalendarApiName apiName,
+                                       GoogleCalendarConfiguration endpointConfiguration )
+    {
+        endpointConfiguration.setApiName( apiName );
+        endpointConfiguration.setMethodName( methodName );
+        return new GoogleCalendarEndpoint( uri, this, apiName, methodName, endpointConfiguration );
     }
 }
