@@ -92,6 +92,9 @@ public class NettyComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the NettyConfiguration as configuration when creating endpoints.
+     */
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -100,6 +103,11 @@ public class NettyComponent extends UriEndpointComponent {
         return maximumPoolSize;
     }
 
+    /**
+     * The core pool size for the ordered thread pool, if its in use.
+     * <p/>
+     * The default value is 16.
+     */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
