@@ -29,6 +29,9 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
+    
+    @EndpointInject(uri = "mock:intercepted")
+    protected MockEndpoint interceptedEndpoint;
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
@@ -36,6 +39,7 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
     @Test
     public void strategyTest() throws Exception {
         resultEndpoint.expectedBodiesReceived("Bla Bla Bla");
+        interceptedEndpoint.expectedBodiesReceived("Bla Bla Bla");
         template.sendBody("direct:start", "Bla Bla Bla");
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +54,7 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
                 // removing this line the test works
                 context.addInterceptStrategy(new DummyInterceptor());
                 // intercet from
-                interceptFrom("direct:start").log("Intercepted");
+                interceptFrom("direct:start").log("Intercepted").to("mock:intercepted");
 
                 from("direct:start").to("mock:result");
             }
