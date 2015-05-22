@@ -196,9 +196,7 @@
                                     <artifactId>camel-package-maven-plugin</artifactId>
                                     <versionRange>${project.version}</versionRange>
                                     <goals>
-                                        <goal>generate-components-list</goal>
-                                        <goal>generate-dataformats-list</goal>
-                                        <goal>generate-languages-list</goal>
+                                        <goal>generate-eips-list</goal>
                                     </goals>
                                 </pluginExecutionFilter>
                                 <action>
