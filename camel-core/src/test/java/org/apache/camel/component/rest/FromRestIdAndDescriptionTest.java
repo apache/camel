@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.rest;
 
+import java.util.Arrays;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
-
-import java.util.Arrays;
 
 public class FromRestIdAndDescriptionTest extends FromRestGetTest {
 

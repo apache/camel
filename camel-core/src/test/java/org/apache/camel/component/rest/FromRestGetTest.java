@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.rest;
 
+import java.util.Arrays;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
-
-import java.util.Arrays;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -64,8 +64,8 @@ public class FromRestGetTest extends ContextTestSupport {
 
         assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
         assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
-        assertEquals(Arrays.asList("1","2","3","4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
-        assertEquals(Arrays.asList("a","b","c","d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
+        assertEquals(Arrays.asList("1", "2", "3", "4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
+        assertEquals(Arrays.asList("a", "b", "c", "d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
@@ -107,16 +107,16 @@ public class FromRestGetTest extends ContextTestSupport {
                     .get().to("direct:hello");
 
                 rest("/say/bye")
-                    .get().consumes("application/json")
-                        .restParam().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1","2","3","4"))
-                            .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
+                        .get().consumes("application/json")
+                        .restParam().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
+                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
                         .endParam().
-                        restParam().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a","b","c","d"))
-                            .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
+                        restParam().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
+                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
                         .endParam()
                         .restResponseMsg().code(300).message("test msg").responseModel(Integer.class).endResponseMsg()
                         .to("direct:bye")
-                    .post().to("mock:update");
+                        .post().to("mock:update");
 
                 from("direct:hello")
                     .transform().constant("Hello World");
