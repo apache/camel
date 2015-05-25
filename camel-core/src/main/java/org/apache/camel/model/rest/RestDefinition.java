@@ -575,15 +575,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (a.startsWith("{") && a.endsWith("}")) {
                     String key = a.substring(1, a.length() - 1);
                     //  merge if exists
-                    boolean found=false;
-                    for(RestOperationParamDefinition param: verb.getParams()){
-                        if(param.getName().equalsIgnoreCase(key)){
+                    boolean found = false;
+                    for (RestOperationParamDefinition param : verb.getParams()) {
+                        if (param.getName().equalsIgnoreCase(key)) {
                             param.type(RestParamType.path);
-                            found=true;
+                            found = true;
                             break;
                         }
                     }
-                    if(!found) {
+                    if (!found) {
                         restParam(verb).name(key).type(RestParamType.path).endParam();
                     }
                 }

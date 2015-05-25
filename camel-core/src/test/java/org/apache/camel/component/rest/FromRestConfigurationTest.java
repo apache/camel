@@ -35,7 +35,7 @@ public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final RouteBuilder lowerR=super.createRouteBuilder();
+        final RouteBuilder lowerR = super.createRouteBuilder();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

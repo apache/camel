@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.util.Arrays;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -25,8 +27,6 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.rest.RestParamType;
-
-import java.util.Arrays;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
 
@@ -61,8 +61,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param paramType=\"query\" name=\"header_letter\" description=\"header param description2\" defaultValue=\"b\" required=\"false\" allowMultiple=\"true\" dataType=\"string\" paramAccess=\"acc2\">"));
-        assertTrue(xml.contains("<param paramType=\"header\" name=\"header_count\" description=\"header param description1\" defaultValue=\"1\" required=\"true\" allowMultiple=\"false\" dataType=\"integer\" paramAccess=\"acc1\">"));
+        assertTrue(xml.contains("<param paramType=\"query\" name=\"header_letter\" description=\"header param description2\""
+                + " defaultValue=\"b\" required=\"false\" allowMultiple=\"true\" dataType=\"string\" paramAccess=\"acc2\">"));
+        assertTrue(xml.contains("<param paramType=\"header\" name=\"header_count\" description=\"header param description1\" "
+                + "defaultValue=\"1\" required=\"true\" allowMultiple=\"false\" dataType=\"integer\" paramAccess=\"acc1\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
