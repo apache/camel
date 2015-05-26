@@ -48,7 +48,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         assertEquals(2, authors.size());
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
-        
+
         exp = lan.createExpression("$.store.bicycle.price");
         String price = exp.evaluate(exchange, String.class);
         assertEquals("Got a wrong result", "19.95", price);
@@ -87,4 +87,17 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         boolean expensive = pre.matches(exchange);
         assertFalse("Should not have expensive books", expensive);
     }
+
+    @Test
+    public void testSuppressException() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/type.json"));
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.foo");
+        String nofoo = exp.evaluate(exchange, String.class);
+
+        assertNull(nofoo);
+    }
+
 }
