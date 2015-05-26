@@ -1394,6 +1394,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 3);
     }
 
+    public void testByteArrayLength() throws Exception {
+        exchange.getIn().setBody(new byte[]{65, 66, 67});
+        assertExpression("${body[0]}", 65);
+        assertExpression("${body[1]}", 66);
+        assertExpression("${body[2]}", 67);
+        assertExpression("${body.length}", 3);
+    }
+
     public void testSimpleMapBoolean() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         exchange.getIn().setBody(map);
