@@ -125,7 +125,7 @@ public class SqsProducer extends DefaultProducer {
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
-                    LOG.warn("Cannot put the message header key={0}, value={1} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
+                    LOG.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
                 }
             }
         }
