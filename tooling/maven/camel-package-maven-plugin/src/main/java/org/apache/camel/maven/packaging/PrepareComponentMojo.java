@@ -16,10 +16,6 @@
  */
 package org.apache.camel.maven.packaging;
 
-import static org.apache.camel.maven.packaging.PackageComponentMojo.prepareComponent;
-import static org.apache.camel.maven.packaging.PackageDataFormatMojo.prepareDataFormat;
-import static org.apache.camel.maven.packaging.PackageLanguageMojo.prepareLanguage;
-
 import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -28,6 +24,10 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
+
+import static org.apache.camel.maven.packaging.PackageComponentMojo.prepareComponent;
+import static org.apache.camel.maven.packaging.PackageDataFormatMojo.prepareDataFormat;
+import static org.apache.camel.maven.packaging.PackageLanguageMojo.prepareLanguage;
 
 /**
  * Prepares a Camel component analyzing if the maven module contains Camel
