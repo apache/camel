@@ -61,31 +61,31 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private UrlRewrite urlRewrite;
     private CookieStore cookieStore = new BasicCookieStore();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", label = "producer")
     private URI httpUri;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam
-    private HttpBinding binding;
-    @UriParam(defaultValue = "true")
+    private HttpBinding httpBinding;
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam(defaultValue = "true")
     private boolean chunked = true;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean disableStreamCache;
     @UriParam
     private boolean transferException;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean traceEnabled;
-    @UriParam
+    @UriParam(label = "producer")
     private boolean authenticationPreemptive;
-    @UriParam
+    @UriParam(label = "consumer")
     private String httpMethodRestrict;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean clearExpiredCookies = true;
 
     public HttpEndpoint() {
@@ -246,33 +246,26 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     /**
      * Register a custom configuration strategy for new {@link HttpClient} instances
      * created by producers or consumers such as to configure authentication mechanisms etc
-     *
-     * @param httpClientConfigurer the strategy for configuring new {@link HttpClient} instances
      */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
-    public HttpBinding getBinding() {
-        if (binding == null) {
+    public HttpBinding getHttpBinding() {
+        if (httpBinding == null) {
             // create a new binding and use the options from this endpoint
-            binding = new DefaultHttpBinding();
-            binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
-            binding.setTransferException(isTransferException());
+            httpBinding = new DefaultHttpBinding();
+            httpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            httpBinding.setTransferException(isTransferException());
         }
-        return binding;
+        return httpBinding;
     }
 
-    public void setBinding(HttpBinding binding) {
-        this.binding = binding;
-    }
-    
-    public void setHttpBinding(HttpBinding binding) {
-        this.binding = binding;
-    }
-
-    public void setHttpBindingRef(HttpBinding binding) {
-        this.binding = binding;
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+     */
+    public void setHttpBinding(HttpBinding httpBinding) {
+        this.httpBinding = httpBinding;
     }
 
     public void setHttpContext(HttpContext httpContext) {
@@ -303,6 +296,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return httpUri;
     }
 
+    /**
+     * The url of the HTTP endpoint to call.
+     */
     public void setHttpUri(URI httpUri) {
         this.httpUri = httpUri;
     }
@@ -311,6 +307,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return clientConnectionManager;
     }
 
+    /**
+     * To use a custom HttpClientConnectionManager to manage connections
+     */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
@@ -319,6 +318,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -327,6 +329,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return throwExceptionOnFailure;
     }
 
+    /**
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
@@ -335,6 +341,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return bridgeEndpoint;
     }
 
+    /**
+     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
+     * You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
+     */
     public void setBridgeEndpoint(boolean bridge) {
         this.bridgeEndpoint = bridge;
     }
@@ -343,6 +353,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return matchOnUriPrefix;
     }
 
+    /**
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     * <p/>
+     * See more details at: http://camel.apache.org/how-do-i-let-jetty-match-wildcards.html
+     */
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
     }
@@ -350,7 +365,18 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public boolean isDisableStreamCache() {
         return this.disableStreamCache;
     }
-       
+
+    /**
+     * Determines whether or not the raw input stream from Jetty is cached or not
+     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
+     * By default Camel will cache the Jetty input stream to support reading it multiple times to ensure it Camel
+     * can retrieve all data from the stream. However you can set this option to true when you for example need
+     * to access the raw stream, such as streaming it directly to a file or other persistent store.
+     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message bod
+     * if this option is false to support reading the stream multiple times.
+     * If you use Jetty to bridge/proxy an endpoint then consider enabling this option to improve performance,
+     * in case you do not need to read the message payload multiple times.
+     */
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
     }
@@ -359,6 +385,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return this.chunked;
     }
 
+    /**
+     * If this option is false Jetty servlet will disable the HTTP streaming and set the content-length header on the response
+     */
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }
@@ -367,6 +396,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return transferException;
     }
 
+    /**
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
+     */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
@@ -375,6 +408,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return this.traceEnabled;
     }
 
+    /**
+     * Specifies whether to enable HTTP TRACE for this Jetty consumer. By default TRACE is turned off.
+     */
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
     }
@@ -383,6 +419,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return httpMethodRestrict;
     }
 
+    /**
+     * Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc.
+     * Multiple methods can be specified separated by comma.
+     */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
     }
@@ -391,6 +431,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return urlRewrite;
     }
 
+    /**
+     * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
+     * See more details at http://camel.apache.org/urlrewrite.html
+     */
     public void setUrlRewrite(UrlRewrite urlRewrite) {
         this.urlRewrite = urlRewrite;
     }
@@ -399,6 +443,10 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return clearExpiredCookies;
     }
 
+    /**
+     * Whether to clear expired cookies before sending the HTTP request.
+     * This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.
+     */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
     }
@@ -407,6 +455,12 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return cookieStore;
     }
 
+    /**
+     * To use a custom org.apache.http.client.CookieStore.
+     * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
+     * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
     }
@@ -415,6 +469,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return authenticationPreemptive;
     }
 
+    /**
+     * If this option is true, camel-http4 sends preemptive basic authentication to the server.
+     */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
     }

@@ -49,7 +49,7 @@ public class HttpMessage extends DefaultMessage {
         }
         // use binding to read the request allowing end users to use their
         // implementation of the binding
-        getEndpoint().getBinding().readRequest(request, this);
+        getEndpoint().getHttpBinding().readRequest(request, this);
     }
 
     public HttpServletRequest getRequest() {
@@ -63,7 +63,7 @@ public class HttpMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         try {
-            return getEndpoint().getBinding().parseBody(this);
+            return getEndpoint().getHttpBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
