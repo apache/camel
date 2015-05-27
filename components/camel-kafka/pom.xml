@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka_2.10</artifactId>
+      <artifactId>kafka_2.11</artifactId>
       <version>${kafka-version}</version>
       <exclusions>
         <exclusion>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala-2.10-version}</version>
+      <version>${scala-version}</version>
       <scope>provided</scope>
     </dependency>
 
