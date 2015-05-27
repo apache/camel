@@ -20,10 +20,10 @@ import org.apache.camel.impl.UriEndpointComponent
 
 class GrapeComponent extends UriEndpointComponent {
 
-    PatchesRepository patchesRepository = new FilePatchesRepository()
+    private PatchesRepository patchesRepository = new FilePatchesRepository()
 
-    GrapeComponent(Class<GrapeEndpoint> endpointClass) {
-        super(endpointClass)
+    GrapeComponent() {
+        super(GrapeEndpoint.class)
     }
 
     @Override

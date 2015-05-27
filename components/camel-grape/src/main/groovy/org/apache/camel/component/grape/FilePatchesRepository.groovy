@@ -28,7 +28,7 @@ class FilePatchesRepository implements PatchesRepository {
     private final File repository
 
     FilePatchesRepository() {
-        this(Paths.get(SystemUtils.userHome.absolutePath, ".camel-iot-labs", "patches").toFile())
+        this(Paths.get(SystemUtils.userHome.absolutePath, ".camel", "patches").toFile())
     }
 
     FilePatchesRepository(File repository) {
