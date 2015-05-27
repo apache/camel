@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.grape
 
-import org.apache.camel.impl.DefaultComponent
+import org.apache.camel.impl.UriEndpointComponent
 
-class GrapeComponent extends DefaultComponent {
+class GrapeComponent extends UriEndpointComponent {
 
     PatchesRepository patchesRepository = new FilePatchesRepository()
+
+    GrapeComponent(Class<GrapeEndpoint> endpointClass) {
+        super(endpointClass)
+    }
 
     @Override
     protected GrapeEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {

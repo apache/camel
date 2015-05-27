@@ -21,9 +21,12 @@ import org.apache.camel.Consumer
 import org.apache.camel.Processor
 import org.apache.camel.Producer
 import org.apache.camel.impl.DefaultEndpoint
+import org.apache.camel.spi.UriEndpoint
 
 import static groovy.grape.Grape.grab
+import static org.apache.camel.component.grape.MavenCoordinates.parseMavenCoordinates
 
+@UriEndpoint(scheme = "grape", title = "Grape", producerOnly = true,  label = "management,deployment", syntax = "grape:defaultCoordinates")
 class GrapeEndpoint extends DefaultEndpoint {
 
     private final String defaultCoordinates
@@ -37,7 +40,7 @@ class GrapeEndpoint extends DefaultEndpoint {
         def classLoader = camelContext.applicationContextClassLoader
         def patchesRepository = camelContext.getComponent('grape', GrapeComponent.class).patchesRepository
         patchesRepository.listPatches().each {
-            def coordinates = MavenCoordinates.parseMavenCoordinates(it)
+            def coordinates = parseMavenCoordinates(it)
             grab(classLoader: classLoader,
                     group: coordinates.groupId, module: coordinates.artifactId, version: coordinates.version)
         }
