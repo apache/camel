@@ -131,7 +131,7 @@ public class MessageHelperTest extends TestCase {
         Message target = message.getExchange().getOut();
         
         DefaultHeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-        headerFilterStrategy.setOutFilterPattern("foo");
+        headerFilterStrategy.setInFilterPattern("foo");
         
         source.setHeader("foo", 123);
         source.setHeader("bar", 456);

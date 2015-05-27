@@ -28,6 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.component.http.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
@@ -42,6 +43,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;
     public DefaultJettyHttpBinding() {
@@ -122,8 +124,8 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        // We also need to apply the HeaderFilterStrategy here
-        MessageHelper.copyHeaders(exchange.getIn(), answer, strategy, false);
+        // We also need to apply the httpProtocolHeaderFilterStrategy to filter the http protocol header
+        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
 
         // extract body after headers has been set as we want to ensure content-type from Jetty HttpExchange
         // has been populated first
