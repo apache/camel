@@ -36,7 +36,8 @@ public class MultipartCustomer {
         return null;
     }
     
-    @POST
+    @POST @Path("/withoutParameters")
+    // Added the path due to change of CXF-6321
     public Response multipartPostWithoutParameters(
             @Multipart(value = "part1", type = "image/jpeg") DataHandler dh1, 
             @Multipart(value = "part2", type = "image/jpeg") DataHandler dh2, 
