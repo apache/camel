@@ -122,9 +122,9 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-    <cxf-version>3.0.5</cxf-version>
+    <cxf-version>3.0.4</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>3.0.3</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>3.0.2</cxf-xjc-utils-version>
     <deltaspike-version>1.3.0</deltaspike-version>
     <derby-version>10.11.1.1</derby-version>
     <disruptor-version>3.3.2</disruptor-version>
@@ -230,6 +230,7 @@
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <isorelax-version>20090621</isorelax-version>
     <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
+    <ivy-version>2.4.0</ivy-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson2-version>2.5.1</jackson2-version>
@@ -304,7 +305,7 @@
     <junit-version>4.11</junit-version>
     <jython-version>2.5.3</jython-version>
     <jzlib-version>1.1.3</jzlib-version>
-    <kafka-version>0.8.2.1</kafka-version>
+    <kafka-version>0.8.2.0</kafka-version>
     <kafka-bundle-version>0.8.2.0_1</kafka-bundle-version>
     <karaf-version>2.4.2</karaf-version>
     <karaf3-version>3.0.2</karaf3-version>
@@ -315,6 +316,7 @@
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
+    <logback-version>1.1.2</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
     <lucene-bundle-version>4.10.3_1</lucene-bundle-version>
