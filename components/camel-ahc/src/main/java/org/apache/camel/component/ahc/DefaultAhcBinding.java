@@ -45,14 +45,15 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultAhcBinding implements AhcBinding {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
-    @Override
     public Request prepareRequest(AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
         if (endpoint.isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -185,7 +186,10 @@ public class DefaultAhcBinding implements AhcBinding {
 
     @Override
     public void onStatusReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseStatus responseStatus) throws Exception {
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        // preserve headers from in by copying any non existing headers
+        // to avoid overriding existing headers with old values
+        // Just filter the http protocol headers 
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), httpProtocolHeaderFilterStrategy, false);
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseStatus.getStatusCode());
     }
 
