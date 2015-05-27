@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
- * 
+ *
  * @version
  */
 public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory {
@@ -178,7 +178,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         // see http://restlet.tigris.org/issues/show_bug.cgi?id=988
         String offsetPath = (String) this.component.getContext()
                 .getAttributes().get("org.restlet.ext.servlet.offsetPath");
-        
+
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(offsetPath, endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
@@ -197,12 +197,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String pattern = decodePattern(endpoint.getUriPattern());
         if (pattern != null && !pattern.isEmpty()) {
-            routesToRemove.add(getMethodRouter(pattern, false));
+            MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
+            if (methodRouter != null) {
+                routesToRemove.add(methodRouter);
+            }
         }
 
         if (endpoint.getRestletUriPatterns() != null) {
             for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                routesToRemove.add(getMethodRouter(uriPattern, false));
+                MethodBasedRouter methodRouter = getMethodRouter(uriPattern, false);
+                if (methodRouter != null) {
+                    routesToRemove.add(methodRouter);
+                }
             }
         }
 
@@ -243,11 +249,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             return result;
         }
     }
-    
+
     protected Server createServer(RestletEndpoint endpoint) {
         return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
     }
-    
+
     protected String stringArrayToString(String[] strings) {
         StringBuffer result = new StringBuffer();
         for (String str : strings) {
@@ -256,18 +262,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
         return result.toString();
     }
-    
+
     protected void setupServerWithSSLContext(Series<Parameter> params, SSLContextParameters scp) throws GeneralSecurityException, IOException {
         // set the SSLContext parameters
         params.add("sslContextFactory",
             "org.restlet.engine.ssl.DefaultSslContextFactory");
-        
+
         SSLContext context = scp.createSSLContext();
         SSLEngine engine = context.createSSLEngine();
-        
+
         params.add("enabledProtocols", stringArrayToString(engine.getEnabledProtocols()));
         params.add("enabledCipherSuites", stringArrayToString(engine.getEnabledCipherSuites()));
-        
+
         if (scp.getSecureSocketProtocol() != null) {
             params.add("protocol", scp.getSecureSocketProtocol());
         }
@@ -275,7 +281,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             boolean b = !scp.getServerParameters().getClientAuthentication().equals("NONE");
             params.add("needClientAuthentication", String.valueOf(b));
         }
-        if (scp.getKeyManagers() != null) { 
+        if (scp.getKeyManagers() != null) {
             if (scp.getKeyManagers().getAlgorithm() != null) {
                 params.add("keyManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
             }
@@ -292,8 +298,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                 params.add("keyStoreType", scp.getKeyManagers().getKeyStore().getType());
             }
         }
-        
-        if (scp.getTrustManagers() != null) { 
+
+        if (scp.getTrustManagers() != null) {
             if (scp.getTrustManagers().getAlgorithm() != null) {
                 params.add("trustManagerAlgorithm", scp.getKeyManagers().getAlgorithm());
             }
@@ -320,7 +326,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
                 // Add any Restlet server parameters that were included
                 Series<Parameter> params = server.getContext().getParameters();
-                
+
                 if ("https".equals(endpoint.getProtocol())) {
                     SSLContextParameters scp = endpoint.getSslContextParameters();
                     if (endpoint.getSslContextParameters() == null) {
@@ -374,7 +380,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
                 if (getReuseAddress() != null) {
                     params.add("reuseAddress", getReuseAddress().toString());
                 }
-                
+
                 LOG.debug("Setting parameters: {} to server: {}", params, server);
                 server.getContext().setParameters(params);
 
@@ -442,7 +448,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
         return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
     }
-    
+
     private static String decodePattern(String pattern) {
         return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
     }
@@ -486,7 +492,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
-    
+
     public Integer getLowThreads() {
         return lowThreads;
     }
