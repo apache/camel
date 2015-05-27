@@ -66,6 +66,7 @@ public class HttpProducer extends DefaultProducer {
     private HttpClient httpClient;
     private boolean throwException;
     private boolean transferException;
+    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -193,7 +194,8 @@ public class HttpProducer extends DefaultProducer {
 
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        // Just filter the http protocol headers 
+        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException, ClassNotFoundException {
