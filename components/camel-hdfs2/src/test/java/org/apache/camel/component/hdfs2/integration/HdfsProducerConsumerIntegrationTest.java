@@ -16,25 +16,16 @@
  */
 package org.apache.camel.component.hdfs2.integration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -44,10 +35,13 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 
 @Ignore("Must run manual")
 public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
+    private static final int ITERATIONS = 400;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -89,7 +83,6 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
     @Test
     // see https://issues.apache.org/jira/browse/CAMEL-7318
     public void testMultipleConsumers() throws Exception {
-        int ITERATIONS = 400;
 
         Path p = new Path("hdfs://localhost:9000/tmp/test/multiple-consumers");
         FileSystem fs = FileSystem.get(p.toUri(), new Configuration());

@@ -34,10 +34,14 @@ import org.junit.Test;
  * Test which checks leaking connections when FTP server returns correct status for NOOP operation.
  */
 public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport {
+    /**
+     * Mapping of socket hashcode to two element tab ([connect() called, close() called])
+     */
+    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3" +
-                "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
+        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
+            + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
     @Override
@@ -53,11 +57,6 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
             }
         });
     }
-
-    /**
-     * Mapping of socket hashcode to two element tab ([connect() called, close() called])
-     */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -119,7 +118,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
         @Override
         public Socket createSocket() throws IOException {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
+            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
             return socket;
         }
 
@@ -138,14 +137,16 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
         public void connect(SocketAddress endpoint, int timeout) throws IOException {
             log.info("Connecting socket {}", System.identityHashCode(this));
             super.connect(endpoint, timeout);
-            socketAudits.get(System.identityHashCode(this))[0] = true;
+            boolean[] value = socketAudits.get(System.identityHashCode(this));
+            value[0] = true;
         }
 
         @Override
         public synchronized void close() throws IOException {
             log.info("Disconnecting socket {}", System.identityHashCode(this));
             super.close();
-            socketAudits.get(System.identityHashCode(this))[1] = true;
+            boolean[] value = socketAudits.get(System.identityHashCode(this));
+            value[1] = true;
         }
     }
 
