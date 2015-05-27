@@ -30,6 +30,8 @@ public class StompConfiguration implements Cloneable {
     private String login;
     @UriParam
     private String passcode;
+    @UriParam
+    private String host;
 
     /**
      * Returns a copy of this configuration
@@ -45,6 +47,10 @@ public class StompConfiguration implements Cloneable {
 
     public String getBrokerURL() {
         return brokerURL;
+    }
+    
+    public String getHost() {
+        return host;
     }
 
     /**
