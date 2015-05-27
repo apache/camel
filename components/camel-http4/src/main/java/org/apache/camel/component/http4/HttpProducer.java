@@ -37,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http4.helper.HttpHelper;
+
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -74,6 +75,7 @@ public class HttpProducer extends DefaultProducer {
     private HttpContext httpContext;
     private boolean throwException;
     private boolean transferException;
+    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -192,6 +194,7 @@ public class HttpProducer extends DefaultProducer {
         // propagate HTTP response headers
         Header[] headers = httpResponse.getAllHeaders();
         for (Header header : headers) {
+            System.out.println("headers name " + header.getName());
             String name = header.getName();
             String value = header.getValue();
             if (name.toLowerCase().equals("content-type")) {
@@ -207,7 +210,8 @@ public class HttpProducer extends DefaultProducer {
 
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        // Just filter the http protocol headers 
+        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException, ClassNotFoundException {
