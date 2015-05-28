@@ -83,8 +83,8 @@ public class StompEndpoint extends DefaultEndpoint {
         stomp.setLogin(configuration.getLogin());
         stomp.setPasscode(configuration.getPasscode());
         stomp.connectCallback(promise);
-        if (configuration.getHost() != null && !configuration.getHost().isEmpty()){
-        	stomp.setHost(configuration.getHost());
+        if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
+            stomp.setHost(configuration.getHost());
         }
 
         connection = promise.await();
