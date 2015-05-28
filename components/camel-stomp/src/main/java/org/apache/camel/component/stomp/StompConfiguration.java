@@ -51,6 +51,10 @@ public class StompConfiguration implements Cloneable {
     public String getHost() {
         return host;
     }
+    
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     public void setBrokerURL(String brokerURL) {
         this.brokerURL = brokerURL;
