@@ -75,4 +75,11 @@ public class StompComponent extends UriEndpointComponent {
     public void setPasscode(String passcode) {
         getConfiguration().setPasscode(passcode);
     }
+    
+    /**
+     * The virtual host
+     */
+    public void setHost(String host) {
+        getConfiguration().setHost(host);
+    }
 }
