@@ -52,6 +52,9 @@ public class StompConfiguration implements Cloneable {
         return host;
     }
     
+    /**
+     * The virtual host name
+     */
     public void setHost(String host) {
         this.host = host;
     }
