@@ -572,6 +572,15 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String asEndpointUri(String scheme, String json) throws URISyntaxException {
+        return doAsEndpointUri(scheme, json, "&");
+    }
+
+    @Override
+    public String asEndpointUriXml(String scheme, String json) throws URISyntaxException {
+        return doAsEndpointUri(scheme, json, "&amp;");
+    }
+
+    private String doAsEndpointUri(String scheme, String json, String ampersand) throws URISyntaxException {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         Map<String, String> copy = new HashMap<String, String>();
@@ -604,11 +613,20 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
-        return asEndpointUri(scheme, copy);
+        return doAsEndpointUri(scheme, copy, ampersand);
     }
 
     @Override
     public String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException {
+        return doAsEndpointUri(scheme, properties, "&");
+    }
+
+    @Override
+    public String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException {
+        return doAsEndpointUri(scheme, properties, "&amp;");
+    }
+
+    private String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand) throws URISyntaxException {
         String json = componentJSonSchema(scheme);
         if (json == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
@@ -686,7 +704,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         if (!copy.isEmpty()) {
             sb.append('?');
-            String query = createQueryString(copy);
+            String query = createQueryString(copy, ampersand);
             sb.append(query);
         }
 

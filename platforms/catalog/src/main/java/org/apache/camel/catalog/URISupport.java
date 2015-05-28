@@ -267,11 +267,12 @@ public final class URISupport {
      * Assembles a query from the given map.
      *
      * @param options  the map with the options (eg key/value pairs)
+     * @param ampersand to use & for Java code, and &amp; for XML
      * @return a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     @SuppressWarnings("unchecked")
-    public static String createQueryString(Map<String, String> options) throws URISyntaxException {
+    public static String createQueryString(Map<String, String> options, String ampersand) throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
@@ -280,7 +281,7 @@ public final class URISupport {
                     if (first) {
                         first = false;
                     } else {
-                        rc.append("&");
+                        rc.append(ampersand);
                     }
 
                     String key = (String) o;
