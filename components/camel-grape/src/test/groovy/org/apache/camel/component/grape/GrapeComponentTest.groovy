@@ -18,7 +18,6 @@ package org.apache.camel.component.grape
 
 import org.apache.camel.ServiceStatus
 import org.apache.camel.builder.RouteBuilder
-import org.apache.camel.component.grape.FilePatchesRepository
 import org.apache.camel.impl.DefaultCamelContext
 import org.junit.Assert
 import org.junit.Before

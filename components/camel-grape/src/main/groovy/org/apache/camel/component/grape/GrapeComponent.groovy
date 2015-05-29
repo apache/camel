@@ -28,7 +28,9 @@ class GrapeComponent extends UriEndpointComponent {
 
     @Override
     protected GrapeEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
-        new GrapeEndpoint(uri, remaining, this)
+        GrapeEndpoint grapeEndpoint = new GrapeEndpoint(uri, remaining, this)
+        setProperties(grapeEndpoint, parameters);
+        grapeEndpoint
     }
 
     PatchesRepository getPatchesRepository() {
