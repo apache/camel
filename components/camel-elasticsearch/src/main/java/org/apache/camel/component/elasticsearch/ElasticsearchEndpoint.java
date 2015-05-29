@@ -93,6 +93,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             if (!configuration.isLocal() && configuration.getClusterName() != null) {
                 builder.clusterName(configuration.getClusterName());
             }
+            builder.getSettings().classLoader(Settings.class.getClassLoader());
             node = builder.node();
             client = node.client();
         }
