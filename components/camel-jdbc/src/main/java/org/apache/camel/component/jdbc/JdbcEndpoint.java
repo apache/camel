@@ -32,10 +32,13 @@ import org.apache.camel.spi.UriPath;
 /**
  * @version
  */
-@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSource", producerOnly = true, label = "database,sql")
+@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
 public class JdbcEndpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = "true")
+
     private DataSource dataSource;
+
+    @UriPath @Metadata(required = "true")
+    private String dataSourceName;
     @UriParam
     private int readSize;
     @UriParam
@@ -76,6 +79,17 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new JdbcProducer(this, dataSource, readSize, parameters);
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    /**
+     * Name of DataSource to lookup in the Registry.
+     */
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     public int getReadSize() {
@@ -229,6 +243,6 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     @Override
     protected String createEndpointUri() {
-        return "jdbc";
+        return dataSourceName != null ? "jdbc:" + dataSourceName : "jdbc";
     }
 }
