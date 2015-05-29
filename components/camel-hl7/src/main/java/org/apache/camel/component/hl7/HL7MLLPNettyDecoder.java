@@ -69,6 +69,7 @@ class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
                     throw new DecoderException("Did not find start byte " + (int) config.getStartByte());
                 }
             } finally {
+                // We need to release the buf here to avoid the memory leak
                 buf.release();
             }
         }
