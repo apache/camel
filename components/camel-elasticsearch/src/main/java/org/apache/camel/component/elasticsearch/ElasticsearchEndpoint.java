@@ -31,8 +31,11 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
  * Represents an Elasticsearch endpoint.
@@ -89,7 +92,12 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
                     .addTransportAddress(new InetSocketTransportAddress(configuration.getIp(), configuration.getPort()));
             this.client = client;
         } else {
-            node = configuration.buildNode();
+            NodeBuilder builder = nodeBuilder().local(configuration.isLocal()).data(configuration.isData());
+            if (!configuration.isLocal() && configuration.getClusterName() != null) {
+                builder.clusterName(configuration.getClusterName());
+            }
+            builder.getSettings().classLoader(Settings.class.getClassLoader());
+            node = builder.node();
             client = node.client();
         }
     }
