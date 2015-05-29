@@ -23,6 +23,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext
 import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches
 import static org.apache.camel.ServiceStatus.Stopped
 
@@ -34,7 +35,7 @@ class GrapeComponentTest extends Assert {
 
     @Before
     void before() {
-        camelContext.setApplicationContextClassLoader(new GroovyClassLoader())
+        grapeCamelContext(camelContext)
     }
 
     @Test

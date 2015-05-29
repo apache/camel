@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.grape
 
+import org.apache.camel.CamelContext
 import org.apache.camel.impl.UriEndpointComponent
 
 class GrapeComponent extends UriEndpointComponent {
@@ -39,6 +40,11 @@ class GrapeComponent extends UriEndpointComponent {
 
     void setPatchesRepository(PatchesRepository patchesRepository) {
         this.patchesRepository = patchesRepository
+    }
+
+    static CamelContext grapeCamelContext(CamelContext camelContext) {
+        camelContext.setApplicationContextClassLoader(new GroovyClassLoader(GrapeComponent.class.getClassLoader()))
+        camelContext
     }
 
 }
