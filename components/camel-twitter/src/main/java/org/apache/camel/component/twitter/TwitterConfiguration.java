@@ -69,6 +69,15 @@ public class TwitterConfiguration {
     private String httpProxyPassword;
     @UriParam
     private Integer httpProxyPort;
+    @UriParam
+    private Double latitude;
+    @UriParam
+    private Double longitude;
+    @UriParam
+    private Double radius;
+    @UriParam(defaultValue = "km")
+    private String distanceMetric;
+    
     
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -351,5 +360,53 @@ public class TwitterConfiguration {
 
     public int getHttpProxyPort() {
         return httpProxyPort;
+    }
+
+    public Double getLongitude() {
+    	return longitude;
+    }
+
+    /**
+     * Used by the non-stream geography search.
+     * @param longitude
+     */
+    public void setLongitude(Double longitude) {
+    	this.longitude = longitude;
+    }
+
+    public Double getRadius() {
+    	return radius;
+    }
+
+    /**
+     * Used by the non-stream geography search.
+     * @param radius
+     */
+    public void setRadius(Double radius) {
+    	this.radius = radius;
+    }
+
+    public String getDistanceMetric() {
+    	return distanceMetric;
+    }
+
+    /**
+     * Used by the non-stream geography search, defaults to km.
+     * @param distanceMetric
+     */
+    public void setDistanceMetric(String distanceMetric) {
+    	this.distanceMetric = distanceMetric;
+    }
+
+    public Double getLatitude() {
+    	return latitude;
+    }
+
+    /**
+     * Used by the non-stream geography search.
+     * @param latitude
+     */
+    public void setLatitude(Double latitude) {
+    	this.latitude = latitude;
     }
 }
