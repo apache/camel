@@ -59,13 +59,17 @@ class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
     protected Object decode(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
         ByteBuf buf = (ByteBuf) super.decode(ctx, buffer);
         if (buf != null) {
-            int pos = buf.bytesBefore((byte) config.getStartByte());
-            if (pos >= 0) {
-                ByteBuf msg = buf.readerIndex(pos + 1).slice();
-                LOG.debug("Message ends with length {}", msg.readableBytes());
-                return config.isProduceString() ? asString(msg) : asByteArray(msg);
-            } else {
-                throw new DecoderException("Did not find start byte " + (int) config.getStartByte());
+            try {
+                int pos = buf.bytesBefore((byte) config.getStartByte());
+                if (pos >= 0) {
+                    ByteBuf msg = buf.readerIndex(pos + 1).slice();
+                    LOG.debug("Message ends with length {}", msg.readableBytes());
+                    return config.isProduceString() ? asString(msg) : asByteArray(msg);
+                } else {
+                    throw new DecoderException("Did not find start byte " + (int) config.getStartByte());
+                }
+            } finally {
+                buf.release();
             }
         }
         // Message not complete yet - return null to be called again
