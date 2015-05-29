@@ -266,6 +266,8 @@
     <jetty8-version>8.1.17.v20150415</jetty8-version>
     <jetty9-version>9.2.10.v20150310</jetty9-version>
     <jetty-version>${jetty8-version}</jetty-version>
+    <!-- jetty-plugin 8.1.7 does not exists -->
+    <jetty-plugin-version>8.1.16.v20140903</jetty-plugin-version>
     <jetty-runner-groupId>org.mortbay.jetty</jetty-runner-groupId>
     <jettison-version>1.3.7</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
@@ -2984,7 +2986,7 @@
         <plugin>
           <groupId>${jetty-runner-groupId}</groupId>
           <artifactId>jetty-maven-plugin</artifactId>
-          <version>${jetty-version}</version>
+          <version>${jetty-plugin-version}</version>
         </plugin>
         <!-- Eclipse m2e Lifecycle Management -->
         <plugin>
@@ -3275,6 +3277,7 @@
         <id>jetty9</id>
         <properties>
             <jetty-version>${jetty9-version}</jetty-version>
+            <jetty-plugin-version>${jetty9-version}</jetty-plugin-version>
             <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         </properties>
     </profile>
