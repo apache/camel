@@ -261,18 +261,21 @@ public final class ProcessorDefinitionHelper {
                     found.add((T)choice);
                 }
 
-                for (WhenDefinition when : choice.getWhenClauses()) {
-                    if (type.isInstance(when)) {
-                        found.add((T)when);   
+                // only look at children if current < maxDeep (or max deep is disabled)
+                if (maxDeep < 0 || current < maxDeep) {
+                    for (WhenDefinition when : choice.getWhenClauses()) {
+                        if (type.isInstance(when)) {
+                            found.add((T) when);
+                        }
+                        List<ProcessorDefinition<?>> children = when.getOutputs();
+                        doFindType(children, type, found, ++current, maxDeep);
                     }
-                    List<ProcessorDefinition<?>> children = when.getOutputs();
-                    doFindType(children, type, found, ++current, maxDeep);
-                }
 
-                // otherwise is optional
-                if (choice.getOtherwise() != null) {
-                    List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
-                    doFindType(children, type, found, ++current, maxDeep);
+                    // otherwise is optional
+                    if (choice.getOtherwise() != null) {
+                        List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
+                        doFindType(children, type, found, ++current, maxDeep);
+                    }
                 }
 
                 // do not check children as we already did that
@@ -288,16 +291,19 @@ public final class ProcessorDefinitionHelper {
                     found.add((T)doTry);
                 }
 
-                List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
-                doFindType(doTryOut, type, found, ++current, maxDeep);
+                // only look at children if current < maxDeep (or max deep is disabled)
+                if (maxDeep < 0 || current < maxDeep) {
+                    List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
+                    doFindType(doTryOut, type, found, ++current, maxDeep);
 
-                List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
-                for (CatchDefinition doCatch : doTryCatch) {
-                    doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
-                }
+                    List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
+                    for (CatchDefinition doCatch : doTryCatch) {
+                        doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
+                    }
 
-                if (doTry.getFinallyClause() != null) {
-                    doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
+                    if (doTry.getFinallyClause() != null) {
+                        doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
+                    }
                 }
 
                 // do not check children as we already did that
