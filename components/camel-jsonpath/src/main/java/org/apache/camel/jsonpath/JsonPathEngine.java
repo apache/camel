@@ -40,14 +40,16 @@ public class JsonPathEngine {
     private final Configuration configuration;
 
     public JsonPathEngine(String expression) {
-        Defaults defaults = DefaultsImpl.INSTANCE;
-        this.configuration = Configuration.builder().jsonProvider(defaults.jsonProvider()).build();
-        this.path = JsonPath.compile(expression);
+        this(expression, null);
     }
 
     public JsonPathEngine(String expression, Option[] options) {
         Defaults defaults = DefaultsImpl.INSTANCE;
-        this.configuration = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options).build();
+        if (options != null) {
+            this.configuration = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options).build();
+        } else {
+            this.configuration = Configuration.builder().jsonProvider(defaults.jsonProvider()).build();
+        }
         this.path = JsonPath.compile(expression);
     }
 

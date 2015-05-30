@@ -32,6 +32,16 @@ public class JsonPathBeanTest extends CamelTestSupport {
     }
 
     @Test
+    public void testFullNameTwo() throws Exception {
+        String json = "{\"person\" : {\"firstname\" : \"foo\", \"middlename\" : \"foo2\", \"lastname\" : \"bar\"}}";
+        String json2 = "{\"person\" : {\"firstname\" : \"bar\", \"middlename\" : \"bar2\", \"lastname\" : \"foo\"}}";
+        getMockEndpoint("mock:result").expectedBodiesReceived("foo foo2 bar", "bar bar2 foo");
+        template.sendBody("direct:start", json);
+        template.sendBody("direct:start", json2);
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testFirstAndLastName() throws Exception {
         String json = "{\"person\" : {\"firstname\" : \"foo\", \"lastname\" : \"bar\"}}";
         getMockEndpoint("mock:result").expectedBodiesReceived("foo bar");

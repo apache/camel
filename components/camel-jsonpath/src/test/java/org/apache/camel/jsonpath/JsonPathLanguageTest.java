@@ -19,6 +19,7 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 import java.util.List;
 
+import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -93,7 +94,9 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
-        Language lan = context.resolveLanguage("jsonpath");
+        JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+        lan.setOption(Option.SUPPRESS_EXCEPTIONS);
+
         Expression exp = lan.createExpression("$.foo");
         String nofoo = exp.evaluate(exchange, String.class);
 
