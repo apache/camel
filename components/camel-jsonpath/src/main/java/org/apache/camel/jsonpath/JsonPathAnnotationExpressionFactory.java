@@ -16,22 +16,33 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.lang.annotation.Annotation;
+
+import com.jayway.jsonpath.Option;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
+import org.apache.camel.language.LanguageAnnotation;
 
-public class JsonPathLanguage extends LanguageSupport {
-
-    @Override
-    public Predicate createPredicate(final String predicate) {
-        JsonPathExpression answer = new JsonPathExpression(predicate);
-        answer.init();
-        return answer;
-    }
+public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(final String expression) {
+    public Expression createExpression(CamelContext camelContext, Annotation annotation,
+                                       LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+
+        String expression = getExpressionFromAnnotation(annotation);
         JsonPathExpression answer = new JsonPathExpression(expression);
+
+        if (expressionReturnType != null) {
+            answer.setResultType(expressionReturnType);
+        }
+
+        if (annotation instanceof JsonPath) {
+            JsonPath jsonPathAnnotation = (JsonPath) annotation;
+            Option[] options = jsonPathAnnotation.options();
+            answer.setOptions(options);
+        }
+
         answer.init();
         return answer;
     }

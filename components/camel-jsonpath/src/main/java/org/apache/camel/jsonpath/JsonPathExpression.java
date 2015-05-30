@@ -16,6 +16,7 @@
  */
 package org.apache.camel.jsonpath;
 
+import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
@@ -24,13 +25,18 @@ import org.apache.camel.support.ExpressionAdapter;
 public class JsonPathExpression extends ExpressionAdapter {
 
     private final String expression;
+    private JsonPathEngine engine;
+
     private Class<?> resultType;
-    private final JsonPathEngine engine;
+    private Option[] options;
 
     public JsonPathExpression(String expression) {
         this.expression = expression;
+    }
+
+    public void init() {
         try {
-            engine = new JsonPathEngine(expression);
+            engine = new JsonPathEngine(expression, options);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expression, e);
         }
@@ -42,6 +48,14 @@ public class JsonPathExpression extends ExpressionAdapter {
 
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public Option[] getOptions() {
+        return options;
+    }
+
+    public void setOptions(Option[] options) {
+        this.options = options;
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JsonPathBeanTest extends CamelTestSupport {
+public class JsonPathBeanOptionTest extends CamelTestSupport {
 
     @Test
     public void testFullName() throws Exception {
