@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * To perform optional initialization on an element after its properties has been configured.
+ * <p/>
+ * Currently only languages is supported using this callback.
  */
 public interface AfterPropertiesConfigured {
 
