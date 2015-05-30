@@ -24,6 +24,7 @@ import org.apache.camel.support.LanguageSupport;
 public class JsonPathLanguage extends LanguageSupport {
 
     private Class<?> resultType;
+    private boolean suppressExceptions;
     private Option[] options;
 
     public Class<?> getResultType() {
@@ -32,6 +33,14 @@ public class JsonPathLanguage extends LanguageSupport {
 
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public boolean isSuppressExceptions() {
+        return suppressExceptions;
+    }
+
+    public void setSuppressExceptions(boolean suppressExceptions) {
+        this.suppressExceptions = suppressExceptions;
     }
 
     public Option[] getOptions() {
@@ -50,8 +59,9 @@ public class JsonPathLanguage extends LanguageSupport {
     public Predicate createPredicate(final String predicate) {
         JsonPathExpression answer = new JsonPathExpression(predicate);
         answer.setResultType(resultType);
+        answer.setSuppressExceptions(suppressExceptions);
         answer.setOptions(options);
-        answer.init();
+        answer.afterPropertiesConfigured(getCamelContext());
         return answer;
     }
 
@@ -59,8 +69,9 @@ public class JsonPathLanguage extends LanguageSupport {
     public Expression createExpression(final String expression) {
         JsonPathExpression answer = new JsonPathExpression(expression);
         answer.setResultType(resultType);
+        answer.setSuppressExceptions(suppressExceptions);
         answer.setOptions(options);
-        answer.init();
+        answer.afterPropertiesConfigured(getCamelContext());
         return answer;
     }
 
