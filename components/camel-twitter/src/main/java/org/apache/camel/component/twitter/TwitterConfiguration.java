@@ -41,19 +41,19 @@ public class TwitterConfiguration {
     private String accessToken;
     @UriParam
     private String accessTokenSecret;
-    @UriParam(defaultValue = "60")
+    @UriParam(label = "consumer", defaultValue = "60")
     private int delay = 60;
     @UriParam
     private String user;
     @UriParam
     private String keywords;
-    @UriParam
+    @UriParam(label = "consumer")
     private String locations;
-    @UriParam
+    @UriParam(label = "consumer")
     private String userIds;
     @UriParam(defaultValue = "true")
     private boolean filterOld = true;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1")
     private long sinceId  = 1;
     @UriParam
     private String lang;
@@ -69,13 +69,13 @@ public class TwitterConfiguration {
     private String httpProxyPassword;
     @UriParam
     private Integer httpProxyPort;
-    @UriParam
+    @UriParam(label = "consumer")
     private Double latitude;
-    @UriParam
+    @UriParam(label = "consumer")
     private Double longitude;
-    @UriParam
+    @UriParam(label = "consumer")
     private Double radius;
-    @UriParam(defaultValue = "km", enums = "mi,km")
+    @UriParam(label = "consumer", defaultValue = "km", enums = "mi,km")
     private String distanceMetric;
 
     /**
@@ -379,7 +379,7 @@ public class TwitterConfiguration {
     }
 
     /**
-     * Used by the non-stream geography search to search by lattitude.
+     * Used by the non-stream geography search to search by latitude.
      * <p/>
      * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
      */
