@@ -75,10 +75,9 @@ public class TwitterConfiguration {
     private Double longitude;
     @UriParam
     private Double radius;
-    @UriParam(defaultValue = "km")
+    @UriParam(defaultValue = "km", enums = "mi,km")
     private String distanceMetric;
-    
-    
+
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
      * This should not be created by an endpoint's doStart(), etc., since
@@ -363,50 +362,57 @@ public class TwitterConfiguration {
     }
 
     public Double getLongitude() {
-    	return longitude;
+        return longitude;
     }
 
     /**
-     * Used by the non-stream geography search.
-     * @param longitude
+     * Used by the non-stream geography search to search by longitude.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
      */
     public void setLongitude(Double longitude) {
-    	this.longitude = longitude;
-    }
-
-    public Double getRadius() {
-    	return radius;
-    }
-
-    /**
-     * Used by the non-stream geography search.
-     * @param radius
-     */
-    public void setRadius(Double radius) {
-    	this.radius = radius;
-    }
-
-    public String getDistanceMetric() {
-    	return distanceMetric;
-    }
-
-    /**
-     * Used by the non-stream geography search, defaults to km.
-     * @param distanceMetric
-     */
-    public void setDistanceMetric(String distanceMetric) {
-    	this.distanceMetric = distanceMetric;
+        this.longitude = longitude;
     }
 
     public Double getLatitude() {
-    	return latitude;
+        return latitude;
     }
 
     /**
-     * Used by the non-stream geography search.
-     * @param latitude
+     * Used by the non-stream geography search to search by lattitude.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
      */
     public void setLatitude(Double latitude) {
-    	this.latitude = latitude;
+        this.latitude = latitude;
     }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    /**
+     * Used by the non-stream geography search to search by radius.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
+     */
+    public void setRadius(Double radius) {
+        this.radius = radius;
+    }
+
+    public String getDistanceMetric() {
+        return distanceMetric;
+    }
+
+    /**
+     * Used by the non-stream geography search, to search by radius using the configured metrics.
+     * <p/>
+     * The unit can either be mi for miles, or km for kilometers.
+     * <p/>
+     * You need to configure all the following options: longitude, latitude, radius, and distanceMetric.
+     */
+    public void setDistanceMetric(String distanceMetric) {
+        this.distanceMetric = distanceMetric;
+    }
+
 }

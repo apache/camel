@@ -24,7 +24,6 @@ import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.Query.Unit;
@@ -45,23 +44,23 @@ public class SearchConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> pollConsume() throws TwitterException {
-    	String keywords = te.getProperties().getKeywords();
+        String keywords = te.getProperties().getKeywords();
 
-    	Query query;
+        Query query;
 
-    	if(keywords!=null && keywords.trim().length() > 0) {
-    		query = new Query(keywords);
-    		LOG.debug("Searching twitter with keywords: {}", keywords);
-    	} else {
-    		query = new Query();
-    		LOG.debug("Searching twitter without keywords.");
-    	}
+        if (keywords != null && keywords.trim().length() > 0) {
+            query = new Query(keywords);
+            LOG.debug("Searching twitter with keywords: {}", keywords);
+        } else {
+            query = new Query();
+            LOG.debug("Searching twitter without keywords.");
+        }
 
-    	if (te.getProperties().isFilterOld()) {
-    		query.setSinceId(lastId);
-    	}
+        if (te.getProperties().isFilterOld()) {
+            query.setSinceId(lastId);
+        }
 
-    	return search(query);
+        return search(query);
     }
 
     public List<Status> directConsume() throws TwitterException {
@@ -70,14 +69,14 @@ public class SearchConsumer extends Twitter4JConsumer {
             return Collections.emptyList();
         }
         Query query = new Query(keywords);
-        
+
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
     }
 
     private List<Status> search(Query query) throws TwitterException {
         Integer numberOfPages = 1;
-        
+
         if (ObjectHelper.isNotEmpty(te.getProperties().getLang())) {
             query.setLang(te.getProperties().getLang());
         }
@@ -89,16 +88,16 @@ public class SearchConsumer extends Twitter4JConsumer {
         if (ObjectHelper.isNotEmpty(te.getProperties().getNumberOfPages())) {
             numberOfPages = te.getProperties().getNumberOfPages();
         }
-        
-        if (ObjectHelper.isNotEmpty(te.getProperties().getLatitude()) &&
-        		ObjectHelper.isNotEmpty(te.getProperties().getLongitude()) &&
-        		ObjectHelper.isNotEmpty(te.getProperties().getRadius())) {
-        	GeoLocation location = new GeoLocation(te.getProperties().getLatitude(), te.getProperties().getLongitude());
-        	query.setGeoCode(location, te.getProperties().getRadius(), Unit.valueOf(te.getProperties().getDistanceMetric()));
 
-        	LOG.debug("Searching with additional geolocation parameters.");
+        if (ObjectHelper.isNotEmpty(te.getProperties().getLatitude())
+                && ObjectHelper.isNotEmpty(te.getProperties().getLongitude())
+                && ObjectHelper.isNotEmpty(te.getProperties().getRadius())) {
+            GeoLocation location = new GeoLocation(te.getProperties().getLatitude(), te.getProperties().getLongitude());
+            query.setGeoCode(location, te.getProperties().getRadius(), Unit.valueOf(te.getProperties().getDistanceMetric()));
+
+            LOG.debug("Searching with additional geolocation parameters.");
         }
-        
+
         LOG.debug("Searching with {} pages.", numberOfPages);
 
         Twitter twitter = te.getProperties().getTwitter();
