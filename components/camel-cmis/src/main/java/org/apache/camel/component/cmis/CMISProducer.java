@@ -63,7 +63,17 @@ public class CMISProducer extends DefaultProducer {
             objectTypeName = (String) properties.get(PropertyIds.OBJECT_TYPE_ID);
         }
 
-        Set<String> types = cmisSessionFacade.getPropertiesFor(objectTypeName);
+		Set<String> types = new HashSet<String>();
+		types.addAll(cmisSessionFacade.getPropertiesFor(objectTypeName));
+
+		if (cmisSessionFacade.supportsSecondaries() && properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+			@SuppressWarnings("unchecked")
+			Collection<String> secondaryTypes = (Collection<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+			for (String secondaryType : secondaryTypes) {
+				types.addAll(cmisSessionFacade.getPropertiesFor(secondaryType));
+			}
+		}
+
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (types.contains(entry.getKey())) {
                 result.put(entry.getKey(), entry.getValue());
