@@ -41,6 +41,11 @@ public @interface JsonPath {
     String value();
 
     /**
+     * Whether to suppress exceptions such as PathNotFoundException
+     */
+    boolean suppressExceptions() default false;
+
+    /**
      * To configure the json path options to use
      */
     Option[] options() default {};

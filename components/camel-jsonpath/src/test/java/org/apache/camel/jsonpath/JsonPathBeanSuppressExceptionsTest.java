@@ -16,12 +16,11 @@
  */
 package org.apache.camel.jsonpath;
 
-import com.jayway.jsonpath.Option;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JsonPathBeanOptionTest extends CamelTestSupport {
+public class JsonPathBeanSuppressExceptionsTest extends CamelTestSupport {
 
     @Test
     public void testFullName() throws Exception {
@@ -52,7 +51,7 @@ public class JsonPathBeanOptionTest extends CamelTestSupport {
     protected static class FullNameBean {
         // middle name is optional
         public static String getName(@JsonPath("person.firstname") String first,
-                                     @JsonPath(value = "person.middlename", options = Option.SUPPRESS_EXCEPTIONS) String middle,
+                                     @JsonPath(value = "person.middlename", suppressExceptions = true) String middle,
                                      @JsonPath("person.lastname") String last) {
             if (middle != null) {
                 return first + " " + middle + " " + last;

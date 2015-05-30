@@ -40,15 +40,23 @@ public class JsonPathEngine {
     private final Configuration configuration;
 
     public JsonPathEngine(String expression) {
-        this(expression, null);
+        this(expression, false, null);
     }
 
-    public JsonPathEngine(String expression, Option[] options) {
+    public JsonPathEngine(String expression, boolean suppressExceptions, Option[] options) {
         Defaults defaults = DefaultsImpl.INSTANCE;
         if (options != null) {
-            this.configuration = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options).build();
+            Configuration.ConfigurationBuilder builder = Configuration.builder().jsonProvider(defaults.jsonProvider()).options(options);
+            if (suppressExceptions) {
+                builder.options(Option.SUPPRESS_EXCEPTIONS);
+            }
+            this.configuration = builder.build();
         } else {
-            this.configuration = Configuration.builder().jsonProvider(defaults.jsonProvider()).build();
+            Configuration.ConfigurationBuilder builder = Configuration.builder().jsonProvider(defaults.jsonProvider());
+            if (suppressExceptions) {
+                builder.options(Option.SUPPRESS_EXCEPTIONS);
+            }
+            this.configuration = builder.build();
         }
         this.path = JsonPath.compile(expression);
     }

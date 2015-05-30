@@ -28,6 +28,7 @@ public class JsonPathExpression extends ExpressionAdapter {
     private JsonPathEngine engine;
 
     private Class<?> resultType;
+    private boolean suppressExceptions;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -36,7 +37,7 @@ public class JsonPathExpression extends ExpressionAdapter {
 
     public void init() {
         try {
-            engine = new JsonPathEngine(expression, options);
+            engine = new JsonPathEngine(expression, suppressExceptions, options);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expression, e);
         }
@@ -46,14 +47,31 @@ public class JsonPathExpression extends ExpressionAdapter {
         return resultType;
     }
 
+    /**
+     * To configure the result type to use
+     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public boolean isSuppressExceptions() {
+        return suppressExceptions;
+    }
+
+    /**
+     * Whether to suppress exceptions such as PathNotFoundException
+     */
+    public void setSuppressExceptions(boolean suppressExceptions) {
+        this.suppressExceptions = suppressExceptions;
     }
 
     public Option[] getOptions() {
         return options;
     }
 
+    /**
+     * To configure the json path options to use
+     */
     public void setOptions(Option[] options) {
         this.options = options;
     }

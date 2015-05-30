@@ -39,6 +39,9 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
 
         if (annotation instanceof JsonPath) {
             JsonPath jsonPathAnnotation = (JsonPath) annotation;
+
+            answer.setSuppressExceptions(jsonPathAnnotation.suppressExceptions());
+
             Option[] options = jsonPathAnnotation.options();
             answer.setOptions(options);
         }
