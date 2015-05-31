@@ -67,7 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class HttpProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
@@ -102,7 +102,7 @@ public class HttpProducer extends DefaultProducer {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString);
             }
-            // Need to remove the Host key as it should be not used 
+            // Need to remove the Host key as it should be not used
             exchange.getIn().getHeaders().remove("host");
         }
         HttpRequestBase httpRequest = createMethod(exchange);
@@ -194,7 +194,6 @@ public class HttpProducer extends DefaultProducer {
         // propagate HTTP response headers
         Header[] headers = httpResponse.getAllHeaders();
         for (Header header : headers) {
-            System.out.println("headers name " + header.getName());
             String name = header.getName();
             String value = header.getValue();
             if (name.toLowerCase().equals("content-type")) {
@@ -210,7 +209,7 @@ public class HttpProducer extends DefaultProducer {
 
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        // Just filter the http protocol headers 
+        // Just filter the http protocol headers
         MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
     }
 
@@ -411,19 +410,19 @@ public class HttpProducer extends DefaultProducer {
                 if (data != null) {
                     String contentTypeString = ExchangeHelper.getContentType(exchange);
                     ContentType contentType = null;
-                    
+
                     //Check the contentType is valid or not, If not it throws an exception.
                     //When ContentType.parse parse method parse "multipart/form-data;boundary=---------------------------j2radvtrk",
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
-                        // using ContentType.parser for charset 
+                        // using ContentType.parser for charset
                         if (contentTypeString.indexOf("charset") > 0) {
                             contentType = ContentType.parse(contentTypeString);
                         } else {
                             contentType = ContentType.create(contentTypeString);
                         }
                     }
-                                        
+
                     if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
