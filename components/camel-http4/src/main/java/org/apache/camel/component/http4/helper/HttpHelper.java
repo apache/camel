@@ -140,16 +140,44 @@ public final class HttpHelper {
     }
 
     /**
-     * Reads the response body from the given http servlet request.
+     * Reads the request body from the given http servlet request.
      *
      * @param request  http servlet request
      * @param exchange the exchange
-     * @return the response body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading response body
+     * @return the request body, can be <tt>null</tt> if no body
+     * @throws IOException is thrown if error reading request body
      */
-    public static Object readResponseBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
+    public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
-        return readResponseBodyFromInputStream(is, exchange);
+        return readRequestBodyFromInputStream(is, exchange);
+    }
+    
+    /**
+     * Reads the request body from the given input stream.
+     *
+     * @param is       the input stream
+     * @param exchange the exchange
+     * @return the request body, can be <tt>null</tt> if no body
+     * @throws IOException is thrown if error reading request body
+     */
+    public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
+        if (is == null) {
+            return null;
+        }
+        
+        boolean disableStreamCaching = false;
+        // Just take the consideration of the setting of Camel Context StreamCaching
+        if (exchange.getContext() instanceof DefaultCamelContext) { 
+            DefaultCamelContext context = (DefaultCamelContext) exchange.getContext();
+            disableStreamCaching = !context.isStreamCaching();
+        }
+        if (disableStreamCaching) {
+            return is;
+        } else {
+            CachedOutputStream cos = new CachedOutputStream(exchange);
+            IOHelper.copyAndCloseInput(is, cos);
+            return cos.newStreamCache();
+        }
     }
 
     /**
@@ -165,15 +193,8 @@ public final class HttpHelper {
             return null;
         }
         
-        boolean disableStreamCaching = false;
-        // Just take the consideration of the setting of Camel Context StreamCaching
-        if (exchange.getContext() instanceof DefaultCamelContext) { 
-            DefaultCamelContext context = (DefaultCamelContext) exchange.getContext();
-            disableStreamCaching = !context.isStreamCaching();
-        }
-        
         // convert the input stream to StreamCache if the stream cache is not disabled
-        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, disableStreamCaching, Boolean.class)) {
+        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
             return is;
         } else {
             CachedOutputStream cos = new CachedOutputStream(exchange);
