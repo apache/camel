@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  *
- * @version 
+ * @version
  */
 public class DefaultHttpBinding implements HttpBinding {
 
@@ -77,12 +77,12 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
-        
+
         // lets force a parse of the body and headers
         message.getBody();
         // populate the headers from the request
         Map<String, Object> headers = message.getHeaders();
-        
+
         //apply the headerFilterStrategy
         Enumeration<?> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
@@ -99,7 +99,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 HttpHelper.appendHeader(headers, name, extracted);
             }
         }
-                
+
         if (request.getCharacterEncoding() != null) {
             headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
             message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
@@ -110,7 +110,7 @@ public class DefaultHttpBinding implements HttpBinding {
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
-        
+
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
         if (body instanceof StreamCache) {
@@ -146,7 +146,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
             }
         }
-        
+
         populateAttachments(request, message);
     }
 
@@ -172,7 +172,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
         Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
-        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false; 
+        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false;
         if (request.getMethod().equals("POST") && request.getContentType() != null
                 && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
                 && !skipWwwFormUrlEncoding) {
@@ -199,7 +199,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
-    
+
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration<?> names = request.getAttributeNames();
@@ -236,7 +236,7 @@ public class DefaultHttpBinding implements HttpBinding {
         if (request.getHeader(Exchange.CONTENT_ENCODING) != null) {
             String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING, String.class);
             response.setHeader(Exchange.CONTENT_ENCODING, contentEncoding);
-        }        
+        }
         if (checkChunked(response, response.getExchange())) {
             response.setHeader(Exchange.TRANSFER_ENCODING, "chunked");
         }
@@ -300,7 +300,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
-    
+
     protected boolean isText(String contentType) {
         if (contentType != null) {
             String temp = contentType.toLowerCase();
@@ -310,7 +310,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
         return false;
     }
-    
+
     protected int copyStream(InputStream is, OutputStream os, int bufferSize) throws IOException {
         try {
             // copy stream, and must flush on each write as etc Jetty has better performance when
