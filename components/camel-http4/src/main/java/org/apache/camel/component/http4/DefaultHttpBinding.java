@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  *
- * @version 
+ * @version
  */
 public class DefaultHttpBinding implements HttpBinding {
 
@@ -86,7 +86,7 @@ public class DefaultHttpBinding implements HttpBinding {
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             Object value = request.getHeader(name);
-            // mapping the content-type 
+            // mapping the content-type
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
@@ -157,7 +157,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
         Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
-        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false; 
+        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false;
         if (request.getMethod().equals("POST") && request.getContentType() != null
                 && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
                 && !skipWwwFormUrlEncoding) {
@@ -283,7 +283,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
     }
-    
+
     protected boolean isText(String contentType) {
         if (contentType != null) {
             String temp = contentType.toLowerCase();
@@ -293,7 +293,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
         return false;
     }
-    
+
     protected void copyStream(InputStream is, OutputStream os) throws IOException {
         try {
             // copy directly from input stream to output stream
