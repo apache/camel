@@ -408,8 +408,8 @@ public class DefaultHttpBinding implements HttpBinding {
             // use reader to read the response body
             return request.getReader();
         } else {
-            // reade the response body from servlet request
-            return HttpHelper.readResponseBodyFromServletRequest(request, httpMessage.getExchange());
+            // read the response body from servlet request
+            return HttpHelper.readRequestBodyFromServletRequest(request, httpMessage.getExchange());
         }
     }
 
