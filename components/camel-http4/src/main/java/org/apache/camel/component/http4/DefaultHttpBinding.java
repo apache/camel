@@ -418,7 +418,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     return null;
                 }
             }
-            // reade the response body from servlet request
+            // read the response body from servlet request
             return HttpHelper.readResponseBodyFromServletRequest(request, httpMessage.getExchange());
         }
     }
