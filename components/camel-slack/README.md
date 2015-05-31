@@ -34,7 +34,7 @@ These options will
 The SlackComponent must be configured as a Spring or Blueprint bean that contains the incoming webhook url for the integration as a parameter.
 
 ```
-<bean id="slack" class="io.mikekennedy.camel.SlackComponent">
+<bean id="slack" class="org.apache.camel.component.SlackComponent">
     <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
 </bean>
 ```
@@ -45,7 +45,7 @@ The SlackComponent must be configured as a Spring or Blueprint bean that contain
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
-    <bean id="slack" class="io.mikekennedy.camel.SlackComponent">
+    <bean id="slack" class="org.apache.camel.component.SlackComponent">
         <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
     </bean>
     
