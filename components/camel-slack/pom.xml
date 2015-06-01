@@ -19,55 +19,56 @@ limitations under the License.
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>components</artifactId>
-        <groupId>org.apache.camel</groupId>
-        <version>2.16-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <artifactId>components</artifactId>
+    <groupId>org.apache.camel</groupId>
+    <version>2.16-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-slack</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: Slack</name>
-    <description>Camel Slack Support</description>
+  <artifactId>camel-slack</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: Slack</name>
+  <description>Camel Slack Support</description>
 
-    <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.slack.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=slack</camel.osgi.export.service>
-    </properties>
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.component.slack.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=slack</camel.osgi.export.service>
+  </properties>
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple-version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient4-version}</version>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
+    </dependency>
 
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-blueprint</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-blueprint</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-    </dependencies>
+  </dependencies>
 
 
 </project>

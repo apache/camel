@@ -28,15 +28,19 @@ public class SlackProducerTest extends CamelBlueprintTestSupport {
 
     @Test
     public void testSlackMessage() throws Exception {
-        getMockEndpoint(("mock:errors")).expectedMessageCount(0);
+        getMockEndpoint("mock:errors").expectedMessageCount(0);
+
         template.sendBody("direct:test", "Hello from Camel!");
+
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSlackError() throws Exception {
-        getMockEndpoint(("mock:errors")).expectedMessageCount(1);
+        getMockEndpoint("mock:errors").expectedMessageCount(1);
+
         template.sendBody("direct:error", "Error from Camel!");
+
         assertMockEndpointsSatisfied();
     }
 }
