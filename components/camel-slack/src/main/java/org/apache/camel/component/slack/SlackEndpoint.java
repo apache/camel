@@ -20,17 +20,23 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+@UriEndpoint(scheme = "slack", title = "Slack", syntax = "slack:channel", producerOnly = true, label = "social")
 public class SlackEndpoint extends DefaultEndpoint {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SlackEndpoint.class);
-
-    private String webhookUrl;
-    private String username;
+    @UriPath @Metadata(required = "true")
     private String channel;
+    @UriParam
+    private String webhookUrl;
+    @UriParam
+    private String username;
+    @UriParam
     private String iconUrl;
+    @UriParam
     private String iconEmoji;
 
     /**
@@ -46,25 +52,12 @@ public class SlackEndpoint extends DefaultEndpoint {
         this.channel = channelName;
     }
 
-    /**
-     * Creates a SlackProducer
-     *
-     * @return SlackProducer
-     * @throws Exception
-     */
     @Override
     public Producer createProducer() throws Exception {
         SlackProducer producer = new SlackProducer(this);
         return producer;
     }
 
-    /**
-     * Unsupported operation
-     *
-     * @param processor
-     * @return
-     * @throws java.lang.UnsupportedOperationException
-     */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume slack messages from this endpoint: " + getEndpointUri());
@@ -75,26 +68,46 @@ public class SlackEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    /**
+     * The incoming webhook URL
+     */
+    public void setWebhookUrl(String webhookUrl) {
+        this.webhookUrl = webhookUrl;
+    }
+
     public String getWebhookUrl() {
         return webhookUrl;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getChannel() {
         return channel;
     }
 
+    /**
+     * The channel name (syntax #name) or slackuser (syntax @userName) to send a message directly to an user.
+     */
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * This is the username that the bot will have when sending messages to a channel or user.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getIconUrl() {
         return iconUrl;
     }
 
+    /**
+     * The avatar that the component will use when sending message to a channel or user.
+     */
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
     }
@@ -103,6 +116,9 @@ public class SlackEndpoint extends DefaultEndpoint {
         return iconEmoji;
     }
 
+    /**
+     * Use a Slack emoji as an avatar
+     */
     public void setIconEmoji(String iconEmoji) {
         this.iconEmoji = iconEmoji;
     }

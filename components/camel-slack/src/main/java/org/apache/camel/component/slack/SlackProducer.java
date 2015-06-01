@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.slack;
 
-import org.apache.camel.CamelException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.impl.DefaultProducer;
@@ -25,20 +28,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.json.simple.JSONObject;
 
 public class SlackProducer extends DefaultProducer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SlackProducer.class);
-
     private SlackEndpoint slackEndpoint;
 
-    /**
-     * Constuctor
-     *
-     * @param endpoint a SlackEndpoint
-     */
     public SlackProducer(SlackEndpoint endpoint) {
         super(endpoint);
         this.slackEndpoint = endpoint;
@@ -60,16 +55,40 @@ public class SlackProducer extends DefaultProducer {
         slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
 
         // Set the post body
-        StringEntity body = new StringEntity(slackMessage.toString());
+        String json = asJson(slackMessage);
+        StringEntity body = new StringEntity(json);
 
         // Do the post
         httpPost.setEntity(body);
 
         HttpResponse response = client.execute(httpPost);
 
-        if (response.getStatusLine().getStatusCode() != 200) {
-            LOG.error("Error POSTing to Slack API: " + response.toString());
-            throw new CamelException("Error POSTing to Slack API: " + response.toString());
+        // 2xx is OK, anything else we regard as failure
+        if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+            throw new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange);
         }
     }
+
+    /**
+     * Returns a JSON string to be posted to the Slack API
+     *
+     * @return JSON string
+     */
+    public String asJson(SlackMessage message) {
+        Map<String, String> jsonMap = new HashMap<String, String>();
+
+        // Put the values in a map
+        jsonMap.put("text", message.getText());
+        jsonMap.put("channel", message.getChannel());
+        jsonMap.put("username", message.getUsername());
+        jsonMap.put("icon_url", message.getIconUrl());
+        jsonMap.put("icon_emoji", message.getIconEmoji());
+
+        // Generate a JSONObject
+        JSONObject jsonObject = new JSONObject(jsonMap);
+
+        // Return the string based on the JSON Object
+        return JSONObject.toJSONString(jsonObject);
+    }
+
 }
