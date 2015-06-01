@@ -18,13 +18,12 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.PackageHelper.after;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
@@ -83,6 +83,15 @@ public class PackageLanguageMojo extends AbstractMojo {
     private MavenProjectHelper projectHelper;
 
     /**
+     * build context to check changed files and mark them for refresh
+     * (used for m2e compatibility)
+     * 
+     * @component
+     * @readonly
+     */
+    private BuildContext buildContext;
+
+    /**
      * Execute goal.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
@@ -90,11 +99,23 @@ public class PackageLanguageMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir);
+        prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir, File schemaOutDir) throws MojoExecutionException {
+    public static void prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir,
+                                       File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
+
+        // first we need to setup the output directory because the next check
+        // can stop the build before the end and eclipse always needs to know about that directory 
+        if (projectHelper != null) {
+            projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
+        }
+
+        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
+            return;
+        }
 
         Map<String, String> javaTypes = new HashMap<String, String>();
 
@@ -122,6 +143,14 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 buffer.append(" ");
                             }
                             buffer.append(name);
+                        }
+
+                        if (!buildContext.hasDelta(file)) {
+                            // if this file has not changed,
+                            // then no need to store the javatype
+                            // for the json file to be generated again
+                            // (but we do need the name above!)
+                            continue;
                         }
 
                         // find out the javaType for each data format
@@ -164,9 +193,10 @@ public class PackageLanguageMojo extends AbstractMojo {
                             if (json != null) {
                                 LanguageModel languageModel = new LanguageModel();
                                 languageModel.setName(name);
+                                languageModel.setTitle("");
                                 languageModel.setModelName(modelName);
                                 languageModel.setLabel("");
-                                languageModel.setDescription(project.getDescription());
+                                languageModel.setDescription("");
                                 languageModel.setJavaType(javaType);
                                 languageModel.setGroupId(project.getGroupId());
                                 languageModel.setArtifactId(project.getArtifactId());
@@ -174,17 +204,17 @@ public class PackageLanguageMojo extends AbstractMojo {
 
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
+                                    if (row.containsKey("title")) {
+                                        languageModel.setTitle(row.get("title"));
+                                    }
+                                    if (row.containsKey("description")) {
+                                        languageModel.setDescription(row.get("description"));
+                                    }
                                     if (row.containsKey("label")) {
                                         languageModel.setLabel(row.get("label"));
                                     }
                                     if (row.containsKey("javaType")) {
                                         languageModel.setModelJavaType(row.get("javaType"));
-                                    }
-                                    // override description for camel-core, as otherwise its too generic
-                                    if ("camel-core".equals(project.getArtifactId())) {
-                                        if (row.containsKey("description")) {
-                                            languageModel.setLabel(row.get("description"));
-                                        }
                                     }
                                 }
                                 log.debug("Model " + languageModel);
@@ -199,9 +229,11 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 dir.mkdirs();
 
                                 File out = new File(dir, name + ".json");
-                                FileOutputStream fos = new FileOutputStream(out, false);
+                                OutputStream fos = buildContext.newFileOutputStream(out);
                                 fos.write(schema.getBytes());
                                 fos.close();
+
+                                buildContext.refresh(out);
 
                                 log.debug("Generated " + out + " containing JSon schema for " + name + " language");
                             }
@@ -228,13 +260,13 @@ public class PackageLanguageMojo extends AbstractMojo {
             camelMetaDir.mkdirs();
             File outFile = new File(camelMetaDir, "language.properties");
             try {
-                properties.store(new FileWriter(outFile), "Generated by camel-package-maven-plugin");
+                OutputStream os = buildContext.newFileOutputStream(outFile);
+                properties.store(os, "Generated by camel-package-maven-plugin");
+                os.close();
+
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
 
                 if (projectHelper != null) {
-                    List<String> includes = new ArrayList<String>();
-                    includes.add("**/language.properties");
-                    projectHelper.addResource(project, languageOutDir.getPath(), includes, new ArrayList<String>());
                     projectHelper.attachArtifact(project, "properties", "camelLanguage", outFile);
                 }
             } catch (IOException e) {
@@ -286,6 +318,9 @@ public class PackageLanguageMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("language").append("\",");
         buffer.append("\n    \"modelName\": \"").append(languageModel.getModelName()).append("\",");
+        if (languageModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(languageModel.getTitle()).append("\",");
+        }
         if (languageModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
         }
@@ -306,6 +341,7 @@ public class PackageLanguageMojo extends AbstractMojo {
 
     private static class LanguageModel {
         private String name;
+        private String title;
         private String modelName;
         private String description;
         private String label;
@@ -321,6 +357,14 @@ public class PackageLanguageMojo extends AbstractMojo {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getModelName() {
@@ -392,6 +436,7 @@ public class PackageLanguageMojo extends AbstractMojo {
             return "LanguageModel["
                     + "name='" + name + '\''
                     + ", modelName='" + modelName + '\''
+                    + ", title='" + title + '\''
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''
                     + ", javaType='" + javaType + '\''

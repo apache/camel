@@ -31,7 +31,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Controls the rate at which messages are passed to the next node in the route
@@ -109,11 +108,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     private Expression createMaxRequestsPerPeriodExpression(RouteContext routeContext) {
-        if (getExpression() != null) {
-            if (ObjectHelper.isNotEmpty(getExpression().getExpression()) || getExpression().getExpressionValue() != null) {
-                return getExpression().createExpression(routeContext);
-            } 
-        } 
+        ExpressionDefinition expr = getExpression();
+        if (expr != null) {
+            return expr.createExpression(routeContext);
+        }
         return null;
     }
     

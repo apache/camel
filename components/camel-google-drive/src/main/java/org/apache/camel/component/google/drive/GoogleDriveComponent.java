@@ -59,6 +59,18 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
         return clientFactory;
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public void setConfiguration(GoogleDriveConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
+    /**
+     * To use the GoogleCalendarClientFactory as factory for creating the client.
+     * Will by default use {@link BatchGoogleDriveClientFactory}
+     */
     public void setClientFactory(GoogleDriveClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }

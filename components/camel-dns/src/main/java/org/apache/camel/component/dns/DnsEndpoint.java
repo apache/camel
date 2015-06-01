@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "dns", syntax = "dns:dnsType", producerOnly = true, label = "networking")
+@UriEndpoint(scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, label = "networking")
 public class DnsEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -64,6 +64,9 @@ public class DnsEndpoint extends DefaultEndpoint {
         return dnsType;
     }
 
+    /**
+     * The type of the lookup.
+     */
     public void setDnsType(DnsType dnsType) {
         this.dnsType = dnsType;
     }

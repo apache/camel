@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
  * Twitter polling endpoint
  */
 @ManagedResource(description = "Managed Twitter Endpoint")
-@UriEndpoint(scheme = "twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
+@UriEndpoint(scheme = "twitter", title = "Twitter", syntax = "twitter:type", consumerClass = Twitter4JConsumer.class, label = "api,social")
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
     @UriParam
@@ -126,16 +126,6 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @ManagedAttribute
     public boolean isFilterOld() {
         return getProperties().isFilterOld();
-    }
-
-    @ManagedAttribute
-    public void setDate(String date) {
-        getProperties().setDate(date);
-    }
-
-    @ManagedAttribute
-    public String getDate() {
-        return getProperties().getDate();
     }
 
     @ManagedAttribute

@@ -72,6 +72,9 @@ public class FacebookComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared configuration
+     */
     public void setConfiguration(FacebookConfiguration configuration) {
         this.configuration = configuration;
     }

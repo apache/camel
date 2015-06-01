@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +25,47 @@ import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ExpressionAdapter;
 
 /**
  * A {@link org.apache.camel.Expression} which can be used to split a {@link MailMessage}
  * per attachment. For example if a mail message has 5 attachments, then this
- * expression will return a <tt>List&lt;Message&gt;</tt> that contains 5 {@link Message}
- * and each have a single attachment from the source {@link MailMessage}.
+ * expression will return a <tt>List&lt;Message&gt;</tt> that contains 5 {@link Message}.
+ * The message can be split 2 ways:
+ * <table>
+ *   <tr>
+ *     <td>As an attachment</td>
+ *     <td>
+ *       The message is split into cloned messages, each has only one attachment.  The mail attachment in each message
+ *       remains unprocessed.
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>As a byte[]</td>
+ *     <td>
+ *       The attachments are split into new messages as the body. This allows the split messages to be easily used by
+ *       other processors / routes, as many other camel components can work on the byte[], e.g. it can be written to disk
+ *       using camel-file.
+ *     </td>
+ *   </tr>
+ * </table>
+ *
+ * In both cases the attachment name is written to a the camel header &quot;CamelSplitAttachmentId&quot;
  */
 public class SplitAttachmentsExpression extends ExpressionAdapter {
+
+    public static final String HEADER_NAME = "CamelSplitAttachmentId";
+
+    private boolean extractAttachments;
+
+    public SplitAttachmentsExpression() {
+    }
+
+    public SplitAttachmentsExpression(boolean extractAttachments) {
+        this.extractAttachments = extractAttachments;
+    }
 
     @Override
     public Object evaluate(Exchange exchange) {
@@ -40,19 +74,68 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
             return null;
         }
 
-        // we want to provide a list of messages with 1 attachment per mail
-        List<Message> answer = new ArrayList<Message>();
+        try {
+            List<Message> answer = new ArrayList<Message>();
+            Message inMessage = exchange.getIn();
+            for (Map.Entry<String, DataHandler> entry : inMessage.getAttachments().entrySet()) {
+                Message attachmentMessage;
+                if (extractAttachments) {
+                    attachmentMessage = extractAttachment(inMessage, entry.getKey());
+                } else {
+                    attachmentMessage = splitAttachment(inMessage, entry.getKey(), entry.getValue());
+                }
 
-        for (Map.Entry<String, DataHandler> entry : exchange.getIn().getAttachments().entrySet()) {
-            final Message copy = exchange.getIn().copy();
-            final String key = entry.getKey();
-            Map<String, DataHandler> attachments = copy.getAttachments();
-            attachments.clear();
-            attachments.put(key, entry.getValue());
-            copy.setHeader("CamelSplitAttachmentId", key);
-            answer.add(copy);
+                if (attachmentMessage != null) {
+                    answer.add(attachmentMessage);
+                }
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Unable to split attachments from MimeMultipart message", e);
         }
+    }
 
-        return answer;
+    private Message splitAttachment(Message inMessage, String attachmentName, DataHandler attachmentHandler) {
+        final Message copy = inMessage.copy();
+        Map<String, DataHandler> attachments = copy.getAttachments();
+        attachments.clear();
+        attachments.put(attachmentName, attachmentHandler);
+        copy.setHeader(HEADER_NAME, attachmentName);
+        return copy;
+    }
+
+    private Message extractAttachment(Message inMessage, String attachmentName) throws Exception {
+        final Message outMessage = new DefaultMessage();
+        outMessage.setHeader(HEADER_NAME, attachmentName);
+        Object attachment = inMessage.getAttachment(attachmentName).getContent();
+        if (attachment instanceof InputStream) {
+            outMessage.setBody(readMimePart((InputStream) attachment));
+            return outMessage;
+        }
+        return null;
+    }
+
+
+    private byte[] readMimePart(InputStream mimePartStream) throws Exception {
+        //  mimePartStream could be base64 encoded, or not, but we don't need to worry about it as
+        // camel is smart enough to wrap it in a decoder stream (eg Base64DecoderStream) when required
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int len;
+        byte[] buf = new byte[1024];
+        while ((len = mimePartStream.read(buf, 0, 1024)) != -1) {
+            bos.write(buf, 0, len);
+        }
+        mimePartStream.close();
+        return bos.toByteArray();
+    }
+
+
+    public boolean isExtractAttachments() {
+        return extractAttachments;
+    }
+
+    public void setExtractAttachments(boolean extractAttachments) {
+        this.extractAttachments = extractAttachments;
     }
 }

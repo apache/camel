@@ -38,6 +38,11 @@ public class FilterTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
+    @Override
+    public boolean isDumpRouteCoverage() {
+        return true;
+    }
+
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";

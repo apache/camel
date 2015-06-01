@@ -30,35 +30,38 @@ public class JcloudsConfiguration {
     private String providerId;
 
     // compute options
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String imageId;
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String locationId;
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String hardwareId;
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String operation;
-    @UriParam
+    @UriParam(label = "producer,compute", enums = "PENDING,TERMINATED,SUSPENDED,RUNNING,ERROR,UNRECOGNIZED")
     private String nodeState;
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String nodeId;
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String group;
-    @UriParam
+    @UriParam(label = "producer,compute")
     private String user;
 
     // blob options
-    @UriParam
+    @UriParam(label = "blobstore")
     private String container;
-    @UriParam
+    @UriParam(label = "consumer,blobstore")
     private String directory;
-    @UriParam
+    @UriParam(label = "producer,blobstore")
     private String blobName;
 
     public JcloudsCommand getCommand() {
         return command;
     }
 
+    /**
+     * What command to execute such as blobstore or compute.
+     */
     public void setCommand(JcloudsCommand command) {
         this.command = command;
     }
@@ -67,6 +70,9 @@ public class JcloudsConfiguration {
         return providerId;
     }
 
+    /**
+     * The name of the cloud provider that provides the target service (e.g. aws-s3 or aws_ec2).
+     */
     public void setProviderId(String providerId) {
         this.providerId = providerId;
     }
@@ -75,6 +81,9 @@ public class JcloudsConfiguration {
         return imageId;
     }
 
+    /**
+     * The imageId that will be used for creating a node. Values depend on the actual cloud provider.
+     */
     public void setImageId(String imageId) {
         this.imageId = imageId;
     }
@@ -83,6 +92,9 @@ public class JcloudsConfiguration {
         return locationId;
     }
 
+    /**
+     * The location that will be used for creating a node. Values depend on the actual cloud provider.
+     */
     public void setLocationId(String locationId) {
         this.locationId = locationId;
     }
@@ -91,6 +103,9 @@ public class JcloudsConfiguration {
         return hardwareId;
     }
 
+    /**
+     * The hardware that will be used for creating a node. Values depend on the actual cloud provider.
+     */
     public void setHardwareId(String hardwareId) {
         this.hardwareId = hardwareId;
     }
@@ -99,6 +114,9 @@ public class JcloudsConfiguration {
         return operation;
     }
 
+    /**
+     * Specifies the type of operation that will be performed to the blobstore.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -107,6 +125,9 @@ public class JcloudsConfiguration {
         return nodeState;
     }
 
+    /**
+     * To filter by node status to only select running nodes etc.
+     */
     public void setNodeState(String nodeState) {
         this.nodeState = nodeState;
     }
@@ -115,6 +136,9 @@ public class JcloudsConfiguration {
         return nodeId;
     }
 
+    /**
+     * The id of the node that will run the script or destroyed.
+     */
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
@@ -123,6 +147,9 @@ public class JcloudsConfiguration {
         return group;
     }
 
+    /**
+     * The group that will be assigned to the newly created node. Values depend on the actual cloud provider.
+     */
     public void setGroup(String group) {
         this.group = group;
     }
@@ -131,6 +158,9 @@ public class JcloudsConfiguration {
         return user;
     }
 
+    /**
+     * The user on the target node that will run the script.
+     */
     public void setUser(String user) {
         this.user = user;
     }
@@ -139,6 +169,9 @@ public class JcloudsConfiguration {
         return container;
     }
 
+    /**
+     * The name of the blob container.
+     */
     public void setContainer(String container) {
         this.container = container;
     }
@@ -147,6 +180,9 @@ public class JcloudsConfiguration {
         return directory;
     }
 
+    /**
+     * An optional directory name to use
+     */
     public void setDirectory(String directory) {
         this.directory = directory;
     }
@@ -155,7 +191,11 @@ public class JcloudsConfiguration {
         return blobName;
     }
 
+    /**
+     * The name of the blob.
+     */
     public void setBlobName(String blobName) {
         this.blobName = blobName;
     }
+
 }

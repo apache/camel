@@ -40,7 +40,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_LAYER_SEPARA
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI;
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
-@UriEndpoint(scheme = "chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;

@@ -153,6 +153,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
 
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
+  def marshal(dataFormatRef: String) = stack.top.marshal(dataFormatRef)
   def multicast = stack.top.multicast
 
   def onCompletion = {
@@ -199,6 +200,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
 
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
+  def unmarshal(dataFormatRef: String) = stack.top.unmarshal(dataFormatRef)
 
   def validate(expression: (Exchange) => Any) = stack.top.validate(expression)
 

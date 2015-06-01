@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Boon data format
  */
-@Metadata(label = "dataformat,transformation")
+@Metadata(label = "dataformat,transformation", title = "Boon")
 @XmlRootElement(name = "boon")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BoonDataFormat extends DataFormatDefinition {

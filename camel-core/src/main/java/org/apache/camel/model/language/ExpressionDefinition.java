@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -44,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A useful base class for an expression
  */
-@Metadata(label = "language")
+@Metadata(label = "language", title = "Expression")
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -265,10 +266,22 @@ public class ExpressionDefinition implements Expression, Predicate {
         this.expressionType = expressionType;
     }
 
+    @SuppressWarnings("unchecked")
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        // allows to perform additional logic after the properties has been configured which may be needed
+        // in the various camel components outside camel-core
+        if (predicate instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) predicate).afterPropertiesConfigured(camelContext);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        // allows to perform additional logic after the properties has been configured which may be needed
+        // in the various camel components outside camel-core
+        if (expression instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) expression).afterPropertiesConfigured(camelContext);
+        }
     }
 
     /**

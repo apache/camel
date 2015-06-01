@@ -70,8 +70,6 @@ public class S3Producer extends DefaultProducer {
         } else {
             processSingleOp(exchange);
         }
-
-
     }
 
     public void processMultiPart(final Exchange exchange) throws Exception {

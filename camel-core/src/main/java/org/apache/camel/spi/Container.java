@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated use {@link CamelContextTracker} and {@link org.apache.camel.impl.CamelContextTrackerRegistry}
  */
 // [TODO] Remove in 3.0
+@Deprecated
 public interface Container {
 
     /**

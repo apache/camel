@@ -95,8 +95,8 @@ public class TimerComponent extends UriEndpointComponent {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
 
         // convert time from String to a java.util.Date using the supported patterns
-        String time = getAndRemoveParameter(parameters, "time", String.class);
-        String pattern = getAndRemoveParameter(parameters, "pattern", String.class);
+        String time = getAndRemoveOrResolveReferenceParameter(parameters, "time", String.class);
+        String pattern = getAndRemoveOrResolveReferenceParameter(parameters, "pattern", String.class);
         if (time != null) {
             SimpleDateFormat sdf;
             if (pattern != null) {

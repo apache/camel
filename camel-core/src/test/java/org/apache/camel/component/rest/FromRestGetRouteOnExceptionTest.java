@@ -25,6 +25,7 @@ public class FromRestGetRouteOnExceptionTest extends FromRestGetOnExceptionTest 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 rest("/say/hello")
                     .get().route()
                         .onException(IllegalArgumentException.class).handled(true).transform().constant("Handled the error").end()

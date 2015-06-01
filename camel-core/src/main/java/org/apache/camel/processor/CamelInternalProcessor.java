@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -521,15 +520,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice {
 
-        private final Queue<DefaultBacklogTracerEventMessage> queue;
         private final BacklogTracer backlogTracer;
         private final ProcessorDefinition<?> processorDefinition;
         private final ProcessorDefinition<?> routeDefinition;
         private final boolean first;
 
-        public BacklogTracerAdvice(Queue<DefaultBacklogTracerEventMessage> queue, BacklogTracer backlogTracer,
-                                   ProcessorDefinition<?> processorDefinition, ProcessorDefinition<?> routeDefinition, boolean first) {
-            this.queue = queue;
+        public BacklogTracerAdvice(BacklogTracer backlogTracer, ProcessorDefinition<?> processorDefinition,
+                                   ProcessorDefinition<?> routeDefinition, boolean first) {
             this.backlogTracer = backlogTracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
@@ -539,16 +536,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public Object before(Exchange exchange) throws Exception {
             if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
-                // ensure there is space on the queue
-                int drain = queue.size() - backlogTracer.getBacklogSize();
-                // and we need room for ourselves and possible also a first pseudo message as well
-                drain += first ? 2 : 1;
-                if (drain > 0) {
-                    for (int i = 0; i < drain; i++) {
-                        queue.poll();
-                    }
-                }
-
                 Date timestamp = new Date();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
@@ -560,10 +547,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
-                    queue.add(pseudo);
+                    backlogTracer.traceEvent(pseudo);
                 }
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml);
-                queue.add(event);
+                backlogTracer.traceEvent(event);
             }
 
             return null;

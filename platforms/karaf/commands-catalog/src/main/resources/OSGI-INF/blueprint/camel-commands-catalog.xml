@@ -24,18 +24,8 @@
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
-    <command name="camel-catalog/component-label-list">
-      <action class="org.apache.camel.karaf.commands.catalog.CatalogComponentLabelList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
     <command name="camel-catalog/dataformat-list">
       <action class="org.apache.camel.karaf.commands.catalog.CatalogDataFormatList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel-catalog/dataformat-label-list">
-      <action class="org.apache.camel.karaf.commands.catalog.CatalogDataFormatLabelList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
@@ -44,18 +34,8 @@
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
-    <command name="camel-catalog/language-label-list">
-      <action class="org.apache.camel.karaf.commands.catalog.CatalogLanguageLabelList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
     <command name="camel-catalog/eip-list">
       <action class="org.apache.camel.karaf.commands.catalog.CatalogEipList">
-        <property name="camelController" ref="camelController"/>
-      </action>
-    </command>
-    <command name="camel-catalog/eip-label-list">
-      <action class="org.apache.camel.karaf.commands.catalog.CatalogEipLabelList">
         <property name="camelController" ref="camelController"/>
       </action>
     </command>
@@ -64,6 +44,5 @@
   <bean id="camelController" class="org.apache.camel.karaf.commands.internal.CamelControllerImpl">
     <property name="bundleContext" ref="blueprintBundleContext"/>
   </bean>
-
 
 </blueprint>

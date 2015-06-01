@@ -141,6 +141,7 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.SOURCE_ADDR, deliverSm.getSourceAddr());
             smppMessage.setHeader(SmppConstants.SOURCE_ADDR_NPI, deliverSm.getSourceAddrNpi());
             smppMessage.setHeader(SmppConstants.SOURCE_ADDR_TON, deliverSm.getSourceAddrTon());
+            smppMessage.setHeader(SmppConstants.DATA_CODING, deliverSm.getDataCoding());
             smppMessage.setHeader(SmppConstants.DEST_ADDR, deliverSm.getDestAddress());
             smppMessage.setHeader(SmppConstants.DEST_ADDR_NPI, deliverSm.getDestAddrNpi());
             smppMessage.setHeader(SmppConstants.DEST_ADDR_TON, deliverSm.getDestAddrTon());

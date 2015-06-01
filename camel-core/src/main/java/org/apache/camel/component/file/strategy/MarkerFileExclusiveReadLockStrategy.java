@@ -76,8 +76,22 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                         GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        doReleaseExclusiveReadLock(operations, file, exchange);
+    }
+
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations,
+                                              GenericFile<File> file, Exchange exchange) throws Exception {
         if (!markerFile) {
             // if not using marker file then nothing to release
             return;

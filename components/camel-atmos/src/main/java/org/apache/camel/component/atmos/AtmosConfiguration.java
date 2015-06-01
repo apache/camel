@@ -32,38 +32,29 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class AtmosConfiguration {
 
+    private AtmosApi client;
+
     @UriPath
     private String name;
     @UriPath @Metadata(required = "true")
     private AtmosOperation operation;
-    //atmos shared secret
     @UriParam
     private String secretKey;
-    //local path to put files
     @UriParam
     private String localPath;
-    //where to put files on atmos
     @UriParam
     private String remotePath;
-    //new path on atmos when moving files
     @UriParam
     private String newRemotePath;
-    //search query on atmos
     @UriParam
     private String query;
-    //atmos client fullTokenId
     @UriParam
     private String fullTokenId;
-    //atmos server uri
     @UriParam
     private String uri;
-    //atmos ssl validation
     @UriParam
     private boolean enableSslValidation;
-    //specific atmos operation for the component
-    //reference to atmo client
-    private AtmosApi client;
-    
+
     public void setClient(AtmosApi client) {
         this.client = client;
     }
@@ -97,6 +88,9 @@ public class AtmosConfiguration {
         return name;
     }
 
+    /**
+     * Atmos name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -104,7 +98,10 @@ public class AtmosConfiguration {
     public String getSecretKey() {
         return secretKey;
     }
-    
+
+    /**
+     * Atmos shared secret
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -112,7 +109,10 @@ public class AtmosConfiguration {
     public String getLocalPath() {
         return localPath;
     }
-    
+
+    /**
+     * Local path to put files
+     */
     public void setLocalPath(String localPath) {
         this.localPath = localPath;
     }
@@ -120,7 +120,10 @@ public class AtmosConfiguration {
     public String getRemotePath() {
         return remotePath;
     }
-    
+
+    /**
+     * Where to put files on Atmos
+     */
     public void setRemotePath(String remotePath) {
         this.remotePath = remotePath;
     }
@@ -128,7 +131,10 @@ public class AtmosConfiguration {
     public String getNewRemotePath() {
         return newRemotePath;
     }
-    
+
+    /**
+     * New path on Atmos when moving files
+     */
     public void setNewRemotePath(String newRemotePath) {
         this.newRemotePath = newRemotePath;
     }
@@ -136,7 +142,10 @@ public class AtmosConfiguration {
     public String getQuery() {
         return query;
     }
-    
+
+    /**
+     * Search query on Atmos
+     */
     public void setQuery(String query) {
         this.query = query;
     }
@@ -144,7 +153,10 @@ public class AtmosConfiguration {
     public String getFullTokenId() {
         return fullTokenId;
     }
-    
+
+    /**
+     * Atmos client fullTokenId
+     */
     public void setFullTokenId(String fullTokenId) {
         this.fullTokenId = fullTokenId;
     }
@@ -152,11 +164,17 @@ public class AtmosConfiguration {
     public AtmosOperation getOperation() {
         return operation;
     }
-    
+
+    /**
+     * Operation to perform
+     */
     public void setOperation(AtmosOperation operation) {
         this.operation = operation;
     }
-    
+
+    /**
+     * Atomos server uri
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -168,7 +186,10 @@ public class AtmosConfiguration {
     public boolean isEnableSslValidation() {
         return enableSslValidation;
     }
-    
+
+    /**
+     * Atmos SSL validation
+     */
     public void setEnableSslValidation(boolean enableSslValidation) {
         this.enableSslValidation = enableSslValidation;
     }

@@ -47,8 +47,11 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
 
     public Calendar getClient() {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), 
-                configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
+            client = getClientFactory().makeClient(configuration.getClientId(), 
+                                                   configuration.getClientSecret(), configuration.getScopes(), 
+                                                   configuration.getApplicationName(), configuration.getRefreshToken(), 
+                                                   configuration.getAccessToken(), configuration.getEmailAddress(),
+                                                   configuration.getP12FileName());
         }
         return client;
     }
@@ -59,7 +62,26 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
         }
         return clientFactory;
     }
-    
+
+    @Override
+    public GoogleCalendarConfiguration getConfiguration() {
+        return super.getConfiguration();
+    }
+
+    /**
+     * To use the shared configuration
+     * @param configuration
+     */
+    @Override
+    public void setConfiguration(GoogleCalendarConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
+    /**
+     * To use the GoogleCalendarClientFactory as factory for creating the client.
+     * Will by default use {@link BatchGoogleCalendarClientFactory}
+     * @param clientFactory
+     */
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }

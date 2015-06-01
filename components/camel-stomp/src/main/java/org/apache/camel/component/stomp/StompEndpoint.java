@@ -45,10 +45,10 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
-@UriEndpoint(scheme = "stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
+@UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Name of the queue") @Metadata(required = "true")
     private String destination;
     @UriParam
     private StompConfiguration configuration;
@@ -83,6 +83,9 @@ public class StompEndpoint extends DefaultEndpoint {
         stomp.setLogin(configuration.getLogin());
         stomp.setPasscode(configuration.getPasscode());
         stomp.connectCallback(promise);
+        if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
+            stomp.setHost(configuration.getHost());
+        }
 
         connection = promise.await();
 

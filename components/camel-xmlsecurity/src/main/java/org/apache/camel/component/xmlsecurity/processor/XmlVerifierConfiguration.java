@@ -62,7 +62,7 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
     @UriParam(defaultValue = "false")
     private Boolean removeSignatureElements = Boolean.FALSE;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "true")
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {

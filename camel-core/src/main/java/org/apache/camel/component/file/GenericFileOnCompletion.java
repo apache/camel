@@ -47,7 +47,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         this.operations = operations;
         this.file = file;
         this.absoluteFileName = absoluteFileName;
-        this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
+        this.exceptionHandler = endpoint.getOnCompletionExceptionHandler();
+        if (this.exceptionHandler == null) {
+            this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
+        }
     }
 
     public void onComplete(Exchange exchange) {

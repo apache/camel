@@ -95,6 +95,10 @@ public class RawMailMessageTest extends CamelTestSupport {
         Message mailMessage = mock.getExchanges().get(0).getIn().getBody(Message.class);
         assertNotNull("mail subject should not be null", mailMessage.getSubject());
         assertEquals("mail subject should be hurz", "hurz", mailMessage.getSubject());
+
+        Map<String, Object> headers = mock.getExchanges().get(0).getIn().getHeaders();
+        assertNotNull(headers);
+        assertTrue(!headers.isEmpty());
     }
 
     @Test
@@ -120,6 +124,10 @@ public class RawMailMessageTest extends CamelTestSupport {
         MimeMessage mm = new MimeMessage(null, new ByteArrayInputStream(body.getBytes()));
         String subject = mm.getSubject();
         assertNull("mail subject should not be available", subject);
+
+        Map<String, Object> headers = mock.getExchanges().get(0).getIn().getHeaders();
+        assertNotNull(headers);
+        assertTrue(!headers.isEmpty());
     }
 
     private void prepareMailbox(String user, String type) throws Exception {

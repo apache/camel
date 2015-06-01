@@ -153,6 +153,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (endpoint.getSortBy() != null) {
             Collections.sort(exchanges, endpoint.getSortBy());
         }
+        if (endpoint.isShuffle()) {
+            Collections.shuffle(exchanges);
+        }
 
         // use a queue for the exchanges
         Deque<Exchange> q = exchanges;
@@ -174,7 +177,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         int polledMessages = processBatch(CastUtils.cast(q));
 
-        postPollCheck();
+        postPollCheck(polledMessages);
 
         return polledMessages;
     }
@@ -284,8 +287,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     /**
      * Override if required. Perform some checks (and perhaps actions) after we have polled.
+     *
+     * @param polledMessages number of polled messages
      */
-    protected void postPollCheck() {
+    protected void postPollCheck(int polledMessages) {
         // noop
     }
 

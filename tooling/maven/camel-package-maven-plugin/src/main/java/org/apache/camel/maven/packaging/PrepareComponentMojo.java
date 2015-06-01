@@ -23,6 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.PackageComponentMojo.prepareComponent;
 import static org.apache.camel.maven.packaging.PackageDataFormatMojo.prepareDataFormat;
@@ -87,6 +88,15 @@ public class PrepareComponentMojo extends AbstractMojo {
     private MavenProjectHelper projectHelper;
 
     /**
+     * build context to check changed files and mark them for refresh
+     * (used for m2e compatibility)
+     * 
+     * @component
+     * @readonly
+     */
+    private BuildContext buildContext;
+    
+    /**
      * Execute goal.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
@@ -94,9 +104,9 @@ public class PrepareComponentMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareComponent(getLog(), project, projectHelper, componentOutDir);
-        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir);
-        prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir);
+        prepareComponent(getLog(), project, projectHelper, componentOutDir, buildContext);
+        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
+        prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
     }
 
 }

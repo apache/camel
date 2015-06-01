@@ -28,6 +28,8 @@ import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ModelChannel;
+import org.apache.camel.model.OnCompletionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -155,7 +157,25 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output, errorHandler);
+        if (!isContextScoped()) {
+            // only stop services if not context scoped (as context scoped is reused by others)
+            ServiceHelper.stopServices(output, errorHandler);
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(output, errorHandler);
+    }
+
+    private boolean isContextScoped() {
+        if (definition instanceof OnExceptionDefinition) {
+            return !((OnExceptionDefinition) definition).isRouteScoped();
+        } else if (definition instanceof OnCompletionDefinition) {
+            return !((OnCompletionDefinition) definition).isRouteScoped();
+        }
+
+        return false;
     }
 
     @SuppressWarnings("deprecation")
@@ -209,7 +229,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                 first = route.getOutputs().get(0) == definition;
             }
 
-            addAdvice(new BacklogTracerAdvice(backlogTracer.getQueue(), backlogTracer, targetOutputDef, route, first));
+            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
 
             // add debugger as well so we have both tracing and debugging out of the box
             InterceptStrategy debugger = getOrCreateBacklogDebugger();
@@ -265,7 +285,13 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                 // however its not the most optimal solution, but we can still run.
                 InterceptorToAsyncProcessorBridge bridge = new InterceptorToAsyncProcessorBridge(target);
                 wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, bridge, next);
-                bridge.setTarget(wrapped);
+                // Avoid the stack overflow
+                if (!wrapped.equals(bridge)) {
+                    bridge.setTarget(wrapped);
+                } else {
+                    // Just skip the wrapped processor
+                    bridge.setTarget(null);
+                }
                 wrapped = bridge;
             }
             if (!(wrapped instanceof WrapProcessor)) {

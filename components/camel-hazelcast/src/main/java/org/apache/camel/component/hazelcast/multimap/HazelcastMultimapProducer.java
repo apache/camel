@@ -66,6 +66,10 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
             this.removevalue(oid, exchange);
             break;
 
+        case HazelcastConstants.CLEAR_OPERATION:
+            this.clear(exchange);
+            break;
+            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
         }
@@ -91,4 +95,7 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
         this.cache.remove(oid, exchange.getIn().getBody());
     }
 
+    private void clear(Exchange exchange) {
+        this.cache.clear();
+    }
 }

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.Condition;
-import com.amazonaws.services.dynamodb.model.Key;
-import com.amazonaws.services.dynamodb.model.QueryRequest;
-import com.amazonaws.services.dynamodb.model.QueryResult;
+import java.util.Map;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
 
 import org.apache.camel.Exchange;
 
@@ -35,41 +35,32 @@ public class QueryCommand extends AbstractDdbCommand {
         QueryResult result = ddbClient.query(new QueryRequest()
                 .withTableName(determineTableName())
                 .withAttributesToGet(determineAttributeNames())
-                .withCount(determineExactCount())
                 .withConsistentRead(determineConsistentRead())
                 .withExclusiveStartKey(determineStartKey())
-                .withHashKeyValue(determineHashKeyValue())
+                .withKeyConditions(determineKeyConditions())
+                .withExclusiveStartKey(determineStartKey())
                 .withLimit(determineLimit())
-                .withRangeKeyCondition(determineRangeKeyCondition())
                 .withScanIndexForward(determineScanIndexForward()));
 
         addToResult(DdbConstants.ITEMS, result.getItems());
         addToResult(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
-        addToResult(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacityUnits());
+        addToResult(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacity());
         addToResult(DdbConstants.COUNT, result.getCount());
     }
 
-    private Key determineStartKey() {
-        return exchange.getIn().getHeader(DdbConstants.START_KEY, Key.class);
+    private  Map<String, AttributeValue> determineStartKey() {
+        return exchange.getIn().getHeader(DdbConstants.START_KEY, Map.class);
     }
 
     private Boolean determineScanIndexForward() {
         return exchange.getIn().getHeader(DdbConstants.SCAN_INDEX_FORWARD, Boolean.class);
     }
 
-    private Condition determineRangeKeyCondition() {
-        return exchange.getIn().getHeader(DdbConstants.SCAN_RANGE_KEY_CONDITION, Condition.class);
+    private Map determineKeyConditions() {
+        return exchange.getIn().getHeader(DdbConstants.KEY_CONDITIONS, Map.class);
     }
 
     private Integer determineLimit() {
         return exchange.getIn().getHeader(DdbConstants.LIMIT, Integer.class);
-    }
-
-    private AttributeValue determineHashKeyValue() {
-        return exchange.getIn().getHeader(DdbConstants.HASH_KEY_VALUE, AttributeValue.class);
-    }
-
-    private Boolean determineExactCount() {
-        return exchange.getIn().getHeader(DdbConstants.EXACT_COUNT, Boolean.class);
     }
 }

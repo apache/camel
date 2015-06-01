@@ -145,6 +145,42 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("direct://foo", e11.getEndpoint().getEndpointUri());
     }
 
+    public void testExchangeWireTap() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:tap", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // give it time to complete
+        Thread.sleep(200);
+
+        assertEquals(6, events.size());
+
+        // we should find log:foo which we tapped
+        // which runs async so they can be in random order
+        boolean found = false;
+        boolean found2 = false;
+        for (EventObject event : events) {
+            if (event instanceof ExchangeSendingEvent) {
+                ExchangeSendingEvent sending = (ExchangeSendingEvent) event;
+                String uri = sending.getEndpoint().getEndpointUri();
+                if ("log://foo".equals(uri))  {
+                    found = true;
+                }
+            } else if (event instanceof ExchangeSentEvent) {
+                ExchangeSentEvent sent = (ExchangeSentEvent) event;
+                String uri = sent.getEndpoint().getEndpointUri();
+                if ("log://foo".equals(uri))  {
+                    found2 = true;
+                }
+            }
+        }
+
+        assertTrue("We should find log:foo being wire tapped", found);
+        assertTrue("We should find log:foo being wire tapped", found2);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -157,6 +193,8 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
                 from("direct:foo").recipientList().header("foo");
 
                 from("direct:cool").delay(1000);
+
+                from("direct:tap").wireTap("log:foo").to("mock:result");
             }
         };
     }

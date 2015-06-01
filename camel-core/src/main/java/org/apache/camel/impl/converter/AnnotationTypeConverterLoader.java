@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * Likewise the procedure for scanning using {@link PackageScanClassResolver} may require custom implementations
  * to work in various containers such as JBoss, OSGi, etc.
  *
- * @version 
+ * @version
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
@@ -163,7 +163,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         // try to load it as a class first
         for (String name : packageNames) {
             // must be a FQN class name by having an upper case letter
-            if (StringHelper.hasUpperCase(name)) {
+            if (StringHelper.isClassName(name)) {
                 Class<?> clazz = null;
                 for (ClassLoader loader : resolver.getClassLoaders()) {
                     try {

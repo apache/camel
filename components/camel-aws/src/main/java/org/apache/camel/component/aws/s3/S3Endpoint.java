@@ -42,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS S3 Endpoint</a>.  
+ * Defines the <a href="http://camel.apache.org/aws.html">AWS S3 Endpoint</a>.
  */
-@UriEndpoint(scheme = "aws-s3", syntax = "aws-s3:bucketName", consumerClass = S3Consumer.class, label = "cloud,file")
+@UriEndpoint(scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketName", consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -53,7 +53,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private S3Configuration configuration;
-    @UriParam(defaultValue = "10")
+    @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
 
     @Deprecated
@@ -61,6 +61,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         super(uri, context);
         this.configuration = configuration;
     }
+
     public S3Endpoint(String uri, Component comp, S3Configuration configuration) {
         super(uri, comp);
         this.configuration = configuration;
@@ -86,12 +87,12 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         super.doStart();
 
         s3Client = configuration.getAmazonS3Client() != null
-            ? configuration.getAmazonS3Client() : createS3Client();
-        
+                ? configuration.getAmazonS3Client() : createS3Client();
+
         if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Endpoint())) {
             s3Client.setEndpoint(configuration.getAmazonS3Endpoint());
         }
-        
+
         String fileName = getConfiguration().getFileName();
 
         if (fileName != null) {
@@ -101,7 +102,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Querying whether bucket [{}] already exists...", bucketName);
-        
+
         try {
             s3Client.listObjects(new ListObjectsRequest(bucketName, null, null, null, 0));
             LOG.trace("Bucket [{}] already exists", bucketName);
@@ -112,26 +113,26 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 throw ase;
             }
         }
-        
+
         LOG.trace("Bucket [{}] doesn't exist yet", bucketName);
-        
+
         // creates the new bucket because it doesn't exist yet
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(getConfiguration().getBucketName());
         if (getConfiguration().getRegion() != null) {
             createBucketRequest.setRegion(getConfiguration().getRegion());
         }
-        
+
         LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", new Object[]{configuration.getBucketName(), configuration.getRegion(), createBucketRequest});
-        
+
         s3Client.createBucket(createBucketRequest);
-        
+
         LOG.trace("Bucket created");
-        
+
         if (configuration.getPolicy() != null) {
             LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());
-            
+
             s3Client.setBucketPolicy(bucketName, configuration.getPolicy());
-            
+
             LOG.trace("Bucket policy updated");
         }
     }
@@ -142,11 +143,11 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
     public Exchange createExchange(ExchangePattern pattern, S3Object s3Object) {
         LOG.trace("Getting object with key [{}] from bucket [{}]...", s3Object.getKey(), s3Object.getBucketName());
-        
+
         ObjectMetadata objectMetadata = s3Object.getObjectMetadata();
-        
+
         LOG.trace("Got object [{}]", s3Object);
-        
+
         Exchange exchange = new DefaultExchange(this, pattern);
         Message message = exchange.getIn();
         message.setBody(s3Object.getObjectContent());
@@ -173,19 +174,17 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     public void setConfiguration(S3Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
     public void setS3Client(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
-    
+
     public AmazonS3 getS3Client() {
         return s3Client;
     }
 
     /**
      * Provide the possibility to override this method for an mock implementation
-     *
-     * @return AmazonS3Client
      */
     AmazonS3 createS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
@@ -197,6 +196,11 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }

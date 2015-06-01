@@ -92,6 +92,7 @@ public class SedaComponent extends UriEndpointComponent {
     /**
      * @deprecated use {@link #getOrCreateQueue(SedaEndpoint, Integer, Boolean, BlockingQueueFactory)}
      */
+    @Deprecated
     public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size, Boolean multipleConsumers) {
         return getOrCreateQueue(endpoint, size, multipleConsumers, null);
     }

@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Secure FTP endpoint
  */
-@UriEndpoint(scheme = "sftp", syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file")
+@UriEndpoint(scheme = "sftp", title = "SFTP", syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file")
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     @UriParam

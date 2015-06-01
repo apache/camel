@@ -88,7 +88,7 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").process(new Processor() {
+                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").streamCaching().process(new Processor() {
 
                     @Override
                     public void process(Exchange exchange) throws Exception {

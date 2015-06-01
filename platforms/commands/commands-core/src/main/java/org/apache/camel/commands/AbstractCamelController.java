@@ -95,6 +95,7 @@ public abstract class AbstractCamelController implements CamelController {
             String json = catalog.componentJSonSchema(name);
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
 
+            String title = null;
             String description = null;
             String label = null;
             // the status can be:
@@ -107,7 +108,9 @@ public abstract class AbstractCamelController implements CamelController {
             String artifactId = null;
             String version = null;
             for (Map<String, String> row : rows) {
-                if (row.containsKey("description")) {
+                if (row.containsKey("title")) {
+                    title = row.get("title");
+                } else if (row.containsKey("description")) {
                     description = row.get("description");
                 } else if (row.containsKey("label")) {
                     label = row.get("label");
@@ -125,6 +128,9 @@ public abstract class AbstractCamelController implements CamelController {
             Map<String, String> row = new HashMap<String, String>();
             row.put("name", name);
             row.put("status", status);
+            if (title != null) {
+                row.put("title", title);
+            }
             if (description != null) {
                 row.put("description", description);
             }
@@ -164,6 +170,7 @@ public abstract class AbstractCamelController implements CamelController {
             String json = catalog.dataFormatJSonSchema(name);
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("dataformat", json, false);
 
+            String title = null;
             String description = null;
             String label = null;
             String modelName = name;
@@ -180,6 +187,8 @@ public abstract class AbstractCamelController implements CamelController {
             for (Map<String, String> row : rows) {
                 if (row.containsKey("modelName")) {
                     modelName = row.get("modelName");
+                } else if (row.containsKey("title")) {
+                    title = row.get("title");
                 } else if (row.containsKey("description")) {
                     description = row.get("description");
                 } else if (row.containsKey("label")) {
@@ -201,6 +210,9 @@ public abstract class AbstractCamelController implements CamelController {
             row.put("name", name);
             row.put("modelName", modelName);
             row.put("status", status);
+            if (title != null) {
+                row.put("title", title);
+            }
             if (description != null) {
                 row.put("description", description);
             }
@@ -243,6 +255,7 @@ public abstract class AbstractCamelController implements CamelController {
             String json = catalog.languageJSonSchema(name);
             List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("language", json, false);
 
+            String title = null;
             String description = null;
             String label = null;
             String modelName = name;
@@ -259,6 +272,8 @@ public abstract class AbstractCamelController implements CamelController {
             for (Map<String, String> row : rows) {
                 if (row.containsKey("modelName")) {
                     modelName = row.get("modelName");
+                } else if (row.containsKey("title")) {
+                    title = row.get("title");
                 } else if (row.containsKey("description")) {
                     description = row.get("description");
                 } else if (row.containsKey("label")) {
@@ -280,6 +295,9 @@ public abstract class AbstractCamelController implements CamelController {
             row.put("name", name);
             row.put("modelName", modelName);
             row.put("status", status);
+            if (title != null) {
+                row.put("title", title);
+            }
             if (description != null) {
                 row.put("description", description);
             }

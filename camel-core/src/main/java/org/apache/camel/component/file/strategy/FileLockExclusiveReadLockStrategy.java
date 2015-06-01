@@ -123,7 +123,7 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 IOHelper.close(randomAccessFile, "while acquiring exclusive read lock for file: " + target, LOG);
 
                 // and also must release super lock
-                super.releaseExclusiveReadLock(operations, file, exchange);
+                super.releaseExclusiveReadLockOnAbort(operations, file, exchange);
             }
         }
 
@@ -135,11 +135,10 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                         GenericFile<File> file, Exchange exchange) throws Exception {
-
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations,
+                                              GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
-        super.releaseExclusiveReadLock(operations, file, exchange);
+        super.doReleaseExclusiveReadLock(operations, file, exchange);
 
         String target = file.getFileName();
         FileLock lock = exchange.getProperty(Exchange.FILE_LOCK_EXCLUSIVE_LOCK, FileLock.class);

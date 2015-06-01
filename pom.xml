@@ -51,11 +51,13 @@
 
     <!-- use maven compiler 2.5.1 as 3.0/3.1 recompiles everything even if nothingh has changed, or only 1 file,
          so 2.5.1 is much faster to use for development -->
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+    <!-- change the maven comipler plugin version to 3.1 to enable google error prone source code detector -->
+    <maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
     <jaxb-version>2.2.11</jaxb-version>
+    <errorprone-version>2.5</errorprone-version>
   </properties>
 
   <mailingLists>

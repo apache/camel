@@ -63,11 +63,7 @@ public abstract class AbstractSdbCommand {
     }
     
     protected Boolean determineConsistentRead() {
-        Boolean consistentRead = exchange.getIn().getHeader(SdbConstants.CONSISTENT_READ, Boolean.class);
-        if (consistentRead == null) {
-            consistentRead = this.configuration.getConsistentRead();
-        }
-        return consistentRead;
+        return exchange.getIn().getHeader(SdbConstants.CONSISTENT_READ, this.configuration.isConsistentRead(), Boolean.class);
     }
     
     protected UpdateCondition determineUpdateCondition() {

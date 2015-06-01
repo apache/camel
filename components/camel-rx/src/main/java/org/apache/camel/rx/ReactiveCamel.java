@@ -23,7 +23,6 @@ import org.apache.camel.Message;
 import org.apache.camel.rx.support.EndpointObservable;
 import org.apache.camel.rx.support.EndpointSubscribeFunc;
 import org.apache.camel.rx.support.ExchangeToBodyFunc1;
-import org.apache.camel.rx.support.ExchangeToMessageFunc1;
 import org.apache.camel.rx.support.ObserverSender;
 import org.apache.camel.util.CamelContextHelper;
 import rx.Observable;
@@ -62,7 +61,7 @@ public class ReactiveCamel {
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
      */
     public Observable<Message> toObservable(Endpoint endpoint) {
-        return createEndpointObservable(endpoint, ExchangeToMessageFunc1.getInstance());
+        return toObservable(endpoint, Message.class);
     }
 
     /**
@@ -92,6 +91,34 @@ public class ReactiveCamel {
         }
     }
 
+    /**
+     * Convenience method for beginning the route
+     */
+    public Observable<Exchange> from(Endpoint endpoint) {
+        return createEndpointObservable(endpoint);
+    }
+
+    /**
+     * Convenience method for beginning the route
+     */
+    public Observable<Exchange> from(String uri) {
+        return from(endpoint(uri));
+    }
+
+    /**
+     * Convenience method for creating CamelOperator instances
+     */
+    public CamelOperator to(String uri) throws Exception {
+        return new CamelOperator(camelContext, uri);
+    }
+
+    /**
+     * Convenience method for creating CamelOperator instances
+     */
+    public CamelOperator to(Endpoint endpoint) throws Exception {
+        return new CamelOperator(endpoint);
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -110,4 +137,15 @@ public class ReactiveCamel {
         return new EndpointObservable<T>(endpoint, func);
     }
 
+    /**
+     * Return a newly created {@link Observable} without conversion
+     */
+    protected Observable<Exchange> createEndpointObservable(final Endpoint endpoint) {
+        return new EndpointObservable<Exchange>(endpoint, new EndpointSubscribeFunc<Exchange>(endpoint, new Func1<Exchange, Exchange>() {
+            @Override
+            public Exchange call(Exchange exchange) {
+                return exchange;
+            }
+        }));
+    }
 }

@@ -93,7 +93,7 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        return new MailMessage();
+        return new MailMessage(null, this.mapMailMessage);
     }
 
     @Override
@@ -134,7 +134,15 @@ public class MailMessage extends DefaultMessage {
     }
 
     public void copyFrom(org.apache.camel.Message that) {
-        super.copyFrom(that);
+        // only do a deep copy if we need to (yes when that is not a mail message, or if the mapMailMessage is true)
+        boolean needCopy = !(that instanceof MailMessage) || (((MailMessage) that).mapMailMessage);
+        if (needCopy) {
+            super.copyFrom(that);
+        } else {
+            // no deep copy needed, but copy message id
+            setMessageId(that.getMessageId());
+            setFault(that.isFault());
+        }
         if (that instanceof MailMessage) {
             MailMessage mailMessage = (MailMessage) that;
             this.originalMailMessage = mailMessage.originalMailMessage;

@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1706,6 +1707,13 @@ public final class ObjectHelper {
         if (exception == null) {
             return null;
         }
+        
+        //check the suppressed exception first
+        for (Throwable throwable : exception.getSuppressed()) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
+            }
+        }
 
         // walk the hierarchy and look for it
         for (final Throwable throwable : createExceptionIterable(exception)) {
@@ -1815,4 +1823,41 @@ public final class ObjectHelper {
         // value must be a number
         return value.equals(Float.NaN) || value.equals(Double.NaN);
     }
+    
+    /**
+     * Calling the Callable with the setting of TCCL with the camel context application classloader.
+     * 
+     * @param call the Callable instance
+     * @param exchange the exchange 
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, Exchange exchange) throws Exception {
+        ClassLoader apcl = null;
+        if (exchange != null && exchange.getContext() != null) {
+            apcl = exchange.getContext().getApplicationContextClassLoader();
+        }
+        return callWithTCCL(call, apcl);
+    }
+    
+    /**
+     * Calling the Callable with the setting of TCCL with a given classloader.
+     *
+     * @param call        the Callable instance
+     * @param classloader the class loader
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (classloader != null) {
+                Thread.currentThread().setContextClassLoader(classloader);
+            }
+            return call.call();
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
+        }
+    }
+    
 }

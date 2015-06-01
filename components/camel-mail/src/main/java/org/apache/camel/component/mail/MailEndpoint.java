@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Endpoint for Camel Mail.
  */
-@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
+@UriEndpoint(scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS", syntax = "imap:host:port", consumerClass = MailConsumer.class, label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private MailConfiguration configuration;
@@ -158,6 +158,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
+    /**
+     * Sets the Mail configuration
+     */
     public void setConfiguration(MailConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -166,6 +169,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter headers.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -174,6 +180,9 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return contentTypeResolver;
     }
 
+    /**
+     * Resolver to determine Content-Type for file attachments.
+     */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
     }
@@ -182,6 +191,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return maxMessagesPerPoll;
     }
 
+    /**
+     * Specifies the maximum number of messages to gather per poll. By default, no maximum is set.
+     * Can be used to set a limit of e.g. 1000 to avoid downloading thousands of files when the server starts up.
+     * Set a value of 0 or negative to disable this option.
+     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
@@ -190,36 +204,31 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return searchTerm;
     }
 
+    /**
+     * Refers to a {@link javax.mail.search.SearchTerm} which allows to filter mails based on search criteria such as subject, body, from, sent after a certain date etc.
+     */
     public void setSearchTerm(SearchTerm searchTerm) {
         this.searchTerm = searchTerm;
     }
 
-    /**
-     * @return Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
-     * or when IMAP server does not have the SORT capability.
-     * @see com.sun.mail.imap.SortTerm
-     */
     public SortTerm[] getSortTerm() {
         return sortTerm == null ? null : sortTerm.clone();
     }
 
     /**
-     * @param sortTerm {@link #getSortTerm()}
+     * Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
+     * or when IMAP server does not have the SORT capability.
      */
     public void setSortTerm(SortTerm[] sortTerm) {
         this.sortTerm = sortTerm == null ? null : sortTerm.clone();
     }
 
-    /**
-     * @return Post processor that can e.g. delete old email. Gets called once the messages have been polled and
-     * processed.
-     */
     public MailBoxPostProcessAction getPostProcessAction() {
         return postProcessAction;
     }
 
     /**
-     * @param postProcessAction {@link #getPostProcessAction()}
+     * Refers to an {@link MailBoxPostProcessAction} for doing post processing tasks on the mailbox once the normal processing ended.
      */
     public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
         this.postProcessAction = postProcessAction;

@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -35,15 +36,15 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A JCR endpoint
  */
-@UriEndpoint(scheme = "jcr", syntax = "jcr:host/base", consumerClass = JcrConsumer.class, label = "cms,database")
+@UriEndpoint(scheme = "jcr", title = "JCR", syntax = "jcr:host/base", consumerClass = JcrConsumer.class, label = "cms,database")
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
     private Repository repository;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String host;
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private String base;
     @UriParam
     private String username;
@@ -51,7 +52,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private int eventTypes;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean deep;
     @UriParam
     private String uuids;
@@ -154,6 +155,9 @@ public class JcrEndpoint extends DefaultEndpoint {
         return username;
     }
 
+    /**
+     * Username for login
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -162,6 +166,9 @@ public class JcrEndpoint extends DefaultEndpoint {
         return password;
     }
 
+    /**
+     * Password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }

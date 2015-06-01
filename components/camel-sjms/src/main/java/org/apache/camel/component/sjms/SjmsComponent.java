@@ -180,19 +180,13 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     }
 
     /**
-     * Sets the ConnectionFactory value of connectionFactory for this instance
-     * of SjmsComponent.
+     * A ConnectionFactory is required to enable the SjmsComponent.
+     * It can be set directly or set set as part of a ConnectionResource.
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
-    /**
-     * Gets the ConnectionFactory value of connectionFactory for this instance
-     * of SjmsComponent.
-     *
-     * @return the connectionFactory
-     */
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
     }
@@ -202,11 +196,18 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         return this.headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    /**
+     * A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory.
+     * See Plugable Connection Resource Management for further details.
+     */
     public void setConnectionResource(ConnectionResource connectionResource) {
         this.connectionResource = connectionResource;
     }
@@ -215,6 +216,9 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         return connectionResource;
     }
 
+    /**
+     * The maximum number of connections available to endpoints started under this component
+     */
     public void setConnectionCount(Integer maxConnections) {
         this.connectionCount = maxConnections;
     }
@@ -223,6 +227,14 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         return connectionCount;
     }
 
+    /**
+     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification.
+     * Camel provides one implementation out of the box: default.
+     * The default strategy will safely marshal dots and hyphens (. and -).
+     * Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters.
+     * You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
+     * and refer to it using the # notation.
+     */
     public void setKeyFormatStrategy(KeyFormatStrategy keyFormatStrategy) {
         this.keyFormatStrategy = keyFormatStrategy;
     }
@@ -231,19 +243,13 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         return keyFormatStrategy;
     }
 
-    /**
-     * Gets the TransactionCommitStrategy value of transactionCommitStrategy for this
-     * instance of SjmsComponent.
-     *
-     * @return the transactionCommitStrategy
-     */
     public TransactionCommitStrategy getTransactionCommitStrategy() {
         return transactionCommitStrategy;
     }
 
     /**
-     * Sets the TransactionCommitStrategy value of transactionCommitStrategy for this
-     * instance of SjmsComponent.
+     * To configure which kind of commit strategy to use. Camel provides two implementations out
+     * of the box, default and batch.
      */
     public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
         this.transactionCommitStrategy = commitStrategy;
@@ -253,6 +259,9 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         return destinationCreationStrategy;
     }
 
+    /**
+     * To use a custom DestinationCreationStrategy.
+     */
     public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
     }
@@ -261,6 +270,9 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         return timedTaskManager;
     }
 
+    /**
+     * To use a custom TimedTaskManager
+     */
     public void setTimedTaskManager(TimedTaskManager timedTaskManager) {
         this.timedTaskManager = timedTaskManager;
     }

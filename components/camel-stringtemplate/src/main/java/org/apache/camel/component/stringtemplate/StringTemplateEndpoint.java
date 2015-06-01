@@ -34,12 +34,12 @@ import org.stringtemplate.v4.STGroup;
 /**
  * @version
  */
-@UriEndpoint(scheme = "stringtemplate", syntax = "stringtemplate:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(scheme = "stringtemplate", title = "String Template", syntax = "stringtemplate:resourceUri", producerOnly = true, label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
-    @UriParam
+    @UriParam(defaultValue = "<")
     private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
-    @UriParam
+    @UriParam(defaultValue = ">")
     private char delimiterStop = STGroup.defaultGroup.delimiterStopChar;
 
     public StringTemplateEndpoint() {
@@ -63,6 +63,9 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         return delimiterStart;
     }
 
+    /**
+     * The variable start delimiter
+     */
     public void setDelimiterStart(char delimiterStart) {
         this.delimiterStart = delimiterStart;
     }
@@ -71,6 +74,9 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         return delimiterStop;
     }
 
+    /**
+     * The variable end delimiter
+     */
     public void setDelimiterStop(char delimiterStop) {
         this.delimiterStop = delimiterStop;
     }

@@ -28,6 +28,7 @@
         <!-- we define the json xstream data formats to be used (xstream is default) -->
         <dataFormats>
             <json id="json"/>
+            <json id="pretty" prettyPrint="true"/>
         </dataFormats>
 
         <route>
@@ -44,6 +45,17 @@
         <route>
             <from uri="direct:reverse"/>
             <unmarshal ref="json"/>
+            <to uri="mock:reverse"/>
+        </route>
+
+        <route>
+            <from uri="direct:inPretty"/>
+            <marshal ref="pretty"/>
+        </route>
+
+        <route>
+            <from uri="direct:backPretty"/>
+            <unmarshal ref="pretty"/>
             <to uri="mock:reverse"/>
         </route>
 

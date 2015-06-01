@@ -24,6 +24,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -98,9 +99,17 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
                     new Object[]{handled, e.getClass().getName(), e.getMessage()});
         }
 
+        if (handled) {
+            // emit event that the failure is being handled
+            EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, false, null);
+        }
+
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                if (!handled) {
+                if (handled) {
+                    // emit event that the failure was handled
+                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
+                } else {
                     if (exchange.getException() == null) {
                         exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                     }

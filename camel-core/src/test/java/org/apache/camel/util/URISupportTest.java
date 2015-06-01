@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -254,7 +255,8 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some+chat", out);
 
         String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some+chat", out2);
+        // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat", out2);
     }
 
     public void testParseQuery() throws Exception {
@@ -271,6 +273,25 @@ public class URISupportTest extends ContextTestSupport {
         map = URISupport.parseQuery("password=RAW(++?)w&rd)&serviceName=somechat");
         assertEquals(2, map.size());
         assertEquals("RAW(++?)w&rd)", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+        
+        map = URISupport.parseQuery("password=RAW(%2520w&rd)&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW(%2520w&rd)", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+    }
+
+    public void testParseQueryLenient() throws Exception {
+        try {
+            URISupport.parseQuery("password=secret&serviceName=somechat&", false, false);
+            fail("Should have thrown exception");
+        } catch (URISyntaxException e) {
+            // expected
+        }
+
+        Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat&", false, true);
+        assertEquals(2, map.size());
+        assertEquals("secret", map.get("password"));
         assertEquals("somechat", map.get("serviceName"));
     }
 

@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
+@UriEndpoint(scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -36,6 +36,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected String cacheName;
     @UriParam
     protected HazelcastInstance hazelcastInstance;
+    @UriParam
+    protected String hazelcastInstanceName;
     @UriParam
     private int defaultOperation = -1;
 
@@ -61,18 +63,50 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         return command;
     }
 
+    /**
+     * What operation to perform.
+     */
     public void setCommand(HazelcastCommand command) {
         this.command = command;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    /**
+     * The name of the cache
+     */
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
     }
 
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
 
+    /**
+     * The hazelcast instance reference which can be used for hazelcast endpoint.
+     */
     public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
     }
 
+    public String getHazelcastInstanceName() {
+        return hazelcastInstanceName;
+    }
+
+    /**
+     * The hazelcast instance reference name which can be used for hazelcast endpoint.
+     * If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance.
+     */
+    public void setHazelcastInstanceName(String hazelcastInstanceName) {
+        this.hazelcastInstanceName = hazelcastInstanceName;
+    }
+
+    /**
+     * To specify a default operation to use, if no operation header has been provided.
+     */
     public void setDefaultOperation(int defaultOperation) {
         this.defaultOperation = defaultOperation;
     }

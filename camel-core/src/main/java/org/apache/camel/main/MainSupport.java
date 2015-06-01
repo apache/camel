@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class MainSupport extends ServiceSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
+    protected final List<MainListener> listeners = new ArrayList<MainListener>();
     protected final List<Option> options = new ArrayList<Option>();
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected final AtomicBoolean completed = new AtomicBoolean(false);
@@ -119,6 +120,7 @@ public abstract class MainSupport extends ServiceSupport {
     public void run() throws Exception {
         if (!completed.get()) {
             // if we have an issue starting then propagate the exception to caller
+            beforeStart();
             start();
             try {
                 afterStart();
@@ -126,6 +128,7 @@ public abstract class MainSupport extends ServiceSupport {
                 internalBeforeStop();
                 beforeStop();
                 stop();
+                afterStop();
             } catch (Exception e) {
                 // however while running then just log errors
                 LOG.error("Failed: " + e, e);
@@ -143,17 +146,65 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
+     * Adds a {@link org.apache.camel.main.MainListener} to receive callbacks when the main is started or stopping
+     *
+     * @param listener the listener
+     */
+    public void addMainListener(MainListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes the {@link org.apache.camel.main.MainListener}
+     *
+     * @param listener the listener
+     */
+    public void removeMainListener(MainListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Callback to run custom logic before CamelContext is being started.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
+     */
+    protected void beforeStart() throws Exception {
+        for (MainListener listener : listeners) {
+            listener.beforeStart(this);
+        }
+    }
+
+    /**
      * Callback to run custom logic after CamelContext has been started.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void afterStart() throws Exception {
-        // noop
+        for (MainListener listener : listeners) {
+            listener.afterStart(this);
+        }
     }
 
     /**
      * Callback to run custom logic before CamelContext is being stopped.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
      */
     protected void beforeStop() throws Exception {
-        // noop
+        for (MainListener listener : listeners) {
+            listener.beforeStop(this);
+        }
+    }
+
+    /**
+     * Callback to run custom logic after CamelContext has been stopped.
+     * <p/>
+     * It is recommended to use {@link org.apache.camel.main.MainListener} instead.
+     */
+    protected void afterStop() throws Exception {
+        for (MainListener listener : listeners) {
+            listener.afterStop(this);
+        }
     }
 
     private void internalBeforeStop() {

@@ -108,6 +108,7 @@
     <module>camel-google-drive</module>
     <module>camel-google-mail</module>
     <module>camel-gora</module>
+    <module>camel-grape</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
@@ -171,6 +172,7 @@
     <module>camel-optaplanner</module>
     <module>camel-paho</module>
     <module>camel-paxlogging</module>
+    <module>camel-pdf</module>
     <module>camel-pgevent</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
@@ -197,6 +199,7 @@
     <module>camel-smpp</module>
     <module>camel-snmp</module>
     <module>camel-sjms</module>
+    <module>camel-slack</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
     <module>camel-spark-rest</module>
@@ -238,35 +241,6 @@
 
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- Eclipse m2e Lifecycle Management -->
-        <plugin>
-         <groupId>org.eclipse.m2e</groupId>
-         <artifactId>lifecycle-mapping</artifactId>
-         <version>${lifecycle-mapping-version}</version>
-         <configuration>
-           <lifecycleMappingMetadata>
-             <pluginExecutions>
-               <pluginExecution>
-                 <pluginExecutionFilter>
-                   <groupId>org.apache.camel</groupId>
-                   <artifactId>camel-package-maven-plugin</artifactId>
-                   <versionRange>${project.version}</versionRange>
-                   <goals>
-                     <goal>prepare-components</goal>
-                   </goals>
-                 </pluginExecutionFilter>
-                 <action>
-                   <ignore />
-                 </action>
-               </pluginExecution>
-             </pluginExecutions>
-           </lifecycleMappingMetadata>
-         </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.camel</groupId>

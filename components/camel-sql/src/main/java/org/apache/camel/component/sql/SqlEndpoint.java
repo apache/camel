@@ -45,7 +45,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
  */
-@UriEndpoint(scheme = "sql", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
+@UriEndpoint(scheme = "sql", title = "SQL", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
 
@@ -346,10 +346,11 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         return "sql:" + UnsafeUriCharactersEncoder.encode(query);
     }
 
+    @SuppressWarnings("unchecked")
     protected List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
-            Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = new BeanPropertyRowMapper(outputClzz);
+            Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
+            RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
             RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
             List<?> data = mapper.extractData(rs);
             return data;

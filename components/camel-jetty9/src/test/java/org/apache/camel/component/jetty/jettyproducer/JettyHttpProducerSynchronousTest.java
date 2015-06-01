@@ -29,15 +29,11 @@ public class JettyHttpProducerSynchronousTest extends BaseJettyTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/sync?synchronous=true";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/sync?synchronous=true";
 
     @Test
     public void testSynchronous() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+        
         // give Jetty time to startup properly
         Thread.sleep(1000);
 

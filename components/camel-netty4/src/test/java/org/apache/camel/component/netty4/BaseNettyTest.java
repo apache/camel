@@ -92,4 +92,22 @@ public class BaseNettyTest extends CamelTestSupport {
         return port;
     }
 
+    protected String byteArrayToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b & 0xff));
+        }
+        return sb.toString();
+    }
+
+    protected byte[] fromHexString(String hexstr) {
+        byte data[] = new byte[hexstr.length() / 2];
+        int i = 0;
+        for (int n = hexstr.length(); i < n; i += 2) {
+            data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
+                    + hexstr.charAt(i + 1))).byteValue();
+        }
+        return data;
+    }
+
 }

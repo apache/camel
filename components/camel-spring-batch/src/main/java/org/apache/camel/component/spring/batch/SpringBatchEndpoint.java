@@ -31,7 +31,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 
-@UriEndpoint(scheme = "spring-batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
+@UriEndpoint(scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -43,15 +43,11 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
      */
     @Deprecated
     private String jobLauncherRef;
-
     @UriParam
     private JobLauncher jobLauncher;
 
-    @UriParam
     private JobLauncher defaultResolvedJobLauncher;
-
     private Map<String, JobLauncher> allResolvedJobLaunchers;
-
     private Job job;
 
     public SpringBatchEndpoint(String endpointUri, Component component,
@@ -111,10 +107,37 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         throw new IllegalStateException("Cannot find Spring Batch JobLauncher.");
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
+    /**
+     * The name of the Spring Batch job located in the registry.
+     */
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    @Deprecated
+    public String getJobLauncherRef() {
+        return jobLauncherRef;
+    }
+
+    /**
+     * Explicitly specifies a JobLauncher to be used looked up from the registry.
+     */
+    @Deprecated
     public void setJobLauncherRef(String jobLauncherRef) {
         this.jobLauncherRef = jobLauncherRef;
     }
 
+    public JobLauncher getJobLauncher() {
+        return jobLauncher;
+    }
+
+    /**
+     * Explicitly specifies a JobLauncher to be used.
+     */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }

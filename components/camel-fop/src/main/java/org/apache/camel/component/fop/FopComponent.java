@@ -30,9 +30,12 @@ public class FopComponent extends UriEndpointComponent {
         super(FopEndpoint.class);
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
-        FopEndpoint endpoint = new FopEndpoint(uri, this, remaining);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        FopOutputType type = FopOutputType.asFooOutputType(remaining);
+        if (type == null) {
+            type = getCamelContext().getTypeConverter().mandatoryConvertTo(FopOutputType.class, remaining);
+        }
+        FopEndpoint endpoint = new FopEndpoint(uri, this, type);
         setProperties(endpoint, parameters);
         return endpoint;
     }

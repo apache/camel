@@ -1379,6 +1379,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
     }
 
+    public void testTypeConstantInnerClass() throws Exception {
+        assertExpression("${type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO}", 123);
+        assertExpression("${type:org.apache.camel.language.simple.Constants.BAR}", 456);
+    }
+
     public void testStringArrayLength() throws Exception {
         exchange.getIn().setBody(new String[]{"foo", "bar"});
         assertExpression("${body[0]}", "foo");
@@ -1386,6 +1391,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 2);
 
         exchange.getIn().setBody(new String[]{"foo", "bar", "beer"});
+        assertExpression("${body.length}", 3);
+    }
+
+    public void testByteArrayLength() throws Exception {
+        exchange.getIn().setBody(new byte[]{65, 66, 67});
+        assertExpression("${body[0]}", 65);
+        assertExpression("${body[1]}", 66);
+        assertExpression("${body[2]}", 67);
         assertExpression("${body.length}", 3);
     }
 

@@ -92,7 +92,21 @@ public class CamelCatalogTest extends TestCase {
     }
 
     @Test
-    public void testAsEndpointUriMap() throws Exception {
+    public void testAsEndpointUriMapFile() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("directoryName", "src/data/inbox");
+        map.put("noop", "true");
+        map.put("delay", "5000");
+
+        String uri = catalog.asEndpointUri("file", map);
+        assertEquals("file:src/data/inbox?delay=5000&noop=true", uri);
+
+        String uri2 = catalog.asEndpointUriXml("file", map);
+        assertEquals("file:src/data/inbox?delay=5000&amp;noop=true", uri2);
+    }
+
+    @Test
+    public void testAsEndpointUriMapFtp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("host", "someserver");
         map.put("port", "21");
@@ -101,6 +115,9 @@ public class CamelCatalogTest extends TestCase {
 
         String uri = catalog.asEndpointUri("ftp", map);
         assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
+
+        String uri2 = catalog.asEndpointUriXml("ftp", map);
+        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri2);
     }
 
     @Test
@@ -122,8 +139,12 @@ public class CamelCatalogTest extends TestCase {
 
         map.put("deliveryPersistent", "false");
         map.put("allowNullBody", "true");
+
         uri = catalog.asEndpointUri("jms", map);
         assertEquals("jms:foo?allowNullBody=true&deliveryPersistent=false", uri);
+
+        String uri2 = catalog.asEndpointUriXml("jms", map);
+        assertEquals("jms:foo?allowNullBody=true&amp;deliveryPersistent=false", uri2);
     }
 
     @Test
@@ -187,6 +208,12 @@ public class CamelCatalogTest extends TestCase {
         assertEquals("file:src/test/data/feed.atom", map.get("feedUri"));
         assertEquals("false", map.get("splitEntries"));
         assertEquals("5000", map.get("delay"));
+    }
+
+    @Test
+    public void testEndpointComponentName() throws Exception {
+        String name = catalog.endpointComponentName("jms:queue:foo");
+        assertEquals("jms", name);
     }
 
 }

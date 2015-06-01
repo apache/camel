@@ -447,7 +447,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
             // inject id
             if (processor instanceof IdAware) {
-                ((IdAware) processor).setId(output.getId());
+                String id = output.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                ((IdAware) processor).setId(id);
             }
 
             if (output instanceof Channel && processor == null) {
@@ -535,7 +536,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // inject id
         if (processor instanceof IdAware) {
-            ((IdAware) processor).setId(this.getId());
+            String id = this.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            ((IdAware) processor).setId(id);
         }
 
         if (processor == null) {

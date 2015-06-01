@@ -95,8 +95,8 @@ public class NettyHttpProducer extends NettyProducer {
                     FullHttpResponse response = nettyMessage.getHttpResponse();
                     // Need to retain the ByteBuffer for producer to consumer
                     // TODO Remove this part of ByteBuffer right away
-                    response.content().retain();
                     if (response != null) {
+                        response.content().retain();
                         // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
                         String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
                         int code = response.getStatus() != null ? response.getStatus().code() : -1;
@@ -116,5 +116,4 @@ public class NettyHttpProducer extends NettyProducer {
             }
         }
     }
-
 }

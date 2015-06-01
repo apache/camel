@@ -51,6 +51,7 @@ import org.springframework.ws.transport.context.TransportContext;
 import org.springframework.ws.transport.context.TransportContextHolder;
 import org.springframework.xml.xpath.XPathExpression;
 
+
 /**
  * Spring {@link EndpointMapping} for mapping messages to corresponding Camel
  * endpoints. This class needs to be registered in the Spring
@@ -84,6 +85,7 @@ import org.springframework.xml.xpath.XPathExpression;
 public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping {
 
     private static final String DOUBLE_QUOTE = "\"";
+    private static final String URI_PATH_WILDCARD = "*";
     private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<EndpointMappingKey, MessageEndpoint>();
     private TransformerFactory transformerFactory;
     private XmlConverter xmlConverter;
@@ -95,7 +97,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     @Override
     protected Object getEndpointInternal(MessageContext messageContext) throws Exception {
         for (EndpointMappingKey key : endpoints.keySet()) {
-            Object messageKey = null;
+            String messageKey;
             switch (key.getType()) {
             case ROOT_QNAME:
                 messageKey = getRootQName(messageContext);
@@ -108,6 +110,18 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
                 break;
             case URI:
                 messageKey = getUri();
+                break;
+            case URI_PATH:
+                messageKey = getUriPath();
+
+                if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
+                    String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
+
+                    if (messageKey.startsWith(lookupKey)) {
+                        return endpoints.get(key);
+                    }
+                }
+
                 break;
             default:
                 throw new RuntimeCamelException("Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
@@ -145,11 +159,28 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     }
 
     private String getUri() throws URISyntaxException {
+        WebServiceConnection webServiceConnection = getWeServiceConnection();
+        if (webServiceConnection != null) {
+            return webServiceConnection.getUri().toString();
+        }
+        return null;
+    }
+
+    private String getUriPath() throws URISyntaxException {
+        WebServiceConnection webServiceConnection = getWeServiceConnection();
+        if (webServiceConnection != null) {
+            return webServiceConnection.getUri().getPath();
+        }
+
+        return null;
+    }
+
+    private WebServiceConnection getWeServiceConnection() {
         TransportContext transportContext = TransportContextHolder.getTransportContext();
         if (transportContext != null) {
             WebServiceConnection webServiceConnection = transportContext.getConnection();
             if (webServiceConnection != null) {
-                return webServiceConnection.getUri().toString();
+                return webServiceConnection;
             }
         }
         return null;

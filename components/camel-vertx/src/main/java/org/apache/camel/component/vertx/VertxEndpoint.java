@@ -30,7 +30,7 @@ import org.vertx.java.core.eventbus.EventBus;
 /**
  * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
  */
-@UriEndpoint(scheme = "vertx", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
+@UriEndpoint(scheme = "vertx", title = "Vert.x", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus")
 public class VertxEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -63,7 +63,11 @@ public class VertxEndpoint extends DefaultEndpoint {
     }
 
     public EventBus getEventBus() {
-        return getVertx().eventBus();
+        if (getVertx() != null) {
+            return getVertx().eventBus();
+        } else {
+            return null;
+        }
     }
 
     public Vertx getVertx() {
@@ -74,6 +78,13 @@ public class VertxEndpoint extends DefaultEndpoint {
         return address;
     }
 
+    /**
+     * Sets the event bus address used to communicate
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public boolean isPubSub() {
         return pubSub != null && pubSub;
     }
@@ -82,14 +93,11 @@ public class VertxEndpoint extends DefaultEndpoint {
         return pubSub;
     }
 
+    /**
+     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
+     */
     public void setPubSub(Boolean pubSub) {
         this.pubSub = pubSub;
     }
 
-    /**
-     * Sets the event bus address used to communicate
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

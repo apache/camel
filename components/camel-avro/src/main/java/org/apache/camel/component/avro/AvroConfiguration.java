@@ -48,9 +48,9 @@ public class AvroConfiguration implements Cloneable {
     private String protocolClassName;
     @UriParam
     private String uriAuthority;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean reflectionProtocol;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean singleParameter;
 
     public AvroConfiguration copy() {
@@ -85,6 +85,9 @@ public class AvroConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * Hostname to use
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -93,6 +96,9 @@ public class AvroConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * Port number to use
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -101,6 +107,9 @@ public class AvroConfiguration implements Cloneable {
         return protocol;
     }
 
+    /**
+     * Avro protocol to use
+     */
     public void setProtocol(Protocol protocol) {
         this.protocol = protocol;
     }
@@ -109,6 +118,9 @@ public class AvroConfiguration implements Cloneable {
         return transport;
     }
 
+    /**
+     * Transport to use
+     */
     public void setTransport(String transport) {
         this.transport = AvroTransport.valueOf(transport);
     }
@@ -121,6 +133,9 @@ public class AvroConfiguration implements Cloneable {
         return protocolLocation;
     }
 
+    /**
+     * Avro protocol location
+     */
     public void setProtocolLocation(String protocolLocation) {
         this.protocolLocation = protocolLocation;
     }
@@ -129,6 +144,9 @@ public class AvroConfiguration implements Cloneable {
         return protocolClassName;
     }
 
+    /**
+     * Avro protocol to use defined by the FQN class name
+     */
     public void setProtocolClassName(String protocolClassName) {
         this.protocolClassName = protocolClassName;
     }
@@ -137,6 +155,9 @@ public class AvroConfiguration implements Cloneable {
         return messageName;
     }
 
+    /**
+     * The name of the message to send.
+     */
     public void setMessageName(String messageName) {
         this.messageName = messageName;
     }
@@ -145,6 +166,9 @@ public class AvroConfiguration implements Cloneable {
         return uriAuthority;
     }
 
+    /**
+     * Authority to use (username and password)
+     */
     public void setUriAuthority(String uriAuthority) {
         this.uriAuthority = uriAuthority;
     }
@@ -153,6 +177,9 @@ public class AvroConfiguration implements Cloneable {
         return reflectionProtocol;
     }
 
+    /**
+     * If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
+     */
     public void setReflectionProtocol(boolean isReflectionProtocol) {
         this.reflectionProtocol = isReflectionProtocol;
     }
@@ -161,6 +188,9 @@ public class AvroConfiguration implements Cloneable {
         return singleParameter;
     }
 
+    /**
+     * If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
+     */
     public void setSingleParameter(boolean singleParameter) {
         this.singleParameter = singleParameter;
     }

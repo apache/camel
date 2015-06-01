@@ -17,22 +17,24 @@
 package org.apache.camel.converter.xmlbeans;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
+import java.util.concurrent.Callable;
+
 import javax.xml.transform.Source;
 
 import org.w3c.dom.Node;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
-import org.apache.xmlbeans.XmlException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
+
+
 
 /**
  * A <a href="http://camel.apache.org/type-coverter.html">Type Converter</a>
@@ -43,50 +45,75 @@ public final class XmlBeansConverter {
 
     private XmlBeansConverter() {
     }
-
+    
     @Converter
-    public static XmlObject toXmlObject(File value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(final File value, Exchange exchange) throws Exception {
+        return (XmlObject) ObjectHelper.callWithTCCL(new Callable<XmlObject>() {
+            public XmlObject call() throws Exception {
+                return XmlObject.Factory.parse(value);
+            }
+        }, exchange); 
+        
     }
 
     @Converter
-    public static XmlObject toXmlObject(Reader value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(final Reader value, Exchange exchange) throws Exception {
+        return (XmlObject) ObjectHelper.callWithTCCL(new Callable<XmlObject>() {
+            public XmlObject call() throws Exception {
+                return XmlObject.Factory.parse(value);
+            }
+        }, exchange);    
     }
 
     @Converter
-    public static XmlObject toXmlObject(Node value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(final Node value, Exchange exchange) throws Exception {
+        return (XmlObject) ObjectHelper.callWithTCCL(new Callable<XmlObject>() {
+            public XmlObject call() throws Exception {
+                return XmlObject.Factory.parse(value);
+            }
+        }, exchange);    
     }
 
     @Converter
-    public static XmlObject toXmlObject(InputStream value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(final InputStream value, Exchange exchange) throws Exception {
+        return (XmlObject) ObjectHelper.callWithTCCL(new Callable<XmlObject>() {
+            public XmlObject call() throws Exception {
+                return XmlObject.Factory.parse(value);
+            }
+        }, exchange);    
     }
 
     @Converter
-    public static XmlObject toXmlObject(String value, Exchange exchange) throws IOException, XmlException {
-        return toXmlObject(IOConverter.toInputStream(value, exchange));
+    public static XmlObject toXmlObject(String value, Exchange exchange) throws Exception {
+        return toXmlObject(IOConverter.toInputStream(value, exchange), exchange);
     }
 
     @Converter
-    public static XmlObject toXmlObject(byte[] value) throws IOException, XmlException {
-        return toXmlObject(IOConverter.toInputStream(value));
+    public static XmlObject toXmlObject(byte[] value, Exchange exchange) throws Exception {
+        return toXmlObject(IOConverter.toInputStream(value), exchange);
     }
 
     @Converter
-    public static XmlObject toXmlObject(ByteBuffer value) throws IOException, XmlException {
-        return toXmlObject(NIOConverter.toInputStream(value));
+    public static XmlObject toXmlObject(ByteBuffer value, Exchange exchange) throws Exception {
+        return toXmlObject(NIOConverter.toInputStream(value), exchange);
     }
 
     @Converter
-    public static XmlObject toXmlObject(XMLStreamReader value) throws IOException, XmlException {
-        return XmlObject.Factory.parse(value);
+    public static XmlObject toXmlObject(final XMLStreamReader value, Exchange exchange) throws Exception {
+        return (XmlObject) ObjectHelper.callWithTCCL(new Callable<XmlObject>() {
+            public XmlObject call() throws Exception {
+                return XmlObject.Factory.parse(value);
+            }
+        }, exchange);    
     }
 
     @Converter
-    public static XmlObject toXmlObject(Source value, Exchange exchange) throws IOException, XmlException, NoTypeConversionAvailableException {
-        Reader reader = exchange.getContext().getTypeConverter().mandatoryConvertTo(Reader.class, value);
-        return XmlObject.Factory.parse(reader);
+    public static XmlObject toXmlObject(Source value, Exchange exchange) throws Exception {
+        final Reader reader = exchange.getContext().getTypeConverter().mandatoryConvertTo(Reader.class, value);
+        return (XmlObject) ObjectHelper.callWithTCCL(new Callable<XmlObject>() {
+            public XmlObject call() throws Exception {
+                return XmlObject.Factory.parse(reader);
+            }
+        }, exchange);   
     }
 }

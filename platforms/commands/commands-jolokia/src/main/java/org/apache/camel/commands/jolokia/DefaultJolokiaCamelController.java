@@ -642,6 +642,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
 
                     Map<String, String> row = new LinkedHashMap<String, String>();
                     row.put("artifactId", asString(component.get("artifactId")));
+                    row.put("title", asString(component.get("title")));
                     row.put("description", asString(component.get("description")));
                     row.put("groupId", asString(component.get("groupId")));
                     row.put("label", asString(component.get("label")));

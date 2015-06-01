@@ -31,9 +31,9 @@ public class FtpsConfiguration extends FtpConfiguration {
 
     @UriParam(defaultValue = "TLS")
     private String securityProtocol = "TLS";
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean isImplicit;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean disableSecureDataChannelDefaults;
     @UriParam
     private String execProt;

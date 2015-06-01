@@ -417,15 +417,20 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public void init(ManagementStrategy strategy) {
-        super.init(strategy);
+        exchangesInFlightKeys.clear();
         exchangesInFlightStartTimestamps.clear();
+        super.init(strategy);
     }
 
     @Override
     public synchronized void processExchange(Exchange exchange) {
         InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
-        exchangesInFlightKeys.put(exchange.getExchangeId(), key);
-        exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        InFlightKey oldKey = exchangesInFlightKeys.putIfAbsent(exchange.getExchangeId(), key);
+        // we may already have the exchange being processed so only add to timestamp if its a new exchange
+        // for example when people call the same routes recursive
+        if (oldKey == null) {
+            exchangesInFlightStartTimestamps.put(key, key.timeStamp);
+        }
         super.processExchange(exchange);
     }
 
@@ -438,14 +443,23 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         super.completedExchange(exchange, time);
     }
 
+    @Override
+    public synchronized void failedExchange(Exchange exchange) {
+        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
+        if (key != null) {
+            exchangesInFlightStartTimestamps.remove(key);
+        }
+        super.failedExchange(exchange);
+    }
+
     private static class InFlightKey implements Comparable<InFlightKey> {
 
         private final Long timeStamp;
         private final String exchangeId;
 
         InFlightKey(Long timeStamp, String exchangeId) {
-            this.exchangeId = exchangeId;
             this.timeStamp = timeStamp;
+            this.exchangeId = exchangeId;
         }
 
         @Override

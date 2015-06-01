@@ -571,7 +571,27 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public String endpointComponentName(String uri) {
+        if (uri != null) {
+            int idx = uri.indexOf(":");
+            if (idx > 0) {
+                return uri.substring(0, idx);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public String asEndpointUri(String scheme, String json) throws URISyntaxException {
+        return doAsEndpointUri(scheme, json, "&");
+    }
+
+    @Override
+    public String asEndpointUriXml(String scheme, String json) throws URISyntaxException {
+        return doAsEndpointUri(scheme, json, "&amp;");
+    }
+
+    private String doAsEndpointUri(String scheme, String json, String ampersand) throws URISyntaxException {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         Map<String, String> copy = new HashMap<String, String>();
@@ -604,11 +624,20 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
         }
 
-        return asEndpointUri(scheme, copy);
+        return doAsEndpointUri(scheme, copy, ampersand);
     }
 
     @Override
     public String asEndpointUri(String scheme, Map<String, String> properties) throws URISyntaxException {
+        return doAsEndpointUri(scheme, properties, "&");
+    }
+
+    @Override
+    public String asEndpointUriXml(String scheme, Map<String, String> properties) throws URISyntaxException {
+        return doAsEndpointUri(scheme, properties, "&amp;");
+    }
+
+    private String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand) throws URISyntaxException {
         String json = componentJSonSchema(scheme);
         if (json == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
@@ -662,6 +691,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // build the endpoint
         StringBuilder sb = new StringBuilder();
+        int range = 0;
         for (int i = 0; i < options.size(); i++) {
             String key = options.get(i);
             String key2 = options2.get(i);
@@ -672,10 +702,20 @@ public class DefaultCamelCatalog implements CamelCatalog {
                 sb.append(token);
                 sb.append(key2);
             }
+            range++;
         }
+        // append any extra options that was in surplus for the last
+        while (range < options2.size()) {
+            String token = tokens[range];
+            String key2 = options2.get(range);
+            sb.append(token);
+            sb.append(key2);
+            range++;
+        }
+
         if (!copy.isEmpty()) {
             sb.append('?');
-            String query = createQueryString(copy);
+            String query = createQueryString(copy, ampersand);
             sb.append(query);
         }
 

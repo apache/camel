@@ -67,6 +67,8 @@ import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.RestartPolicy;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
+import com.github.dockerjava.api.model.VolumesFrom;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.DockerClientFactory;
@@ -991,7 +993,7 @@ public class DockerProducer extends DefaultProducer {
             createContainerCmd.withVolumes(volume);
         }
 
-        String[] volumesFrom = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_VOLUMES_FROM, message);
+        VolumesFrom[] volumesFrom = DockerHelper.getArrayProperty(DockerConstants.DOCKER_VOLUMES_FROM, message, VolumesFrom.class);
 
         if (volumesFrom != null) {
             createContainerCmd.withVolumesFrom(volumesFrom);

@@ -43,10 +43,10 @@ public class GangliaConfiguration implements Cloneable {
     public static final int DEFAULT_TMAX = 60;
     public static final int DEFAULT_DMAX = 0;
 
-    @UriPath
+    @UriPath(defaultValue = DEFAULT_DESTINATION)
     private String host = DEFAULT_DESTINATION;
 
-    @UriPath
+    @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port = DEFAULT_PORT;
 
     @UriParam(defaultValue = "MULTICAST")
@@ -120,6 +120,9 @@ public class GangliaConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * Host name for Ganglia server
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -128,6 +131,9 @@ public class GangliaConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * Port for Ganglia server
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -136,6 +142,9 @@ public class GangliaConfiguration implements Cloneable {
         return mode;
     }
 
+    /**
+     * Send the UDP metric packets using MULTICAST or UNICAST
+     */
     public void setMode(GMetric.UDPAddressingMode mode) {
         this.mode = mode;
     }
@@ -144,6 +153,9 @@ public class GangliaConfiguration implements Cloneable {
         return ttl;
     }
 
+    /**
+     * If using multicast, set the TTL of the packets
+     */
     public void setTtl(int ttl) {
         this.ttl = ttl;
     }
@@ -152,6 +164,9 @@ public class GangliaConfiguration implements Cloneable {
         return wireFormat31x;
     }
 
+    /**
+     * Use the wire format of Ganglia 3.1.0 and later versions.  Set this to false to use Ganglia 3.0.x or earlier.
+     */
     public void setWireFormat31x(boolean wireFormat31x) {
         this.wireFormat31x = wireFormat31x;
     }
@@ -160,6 +175,9 @@ public class GangliaConfiguration implements Cloneable {
         return spoofHostname;
     }
 
+    /**
+     * Spoofing information IP:hostname
+     */
     public void setSpoofHostname(String spoofHostname) {
         this.spoofHostname = spoofHostname;
     }
@@ -168,6 +186,9 @@ public class GangliaConfiguration implements Cloneable {
         return groupName;
     }
 
+    /**
+     * The group that the metric belongs to.
+     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -176,6 +197,9 @@ public class GangliaConfiguration implements Cloneable {
         return prefix;
     }
 
+    /**
+     * Prefix the metric name with this string and an underscore.
+     */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
@@ -184,6 +208,9 @@ public class GangliaConfiguration implements Cloneable {
         return metricName;
     }
 
+    /**
+     * The name to use for the metric.
+     */
     public void setMetricName(String metricName) {
         this.metricName = metricName;
     }
@@ -192,6 +219,9 @@ public class GangliaConfiguration implements Cloneable {
         return type;
     }
 
+    /**
+     * The type of value
+     */
     public void setType(GMetricType type) {
         this.type = type;
     }
@@ -200,6 +230,9 @@ public class GangliaConfiguration implements Cloneable {
         return slope;
     }
 
+    /**
+     * The slope
+     */
     public void setSlope(GMetricSlope slope) {
         this.slope = slope;
     }
@@ -208,6 +241,11 @@ public class GangliaConfiguration implements Cloneable {
         return units;
     }
 
+    /**
+     * Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes.
+     * Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later.
+     * The value should be unscaled.
+     */
     public void setUnits(String units) {
         this.units = units;
     }
@@ -220,6 +258,10 @@ public class GangliaConfiguration implements Cloneable {
         return tmax;
     }
 
+    /**
+     * Maximum time in seconds that the value can be considered current.
+     * After this, Ganglia considers the value to have expired.
+     */
     public void setTmax(int tmax) {
         this.tmax = tmax;
     }
@@ -228,6 +270,10 @@ public class GangliaConfiguration implements Cloneable {
         return dmax;
     }
 
+    /**
+     * Minumum time in seconds before Ganglia will purge the metric value if it expires.
+     * Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart.
+     */
     public void setDmax(int dmax) {
         this.dmax = dmax;
     }

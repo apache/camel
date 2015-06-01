@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import javax.xml.transform.Source;
 
 import org.apache.camel.BytesSource;
@@ -36,6 +37,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.StringSource;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -468,6 +470,18 @@ public final class MessageHelper {
      * @param override whether to override existing headers
      */
     public static void copyHeaders(Message source, Message target, boolean override) {
+        copyHeaders(source, target, null, override);
+    }
+    
+    /**
+     * Copies the headers from the source to the target message.
+     * 
+     * @param source the source message
+     * @param target the target message
+     * @param strategy the header filter strategy which could help us to filter the protocol message headers
+     * @param override whether to override existing headers
+     */
+    public static void copyHeaders(Message source, Message target, HeaderFilterStrategy strategy, boolean override) {
         if (!source.hasHeaders()) {
             return;
         }
@@ -477,7 +491,12 @@ public final class MessageHelper {
             Object value = entry.getValue();
 
             if (target.getHeader(key) == null || override) {
-                target.setHeader(key, value);
+                if (strategy == null) {
+                    target.setHeader(key, value);
+                } else if (!strategy.applyFilterToExternalHeaders(key, value, target.getExchange())) {
+                    // Just make sure we don't copy the protocol headers to target
+                    target.setHeader(key, value);
+                }
             }
         }
     }

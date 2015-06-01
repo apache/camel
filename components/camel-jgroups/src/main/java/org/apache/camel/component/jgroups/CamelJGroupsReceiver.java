@@ -49,7 +49,7 @@ public class CamelJGroupsReceiver extends ReceiverAdapter {
 
     @Override
     public void viewAccepted(View view) {
-        if (endpoint.isResolvedEnableViewMessages()) {
+        if (endpoint.isEnableViewMessages()) {
             Exchange exchange = endpoint.createExchange(view);
             try {
                 LOG.debug("Processing view: {}", view);

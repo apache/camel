@@ -18,13 +18,12 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.PackageHelper.after;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
@@ -81,6 +81,15 @@ public class PackageDataFormatMojo extends AbstractMojo {
      * @readonly
      */
     private MavenProjectHelper projectHelper;
+    
+    /**
+     * build context to check changed files and mark them for refresh (used for
+     * m2e compatibility)
+     * 
+     * @component
+     * @readonly
+     */
+    private BuildContext buildContext;
 
     /**
      * Execute goal.
@@ -90,11 +99,23 @@ public class PackageDataFormatMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir);
+        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir, File schemaOutDir) throws MojoExecutionException {
+    public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
+                                         File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
+
+        // first we need to setup the output directory because the next check
+        // can stop the build before the end and eclipse always needs to know about that directory 
+        if (projectHelper != null) {
+            projectHelper.addResource(project, dataFormatOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
+        }
+
+        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
+            return;
+        }
 
         Map<String, String> javaTypes = new HashMap<String, String>();
 
@@ -122,6 +143,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 buffer.append(" ");
                             }
                             buffer.append(name);
+                        }
+
+                        if (!buildContext.hasDelta(file)) {
+                            // if this file has not changed,
+                            // then no need to store the javatype
+                            // for the json file to be generated again
+                            // (but we do need the name above!)
+                            continue;
                         }
 
                         // find out the javaType for each data format
@@ -164,6 +193,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                             if (json != null) {
                                 DataFormatModel dataFormatModel = new DataFormatModel();
                                 dataFormatModel.setName(name);
+                                dataFormatModel.setTitle("");
                                 dataFormatModel.setModelName(modelName);
                                 dataFormatModel.setLabel("");
                                 dataFormatModel.setDescription(project.getDescription());
@@ -174,6 +204,10 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                                 for (Map<String, String> row : rows) {
+                                    if (row.containsKey("title")) {
+                                        String title = row.get("title");
+                                        dataFormatModel.setTitle(asModelTitle(name, title));
+                                    }
                                     if (row.containsKey("label")) {
                                         dataFormatModel.setLabel(row.get("label"));
                                     }
@@ -199,7 +233,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 dir.mkdirs();
 
                                 File out = new File(dir, name + ".json");
-                                FileOutputStream fos = new FileOutputStream(out, false);
+                                OutputStream fos = buildContext.newFileOutputStream(out);
                                 fos.write(schema.getBytes());
                                 fos.close();
 
@@ -228,13 +262,13 @@ public class PackageDataFormatMojo extends AbstractMojo {
             camelMetaDir.mkdirs();
             File outFile = new File(camelMetaDir, "dataformat.properties");
             try {
-                properties.store(new FileWriter(outFile), "Generated by camel-package-maven-plugin");
+                OutputStream os = buildContext.newFileOutputStream(outFile);
+                properties.store(os, "Generated by camel-package-maven-plugin");
+                os.close();
+
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
 
                 if (projectHelper != null) {
-                    List<String> includes = new ArrayList<String>();
-                    includes.add("**/dataformat.properties");
-                    projectHelper.addResource(project, dataFormatOutDir.getPath(), includes, new ArrayList<String>());
                     projectHelper.attachArtifact(project, "properties", "camelDataFormat", outFile);
                 }
             } catch (IOException e) {
@@ -256,6 +290,24 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return "zipFile";
         }
         return name;
+    }
+
+    private static String asModelTitle(String name, String title) {
+        // special for some data formats
+        if ("json-gson".equals(name)) {
+            return "JSon GSon";
+        } else if ("json-jackson".equals(name)) {
+            return "JSon Jackson";
+        } else if ("json-xstream".equals(name)) {
+            return "JSon XStream";
+        } else if ("bindy-csv".equals(name)) {
+            return "Bindy CSV";
+        } else if ("bindy-fixed".equals(name)) {
+            return "Bindy Fixed Length";
+        } else if ("bindy-kvp".equals(name)) {
+            return "Bindy Key Value Pair";
+        }
+        return title;
     }
 
     private static Artifact findCamelCoreArtifact(MavenProject project) {
@@ -289,6 +341,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         buffer.append("\n    \"name\": \"").append(dataFormatModel.getName()).append("\",");
         buffer.append("\n    \"kind\": \"").append("dataformat").append("\",");
         buffer.append("\n    \"modelName\": \"").append(dataFormatModel.getModelName()).append("\",");
+        if (dataFormatModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(dataFormatModel.getTitle()).append("\",");
+        }
         if (dataFormatModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         }
@@ -309,6 +364,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
     private static class DataFormatModel {
         private String name;
+        private String title;
         private String modelName;
         private String description;
         private String label;
@@ -324,6 +380,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getModelName() {
@@ -394,6 +458,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         public String toString() {
             return "DataFormatModel["
                     + "name='" + name + '\''
+                    + ", title='" + title + '\''
                     + ", modelName='" + modelName + '\''
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''

@@ -35,7 +35,7 @@ public class JettyHttpProducerRedirectTest extends BaseJettyTest {
             template.requestBody("jetty:http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertThrowable(HttpOperationFailedException.class, e.getCause());
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(301, cause.getStatusCode());
             assertEquals(true, cause.isRedirectError());
             assertEquals(true, cause.hasRedirectLocation());

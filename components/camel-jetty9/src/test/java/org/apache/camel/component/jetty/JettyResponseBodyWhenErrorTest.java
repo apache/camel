@@ -34,7 +34,7 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
             template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertThrowable(HttpOperationFailedException.class, e.getCause());
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(500, cause.getStatusCode());
             String body = context.getTypeConverter().convertTo(String.class, cause.getResponseBody());
             assertTrue(body.indexOf("Damm") > -1);

@@ -90,7 +90,60 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         assertNull(ts);
         id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
         assertNull(id);
+    }
 
+    public void testManageStatisticsFailed() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // get the stats for the route
+        MBeanServer mbeanServer = getMBeanServer();
+
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        assertEquals(1, set.size());
+        ObjectName on = set.iterator().next();
+
+        Long inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+        assertEquals(0, inflight.longValue());
+        Long ts = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
+        assertNull(ts);
+        String id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
+        assertNull(id);
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+
+        // start some exchanges.
+        template.asyncSendBody("direct:start", 1000L);
+        Thread.sleep(500);
+        try {
+            template.sendBody("direct:start", "Kaboom");
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            // expected
+        }
+
+        inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+        assertEquals(1, inflight.longValue());
+
+        ts = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
+        assertNotNull(ts);
+        id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
+        assertNotNull(id);
+
+        assertMockEndpointsSatisfied();
+
+        // Lets wait for all the exchanges to complete.
+        Thread.sleep(500);
+
+        inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+        assertEquals(0, inflight.longValue());
+        ts = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
+        assertNull(ts);
+        id = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");
+        assertNull(id);
     }
 
     @Override
@@ -102,6 +155,11 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+
                                 Long delay = (Long) exchange.getIn().getBody();
                                 Thread.sleep(delay.longValue());
                             }

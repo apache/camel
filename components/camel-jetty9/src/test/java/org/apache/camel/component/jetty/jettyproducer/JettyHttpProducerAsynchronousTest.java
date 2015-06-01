@@ -33,14 +33,10 @@ public class JettyHttpProducerAsynchronousTest extends BaseJettyTest {
     private static String thread1;
     private static String thread2;
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/foo";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/foo";
 
     @Test
     public void testAsynchronous() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
 
         // give Jetty time to startup properly
         Thread.sleep(1000);

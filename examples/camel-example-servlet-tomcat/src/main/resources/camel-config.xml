@@ -35,7 +35,7 @@
           <header>name</header>
           <!-- yes so return back a message to the user -->
           <transform>
-            <simple>Hello ${header.name} how are you?</simple>
+            <simple>Hello ${header.name} how are you? You are from host: ${sysenv.HOSTNAME}</simple>
           </transform>
         </when>
         <otherwise>

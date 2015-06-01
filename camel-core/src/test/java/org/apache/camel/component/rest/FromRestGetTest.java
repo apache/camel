@@ -70,6 +70,7 @@ public class FromRestGetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration().host("localhost");
                 rest("/say/hello")
                     .get().to("direct:hello");
 

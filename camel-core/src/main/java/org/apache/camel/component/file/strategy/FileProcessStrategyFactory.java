@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
@@ -125,6 +126,21 @@ public final class FileProcessStrategyFactory {
                 Long minAge = (Long) params.get("readLockMinAge");
                 if (null != minAge) {
                     readLockStrategy.setMinAge(minAge);
+                }
+                strategy = readLockStrategy;
+            } else if ("idempotent".equals(readLock)) {
+                FileIdempotentRepositoryReadLockStrategy readLockStrategy = new FileIdempotentRepositoryReadLockStrategy();
+                Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
+                if (readLockRemoveOnRollback != null) {
+                    readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
+                }
+                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                if (readLockRemoveOnCommit != null) {
+                    readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
+                }
+                IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
+                if (repo != null) {
+                    readLockStrategy.setIdempotentRepository(repo);
                 }
                 strategy = readLockStrategy;
             }

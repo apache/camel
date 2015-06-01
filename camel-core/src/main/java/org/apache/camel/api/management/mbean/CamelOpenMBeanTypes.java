@@ -108,9 +108,9 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listComponentsCompositeType() throws OpenDataException {
-        return new CompositeType("components", "Components", new String[]{"name", "description", "label", "status", "type", "groupId", "artifactId", "version"},
-                new String[]{"Name", "Description", "Label", "Status", "Type", "GroupId", "ArtifactId", "Version"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+        return new CompositeType("components", "Components", new String[]{"name", "title", "description", "label", "status", "type", "groupId", "artifactId", "version"},
+                new String[]{"Name", "Title", "Description", "Label", "Status", "Type", "GroupId", "ArtifactId", "Version"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                                SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
 

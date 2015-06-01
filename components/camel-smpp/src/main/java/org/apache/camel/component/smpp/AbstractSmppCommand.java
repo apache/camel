@@ -95,6 +95,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
      * @param optinalParamaters
      * @return
      */
+    @Deprecated
     @SuppressWarnings("rawtypes")
     protected List<OptionalParameter> createOptionalParametersByName(Map<String, String> optinalParamaters) {
         List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();

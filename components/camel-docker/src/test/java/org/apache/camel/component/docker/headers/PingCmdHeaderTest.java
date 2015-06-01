@@ -19,7 +19,9 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.PingCmd;
+
 import org.apache.camel.component.docker.DockerOperation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,6 +34,7 @@ public class PingCmdHeaderTest extends BaseDockerHeaderTest<PingCmd> {
     @Mock
     private PingCmd mockObject;
 
+    @Ignore
     @Test
     public void pingHeaderTest() {
 

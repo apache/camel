@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "language")
+@Metadata(label = "language", title = "JSonPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {
@@ -42,6 +42,8 @@ public class JsonPathExpression extends ExpressionDefinition {
     private String resultTypeName;
     @XmlTransient
     private Class<?> resultType;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private Boolean suppressExceptions;
 
     public JsonPathExpression() {
     }
@@ -72,6 +74,17 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.resultType = resultType;
     }
 
+    public Boolean getSuppressExceptions() {
+        return suppressExceptions;
+    }
+
+    /**
+     * Whether to suppress exceptions such as PathNotFoundException.
+     */
+    public void setSuppressExceptions(Boolean suppressExceptions) {
+        this.suppressExceptions = suppressExceptions;
+    }
+
     public String getLanguage() {
         return "jsonpath";
     }
@@ -93,6 +106,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
+        if (suppressExceptions != null) {
+            setProperty(expression, "suppressExceptions", suppressExceptions);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -100,6 +116,9 @@ public class JsonPathExpression extends ExpressionDefinition {
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
+        }
+        if (suppressExceptions != null) {
+            setProperty(predicate, "suppressExceptions", suppressExceptions);
         }
         super.configurePredicate(camelContext, predicate);
     }

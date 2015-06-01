@@ -74,6 +74,13 @@ public @interface UriEndpoint {
     String consumerPrefix() default "";
 
     /**
+     * A human readable title of this entity, such as the component name of the this endpoint.
+     * <p/>
+     * For example: JMS, MQTT, Netty HTTP, SAP NetWeaver
+     */
+    String title();
+
+    /**
      * To associate this endpoint with label(s).
      * <p/>
      * Multiple labels can be defined as a comma separated value.

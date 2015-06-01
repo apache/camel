@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class HttpProducerQueryParamTest extends BaseJettyTest {
 
-    private String url = "http://0.0.0.0:" + getPort() + "/cheese";
+    private String url = "http://127.0.0.1:" + getPort() + "/cheese";
 
     @Test
     public void testQueryParameters() throws Exception {

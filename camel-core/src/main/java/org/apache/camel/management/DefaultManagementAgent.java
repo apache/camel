@@ -272,14 +272,18 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     public boolean isRegistered(ObjectName name) {
+        if (server == null) {
+            return false;
+        }
         ObjectName on = mbeansRegistered.get(name);
         return (on != null && server.isRegistered(on))
                 || server.isRegistered(name);
     }
 
     public <T> T newProxyClient(ObjectName name, Class<T> mbean) {
-        if (server.isRegistered(name)) {
-            return MBeanServerInvocationHandler.newProxyInstance(server, name, mbean, false);
+        if (isRegistered(name)) {
+            ObjectName on = mbeansRegistered.get(name);
+            return MBeanServerInvocationHandler.newProxyInstance(server, on != null ? on : name, mbean, false);
         } else {
             return null;
         }

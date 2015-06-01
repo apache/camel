@@ -51,7 +51,7 @@ public class SolrProducer extends DefaultProducer {
     private SolrServer getBestSolrServer(String operation) {
         if (this.cloudSolrServer != null) {
             return this.cloudSolrServer;
-        } else if (operation == SolrConstants.OPERATION_INSERT_STREAMING) {
+        } else if (SolrConstants.OPERATION_INSERT_STREAMING.equals(operation)) {
             return this.concSolrServer;
         } else {
             return this.httpServer;

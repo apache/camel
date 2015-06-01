@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Twitter component
@@ -30,6 +31,10 @@ public class TwitterComponent extends UriEndpointComponent {
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
+    private String httpProxyHost;
+    private String httpProxyUser;
+    private String httpProxyPassword;
+    private Integer httpProxyPort;
 
     public TwitterComponent() {
         super(TwitterEndpointEvent.class);
@@ -44,6 +49,12 @@ public class TwitterComponent extends UriEndpointComponent {
         properties.setConsumerSecret(consumerSecret);
         properties.setAccessToken(accessToken);
         properties.setAccessTokenSecret(accessTokenSecret);
+        properties.setHttpProxyHost(httpProxyHost);
+        properties.setHttpProxyUser(httpProxyUser);
+        properties.setHttpProxyPassword(httpProxyPassword);
+        if (httpProxyPort != null) {
+            properties.setHttpProxyPort(httpProxyPort);
+        }
 
         // and then override from parameters
         setProperties(properties, parameters);
@@ -68,6 +79,9 @@ public class TwitterComponent extends UriEndpointComponent {
         return accessToken;
     }
 
+    /**
+     * The access token
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -76,6 +90,9 @@ public class TwitterComponent extends UriEndpointComponent {
         return accessTokenSecret;
     }
 
+    /**
+     * The access token secret
+     */
     public void setAccessTokenSecret(String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
     }
@@ -84,6 +101,9 @@ public class TwitterComponent extends UriEndpointComponent {
         return consumerKey;
     }
 
+    /**
+     * The consumer key
+     */
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
@@ -92,7 +112,55 @@ public class TwitterComponent extends UriEndpointComponent {
         return consumerSecret;
     }
 
+    /**
+     * The consumer secret
+     */
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
+
+    /**
+     * The http proxy host which can be used for the camel-twitter.
+     */
+    public void setHttpProxyHost(String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
+    }
+
+    public String getHttpProxyHost() {
+        return httpProxyHost;
+    }
+
+    /**
+     * The http proxy user which can be used for the camel-twitter.
+     */
+    public void setHttpProxyUser(String httpProxyUser) {
+        this.httpProxyUser = httpProxyUser;
+    }
+
+    public String getHttpProxyUser() {
+        return httpProxyUser;
+    }
+
+    /**
+     * The http proxy password which can be used for the camel-twitter.
+     */
+    public void setHttpProxyPassword(String httpProxyPassword) {
+        this.httpProxyPassword = httpProxyPassword;
+    }
+
+    public String getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+
+    /**
+     * The http proxy port which can be used for the camel-twitter.
+     */
+    public void setHttpProxyPort(int httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
+    }
+
+    public int getHttpProxyPort() {
+        return httpProxyPort;
+    }
+
 }

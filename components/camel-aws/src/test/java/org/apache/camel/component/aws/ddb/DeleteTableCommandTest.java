@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.ArrayList;
 import java.util.Date;
 
-import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.ProvisionedThroughputDescription;
-import com.amazonaws.services.dynamodb.model.TableStatus;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputDescription;
+import com.amazonaws.services.dynamodbv2.model.TableStatus;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class DeleteTableCommandTest {
@@ -58,7 +57,7 @@ public class DeleteTableCommandTest {
         assertEquals(new Date(AmazonDDBClientMock.NOW), exchange.getIn().getHeader(DdbConstants.CREATION_DATE,
                 Date.class));
         assertEquals(Long.valueOf(10L), exchange.getIn().getHeader(DdbConstants.ITEM_COUNT, Long.class));
-        assertEquals(new KeySchema(), exchange.getIn().getHeader(DdbConstants.KEY_SCHEMA, KeySchema.class));
+        assertEquals(new ArrayList<KeySchemaElement>(), exchange.getIn().getHeader(DdbConstants.KEY_SCHEMA, ArrayList.class));
         assertEquals(Long.valueOf(20L), exchange.getIn().getHeader(DdbConstants.TABLE_SIZE, Long.class));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(DdbConstants.TABLE_STATUS, TableStatus.class));
     }

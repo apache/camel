@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
+ * <p/>
+ * Uses by default the {@link org.apache.camel.component.http.HttpHeaderFilterStrategy}
  *
  * @version 
  */
@@ -58,10 +60,9 @@ public class DefaultHttpBinding implements HttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
+    private boolean transferException;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpEndpoint endpoint;
 
-    @Deprecated
     public DefaultHttpBinding() {
     }
 
@@ -70,9 +71,10 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    @Deprecated
     public DefaultHttpBinding(HttpEndpoint endpoint) {
-        this.endpoint = endpoint;
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+        this.transferException = endpoint.isTransferException();
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
@@ -129,7 +131,7 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP method {}", request.getMethod());
             LOG.trace("HTTP query {}", request.getQueryString());
             LOG.trace("HTTP url {}", request.getRequestURL());
-            LOG.trace("HTTP uri {}", request.getRequestURI().toString());
+            LOG.trace("HTTP uri {}", request.getRequestURI());
             LOG.trace("HTTP path {}", request.getPathInfo());
             LOG.trace("HTTP content-type {}", request.getContentType());
         }
@@ -137,8 +139,8 @@ public class DefaultHttpBinding implements HttpBinding {
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
             try {
-                InputStream is = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                Object object = HttpHelper.deserializeJavaObjectFromStream(is);
+                InputStream is = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
                 if (object != null) {
                     message.setBody(object);
                 }
@@ -246,7 +248,7 @@ public class DefaultHttpBinding implements HttpBinding {
         // 500 for internal server error
         response.setStatus(500);
 
-        if (endpoint != null && endpoint.isTransferException()) {
+        if (isTransferException()) {
             // transfer the exception as a serialized java object
             HttpHelper.writeObjectToServletResponse(response, exception);
         } else {
@@ -455,8 +457,8 @@ public class DefaultHttpBinding implements HttpBinding {
                     return null;
                 }
             }
-            // reade the response body from servlet request
-            return HttpHelper.readResponseBodyFromServletRequest(request, httpMessage.getExchange());
+            // read the response body from servlet request
+            return HttpHelper.readRequestBodyFromServletRequest(request, httpMessage.getExchange());
         }
     }
 
@@ -466,6 +468,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

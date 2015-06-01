@@ -46,7 +46,7 @@ public class IrcConfiguration implements Cloneable {
     private List<IrcChannel> channels = new ArrayList<IrcChannel>();
     @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath
+    @UriPath(defaultValue = "6667,6668,6669")
     private int port;
     private int[] ports = {6667, 6668, 6669};
     @UriParam
@@ -75,7 +75,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean onMode = true;
     @UriParam(defaultValue = "true")
     private boolean onPart = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean onReply;
     @UriParam(defaultValue = "true")
     private boolean onTopic = true;
@@ -197,6 +197,9 @@ public class IrcConfiguration implements Cloneable {
         return null;
     }
 
+    /**
+     * The trust manager used to verify the SSL server's certificate.
+     */
     public void setTrustManager(SSLTrustManager trustManager) {
         this.trustManager = trustManager;
     }
@@ -217,6 +220,9 @@ public class IrcConfiguration implements Cloneable {
         return hostname;
     }
 
+    /**
+     * Hostname for the IRC chat server
+     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -225,6 +231,9 @@ public class IrcConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * The IRC server password.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -233,6 +242,9 @@ public class IrcConfiguration implements Cloneable {
         return nickname;
     }
 
+    /**
+     * The nickname used in chat.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -241,6 +253,9 @@ public class IrcConfiguration implements Cloneable {
         return realname;
     }
 
+    /**
+     * The IRC user's actual name.
+     */
     public void setRealname(String realname) {
         this.realname = realname;
     }
@@ -249,6 +264,9 @@ public class IrcConfiguration implements Cloneable {
         return username;
     }
 
+    /**
+     * The IRC server user name.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -257,6 +275,9 @@ public class IrcConfiguration implements Cloneable {
         return ports;
     }
 
+    /**
+     * Port numbers for the IRC chat server
+     */
     public void setPorts(int[] ports) {
         this.ports = ports;
     }
@@ -265,6 +286,9 @@ public class IrcConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * Port number for the IRC chat server
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -273,6 +297,11 @@ public class IrcConfiguration implements Cloneable {
         return persistent;
     }
 
+    /**
+     * Use persistent messages.
+     * @deprecated not in use
+     */
+    @Deprecated
     public void setPersistent(boolean persistent) {
         this.persistent = persistent;
     }
@@ -281,6 +310,9 @@ public class IrcConfiguration implements Cloneable {
         return colors;
     }
 
+    /**
+     * Whether or not the server supports color codes.
+     */
     public void setColors(boolean colors) {
         this.colors = colors;
     }
@@ -289,6 +321,9 @@ public class IrcConfiguration implements Cloneable {
         return onNick;
     }
 
+    /**
+     * Handle nickname change events.
+     */
     public void setOnNick(boolean onNick) {
         this.onNick = onNick;
     }
@@ -297,6 +332,9 @@ public class IrcConfiguration implements Cloneable {
         return onQuit;
     }
 
+    /**
+     * Handle user quit events.
+     */
     public void setOnQuit(boolean onQuit) {
         this.onQuit = onQuit;
     }
@@ -305,6 +343,9 @@ public class IrcConfiguration implements Cloneable {
         return onJoin;
     }
 
+    /**
+     * Handle user join events.
+     */
     public void setOnJoin(boolean onJoin) {
         this.onJoin = onJoin;
     }
@@ -313,6 +354,9 @@ public class IrcConfiguration implements Cloneable {
         return onKick;
     }
 
+    /**
+     * Handle kick events.
+     */
     public void setOnKick(boolean onKick) {
         this.onKick = onKick;
     }
@@ -321,6 +365,9 @@ public class IrcConfiguration implements Cloneable {
         return onMode;
     }
 
+    /**
+     * Handle mode change events.
+     */
     public void setOnMode(boolean onMode) {
         this.onMode = onMode;
     }
@@ -329,6 +376,9 @@ public class IrcConfiguration implements Cloneable {
         return onPart;
     }
 
+    /**
+     * Handle user part events.
+     */
     public void setOnPart(boolean onPart) {
         this.onPart = onPart;
     }
@@ -337,6 +387,9 @@ public class IrcConfiguration implements Cloneable {
         return onReply;
     }
 
+    /**
+     * Whether or not to handle general responses to commands or informational messages.
+     */
     public void setOnReply(boolean onReply) {
         this.onReply = onReply;
     }
@@ -345,6 +398,9 @@ public class IrcConfiguration implements Cloneable {
         return onTopic;
     }
 
+    /**
+     * Handle topic change events.
+     */
     public void setOnTopic(boolean onTopic) {
         this.onTopic = onTopic;
     }
@@ -353,6 +409,9 @@ public class IrcConfiguration implements Cloneable {
         return onPrivmsg;
     }
 
+    /**
+     * Handle private message events.
+     */
     public void setOnPrivmsg(boolean onPrivmsg) {
         this.onPrivmsg = onPrivmsg;
     }
@@ -361,6 +420,9 @@ public class IrcConfiguration implements Cloneable {
         return autoRejoin;
     }
 
+    /**
+     * Whether to auto re-join when being kicked
+     */
     public void setAutoRejoin(boolean autoRejoin) {
         this.autoRejoin = autoRejoin;
     }
@@ -369,6 +431,12 @@ public class IrcConfiguration implements Cloneable {
         return sslContextParameters;
     }
 
+    /**
+     * Used for configuring security using SSL.
+     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * This reference overrides any configured SSLContextParameters at the component level.
+     * Note that this setting overrides the trustManager option.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }

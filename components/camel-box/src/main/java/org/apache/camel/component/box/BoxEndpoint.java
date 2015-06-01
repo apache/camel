@@ -39,7 +39,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a Box endpoint.
  */
-@UriEndpoint(scheme = "box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud")
+@UriEndpoint(scheme = "box", title = "Box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud")
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     private static final String SHARED_LINK_PROPERTY = "sharedLink";
@@ -60,7 +60,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     private boolean boxClientShared;
 
     public BoxEndpoint(String uri, BoxComponent component,
-                         BoxApiName apiName, String methodName, BoxConfiguration endpointConfiguration) {
+                       BoxApiName apiName, String methodName, BoxConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, BoxApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.configuration = endpointConfiguration;
     }

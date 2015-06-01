@@ -22,10 +22,27 @@ public interface InfinispanConstants {
     String CACHE_NAME = "CamelInfinispanCacheName";
     String KEY = "CamelInfinispanKey";
     String VALUE = "CamelInfinispanValue";
+    String OLD_VALUE = "CamelInfinispanOldValue";
+    String MAP = "CamelInfinispanMap";    
     String OPERATION = "CamelInfinispanOperation";
     String PUT = "CamelInfinispanOperationPut";
+    String PUT_ASYNC = "CamelInfinispanOperationPutAsync";
+    String PUT_IF_ABSENT = "CamelInfinispanOperationPutIfAbsent";
+    String PUT_IF_ABSENT_ASYNC = "CamelInfinispanOperationPutIfAbsentAsync";
     String GET = "CamelInfinispanOperationGet";
+    String CONTAINS_KEY = "CamelInfinispanOperationContainsKey";
+    String CONTAINS_VALUE = "CamelInfinispanOperationContainsValue";
+    String PUT_ALL = "CamelInfinispanOperationPutAll";
+    String PUT_ALL_ASYNC = "CamelInfinispanOperationPutAllAsync";
     String REMOVE = "CamelInfinispanOperationRemove";
+    String REMOVE_ASYNC = "CamelInfinispanOperationRemoveAsync";
+    String REPLACE = "CamelInfinispanOperationReplace";
+    String REPLACE_ASYNC = "CamelInfinispanOperationReplaceAsync";
     String CLEAR = "CamelInfinispanOperationClear";
+    String SIZE = "CamelInfinispanOperationSize";
     String RESULT = "CamelInfinispanOperationResult";
+    String LIFESPAN_TIME = "CamelInfinispanLifespanTime";
+    String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
+    String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";
+    String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
 }

@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
@@ -36,13 +37,17 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 
 @Converter
 public final class CxfPayloadConverter {
+    private static XmlConverter xml = new XmlConverter();
 
     private CxfPayloadConverter() {
         // Helper class
@@ -106,6 +111,11 @@ public final class CxfPayloadConverter {
             return payloadBody.get(0);
         }
         return null;
+    }
+
+    @Converter
+    public static <T> StreamCache cxfPayLoadToStreamCache(CxfPayload<T> payload, Exchange exchange) {
+        return new CachedCxfPayload<T>(payload, exchange, xml);
     }
 
     @SuppressWarnings("unchecked")
@@ -179,37 +189,27 @@ public final class CxfPayloadConverter {
                     } catch (XMLStreamException e) {
                         throw new RuntimeException(e);
                     }
-                    payload.getBodySources().set(0, new DOMSource(d.getDocumentElement()));
                     return type.cast(d);
+                }
+                // CAMEL-8410 Just make sure we get the Source object directly from the payload body source
+                Source s = payload.getBodySources().get(0);
+                if (type.isInstance(s)) {
+                    return type.cast(s);
                 }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
-                    Source s = payload.getBodySources().get(0);
-                    if (type.isInstance(s)) {
-                        return type.cast(s);
-                    }
-                    if ((s instanceof StreamSource
-                        || s instanceof SAXSource) 
-                        && !type.isAssignableFrom(Document.class)
-                        && !type.isAssignableFrom(Source.class)) {
-                        //non-reproducible sources, we need to convert to DOMSource first
-                        //or the payload will get wiped out
-                        Document d;
-                        try {
-                            d = StaxUtils.read(s);
-                        } catch (XMLStreamException e) {
-                            throw new RuntimeException(e);
+                    XMLStreamReader r = null;
+                    if (payload.getNsMap() != null) {
+                        if (s instanceof StaxSource) {
+                            r = ((StaxSource) s).getXMLStreamReader();
+                        } else if (s instanceof StAXSource) {
+                            r = ((StAXSource) s).getXMLStreamReader();
                         }
-                        s = new DOMSource(d.getDocumentElement());
-                        payload.getBodySources().set(0, s);
+                        if (r != null) { 
+                            s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
+                        }
                     }
-                    
                     T t = tc.convertTo(type, s);
-                    if (t instanceof Document) {
-                        payload.getBodySources().set(0, new DOMSource(((Document)t).getDocumentElement()));
-                    } else if (t instanceof Source) {
-                        payload.getBodySources().set(0, (Source)t);
-                    }
                     return t;
                 }                
             }
@@ -252,4 +252,5 @@ public final class CxfPayloadConverter {
         }
         return null;
     }
+
 }

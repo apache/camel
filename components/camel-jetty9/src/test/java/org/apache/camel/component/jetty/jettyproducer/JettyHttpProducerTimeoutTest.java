@@ -28,15 +28,10 @@ import org.junit.Test;
  */
 public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/timeout?httpClient.timeout=2000";
+    private String url = "jetty://http://127.0.0.1:" + getPort() + "/timeout?httpClient.timeout=2000";
 
     @Test
     public void testTimeout() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         // give Jetty time to startup properly
         Thread.sleep(1000);
         final MyInputStream is = new MyInputStream("Content".getBytes());
@@ -49,7 +44,7 @@ public class JettyHttpProducerTimeoutTest extends BaseJettyTest {
         });
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
-        ExchangeTimedOutException cause = assertThrowable(ExchangeTimedOutException.class, e);
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e);
         assertEquals(2000, cause.getTimeout());
         assertTrue("The input stream should be closed", is.isClosed());
     }

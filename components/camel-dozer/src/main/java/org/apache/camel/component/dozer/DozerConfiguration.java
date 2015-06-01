@@ -53,6 +53,9 @@ public class DozerConfiguration {
         return marshalId;
     }
 
+    /**
+     * The id of a dataFormat defined within the Camel Context to use for marshalling the mapping output to a non-Java type.
+     */
     public void setMarshalId(String marshalId) {
         this.marshalId = marshalId;
     }
@@ -61,6 +64,9 @@ public class DozerConfiguration {
         return unmarshalId;
     }
 
+    /**
+     * The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a non-Java type.
+     */
     public void setUnmarshalId(String unmarshalId) {
         this.unmarshalId = unmarshalId;
     }
@@ -69,6 +75,9 @@ public class DozerConfiguration {
         return sourceModel;
     }
 
+    /**
+     * Fully-qualified class name for the source type used in the mapping. If specified, the input to the mapping is converted to the specified type before being mapped with Dozer.
+     */
     public void setSourceModel(String sourceModel) {
         this.sourceModel = sourceModel;
     }
@@ -77,6 +86,9 @@ public class DozerConfiguration {
         return targetModel;
     }
 
+    /**
+     * Fully-qualified class name for the target type used in the mapping.
+     */
     public void setTargetModel(String targetModel) {
         this.targetModel = targetModel;
     }
@@ -85,6 +97,9 @@ public class DozerConfiguration {
         return name;
     }
 
+    /**
+     * A human readable name of the mapping.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -93,6 +108,10 @@ public class DozerConfiguration {
         return mappingFile;
     }
 
+    /**
+     * The location of a Dozer configuration file. The file is loaded from the classpath by default,
+     * but you can use file:, classpath:, or http: to load the configuration from a specific location.
+     */
     public void setMappingFile(String mappingFile) {
         this.mappingFile = mappingFile;
     }
@@ -101,6 +120,11 @@ public class DozerConfiguration {
         return mappingConfiguration;
     }
 
+    /**
+     * The name of a DozerBeanMapperConfiguration bean in the Camel registry which should be used for configuring the Dozer mapping.
+     * This is an alternative to the mappingFile option that can be used for fine-grained control over how Dozer is configured.
+     * Remember to use a "#" prefix in the value to indicate that the bean is in the Camel registry (e.g. "#myDozerConfig").
+     */
     public void setMappingConfiguration(DozerBeanMapperConfiguration mappingConfiguration) {
         this.mappingConfiguration = mappingConfiguration;
     }

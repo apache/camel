@@ -21,6 +21,8 @@
         <goals>
           <goal>generate-components-list</goal>
           <goal>generate-dataformats-list</goal>
+          <goal>generate-languages-list</goal>
+          <goal>prepare-components</goal>
         </goals>
       </pluginExecutionFilter>
       <action>

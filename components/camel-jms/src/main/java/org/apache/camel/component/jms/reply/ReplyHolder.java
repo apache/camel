@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.reply;
 
 import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -32,6 +33,7 @@ public class ReplyHolder {
     private final Exchange exchange;
     private final AsyncCallback callback;
     private final Message message;
+    private final Session session;
     private final String originalCorrelationId;
     private final String correlationId;
     private long timeout;
@@ -40,12 +42,13 @@ public class ReplyHolder {
      * Constructor to use when a reply message was received
      */
     public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
-                       String correlationId, Message message) {
+                       String correlationId, Message message, Session session) {
         this.exchange = exchange;
         this.callback = callback;
         this.originalCorrelationId = originalCorrelationId;
         this.correlationId = correlationId;
         this.message = message;
+        this.session = session;
     }
 
     /**
@@ -53,7 +56,7 @@ public class ReplyHolder {
      */
     public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
                        String correlationId, long timeout) {
-        this(exchange, callback, originalCorrelationId, correlationId, null);
+        this(exchange, callback, originalCorrelationId, correlationId, null, null);
         this.timeout = timeout;
     }
 
@@ -92,6 +95,16 @@ public class ReplyHolder {
      */
     public Message getMessage() {
         return message;
+    }
+
+    /**
+     * Gets the JMS session from the received message
+     *
+     * @return  the JMS session, or <tt>null</tt> if timeout occurred and no message has been received
+     * @see #isTimeout()
+     */
+    public Session getSession() {
+        return session;
     }
 
     /**

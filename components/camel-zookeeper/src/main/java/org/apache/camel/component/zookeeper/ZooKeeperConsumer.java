@@ -154,7 +154,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                     handleException(e);
                     backoffAndThenRestart();
                 } finally {
-                    if (configuration.shouldRepeat()) {
+                    if (configuration.isRepeat()) {
                         try {
                             operations.offer(current.createCopy());
                         } catch (Exception e) {

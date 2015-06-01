@@ -65,7 +65,7 @@ public final class ApnsUtils {
     
     public static ApnsServerStub prepareAndStartServer(int gatePort, int feedPort) {
         InputStream stream = ClassLoader.getSystemResourceAsStream(FixedCertificates.SERVER_STORE);
-        SSLContext context = Utilities.newSSLContext(stream, FixedCertificates.SERVER_PASSWD, 
+        SSLContext context = Utilities.newSSLContext(stream, FixedCertificates.SERVER_PASSWORD, 
                                                      "PKCS12", getAlgorithm());
 
         
@@ -101,7 +101,7 @@ public final class ApnsUtils {
 
         final KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyStore(ksp);
-        kmp.setKeyPassword(FixedCertificates.CLIENT_PASSWD);
+        kmp.setKeyPassword(FixedCertificates.CLIENT_PASSWORD);
         kmp.setAlgorithm(getAlgorithm());
 
         final SSLContextParameters contextParameters = new SSLContextParameters();
@@ -133,10 +133,10 @@ public final class ApnsUtils {
         throws Exception {
         ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory(camelContext);
 
-        apnsServiceFactory.setFeedbackHost(FixedCertificates.TEST_HOST);
-        apnsServiceFactory.setFeedbackPort(FixedCertificates.TEST_FEEDBACK_PORT);
-        apnsServiceFactory.setGatewayHost(FixedCertificates.TEST_HOST);
-        apnsServiceFactory.setGatewayPort(FixedCertificates.TEST_GATEWAY_PORT);
+        apnsServiceFactory.setFeedbackHost(TestConstants.TEST_HOST);
+        apnsServiceFactory.setFeedbackPort(TestConstants.TEST_FEEDBACK_PORT);
+        apnsServiceFactory.setGatewayHost(TestConstants.TEST_HOST);
+        apnsServiceFactory.setGatewayPort(TestConstants.TEST_GATEWAY_PORT);
         // apnsServiceFactory.setCertificatePath("classpath:/" +
         // FixedCertificates.CLIENT_STORE);
         // apnsServiceFactory.setCertificatePassword(FixedCertificates.CLIENT_PASSWD);

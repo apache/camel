@@ -118,6 +118,9 @@ public class MailComponent extends UriEndpointComponent {
         return contentTypeResolver;
     }
 
+    /**
+     * Resolver to determine Content-Type for file attachments.
+     */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
     }

@@ -44,7 +44,7 @@ import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRA
 /**
  * Schematron Endpoint.
  */
-@UriEndpoint(scheme = "schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
+@UriEndpoint(scheme = "schematron", title = "Schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private Logger LOG = LoggerFactory.getLogger(SchematronEndpoint.class);
@@ -108,6 +108,9 @@ public class SchematronEndpoint extends DefaultEndpoint {
         return rules;
     }
 
+    /**
+     * To use the given schematron rules instead of loading from the path
+     */
     public void setRules(Templates rules) {
         this.rules = rules;
     }
@@ -153,4 +156,3 @@ public class SchematronEndpoint extends DefaultEndpoint {
         transformerFactory.setAttribute(LINE_NUMBERING, true);
     }
 }
-

@@ -85,9 +85,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     @Override
-    protected void postPollCheck() {
+    protected void postPollCheck(int polledMessages) {
         if (log.isTraceEnabled()) {
             log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+        }
+
+        // if we did not poll any messages, but are configured to disconnect then we need to do this now
+        // as there is no exchanges to be routed that otherwise will disconnect from the last UoW
+        if (polledMessages == 0) {
+            if (getEndpoint().isDisconnect()) {
+                log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                disconnect();
+            }
         }
     }
 
@@ -176,13 +185,24 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!loggedIn) {
+        // We need to send a noop first to check if the connection is still open 
+        boolean isConnected = false;
+        try {
+            isConnected = getOperations().sendNoop();
+        } catch (Exception ex) {
+            // here we just ignore the exception and try to reconnect
+            if (log.isDebugEnabled()) {
+                log.debug("Exception checking connection status: " + ex.getMessage());
+            }
+        }
+
+        if (!loggedIn || !isConnected) {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {
-                log.info("Connected and logged in to: " + remoteServer());
+                log.debug("Connected and logged in to: " + remoteServer());
             }
         }
     }

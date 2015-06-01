@@ -37,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http4.helper.HttpHelper;
+
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -66,7 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class HttpProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
@@ -74,6 +75,7 @@ public class HttpProducer extends DefaultProducer {
     private HttpContext httpContext;
     private boolean throwException;
     private boolean transferException;
+    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -98,9 +100,9 @@ public class HttpProducer extends DefaultProducer {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                skipRequestHeaders = URISupport.parseQuery(queryString);
+                skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
-            // Need to remove the Host key as it should be not used 
+            // Need to remove the Host key as it should be not used
             exchange.getIn().getHeaders().remove("host");
         }
         HttpRequestBase httpRequest = createMethod(exchange);
@@ -207,7 +209,8 @@ public class HttpProducer extends DefaultProducer {
 
         // preserve headers from in by copying any non existing headers
         // to avoid overriding existing headers with old values
-        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
+        // Just filter the http protocol headers
+        MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException, ClassNotFoundException {
@@ -407,19 +410,19 @@ public class HttpProducer extends DefaultProducer {
                 if (data != null) {
                     String contentTypeString = ExchangeHelper.getContentType(exchange);
                     ContentType contentType = null;
-                    
+
                     //Check the contentType is valid or not, If not it throws an exception.
                     //When ContentType.parse parse method parse "multipart/form-data;boundary=---------------------------j2radvtrk",
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
-                        // using ContentType.parser for charset 
+                        // using ContentType.parser for charset
                         if (contentTypeString.indexOf("charset") > 0) {
                             contentType = ContentType.parse(contentTypeString);
                         } else {
                             contentType = ContentType.create(contentTypeString);
                         }
                     }
-                                        
+
                     if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);

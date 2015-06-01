@@ -136,29 +136,31 @@ public class KafkaConsumer extends DefaultConsumer {
             boolean consumerTimeout;
             MessageAndMetadata<byte[], byte[]> mm = null;
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
-
-            while (true) {
+            boolean hasNext = true;
+            while (hasNext) {
 
                 try {
                     consumerTimeout = false;
                     if (it.hasNext()) {
                         mm = it.next();
+                        Exchange exchange = endpoint.createKafkaExchange(mm);
+                        try {
+                            processor.process(exchange);
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                        processed++;
                     } else {
-                        break;
+                        // we don't need to process the message
+                        hasNext = false;
                     }
-                    Exchange exchange = endpoint.createKafkaExchange(mm);
-                    try {
-                        processor.process(exchange);
-                    } catch (Exception e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                    processed++;
                 } catch (ConsumerTimeoutException e) {
                     LOG.debug(e.getMessage(), e);
                     consumerTimeout = true;
                 }
 
-                if (processed >= endpoint.getBatchSize() || consumerTimeout) {
+                if (processed >= endpoint.getBatchSize() || consumerTimeout 
+                    || (processed > 0 && !hasNext)) { // Need to commit the offset for the last round
                     try {
                         berrier.await(endpoint.getBarrierAwaitTimeoutMs(), TimeUnit.MILLISECONDS);
                         if (!consumerTimeout) {

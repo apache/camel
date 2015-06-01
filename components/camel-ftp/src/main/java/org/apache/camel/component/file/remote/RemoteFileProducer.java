@@ -106,17 +106,22 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
         if (loggedIn) {
-            try {
-                noop = getOperations().sendNoop();
-            } catch (Exception e) {
-                // ignore as we will try to recover connection
-                noop = false;
-                // mark as not logged in, since the noop failed
-                loggedIn = false;
+            if (getEndpoint().getConfiguration().isSendNoop()) {
+                try {
+                    noop = getOperations().sendNoop();
+                } catch (Exception e) {
+                    // ignore as we will try to recover connection
+                    noop = false;
+                    // mark as not logged in, since the noop failed
+                    loggedIn = false;
+                }
+                log.trace("preWriteCheck send noop success: {}", noop);
+            } else {
+                // okay send noop is disabled then we would regard the op as success
+                noop = true;
+                log.trace("preWriteCheck send noop disabled");
             }
         }
-
-        log.trace("preWriteCheck send noop success: {}", noop);
 
         // if not alive then reconnect
         if (!noop) {
@@ -203,7 +208,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             if (!loggedIn) {
                 return;
             }
-            log.info("Connected and logged in to: " + getEndpoint());
+            log.debug("Connected and logged in to: " + getEndpoint());
         }
     }
 

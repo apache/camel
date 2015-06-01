@@ -55,6 +55,8 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent {
         return handled;
     }
 
+    public boolean isContinued() { return !handled; }
+
     @Override
     public String toString() {
         if (isDeadLetterChannel()) {

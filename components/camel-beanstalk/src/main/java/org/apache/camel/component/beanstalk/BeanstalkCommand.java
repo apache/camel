@@ -20,6 +20,4 @@ public enum BeanstalkCommand {
 
     bury, release, put, touch, delete, kick
 
-
-
 }

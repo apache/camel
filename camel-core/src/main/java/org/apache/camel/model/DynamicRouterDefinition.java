@@ -44,6 +44,8 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
+    @XmlAttribute
+    private Integer cacheSize; 
 
     public DynamicRouterDefinition() {
     }
@@ -75,6 +77,9 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, delimiter);
         if (getIgnoreInvalidEndpoints() != null) {
             dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
+        }
+        if (getCacheSize() != null) {
+            dynamicRouter.setCacheSize(getCacheSize());
         }
         return dynamicRouter;
     }
@@ -110,6 +115,14 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     // Fluent API
     // -------------------------------------------------------------------------
 
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Type end() {
@@ -135,6 +148,18 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public DynamicRouterDefinition<Type> uriDelimiter(String uriDelimiter) {
         setUriDelimiter(uriDelimiter);
+        return this;
+    }
+    
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this recipient list, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public DynamicRouterDefinition<Type> cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 

@@ -112,6 +112,17 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         super.setIgnoreResourceNotFound(ignoreResourceNotFound);
         this.ignoreResourceNotFound = ignoreResourceNotFound;
     }
+    
+    @Override
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        String value = props.getProperty(placeholder);
+        if (parser != null) {
+            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
+            return parser.parseProperty(placeholder, value, props);
+        } else {
+            return value;
+        }
+    }
 
     @Override
     public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {

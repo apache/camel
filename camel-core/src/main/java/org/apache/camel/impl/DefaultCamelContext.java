@@ -733,6 +733,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
         Processor processor = getProcessor(id);
         ProcessorDefinition def = getProcessorDefinition(id);
 
@@ -749,6 +754,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
         Route route = getRoute(routeId);
 
         if (route != null) {
@@ -764,6 +774,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagedCamelContextMBean getManagedCamelContext() {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
         try {
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(this);
             return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
@@ -799,13 +814,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     void removeRouteCollection(Collection<Route> routes) {
-        synchronized (routes) {
+        synchronized (this.routes) {
             this.routes.removeAll(routes);
         }
     }
 
     void addRouteCollection(Collection<Route> routes) throws Exception {
-        synchronized (routes) {
+        synchronized (this.routes) {
             this.routes.addAll(routes);
         }
     }
@@ -1780,6 +1795,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<String, String[]>();
+            Map<String, String[]> uriOptions = new LinkedHashMap<String, String[]>();
 
             // insert values from uri
             Map<String, Object> options = URISupport.parseParameters(u);
@@ -1820,8 +1836,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     }
                 }
 
-                // add as selected row
-                selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                // remember this option from the uri
+                uriOptions.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
             }
 
             // include other rows
@@ -1844,11 +1860,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     value = URISupport.sanitizePath(value);
                 }
 
-                // always include path options
-                if (includeAllOptions || "path".equals(kind)) {
-                    // add as selected row
+                boolean isUriOption = uriOptions.containsKey(name);
+
+                // always include from uri or path options
+                if (includeAllOptions || isUriOption || "path".equals(kind)) {
                     if (!selected.containsKey(name)) {
-                        selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        // add as selected row, but take the value from uri options if it was from there
+                        if (isUriOption) {
+                            selected.put(name, uriOptions.get(name));
+                        } else {
+                            selected.put(name, new String[]{name, kind, label, required, type, javaType, deprecated, value, defaultValue, description});
+                        }
                     }
                 }
             }
@@ -3567,7 +3589,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public InterceptStrategy getDefaultBacklogTracer() {
         if (defaultBacklogTracer == null) {
-            defaultBacklogTracer = new BacklogTracer(this);
+            defaultBacklogTracer = BacklogTracer.createTracer(this);
         }
         return defaultBacklogTracer;
     }

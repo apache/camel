@@ -48,6 +48,9 @@ public class GuavaEventBusComponent extends UriEndpointComponent {
         return eventBus;
     }
 
+    /**
+     * To use the given Guava EventBus instance
+     */
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
@@ -56,6 +59,11 @@ public class GuavaEventBusComponent extends UriEndpointComponent {
         return listenerInterface;
     }
 
+    /**
+     * The interface with method(s) marked with the @Subscribe annotation.
+     * Dynamic proxy will be created over the interface so it could be registered as the EventBus listener.
+     * Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option.
+     */
     public void setListenerInterface(Class<?> listenerInterface) {
         this.listenerInterface = listenerInterface;
     }

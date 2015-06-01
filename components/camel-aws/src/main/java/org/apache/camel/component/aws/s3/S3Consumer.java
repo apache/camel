@@ -62,7 +62,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
-        Queue<Exchange> exchanges = null;
+        Queue<Exchange> exchanges;
 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
@@ -75,7 +75,9 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
             listObjectsRequest.setBucketName(bucketName);
             listObjectsRequest.setPrefix(getConfiguration().getPrefix());
-            listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+            if (maxMessagesPerPoll > 0) {
+                listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+            }
             if (marker != null && !getConfiguration().isDeleteAfterRead()) {
                 listObjectsRequest.setMarker(marker);
             }

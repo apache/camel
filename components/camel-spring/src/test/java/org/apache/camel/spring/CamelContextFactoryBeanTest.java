@@ -26,7 +26,9 @@ import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
 import org.apache.camel.impl.ActiveMQUuidGenerator;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.SimpleUuidGenerator;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.IOHelper;
 import org.custommonkey.xmlunit.XMLAssert;
@@ -94,5 +96,20 @@ public class CamelContextFactoryBeanTest extends TestCase {
         JAXBContext jaxb = JAXBContext.newInstance(CamelContextFactoryBean.class);
         jaxb.createMarshaller().marshal(context, stringOut);
         return stringOut.toString();
+    }
+
+    public void testCustomModelJAXBContextFactory() throws Exception {
+        StaticApplicationContext applicationContext = new StaticApplicationContext();
+        applicationContext.registerSingleton("customModelJAXBContextFactory", CustomModelJAXBContextFactory.class);
+        factory.setApplicationContext(applicationContext);
+        factory.afterPropertiesSet();
+
+        ModelJAXBContextFactory modelJAXBContextFactory = factory.getContext().getModelJAXBContextFactory();
+
+        assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
+    }
+
+    private static class CustomModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
+        // Do nothing here
     }
 }
