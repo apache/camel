@@ -20,6 +20,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
+import java.io.*;
 
 
 /**
@@ -40,6 +41,7 @@ public class ClassPathURIResolver implements URIResolver {
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
-        return new StreamSource(ClassLoader.getSystemResourceAsStream(rulesDir.concat("/").concat(href)));
+        return new StreamSource(ClassPathURIResolver.class.getClassLoader()
+                .getResourceAsStream(rulesDir.concat(File.separator).concat(href)));
     }
 }
