@@ -1314,6 +1314,14 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-sjms/${project.version}</bundle>
   </feature>
+  <feature name='camel-slack' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-slack/${project.version}</bundle>
+  </feature>
   <feature name='camel-smpp' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsmpp/${jsmpp-bundle-version}</bundle>
