@@ -75,6 +75,9 @@ public final class CamelContextStatDump {
     private Long selfProcessingTime;
 
     @XmlAttribute
+    private String startTimestamp;
+
+    @XmlAttribute
     private String resetTimestamp;
 
     @XmlAttribute
@@ -217,6 +220,14 @@ public final class CamelContextStatDump {
 
     public void setExchangesInflight(Long exchangesInflight) {
         this.exchangesInflight = exchangesInflight;
+    }
+
+    public String getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(String startTimestamp) {
+        this.startTimestamp = startTimestamp;
     }
 
     public String getResetTimestamp() {
