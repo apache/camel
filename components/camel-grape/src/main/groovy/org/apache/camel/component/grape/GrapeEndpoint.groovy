@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriEndpoint
 import static groovy.grape.Grape.grab
 import static org.apache.camel.component.grape.MavenCoordinates.parseMavenCoordinates
 
-@UriEndpoint(scheme = "grape", title = "Grape", producerOnly = true,  label = "management,deployment", syntax = "grape:defaultCoordinates")
+@UriEndpoint(scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
 class GrapeEndpoint extends DefaultEndpoint {
 
     private final String defaultCoordinates
