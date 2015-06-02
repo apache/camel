@@ -17,7 +17,10 @@
 package org.apache.camel.component.schematron.processor;
 
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerFactory;
 
+import net.sf.saxon.TransformerFactoryImpl;
+import org.apache.camel.component.schematron.constant.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,12 +34,11 @@ public class TemplatesFactoryTest {
 
     @Test
     public void testInstantiateAnInstanceOfTemplates() throws Exception {
-
-
         TemplatesFactory fac = TemplatesFactory.newInstance();
-        Templates templates = fac.newTemplates(ClassLoader.getSystemResourceAsStream(rules));
+        TransformerFactory factory = new TransformerFactoryImpl();
+        factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
+        Templates templates = fac.getTemplates(ClassLoader.getSystemResourceAsStream(rules), factory);
         Assert.assertNotNull(templates);
-
 
     }
 }
