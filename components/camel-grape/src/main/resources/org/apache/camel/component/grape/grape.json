@@ -10,7 +10,7 @@
     "javaType": "org.apache.camel.component.grape.GrapeEndpoint",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grape",
-    "version": "2.16.0"
+    "version": "ARTIFACT_VERSION"
   },
   "componentProperties": {
   },
