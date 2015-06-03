@@ -83,15 +83,35 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Exchange copy() {
+        // to be backwards compatible as today
+        return copy(false);
+    }
+
+    public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
         if (hasProperties()) {
             exchange.setProperties(safeCopy(getProperties()));
         }
-        
-        exchange.setIn(getIn().copy());
-        if (hasOut()) {
-            exchange.setOut(getOut().copy());
+
+        if (safeCopy) {
+            exchange.getIn().setBody(getIn().getBody());
+            if (getIn().hasHeaders()) {
+                exchange.getIn().setHeaders(safeCopy(getIn().getHeaders()));
+            }
+            if (hasOut()) {
+                exchange.getOut().setBody(getOut().getBody());
+                if (getOut().hasHeaders()) {
+                    exchange.getOut().setHeaders(safeCopy(getOut().getHeaders()));
+                }
+            }
+        } else {
+            // old way of doing copy which is @deprecated
+            // TODO: remove this in Camel 3.0, and always do a safe copy
+            exchange.setIn(getIn().copy());
+            if (hasOut()) {
+                exchange.setOut(getOut().copy());
+            }
         }
         exchange.setException(getException());
         return exchange;
