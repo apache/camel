@@ -27,9 +27,6 @@
     <requiredProperty key="spring-boot-version">
       <defaultValue>${spring-boot-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="jolokia-version">
-      <defaultValue>${jolokia-version}</defaultValue>
-    </requiredProperty>
     <requiredProperty key="log4j-version">
       <defaultValue>${log4j-version}</defaultValue>
     </requiredProperty>
