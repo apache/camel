@@ -127,6 +127,8 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def copy = new RichExchange(exchange.copy)
 
+  def copy(safeCopy: Boolean) = new RichExchange(exchange.copy(safeCopy))
+
   def addOnCompletion(onCompletion: Synchronization) { exchange.addOnCompletion(onCompletion) }
   
   def containsOnCompletion(onCompletion: Synchronization) = exchange.containsOnCompletion(onCompletion)
