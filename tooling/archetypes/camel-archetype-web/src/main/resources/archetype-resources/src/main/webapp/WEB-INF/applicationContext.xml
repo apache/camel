@@ -28,7 +28,7 @@
         <route id="timer-to-console">
             <from uri="timer://foo?fixedRate=true&amp;period=10s"/>
             <transform>
-               <simple>Hello Web Application, how are you?</simple>
+               <simple>I am ${sysenv.HOSTNAME} and I have run ${header.CamelTimerCounter} times</simple>
             </transform>
             <to uri="stream:out"/>
         </route>
