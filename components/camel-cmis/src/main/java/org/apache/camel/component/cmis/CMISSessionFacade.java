@@ -35,7 +35,9 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,6 +195,17 @@ public class CMISSessionFacade {
         }
         return false;
     }
+
+	public boolean supportsSecondaries() {
+		if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0)
+			return false;
+		for (ObjectType type : session.getTypeChildren(null, false)) {
+			if (BaseTypeId.CMIS_SECONDARY.value().equals(type.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) throws Exception {
         return buf != null ? session.getObjectFactory()
