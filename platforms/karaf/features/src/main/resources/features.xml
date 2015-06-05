@@ -371,7 +371,6 @@
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jakarta-regexp/${regexp-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/${lucene-bundle-version}</bundle>
@@ -1438,7 +1437,7 @@
     <bundle dependency='true'>mvn:org.springframework.ws/spring-xml/${spring-ws-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-core/${spring-ws-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-support/${spring-ws-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>    
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-sql' version='${project.version}' resolver='(obr)' start-level='50'>
