@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#525-response-message-object.
  */
 @Metadata(label = "rest")
-@XmlRootElement(name = "respMsg")
+@XmlRootElement(name = "responseMessage")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestOperationResponseMsgDefinition {
 
@@ -106,7 +106,7 @@ public class RestOperationResponseMsgDefinition {
         return this;
     }
 
-    public RestDefinition endResponseMsg() {
+    public RestDefinition endResponseMessage() {
         verb.getResponseMsgs().add(this);
         return verb.getRest();
     }
