@@ -35,12 +35,6 @@
 
     <dependencies>
         <dependency>
-            <!-- Make sure we use the version of osgi.core that we specify for compiling -->
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
         </dependency>
@@ -84,10 +78,11 @@
             <version>${aries-blueprint-proxy-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.pojosr</groupId>
-            <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>${pojosr-version}</version>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.connect</artifactId>
+            <version>${felix-connect-version}</version>
             <exclusions>
+                <!-- felix-connect includes osgi.core and osgi.compendium version 5.0.0 -->
                 <exclusion>
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
@@ -133,7 +128,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.fileinstall</artifactId>
-            <version>${felix-fileinstall-pojosr-version}</version>
+            <version>${felix-fileinstall-version}</version>
                 <!-- exclude the following dependency which otherwise would pop up a lot of compilation
                      errors both by this and the camel-maven-plugin modules under eclipse. -->
                 <exclusions>

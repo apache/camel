@@ -151,8 +151,8 @@
     <facebook4j-core-version>2.2.2</facebook4j-core-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <felix-configadmin-version>1.8.0</felix-configadmin-version>
-    <!-- need to keep using the older 3.2.8 that do not cause NPE issues when using pojosr - see pojosr bug #13 -->
-    <felix-fileinstall-pojosr-version>3.2.8</felix-fileinstall-pojosr-version>
+    <felix-connect-version>0.1.0</felix-connect-version>
+    <felix-fileinstall-version>3.5.0</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
     <felix-scr-annotations-version>1.9.8</felix-scr-annotations-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
@@ -393,7 +393,6 @@
     <pgjdbc-ng-driver-version>0.4</pgjdbc-ng-driver-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.8</plexus-utils-version>
-    <pojosr-version>0.2.1</pojosr-version>
     <powermock-version>1.6.1</powermock-version>
     <protobuf-version>2.6.1</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
