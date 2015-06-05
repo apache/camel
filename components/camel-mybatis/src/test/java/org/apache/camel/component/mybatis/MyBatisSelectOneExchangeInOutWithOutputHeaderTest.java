@@ -49,7 +49,7 @@ public class MyBatisSelectOneExchangeInOutWithOutputHeaderTest extends MyBatisTe
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                	.setExchangePattern(ExchangePattern.InOut)
+                    .setExchangePattern(ExchangePattern.InOut)
                     .to("mybatis:selectAccountById?statementType=SelectOne&outputHeader=" + TEST_CASE_HEADER_NAME)
                     .to("mock:result");
                 // END SNIPPET: e1
