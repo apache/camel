@@ -22,10 +22,13 @@ import java.util.Collection;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.InstanceState;
 import com.amazonaws.services.ec2.model.InstanceStateChange;
 import com.amazonaws.services.ec2.model.InstanceStateName;
+import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -132,5 +135,49 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             throw new AmazonServiceException("The image-id doesn't exists");
         }
         return result;    
+    }
+    
+    @Override
+    public DescribeInstancesResult describeInstances(DescribeInstancesRequest describeInstancesRequest) {
+        DescribeInstancesResult result = new DescribeInstancesResult();
+        if (describeInstancesRequest.getInstanceIds().isEmpty()) {
+            Collection<Reservation> list = new ArrayList<Reservation>();
+            Reservation res = new Reservation();
+            res.setOwnerId("1");
+            res.setRequesterId("user-test");
+            res.setReservationId("res-1");
+            Collection<Instance> instances = new ArrayList();
+            Instance ins = new Instance();
+            ins.setImageId("id-1");
+            ins.setInstanceType(InstanceType.T2Micro);
+            ins.setInstanceId("instance-1");
+            instances.add(ins);
+            Instance ins1 = new Instance();
+            ins1.setImageId("id-2");
+            ins1.setInstanceType(InstanceType.T2Micro);
+            ins1.setInstanceId("instance-2");
+            instances.add(ins1);
+            res.setInstances(instances);
+            list.add(res);
+            result.setReservations(list); 
+        } else {
+            if (describeInstancesRequest.getInstanceIds().contains("instance-1")) {
+                Collection<Reservation> list = new ArrayList<Reservation>();
+                Reservation res = new Reservation();
+                res.setOwnerId("1");
+                res.setRequesterId("user-test");
+                res.setReservationId("res-1");
+                Collection<Instance> instances = new ArrayList();
+                Instance ins = new Instance();
+                ins.setImageId("id-1");
+                ins.setInstanceType(InstanceType.T2Micro);
+                ins.setInstanceId("instance-1");
+                instances.add(ins);
+                res.setInstances(instances);
+                list.add(res);
+                result.setReservations(list); 
+            }
+        }
+        return result;
     }
 }

@@ -20,6 +20,8 @@ import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -63,6 +65,9 @@ public class EC2Producer extends DefaultProducer {
             break;
         case terminateInstances:
             terminateInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case describeInstances:
+            describeInstances(getEndpoint().getEc2Client(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -198,6 +203,23 @@ public class EC2Producer extends DefaultProducer {
             result = ec2Client.terminateInstances(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        exchange.getIn().setBody(result);        
+    }
+    
+    private void describeInstances(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        DescribeInstancesRequest request = new DescribeInstancesRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withInstanceIds(instanceIds);
+        } 
+        DescribeInstancesResult result;
+        try {
+            result = ec2Client.describeInstances(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Describe Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         exchange.getIn().setBody(result);        
