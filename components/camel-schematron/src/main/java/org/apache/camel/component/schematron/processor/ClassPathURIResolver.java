@@ -16,24 +16,21 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import java.io.File;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
-
 
 /**
  * Class path resolver for schematron templates
- *
  */
 public class ClassPathURIResolver implements URIResolver {
 
-    private String rulesDir;
+    private final String rulesDir;
 
     /**
      * Constructor setter for rules directory path.
-     * @param rulesDir
      */
     public ClassPathURIResolver(final String rulesDir) {
         this.rulesDir = rulesDir;
