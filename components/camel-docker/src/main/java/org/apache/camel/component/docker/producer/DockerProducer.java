@@ -900,7 +900,7 @@ public class DockerProducer extends DefaultProducer {
         Boolean disableNetwork = DockerHelper.getProperty(DockerConstants.DOCKER_DISABLE_NETWORK, configuration, message, Boolean.class);
 
         if (disableNetwork != null) {
-            createContainerCmd.withDisableNetwork(disableNetwork);
+            createContainerCmd.withNetworkDisabled(disableNetwork);
         }
 
         String[] dns = DockerHelper.parseDelimitedStringHeader(DockerConstants.DOCKER_DNS, message);

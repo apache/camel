@@ -110,7 +110,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
         Mockito.verify(mockObject, Mockito.times(1)).withName(Matchers.eq(name));
         Mockito.verify(mockObject, Mockito.times(1)).withWorkingDir(workingDir);
-        Mockito.verify(mockObject, Mockito.times(1)).withDisableNetwork(disableNetwork);
+        Mockito.verify(mockObject, Mockito.times(1)).withNetworkDisabled(disableNetwork);
         Mockito.verify(mockObject, Mockito.times(1)).withHostName(hostname);
         Mockito.verify(mockObject, Mockito.times(1)).withUser(user);
         Mockito.verify(mockObject, Mockito.times(1)).withStdinOpen(stdInOpen);
