@@ -14,17 +14,17 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-#
-# The logging properties used
-#
-log4j.rootLogger=INFO, out
+package ${package};
 
-# uncomment the following line to turn on Camel debugging
-#log4j.logger.org.apache.camel=DEBUG
+import javax.inject.Singleton;
 
-# CONSOLE appender not used by default
-log4j.appender.out=org.apache.log4j.ConsoleAppender
-log4j.appender.out.layout=org.apache.log4j.PatternLayout
-log4j.appender.out.layout.ConversionPattern=[%30.30t] %-30.30c{1} %-5p %m%n
-#log4j.appender.out.layout.ConversionPattern=%d [%-15.15t] %-5p %-30.30c{1} - %m%n
+@Singleton
+public class SomeBean {
 
+    private int counter;
+
+    public String someMethod(String body) {
+        return "Saying Hello World " + ++counter + " times";
+    }
+
+}
