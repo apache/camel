@@ -268,27 +268,27 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestOperationParamDefinition restParam() {
+    public RestOperationParamDefinition param() {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        return restParam(verb);
+        return param(verb);
     }
 
-    public RestOperationParamDefinition restParam(VerbDefinition verb) {
+    public RestOperationParamDefinition param(VerbDefinition verb) {
         return new RestOperationParamDefinition(verb);
     }
 
-    public RestOperationResponseMsgDefinition restResponseMsg() {
+    public RestOperationResponseMsgDefinition responseMessage() {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        return restResponseMsg(verb);
+        return responseMessage(verb);
     }
 
-    public RestOperationResponseMsgDefinition restResponseMsg(VerbDefinition verb) {
+    public RestOperationResponseMsgDefinition responseMessage(VerbDefinition verb) {
         return new RestOperationResponseMsgDefinition(verb);
     }
 
@@ -584,7 +584,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                         }
                     }
                     if (!found) {
-                        restParam(verb).name(key).type(RestParamType.path).endParam();
+                        param(verb).name(key).type(RestParamType.path).endParam();
                     }
                 }
             }
@@ -594,7 +594,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
                 }
-                restParam(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
             }
 
 

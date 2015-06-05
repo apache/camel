@@ -17,6 +17,7 @@
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -222,6 +223,12 @@ public class RestOperationParamDefinition {
         setAllowableValues(allowableValues);
         return this;
     }
+
+    public RestOperationParamDefinition allowableValues(String... allowableValues) {
+        setAllowableValues(Arrays.asList(allowableValues));
+        return this;
+    }
+
 
     public RestOperationParamDefinition type(RestParamType type) {
         setParamType(type);

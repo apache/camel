@@ -54,13 +54,13 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
 
                 rest("/say/bye").description("bye", "Bye Service", "en")
                         .get().description("Says bye to you").consumes("application/json")
-                        .restParam().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
+                        .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
                         .defaultValue("1").allowMultiple(false).name("header_count").required(true).paramAccess("acc1")
                         .endParam().
-                        restParam().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
+                        param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
                         .defaultValue("b").allowMultiple(true).name("header_letter").required(false).paramAccess("acc2")
                         .endParam()
-                        .restResponseMsg().code(300).message("test msg").responseModel(Integer.class).endResponseMsg()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")
                         .post().description("Updates the bye message").to("mock:update");
 
