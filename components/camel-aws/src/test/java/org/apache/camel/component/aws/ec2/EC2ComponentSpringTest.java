@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceStateName;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -126,6 +127,24 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
         assertEquals(resultGet.getTerminatingInstances().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getTerminatingInstances().get(0).getPreviousState().getName(), InstanceStateName.Running.toString());
         assertEquals(resultGet.getTerminatingInstances().get(0).getCurrentState().getName(), InstanceStateName.Terminated.toString());
+    }
+    
+    @Test
+    public void ec2DescribeSpecificInstancesTest() throws Exception {
+
+        Exchange exchange = template.request("direct:describe", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection l = new ArrayList();
+                l.add("instance-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
+            }
+        });
+        
+        DescribeInstancesResult resultGet = (DescribeInstancesResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getReservations().size(), 1);
+        assertEquals(resultGet.getReservations().get(0).getInstances().size(), 1);
     }
     
     @Override
