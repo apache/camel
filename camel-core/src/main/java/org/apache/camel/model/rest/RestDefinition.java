@@ -268,12 +268,28 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestOperationParamDefinition restParam() {
+    public RestOperationParamDefinition param() {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return param(verb);
+    }
+
+    public RestOperationParamDefinition param(VerbDefinition verb) {
         return new RestOperationParamDefinition(verb);
+    }
+
+    public RestOperationResponseMsgDefinition responseMessage() {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        return responseMessage(verb);
+    }
+
+    public RestOperationResponseMsgDefinition responseMessage(VerbDefinition verb) {
+        return new RestOperationResponseMsgDefinition(verb);
     }
 
     public RestDefinition produces(String mediaType) {
@@ -558,7 +574,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             for (String a : arr) {
                 if (a.startsWith("{") && a.endsWith("}")) {
                     String key = a.substring(1, a.length() - 1);
-                    restParam().name(key).type(RestParamType.path).endParam();
+                    //  merge if exists
+                    boolean found = false;
+                    for (RestOperationParamDefinition param : verb.getParams()) {
+                        if (param.getName().equalsIgnoreCase(key)) {
+                            param.type(RestParamType.path);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        param(verb).name(key).type(RestParamType.path).endParam();
+                    }
                 }
             }
 
@@ -567,8 +594,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
                 }
-                restParam().name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
             }
+
+
 
             // the route should be from this rest endpoint
             route.fromRest(from);

@@ -17,6 +17,7 @@
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,22 +46,25 @@ public class RestOperationParamDefinition {
 
     @XmlAttribute(required = true)
     @Metadata(defaultValue = "path")
-    private RestParamType paramType = RestParamType.path;
+    private RestParamType paramType;
 
     @XmlAttribute(required = true)
     private String name;
 
     @XmlAttribute
+    @Metadata(defaultValue = "")
     private String description;
 
     @XmlAttribute
+    @Metadata(defaultValue = "")
     private String defaultValue;
 
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean required = true;
+    private Boolean required;
 
     @XmlAttribute
+    @Metadata(defaultValue = "false")
     private Boolean allowMultiple;
 
     @XmlAttribute
@@ -72,6 +76,7 @@ public class RestOperationParamDefinition {
     private List<String> allowableValues;
 
     @XmlAttribute
+    @Metadata(defaultValue = "")
     private String paramAccess;
 
     public RestOperationParamDefinition(VerbDefinition verb) {
@@ -82,7 +87,7 @@ public class RestOperationParamDefinition {
     }
 
     public RestParamType getParamType() {
-        return paramType;
+        return paramType != null ? paramType : RestParamType.path;
     }
 
     /**
@@ -104,7 +109,7 @@ public class RestOperationParamDefinition {
     }
 
     public String getDescription() {
-        return description;
+        return description != null ? description : "";
     }
 
     /**
@@ -118,7 +123,7 @@ public class RestOperationParamDefinition {
      * Sets the Swagger Parameter default value.
      */
     public String getDefaultValue() {
-        return defaultValue;
+        return defaultValue != null ? defaultValue : "";
     }
 
     public void setDefaultValue(String defaultValue) {
@@ -126,7 +131,7 @@ public class RestOperationParamDefinition {
     }
 
     public Boolean getRequired() {
-        return required;
+        return required != null ? required : true;
     }
 
     /**
@@ -137,7 +142,7 @@ public class RestOperationParamDefinition {
     }
 
     public Boolean getAllowMultiple() {
-        return allowMultiple;
+        return allowMultiple != null ? allowMultiple : false;
     }
 
     /**
@@ -174,7 +179,7 @@ public class RestOperationParamDefinition {
     }
 
     public String getParamAccess() {
-        return paramAccess;
+        return paramAccess != null ? paramAccess : "";
     }
 
     /**
@@ -218,6 +223,12 @@ public class RestOperationParamDefinition {
         setAllowableValues(allowableValues);
         return this;
     }
+
+    public RestOperationParamDefinition allowableValues(String... allowableValues) {
+        setAllowableValues(Arrays.asList(allowableValues));
+        return this;
+    }
+
 
     public RestOperationParamDefinition type(RestParamType type) {
         setParamType(type);
