@@ -1422,6 +1422,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertPredicate("${body['isCredit']} == false", true);
     }
 
+    public void testSimpleRegexp() throws Exception {
+        exchange.getIn().setBody("12345678");
+        assertPredicate("${body} regex '\\d+'", true);
+        assertPredicate("${body} regex '\\w{1,4}'", false);
+
+        exchange.getIn().setBody("tel:+97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("tel:+87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+
+        exchange.getIn().setBody("87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
