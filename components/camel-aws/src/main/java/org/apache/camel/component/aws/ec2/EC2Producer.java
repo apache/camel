@@ -164,7 +164,7 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.startInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Start Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         exchange.getIn().setBody(result);        
@@ -183,7 +183,7 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.stopInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Stop Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         exchange.getIn().setBody(result);        
@@ -202,7 +202,7 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.terminateInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Terminate Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         exchange.getIn().setBody(result);        
