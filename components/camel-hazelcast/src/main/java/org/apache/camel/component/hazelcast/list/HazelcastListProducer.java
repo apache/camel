@@ -73,6 +73,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.REMOVEVALUE_OPERATION:
             this.remove(pos, exchange);
             break;
+            
+        case HazelcastConstants.CLEAR_OPERATION:
+            this.clear();
+            break;
 
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation, HazelcastConstants.OPERATION));
@@ -119,5 +123,9 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
             int position = pos;
             list.remove(position);
         }
+    }
+    
+    private void clear() {
+        list.clear();
     }
 }
