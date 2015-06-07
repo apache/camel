@@ -65,6 +65,36 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
     
     @Test
+    public void ec2CreateAndRunTestWithSecurityGroups() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
+                Collection<String> secGroups = new ArrayList<String>();
+                secGroups.add("secgroup-1");
+                secGroups.add("secgroup-2");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, secGroups);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        RunInstancesResult resultGet = (RunInstancesResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getReservation().getInstances().get(0).getImageId(), "test-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceType(), InstanceType.T2Micro.toString());
+        assertEquals(resultGet.getReservation().getInstances().get(0).getInstanceId(), "instance-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().size(), 2);
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(0).getGroupId(), "id-1");
+        assertEquals(resultGet.getReservation().getInstances().get(0).getSecurityGroups().get(1).getGroupId(), "id-2");
+    }
+    
+    @Test
     public void ec2CreateAndRunKoTest() throws Exception {
 
         mock.expectedMessageCount(0);

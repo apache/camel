@@ -31,6 +31,7 @@ import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.amazonaws.services.opsworks.model.StartInstanceRequest;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -104,6 +105,7 @@ public class EC2Producer extends DefaultProducer {
         boolean monitoring;
         String kernelId;
         boolean ebsOptimized;
+        Collection securityGroups;
         RunInstancesRequest request = new RunInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.IMAGE_ID))) {
             ami = exchange.getIn().getHeader(EC2Constants.IMAGE_ID, String.class);
@@ -140,6 +142,10 @@ public class EC2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED))) {
             ebsOptimized = exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED, Boolean.class);
             request.withEbsOptimized(ebsOptimized);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_SECURITY_GROUPS))) {
+            securityGroups = exchange.getIn().getHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
+            request.withSecurityGroups(securityGroups);
         }
         RunInstancesResult result;
         try {

@@ -22,13 +22,14 @@ package org.apache.camel.component.aws.ec2;
  */
 public interface EC2Constants {
 
-    String IMAGE_ID                = "CamelAwsEC2ImageId";
-    String INSTANCE_TYPE           = "CamelAwsEC2InstanceType";
-    String OPERATION               = "CamelAwsEC2Operation";
-    String INSTANCE_MIN_COUNT      = "CamelAwsEC2InstanceMinCount";
-    String INSTANCE_MAX_COUNT      = "CamelAwsEC2InstanceMaxCount";
-    String INSTANCE_MONITORING     = "CamelAwsEC2InstanceMonitoring";
-    String INSTANCE_KERNEL_ID      = "CamelAwsEC2InstanceKernelId";
-    String INSTANCE_EBS_OPTIMIZED  = "CamelAwsEC2InstanceEbsOptimized";
-    String INSTANCES_IDS           = "CamelAwsEC2InstancesIds";
+    String IMAGE_ID                 = "CamelAwsEC2ImageId";
+    String INSTANCE_TYPE            = "CamelAwsEC2InstanceType";
+    String OPERATION                = "CamelAwsEC2Operation";
+    String INSTANCE_MIN_COUNT       = "CamelAwsEC2InstanceMinCount";
+    String INSTANCE_MAX_COUNT       = "CamelAwsEC2InstanceMaxCount";
+    String INSTANCE_MONITORING      = "CamelAwsEC2InstanceMonitoring";
+    String INSTANCE_KERNEL_ID       = "CamelAwsEC2InstanceKernelId";
+    String INSTANCE_EBS_OPTIMIZED   = "CamelAwsEC2InstanceEbsOptimized";
+    String INSTANCE_SECURITY_GROUPS = "CamelAwsEC2InstanceSecurityGroups";
+    String INSTANCES_IDS            = "CamelAwsEC2InstancesIds";
 }

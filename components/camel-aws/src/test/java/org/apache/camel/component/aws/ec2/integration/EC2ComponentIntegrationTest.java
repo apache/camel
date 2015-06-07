@@ -46,6 +46,23 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
     }
     
     @Test
+    public void createAndRunInstancesWithSecurityGroupsTest() {
+        
+        template.send("direct:createAndRun", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EC2Constants.IMAGE_ID, "ami-fd65ba94");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1); 
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);  
+                Collection<String> secGroups = new ArrayList<String>();
+                secGroups.add("secgroup-1");
+                secGroups.add("secgroup-2");
+                exchange.getIn().setHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, secGroups);
+            }
+        });
+    }
+    
+    @Test
     public void stopInstances() {
         
         template.send("direct:stop", new Processor() {
