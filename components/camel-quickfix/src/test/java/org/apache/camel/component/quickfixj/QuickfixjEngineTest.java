@@ -31,7 +31,6 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.mina.common.TransportType;
 
 import org.junit.After;
 import org.junit.Before;
@@ -70,6 +69,7 @@ import quickfix.ThreadedSocketAcceptor;
 import quickfix.ThreadedSocketInitiator;
 import quickfix.field.MsgType;
 import quickfix.fix42.Email;
+import quickfix.mina.ProtocolFactory;
 
 import static org.apache.camel.util.ObjectHelper.equal;
 
@@ -99,8 +99,8 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
         settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
+        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         settings.setBool(QuickfixjEngine.SETTING_USE_JMX, false);
         TestSupport.setSessionID(settings, sessionID);

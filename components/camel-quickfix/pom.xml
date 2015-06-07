@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
-      <version>${mina-version}</version>
+      <version>${mina2-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -40,7 +40,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +62,8 @@ import quickfix.field.SenderCompID;
 import quickfix.field.Subject;
 import quickfix.field.TargetCompID;
 import quickfix.fix44.Email;
+import quickfix.mina.ProtocolFactory;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -108,8 +109,8 @@ public class QuickfixjComponentTest {
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
         settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
+        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         setSessionID(settings, sessionID);   
 
@@ -364,8 +365,8 @@ public class QuickfixjComponentTest {
         // Create settings file with both acceptor and initiator
         
         SessionSettings settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
+        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         
         SessionID acceptorSessionID =  new SessionID(FixVersions.BEGINSTRING_FIX44, "ACCEPTOR", "INITIATOR");
